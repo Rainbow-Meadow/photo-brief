@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <title>PhotoBrief | Take the right photos, every time.</title>
+    <meta name="description" content="PhotoBrief turns vague customer photos into business-ready briefs. Chat-guided capture, AI quality checks, clean summaries — every time.">
+    <meta name="author" content="PhotoBrief" />
+    <meta name="theme-color" content="#0A6BFF" />
+    <meta name="apple-mobile-web-app-title" content="PhotoBrief" />
+
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    
+    
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/og-image.png">
+
+    <meta name="twitter:card" content="summary_large_image" />
+    
+    
+    <meta name="twitter:image" content="/og-image.png">
+    <meta property="og:title" content="PhotoBrief | Take the right photos, every time.">
+  <meta name="twitter:title" content="PhotoBrief | Take the right photos, every time.">
+  <meta property="og:description" content="PhotoBrief turns vague customer photos into business-ready briefs. Chat-guided capture, AI quality checks, clean summaries — every time.">
+  <meta name="twitter:description" content="PhotoBrief turns vague customer photos into business-ready briefs. Chat-guided capture, AI quality checks, clean summaries — every time.">
+  <meta property="og:site_name" content="PhotoBrief">
+  <meta name="twitter:site" content="@photobriefai">
+  <meta property="og:url" content="https://photobrief.ai/">
+
+  <!-- Sitewide Organization + WebSite JSON-LD. Per-page SoftwareApplication,
+       FAQPage, HowTo, Article, BreadcrumbList blobs are injected by usePageMeta. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://photobrief.ai/#org",
+        "name": "PhotoBrief",
+        "url": "https://photobrief.ai",
+        "logo": "https://photobrief.ai/og-image.png",
+        "email": "hello@photobrief.ai",
+        "sameAs": []
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://photobrief.ai/#website",
+        "url": "https://photobrief.ai",
+        "name": "PhotoBrief",
+        "publisher": { "@id": "https://photobrief.ai/#org" },
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://photobrief.ai/help?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      }
+    ]
+  }
+  </script>
+
+  <!-- Google tag (gtag.js) — deferred until first user interaction or 5s idle.
+       Removes ~156KB / 660ms of main-thread work from the initial load
+       (Speed Index / LCP / TBT win) without losing analytics for engaged
+       users. The dataLayer + gtag shim are defined synchronously so any
+       early trackEvent() calls queue up and replay once the real script loads. -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    window.gtag = gtag;
+    gtag('js', new Date());
+    // SPA: page_view is sent manually by RouteTracker on every route change
+    gtag('config', 'G-GJCZPQ3WJ9', { send_page_view: false });
+
+    (function () {
+      var loaded = false;
+      function loadGA() {
+        if (loaded) return;
+        loaded = true;
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=G-GJCZPQ3WJ9';
+        document.head.appendChild(s);
+        ['pointerdown','keydown','touchstart','scroll'].forEach(function (e) {
+          window.removeEventListener(e, loadGA);
+        });
+      }
+      ['pointerdown','keydown','touchstart','scroll'].forEach(function (e) {
+        window.addEventListener(e, loadGA, { passive: true, once: true });
+      });
+      // Fallback: load after the page is idle so bounced visitors are still
+      // counted. 5s gives the browser time to finish paint + hydrate.
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(loadGA, { timeout: 5000 });
+      } else {
+        setTimeout(loadGA, 5000);
+      }
+    })();
+  </script>
+</head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
