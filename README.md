@@ -60,28 +60,43 @@ Important authorization rule: AI Edge Functions should authorize before model ca
 
 Plan capabilities live in `src/config/planLimits.ts`. The UI reads plan state through `usePlan`, while important limits and feature gates should also be enforced by RLS, database triggers, or Edge Functions.
 
-PhotoBrief now uses a credit-first pricing model:
+PhotoBrief uses a simple per-photo credit model:
 
 ```text
 Requests are workflow containers.
-PhotoBrief Credits are the metered resource.
+PhotoBrief Credits are photo credits.
+1 submitted/analyzed photo = 1 credit.
 ```
 
-A simple one-photo request usually uses 2 credits: 1 AI photo check and 1 AI submission summary. A detailed 10-photo inspection usually uses about 11 credits. This lets simple requests stay cheap while complex, AI-heavy workflows naturally consume more.
+Basic AI quality checks and submission summaries are included in the photo credit. Customers do not need to understand AI task pricing, router tiers, or summary costs.
+
+Examples:
+
+```text
+1-photo request = 1 credit
+3-photo request = 3 credits
+10-photo inspection = 10 credits
+```
+
+First-pass guarantee:
+
+```text
+If PhotoBrief asks for follow-up/resubmission photos after a failed first pass, those follow-up photos do not consume credits.
+```
 
 Current credit rules:
 
 ```text
-AI photo quality check: 1 credit
-AI submission summary: 1 credit
-AI request builder draft: 2 credits
-AI guide generation: 3 credits
-AI missing-shot follow-up: 1 credit
-AI admin/escalation rerun: 5 credits
+Submitted/analyzed photo: 1 credit
+First-pass follow-up photo: 0 credits
+AI submission summary: included
+AI request builder draft: included / plan-gated
+AI guide generation: included / plan-gated
+AI missing-shot follow-up: included / plan-gated
 Manual request creation: 0 credits
 ```
 
-Credit accounting is stored in `usage_events.credit_cost` and the auditable `credit_ledger` table. The billing page reads `current_credit_balance()` and displays included credits, used credits, top-up credits, and estimated simple requests remaining.
+Credit accounting is stored in `usage_events.credit_cost` and the auditable `credit_ledger` table. The billing page reads `current_credit_balance()` and displays included credits, used credits, top-up credits, and estimated submitted photos remaining.
 
 Top-ups are PhotoBrief Credit packs. The legacy `request_credit_packs` table is still used as the pack storage layer during beta, but app-facing copy treats those balances as credits.
 
@@ -106,4 +121,4 @@ Reviewers can approve, reject, request retakes, assign, add notes, export PDFs, 
 - Move public request links fully to token hash/prefix storage and remove raw-token fallback.
 - Wire pre-model credit enforcement into every future AI Edge Function as new AI workflows are added.
 - Replace legacy `request_credit_packs` naming with dedicated credit-pack naming once Stripe products are finalized.
-- Add tests around recipient submit, answer persistence, token-authorized AI calls, credit accounting, and review hydration.
+- Add tests around recipient submit, answer persistence, token-authorized AI calls, credit accounting, first-pass guarantee accounting, and review hydration.
