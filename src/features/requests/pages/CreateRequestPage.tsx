@@ -31,6 +31,7 @@ const newId = () => `chat_${Date.now()}_${++mid}`;
 
 export default function CreateRequestPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { can } = usePlan();
   const { workspace } = useCurrentWorkspace();
   const { usage } = useUsage();
@@ -41,6 +42,11 @@ export default function CreateRequestPage() {
   const [chatMessages, setChatMessages] = useState<AiBuilderMessage[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
+
+  // Customer prefill from URL params (e.g. /requests/new?customer_id=...&name=...&email=...)
+  const prefillCustomerId = searchParams.get("customer_id");
+  const prefillName = searchParams.get("name") ?? "";
+  const prefillContact = searchParams.get("email") ?? searchParams.get("phone") ?? "";
 
   const handleSelectTemplate = (guide: PhotoGuide) => {
     setDraft(draftFromGuide(guide));
