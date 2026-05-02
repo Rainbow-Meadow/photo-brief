@@ -42,8 +42,8 @@ export function PublicRequestLayout() {
 
       {!hidePhotobriefBranding ? (
         <footer className="hairline-t bg-background/60 py-4 backdrop-blur">
-          <div className="mx-auto flex w-full max-w-2xl items-center justify-center px-4">
-            <BrandMark variant="wordmark" tone="dark" size={18} className="opacity-60" />
+          <div className="mx-auto w-full max-w-2xl px-4">
+            <PoweredByBadge size={42} />
           </div>
         </footer>
       ) : null}
