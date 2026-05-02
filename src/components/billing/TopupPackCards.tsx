@@ -1,14 +1,13 @@
-// Mobile-first card grid for buying request top-up credit packs.
+// Mobile-first card grid for buying PhotoBrief Credit packs.
 // On mobile: vertical stack. On sm+: 3-column grid.
 import { Check, Sparkles, Zap, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { topupPacks, formatPrice, perRequestCents, type TopupPack } from "@/config/topupPacks";
+import { topupPacks, formatPrice, perCreditCents, type TopupPack } from "@/config/topupPacks";
 import { cn } from "@/lib/utils";
 
 interface Props {
   onSelect: (pack: TopupPack) => void;
   pendingPriceId?: TopupPack["priceId"] | null;
-  /** Disable purchase (e.g. payments not configured or free plan). */
   disabled?: boolean;
   disabledReason?: string;
 }
@@ -55,13 +54,13 @@ export function TopupPackCards({ onSelect, pendingPriceId, disabled, disabledRea
               <li className="flex items-start gap-2">
                 <Check className="mt-0.5 h-4 w-4 shrink-0 text-success" />
                 <span className="text-foreground">
-                  <span className="font-medium">+{pack.size}</span> requests
+                  <span className="font-medium">+{pack.size}</span> PhotoBrief Credits
                 </span>
               </li>
               <li className="flex items-start gap-2">
                 <Check className="mt-0.5 h-4 w-4 shrink-0 text-success" />
                 <span className="text-muted-foreground">
-                  ~{(perRequestCents(pack) / 100).toFixed(2)} per request
+                  ~{(perCreditCents(pack) / 100).toFixed(2)} per credit
                 </span>
               </li>
               <li className="flex items-start gap-2">
@@ -78,7 +77,7 @@ export function TopupPackCards({ onSelect, pendingPriceId, disabled, disabledRea
               onClick={() => onSelect(pack)}
               disabled={disabled || isPending}
             >
-              {isPending ? "Opening checkout…" : `Buy ${pack.size}-pack`}
+              {isPending ? "Opening checkout…" : `Buy ${pack.size} credits`}
             </Button>
             {disabled && disabledReason ? (
               <p className="mt-2 text-center text-[11px] text-muted-foreground">{disabledReason}</p>
