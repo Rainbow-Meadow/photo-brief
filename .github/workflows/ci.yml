@@ -24,7 +24,6 @@ jobs:
     timeout-minutes: 20
 
     env:
-      GPTFULL: ${{ secrets.GPTFULL }}
       PUPPETEER_SKIP_DOWNLOAD: "true"
 
     steps:
@@ -36,15 +35,6 @@ jobs:
         with:
           node-version: 20
           cache: npm
-
-      - name: Confirm GPTFULL secret is available
-        shell: bash
-        run: |
-          if [ -z "$GPTFULL" ]; then
-            echo "GPTFULL secret is not available to this workflow."
-            exit 1
-          fi
-          echo "GPTFULL secret is configured."
 
       - name: Install dependencies
         run: npm ci
