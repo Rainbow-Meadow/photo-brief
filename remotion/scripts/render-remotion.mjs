@@ -47,7 +47,7 @@ if (stillFrame !== null) {
     codec: "h264",
     outputLocation: outPath,
     puppeteerInstance: browser,
-    muted: false,
+    muted: true,
     concurrency: 1,
   });
 }
