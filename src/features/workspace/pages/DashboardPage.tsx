@@ -166,7 +166,7 @@ export default function DashboardPage() {
         }
       />
 
-      {isEmpty ? <FirstRequestHero /> : null}
+      {isEmpty ? <StarterRequestCard industry={workspace?.industry} /> : null}
       {!isEmpty ? (
       <div className="grid gap-6 lg:grid-cols-3">
         <div className={cn("space-y-6", assistantOpen ? "lg:col-span-2" : "lg:col-span-3")}>
