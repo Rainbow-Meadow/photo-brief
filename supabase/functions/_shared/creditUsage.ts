@@ -4,12 +4,14 @@ const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
 export const CREDIT_COST = {
+  submittedPhoto: 1,
+  firstPassFollowupPhoto: 0,
   aiPhotoCheck: 1,
-  aiSubmissionSummary: 1,
-  aiRequestBuilder: 2,
-  aiGuideGeneration: 3,
-  aiFollowupGeneration: 1,
-  aiAdminRerun: 5,
+  aiSubmissionSummary: 0,
+  aiRequestBuilder: 0,
+  aiGuideGeneration: 0,
+  aiFollowupGeneration: 0,
+  aiAdminRerun: 0,
 } as const;
 
 export function creditErrorResponse(requiredCredits: number, corsHeaders: Record<string, string>) {
@@ -45,6 +47,7 @@ export async function logCreditUsage(args: {
   relatedType?: string | null;
   relatedId?: string | null;
   credits?: number | null;
+  source?: "usage" | "guarantee" | "refund" | "adjustment" | "topup" | "plan_allowance";
   metadata?: Record<string, unknown>;
 }) {
   const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
@@ -55,6 +58,7 @@ export async function logCreditUsage(args: {
     _related_id: args.relatedId ?? null,
     _metadata: args.metadata ?? {},
     _credits: args.credits ?? null,
+    _source: args.source ?? "usage",
   });
   if (error) console.error("log_credit_usage failed", error);
 }
