@@ -20,6 +20,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { EmptyState } from "@/components/shared/EmptyState";
+import noGuidesIllustration from "@/assets/empty-states/no-guides.png";
 import { GeneratedStepEditor } from "@/features/requests/components/GeneratedStepEditor";
 import { GeneratedQuestionEditor } from "@/features/requests/components/GeneratedQuestionEditor";
 
@@ -113,6 +114,7 @@ export default function GuideDetailPage() {
     return (
       <EmptyState
         icon={BookOpen}
+        illustration={noGuidesIllustration}
         title="Guide not found"
         description="This guide no longer exists."
       />

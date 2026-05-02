@@ -130,7 +130,7 @@ export default function WaitlistPage() {
       <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[60vh] bg-ambient-sky" aria-hidden />
 
       <div className="mx-auto w-full max-w-3xl px-4 py-16 sm:py-20">
-        <div className="mb-8 flex flex-col items-center text-center">
+        <div className="mb-8 flex flex-col items-center text-center animate-brand-entrance">
           <BrandMark variant="stacked" tone="color" size={96} eager withGlow />
           <span className="mt-6 inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-medium text-primary">
             <Sparkles className="h-3.5 w-3.5" /> Invite-only beta
