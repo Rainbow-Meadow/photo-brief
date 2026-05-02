@@ -110,3 +110,5 @@ jobs:
           fi
           git commit -m "Port PhotoBrief baseline fixes from photobrief"
           git push origin "$TARGET_BRANCH"
+
+# trigger: 2026-05-02
