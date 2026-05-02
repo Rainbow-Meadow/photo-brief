@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { NavLink, useParams } from "react-router-dom";
-import { CheckCircle2, Camera, ArrowLeft } from "lucide-react";
+import { CheckCircle2, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PoweredByBadge } from "@/components/shared/PoweredByBadge";
 import { loadRecipientContext, type RecipientContext } from "@/features/capture/recipientContext";
