@@ -126,7 +126,7 @@ export function ApiKeysSection({ workspaceId, canManage }: Props) {
         {loading ? (
           <p className="text-xs text-muted-foreground">Loading…</p>
         ) : active.length === 0 ? (
-          <EmptyState icon={Key} title="No API keys" description="Create one to start sending requests via API." />
+          <EmptyState icon={Key} illustration={noKeysIllustration} title="No API keys" description="Create one to start sending requests via API." />
         ) : (
           active.map((k) => (
             <div key={k.id} className="flex items-center justify-between rounded-md border bg-card p-3 text-sm">
