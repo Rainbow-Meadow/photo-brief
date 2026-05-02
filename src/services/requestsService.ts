@@ -59,6 +59,7 @@ export interface CreateRequestInput {
   recipientPhone?: string;
   customMessage?: string;
   status?: RequestStatus;
+  customerId?: string;
 }
 
 export const requestsService = {
@@ -134,6 +135,7 @@ export const requestsService = {
         custom_message: input.customMessage ?? null,
         status: input.status ?? "sent",
         created_by: user.user?.id ?? null,
+        customer_id: input.customerId ?? null,
       })
       .select("*, photo_guides(name)")
       .single();
