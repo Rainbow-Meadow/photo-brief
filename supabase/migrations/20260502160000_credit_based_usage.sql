@@ -1,8 +1,11 @@
 -- Credit-based usage model for PhotoBrief.
 --
--- Requests are workflow containers. PhotoBrief Credits are the metered resource
--- for AI/photo workload: photo checks, summaries, guide generation, request
--- drafting, follow-ups, and admin reruns.
+-- Requests are workflow containers. PhotoBrief Credits are photo credits:
+-- 1 submitted/analyzed photo = 1 credit.
+--
+-- Basic AI quality checks and submission summaries are bundled into the photo
+-- credit. First-pass guarantee: follow-up/resubmission photos requested after a
+-- failed first pass do not consume credits.
 --
 -- This migration is intentionally additive and beta-safe. Existing
 -- request_credit_packs remain in place, but their remaining balance now maps to
@@ -18,7 +21,7 @@ create table if not exists public.credit_ledger (
   related_type text null,
   related_id uuid null,
   credits_delta numeric not null,
-  source text not null check (source in ('plan_allowance', 'topup', 'usage', 'refund', 'adjustment')),
+  source text not null check (source in ('plan_allowance', 'topup', 'usage', 'refund', 'adjustment', 'guarantee')),
   metadata jsonb not null default '{}'::jsonb,
   created_at timestamptz not null default now()
 );
@@ -41,8 +44,7 @@ create policy "Workspace members can read credit ledger"
   for select
   using (public.is_workspace_member(workspace_id));
 
--- Writes are intentionally service-role only. Edge Functions and DB helpers
--- insert usage rows after authorization and before/after paid AI work.
+-- Writes are intentionally service-role/DB-helper only.
 
 create or replace function public.plan_credit_allowance(_plan public.plan_tier)
 returns numeric
@@ -65,12 +67,14 @@ language sql
 immutable
 as $$
   select case _event_type
+    when 'submitted_photo' then 1
     when 'ai_photo_check' then 1
-    when 'ai_submission_summary' then 1
-    when 'ai_request_builder' then 2
-    when 'ai_guide_generation' then 3
-    when 'ai_followup_generation' then 1
-    when 'ai_admin_rerun' then 5
+    when 'first_pass_followup_photo' then 0
+    when 'ai_submission_summary' then 0
+    when 'ai_request_builder' then 0
+    when 'ai_guide_generation' then 0
+    when 'ai_followup_generation' then 0
+    when 'ai_admin_rerun' then 0
     when 'manual_request_created' then 0
     when 'request_created' then 0
     when 'ai_check_run' then 1
@@ -187,7 +191,8 @@ create or replace function public.log_credit_usage(
   _related_type text default null,
   _related_id uuid default null,
   _metadata jsonb default '{}'::jsonb,
-  _credits numeric default null
+  _credits numeric default null,
+  _source text default 'usage'
 )
 returns uuid
 language plpgsql
@@ -197,30 +202,29 @@ as $$
 declare
   v_cost numeric := coalesce(_credits, public.credit_cost_for_event(_event_type));
   v_usage_id uuid;
+  v_source text := coalesce(_source, 'usage');
 begin
   insert into public.usage_events(workspace_id, event_type, related_id, metadata, credit_cost)
   values (_workspace_id, _event_type, _related_id, coalesce(_metadata, '{}'::jsonb), greatest(v_cost, 0))
   returning id into v_usage_id;
 
-  if greatest(v_cost, 0) > 0 then
-    insert into public.credit_ledger(
-      workspace_id,
-      event_type,
-      related_type,
-      related_id,
-      credits_delta,
-      source,
-      metadata
-    ) values (
-      _workspace_id,
-      _event_type,
-      _related_type,
-      _related_id,
-      -greatest(v_cost, 0),
-      'usage',
-      coalesce(_metadata, '{}'::jsonb)
-    );
-  end if;
+  insert into public.credit_ledger(
+    workspace_id,
+    event_type,
+    related_type,
+    related_id,
+    credits_delta,
+    source,
+    metadata
+  ) values (
+    _workspace_id,
+    _event_type,
+    _related_type,
+    _related_id,
+    -greatest(v_cost, 0),
+    case when greatest(v_cost, 0) = 0 and v_source = 'usage' then 'guarantee' else v_source end,
+    coalesce(_metadata, '{}'::jsonb)
+  );
 
   return v_usage_id;
 end;
@@ -257,5 +261,5 @@ as $$
     and (p.period_end is null or p.period_end >= now());
 $$;
 
-comment on table public.credit_ledger is 'Auditable PhotoBrief Credit ledger. Requests are containers; credits are consumed by AI/photo workload.';
-comment on column public.usage_events.credit_cost is 'PhotoBrief Credits consumed by this usage event. Zero for non-billable/manual events.';
+comment on table public.credit_ledger is 'Auditable PhotoBrief Credit ledger. Requests are containers; credits are consumed per submitted/analyzed photo.';
+comment on column public.usage_events.credit_cost is 'PhotoBrief Credits consumed by this usage event. One submitted/analyzed photo = one credit; first-pass follow-up photos cost zero.';
