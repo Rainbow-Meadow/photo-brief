@@ -150,9 +150,9 @@ export default function BillingSettingsPage() {
             </h2>
             <p className="mt-1 text-sm text-muted-foreground">{current.tagline}</p>
             <p className="mt-3 max-w-xl text-sm text-muted-foreground">
-              PhotoBrief Credits power AI photo checks, summaries, guide generation, and follow-ups.
-              A simple one-photo request usually uses 2 credits; detailed inspections use more because
-              they analyze more photos.
+              PhotoBrief Credits are photo credits. One submitted photo uses one credit.
+              Basic AI quality checks and summaries are included, and first-pass follow-up
+              photos requested by PhotoBrief are free.
             </p>
             {workspace.cancelAtPeriodEnd ? (
               <p className="mt-2 text-xs font-medium text-warning">
@@ -191,9 +191,9 @@ export default function BillingSettingsPage() {
             />
             <p className="rounded-lg bg-muted/60 px-3 py-2 text-xs text-muted-foreground">
               Estimated remaining: {Number.isFinite(usage.creditsRemaining)
-                ? `${Math.floor(usage.creditsRemaining / 2)} simple one-photo requests`
-                : "unlimited simple requests"}
-              . Actual usage depends on photo count and AI features used.
+                ? `${Math.floor(usage.creditsRemaining)} submitted photos`
+                : "unlimited submitted photos"}
+              . Requests can contain one photo or many — you only spend credits on submitted photos.
             </p>
             <UsageMeter
               label="Requests created"
@@ -221,7 +221,7 @@ export default function BillingSettingsPage() {
             <div>
               <h3 className="text-base font-semibold text-foreground">Top-up credits</h3>
               <p className="mt-1 text-sm text-muted-foreground">
-                Need more AI/photo capacity for a busy week? Buy one-time PhotoBrief Credits —
+                Need room for more submitted photos this period? Buy one-time PhotoBrief Credits —
                 they stack on top of your plan and are valid until the end of your current billing period.
               </p>
             </div>
