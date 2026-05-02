@@ -1,9 +1,9 @@
 // ai-analyze-media — runs vision checks on a single captured photo.
 // Routed via the centralized aiModelRouter (task: photo_quality_check, vision tier).
 //
-// Authorization happens BEFORE model calls. Public recipient traffic must
-// include x-request-token tied to the captured_media row's request; workspace
-// traffic must be an active member of the media's workspace.
+// Authorization and credit checks happen BEFORE model calls. Public recipient
+// traffic must include x-request-token tied to the captured_media row's request;
+// workspace traffic must be an active member of the media's workspace.
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
 import {
@@ -11,11 +11,16 @@ import {
   callAIWithRouter,
   routerErrorResponse,
 } from "../_shared/aiModelRouter.ts";
+import {
+  CREDIT_COST,
+  creditErrorResponse,
+  workspaceHasCredits,
+} from "../_shared/creditUsage.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version, x-request-token",
+    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version, x-request-token, x-workspace-id",
 };
 
 const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
@@ -95,6 +100,10 @@ interface Body {
   priority?: "admin_review";
 }
 
+type AuthzResult =
+  | { ok: true; workspaceId: string; requestId?: string; creditCost: number }
+  | { ok: false; status: number; error: string };
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   if (!LOVABLE_API_KEY) return json({ error: "LOVABLE_API_KEY not configured" }, 500);
@@ -109,8 +118,12 @@ Deno.serve(async (req) => {
     return json({ error: "imageUrl and stepTitle are required" }, 400);
   }
 
-  const authz = await authorizeAnalyze(req, body.capturedMediaId);
+  const authz = await authorizeAnalyze(req, body);
   if (!authz.ok) return json({ error: authz.error }, authz.status);
+
+  if (authz.creditCost > 0 && !(await workspaceHasCredits(authz.workspaceId, authz.creditCost))) {
+    return creditErrorResponse(authz.creditCost, corsHeaders);
+  }
 
   const userPrompt = [
     `Step: ${body.stepTitle}`,
@@ -196,46 +209,79 @@ function prettyLabel(type: string) {
   return type.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-async function authorizeAnalyze(req: Request, capturedMediaId?: string): Promise<
-  | { ok: true }
-  | { ok: false; status: number; error: string }
-> {
-  // For persisted recipient/admin photo checks, authorize against the media's
-  // backing request. This prevents anonymous callers from spending AI credits
-  // with arbitrary image URLs.
-  if (capturedMediaId) {
+async function authorizeAnalyze(req: Request, body: Body): Promise<AuthzResult> {
+  if (body.capturedMediaId) {
     const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
     const { data: media } = await admin
       .from("captured_media")
-      .select("id, submissions!inner(workspace_id, request_id)")
-      .eq("id", capturedMediaId)
+      .select("id, step_id, submissions!inner(id, workspace_id, request_id)")
+      .eq("id", body.capturedMediaId)
       .maybeSingle();
     if (!media) return { ok: false, status: 404, error: "Captured media not found" };
 
     const submission: any = (media as any).submissions;
     const workspaceId = submission?.workspace_id as string | undefined;
     const requestId = submission?.request_id as string | undefined;
-    if (!workspaceId || !requestId) {
+    const submissionId = submission?.id as string | undefined;
+    const stepId = (media as any).step_id as string | null;
+    if (!workspaceId || !requestId || !submissionId) {
       return { ok: false, status: 400, error: "Captured media is missing request context" };
     }
 
-    if (await isAuthorizedForWorkspaceOrRequest(req, workspaceId, requestId)) {
-      return { ok: true };
+    if (!(await isAuthorizedForWorkspaceOrRequest(req, workspaceId, requestId))) {
+      return { ok: false, status: 403, error: "Not authorized for this media" };
     }
-    return { ok: false, status: 403, error: "Not authorized for this media" };
+
+    const isFollowup = await isFirstPassFollowup(admin, submissionId, body.capturedMediaId, stepId);
+    return {
+      ok: true,
+      workspaceId,
+      requestId,
+      creditCost: isFollowup ? CREDIT_COST.firstPassFollowupPhoto : CREDIT_COST.submittedPhoto,
+    };
   }
 
-  // Allow authenticated app users to run non-persisted admin/debug checks,
-  // but do not allow anonymous no-media analysis.
   const auth = req.headers.get("Authorization");
   if (!auth) return { ok: false, status: 401, error: "Authentication required" };
+  const workspaceId = req.headers.get("x-workspace-id");
+  if (!workspaceId) return { ok: false, status: 400, error: "x-workspace-id is required" };
+
   const userClient = createClient(SUPABASE_URL, ANON_KEY, {
     global: { headers: { Authorization: auth } },
   });
   const { data } = await userClient.auth.getUser();
-  return data?.user
-    ? { ok: true }
-    : { ok: false, status: 401, error: "Invalid auth token" };
+  if (!data?.user) return { ok: false, status: 401, error: "Invalid auth token" };
+
+  const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
+  const { data: member } = await admin
+    .from("workspace_members")
+    .select("user_id")
+    .eq("workspace_id", workspaceId)
+    .eq("user_id", data.user.id)
+    .eq("status", "active")
+    .maybeSingle();
+
+  return member
+    ? { ok: true, workspaceId, creditCost: CREDIT_COST.submittedPhoto }
+    : { ok: false, status: 403, error: "Not a workspace member" };
+}
+
+async function isFirstPassFollowup(
+  admin: ReturnType<typeof createClient>,
+  submissionId: string,
+  capturedMediaId: string,
+  stepId: string | null,
+): Promise<boolean> {
+  if (!stepId) return false;
+  const { data } = await admin
+    .from("captured_media")
+    .select("id")
+    .eq("submission_id", submissionId)
+    .eq("step_id", stepId)
+    .neq("id", capturedMediaId)
+    .in("status", ["rejected", "resubmitted"])
+    .limit(1);
+  return (data?.length ?? 0) > 0;
 }
 
 async function isAuthorizedForWorkspaceOrRequest(
