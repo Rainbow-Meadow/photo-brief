@@ -417,8 +417,8 @@
     --primary-foreground: var(--app-primary-fg);
     --ring: var(--app-primary);
     --background: var(--app-bg);
-    --accent: 168 60% 94%;
-    --accent-foreground: 168 76% 22%;
+    --accent: 217 92% 95%;
+    --accent-foreground: 217 80% 30%;
     --sidebar-background: var(--app-sidebar-bg);
     --sidebar-foreground: var(--app-sidebar-fg);
     --sidebar-accent: var(--app-sidebar-active-bg);
@@ -429,8 +429,8 @@
     --sidebar-primary-foreground: var(--app-primary-fg);
   }
   .dark .app-shell {
-    --accent: 168 40% 18%;
-    --accent-foreground: 168 70% 80%;
+    --accent: 217 50% 18%;
+    --accent-foreground: 217 80% 80%;
   }
 
   /* Recipient capture flow uses the same teal primary so the customer
@@ -442,8 +442,8 @@
     --primary-glow: var(--app-primary-glow);
     --primary-foreground: var(--app-primary-fg);
     --ring: var(--app-primary);
-    --accent: 168 60% 94%;
-    --accent-foreground: 168 76% 22%;
+    --accent: 217 92% 95%;
+    --accent-foreground: 217 80% 30%;
   }
 
   /* Compact status pill — replaces the larger StatusBadge look on
