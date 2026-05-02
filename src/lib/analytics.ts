@@ -96,7 +96,7 @@ export function initAnalytics() {
   if ("requestIdleCallback" in window) {
     window.requestIdleCallback(loadAndCleanup, { timeout: 5000 });
   } else {
-    window.setTimeout(loadAndCleanup, 5000);
+    setTimeout(loadAndCleanup, 5000);
   }
 }
 
