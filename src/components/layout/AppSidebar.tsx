@@ -3,6 +3,7 @@ import {
   LayoutDashboard,
   Inbox,
   BookOpen,
+  Users,
   CreditCard,
   Settings,
   Sparkles,
@@ -34,6 +35,7 @@ import { cn } from "@/lib/utils";
 const mainItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Requests", url: "/requests", icon: Inbox },
+  { title: "Customers", url: "/customers", icon: Users },
   { title: "Guides", url: "/guides", icon: BookOpen },
 ];
 

@@ -23,7 +23,7 @@ import { formatRelativeTime } from "@/utils/format";
 import { cn } from "@/lib/utils";
 
 export default function CustomerDetailPage() {
-  const { customerId } = useParams();
+  const { id: customerId } = useParams();
   const navigate = useNavigate();
   const { data: customer, isLoading } = useCustomer(customerId);
   const archiveMutation = useArchiveCustomer();
@@ -91,7 +91,14 @@ export default function CustomerDetailPage() {
             <Button
               size="sm"
               className="gap-1.5"
-              onClick={() => navigate(`/requests/new?customerId=${customer.id}`)}
+              onClick={() => {
+                const params = new URLSearchParams();
+                params.set("customer_id", customer.id);
+                if (customer.displayName) params.set("name", customer.displayName);
+                if (customer.email) params.set("email", customer.email);
+                else if (customer.phone) params.set("phone", customer.phone);
+                navigate(`/requests/new?${params.toString()}`);
+              }}
             >
               <Send className="h-4 w-4" /> Send request
             </Button>

@@ -94,7 +94,14 @@ export default function CustomersPage() {
       ) : (
         <CustomerTable
           customers={customers}
-          onSendRequest={(c) => navigate(`/requests/new?customerId=${c.id}`)}
+          onSendRequest={(c) => {
+            const params = new URLSearchParams();
+            params.set("customer_id", c.id);
+            if (c.displayName) params.set("name", c.displayName);
+            if (c.email) params.set("email", c.email);
+            else if (c.phone) params.set("phone", c.phone);
+            navigate(`/requests/new?${params.toString()}`);
+          }}
           onView={(c) => navigate(`/customers/${c.id}`)}
         />
       )}
