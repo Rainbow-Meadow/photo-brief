@@ -1,5 +1,6 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { Camera, Clock, MessageCircleQuestion, ArrowRight, Sparkles, BookOpen } from "lucide-react";
+import { BrandMark } from "@/components/layout/BrandMark";
 import { Button } from "@/components/ui/button";
 import { getStarterForIndustry } from "@/config/industryGuideMap";
 import { guideTemplates } from "@/config/guideTemplates";
