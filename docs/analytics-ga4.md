@@ -7,12 +7,10 @@ PhotoBrief uses GA4 through `src/lib/analytics.ts`.
 Set this in Lovable/deploy environment variables:
 
 ```text
-VITE_GA4_MEASUREMENT_ID=535045746
+VITE_GA4_MEASUREMENT_ID=G-GJCZPQ3WJ9
 ```
 
-The app currently falls back to `535045746` if the variable is absent. Prefer setting the env var so the ID can be changed without a code deploy.
-
-If Google Analytics provides a stream measurement ID in the `G-XXXXXXXXXX` format, use that value for `VITE_GA4_MEASUREMENT_ID` instead.
+The app currently falls back to the existing PhotoBrief GA4 web stream measurement ID, `G-GJCZPQ3WJ9`, if the variable is absent. Prefer setting the env var so the ID can be changed without a code deploy.
 
 To disable analytics for a deployment:
 
