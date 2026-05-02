@@ -16,7 +16,7 @@ import { RecipientBrandingProvider } from "@/features/capture/RecipientBrandingC
 import { loadRecipientContext, type RecipientContext } from "@/features/capture/recipientContext";
 import { useChatFlow } from "@/hooks/useChatFlow";
 import { submissionsService } from "@/services/submissionsService";
-import { trackEvent } from "@/lib/analytics";
+import { conversions, trackEvent } from "@/lib/analytics";
 
 export default function PublicRecipientPage() {
   const { token } = useParams();
@@ -192,7 +192,7 @@ function RecipientChat({ ctx, token, navigate }: { ctx: RecipientContext; token:
             return { stepId: p.stepId, blob, ext };
           }),
       );
-      await submissionsService.submitFromRecipient({
+      const submission = await submissionsService.submitFromRecipient({
         token,
         requestId: ctx.requestId,
         workspaceId: ctx.workspaceId,
@@ -200,6 +200,15 @@ function RecipientChat({ ctx, token, navigate }: { ctx: RecipientContext; token:
         existingSubmissionId: submissionIdRef.current ?? undefined,
         photos: backfill,
         answers: flow.answers,
+      });
+
+      conversions.recipientSubmissionCompleted({
+        guide_id: ctx.guide.id,
+        request_id: ctx.requestId,
+        submission_id: submission.id,
+        photos: flow.photos.length,
+        answers: flow.answers.length,
+        resubmit: !!ctx.resubmit,
       });
 
       if (ctx.resubmit && ctx.resubmit.items.length > 0) {

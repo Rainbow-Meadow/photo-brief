@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { conversions, trackEvent } from "@/lib/analytics";
 import { isPaymentsConfigured } from "@/lib/stripe";
 import type { Plan, BillingInterval } from "@/types/photobrief";
 import type { TopupPack } from "@/config/topupPacks";
@@ -237,6 +238,19 @@ export default function BillingSettingsPage() {
                   });
                   return;
                 }
+                trackEvent("topup_pack_selected", {
+                  pack_size: pack.size,
+                  price_id: pack.priceId,
+                  value: pack.amountCents / 100,
+                  currency: pack.currency.toUpperCase(),
+                });
+                conversions.checkoutStarted({
+                  checkout_type: "credit_topup",
+                  item_id: pack.priceId,
+                  item_name: pack.label,
+                  value: pack.amountCents / 100,
+                  currency: pack.currency.toUpperCase(),
+                });
                 setTopupCheckout(pack);
               }}
               pendingPriceId={topupCheckout?.priceId ?? null}
@@ -263,6 +277,18 @@ export default function BillingSettingsPage() {
               });
               return;
             }
+            const selectedPlan = planLimits.find((p) => p.id === plan);
+            conversions.checkoutStarted({
+              checkout_type: "subscription",
+              item_id: plan,
+              item_name: selectedPlan?.name ?? plan,
+              billing_interval: interval,
+              value: selectedPlan
+                ? interval === "annual"
+                  ? selectedPlan.priceAnnualMonthly * 12
+                  : selectedPlan.priceMonthly
+                : undefined,
+            });
             setCheckout({ plan, interval });
           }}
         />
