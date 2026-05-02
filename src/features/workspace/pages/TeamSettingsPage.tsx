@@ -147,7 +147,7 @@ export default function TeamSettingsPage() {
             <h2 className="text-sm font-semibold text-foreground">Members ({members.length})</h2>
             <div className="mt-4 space-y-2">
               {members.length === 0 ? (
-                <EmptyState icon={Users} title="No members yet" description="Invite someone to get started." compact />
+                <EmptyState icon={Users} illustration={noTeamIllustration} title="No members yet" description="Invite someone to get started." compact />
               ) : (
                 members.map((m) => (
                   <div
