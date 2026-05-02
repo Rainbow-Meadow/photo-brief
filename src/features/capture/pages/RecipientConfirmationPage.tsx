@@ -39,7 +39,7 @@ export default function RecipientConfirmationPage() {
 
   return (
     <div className="mx-auto w-full max-w-md px-4 py-8">
-      <div className="rounded-3xl border bg-card p-8 text-center shadow-elev-md">
+      <div className="surface-card-elevated rounded-3xl p-8 text-center">
         {/* Branding header — business logo if present, else PhotoBrief mark */}
         <div className="flex flex-col items-center">
           {showLogo ? (
