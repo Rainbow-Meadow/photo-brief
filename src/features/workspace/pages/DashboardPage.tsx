@@ -297,7 +297,10 @@ function DashboardList({ title, emptyLabel, items, ctaLabel, ctaHref, showRemind
         </Button>
       </header>
       {items.length === 0 ? (
-        <p className="px-5 py-8 text-center text-sm text-muted-foreground">{emptyLabel}</p>
+        <div className="px-5 py-8 text-center">
+          <p className="text-sm text-muted-foreground">{emptyLabel}</p>
+          <p className="mt-1 text-xs text-muted-foreground/60">New activity will appear here.</p>
+        </div>
       ) : (
         <ul className="divide-y">
           {items.map((r) => {

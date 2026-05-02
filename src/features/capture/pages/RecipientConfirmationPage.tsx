@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { NavLink, useParams } from "react-router-dom";
-import { CheckCircle2, Camera, ArrowLeft } from "lucide-react";
+import { CheckCircle2, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { BrandMark } from "@/components/layout/BrandMark";
+import { PoweredByBadge } from "@/components/shared/PoweredByBadge";
 import { loadRecipientContext, type RecipientContext } from "@/features/capture/recipientContext";
 
 export default function RecipientConfirmationPage() {
@@ -39,7 +39,7 @@ export default function RecipientConfirmationPage() {
 
   return (
     <div className="mx-auto w-full max-w-md px-4 py-8">
-      <div className="rounded-3xl border bg-card p-8 text-center shadow-elev-md">
+      <div className="surface-card-elevated rounded-3xl p-8 text-center">
         {/* Branding header — business logo if present, else PhotoBrief mark */}
         <div className="flex flex-col items-center">
           {showLogo ? (
@@ -96,11 +96,7 @@ export default function RecipientConfirmationPage() {
         ) : null}
 
         {showPhotobriefMark ? (
-          <div className="mt-6 flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground">
-            <Camera className="h-3 w-3" />
-            <span>Sent securely with</span>
-            <BrandMark variant="wordmark" tone="auto" size={56} />
-          </div>
+          <PoweredByBadge className="mt-6" size={48} />
         ) : null}
       </div>
     </div>

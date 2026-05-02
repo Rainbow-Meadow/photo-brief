@@ -154,14 +154,14 @@ export function MarketingLayout() {
       </main>
 
       <footer className="border-t bg-muted/30 pb-safe">
-        <div className="mx-auto flex w-full max-w-7xl flex-col gap-3 px-4 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-          <BrandMark variant="wordmark" tone="dark" size={28} className="opacity-80" />
+        <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+          <BrandMark variant="horizontal" tone="auto" size={28} className="opacity-80" />
           <nav aria-label="Footer" className="flex flex-wrap items-center gap-4">
-            <NavLink to="/pricing" className="hover:text-foreground">Pricing</NavLink>
-            <NavLink to="/help" className="hover:text-foreground">Help</NavLink>
-            <NavLink to="/for-ai-agents" className="hover:text-foreground">For AI agents</NavLink>
+            <NavLink to="/pricing" className="hover:text-foreground transition-colors">Pricing</NavLink>
+            <NavLink to="/help" className="hover:text-foreground transition-colors">Help</NavLink>
+            <NavLink to="/for-ai-agents" className="hover:text-foreground transition-colors">For AI agents</NavLink>
           </nav>
-          <p>© {new Date().getFullYear()} PhotoBrief. Take the right photos, every time.</p>
+          <p className="text-xs text-muted-foreground/70">© {new Date().getFullYear()} PhotoBrief</p>
         </div>
       </footer>
     </div>
