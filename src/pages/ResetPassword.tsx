@@ -69,7 +69,7 @@ export default function ResetPasswordPage() {
       <div className="pointer-events-none absolute inset-0 -z-10 bg-ambient-mesh" aria-hidden />
       <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[60vh] bg-ambient-sky" aria-hidden />
       <div className="mx-auto flex min-h-[100vh] w-full max-w-md flex-col justify-center px-4 py-10">
-        <div className="mb-8 flex justify-center">
+        <div className="mb-8 flex justify-center animate-brand-entrance">
           <BrandMark variant="stacked" tone="color" size={96} eager withGlow />
         </div>
         <div className="glass-strong rounded-3xl p-7 animate-lift-in">

@@ -175,7 +175,7 @@ export default function SignupPage() {
       <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[60vh] bg-ambient-sky" aria-hidden />
 
       <div className="mx-auto flex w-full max-w-md flex-col px-4 py-16">
-        <div className="mb-6 flex justify-center">
+        <div className="mb-6 flex justify-center animate-brand-entrance">
           <BrandMark variant="stacked" tone="color" size={96} eager withGlow />
         </div>
 
