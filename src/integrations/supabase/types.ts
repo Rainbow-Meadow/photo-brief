@@ -314,6 +314,60 @@ export type Database = {
           },
         ]
       }
+      customers: {
+        Row: {
+          archived_at: string | null
+          company_name: string | null
+          created_at: string
+          created_by: string | null
+          display_name: string
+          email: string | null
+          id: string
+          last_request_at: string | null
+          metadata: Json
+          notes: string | null
+          phone: string | null
+          preferred_contact_method: Database["public"]["Enums"]["contact_method"]
+          tags: string[]
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          archived_at?: string | null
+          company_name?: string | null
+          created_at?: string
+          created_by?: string | null
+          display_name: string
+          email?: string | null
+          id?: string
+          last_request_at?: string | null
+          metadata?: Json
+          notes?: string | null
+          phone?: string | null
+          preferred_contact_method?: Database["public"]["Enums"]["contact_method"]
+          tags?: string[]
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          archived_at?: string | null
+          company_name?: string | null
+          created_at?: string
+          created_by?: string | null
+          display_name?: string
+          email?: string | null
+          id?: string
+          last_request_at?: string | null
+          metadata?: Json
+          notes?: string | null
+          phone?: string | null
+          preferred_contact_method?: Database["public"]["Enums"]["contact_method"]
+          tags?: string[]
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: []
+      }
       email_send_log: {
         Row: {
           created_at: string
@@ -669,6 +723,7 @@ export type Database = {
           created_at: string
           created_by: string | null
           custom_message: string | null
+          customer_id: string | null
           due_date: string | null
           guide_id: string | null
           id: string
@@ -686,6 +741,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           custom_message?: string | null
+          customer_id?: string | null
           due_date?: string | null
           guide_id?: string | null
           id?: string
@@ -703,6 +759,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           custom_message?: string | null
+          customer_id?: string | null
           due_date?: string | null
           guide_id?: string | null
           id?: string
@@ -716,6 +773,13 @@ export type Database = {
           workspace_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "photo_brief_requests_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "photo_brief_requests_guide_id_fkey"
             columns: ["guide_id"]
@@ -1760,6 +1824,7 @@ export type Database = {
         | "label"
         | "note"
         | "measurement"
+      contact_method: "email" | "sms" | "both" | "unknown"
       member_role: "owner" | "admin" | "member"
       output_type:
         | "service_intake_brief"
@@ -1955,6 +2020,7 @@ export const Constants = {
         "note",
         "measurement",
       ],
+      contact_method: ["email", "sms", "both", "unknown"],
       member_role: ["owner", "admin", "member"],
       output_type: [
         "service_intake_brief",
