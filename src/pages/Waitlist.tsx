@@ -11,7 +11,7 @@ import { GlassPanel } from "@/components/ui/glass-panel";
 import { BrandMark } from "@/components/layout/BrandMark";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { trackEvent } from "@/lib/analytics";
+import { conversions, trackEvent } from "@/lib/analytics";
 
 const BUSINESS_TYPES = [
   "Roofing",
@@ -105,7 +105,16 @@ export default function WaitlistPage() {
         trackEvent("waitlist_duplicate");
         setDone("already");
       } else {
-        trackEvent("waitlist_submitted");
+        trackEvent("waitlist_submitted", {
+          interest: interest ?? undefined,
+          business_type: form.business_type || undefined,
+          estimated_monthly_requests: form.estimated_monthly_requests || undefined,
+        });
+        conversions.waitlistSubmitted({
+          interest: interest ?? undefined,
+          business_type: form.business_type || undefined,
+          estimated_monthly_requests: form.estimated_monthly_requests || undefined,
+        });
         setDone("new");
       }
     } catch (e) {
