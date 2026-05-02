@@ -5,6 +5,10 @@
 // Authorization happens BEFORE model calls. Public recipient traffic must
 // include x-request-token tied to the submission's request; workspace traffic
 // must be an active member of the submission workspace.
+//
+// Pricing note: submission summaries are included in per-photo credits. This
+// function does not block on credit balance; successful persisted summaries are
+// logged by DB trigger as included usage with credit_cost = 0.
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
 import {
