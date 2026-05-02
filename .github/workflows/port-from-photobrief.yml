@@ -84,7 +84,6 @@ jobs:
       - name: Restore correct branch references in CI
         shell: bash
         run: |
-          # Keep the target repo's port branch name in CI rather than copying the accidental repo branch name.
           python - <<'PY'
           from pathlib import Path
           p = Path('.github/workflows/ci.yml')
