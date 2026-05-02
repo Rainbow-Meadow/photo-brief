@@ -2,7 +2,7 @@
   "schema_version": "0.1",
   "name": "photobrief",
   "display_name": "PhotoBrief",
-  "description": "Create AI-guided photo requests and look up pricing, plan limits, and FAQ content via MCP.",
+  "description": "Create AI-guided photo requests and look up pricing, plan limits, and FAQ content via MCP. PhotoBrief Credits are per-photo: 1 submitted/analyzed photo = 1 credit.",
   "status": "planned",
   "homepage": "https://photobrief.ai/for-ai-agents",
   "contact_email": "hello@photobrief.ai",
@@ -18,19 +18,24 @@
   "tools": [
     {
       "name": "create_request",
-      "description": "Create a photo request and return a recipient URL the business can forward.",
+      "description": "Create a guided photo request and return a recipient URL the business can forward.",
       "input_schema": "https://photobrief.ai/openapi.json#/components/schemas/CreateRequestBody",
       "output_schema": "https://photobrief.ai/openapi.json#/components/schemas/CreateRequestResponse"
     },
     {
       "name": "lookup_pricing",
-      "description": "Return current PhotoBrief plans, monthly and annual prices, and per-plan request quotas."
+      "description": "Return current PhotoBrief plans, monthly and annual prices, included PhotoBrief Credits, and the per-photo credit model."
     },
     {
       "name": "read_faq",
       "description": "Return canonical FAQ answers for businesses and recipients."
     }
   ],
+  "pricing_summary": {
+    "unit": "PhotoBrief Credit",
+    "rule": "1 submitted/analyzed photo = 1 PhotoBrief Credit",
+    "first_pass_guarantee": "Follow-up photos requested by PhotoBrief after a rejected first pass do not consume credits."
+  },
   "resources": [
     { "uri": "https://photobrief.ai/llms.txt", "name": "Short LLM brief" },
     { "uri": "https://photobrief.ai/llms-full.txt", "name": "Full LLM reference" },
