@@ -1,4 +1,4 @@
-// Create a one-time Embedded Checkout session for a request-credit top-up pack.
+// Create a one-time Embedded Checkout session for a PhotoBrief Credit top-up pack.
 // Returns { clientSecret } that the frontend mounts via @stripe/react-stripe-js.
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -8,12 +8,14 @@ const corsHeaders = {
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { type StripeEnv, createStripeClient } from "../_shared/stripe.ts";
 
+// Lookup keys are kept stable until Stripe is fully integrated. Product copy and
+// metadata now treat these as PhotoBrief Credit packs.
 const PACK_PRICE_IDS = new Set(["topup_25", "topup_100", "topup_500"]);
 
 const PACK_SIZES: Record<string, number> = {
-  topup_25: 25,
-  topup_100: 100,
-  topup_500: 500,
+  topup_25: 100,
+  topup_100: 500,
+  topup_500: 1500,
 };
 
 Deno.serve(async (req) => {
@@ -40,12 +42,11 @@ Deno.serve(async (req) => {
 
     if (!PACK_PRICE_IDS.has(priceId)) {
       return new Response(
-        JSON.stringify({ error: `Unknown top-up pack: ${priceId}` }),
+        JSON.stringify({ error: `Unknown credit pack: ${priceId}` }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
 
-    // Authenticate the caller
     const authHeader = req.headers.get("Authorization");
     const token = authHeader?.replace("Bearer ", "");
     const supabase = createClient(
@@ -60,7 +61,6 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Verify membership
     const { data: membership } = await supabase
       .from("workspace_members")
       .select("role")
@@ -75,7 +75,6 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Fetch workspace plan tier (for record-keeping on the pack)
     const { data: workspace } = await supabase
       .from("business_workspaces")
       .select("plan_tier")
@@ -93,7 +92,6 @@ Deno.serve(async (req) => {
     }
     const stripePrice = prices.data[0];
 
-    // Reuse existing customer if available
     const { data: existing } = await supabase
       .from("subscriptions")
       .select("stripe_customer_id")
@@ -104,6 +102,8 @@ Deno.serve(async (req) => {
       .maybeSingle();
     const existingCustomer = existing?.stripe_customer_id ?? undefined;
 
+    const creditPackSize = PACK_SIZES[priceId] ?? 0;
+
     const session = await stripe.checkout.sessions.create({
       line_items: [{ price: stripePrice.id, quantity: 1 }],
       mode: "payment",
@@ -113,20 +113,22 @@ Deno.serve(async (req) => {
         ? { customer: existingCustomer }
         : { customer_email: user.email ?? undefined }),
       metadata: {
-        kind: "topup",
+        kind: "credit_topup",
         workspace_id: workspaceId,
         user_id: user.id,
         price_id: priceId,
-        pack_size: String(PACK_SIZES[priceId] ?? 0),
+        credit_pack_size: String(creditPackSize),
+        pack_size: String(creditPackSize),
         plan_at_purchase: workspace?.plan_tier ?? "free",
       },
       payment_intent_data: {
         metadata: {
-          kind: "topup",
+          kind: "credit_topup",
           workspace_id: workspaceId,
           user_id: user.id,
           price_id: priceId,
-          pack_size: String(PACK_SIZES[priceId] ?? 0),
+          credit_pack_size: String(creditPackSize),
+          pack_size: String(creditPackSize),
         },
       },
     });
