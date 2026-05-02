@@ -3,12 +3,12 @@
 //
 // Deployment:
 // - Preferred: set VITE_GA4_MEASUREMENT_ID in Lovable/deploy settings.
-// - Fallback: uses the tag/property value provided during setup.
+// - Fallback: uses the existing PhotoBrief GA4 web stream measurement ID.
 //
 // SPA page views are sent manually by RouteTracker so tokenized recipient URLs
 // can be sanitized before they reach GA4.
 
-const FALLBACK_GA4_ID = "535045746";
+const FALLBACK_GA4_ID = "G-GJCZPQ3WJ9";
 
 export const GA_MEASUREMENT_ID =
   (import.meta.env.VITE_GA4_MEASUREMENT_ID as string | undefined)?.trim() ||
