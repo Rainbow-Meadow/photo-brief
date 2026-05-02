@@ -23,7 +23,7 @@ import { formatRelativeTime } from "@/utils/format";
 import { cn } from "@/lib/utils";
 
 export default function CustomerDetailPage() {
-  const { customerId } = useParams();
+  const { id: customerId } = useParams();
   const navigate = useNavigate();
   const { data: customer, isLoading } = useCustomer(customerId);
   const archiveMutation = useArchiveCustomer();
