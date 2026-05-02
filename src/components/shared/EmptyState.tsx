@@ -4,6 +4,8 @@ import { cn } from "@/lib/utils";
 
 interface EmptyStateProps {
   icon?: LucideIcon;
+  /** Optional branded illustration image — renders above the icon chip. */
+  illustration?: string;
   title: string;
   description?: ReactNode;
   /** Primary action(s) — typically a Button or Button group. */
@@ -24,6 +26,7 @@ interface EmptyStateProps {
  */
 export function EmptyState({
   icon: Icon,
+  illustration,
   title,
   description,
   action,
@@ -42,19 +45,40 @@ export function EmptyState({
       )}
     >
       {/* Decorative lens-ring backdrop */}
-      <div
-        className={cn(
-          "pointer-events-none absolute left-1/2 top-0 -z-10 -translate-x-1/2 opacity-30",
-          effectiveSize === "lg" ? "h-72 w-72 -translate-y-12" : "h-56 w-56 -translate-y-10",
-          "lens-ring",
-        )}
-        aria-hidden
-      />
+      {!illustration && (
+        <div
+          className={cn(
+            "pointer-events-none absolute left-1/2 top-0 -z-10 -translate-x-1/2 opacity-30",
+            effectiveSize === "lg" ? "h-72 w-72 -translate-y-12" : "h-56 w-56 -translate-y-10",
+            "lens-ring",
+          )}
+          aria-hidden
+        />
+      )}
+
+      {/* Brand illustration — replaces lens-ring when provided */}
+      {illustration ? (
+        <img
+          src={illustration}
+          alt=""
+          aria-hidden
+          loading="lazy"
+          width={512}
+          height={512}
+          className={cn(
+            "mx-auto select-none opacity-80",
+            effectiveSize === "lg" ? "h-32 w-32" : "h-24 w-24",
+          )}
+          draggable={false}
+        />
+      ) : null}
+
       {Icon ? (
         <span
           className={cn(
             "mx-auto flex items-center justify-center rounded-full glass-strong text-primary",
             effectiveSize === "lg" ? "h-16 w-16" : "h-14 w-14",
+            illustration && "mt-3",
           )}
           aria-hidden
         >
