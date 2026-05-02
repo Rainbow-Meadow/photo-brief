@@ -4,7 +4,7 @@
     "title": "PhotoBrief Public API",
     "version": "1.0.0",
     "summary": "Programmatically create AI-guided photo requests.",
-    "description": "Public API for PhotoBrief. Currently exposes the request-creation endpoint used by integrations and AI agents to send a branded photo request to a customer. API keys are issued on the Business plan.",
+    "description": "Public API for PhotoBrief. Currently exposes the request-creation endpoint used by integrations and AI agents to send a branded, app-free, AI-guided photo request to a customer. PhotoBrief pricing is per submitted/analyzed photo: 1 photo = 1 PhotoBrief Credit. API keys are issued on the Business plan.",
     "contact": {
       "name": "PhotoBrief",
       "email": "hello@photobrief.ai",
@@ -23,8 +23,8 @@
     "/api-create-request": {
       "post": {
         "operationId": "createRequest",
-        "summary": "Create a photo request",
-        "description": "Creates a photo request and returns a recipient URL the business can forward via SMS or email. The recipient opens the URL and walks through the AI-guided capture flow.",
+        "summary": "Create a guided photo request",
+        "description": "Creates a guided photo request and returns a recipient URL the business can forward via SMS or email. The recipient opens the URL in a mobile browser and completes the AI-guided capture flow with no app install.",
         "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "required": true,
@@ -73,7 +73,7 @@
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "Opaque (prefix: pb_)",
-        "description": "Workspace API key issued from Settings → Team → API Keys (Business plan)."
+        "description": "Workspace API key issued from Settings → API Keys on the Business plan."
       }
     },
     "schemas": {
@@ -137,5 +137,10 @@
         }
       }
     }
+  },
+  "x-photobrief-pricing": {
+    "unit": "PhotoBrief Credit",
+    "rule": "1 submitted/analyzed photo = 1 PhotoBrief Credit",
+    "first_pass_guarantee": "Follow-up photos requested by PhotoBrief after a rejected first pass do not consume credits."
   }
 }
