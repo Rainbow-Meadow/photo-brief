@@ -5,6 +5,7 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { getTokenClient } from "@/integrations/supabase/tokenClient";
+import { conversions, trackEvent } from "@/lib/analytics";
 import type { PhotoBriefRequest, RequestStatus } from "@/types/photobrief";
 
 type Row = {
@@ -140,7 +141,21 @@ export const requestsService = {
       .select("*, photo_guides(name)")
       .single();
     if (error) throw error;
-    return toDomain(data as any, (data as any).photo_guides?.name ?? null, null);
+    const request = toDomain(data as any, (data as any).photo_guides?.name ?? null, null);
+    trackEvent("request_created", {
+      workspace_id: input.workspaceId,
+      request_id: request.id,
+      guide_id: input.guideId ?? undefined,
+      has_customer_profile: Boolean(input.customerId),
+      delivery_channel: input.recipientEmail && input.recipientPhone ? "both" : input.recipientPhone ? "sms" : "email",
+    });
+    conversions.requestCreated({
+      workspace_id: input.workspaceId,
+      request_id: request.id,
+      guide_id: input.guideId ?? undefined,
+      has_customer_profile: Boolean(input.customerId),
+    });
+    return request;
   },
 
   async updateStatus(id: string, status: RequestStatus) {
