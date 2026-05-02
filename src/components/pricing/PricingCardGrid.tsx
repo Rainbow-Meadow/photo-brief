@@ -264,8 +264,7 @@ export function PricingCardGrid({
       >
         ✓ <span className="font-semibold">First-pass guarantee included on every plan.</span>{" "}
         <span className={onDark ? "text-white/65" : "text-muted-foreground"}>
-          Rejected submissions are refunded — they don't count against your
-          monthly request allowance.
+          Credits are returned when PhotoBrief asks for rework.
         </span>
       </p>
       <p
@@ -274,7 +273,7 @@ export function PricingCardGrid({
           onDark ? "text-white/55" : "text-muted-foreground",
         )}
       >
-        Prices in USD. Cancel anytime. Annual plans billed yearly.
+        Prices in USD. Cancel anytime. Annual plans billed yearly. Credits reset each billing period.
       </p>
     </section>
   );
