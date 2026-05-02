@@ -30,12 +30,15 @@ export function StarterRequestCard({ industry }: Props) {
   }
 
   return (
-    <section className="surface-card relative isolate overflow-hidden p-6 sm:p-10">
+    <section className="surface-card-elevated relative isolate overflow-hidden p-6 sm:p-10">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-64 bg-ambient-sky opacity-70"
       />
       <div className="mx-auto max-w-2xl">
+        <div className="mb-5">
+          <BrandMark variant="mark" tone="color" size={36} />
+        </div>
         <span className="inline-flex items-center gap-1.5 rounded-full glass px-3 py-1 text-xs font-medium text-foreground/80">
           <Sparkles className="h-3 w-3 text-primary" /> Recommended for your business
         </span>
