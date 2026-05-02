@@ -1,80 +1,216 @@
 # PhotoBrief — robots.txt
-# We explicitly welcome AI / answer-engine crawlers in addition to traditional search.
+# Public marketing, docs, and discovery files are crawlable.
+# Tokenized recipient links, auth pages, and authenticated app routes are not.
+
+User-agent: *
+Allow: /
+Disallow: /auth
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /unsubscribe
+Disallow: /signup
+Disallow: /onboarding
+Disallow: /dashboard
+Disallow: /requests
+Disallow: /submissions
+Disallow: /guides
+Disallow: /customers
+Disallow: /settings
+Disallow: /admin
+Disallow: /invite/
+Disallow: /beta-invite/
+Disallow: /r/
 
 # Traditional search engines
 User-agent: Googlebot
 Allow: /
+Disallow: /auth
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /unsubscribe
+Disallow: /signup
+Disallow: /onboarding
+Disallow: /dashboard
+Disallow: /requests
+Disallow: /submissions
+Disallow: /guides
+Disallow: /customers
+Disallow: /settings
+Disallow: /admin
+Disallow: /invite/
+Disallow: /beta-invite/
+Disallow: /r/
 
 User-agent: Bingbot
 Allow: /
+Disallow: /auth
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /unsubscribe
+Disallow: /signup
+Disallow: /onboarding
+Disallow: /dashboard
+Disallow: /requests
+Disallow: /submissions
+Disallow: /guides
+Disallow: /customers
+Disallow: /settings
+Disallow: /admin
+Disallow: /invite/
+Disallow: /beta-invite/
+Disallow: /r/
 
-User-agent: DuckDuckBot
-Allow: /
-
-User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
-
-User-agent: LinkedInBot
-Allow: /
-
-# OpenAI
+# AI / answer-engine crawlers are welcome on public material only.
 User-agent: GPTBot
 Allow: /
+Disallow: /auth
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /unsubscribe
+Disallow: /signup
+Disallow: /onboarding
+Disallow: /dashboard
+Disallow: /requests
+Disallow: /submissions
+Disallow: /guides
+Disallow: /customers
+Disallow: /settings
+Disallow: /admin
+Disallow: /invite/
+Disallow: /beta-invite/
+Disallow: /r/
 
 User-agent: OAI-SearchBot
 Allow: /
+Disallow: /auth
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /unsubscribe
+Disallow: /signup
+Disallow: /onboarding
+Disallow: /dashboard
+Disallow: /requests
+Disallow: /submissions
+Disallow: /guides
+Disallow: /customers
+Disallow: /settings
+Disallow: /admin
+Disallow: /invite/
+Disallow: /beta-invite/
+Disallow: /r/
 
 User-agent: ChatGPT-User
 Allow: /
+Disallow: /auth
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /unsubscribe
+Disallow: /signup
+Disallow: /onboarding
+Disallow: /dashboard
+Disallow: /requests
+Disallow: /submissions
+Disallow: /guides
+Disallow: /customers
+Disallow: /settings
+Disallow: /admin
+Disallow: /invite/
+Disallow: /beta-invite/
+Disallow: /r/
 
-# Anthropic
 User-agent: ClaudeBot
 Allow: /
+Disallow: /auth
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /unsubscribe
+Disallow: /signup
+Disallow: /onboarding
+Disallow: /dashboard
+Disallow: /requests
+Disallow: /submissions
+Disallow: /guides
+Disallow: /customers
+Disallow: /settings
+Disallow: /admin
+Disallow: /invite/
+Disallow: /beta-invite/
+Disallow: /r/
 
-User-agent: Claude-Web
-Allow: /
-
-User-agent: anthropic-ai
-Allow: /
-
-# Perplexity
 User-agent: PerplexityBot
 Allow: /
+Disallow: /auth
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /unsubscribe
+Disallow: /signup
+Disallow: /onboarding
+Disallow: /dashboard
+Disallow: /requests
+Disallow: /submissions
+Disallow: /guides
+Disallow: /customers
+Disallow: /settings
+Disallow: /admin
+Disallow: /invite/
+Disallow: /beta-invite/
+Disallow: /r/
 
-User-agent: Perplexity-User
-Allow: /
-
-# Google AI / Gemini opt-in
 User-agent: Google-Extended
 Allow: /
+Disallow: /auth
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /unsubscribe
+Disallow: /signup
+Disallow: /onboarding
+Disallow: /dashboard
+Disallow: /requests
+Disallow: /submissions
+Disallow: /guides
+Disallow: /customers
+Disallow: /settings
+Disallow: /admin
+Disallow: /invite/
+Disallow: /beta-invite/
+Disallow: /r/
 
-# Apple Intelligence opt-in
 User-agent: Applebot
 Allow: /
+Disallow: /auth
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /unsubscribe
+Disallow: /signup
+Disallow: /onboarding
+Disallow: /dashboard
+Disallow: /requests
+Disallow: /submissions
+Disallow: /guides
+Disallow: /customers
+Disallow: /settings
+Disallow: /admin
+Disallow: /invite/
+Disallow: /beta-invite/
+Disallow: /r/
 
 User-agent: Applebot-Extended
 Allow: /
-
-# Common Crawl (used by many model trainers)
-User-agent: CCBot
-Allow: /
-
-# ByteDance / Doubao
-User-agent: Bytespider
-Allow: /
-
-# Meta AI
-User-agent: meta-externalagent
-Allow: /
-
-User-agent: FacebookBot
-Allow: /
-
-# Default
-User-agent: *
-Allow: /
+Disallow: /auth
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /unsubscribe
+Disallow: /signup
+Disallow: /onboarding
+Disallow: /dashboard
+Disallow: /requests
+Disallow: /submissions
+Disallow: /guides
+Disallow: /customers
+Disallow: /settings
+Disallow: /admin
+Disallow: /invite/
+Disallow: /beta-invite/
+Disallow: /r/
 
 Sitemap: https://photobrief.ai/sitemap.xml

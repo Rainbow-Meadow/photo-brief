@@ -1,19 +1,19 @@
 {
   "schema_version": "0.1",
   "name": "PhotoBrief",
-  "description": "AI-guided visual intake. Convert a shareable link into an AI-quality-checked photo brief.",
+  "description": "AI-guided visual intake. Convert a shareable link into an AI-quality-checked photo brief. Pricing is per submitted/analyzed photo: 1 photo = 1 PhotoBrief Credit.",
   "url": "https://photobrief.ai",
   "documentation_url": "https://photobrief.ai/for-ai-agents",
   "contact_email": "hello@photobrief.ai",
   "auth": {
     "type": "bearer_token",
-    "instructions": "API keys (prefix pb_) are issued on the Business plan from Settings → Team → API Keys. Pass as `Authorization: Bearer <key>`."
+    "instructions": "API keys (prefix pb_) are issued on the Business plan. Pass as `Authorization: Bearer <key>`."
   },
   "capabilities": [
     {
       "id": "create_request",
       "name": "Create photo request",
-      "description": "Create a new photo request for a named recipient and return a shareable URL.",
+      "description": "Create a new guided photo request for a named recipient and return a shareable URL.",
       "endpoint": "https://app.photobrief.ai/functions/v1/api-create-request",
       "method": "POST",
       "input_schema": "https://photobrief.ai/openapi.json#/components/schemas/CreateRequestBody",
@@ -22,7 +22,7 @@
     {
       "id": "lookup_pricing",
       "name": "Lookup pricing and plan limits",
-      "description": "Retrieve current PhotoBrief plans, prices, request quotas, and feature availability.",
+      "description": "Retrieve current PhotoBrief plans, prices, included PhotoBrief Credits, per-photo credit model, and feature availability.",
       "source": "https://photobrief.ai/llms-full.txt"
     },
     {
@@ -32,6 +32,11 @@
       "source": "https://photobrief.ai/llms-full.txt"
     }
   ],
+  "pricing_summary": {
+    "unit": "PhotoBrief Credit",
+    "rule": "1 submitted/analyzed photo = 1 PhotoBrief Credit",
+    "first_pass_guarantee": "Follow-up photos requested by PhotoBrief after a rejected first pass do not consume credits."
+  },
   "discovery": {
     "openapi": "https://photobrief.ai/openapi.json",
     "ai_plugin": "https://photobrief.ai/.well-known/ai-plugin.json",

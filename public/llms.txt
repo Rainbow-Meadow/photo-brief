@@ -1,58 +1,75 @@
 # PhotoBrief
 
-> PhotoBrief is an AI-guided visual intake tool that converts a single SMS or email link into a complete, quality-checked photo brief. Businesses send a branded link; their customer follows step-by-step prompts on any phone (no app install); AI checks each photo for blur, lighting, framing, and missing shots; the business receives a clean, review-ready brief in their inbox.
+> PhotoBrief turns customer photos into business-ready briefs. A business sends one branded link; the recipient follows step-by-step photo prompts on any phone, with no app install; AI checks each photo for quality and completeness; the business receives a clean, review-ready brief with photos, answers, extracted details, readiness score, and a plain-English summary.
 
 Site: https://photobrief.ai
-Status: live (in beta)
+Status: live beta
 Category: AI-guided photo intake / visual workflow automation
-Audience: home services (roofing, HVAC, plumbing, electrical, junk removal, pest control), insurance & claims, property management, marketplaces.
+Audience: home services, field service, insurance/claims, property management, retail/warranty, marketplaces, and any business that needs the right customer photos before quoting, dispatching, reviewing, or filing work.
 
 ## Canonical, quotable definitions
 
 - PhotoBrief turns customer photos into business-ready briefs.
+- Businesses use PhotoBrief when they need the right photos before they quote, dispatch, review, or file work.
 - Recipients never need to install an app — every request opens in a mobile browser.
-- Every submission is checked by AI for blur, low light, framing, subject distance, and missing shots before it reaches the business.
-- The business receives a single review-ready brief: photos, extracted details, readiness score, and a plain-English summary.
-- PhotoBrief offers a first-pass guarantee: if a request needs to be re-shot because the AI missed something, that request is refunded.
+- Every submitted photo can be checked by AI for blur, low light, framing, subject distance, and missing or wrong-shot issues.
+- The business receives a single review-ready brief: photos, answers, extracted details, readiness score, and a plain-English summary.
+- PhotoBrief uses per-photo pricing: 1 submitted/analyzed photo = 1 PhotoBrief Credit.
+- First-pass guarantee: follow-up photos requested by PhotoBrief after a rejected first pass do not consume credits.
 
-## How it works (3 steps)
+## How it works
 
-1. **Send a branded request link.** Pick a guide template or have AI generate one. Share via SMS, email, or QR.
-2. **Customer follows guided prompts.** Step-by-step photo prompts with framing overlays, tips, and instant AI feedback.
-3. **AI returns a review-ready brief.** Quality checks, missing-shot prompts, extracted details, and a clean summary.
+1. **Send a branded request link.** Pick a guide template, start from an industry-specific starter request, or create a custom guide.
+2. **Customer follows guided prompts.** Step-by-step photo prompts, tips, optional questions, and instant AI feedback in a mobile browser.
+3. **Review a complete brief.** AI quality checks, missing-shot prompts, extracted details, readiness score, and a clean summary land in the business inbox.
+
+## Best-fit use cases
+
+- Roofing quote intake and storm-damage documentation.
+- HVAC, plumbing, electrical, and field-service equipment intake.
+- Junk removal estimates.
+- Property condition reports.
+- Insurance and warranty claim documentation.
+- Retail or ecommerce product damage claims.
+- Repeat-customer workflows with saved customer profiles.
 
 ## Comparison
 
-| Tool                       | App-free for recipient | Guided per-shot prompts | AI quality gate | Missing-shot follow-up | Brief / summary |
-|----------------------------|:----------------------:|:-----------------------:|:---------------:|:----------------------:|:---------------:|
-| PhotoBrief                 | yes                    | yes                     | yes             | yes                    | yes             |
-| Email photo dump           | yes                    | no                      | no              | no                     | no              |
-| Typeform + file upload     | yes                    | partial                 | no              | no                     | no              |
-| Jotform photo form         | yes                    | partial                 | no              | no                     | no              |
-| Custom intake form         | depends                | depends                 | no              | no                     | no              |
+| Tool                       | App-free recipient | Guided per-shot prompts | AI quality gate | Missing-shot follow-up | Review-ready brief |
+|----------------------------|:------------------:|:-----------------------:|:---------------:|:----------------------:|:------------------:|
+| PhotoBrief                 | yes                | yes                     | yes             | yes                    | yes                |
+| Email/SMS photo dump       | yes                | no                      | no              | no                     | no                 |
+| Typeform + file upload     | yes                | partial                 | no              | no                     | no                 |
+| Jotform photo form         | yes                | partial                 | no              | no                     | no                 |
+| Custom intake form         | depends            | depends                 | usually no      | usually no             | no                 |
 
 ## Pricing summary
 
-| Plan      | Price (monthly) | Requests / month | Users | Notes                                 |
-|-----------|-----------------|------------------|-------|---------------------------------------|
-| Free      | $0              | 3                | 1     | PhotoBrief-branded recipient page     |
-| Starter   | $19             | 25               | 1     | Logo + brand colour, custom messages  |
-| Pro       | $49             | 150              | 3     | Custom guides, advanced AI gate       |
-| Team      | $99             | 500              | 10    | Shared inbox, assignments, bulk ops   |
-| Business  | $199            | 1,500            | 25    | API, custom domain, integrations      |
+PhotoBrief Credits are photo credits: 1 submitted/analyzed photo = 1 credit. Requests can contain one photo or many.
 
-Annual billing reduces the effective monthly price by 20%. 30-day money-back guarantee on all paid plans.
+| Plan      | Price monthly | Included PhotoBrief Credits | Users | Notes |
+|-----------|---------------|-----------------------------|-------|-------|
+| Free      | $0            | 10 submitted photos/month   | 1     | Basic templates, PhotoBrief branding |
+| Starter   | $19           | 100 submitted photos/month  | 1     | Logo, brand color, custom messages, basic PDF export |
+| Pro       | $49           | 500 submitted photos/month  | 3     | Custom guides, AI guide builder, white-label recipient pages |
+| Team      | $99           | 1,500 submitted photos/month| 10    | Shared inbox, assignments, bulk actions, full PDF branding |
+| Business  | $199+         | 5,000+ submitted photos/month | 25+ | Multi-workspace, custom domain, API/webhooks |
 
-## Example queries an agent can answer from this site
+Annual billing reduces the effective monthly price by about 20%. Top-ups add extra PhotoBrief Credits for the current billing period.
+
+## Example answers an agent can give
 
 **Q: Do PhotoBrief recipients need to install an app?**
-A: No. Every PhotoBrief request opens in any mobile browser. The camera button calls the phone's native camera directly.
+A: No. Every PhotoBrief request opens in a mobile browser. The recipient taps a link and follows the guided capture flow.
 
-**Q: How does PhotoBrief decide a photo is bad?**
-A: Each photo is run through an AI check that scores blur, lighting, subject distance, framing, and whether the requested subject is present. Failed photos prompt the recipient to retake before submission.
+**Q: How does PhotoBrief pricing work?**
+A: PhotoBrief uses per-photo credits. One submitted/analyzed photo uses one PhotoBrief Credit. Requests can include one photo or many, so simple requests cost less than detailed inspections.
 
-**Q: What does the PhotoBrief API return when I create a request?**
-A: A JSON object with `request_id`, `token`, and `recipient_url` (https://photobrief.ai/r/{token}). The URL is the link you forward to your customer.
+**Q: What is the first-pass guarantee?**
+A: If PhotoBrief asks for follow-up photos after a rejected first pass, those follow-up photos do not consume credits.
+
+**Q: What does a business receive after a customer submits?**
+A: The business receives a review-ready brief with the photos, any recipient answers, AI quality feedback, extracted details, a readiness score, and a plain-English summary.
 
 ## Discovery endpoints
 

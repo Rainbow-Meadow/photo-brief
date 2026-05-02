@@ -27,7 +27,7 @@ const SOFTWARE_APP_JSONLD: Record<string, unknown> = {
   applicationCategory: "BusinessApplication",
   operatingSystem: "Web",
   description:
-    "PhotoBrief turns vague customer photos into business-ready briefs. Chat-guided capture, AI quality checks, clean summaries.",
+    "PhotoBrief turns customer photos into business-ready briefs. Chat-guided capture, AI quality checks, clean summaries.",
   offers: [
     { "@type": "Offer", name: "Free", price: "0", priceCurrency: "USD" },
     { "@type": "Offer", name: "Starter", price: "19", priceCurrency: "USD" },
@@ -123,7 +123,7 @@ export default function LandingPage() {
               onClick={() => trackEvent("cta_click", { location: "hero", label: "first_pass_pill" })}
               className="mt-3 inline-flex items-center gap-1.5 rounded-full glass px-3 py-1 text-xs font-medium text-primary transition hover:bg-primary/10"
             >
-              ✓ First-pass guarantee — rework? request refunded
+              ✓ First-pass guarantee — follow-up photos are free
             </a>
           </div>
 
