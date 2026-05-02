@@ -68,9 +68,8 @@ export function DashboardLayout() {
                       aria-label="Account menu"
                       className="rounded-full outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                     >
-                      <Avatar className="h-8 w-8">
-                        <AvatarImage src="/photobrief-logo.png" alt="PhotoBrief" />
-                        <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+                    <Avatar className="h-8 w-8">
+                        <AvatarFallback className="bg-primary text-primary-foreground text-xs font-medium">
                           {initial}
                         </AvatarFallback>
                       </Avatar>
