@@ -72,7 +72,6 @@ export default function BillingSettingsPage() {
   const [topupCheckout, setTopupCheckout] = useState<TopupPack | null>(null);
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // After Stripe Checkout returns, refetch and clear the URL flag.
   useEffect(() => {
     if (searchParams.get("checkout") === "success") {
       toast({
@@ -88,11 +87,10 @@ export default function BillingSettingsPage() {
     }
     if (searchParams.get("topup") === "success") {
       toast({
-        title: "Top-up purchased",
-        description: "Your extra request credits will appear within a few seconds.",
+        title: "Credits purchased",
+        description: "Your extra PhotoBrief Credits will appear within a few seconds.",
       });
       setTopupCheckout(null);
-      // Webhook may take a moment — refetch a couple of times.
       refetchUsage();
       setTimeout(() => refetchUsage(), 2500);
       const next = new URLSearchParams(searchParams);
@@ -128,12 +126,14 @@ export default function BillingSettingsPage() {
     );
   }
 
+  const creditCap = current.quotas.creditsPerMonth;
+  const includedCredits = creditCap === "unlimited" ? "unlimited" : usage.creditsIncluded || creditCap;
+
   return (
     <div className="space-y-8">
       <PaymentTestModeBanner />
-      <PageHeader title="Billing" description="Plan, usage, and limits." bordered={false} />
+      <PageHeader title="Billing" description="Plan, credits, and usage." bordered={false} />
 
-      {/* Current plan + usage --------------------------------------------- */}
       <section className="overflow-hidden rounded-2xl border bg-gradient-to-br from-card to-muted/30 shadow-elev-sm">
         <div className="grid gap-6 p-6 lg:grid-cols-[1.2fr_1fr] lg:gap-10">
           <div>
@@ -149,6 +149,11 @@ export default function BillingSettingsPage() {
               {wsLoading ? "Loading…" : current.name}
             </h2>
             <p className="mt-1 text-sm text-muted-foreground">{current.tagline}</p>
+            <p className="mt-3 max-w-xl text-sm text-muted-foreground">
+              PhotoBrief Credits power AI photo checks, summaries, guide generation, and follow-ups.
+              A simple one-photo request usually uses 2 credits; detailed inspections use more because
+              they analyze more photos.
+            </p>
             {workspace.cancelAtPeriodEnd ? (
               <p className="mt-2 text-xs font-medium text-warning">
                 Cancels at end of current period
@@ -178,22 +183,28 @@ export default function BillingSettingsPage() {
 
           <div className="space-y-4">
             <UsageMeter
-              label="Requests this month"
-              used={usage.requests}
-              cap={current.quotas.requestsPerMonth}
+              label="PhotoBrief Credits"
+              used={usage.creditsUsed}
+              cap={includedCredits as Quota}
               loading={usageLoading}
               topupRemaining={topup.remaining}
             />
+            <p className="rounded-lg bg-muted/60 px-3 py-2 text-xs text-muted-foreground">
+              Estimated remaining: {Number.isFinite(usage.creditsRemaining)
+                ? `${Math.floor(usage.creditsRemaining / 2)} simple one-photo requests`
+                : "unlimited simple requests"}
+              . Actual usage depends on photo count and AI features used.
+            </p>
             <UsageMeter
-              label="AI checks this month"
-              used={usage.aiChecks}
-              cap={current.quotas.aiChecksPerMonth}
+              label="Requests created"
+              used={usage.requests}
+              cap={current.quotas.requestsPerMonth}
               loading={usageLoading}
             />
             {topup.remaining > 0 ? (
               <p className="rounded-lg bg-success/10 px-3 py-2 text-xs text-success-foreground">
                 <Sparkles className="mr-1 inline h-3.5 w-3.5" />
-                <span className="font-medium">+{topup.remaining}</span> top-up requests available
+                <span className="font-medium">+{topup.remaining}</span> top-up credits available
                 {topup.expiresAt
                   ? ` until ${new Date(topup.expiresAt).toLocaleDateString()}`
                   : ""}
@@ -204,15 +215,14 @@ export default function BillingSettingsPage() {
         </div>
       </section>
 
-      {/* Top-up credits --------------------------------------------------- */}
       {workspace.plan !== "free" ? (
         <section className="rounded-2xl border bg-card p-5 shadow-elev-sm sm:p-6">
           <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <h3 className="text-base font-semibold text-foreground">Top-up credits</h3>
               <p className="mt-1 text-sm text-muted-foreground">
-                Out of requests but not ready to upgrade? Buy a one-time pack — credits stack on
-                top of your plan and are valid until the end of your current billing period.
+                Need more AI/photo capacity for a busy week? Buy one-time PhotoBrief Credits —
+                they stack on top of your plan and are valid until the end of your current billing period.
               </p>
             </div>
           </div>
@@ -235,7 +245,6 @@ export default function BillingSettingsPage() {
         </section>
       ) : null}
 
-      {/* Plan switcher ---------------------------------------------------- */}
       <section>
         <PricingCardGrid
           ctaTarget="billing"
@@ -259,7 +268,6 @@ export default function BillingSettingsPage() {
         />
       </section>
 
-      {/* Embedded Checkout dialog --------------------------------------- */}
       <Dialog open={!!checkout} onOpenChange={(open) => !open && setCheckout(null)}>
         <DialogContent className="max-w-3xl">
           <DialogHeader>
@@ -280,7 +288,6 @@ export default function BillingSettingsPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Comparison table ------------------------------------------------- */}
       <section className="rounded-2xl border bg-card p-5 shadow-elev-sm">
         <h3 className="text-sm font-semibold text-foreground">Compare features</h3>
         <div className="mt-3 overflow-x-auto">
@@ -327,14 +334,13 @@ export default function BillingSettingsPage() {
         </div>
       </section>
 
-      {/* Top-up Embedded Checkout dialog --------------------------------- */}
       <Dialog open={!!topupCheckout} onOpenChange={(open) => !open && setTopupCheckout(null)}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>
               {topupCheckout
-                ? `Buy ${topupCheckout.size} extra requests`
-                : "Top-up checkout"}
+                ? `Buy ${topupCheckout.size} PhotoBrief Credits`
+                : "Credit checkout"}
             </DialogTitle>
           </DialogHeader>
           {topupCheckout ? (
