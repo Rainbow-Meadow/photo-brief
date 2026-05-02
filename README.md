@@ -56,6 +56,37 @@ AI work is performed by Supabase Edge Functions and routed through `_shared/aiMo
 
 Important authorization rule: AI Edge Functions should authorize before model calls. Public recipient calls must include `x-request-token`; workspace calls must be tied to an active workspace member. This protects private submission data and prevents anonymous AI spend.
 
+## Billing, credits, and plan gates
+
+Plan capabilities live in `src/config/planLimits.ts`. The UI reads plan state through `usePlan`, while important limits and feature gates should also be enforced by RLS, database triggers, or Edge Functions.
+
+PhotoBrief now uses a credit-first pricing model:
+
+```text
+Requests are workflow containers.
+PhotoBrief Credits are the metered resource.
+```
+
+A simple one-photo request usually uses 2 credits: 1 AI photo check and 1 AI submission summary. A detailed 10-photo inspection usually uses about 11 credits. This lets simple requests stay cheap while complex, AI-heavy workflows naturally consume more.
+
+Current credit rules:
+
+```text
+AI photo quality check: 1 credit
+AI submission summary: 1 credit
+AI request builder draft: 2 credits
+AI guide generation: 3 credits
+AI missing-shot follow-up: 1 credit
+AI admin/escalation rerun: 5 credits
+Manual request creation: 0 credits
+```
+
+Credit accounting is stored in `usage_events.credit_cost` and the auditable `credit_ledger` table. The billing page reads `current_credit_balance()` and displays included credits, used credits, top-up credits, and estimated simple requests remaining.
+
+Top-ups are PhotoBrief Credit packs. The legacy `request_credit_packs` table is still used as the pack storage layer during beta, but app-facing copy treats those balances as credits.
+
+Stripe checkout and subscription sync live in Supabase Edge Functions. Active subscription state is written to `subscriptions` and mirrored onto `business_workspaces.plan_tier`.
+
 ## Review flow
 
 `submissionsService.getById` hydrates a reviewer-facing `Submission` shape from:
@@ -68,15 +99,11 @@ Important authorization rule: AI Edge Functions should authorize before model ca
 
 Reviewers can approve, reject, request retakes, assign, add notes, export PDFs, send reminders, and archive. Rejected shots update `captured_media`, insert `submission_reviews`, move the submission to `needs_more`, and are detected by the recipient context loader when the original link is reopened.
 
-## Billing and plan gates
-
-Plan capabilities live in `src/config/planLimits.ts`. The UI reads plan state through `usePlan`, while important limits and feature gates should also be enforced by RLS, database triggers, or Edge Functions.
-
-Stripe checkout and subscription sync live in Supabase Edge Functions. Active subscription state is written to `subscriptions` and mirrored onto `business_workspaces.plan_tier`.
-
 ## Known follow-ups
 
 - Add a proper session restore path for the public recipient flow. The app currently saves a small progress snapshot to `sessionStorage`, but full rehydration is not complete.
 - Regenerate Supabase types after preview migrations apply.
 - Move public request links fully to token hash/prefix storage and remove raw-token fallback.
-- Add tests around recipient submit, answer persistence, token-authorized AI calls, and review hydration.
+- Wire pre-model credit enforcement into every future AI Edge Function as new AI workflows are added.
+- Replace legacy `request_credit_packs` naming with dedicated credit-pack naming once Stripe products are finalized.
+- Add tests around recipient submit, answer persistence, token-authorized AI calls, credit accounting, and review hydration.
