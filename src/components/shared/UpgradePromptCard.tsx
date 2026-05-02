@@ -50,7 +50,7 @@ export function UpgradePromptCard({
     return (
       <div
         className={cn(
-          "flex items-start gap-3 rounded-md border border-primary/30 bg-primary/5 p-3 text-sm",
+          "flex items-start gap-3 rounded-lg border border-primary/30 bg-primary/5 p-3 text-sm",
           className,
         )}
       >
@@ -75,7 +75,7 @@ export function UpgradePromptCard({
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-lg border bg-gradient-primary p-5 text-primary-foreground shadow-glow",
+        "relative overflow-hidden rounded-xl border bg-gradient-primary p-5 text-primary-foreground shadow-glow",
         className,
       )}
     >
