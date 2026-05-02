@@ -2,9 +2,10 @@
 //
 // Pricing model:
 // - Requests are workflow containers.
-// - PhotoBrief Credits are the metered resource for AI/photo workload.
-// - A simple one-photo request usually uses 2 credits: 1 photo check + 1 summary.
-// - Larger inspections naturally use more credits because they analyze more photos.
+// - PhotoBrief Credits are photo credits.
+// - 1 submitted/analyzed photo = 1 credit.
+// - Basic AI quality checks and submission summaries are bundled into that photo credit.
+// - First-pass guarantee: follow-up/resubmission photos requested by PhotoBrief do not consume credits.
 import type { Plan } from "@/types/photobrief";
 
 /** Every gated capability in PhotoBrief. */
@@ -51,7 +52,7 @@ export const featureCatalog: Record<FeatureKey, FeatureMeta> = {
   },
   credit_limit: {
     label: "More PhotoBrief Credits",
-    description: "Credits power AI photo checks, summaries, guide generation, and follow-ups.",
+    description: "Credits are used when recipients submit photos. One submitted photo uses one credit.",
   },
   branding: {
     label: "Branded request links",
@@ -155,13 +156,13 @@ export interface PlanLimit {
   features: string[];
   highlight?: boolean;
   quotas: {
-    /** Primary usage unit. Powers AI photo checks, summaries, AI guide generation, and follow-ups. */
+    /** Primary usage unit: 1 submitted/analyzed photo = 1 credit. */
     creditsPerMonth: Quota;
     /** Back-compat / abuse-control cap, not the main pricing primitive. */
     requestsPerMonth: Quota;
     /** Back-compat diagnostic quota. New UI should prefer creditsPerMonth. */
     aiChecksPerMonth: Quota;
-    /** Friendly pricing-card estimate. Assumes ~2 credits per one-photo request. */
+    /** Friendly pricing-card estimate. Same as credits because one photo = one credit. */
     estimatedSimpleRequests: Quota;
     users: Quota;
     historyMonths: Quota;
@@ -174,15 +175,15 @@ export interface PlanLimit {
 }
 
 export const CREDIT_COSTS = {
+  submittedPhoto: 1,
+  firstPassFollowupPhoto: 0,
   aiPhotoCheck: 1,
-  aiSubmissionSummary: 1,
-  aiRequestBuilder: 2,
-  aiGuideGeneration: 3,
-  aiFollowupGeneration: 1,
-  aiAdminRerun: 5,
+  aiSubmissionSummary: 0,
+  aiRequestBuilder: 0,
+  aiGuideGeneration: 0,
+  aiFollowupGeneration: 0,
+  aiAdminRerun: 0,
 } as const;
-
-const annual = (monthly: number) => Number((monthly * 0.8).toFixed(2));
 
 export const planLimits: PlanLimit[] = [
   {
@@ -196,17 +197,16 @@ export const planLimits: PlanLimit[] = [
       creditsPerMonth: 10,
       requestsPerMonth: 10,
       aiChecksPerMonth: 10,
-      estimatedSimpleRequests: 5,
+      estimatedSimpleRequests: 10,
       users: 1,
       historyMonths: 0.25,
       savedTemplates: 0,
     },
     features: [
       "10 PhotoBrief Credits / month",
-      "Enough for about 5 simple one-photo requests",
+      "1 submitted photo = 1 credit",
+      "Basic AI quality checks and summaries included",
       "Built-in templates",
-      "Basic AI quality checks",
-      "AI submission summaries",
       "PhotoBrief branding",
       "7-day history",
     ],
@@ -224,19 +224,21 @@ export const planLimits: PlanLimit[] = [
       creditsPerMonth: 100,
       requestsPerMonth: 100,
       aiChecksPerMonth: 100,
-      estimatedSimpleRequests: 50,
+      estimatedSimpleRequests: 100,
       users: 1,
       historyMonths: 1,
       savedTemplates: 1,
     },
     features: [
       "100 PhotoBrief Credits / month",
-      "About 50 simple requests or 8–12 detailed inspections",
+      "About 100 submitted photos",
+      "1 submitted photo = 1 credit",
+      "First-pass guarantee: follow-up photos are free",
       "1 user",
       "Logo + brand color",
       "Branded request page",
       "Custom intro & completion messages",
-      "Standard AI checks + AI summary",
+      "Standard AI checks + AI summary included",
       "Readiness score & extracted details",
       "Basic request inbox",
       "PDF export (PhotoBrief footer)",
@@ -263,14 +265,15 @@ export const planLimits: PlanLimit[] = [
       creditsPerMonth: 500,
       requestsPerMonth: 500,
       aiChecksPerMonth: 500,
-      estimatedSimpleRequests: 250,
+      estimatedSimpleRequests: 500,
       users: 3,
       historyMonths: 12,
       savedTemplates: 5,
     },
     features: [
       "500 PhotoBrief Credits / month",
-      "About 250 simple requests or 40–50 detailed inspections",
+      "About 500 submitted photos",
+      "First-pass guarantee: follow-up photos are free",
       "Everything in Starter",
       "3 users",
       "Custom Photo Guides",
@@ -314,14 +317,15 @@ export const planLimits: PlanLimit[] = [
       creditsPerMonth: 1500,
       requestsPerMonth: 1500,
       aiChecksPerMonth: 1500,
-      estimatedSimpleRequests: 750,
+      estimatedSimpleRequests: 1500,
       users: 10,
       historyMonths: 24,
       savedTemplates: "unlimited",
     },
     features: [
       "1,500 PhotoBrief Credits / month",
-      "About 750 simple requests or 125+ detailed inspections",
+      "About 1,500 submitted photos",
+      "First-pass guarantee: follow-up photos are free",
       "Everything in Pro",
       "10 users",
       "Team assignments & reviewer roles",
@@ -373,7 +377,8 @@ export const planLimits: PlanLimit[] = [
     },
     features: [
       "5,000+ PhotoBrief Credits / month",
-      "Custom pooled credits for multi-location teams",
+      "Custom pooled photo volume for multi-location teams",
+      "First-pass guarantee: follow-up photos are free",
       "Everything in Team",
       "25+ users",
       "Multiple workspaces / locations",
