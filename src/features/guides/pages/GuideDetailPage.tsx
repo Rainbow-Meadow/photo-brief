@@ -114,6 +114,7 @@ export default function GuideDetailPage() {
     return (
       <EmptyState
         icon={BookOpen}
+        illustration={noGuidesIllustration}
         title="Guide not found"
         description="This guide no longer exists."
       />
