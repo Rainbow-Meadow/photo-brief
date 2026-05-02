@@ -1,18 +1,18 @@
 // Centralized plan tiers, limits, and feature gating.
-// Source of truth: 01_Strategy/02_pricing_and_plan_limits.md +
-// 08_Config_Blueprints/planLimits.example.ts +
-// 10_Go_To_Market/03_founding_pro_offer.md.
 //
-// All gating in the app should go through `canUseFeature(plan, feature)`
-// or read limits via `getPlanLimit(plan)`. Do NOT hardcode plan checks
-// elsewhere — add a feature key here instead.
+// Pricing model:
+// - Requests are workflow containers.
+// - PhotoBrief Credits are the metered resource for AI/photo workload.
+// - A simple one-photo request usually uses 2 credits: 1 photo check + 1 summary.
+// - Larger inspections naturally use more credits because they analyze more photos.
 import type { Plan } from "@/types/photobrief";
 
 /** Every gated capability in PhotoBrief. */
 export type FeatureKey =
   | "request_limit"
+  | "credit_limit"
   // Branding / recipient experience
-  | "branding"          // alias for branded_links — kept for back-compat
+  | "branding"
   | "branded_links"
   | "custom_messages"
   | "white_label"
@@ -27,7 +27,7 @@ export type FeatureKey =
   | "reminders"
   | "internal_notes"
   | "assignments"
-  | "team_members"      // alias for team_inbox — kept for back-compat
+  | "team_members"
   | "team_inbox"
   | "saved_templates"
   | "bulk_actions"
@@ -46,8 +46,12 @@ export interface FeatureMeta {
 
 export const featureCatalog: Record<FeatureKey, FeatureMeta> = {
   request_limit: {
-    label: "More requests per month",
-    description: "Send more photo briefs every month without hitting a cap.",
+    label: "More active requests",
+    description: "Create more PhotoBrief request workflows without hitting an abuse-control cap.",
+  },
+  credit_limit: {
+    label: "More PhotoBrief Credits",
+    description: "Credits power AI photo checks, summaries, guide generation, and follow-ups.",
   },
   branding: {
     label: "Branded request links",
@@ -147,32 +151,36 @@ export interface PlanLimit {
   /** Effective monthly price when paying yearly (~20% off). */
   priceAnnualMonthly: number;
   tagline: string;
-  /** Short purpose line from the spec — used as the card subtitle. */
   purpose: string;
-  /** Marketing bullets. The first 3 lead the card; the rest expand on hover/expand. */
   features: string[];
-  /** Pro is the visually emphasized main plan. */
   highlight?: boolean;
-  /** Numeric quotas — surfaced in usage meters. */
   quotas: {
+    /** Primary usage unit. Powers AI photo checks, summaries, AI guide generation, and follow-ups. */
+    creditsPerMonth: Quota;
+    /** Back-compat / abuse-control cap, not the main pricing primitive. */
     requestsPerMonth: Quota;
-    users: Quota;
+    /** Back-compat diagnostic quota. New UI should prefer creditsPerMonth. */
     aiChecksPerMonth: Quota;
+    /** Friendly pricing-card estimate. Assumes ~2 credits per one-photo request. */
+    estimatedSimpleRequests: Quota;
+    users: Quota;
     historyMonths: Quota;
     savedTemplates: Quota;
   };
-  /**
-   * Boolean feature toggles. Anything not listed is treated as `false`.
-   * `request_limit` is implicitly true for every plan — it's gated by the
-   * numeric quota above, not this map.
-   */
   capabilities: Partial<Record<FeatureKey, boolean>>;
-  /** Output level for PDF export specifically (per spec). */
   pdfExport: PdfExportLevel;
-  /** Stripe price IDs (filled once Stripe products are created). */
   stripeMonthlyPriceId?: string;
   stripeAnnualPriceId?: string;
 }
+
+export const CREDIT_COSTS = {
+  aiPhotoCheck: 1,
+  aiSubmissionSummary: 1,
+  aiRequestBuilder: 2,
+  aiGuideGeneration: 3,
+  aiFollowupGeneration: 1,
+  aiAdminRerun: 5,
+} as const;
 
 const annual = (monthly: number) => Number((monthly * 0.8).toFixed(2));
 
@@ -182,22 +190,23 @@ export const planLimits: PlanLimit[] = [
     name: "Free",
     priceMonthly: 0,
     priceAnnualMonthly: 0,
-    tagline: "Try the request workflow.",
-    purpose: "Experience the full request flow on a few jobs.",
+    tagline: "Try the full request flow.",
+    purpose: "Test PhotoBrief with a few simple jobs before committing.",
     quotas: {
-      requestsPerMonth: 3,
+      creditsPerMonth: 10,
+      requestsPerMonth: 10,
+      aiChecksPerMonth: 10,
+      estimatedSimpleRequests: 5,
       users: 1,
-      aiChecksPerMonth: 30,
-      historyMonths: 0.25, // 7 days
+      historyMonths: 0.25,
       savedTemplates: 0,
     },
     features: [
-      "First-pass guarantee — rejected requests are refunded",
-      "3 requests / month",
-      "1 user",
+      "10 PhotoBrief Credits / month",
+      "Enough for about 5 simple one-photo requests",
       "Built-in templates",
-      "Basic request links",
       "Basic AI quality checks",
+      "AI submission summaries",
       "PhotoBrief branding",
       "7-day history",
     ],
@@ -212,15 +221,17 @@ export const planLimits: PlanLimit[] = [
     tagline: "Look professional, instantly.",
     purpose: "Solo operators who want a branded recipient experience.",
     quotas: {
-      requestsPerMonth: 25,
+      creditsPerMonth: 100,
+      requestsPerMonth: 100,
+      aiChecksPerMonth: 100,
+      estimatedSimpleRequests: 50,
       users: 1,
-      aiChecksPerMonth: 250,
       historyMonths: 1,
       savedTemplates: 1,
     },
     features: [
-      "First-pass guarantee — rejected requests are refunded",
-      "25 requests / month",
+      "100 PhotoBrief Credits / month",
+      "About 50 simple requests or 8–12 detailed inspections",
       "1 user",
       "Logo + brand color",
       "Branded request page",
@@ -249,19 +260,22 @@ export const planLimits: PlanLimit[] = [
     purpose: "Solo operators and small crews automating their request workflow.",
     highlight: true,
     quotas: {
-      requestsPerMonth: 150,
+      creditsPerMonth: 500,
+      requestsPerMonth: 500,
+      aiChecksPerMonth: 500,
+      estimatedSimpleRequests: 250,
       users: 3,
-      aiChecksPerMonth: 1500,
       historyMonths: 12,
       savedTemplates: 5,
     },
     features: [
-      "First-pass guarantee — rejected requests are refunded",
+      "500 PhotoBrief Credits / month",
+      "About 250 simple requests or 40–50 detailed inspections",
       "Everything in Starter",
-      "150 requests / month",
       "3 users",
       "Custom Photo Guides",
       "AI Guide Generator",
+      "AI request builder",
       "Advanced AI quality gate",
       "Missing-shot follow-up",
       "Request reminders",
@@ -297,22 +311,23 @@ export const planLimits: PlanLimit[] = [
     tagline: "Run the whole operation.",
     purpose: "Teams that share an inbox and review submissions together.",
     quotas: {
-      requestsPerMonth: 500,
+      creditsPerMonth: 1500,
+      requestsPerMonth: 1500,
+      aiChecksPerMonth: 1500,
+      estimatedSimpleRequests: 750,
       users: 10,
-      aiChecksPerMonth: 5000,
       historyMonths: 24,
       savedTemplates: "unlimited",
     },
     features: [
-      "First-pass guarantee — rejected requests are refunded",
+      "1,500 PhotoBrief Credits / month",
+      "About 750 simple requests or 125+ detailed inspections",
       "Everything in Pro",
-      "500 requests / month",
       "10 users",
       "Team assignments & reviewer roles",
       "Shared internal notes",
       "Team activity history",
-      "Multiple saved templates",
-      "Higher AI limits",
+      "Higher AI automation volume",
       "Bulk actions",
       "Full PDF branding",
       "White-label recipient pages",
@@ -348,16 +363,18 @@ export const planLimits: PlanLimit[] = [
     tagline: "Scale and integrate.",
     purpose: "Multi-location operators who need custom domains, API access, and integrations.",
     quotas: {
-      requestsPerMonth: 1500,
-      users: 25,
+      creditsPerMonth: 5000,
+      requestsPerMonth: "unlimited",
       aiChecksPerMonth: "unlimited",
+      estimatedSimpleRequests: "unlimited",
+      users: 25,
       historyMonths: "unlimited",
       savedTemplates: "unlimited",
     },
     features: [
-      "First-pass guarantee — rejected requests are refunded",
+      "5,000+ PhotoBrief Credits / month",
+      "Custom pooled credits for multi-location teams",
       "Everything in Team",
-      "1,500+ requests / month",
       "25+ users",
       "Multiple workspaces / locations",
       "Custom domain",
@@ -406,10 +423,6 @@ export function getPlanLimit(plan: Plan): PlanLimit {
   return planLimits.find((p) => p.id === plan) ?? planLimits[0];
 }
 
-/**
- * Single source of truth for "is this feature available on this plan?".
- * Use this everywhere instead of `if (plan === 'pro')` style checks.
- */
 export function canUseFeature(
   plan: Plan,
   feature: FeatureKey,
@@ -424,15 +437,24 @@ export function canUseFeature(
     return cap > 0;
   }
 
+  if (feature === "credit_limit") {
+    const cap = limit.quotas.creditsPerMonth;
+    if (cap === "unlimited") return true;
+    if (typeof currentUsage === "number") return currentUsage < cap;
+    return cap > 0;
+  }
+
   return limit.capabilities[feature] === true;
 }
 
-/** Lowest plan that unlocks a given feature, or undefined if nothing does. */
 export function minPlanFor(feature: FeatureKey): Plan | undefined {
   const sorted = [...planLimits].sort((a, b) => planRank[a.id] - planRank[b.id]);
   for (const p of sorted) {
     if (feature === "request_limit") {
       const cap = p.quotas.requestsPerMonth;
+      if (cap === "unlimited" || (typeof cap === "number" && cap > 0)) return p.id;
+    } else if (feature === "credit_limit") {
+      const cap = p.quotas.creditsPerMonth;
       if (cap === "unlimited" || (typeof cap === "number" && cap > 0)) return p.id;
     } else if (p.capabilities[feature]) {
       return p.id;
@@ -445,20 +467,10 @@ export function comparePlans(a: Plan, b: Plan): number {
   return planRank[a] - planRank[b];
 }
 
-/**
- * Single source of truth for "this feature is locked" copy.
- *
- * Use everywhere instead of ad-hoc `"X is on the Pro plan"` strings so the
- * upgrade language stays consistent and is easy to retune.
- */
 export function lockedFeatureCopy(feature: FeatureKey): {
-  /** Plan that unlocks the feature, capitalized (e.g. "Pro"). */
   planLabel: string;
-  /** Short toast message: "Reminders are on the Pro plan". */
   toast: string;
-  /** Tooltip text: "Available on Pro and above". */
   tooltip: string;
-  /** 2-3 char badge label rendered next to gated buttons. */
   badge: string;
 } {
   const plan = minPlanFor(feature);
@@ -473,12 +485,9 @@ export function lockedFeatureCopy(feature: FeatureKey): {
   };
 }
 
-/** Founding-Pro offer config. Sourced from 10_Go_To_Market/03_founding_pro_offer.md. */
 export const FOUNDING_PRO = {
   monthlyPrice: 29,
   totalSlots: 50,
-  /** Apply on top of the Pro plan capabilities — Founding Pro IS the Pro plan, just locked in. */
   basePlan: "pro" as Plan,
-  /** Coupon code surfaced in the marketing CTA. */
   couponCode: "FOUNDINGPRO",
 };
