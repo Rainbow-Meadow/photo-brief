@@ -8,7 +8,7 @@ import type { BillingInterval, Plan } from "@/types/photobrief";
 import { BillingIntervalToggle } from "./BillingIntervalToggle";
 import { FoundingProBadge } from "./FoundingProBadge";
 import { FoundingCustomerBanner } from "@/components/marketing/FoundingCustomerBanner";
-import { trackEvent } from "@/lib/analytics";
+import { conversions, trackEvent } from "@/lib/analytics";
 import { INVITE_ONLY_BETA } from "@/config/access";
 
 interface Props {
@@ -49,6 +49,18 @@ function ctaTo(plan: PlanLimit, target: "signup" | "billing"): string {
   if (target === "billing") return `/settings/billing?plan=${plan.id}`;
   if (INVITE_ONLY_BETA) return `/waitlist?interest=${plan.id}`;
   return `/auth?mode=signup&plan=${plan.id}`;
+}
+
+function trackPlanSelection(plan: PlanLimit, interval: BillingInterval, surface: "signup" | "billing") {
+  const value = interval === "annual" ? plan.priceAnnualMonthly * 12 : plan.priceMonthly;
+  trackEvent("plan_upgrade_clicked", { plan: plan.id, interval, surface });
+  conversions.pricingPlanSelected({
+    item_id: plan.id,
+    item_name: plan.name,
+    billing_interval: interval,
+    surface,
+    value,
+  });
 }
 
 export function PricingCardGrid({
@@ -180,7 +192,7 @@ export function PricingCardGrid({
                   size="default"
                   disabled={isCurrent || pendingPlan === plan.id}
                   onClick={() => {
-                    trackEvent("plan_upgrade_clicked", { plan: plan.id, interval, surface: "billing" });
+                    trackPlanSelection(plan, interval, "billing");
                     onSelectPlan(plan.id, interval);
                   }}
                   variant={showHighlight ? "default" : "outline"}
@@ -210,7 +222,7 @@ export function PricingCardGrid({
                   {plan.id === "business" ? (
                     <a
                       href={ctaTo(plan, ctaTarget)}
-                      onClick={() => trackEvent("plan_upgrade_clicked", { plan: plan.id, interval, surface: ctaTarget })}
+                      onClick={() => trackPlanSelection(plan, interval, ctaTarget)}
                     >
                       {ctaLabel(plan, currentPlan, false, ctaTarget)}
                       <ArrowRight className="ml-1 h-4 w-4" />
@@ -218,7 +230,7 @@ export function PricingCardGrid({
                   ) : (
                     <NavLink
                       to={ctaTo(plan, ctaTarget)}
-                      onClick={() => trackEvent("plan_upgrade_clicked", { plan: plan.id, interval, surface: ctaTarget })}
+                      onClick={() => trackPlanSelection(plan, interval, ctaTarget)}
                     >
                       {ctaLabel(plan, currentPlan, false, ctaTarget)}
                       {!isCurrent && plan.id !== "free" ? <ArrowRight className="ml-1 h-4 w-4" /> : null}
