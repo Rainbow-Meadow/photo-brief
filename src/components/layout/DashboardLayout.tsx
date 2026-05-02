@@ -7,7 +7,7 @@ import { NotificationBell } from "@/components/layout/NotificationBell";
 import { MobileTabBar } from "@/components/layout/MobileTabBar";
 import { BrandMark } from "@/components/layout/BrandMark";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -69,6 +69,7 @@ export function DashboardLayout() {
                       className="rounded-full outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                     >
                       <Avatar className="h-8 w-8">
+                        <AvatarImage src="/photobrief-logo.png" alt="PhotoBrief" />
                         <AvatarFallback className="bg-primary text-primary-foreground text-xs">
                           {initial}
                         </AvatarFallback>
