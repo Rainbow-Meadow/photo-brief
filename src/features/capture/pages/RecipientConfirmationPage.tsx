@@ -96,11 +96,7 @@ export default function RecipientConfirmationPage() {
         ) : null}
 
         {showPhotobriefMark ? (
-          <div className="mt-6 flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground">
-            <Camera className="h-3 w-3" />
-            <span>Sent securely with</span>
-            <BrandMark variant="wordmark" tone="auto" size={56} />
-          </div>
+          <PoweredByBadge className="mt-6" size={48} />
         ) : null}
       </div>
     </div>
