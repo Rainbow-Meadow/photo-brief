@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import horizontalLogo from "/photobrief-logo.png";
+import horizontalLogo from "@/assets/brand/photobrief-horizontal.png";
 import stackedLogo from "@/assets/brand/photobrief-stacked.png";
 import wordmark from "@/assets/brand/photobrief-wordmark.webp";
 import markDark from "@/assets/brand/photobrief-mark-dark.png";
