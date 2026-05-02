@@ -125,6 +125,7 @@ export default function CreateRequestPage() {
         recipientPhone: !isEmail && contact ? contact : undefined,
         customMessage: draft.introMessage,
         status: "sent",
+        customerId: prefillCustomerId ?? undefined,
       });
 
       const link = `${window.location.origin}/r/${created.token}`;
