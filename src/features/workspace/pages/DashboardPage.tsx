@@ -26,6 +26,7 @@ import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { messagingService } from "@/services/messagingService";
+import { StarterRequestCard } from "@/features/workspace/components/StarterRequestCard";
 import { usePlan } from "@/hooks/usePlan";
 import { getPlanLimit, minPlanFor } from "@/config/planLimits";
 
