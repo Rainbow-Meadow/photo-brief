@@ -1,9 +1,9 @@
 name: Cloudflare Host Audit
 
 on:
-  push:
+  pull_request:
     branches:
-      - ops/cloudflare-host-audit
+      - main
   workflow_dispatch:
     inputs:
       domain:
