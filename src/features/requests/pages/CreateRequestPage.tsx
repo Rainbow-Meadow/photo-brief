@@ -49,7 +49,10 @@ export default function CreateRequestPage() {
   const prefillContact = searchParams.get("email") ?? searchParams.get("phone") ?? "";
 
   const handleSelectTemplate = (guide: PhotoGuide) => {
-    setDraft(draftFromGuide(guide));
+    const d = draftFromGuide(guide);
+    if (prefillName) d.recipientName = prefillName;
+    if (prefillContact) d.recipientContact = prefillContact;
+    setDraft(d);
     toast.success(`Loaded template: ${guide.name}`);
   };
 
