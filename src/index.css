@@ -118,15 +118,15 @@
        ------------------------------------------------------------- */
     --app-bg: 220 20% 98%;
 
-    --app-sidebar-bg: 222 47% 11%;
+    --app-sidebar-bg: 220 26% 14%;
     --app-sidebar-fg: 0 0% 96%;
     --app-sidebar-muted: 220 14% 70%;
-    --app-sidebar-active-bg: 222 47% 16%;
-    --app-sidebar-active-fg: 168 76% 55%;
-    --app-sidebar-border: 222 30% 18%;
+    --app-sidebar-active-bg: 217 80% 52%;
+    --app-sidebar-active-fg: 0 0% 100%;
+    --app-sidebar-border: 220 20% 20%;
 
-    --app-primary: 168 76% 38%;            /* teal-600 #0d9488 */
-    --app-primary-glow: 168 76% 46%;       /* teal-500 */
+    --app-primary: 217 91% 55%;            /* blue-500 */
+    --app-primary-glow: 217 91% 65%;       /* blue-400 */
     --app-primary-fg: 0 0% 100%;
 
     --app-pill-pass-bg: 152 70% 92%;
@@ -206,16 +206,16 @@
 
     /* In-app palette (dark) */
     --app-bg: 222 47% 6%;
-    --app-sidebar-bg: 222 50% 5%;
+    --app-sidebar-bg: 220 30% 7%;
     --app-sidebar-fg: 0 0% 96%;
     --app-sidebar-muted: 220 9% 60%;
-    --app-sidebar-active-bg: 222 40% 12%;
-    --app-sidebar-active-fg: 168 76% 60%;
-    --app-sidebar-border: 222 30% 14%;
+    --app-sidebar-active-bg: 217 70% 45%;
+    --app-sidebar-active-fg: 0 0% 100%;
+    --app-sidebar-border: 220 25% 14%;
 
-    --app-primary: 168 76% 45%;
-    --app-primary-glow: 168 76% 55%;
-    --app-primary-fg: 222 47% 8%;
+    --app-primary: 217 91% 60%;
+    --app-primary-glow: 217 91% 70%;
+    --app-primary-fg: 0 0% 100%;
 
     --app-pill-pass-bg: 152 60% 18%;
     --app-pill-pass-fg: 152 70% 75%;
