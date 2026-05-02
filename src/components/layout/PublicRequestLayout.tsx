@@ -1,5 +1,6 @@
 import { Outlet } from "react-router-dom";
 import { BrandMark } from "@/components/layout/BrandMark";
+import { PoweredByBadge } from "@/components/shared/PoweredByBadge";
 import { useRecipientBranding } from "@/features/capture/RecipientBrandingContext";
 
 
