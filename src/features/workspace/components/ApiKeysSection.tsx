@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { EmptyState } from "@/components/shared/EmptyState";
+import noKeysIllustration from "@/assets/empty-states/no-keys.png";
 import { apiKeysService, type ApiKey } from "@/services/apiKeysService";
 import { toast } from "@/hooks/use-toast";
 

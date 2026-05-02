@@ -4,6 +4,7 @@ import { toast } from "sonner";
 
 import { PageHeader } from "@/components/layout/PageHeader";
 import { EmptyState } from "@/components/shared/EmptyState";
+import noTeamIllustration from "@/assets/empty-states/no-team.png";
 import { UpgradePromptCard } from "@/components/shared/UpgradePromptCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
