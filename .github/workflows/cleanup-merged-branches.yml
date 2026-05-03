@@ -25,7 +25,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Delete merged work branches
+      - name: Delete merged and superseded work branches
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -33,7 +33,7 @@ jobs:
 
           git fetch origin '+refs/heads/*:refs/remotes/origin/*' --prune
 
-          branches=(
+          merged_branches=(
             "chore/trigger-product-spotlight-render"
             "cleanup/relaunch-context"
             "cleanup/remove-legacy-templates"
@@ -43,7 +43,6 @@ jobs:
             "feature/ga4-conversion-tracking"
             "feature/global-image-asset-pass"
             "feature/global-image-asset-pass-2026"
-            "feature/global-image-asset-pass-v2"
             "feature/hosted-intake-and-ai-routing"
             "feature/optimize-hybrid-hosting"
             "feature/product-spotlight-demo-video"
@@ -65,11 +64,19 @@ jobs:
             "port/photobrief-baseline-fixes"
           )
 
+          # This branch was an early divergent asset-pass attempt. It was superseded
+          # by the merged `feature/global-image-asset-pass-2026` work and should not
+          # remain as an active branch.
+          superseded_branches=(
+            "feature/global-image-asset-pass-v2"
+          )
+
           deleted=0
           skipped=0
           missing=0
+          superseded_deleted=0
 
-          for branch in "${branches[@]}"; do
+          for branch in "${merged_branches[@]}"; do
             if [[ "$branch" == "main" ]]; then
               echo "Skipping protected branch: $branch"
               continue
@@ -91,6 +98,19 @@ jobs:
             fi
           done
 
-          echo "Deleted: $deleted"
+          for branch in "${superseded_branches[@]}"; do
+            if ! git show-ref --verify --quiet "refs/remotes/origin/$branch"; then
+              echo "Already gone: $branch"
+              missing=$((missing + 1))
+              continue
+            fi
+
+            echo "Deleting superseded stale branch: $branch"
+            gh api -X DELETE "repos/${GITHUB_REPOSITORY}/git/refs/heads/$branch"
+            superseded_deleted=$((superseded_deleted + 1))
+          done
+
+          echo "Deleted merged: $deleted"
+          echo "Deleted superseded: $superseded_deleted"
           echo "Skipped unmerged: $skipped"
           echo "Already missing: $missing"
