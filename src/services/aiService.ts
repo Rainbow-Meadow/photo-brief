@@ -39,8 +39,7 @@ export const aiModelRouter: Record<AITask, AITier> = {
 
 export interface AnalyzeMediaInput {
   step: GuideStep;
-  mediaUrl?: string;
-  capturedMediaId?: string;
+  capturedMediaId: string;
   recipientNote?: string;
   escalate?: boolean;
   /** Public recipient flow token. Required when analyzing token-created captured_media rows. */
@@ -123,12 +122,6 @@ function worstOf(severities: AICheckSeverity[]): AICheckSeverity {
   return "pass";
 }
 
-function bandFromScore(score: number): ReadinessScoreOutput["band"] {
-  if (score >= 80) return "high";
-  if (score >= 50) return "medium";
-  return "low";
-}
-
 function feedbackHeadline(verdict: AICheckSeverity, stepTitle: string): string {
   if (verdict === "pass") return "Sharp & well lit";
   if (verdict === "warn") return `${stepTitle}: usable, but could be better`;
@@ -161,57 +154,53 @@ function aiUnavailableResult(stepTitle: string): AnalyzeMediaOutput {
 
 export const aiService = {
   async analyzeCapturedMedia(input: AnalyzeMediaInput): Promise<AnalyzeMediaOutput> {
-    const { step, mediaUrl, capturedMediaId, recipientNote, escalate, requestToken } = input;
-    const usableUrl = mediaUrl && /^https?:\/\//.test(mediaUrl) ? mediaUrl : null;
+    const { step, capturedMediaId, recipientNote, escalate, requestToken } = input;
 
-    if (usableUrl) {
-      try {
-        const client = requestToken ? getTokenClient(requestToken) : supabase;
-        const { data, error } = await client.functions.invoke("ai-analyze-media", {
-          body: {
-            stepId: step.id,
-            stepTitle: step.title,
-            instruction: step.instructions,
-            captureType: step.shotType,
-            overlayType: step.overlayType,
-            aiChecks: step.aiChecks,
-            imageUrl: usableUrl,
-            recipientNote,
-            capturedMediaId,
-            priority: escalate ? "admin_review" : undefined,
-            task: "photo_quality_check",
-          },
-        });
-        if (error) throw error;
-        if (data && data.error === "ai_unavailable") return aiUnavailableResult(step.title);
+    try {
+      const client = requestToken ? getTokenClient(requestToken) : supabase;
+      const { data, error } = await client.functions.invoke("ai-analyze-media", {
+        body: {
+          stepId: step.id,
+          stepTitle: step.title,
+          instruction: step.instructions,
+          captureType: step.shotType,
+          overlayType: step.overlayType,
+          aiChecks: step.aiChecks,
+          recipientNote,
+          capturedMediaId,
+          priority: escalate ? "admin_review" : undefined,
+          task: "photo_quality_check",
+        },
+      });
+      if (error) throw error;
+      if (data && data.error === "ai_unavailable") return aiUnavailableResult(step.title);
 
-        if (data && data.checks) {
-          const checks = data.checks.map((c: any) => ({
-            type: c.type as AICheckType,
-            severity: c.severity as AICheckSeverity,
-            message: c.message,
-            label: c.label,
-          }));
-          const verdict = (data.verdict ?? worstOf(checks.map((c: any) => c.severity))) as AICheckSeverity;
-          const feedback: ShotAIFeedback = {
-            severity: verdict,
-            headline: data.headline ?? feedbackHeadline(verdict, step.title),
-            detail: data.detail ?? checks.find((c: any) => c.severity !== "pass")?.message,
-            checks: checks.map((c: any) => ({ type: c.type, severity: c.severity, label: c.label })),
-            confidence: typeof data.confidence === "number" ? data.confidence : undefined,
-            flags: Array.isArray(data.flags) ? data.flags : undefined,
-            businessSummary: data.businessSummary ?? undefined,
-            suggestedNextAction: data.suggestedNextAction ?? undefined,
-          };
-          return {
-            checks: checks.map(({ type, severity, message }: any) => ({ type, severity, message })),
-            verdict,
-            feedback,
-          };
-        }
-      } catch (e) {
-        console.warn("ai-analyze-media failed", e);
+      if (data && data.checks) {
+        const checks = data.checks.map((c: any) => ({
+          type: c.type as AICheckType,
+          severity: c.severity as AICheckSeverity,
+          message: c.message,
+          label: c.label,
+        }));
+        const verdict = (data.verdict ?? worstOf(checks.map((c: any) => c.severity))) as AICheckSeverity;
+        const feedback: ShotAIFeedback = {
+          severity: verdict,
+          headline: data.headline ?? feedbackHeadline(verdict, step.title),
+          detail: data.detail ?? checks.find((c: any) => c.severity !== "pass")?.message,
+          checks: checks.map((c: any) => ({ type: c.type, severity: c.severity, label: c.label })),
+          confidence: typeof data.confidence === "number" ? data.confidence : undefined,
+          flags: Array.isArray(data.flags) ? data.flags : undefined,
+          businessSummary: data.businessSummary ?? undefined,
+          suggestedNextAction: data.suggestedNextAction ?? undefined,
+        };
+        return {
+          checks: checks.map(({ type, severity, message }: any) => ({ type, severity, message })),
+          verdict,
+          feedback,
+        };
       }
+    } catch (e) {
+      console.warn("ai-analyze-media failed", e);
     }
 
     return aiUnavailableResult(step.title);
@@ -279,7 +268,7 @@ export const aiService = {
     let score = Math.round(raw * 100);
     if (input.hasMissingItems) score = Math.max(0, score - 5);
     score = Math.min(100, Math.max(0, score));
-    const band = bandFromScore(score);
+    const band = score >= 80 ? "high" : score >= 50 ? "medium" : "low";
     const missingItems = input.shots.filter((s) => s.missing).map((s) => s.title);
     const rationale =
       band === "high"
