@@ -136,11 +136,16 @@ async function main() {
   }
   ok("_headers sets shared-cache policy for public discovery files");
 
-  const dangerousHtmlRules = ["/dashboard", "/requests", "/submissions", "/settings", "/r/", "/*\n  Cache-Control: public"];
-  for (const rule of dangerousHtmlRules) {
-    if (headers.includes(rule)) {
-      fail(`_headers may publicly cache app/token HTML via rule containing ${rule}`);
+  const forbiddenExplicitSections = ["/dashboard", "/requests", "/submissions", "/settings", "/r/"];
+  for (const route of forbiddenExplicitSections) {
+    if (sectionFor(headers, route).includes("Cache-Control: public")) {
+      fail(`_headers explicitly public-caches app/token route ${route}`);
     }
+  }
+
+  const globalSection = sectionFor(headers, "/*");
+  if (globalSection.includes("Cache-Control: public")) {
+    fail("_headers sets public Cache-Control on the global /* rule");
   }
   ok("_headers does not explicitly public-cache app/token routes");
 
