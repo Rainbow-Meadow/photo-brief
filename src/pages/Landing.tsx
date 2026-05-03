@@ -10,9 +10,7 @@ import {
   Link2,
   PlayCircle,
   Route,
-  ShieldCheck,
   Sparkles,
-  Zap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
