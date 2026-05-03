@@ -27,7 +27,6 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { BrandMark } from "@/components/layout/BrandMark";
-import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import { UpgradePromptCard } from "@/components/shared/UpgradePromptCard";
 import { WorkspaceSwitcher } from "@/features/workspace/components/WorkspaceSwitcher";
 import { usePlan } from "@/hooks/usePlan";
@@ -138,12 +137,11 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="gap-2 p-2">
-        {!collapsed && showUpgradeCard ? <UpgradePromptCard /> : null}
-        <div className={collapsed ? "flex justify-center" : "flex justify-start px-1"}>
-          <ThemeToggle compact={collapsed} />
-        </div>
-      </SidebarFooter>
+      {!collapsed && showUpgradeCard ? (
+        <SidebarFooter className="gap-2 p-2">
+          <UpgradePromptCard />
+        </SidebarFooter>
+      ) : null}
     </Sidebar>
   );
 }

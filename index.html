@@ -6,10 +6,22 @@
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <title>PhotoBrief | Take the right photos, every time.</title>
-    <meta name="description" content="PhotoBrief turns vague customer photos into business-ready briefs. Chat-guided capture, AI quality checks, clean summaries — every time.">
+    <script>
+      (() => {
+        try {
+          const stored = localStorage.getItem("pb-theme");
+          const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          const theme = stored === "light" || stored === "dark" ? stored : prefersDark ? "dark" : "light";
+          document.documentElement.classList.toggle("dark", theme === "dark");
+          document.documentElement.style.colorScheme = theme;
+        } catch (_) {}
+      })();
+    </script>
+    <title>PhotoBrief | Turn website leads into photo-ready job briefs</title>
+    <meta name="description" content="PhotoBrief automates small business intake: website leads, template routing, mobile photo capture, AI photo checks, and clean job summaries.">
     <meta name="author" content="PhotoBrief" />
-    <meta name="theme-color" content="#0A6BFF" />
+    <meta name="theme-color" content="#0B67FF" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#061326" media="(prefers-color-scheme: dark)" />
     <meta name="apple-mobile-web-app-title" content="PhotoBrief" />
 
     <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" type="image/x-icon">
@@ -18,10 +30,10 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/ed2857e4-751f-457b-9c7f-d97506a9d19d">
+    <meta property="og:image" content="https://photobrief.ai/og-image.svg">
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/ed2857e4-751f-457b-9c7f-d97506a9d19d">
+    <meta name="twitter:image" content="https://photobrief.ai/og-image.svg">
 
     <meta property="og:site_name" content="PhotoBrief">
     <meta name="twitter:site" content="@photobriefai">
@@ -38,7 +50,7 @@
           "@id": "https://photobrief.ai/#org",
           "name": "PhotoBrief",
           "url": "https://photobrief.ai",
-          "logo": "https://photobrief.ai/og-image.png",
+          "logo": "https://photobrief.ai/photobrief-logo.svg",
           "email": "hello@photobrief.ai",
           "sameAs": []
         },
@@ -58,10 +70,10 @@
     }
     </script>
 
-    <meta property="og:title" content="PhotoBrief | Take the right photos, every time.">
-    <meta name="twitter:title" content="PhotoBrief | Take the right photos, every time.">
-    <meta property="og:description" content="PhotoBrief turns vague customer photos into business-ready briefs. Chat-guided capture, AI quality checks, clean summaries — every time.">
-    <meta name="twitter:description" content="PhotoBrief turns vague customer photos into business-ready briefs. Chat-guided capture, AI quality checks, clean summaries — every time.">
+    <meta property="og:title" content="PhotoBrief | Turn website leads into photo-ready job briefs">
+    <meta name="twitter:title" content="PhotoBrief | Turn website leads into photo-ready job briefs">
+    <meta property="og:description" content="PhotoBrief automates small business intake: website leads, template routing, mobile photo capture, AI photo checks, and clean job summaries.">
+    <meta name="twitter:description" content="PhotoBrief automates small business intake: website leads, template routing, mobile photo capture, AI photo checks, and clean job summaries.">
   </head>
 
   <body>

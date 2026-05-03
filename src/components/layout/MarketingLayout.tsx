@@ -3,6 +3,7 @@ import { Outlet, NavLink } from "react-router-dom";
 import { Menu } from "lucide-react";
 
 import { BrandMark } from "@/components/layout/BrandMark";
+import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { signupCtaTarget, signupCtaShortLabel, signupCtaLabel } from "@/config/access";
 import {
@@ -25,11 +26,11 @@ export function MarketingLayout() {
       <div className="sticky top-0 z-40 px-3 pt-3 sm:px-6 sm:pt-4 pt-safe">
         <header className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between gap-4 rounded-full glass-nav px-3 sm:h-16 sm:px-5">
           <NavLink to="/" aria-label="PhotoBrief home" className="flex items-center pl-1">
-            <BrandMark variant="horizontal" tone="dark" size={32} eager className="sm:hidden" />
-            <BrandMark variant="horizontal" tone="dark" size={38} eager className="hidden sm:block" />
+            <BrandMark variant="horizontal" tone="auto" size={32} eager className="sm:hidden" />
+            <BrandMark variant="horizontal" tone="auto" size={38} eager className="hidden sm:block" />
           </NavLink>
 
-          <nav className="hidden items-center gap-1 text-sm font-medium sm:flex">
+          <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
             {[
               { href: "/#how-it-works", label: "How it works" },
               { href: "/#use-cases", label: "Use cases" },
@@ -63,6 +64,7 @@ export function MarketingLayout() {
           </nav>
 
           <div className="flex items-center gap-1.5">
+            <ThemeToggle hideLabel className="hidden md:inline-flex" />
             <Button asChild variant="ghost" size="sm" className="hidden rounded-full sm:inline-flex">
               <NavLink to="/auth">Sign in</NavLink>
             </Button>
@@ -74,7 +76,7 @@ export function MarketingLayout() {
               type="button"
               variant="ghost"
               size="icon"
-              className="h-10 w-10 rounded-full sm:hidden"
+              className="h-10 w-10 rounded-full md:hidden"
               aria-label="Open menu"
               onClick={() => setMenuOpen(true)}
             >
@@ -86,12 +88,15 @@ export function MarketingLayout() {
 
       {/* Mobile nav sheet */}
       <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
-        <SheetContent side="right" className="w-[80vw] max-w-sm p-0">
+        <SheetContent side="right" className="w-[84vw] max-w-sm p-0">
           <SheetHeader className="border-b px-5 py-4 text-left">
             <SheetTitle>
-              <BrandMark variant="horizontal" tone="dark" size={32} eager />
+              <BrandMark variant="horizontal" tone="auto" size={32} eager />
             </SheetTitle>
           </SheetHeader>
+          <div className="border-b px-5 py-4">
+            <ThemeToggle className="w-full justify-between" />
+          </div>
           <ul className="divide-y">
             <li>
               <a
