@@ -5,8 +5,8 @@
 // traffic must include x-request-token tied to the captured_media row's request;
 // workspace traffic must be an active member of the media's workspace.
 //
-// When capturedMediaId is provided, the model image URL is resolved server-side
-// from Supabase/R2 metadata instead of trusting a client-supplied arbitrary URL.
+// Relaunch context: AI analysis runs only on stored R2 captured_media rows.
+// Clients provide capturedMediaId, not arbitrary external image URLs.
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
 import {
@@ -97,7 +97,6 @@ interface Body {
   captureType?: string;
   overlayType?: string;
   aiChecks?: string[];
-  imageUrl?: string;
   recipientNote?: string;
   capturedMediaId?: string;
   /** When "admin_review", router escalates to the premium tier first. */
@@ -118,8 +117,8 @@ Deno.serve(async (req) => {
   } catch {
     return json({ error: "Invalid JSON body" }, 400);
   }
-  if (!body?.stepTitle || (!body.imageUrl && !body.capturedMediaId)) {
-    return json({ error: "stepTitle and either imageUrl or capturedMediaId are required" }, 400);
+  if (!body?.stepTitle || !body.capturedMediaId) {
+    return json({ error: "stepTitle and capturedMediaId are required" }, 400);
   }
 
   const authz = await authorizeAnalyze(req, body);
@@ -131,7 +130,7 @@ Deno.serve(async (req) => {
 
   let imageUrl: string;
   try {
-    imageUrl = await resolveImageUrlForModel(body.capturedMediaId, body.imageUrl);
+    imageUrl = await resolveImageUrlForModel(body.capturedMediaId);
   } catch (e) {
     return json({ error: e instanceof Error ? e.message : "Could not resolve media URL" }, 400);
   }
@@ -196,9 +195,7 @@ Deno.serve(async (req) => {
       attempts,
     };
 
-    if (body.capturedMediaId) {
-      await persistAuthorized(body.capturedMediaId, result);
-    }
+    await persistAuthorized(body.capturedMediaId, result);
 
     return json(result, 200);
   } catch (e) {
@@ -252,58 +249,27 @@ async function authorizeAnalyze(req: Request, body: Body): Promise<AuthzResult> 
     };
   }
 
-  const auth = req.headers.get("Authorization");
-  if (!auth) return { ok: false, status: 401, error: "Authentication required" };
-  const workspaceId = req.headers.get("x-workspace-id");
-  if (!workspaceId) return { ok: false, status: 400, error: "x-workspace-id is required" };
-
-  const userClient = createClient(SUPABASE_URL, ANON_KEY, {
-    global: { headers: { Authorization: auth } },
-  });
-  const { data } = await userClient.auth.getUser();
-  if (!data?.user) return { ok: false, status: 401, error: "Invalid auth token" };
-
-  const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
-  const { data: member } = await admin
-    .from("workspace_members")
-    .select("user_id")
-    .eq("workspace_id", workspaceId)
-    .eq("user_id", data.user.id)
-    .eq("status", "active")
-    .maybeSingle();
-
-  return member
-    ? { ok: true, workspaceId, creditCost: CREDIT_COST.submittedPhoto }
-    : { ok: false, status: 403, error: "Not a workspace member" };
+  return { ok: false, status: 400, error: "capturedMediaId is required" };
 }
 
-async function resolveImageUrlForModel(capturedMediaId?: string, fallbackUrl?: string): Promise<string> {
-  if (!capturedMediaId) {
-    if (fallbackUrl && /^https?:\/\//.test(fallbackUrl)) return fallbackUrl;
-    throw new Error("No usable image URL provided");
-  }
-
+async function resolveImageUrlForModel(capturedMediaId: string): Promise<string> {
   const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
   const { data: media, error } = await admin
     .from("captured_media")
-    .select("id, file_url, storage_provider, original_storage_key, processed_storage_key, preview_storage_key")
+    .select("id, storage_provider, original_storage_key, processed_storage_key, preview_storage_key")
     .eq("id", capturedMediaId)
     .maybeSingle();
   if (error) throw error;
   if (!media) throw new Error("Captured media not found");
 
   const m: any = media;
-  if (m.storage_provider === "r2") {
-    const key = m.original_storage_key ?? m.processed_storage_key ?? m.preview_storage_key;
-    if (!key) throw new Error("R2 media has no object key");
-    return presignR2Url({ key, method: "GET", expiresSeconds: 900 });
+  if (m.storage_provider !== "r2") {
+    throw new Error("Captured media is not stored in R2");
   }
 
-  const filePath = m.file_url as string | null;
-  if (!filePath) throw new Error("Media has no file_url");
-  if (filePath.startsWith("http")) return filePath;
-  const projectUrl = SUPABASE_URL.replace(/\/$/, "");
-  return `${projectUrl}/storage/v1/object/public/submission-media/${filePath}`;
+  const key = m.original_storage_key ?? m.processed_storage_key ?? m.preview_storage_key;
+  if (!key) throw new Error("R2 media has no object key");
+  return presignR2Url({ key, method: "GET", expiresSeconds: 900 });
 }
 
 async function isFirstPassFollowup(
