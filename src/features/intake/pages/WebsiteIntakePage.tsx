@@ -89,7 +89,7 @@ export default function WebsiteIntakePage() {
         <span className="inline-flex items-center gap-1.5 rounded-full border bg-background/70 px-3 py-1 text-xs font-medium text-muted-foreground shadow-sm">
           <Globe2 className="h-3.5 w-3.5 text-primary" /> Website Intake
         </span>
-        <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="mt-4 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
               Turn website inquiries into photo-ready requests.
@@ -97,6 +97,9 @@ export default function WebsiteIntakePage() {
             <p className="mt-2 max-w-2xl text-base leading-7 text-muted-foreground">
               Use the hosted form or connect your existing website form. Either way, PhotoBrief can pick the right template, create the customer, and send the photo request automatically.
             </p>
+            <div className="mt-5 hidden max-w-xl overflow-hidden rounded-[1.75rem] border bg-background/60 p-2 shadow-sm backdrop-blur md:block">
+              <img src="/marketing/website-intake-flow.svg" alt="Website Intake automation flow" className="w-full rounded-[1.25rem]" loading="lazy" />
+            </div>
           </div>
           <div className="flex items-center gap-2 rounded-full border bg-background/70 px-3 py-2 shadow-sm">
             <Switch

@@ -8,9 +8,9 @@ export const SceneClosing: React.FC = () => {
   const { fps } = useVideoConfig();
 
   const benefits = [
-    { icon: "🚚", title: "Fewer wasted site visits", desc: "Know what you're walking into" },
-    { icon: "⚡", title: "Faster, more accurate quotes", desc: "Complete info from day one" },
-    { icon: "😊", title: "Happier customers", desc: "Guided, not confused" },
+    { icon: "🌐", title: "Website leads become briefs", desc: "Intake starts the moment someone asks" },
+    { icon: "⚡", title: "Faster, clearer decisions", desc: "Photos and answers arrive organized" },
+    { icon: "😊", title: "Customers stay guided", desc: "Simple capture, not confusing back-and-forth" },
   ];
 
   // Benefits cards stagger in
@@ -49,9 +49,9 @@ export const SceneClosing: React.FC = () => {
             fontFamily: FONT.display,
             lineHeight: 1.1,
             margin: "0 auto",
-            maxWidth: 700,
+            maxWidth: 760,
           }}>
-            Better photos. Better quotes. Fewer truck rolls.
+            Website leads become photo-ready job briefs.
           </h2>
         </div>
 
@@ -102,7 +102,7 @@ export const SceneClosing: React.FC = () => {
             marginTop: 8,
             fontStyle: "italic",
           }}>
-            See the job before you send the crew.
+            Turn the first contact into the right photos.
           </div>
         </div>
 
@@ -112,7 +112,7 @@ export const SceneClosing: React.FC = () => {
           opacity: interpolate(logoSpring, [0, 1], [0, 1]),
         }}>
           <Img
-            src={staticFile("brand/photobrief-horizontal.png")}
+            src={staticFile("brand/photobrief-horizontal.svg")}
             style={{
               height: 48,
               width: "auto",

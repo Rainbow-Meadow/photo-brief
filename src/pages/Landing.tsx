@@ -143,20 +143,30 @@ export default function LandingPage() {
                 <li className="flex gap-2"><CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-success" /> Send the customer straight into a five-minute mobile capture flow.</li>
               </ul>
             </div>
-            <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-1">
-              {automationCards.map((card) => (
-                <article key={card.title} className="glass-strong magnetic-card rounded-[1.75rem] p-5">
-                  <div className="flex items-start gap-3">
-                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                      <card.icon className="h-5 w-5" />
-                    </span>
-                    <div>
-                      <h3 className="text-base font-semibold text-foreground">{card.title}</h3>
-                      <p className="mt-1 text-sm leading-6 text-muted-foreground">{card.body}</p>
+            <div className="space-y-4">
+              <div className="glass-strong magnetic-card overflow-hidden rounded-[1.75rem] p-3">
+                <img
+                  src="/marketing/website-intake-flow.svg"
+                  alt="Website lead routed into a mobile PhotoBrief request and job-ready brief"
+                  loading="lazy"
+                  className="w-full rounded-[1.25rem]"
+                />
+              </div>
+              <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-1">
+                {automationCards.map((card) => (
+                  <article key={card.title} className="glass-strong magnetic-card rounded-[1.75rem] p-5">
+                    <div className="flex items-start gap-3">
+                      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                        <card.icon className="h-5 w-5" />
+                      </span>
+                      <div>
+                        <h3 className="text-base font-semibold text-foreground">{card.title}</h3>
+                        <p className="mt-1 text-sm leading-6 text-muted-foreground">{card.body}</p>
+                      </div>
                     </div>
-                  </div>
-                </article>
-              ))}
+                  </article>
+                ))}
+              </div>
             </div>
           </div>
         </div>

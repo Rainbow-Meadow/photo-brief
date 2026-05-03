@@ -10,7 +10,7 @@ export const DashboardShell: React.FC<{
   const navItems = [
     { icon: "⊞", label: "Dashboard" },
     { icon: "📋", label: "Requests" },
-    { icon: "📐", label: "Guides" },
+    { icon: "🌐", label: "Intake" },
     { icon: "⚙", label: "Settings" },
   ];
 
@@ -29,8 +29,8 @@ export const DashboardShell: React.FC<{
       >
         <div style={{ padding: "0 20px", marginBottom: 32, display: "flex", alignItems: "center", gap: 10 }}>
           <Img
-            src={staticFile("brand/photobrief-horizontal.png")}
-            style={{ height: 32, width: "auto", filter: "brightness(10)" }}
+            src={staticFile("brand/photobrief-horizontal-light.svg")}
+            style={{ height: 32, width: "auto" }}
           />
         </div>
         {navItems.map((item) => (
@@ -64,8 +64,8 @@ export const DashboardShell: React.FC<{
             color: COLORS.sidebarMuted,
           }}
         >
-          <div style={{ fontWeight: 600, color: COLORS.sidebarFg, marginBottom: 4 }}>Apex Roofing</div>
-          <div>Pro Plan</div>
+          <div style={{ fontWeight: 600, color: COLORS.sidebarFg, marginBottom: 4 }}>Apex Services</div>
+          <div>Visual intake workspace</div>
         </div>
       </div>
 
@@ -98,7 +98,7 @@ export const DashboardShell: React.FC<{
               fontWeight: 600,
             }}
           >
-            AR
+            AS
           </div>
         </div>
 
