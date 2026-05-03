@@ -15,21 +15,21 @@ const verdictMeta: Record<
   pass: {
     Icon: CheckCircle2,
     label: "Looks good",
-    detail: "We'll use this photo.",
+    detail: "This photo should work well.",
     tone: "text-success",
     bg: "bg-success/10",
   },
   warn: {
     Icon: AlertTriangle,
-    label: "This might work",
-    detail: "A clearer photo would help, but you can keep it if needed.",
+    label: "Usable, but could be clearer",
+    detail: "You can keep this photo, or retake it if you want to make it easier to review.",
     tone: "text-warning",
     bg: "bg-warning/10",
   },
   fail: {
     Icon: XCircle,
-    label: "Let's retake this one",
-    detail: "The business may not be able to use this photo as-is.",
+    label: "This probably needs a retake",
+    detail: "The business may not be able to use this photo unless it is clearer.",
     tone: "text-destructive",
     bg: "bg-destructive/10",
   },
@@ -51,7 +51,7 @@ export function AIFeedbackMessage({ photo, verdict }: AIFeedbackMessageProps) {
       <div className={cn("flex items-center gap-2 text-sm font-semibold", tone)}>
         <Icon className="h-4 w-4" /> {label}
       </div>
-      <p className="mt-1 text-sm text-foreground/80">
+      <p className="mt-1 text-sm leading-6 text-foreground/80">
         {issue?.message || detail}
       </p>
     </div>
