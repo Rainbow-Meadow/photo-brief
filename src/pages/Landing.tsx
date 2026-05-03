@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { ArrowRight, PlayCircle, Sparkles } from "lucide-react";
+import { ArrowRight, CheckCircle2, Globe2, PlayCircle, Route, Sparkles, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
@@ -27,7 +27,7 @@ const SOFTWARE_APP_JSONLD: Record<string, unknown> = {
   applicationCategory: "BusinessApplication",
   operatingSystem: "Web",
   description:
-    "PhotoBrief turns customer photos into business-ready briefs. Chat-guided capture, AI quality checks, clean summaries.",
+    "PhotoBrief turns website inquiries and customer photo requests into complete photo-ready job briefs with hosted intake forms, routing rules, mobile capture, AI photo checks, and summaries.",
   offers: [
     { "@type": "Offer", name: "Free", price: "0", priceCurrency: "USD" },
     { "@type": "Offer", name: "Starter", price: "19", priceCurrency: "USD" },
@@ -36,135 +36,148 @@ const SOFTWARE_APP_JSONLD: Record<string, unknown> = {
     { "@type": "Offer", name: "Business", price: "199", priceCurrency: "USD" },
   ],
   featureList: [
-    "AI-guided photo capture",
-    "Per-photo quality checks (blur, lighting, framing, distance)",
-    "Missing-shot follow-up",
-    "Auto-generated brief and summary",
-    "Branded recipient links",
-    "REST API and outbound webhooks (Business plan)",
+    "Hosted website intake forms",
+    "Universal website form webhook",
+    "Template routing rules and AI routing fallback",
+    "Mobile-first customer photo capture",
+    "Simple AI photo quality checks",
+    "Business-ready photo brief summaries",
+    "Customer profiles and saved templates",
   ],
 };
 
+const automationCards = [
+  {
+    icon: Globe2,
+    title: "Hosted intake link",
+    body: "Put a clean PhotoBrief form behind your website's Get a quote or Request service button.",
+  },
+  {
+    icon: Route,
+    title: "Template routing",
+    body: "Map request types like repair, quote, return, or roof to the exact photo template you want sent.",
+  },
+  {
+    icon: Sparkles,
+    title: "AI fallback",
+    body: "If a rule does not match, PhotoBrief can choose from your configured rules only when it is confident.",
+  },
+];
 
 export default function LandingPage() {
   const [demoOpen, setDemoOpen] = useState(false);
-  const jsonLd = useMemo(
-    () => [
-      SOFTWARE_APP_JSONLD,
-      buildHowToJsonLd("Send a PhotoBrief request", howItWorksSteps),
-      buildFaqJsonLd(faqItems),
-    ],
-    [],
-  );
+  const jsonLd = useMemo(() => [SOFTWARE_APP_JSONLD, buildHowToJsonLd("Automate a website lead into a PhotoBrief request", howItWorksSteps), buildFaqJsonLd(faqItems)], []);
   return (
     <>
       <PageMeta
-        title="PhotoBrief | Send a link. Get a complete brief."
-        description="PhotoBrief turns customer photos into AI-guided, business-ready submissions with quality checks, missing-shot prompts, and clean summaries."
+        title="PhotoBrief | Turn website leads into photo-ready job briefs"
+        description="PhotoBrief automates small business intake: website lead capture, template routing, mobile photo requests, AI photo checks, and clean job summaries."
         canonicalPath="/"
         jsonLd={jsonLd}
         breadcrumbs={[{ name: "Home", path: "/" }]}
       />
 
-      {/* HERO ---------------------------------------------------------------- */}
       <section className="relative overflow-hidden">
-        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[640px] bg-ambient-sky" />
-        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 bg-ambient-mesh opacity-70" />
+        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[720px] bg-ambient-future" />
+        <div aria-hidden className="future-grid pointer-events-none absolute inset-0 -z-10 opacity-70" />
 
         <div className="relative mx-auto max-w-7xl px-4 pt-14 sm:px-6 sm:pt-20 lg:px-8 lg:pt-24">
-          <div className="mx-auto max-w-3xl text-center animate-lift-in">
+          <div className="mx-auto max-w-4xl text-center animate-lift-in">
             <span className="inline-flex items-center gap-1.5 rounded-full glass px-3 py-1 text-xs font-medium text-foreground/80">
-              <Sparkles className="h-3 w-3 text-primary" /> AI-guided visual intake
+              <Sparkles className="h-3 w-3 text-primary" /> The visual intake layer for small business
             </span>
             <h1 className="text-display mt-6 text-foreground">
-              Stop chasing customers
+              Turn website leads into
               <br />
-              for{" "}
-              <span className="bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
-                photos
-              </span>
-              .
+              <span className="text-gradient-future">photo-ready briefs.</span>
             </h1>
-            <p className="mx-auto mt-5 max-w-xl text-base text-muted-foreground sm:text-lg">
-              Send one branded link. Your customer follows step-by-step prompts on their phone.
-              You get a complete, AI-checked brief — photos, details, and a plain-English summary —
-              ready to quote, dispatch, or file.
+            <p className="mx-auto mt-6 max-w-2xl text-base leading-7 text-muted-foreground sm:text-xl">
+              PhotoBrief replaces “can you send a few photos?” with an automatic flow: customer inquiry, right template, guided mobile photos, AI checks, and a clean summary your team can act on.
             </p>
-            <p className="mx-auto mt-3 max-w-xl text-sm text-muted-foreground/90">
-              Built for roofing, HVAC, plumbing, electrical, junk removal, claims, and property management.
+            <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-muted-foreground/90">
+              Built for service businesses, property teams, claims, warranty, returns, and anyone who needs customer photos before making a decision.
             </p>
 
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <Button asChild size="xl" className="rounded-full">
-                <NavLink
-                  to={signupCtaTarget()}
-                  onClick={() => trackEvent("cta_click", { location: "hero", label: "primary" })}
-                >
+                <NavLink to={signupCtaTarget()} onClick={() => trackEvent("cta_click", { location: "hero", label: "primary" })}>
                   {signupCtaLabel()} <ArrowRight className="ml-1 h-4 w-4" />
                 </NavLink>
               </Button>
-              <Button
-                size="xl"
-                variant="glass"
-                className="rounded-full"
-                onClick={() => {
-                  trackEvent("cta_click", { location: "hero", label: "watch_demo" });
-                  setDemoOpen(true);
-                }}
-              >
+              <Button size="xl" variant="glass" className="rounded-full" onClick={() => { trackEvent("cta_click", { location: "hero", label: "watch_demo" }); setDemoOpen(true); }}>
                 <PlayCircle className="mr-1 h-5 w-5" /> Watch 60-sec demo
               </Button>
             </div>
-            <p className="mt-4 text-xs text-muted-foreground">
-              No app for your customer · Works on any phone · Invite-only beta
-            </p>
-            <a
-              href="#first-pass-guarantee"
-              onClick={() => trackEvent("cta_click", { location: "hero", label: "first_pass_pill" })}
-              className="mt-3 inline-flex items-center gap-1.5 rounded-full glass px-3 py-1 text-xs font-medium text-primary transition hover:bg-primary/10"
-            >
-              ✓ First-pass guarantee — follow-up photos are free
-            </a>
+            <div className="mt-5 flex flex-wrap justify-center gap-2 text-xs text-muted-foreground">
+              <span className="rounded-full glass px-3 py-1">No app for customers</span>
+              <span className="rounded-full glass px-3 py-1">Hosted intake or webhook</span>
+              <span className="rounded-full glass px-3 py-1">Photo-credit pricing</span>
+            </div>
           </div>
 
           <div className="mt-14 sm:mt-16 lg:mt-20">
             <HeroGlassStory />
           </div>
-
           <div className="h-16 sm:h-20" />
         </div>
       </section>
 
-      {/* TRUST STRIP --------------------------------------------------------- */}
       <TrustLogosStrip />
-
-      {/* HOW IT WORKS -------------------------------------------------------- */}
       <HowItWorksSteps />
 
-      {/* STATS BAND ---------------------------------------------------------- */}
+      <section className="relative overflow-hidden bg-background">
+        <div aria-hidden className="pointer-events-none absolute inset-0 bg-ambient-future opacity-70" />
+        <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+          <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+            <div>
+              <p className="text-eyebrow">Website Intake</p>
+              <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground sm:text-5xl">
+                The button your website has always needed.
+              </h2>
+              <p className="mt-4 text-base leading-7 text-muted-foreground sm:text-lg">
+                Most small-business sites collect vague contact forms, then the real work happens over email. PhotoBrief lets that first request start the actual intake workflow automatically.
+              </p>
+              <ul className="mt-6 space-y-3 text-sm text-muted-foreground">
+                <li className="flex gap-2"><CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-success" /> Add a hosted intake link to your website.</li>
+                <li className="flex gap-2"><CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-success" /> Route each request type to a saved photo template.</li>
+                <li className="flex gap-2"><CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-success" /> Send the customer straight into a five-minute mobile capture flow.</li>
+              </ul>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-1">
+              {automationCards.map((card) => (
+                <article key={card.title} className="glass-strong magnetic-card rounded-[1.75rem] p-5">
+                  <div className="flex items-start gap-3">
+                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                      <card.icon className="h-5 w-5" />
+                    </span>
+                    <div>
+                      <h3 className="text-base font-semibold text-foreground">{card.title}</h3>
+                      <p className="mt-1 text-sm leading-6 text-muted-foreground">{card.body}</p>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       <StatsBand />
-
-      {/* FIRST-PASS GUARANTEE ----------------------------------------------- */}
       <FirstPassGuaranteeBand />
-
-      {/* INDUSTRIES ---------------------------------------------------------- */}
       <IndustryGrid />
-
-      {/* TESTIMONIALS -------------------------------------------------------- */}
       <TestimonialsRow />
 
-      {/* PRICING ------------------------------------------------------------- */}
       <section id="pricing" className="relative overflow-hidden border-t bg-background">
         <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[420px] bg-ambient-sky opacity-70" />
         <div className="relative mx-auto max-w-3xl px-4 pt-16 text-center sm:px-6 sm:pt-20 lg:px-8">
-          <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            Simple, transparent pricing
+          <h2 className="text-3xl font-semibold tracking-tight text-foreground sm:text-5xl">
+            Pricing built around the photos you actually collect.
           </h2>
           <p className="mt-4 text-base text-muted-foreground sm:text-lg">
-            Start free. Automate intake with Pro. Coordinate your team with Business. Scale with Enterprise.
+            Plans scale by monthly photos, customer branding, PhotoBrief branding, storage term, and team size.
           </p>
           <p className="mt-2 text-sm text-primary">
-            Backed by our 30-day money-back guarantee. Cancel anytime.
+            First-pass follow-up photos requested by PhotoBrief do not consume credits.
           </p>
         </div>
         <div className="relative px-4 pb-16 pt-12 sm:px-6 lg:px-8 lg:pb-20">
@@ -172,24 +185,15 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* FINAL CTA ----------------------------------------------------------- */}
       <FinalCtaCard />
 
-      {/* DEMO VIDEO MODAL ---------------------------------------------------- */}
       <Dialog open={demoOpen} onOpenChange={setDemoOpen}>
-        <DialogContent className="max-w-4xl border-0 bg-black p-0 sm:rounded-xl overflow-hidden">
+        <DialogContent className="max-w-4xl overflow-hidden border-0 bg-black p-0 sm:rounded-xl">
           <VisuallyHidden>
             <DialogTitle>PhotoBrief product demo</DialogTitle>
-            <DialogDescription>A short walkthrough of the PhotoBrief request flow.</DialogDescription>
+            <DialogDescription>A short walkthrough of the PhotoBrief intake and request flow.</DialogDescription>
           </VisuallyHidden>
-          <video
-            key={demoOpen ? "open" : "closed"}
-            src="/marketing/photobrief-demo.mp4"
-            controls
-            autoPlay
-            playsInline
-            className="h-auto w-full"
-          />
+          <video key={demoOpen ? "open" : "closed"} src="/marketing/photobrief-demo.mp4" controls autoPlay playsInline className="h-auto w-full" />
         </DialogContent>
       </Dialog>
     </>
