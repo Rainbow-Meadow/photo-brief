@@ -3,6 +3,7 @@
 // Supabase workspace data; there is no built-in template fallback.
 
 import { getTokenClient } from "@/integrations/supabase/tokenClient";
+import { STANDARD_PHOTO_ISSUE_TYPES } from "@/config/photoAssessment";
 import { guidesService } from "@/services/guidesService";
 import type { PhotoGuide } from "@/types/photobrief";
 
@@ -51,7 +52,7 @@ const PREVIEW_GUIDE: PhotoGuide = {
       instructions: "Take a clear, well-lit photo of the item or issue.",
       shotType: "photo",
       overlayType: "full_area",
-      aiChecks: ["blur", "low_light", "wrong_shot"],
+      aiChecks: [...STANDARD_PHOTO_ISSUE_TYPES],
       required: true,
     },
   ],

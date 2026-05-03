@@ -2,6 +2,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { getTokenClient } from "@/integrations/supabase/tokenClient";
 import { createBlankDraft } from "@/types/requestDraft";
 import type { RequestDraft } from "@/types/requestDraft";
+import { photoIssueCustomerCopy, photoIssueLabel, STANDARD_PHOTO_ISSUE_TYPES } from "@/config/photoAssessment";
 import type {
   AICheckSeverity,
   AICheckType,
@@ -122,33 +123,47 @@ function worstOf(severities: AICheckSeverity[]): AICheckSeverity {
   return "pass";
 }
 
-function feedbackHeadline(verdict: AICheckSeverity, stepTitle: string): string {
-  if (verdict === "pass") return "Sharp & well lit";
-  if (verdict === "warn") return `${stepTitle}: usable, but could be better`;
-  if (verdict === "unavailable") return `${stepTitle}: AI review unavailable`;
-  return `${stepTitle}: needs a retake`;
+function feedbackHeadline(verdict: AICheckSeverity): string {
+  if (verdict === "pass") return "Looks good";
+  if (verdict === "warn") return "Usable, but could be clearer";
+  if (verdict === "unavailable") return "Photo received";
+  return "This probably needs a retake";
 }
 
-function aiUnavailableResult(stepTitle: string): AnalyzeMediaOutput {
-  const checks = [
-    {
-      type: "manual_review" as unknown as AICheckType,
-      severity: "unavailable" as AICheckSeverity,
-      message: "AI review is temporarily unavailable — you can still submit this photo.",
-      label: "AI review unavailable",
-    },
-  ];
+function feedbackDetail(verdict: AICheckSeverity, checks: { type: AICheckType; message: string }[]): string {
+  const first = checks[0];
+  if (first) return first.message;
+  if (verdict === "pass") return "This photo should work well.";
+  if (verdict === "warn") return "You can keep this photo, or retake it if you want to make it easier to review.";
+  if (verdict === "unavailable") return "We couldn't check it automatically, but you can continue.";
+  return "The business may not be able to use this photo unless it is clearer.";
+}
+
+function aiUnavailableResult(): AnalyzeMediaOutput {
+  const checks: AnalyzeMediaOutput["checks"] = [];
   const feedback: ShotAIFeedback = {
     severity: "unavailable",
-    headline: `${stepTitle}: AI review unavailable`,
-    detail: "You can submit it as-is or retake.",
-    checks: checks.map((c) => ({ type: c.type, severity: c.severity, label: c.label })),
+    headline: "Photo received",
+    detail: "We couldn't check it automatically, but you can continue.",
+    checks: [],
   };
   return {
-    checks: checks.map(({ type, severity, message }) => ({ type, severity, message })),
+    checks,
     verdict: "unavailable",
     feedback,
     unavailable: true,
+  };
+}
+
+function normalizeClientCheck(c: any): { type: AICheckType; severity: AICheckSeverity; message: string; label: string } | null {
+  const type = c?.type as AICheckType;
+  if (!STANDARD_PHOTO_ISSUE_TYPES.includes(type)) return null;
+  const severity = c?.severity === "fail" ? "fail" : "warn";
+  return {
+    type,
+    severity,
+    message: photoIssueCustomerCopy(type) ?? c?.message ?? photoIssueLabel(type),
+    label: c?.label ?? photoIssueLabel(type),
   };
 }
 
@@ -165,7 +180,6 @@ export const aiService = {
           instruction: step.instructions,
           captureType: step.shotType,
           overlayType: step.overlayType,
-          aiChecks: step.aiChecks,
           recipientNote,
           capturedMediaId,
           priority: escalate ? "admin_review" : undefined,
@@ -173,28 +187,23 @@ export const aiService = {
         },
       });
       if (error) throw error;
-      if (data && data.error === "ai_unavailable") return aiUnavailableResult(step.title);
+      if (data && data.error === "ai_unavailable") return aiUnavailableResult();
 
       if (data && data.checks) {
-        const checks = data.checks.map((c: any) => ({
-          type: c.type as AICheckType,
-          severity: c.severity as AICheckSeverity,
-          message: c.message,
-          label: c.label,
-        }));
-        const verdict = (data.verdict ?? worstOf(checks.map((c: any) => c.severity))) as AICheckSeverity;
+        const checks = data.checks.map(normalizeClientCheck).filter(Boolean) as Array<{ type: AICheckType; severity: AICheckSeverity; message: string; label: string }>;
+        const verdict = (data.verdict ?? worstOf(checks.map((c) => c.severity))) as AICheckSeverity;
         const feedback: ShotAIFeedback = {
           severity: verdict,
-          headline: data.headline ?? feedbackHeadline(verdict, step.title),
-          detail: data.detail ?? checks.find((c: any) => c.severity !== "pass")?.message,
-          checks: checks.map((c: any) => ({ type: c.type, severity: c.severity, label: c.label })),
+          headline: data.headline ?? feedbackHeadline(verdict),
+          detail: data.detail ?? feedbackDetail(verdict, checks),
+          checks: checks.map((c) => ({ type: c.type, severity: c.severity, label: c.label, message: c.message })),
           confidence: typeof data.confidence === "number" ? data.confidence : undefined,
           flags: Array.isArray(data.flags) ? data.flags : undefined,
           businessSummary: data.businessSummary ?? undefined,
           suggestedNextAction: data.suggestedNextAction ?? undefined,
         };
         return {
-          checks: checks.map(({ type, severity, message }: any) => ({ type, severity, message })),
+          checks: checks.map(({ type, severity, message }) => ({ type, severity, message })),
           verdict,
           feedback,
         };
@@ -203,7 +212,7 @@ export const aiService = {
       console.warn("ai-analyze-media failed", e);
     }
 
-    return aiUnavailableResult(step.title);
+    return aiUnavailableResult();
   },
 
   async generateSubmissionSummary(input: SubmissionSummaryInput): Promise<SubmissionSummaryOutput> {
@@ -287,22 +296,12 @@ export const aiService = {
 
   async extractDetails(input: ExtractDetailsInput): Promise<ExtractDetailsOutput> {
     await wait(500);
-    const details: ExtractedDetail[] = [];
-    for (const shot of input.shots) {
-      if (shot.missing) continue;
-      const detected = (shot.feedback?.checks ?? []).filter((c) => c.severity === "pass").map((c) => c.type);
-      if (detected.includes("label_detected")) {
-        details.push({ label: "Model number", value: `MDL-${Math.floor(1000 + Math.random() * 9000)}`, confidence: 0.86, sourceStepId: shot.stepId });
-      }
-      if (detected.includes("serial_detected")) {
-        details.push({ label: "Serial number", value: `SN${Math.floor(100000 + Math.random() * 900000)}`, confidence: 0.79, sourceStepId: shot.stepId });
-      }
-      if (detected.includes("receipt_detected")) {
-        details.push({ label: "Purchase date", value: "2024-08-12", confidence: 0.71, sourceStepId: shot.stepId });
-      }
-    }
-    if (details.length === 0) details.push({ label: "Request type", value: input.guideName, confidence: 1 });
-    return { details };
+    const failed = input.shots.flatMap((shot) =>
+      (shot.feedback?.checks ?? [])
+        .filter((c) => c.severity === "fail")
+        .map((c) => ({ label: c.label, value: shot.title, confidence: shot.feedback?.confidence ?? 0.5, sourceStepId: shot.stepId })),
+    );
+    return { details: failed.length ? failed : [{ label: "Request type", value: input.guideName, confidence: 1 }] };
   },
 
   async generateGuideFromPrompt(input: GenerateGuideInput): Promise<GenerateGuideOutput> {
@@ -402,7 +401,7 @@ function normalizeGeneratedSteps(steps: any[] | undefined, prompt: string): Guid
     instructions: s.instructions ?? s.instruction ?? "Take a clear, well-lit photo.",
     shotType: (s.shotType ?? "photo") as any,
     overlayType: (s.overlayType ?? "full_area") as any,
-    aiChecks: s.aiChecks ?? ["blur", "low_light", "wrong_shot"],
+    aiChecks: ["wrong_subject", "too_dark", "blurry", "label_unreadable", "glare", "too_close_or_cropped"],
     required: s.required ?? true,
   }));
 }
@@ -428,7 +427,7 @@ function fallbackStepsFromPrompt(prompt: string): GuideStep[] {
       instructions: "Take a clear, well-lit photo that shows the full item, area, or issue.",
       shotType: "photo",
       overlayType: "full_area",
-      aiChecks: ["blur", "low_light", "wrong_shot"],
+      aiChecks: ["wrong_subject", "too_dark", "blurry", "label_unreadable", "glare", "too_close_or_cropped"],
       required: true,
     },
   ];
