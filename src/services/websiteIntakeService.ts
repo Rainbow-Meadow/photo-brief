@@ -1,5 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 
+const db = supabase as any;
+
 export type IntakeField = "name" | "email" | "phone" | "request_type" | "message" | "address";
 export type IntakeRuleMatchType = "exact" | "contains";
 
@@ -95,7 +97,7 @@ function toEvent(row: any): IntakeEvent {
 
 export const websiteIntakeService = {
   async getOrCreateSource(workspaceId: string): Promise<IntakeSource> {
-    const { data: existing, error: readErr } = await supabase
+    const { data: existing, error: readErr } = await db
       .from("intake_sources")
       .select("*")
       .eq("workspace_id", workspaceId)
@@ -106,9 +108,9 @@ export const websiteIntakeService = {
     if (existing) return toSource(existing);
 
     const { data: user } = await supabase.auth.getUser();
-    const { data, error } = await supabase
+    const { data, error } = await db
       .from("intake_sources")
-      .insert({ workspace_id: workspaceId, name: "Website intake", created_by: user.user?.id ?? null } as any)
+      .insert({ workspace_id: workspaceId, name: "Website intake", created_by: user.user?.id ?? null })
       .select("*")
       .single();
     if (error) throw error;
@@ -125,9 +127,9 @@ export const websiteIntakeService = {
     if (patch.defaultGuideId !== undefined) payload.default_guide_id = patch.defaultGuideId;
     if (patch.introMessage !== undefined) payload.intro_message = patch.introMessage;
     if (patch.autoSend !== undefined) payload.auto_send = patch.autoSend;
-    const { data, error } = await supabase
+    const { data, error } = await db
       .from("intake_sources")
-      .update(payload as any)
+      .update(payload)
       .eq("id", id)
       .select("*")
       .single();
@@ -136,7 +138,7 @@ export const websiteIntakeService = {
   },
 
   async listMappings(sourceId: string): Promise<IntakeFieldMapping[]> {
-    const { data, error } = await supabase
+    const { data, error } = await db
       .from("intake_field_mappings")
       .select("*")
       .eq("intake_source_id", sourceId)
@@ -146,18 +148,18 @@ export const websiteIntakeService = {
   },
 
   async saveMappings(sourceId: string, mappings: Array<{ photobriefField: IntakeField; externalField: string }>): Promise<void> {
-    const { error: delErr } = await supabase.from("intake_field_mappings").delete().eq("intake_source_id", sourceId);
+    const { error: delErr } = await db.from("intake_field_mappings").delete().eq("intake_source_id", sourceId);
     if (delErr) throw delErr;
     const rows = mappings
       .filter((m) => m.externalField.trim())
       .map((m) => ({ intake_source_id: sourceId, photobrief_field: m.photobriefField, external_field: m.externalField.trim() }));
     if (rows.length === 0) return;
-    const { error } = await supabase.from("intake_field_mappings").insert(rows as any);
+    const { error } = await db.from("intake_field_mappings").insert(rows);
     if (error) throw error;
   },
 
   async listRules(sourceId: string): Promise<IntakeTemplateRule[]> {
-    const { data, error } = await supabase
+    const { data, error } = await db
       .from("intake_template_rules")
       .select("*")
       .eq("intake_source_id", sourceId)
@@ -167,7 +169,7 @@ export const websiteIntakeService = {
   },
 
   async createRule(input: { sourceId: string; matchType: IntakeRuleMatchType; matchValue: string; guideId: string; priority: number }): Promise<IntakeTemplateRule> {
-    const { data, error } = await supabase
+    const { data, error } = await db
       .from("intake_template_rules")
       .insert({
         intake_source_id: input.sourceId,
@@ -176,7 +178,7 @@ export const websiteIntakeService = {
         guide_id: input.guideId,
         priority: input.priority,
         enabled: true,
-      } as any)
+      })
       .select("*")
       .single();
     if (error) throw error;
@@ -184,12 +186,12 @@ export const websiteIntakeService = {
   },
 
   async deleteRule(id: string): Promise<void> {
-    const { error } = await supabase.from("intake_template_rules").delete().eq("id", id);
+    const { error } = await db.from("intake_template_rules").delete().eq("id", id);
     if (error) throw error;
   },
 
   async listEvents(workspaceId: string): Promise<IntakeEvent[]> {
-    const { data, error } = await supabase
+    const { data, error } = await db
       .from("intake_events")
       .select("*")
       .eq("workspace_id", workspaceId)
