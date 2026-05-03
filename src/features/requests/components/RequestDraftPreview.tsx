@@ -1,15 +1,8 @@
-
-import { Camera, MessageCircleQuestion, Pencil, Save, Link as LinkIcon, ShieldCheck } from "lucide-react";
+import { Camera, MessageCircleQuestion, Save, Link as LinkIcon, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { GeneratedStepEditor } from "./GeneratedStepEditor";
 import { GeneratedQuestionEditor } from "./GeneratedQuestionEditor";
 import type { RequestDraft } from "@/types/requestDraft";
@@ -22,11 +15,7 @@ interface RequestDraftPreviewProps {
   isSaving?: boolean;
 }
 
-/**
- * Editable preview of the AI- or template-generated request.
- * Lets the business tweak title, intro, completion, steps, questions,
- * and recipient before creating the request link.
- */
+/** Simple editable review surface before sending/saving a request. */
 export function RequestDraftPreview({
   draft,
   onChange,
@@ -41,151 +30,131 @@ export function RequestDraftPreview({
 
   return (
     <div className="space-y-4">
-      <div className="rounded-xl border bg-card p-4">
-        <div className="flex items-start justify-between gap-2">
-          <div className="flex-1 space-y-1">
-            <Label className="text-xs uppercase tracking-wide text-muted-foreground">
-              Request title
-            </Label>
+      <section className="overflow-hidden rounded-[2rem] border border-border/70 bg-card/90 p-4 shadow-[0_24px_70px_-45px_hsl(222_47%_11%/0.5)] backdrop-blur sm:p-5">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Ready to edit</p>
+            <h2 className="mt-1 text-2xl font-semibold tracking-tight text-foreground">{draft.title || "Photo request"}</h2>
+          </div>
+          <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+            {draft.steps.length} photo{draft.steps.length === 1 ? "" : "s"}
+          </span>
+        </div>
+
+        <div className="mt-5 space-y-3">
+          <div className="space-y-1.5">
+            <Label className="text-sm font-medium text-foreground">Request name</Label>
             <Input
               value={draft.title}
               onChange={(e) => set("title", e.target.value)}
-              className="text-base font-semibold"
+              className="h-12 rounded-2xl bg-background/80 text-base font-medium"
+              placeholder="e.g. Junk removal quote"
             />
           </div>
-        </div>
 
-        <div className="mt-4 grid gap-3 sm:grid-cols-2">
-          <div className="space-y-1">
-            <Label className="text-xs text-muted-foreground">Recipient name</Label>
-            <Input
-              value={draft.recipientName}
-              onChange={(e) => set("recipientName", e.target.value)}
-              placeholder="e.g. Maria Alvarez"
-            />
-          </div>
-          <div className="space-y-1">
-            <Label className="text-xs text-muted-foreground">Email or phone</Label>
-            <Input
-              value={draft.recipientContact}
-              onChange={(e) => set("recipientContact", e.target.value)}
-              placeholder="email@example.com or 555-0142"
-            />
-          </div>
-        </div>
-      </div>
-
-      <Accordion
-        type="multiple"
-        defaultValue={["messages", "steps", "questions"]}
-        className="space-y-3"
-      >
-        <AccordionItem value="messages" className="rounded-xl border bg-card px-4">
-          <AccordionTrigger className="text-sm font-medium">
-            <span className="flex items-center gap-2">
-              <Pencil className="h-4 w-4" /> Intro & completion messages
-            </span>
-          </AccordionTrigger>
-          <AccordionContent className="space-y-3 pb-4">
-            <div className="space-y-1">
-              <Label className="text-xs text-muted-foreground">Intro message</Label>
-              <Textarea
-                value={draft.introMessage}
-                onChange={(e) => set("introMessage", e.target.value)}
-                rows={3}
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div className="space-y-1.5">
+              <Label className="text-sm font-medium text-foreground">Customer name</Label>
+              <Input
+                value={draft.recipientName}
+                onChange={(e) => set("recipientName", e.target.value)}
+                placeholder="e.g. Maria Alvarez"
+                className="h-12 rounded-2xl bg-background/80"
               />
             </div>
-            <div className="space-y-1">
-              <Label className="text-xs text-muted-foreground">Completion message</Label>
-              <Textarea
-                value={draft.completionMessage}
-                onChange={(e) => set("completionMessage", e.target.value)}
-                rows={2}
+            <div className="space-y-1.5">
+              <Label className="text-sm font-medium text-foreground">Email or phone</Label>
+              <Input
+                value={draft.recipientContact}
+                onChange={(e) => set("recipientContact", e.target.value)}
+                placeholder="email@example.com or 555-0142"
+                className="h-12 rounded-2xl bg-background/80"
               />
             </div>
-          </AccordionContent>
-        </AccordionItem>
+          </div>
+        </div>
+      </section>
 
-        <AccordionItem value="steps" className="rounded-xl border bg-card px-4">
-          <AccordionTrigger className="text-sm font-medium">
-            <span className="flex items-center gap-2">
-              <Camera className="h-4 w-4" /> Capture steps ({draft.steps.length})
-            </span>
-          </AccordionTrigger>
-          <AccordionContent className="pb-4">
-            <GeneratedStepEditor
-              steps={draft.steps}
-              onChange={(steps) => set("steps", steps)}
-            />
-          </AccordionContent>
-        </AccordionItem>
+      <section className="rounded-[2rem] border border-border/70 bg-card/90 p-4 shadow-sm backdrop-blur sm:p-5">
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <div>
+            <h3 className="flex items-center gap-2 text-lg font-semibold tracking-tight text-foreground">
+              <Camera className="h-5 w-5 text-primary" /> Photos to collect
+            </h3>
+            <p className="mt-1 text-sm text-muted-foreground">Each item becomes one simple customer step.</p>
+          </div>
+        </div>
+        <GeneratedStepEditor
+          steps={draft.steps}
+          onChange={(steps) => set("steps", steps)}
+        />
+      </section>
 
-        <AccordionItem value="questions" className="rounded-xl border bg-card px-4">
-          <AccordionTrigger className="text-sm font-medium">
-            <span className="flex items-center gap-2">
-              <MessageCircleQuestion className="h-4 w-4" /> Context questions ({draft.questions.length})
-            </span>
-          </AccordionTrigger>
-          <AccordionContent className="pb-4">
-            <GeneratedQuestionEditor
-              questions={draft.questions}
-              onChange={(questions) => set("questions", questions)}
-            />
-          </AccordionContent>
-        </AccordionItem>
+      <section className="rounded-[2rem] border border-border/70 bg-card/90 p-4 shadow-sm backdrop-blur sm:p-5">
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <div>
+            <h3 className="flex items-center gap-2 text-lg font-semibold tracking-tight text-foreground">
+              <MessageCircleQuestion className="h-5 w-5 text-primary" /> Questions
+            </h3>
+            <p className="mt-1 text-sm text-muted-foreground">Only ask what photos can’t answer.</p>
+          </div>
+        </div>
+        <GeneratedQuestionEditor
+          questions={draft.questions}
+          onChange={(questions) => set("questions", questions)}
+        />
+      </section>
 
-        <AccordionItem value="readiness" className="rounded-xl border bg-card px-4">
-          <AccordionTrigger className="text-sm font-medium">
-            <span className="flex items-center gap-2">
-              <ShieldCheck className="h-4 w-4" /> Readiness rules
-              <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
-                Preview
-              </span>
-            </span>
-          </AccordionTrigger>
-          <AccordionContent className="pb-4">
-            <p className="mb-3 text-xs text-muted-foreground">
-              Used to compute the readiness score on each submission. Editable in a later phase.
-            </p>
-            <ul className="space-y-2">
-              {draft.readinessRules.map((r) => (
-                <li
-                  key={r.id}
-                  className="flex items-center justify-between rounded-md border bg-background px-3 py-2 text-xs"
-                >
-                  <span className="text-foreground">{r.description}</span>
-                  <span className="font-medium text-muted-foreground">{r.weight}%</span>
-                </li>
-              ))}
-            </ul>
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
+      <section className="rounded-[2rem] border border-border/70 bg-card/90 p-4 shadow-sm backdrop-blur sm:p-5">
+        <div className="space-y-1.5">
+          <Label className="text-sm font-medium text-foreground">Opening message</Label>
+          <Textarea
+            value={draft.introMessage}
+            onChange={(e) => set("introMessage", e.target.value)}
+            rows={3}
+            className="rounded-2xl bg-background/80 text-sm"
+          />
+        </div>
+        <div className="mt-3 space-y-1.5">
+          <Label className="text-sm font-medium text-foreground">Done message</Label>
+          <Textarea
+            value={draft.completionMessage}
+            onChange={(e) => set("completionMessage", e.target.value)}
+            rows={2}
+            className="rounded-2xl bg-background/80 text-sm"
+          />
+        </div>
+      </section>
 
-      <div className="flex flex-wrap items-center gap-2 pt-1">
-        <Button
-          className="gap-1.5"
-          onClick={onCreate}
-          disabled={!canCreate || isSaving}
-        >
-          <LinkIcon className="h-4 w-4" /> Create Request Link
-        </Button>
-        <Button
-          variant="outline"
-          className="gap-1.5"
-          onClick={() => {
-            document.getElementById("draft-preview-top")?.scrollIntoView({ behavior: "smooth" });
-          }}
-        >
-          <Pencil className="h-4 w-4" /> Edit Steps
-        </Button>
-        <Button variant="outline" className="gap-1.5" onClick={onSaveAsGuide}>
-          <Save className="h-4 w-4" /> Save as Guide
-        </Button>
+      <div className="sticky bottom-4 z-20 rounded-[1.5rem] border border-border/70 bg-background/85 p-3 shadow-[0_20px_70px_-35px_hsl(222_47%_11%/0.6)] backdrop-blur-xl">
+        <div className="grid gap-2 sm:grid-cols-[1fr_auto_auto]">
+          <Button
+            size="lg"
+            className="h-14 rounded-2xl text-base shadow-glow"
+            onClick={onCreate}
+            disabled={!canCreate || isSaving}
+          >
+            <Send className="mr-2 h-5 w-5" />
+            {isSaving ? "Creating…" : "Create request"}
+          </Button>
+          <Button variant="outline" size="lg" className="h-14 rounded-2xl bg-background/70" onClick={onSaveAsGuide}>
+            <Save className="mr-2 h-4 w-4" /> Save template
+          </Button>
+          <Button
+            variant="ghost"
+            size="lg"
+            className="h-14 rounded-2xl"
+            onClick={() => {
+              document.getElementById("draft-preview-top")?.scrollIntoView({ behavior: "smooth" });
+            }}
+          >
+            <LinkIcon className="mr-2 h-4 w-4" /> Top
+          </Button>
+        </div>
         {!canCreate && (
-          <span className="text-xs text-muted-foreground">
-            Add a recipient name and email/phone to enable the link.
-          </span>
+          <p className="mt-2 text-center text-xs text-muted-foreground">
+            Add a customer name and email/phone to create the request.
+          </p>
         )}
       </div>
     </div>
