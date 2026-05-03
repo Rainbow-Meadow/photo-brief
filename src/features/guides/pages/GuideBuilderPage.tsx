@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Save } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Save, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 import { PageHeader } from "@/components/layout/PageHeader";
@@ -16,7 +16,7 @@ import { UpgradePromptCard } from "@/components/shared/UpgradePromptCard";
 import { guidesService } from "@/services/guidesService";
 import { useCurrentWorkspace } from "@/hooks/useCurrentWorkspace";
 import { usePlan } from "@/hooks/usePlan";
-import { draftFromGuide } from "@/types/requestDraft";
+import { createBlankDraft, draftFromGuide } from "@/types/requestDraft";
 import type { ContextQuestion, GuideStep } from "@/types/photobrief";
 import { trackEvent } from "@/lib/analytics";
 
@@ -26,13 +26,6 @@ interface BuilderState {
   steps: GuideStep[];
   questions: ContextQuestion[];
 }
-
-const EMPTY_STATE: BuilderState = {
-  name: "",
-  description: "",
-  steps: [],
-  questions: [],
-};
 
 export default function GuideBuilderPage() {
   const navigate = useNavigate();
@@ -44,9 +37,20 @@ export default function GuideBuilderPage() {
   const qc = useQueryClient();
 
   const initial = useMemo<BuilderState>(() => {
-    if (!seedTemplateId) return EMPTY_STATE;
+    if (!seedTemplateId) {
+      const blank = createBlankDraft();
+      return {
+        name: "",
+        description: "",
+        steps: blank.steps,
+        questions: [],
+      };
+    }
     const seed = guidesService.getById(seedTemplateId);
-    if (!seed) return EMPTY_STATE;
+    if (!seed) {
+      const blank = createBlankDraft();
+      return { name: "", description: "", steps: blank.steps, questions: [] };
+    }
     const draft = draftFromGuide(seed);
     return {
       name: `${seed.name} (custom)`,
@@ -61,16 +65,19 @@ export default function GuideBuilderPage() {
     setState(initial);
   }, [initial]);
 
+  const validSteps = state.steps.filter((s) => s.title.trim());
+  const canSave = state.name.trim().length > 0 && validSteps.length > 0;
+
   const save = useMutation({
     mutationFn: async () => {
       if (!workspace?.id) throw new Error("Workspace not loaded");
-      if (!state.name.trim()) throw new Error("Give your guide a name");
-      if (state.steps.length === 0) throw new Error("Add at least one capture step");
+      if (!state.name.trim()) throw new Error("Name your template");
+      if (validSteps.length === 0) throw new Error("Add at least one photo prompt");
       return guidesService.saveDraftAsGuide({
         workspaceId: workspace.id,
         draft: {
           draftId: `builder_${Date.now()}`,
-          source: "template",
+          source: "blank",
           baseGuideId: seedTemplateId ?? undefined,
           title: state.name.trim(),
           introMessage: "",
@@ -85,15 +92,15 @@ export default function GuideBuilderPage() {
     },
     onSuccess: (guide) => {
       qc.invalidateQueries({ queryKey: ["workspace-guides"] });
-      trackEvent("guide_created", { guide_id: guide.id, steps: guide.steps?.length ?? 0, questions: guide.questions?.length ?? 0 });
-      toast.success("Guide saved", { description: `"${guide.name}" is ready to use.` });
+      trackEvent("template_created", { guide_id: guide.id, steps: guide.steps?.length ?? 0, questions: guide.questions?.length ?? 0 });
+      toast.success("Template saved", { description: `"${guide.name}" is ready to use.` });
       navigate(`/guides/${guide.id}`);
     },
     onError: (err: any) => {
-      const message = err?.message ?? "Couldn't save guide";
+      const message = err?.message ?? "Couldn't save template";
       if (message.includes("PLAN_FEATURE_LOCKED")) {
-        toast.error("Custom guides require Pro", {
-          description: "Upgrade your plan to create your own guides.",
+        toast.error("Custom templates require Pro", {
+          description: "Upgrade your plan to create your own templates.",
         });
       } else {
         toast.error(message);
@@ -105,11 +112,11 @@ export default function GuideBuilderPage() {
     return (
       <div className="space-y-6">
         <PageHeader
-          title="New guide"
-          description="Custom guides are available on Pro and higher plans."
+          title="New template"
+          description="Custom templates are available on Pro and higher plans."
           actions={
             <Button variant="ghost" size="sm" onClick={() => navigate("/guides")} className="gap-1.5">
-              <ArrowLeft className="h-4 w-4" /> Back to library
+              <ArrowLeft className="h-4 w-4" /> Back
             </Button>
           }
         />
@@ -121,8 +128,8 @@ export default function GuideBuilderPage() {
   return (
     <div className="space-y-6 pb-12">
       <PageHeader
-        title="New guide"
-        description="Define the photo steps and context questions you'll send to recipients."
+        title="New template"
+        description="Start with one photo. Add more only if the request needs them."
         actions={
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="sm" onClick={() => navigate("/guides")} className="gap-1.5">
@@ -131,32 +138,62 @@ export default function GuideBuilderPage() {
             <Button
               size="sm"
               className="gap-1.5"
-              disabled={save.isPending}
+              disabled={save.isPending || !canSave}
               onClick={() => save.mutate()}
             >
               <Save className="h-4 w-4" />
-              {save.isPending ? "Saving…" : "Save guide"}
+              {save.isPending ? "Saving…" : "Save template"}
             </Button>
           </div>
         }
       />
 
-      <section className="rounded-xl border bg-card p-5 shadow-elev-sm">
+      <section className="rounded-3xl border bg-card p-5 shadow-elev-sm sm:p-6">
+        <div className="grid gap-5 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+          <div>
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+              <Sparkles className="h-3.5 w-3.5" /> Additive setup
+            </span>
+            <h2 className="mt-4 text-xl font-semibold tracking-tight text-foreground">
+              Build only what this template needs.
+            </h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              No giant library. No nested configuration. Name the template, write the first photo prompt,
+              then add more photos or questions only if they make the request clearer.
+            </p>
+          </div>
+          <ol className="grid gap-2 text-sm">
+            {[
+              "Name the template in your words.",
+              "Add the exact photos customers should send.",
+              "Save it and reuse it for future requests.",
+            ].map((item, idx) => (
+              <li key={item} className="flex items-center gap-2 rounded-xl bg-muted/50 px-3 py-2">
+                <CheckCircle2 className="h-4 w-4 text-success" />
+                <span className="text-foreground">{idx + 1}. {item}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      <section className="rounded-2xl border bg-card p-5 shadow-elev-sm">
         <div className="grid gap-4">
           <div className="space-y-1.5">
-            <Label htmlFor="guide-name">Guide name</Label>
+            <Label htmlFor="guide-name">Template name</Label>
             <Input
               id="guide-name"
-              placeholder="e.g. Water heater quote intake"
+              placeholder="e.g. Water heater quote photos"
               value={state.name}
               onChange={(e) => setState({ ...state, name: e.target.value })}
+              className="h-11 text-base font-medium"
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="guide-desc">Description (optional)</Label>
+            <Label htmlFor="guide-desc">Team note (optional)</Label>
             <Textarea
               id="guide-desc"
-              placeholder="What this guide is used for. Visible to your team only."
+              placeholder="When should your team use this template? Customers won't see this."
               value={state.description}
               onChange={(e) => setState({ ...state, description: e.target.value })}
               rows={2}
@@ -165,13 +202,13 @@ export default function GuideBuilderPage() {
         </div>
       </section>
 
-      <section className="space-y-3 rounded-xl border bg-card p-5 shadow-elev-sm">
+      <section className="space-y-3 rounded-2xl border bg-card p-5 shadow-elev-sm">
         <header>
           <h2 className="text-sm font-semibold text-foreground">
-            Capture steps ({state.steps.length})
+            Photos to request
           </h2>
           <p className="text-xs text-muted-foreground">
-            Each step becomes one photo prompt for the recipient.
+            Each item becomes one customer-facing photo prompt. Start with one and keep adding only what matters.
           </p>
         </header>
         <GeneratedStepEditor
@@ -180,13 +217,13 @@ export default function GuideBuilderPage() {
         />
       </section>
 
-      <section className="space-y-3 rounded-xl border bg-card p-5 shadow-elev-sm">
+      <section className="space-y-3 rounded-2xl border bg-card p-5 shadow-elev-sm">
         <header>
           <h2 className="text-sm font-semibold text-foreground">
-            Context questions ({state.questions.length})
+            Questions to ask, if any
           </h2>
           <p className="text-xs text-muted-foreground">
-            Optional short prompts asked alongside the photos.
+            Optional. Use questions for context photos cannot capture, like timing, measurements, or preferences.
           </p>
         </header>
         <GeneratedQuestionEditor
