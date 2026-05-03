@@ -1,6 +1,9 @@
 name: Provision R2 Media Bucket
 
 on:
+  pull_request:
+    branches:
+      - main
   push:
     branches:
       - feature/r2-submission-media
