@@ -1,12 +1,11 @@
-// ai-analyze-media — runs vision checks on a single captured photo.
-// Routed via the centralized aiModelRouter (task: photo_quality_check, vision tier).
+// ai-analyze-media — runs one simple, standardized assessment on a captured photo.
 //
-// Authorization and credit checks happen BEFORE model calls. Public recipient
-// traffic must include x-request-token tied to the captured_media row's request;
-// workspace traffic must be an active member of the media's workspace.
+// The AI should only answer:
+// 1. Does this photo show what the requested step asked for?
+// 2. Are there obvious issues that stop the business from using it?
 //
-// Relaunch context: AI analysis runs only on stored R2 captured_media rows.
-// Clients provide capturedMediaId, not arbitrary external image URLs.
+// Keep the taxonomy intentionally small and stable. Do not let the model invent
+// new issue types or long diagnostic checklists.
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
 import {
@@ -32,40 +31,89 @@ const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
 
-const SYSTEM = `You are PhotoBrief's image-quality reviewer. You judge whether a single recipient-submitted photo is usable for a small-business workflow (quotes, claims, intake, support).
+const PHOTO_ISSUES = [
+  "wrong_subject",
+  "too_dark",
+  "blurry",
+  "label_unreadable",
+  "glare",
+  "too_close_or_cropped",
+] as const;
 
-Reply ONLY by calling the analyze_photo function. Be specific, kind, and actionable. Severity guidance:
-- "pass": photo clearly satisfies the step's intent and quality is acceptable.
-- "warn": usable but a better retake would help (slight blur, glare, framing).
-- "fail": not usable for this step (wrong subject, too dark, blurry, missing key element).
+type PhotoIssueType = typeof PHOTO_ISSUES[number];
+type Severity = "pass" | "warn" | "fail";
 
-Per-check messages should be one short sentence the recipient could act on.
+const ISSUE_LABELS: Record<PhotoIssueType, string> = {
+  wrong_subject: "Requested subject not visible",
+  too_dark: "Too dark",
+  blurry: "Blurry",
+  label_unreadable: "Label unreadable",
+  glare: "Glare",
+  too_close_or_cropped: "Too close or cropped",
+};
 
-Always populate the envelope:
-  result.verdict, result.headline, result.checks[], result.extractedDetails[]
-  confidence (0..1), flags[] (e.g. low_light, ambiguous_label, low_confidence),
-  recipient_feedback (kind sentence to recipient),
-  business_summary (one short sentence for the business owner),
-  missing_items[] (required items still missing — usually empty for a single photo),
-  suggested_next_action (e.g. "Retake closer", "Accept as-is").`;
+const ISSUE_CUSTOMER_COPY: Record<PhotoIssueType, string> = {
+  wrong_subject: "Make sure the requested item or area is clearly in the photo.",
+  too_dark: "Try taking it somewhere brighter or turn on a light.",
+  blurry: "Hold the camera steady and retake it if the details are hard to see.",
+  label_unreadable: "Move closer so the label or text can be read.",
+  glare: "Tilt the camera slightly to avoid glare or reflections.",
+  too_close_or_cropped: "Back up a little so the full requested subject is visible.",
+};
+
+const ISSUE_DEFAULT_SEVERITY: Record<PhotoIssueType, Severity> = {
+  wrong_subject: "fail",
+  too_dark: "fail",
+  blurry: "warn",
+  label_unreadable: "fail",
+  glare: "warn",
+  too_close_or_cropped: "warn",
+};
+
+const SYSTEM = `You are PhotoBrief's simple photo checker.
+
+Your job is intentionally narrow:
+1. Compare the uploaded photo to the requested photo step.
+2. Decide whether the photo is usable.
+3. If there is a problem, choose only from this standard issue list:
+   - wrong_subject: the requested item/area/subject is missing or unclear
+   - too_dark: the image is too dark to use
+   - blurry: the image is blurry or shaky
+   - label_unreadable: needed text, label, serial number, or document is unreadable
+   - glare: glare/reflection blocks important details
+   - too_close_or_cropped: the subject is cut off or too zoomed in
+
+Do not invent other issue types.
+Do not create a long checklist.
+Do not fail a photo for minor imperfections if the business can still use it.
+
+Severity guidance:
+- pass: the requested subject is visible and the photo is usable.
+- warn: the photo is probably usable, but a clearer retake would help.
+- fail: the business likely cannot use the photo as-is.
+
+Use the requested step title and instructions as the source of truth for what the photo should show.
+
+Call analyze_photo exactly once.`;
 
 const TOOL = buildEnvelopeTool({
   name: "analyze_photo",
-  description: "Return per-check verdicts and reviewer feedback for one photo.",
+  description: "Return a simple standardized assessment for one requested photo.",
   resultSchema: {
     type: "object",
     properties: {
       verdict: { type: "string", enum: ["pass", "warn", "fail"] },
-      headline: { type: "string", description: "Short reviewer headline (max 60 chars)." },
-      detail: { type: "string", description: "Optional 1-sentence detail." },
+      headline: { type: "string", description: "Short customer-safe headline." },
+      detail: { type: "string", description: "One short customer-safe sentence." },
       checks: {
         type: "array",
+        description: "Only include actual issues found. Return [] when verdict is pass.",
         items: {
           type: "object",
           properties: {
-            type: { type: "string" },
-            severity: { type: "string", enum: ["pass", "warn", "fail"] },
-            message: { type: "string" },
+            type: { type: "string", enum: PHOTO_ISSUES as unknown as string[] },
+            severity: { type: "string", enum: ["warn", "fail"] },
+            message: { type: "string", description: "One short actionable customer sentence." },
           },
           required: ["type", "severity", "message"],
           additionalProperties: false,
@@ -73,6 +121,7 @@ const TOOL = buildEnvelopeTool({
       },
       extractedDetails: {
         type: "array",
+        description: "Optional visible values, only when clearly readable.",
         items: {
           type: "object",
           properties: {
@@ -99,7 +148,6 @@ interface Body {
   aiChecks?: string[];
   recipientNote?: string;
   capturedMediaId?: string;
-  /** When "admin_review", router escalates to the premium tier first. */
   priority?: "admin_review";
 }
 
@@ -136,14 +184,13 @@ Deno.serve(async (req) => {
   }
 
   const userPrompt = [
-    `Step: ${body.stepTitle}`,
-    body.instruction ? `Instruction to recipient: ${body.instruction}` : null,
+    `Requested photo: ${body.stepTitle}`,
+    body.instruction ? `Instructions: ${body.instruction}` : null,
     body.captureType ? `Expected capture type: ${body.captureType}` : null,
-    body.overlayType ? `Framing overlay shown: ${body.overlayType}` : null,
-    body.aiChecks?.length ? `AI checks to evaluate: ${body.aiChecks.join(", ")}` : null,
+    body.overlayType ? `Framing guidance: ${body.overlayType}` : null,
     body.recipientNote ? `Recipient note: ${body.recipientNote}` : null,
     "",
-    "Evaluate the photo and call analyze_photo.",
+    "Assess this uploaded photo against the requested photo. Return only standard issue categories if there is a problem.",
   ].filter(Boolean).join("\n");
 
   try {
@@ -165,32 +212,29 @@ Deno.serve(async (req) => {
     });
 
     const inner = (envelope.result ?? {}) as {
-      verdict?: "pass" | "warn" | "fail";
+      verdict?: Severity;
       headline?: string;
       detail?: string;
-      checks?: Array<{ type: string; severity: string; message: string; label?: string }>;
+      checks?: Array<{ type: string; severity: string; message: string }>;
       extractedDetails?: Array<{ label: string; value: string; confidence?: number }>;
     };
 
-    const enrichedChecks = (inner.checks ?? []).map((c) => ({
-      type: c.type,
-      severity: c.severity,
-      label: c.label ?? prettyLabel(c.type),
-      message: c.message,
-    }));
+    const checks = normalizeChecks(inner.checks ?? []);
+    const verdict = normalizeVerdict(inner.verdict, checks);
+    const primaryIssue = checks[0];
 
     const result = {
-      verdict: inner.verdict ?? "pass",
-      headline: inner.headline ?? "Photo received",
-      detail: inner.detail,
-      checks: enrichedChecks,
-      extractedDetails: inner.extractedDetails ?? [],
+      verdict,
+      headline: inner.headline ?? headlineFor(verdict),
+      detail: inner.detail ?? (primaryIssue ? primaryIssue.message : detailFor(verdict)),
+      checks,
+      extractedDetails: Array.isArray(inner.extractedDetails) ? inner.extractedDetails : [],
       confidence: envelope.confidence,
-      flags: envelope.flags,
-      recipientFeedback: envelope.recipient_feedback,
-      businessSummary: envelope.business_summary,
-      missingItems: envelope.missing_items,
-      suggestedNextAction: envelope.suggested_next_action,
+      flags: checks.map((c) => c.type),
+      recipientFeedback: primaryIssue?.message ?? detailFor(verdict),
+      businessSummary: businessSummaryFor(verdict, checks),
+      missingItems: verdict === "fail" ? checks.map((c) => c.label) : [],
+      suggestedNextAction: suggestedNextActionFor(verdict),
       model,
       attempts,
     };
@@ -206,15 +250,83 @@ Deno.serve(async (req) => {
   }
 });
 
+function normalizeChecks(raw: Array<{ type: string; severity: string; message?: string }>) {
+  const seen = new Set<string>();
+  const normalized: Array<{ type: PhotoIssueType; severity: Severity; label: string; message: string }> = [];
+
+  for (const item of raw) {
+    const mappedType = mapIssueType(item.type);
+    if (!mappedType || seen.has(mappedType)) continue;
+    seen.add(mappedType);
+
+    const defaultSeverity = ISSUE_DEFAULT_SEVERITY[mappedType];
+    const severity: Severity = item.severity === "fail" || item.severity === "warn" ? item.severity : defaultSeverity;
+    normalized.push({
+      type: mappedType,
+      severity,
+      label: ISSUE_LABELS[mappedType],
+      message: sanitizeMessage(item.message) ?? ISSUE_CUSTOMER_COPY[mappedType],
+    });
+  }
+
+  return normalized.slice(0, 2);
+}
+
+function mapIssueType(type: string): PhotoIssueType | null {
+  if ((PHOTO_ISSUES as readonly string[]).includes(type)) return type as PhotoIssueType;
+  const aliases: Record<string, PhotoIssueType> = {
+    blur: "blurry",
+    low_light: "too_dark",
+    unreadable_text: "label_unreadable",
+    wrong_shot: "wrong_subject",
+    cropped_subject: "too_close_or_cropped",
+    missing_required_item: "wrong_subject",
+  };
+  return aliases[type] ?? null;
+}
+
+function sanitizeMessage(message?: string) {
+  if (!message) return undefined;
+  const trimmed = message.trim();
+  if (!trimmed) return undefined;
+  return trimmed.length > 120 ? `${trimmed.slice(0, 117)}…` : trimmed;
+}
+
+function normalizeVerdict(verdict: Severity | undefined, checks: Array<{ severity: Severity }>): Severity {
+  if (checks.some((c) => c.severity === "fail")) return "fail";
+  if (checks.some((c) => c.severity === "warn")) return "warn";
+  return verdict === "warn" || verdict === "fail" ? verdict : "pass";
+}
+
+function headlineFor(verdict: Severity) {
+  if (verdict === "pass") return "Looks good";
+  if (verdict === "warn") return "Usable, but could be clearer";
+  return "This probably needs a retake";
+}
+
+function detailFor(verdict: Severity) {
+  if (verdict === "pass") return "This photo should work well.";
+  if (verdict === "warn") return "You can keep this photo, or retake it if you want to make it easier to review.";
+  return "The business may not be able to use this photo unless it is clearer.";
+}
+
+function businessSummaryFor(verdict: Severity, checks: Array<{ label: string }>) {
+  if (verdict === "pass") return "Photo appears usable for the requested shot.";
+  if (checks.length === 0) return "Photo may need review.";
+  return `Photo flagged for: ${checks.map((c) => c.label).join(", ")}.`;
+}
+
+function suggestedNextActionFor(verdict: Severity) {
+  if (verdict === "pass") return "Continue";
+  if (verdict === "warn") return "Keep or retake";
+  return "Retake recommended";
+}
+
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
-}
-
-function prettyLabel(type: string) {
-  return type.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 async function authorizeAnalyze(req: Request, body: Body): Promise<AuthzResult> {
