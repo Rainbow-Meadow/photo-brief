@@ -1,25 +1,25 @@
-import { Camera, Globe2, Route, Sparkles } from "lucide-react";
+import { Camera, ClipboardList, Link2, Sparkles } from "lucide-react";
 
 export const howItWorksSteps = [
   {
-    icon: Globe2,
-    title: "A customer asks for help",
-    body: "Use PhotoBrief's hosted intake form or connect your existing website form with a webhook.",
+    icon: Link2,
+    title: "Create a request or automate the lead",
+    body: "Start with a manual PhotoBrief link, or use Pro Website Intake to trigger the same flow from your website.",
   },
   {
-    icon: Route,
-    title: "PhotoBrief chooses the right template",
-    body: "Your routing rules and fallback template turn each lead into the right photo request automatically.",
+    icon: ClipboardList,
+    title: "Choose what photos you need",
+    body: "Use a saved template or build a simple request so customers see one clear photo step at a time.",
   },
   {
     icon: Camera,
     title: "The customer captures what matters",
-    body: "They open a simple mobile workflow, take one photo at a time, and get clear feedback before sending.",
+    body: "They open a mobile workflow, take the requested photos, and get simple feedback before submitting.",
   },
   {
     icon: Sparkles,
-    title: "You get a job-ready brief",
-    body: "Photos, answers, AI checks, and a plain-English summary arrive organized and ready to quote, dispatch, or review.",
+    title: "You get a ready-to-use brief",
+    body: "Photos, answers, AI checks, and a plain-English summary arrive organized for quoting, dispatch, review, or documentation.",
   },
 ];
 
@@ -32,10 +32,10 @@ export function HowItWorksSteps() {
         <div className="mx-auto max-w-3xl text-center">
           <p className="text-eyebrow">How it works</p>
           <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground sm:text-5xl">
-            From messy website lead to complete visual brief.
+            From photo chase to complete visual brief.
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-base text-muted-foreground sm:text-lg">
-            The old way is contact form → email → "can you send a few photos?" PhotoBrief makes the first contact do the work.
+            The old way is contact form → email → “can you send photos?” PhotoBrief makes the request itself do the work.
           </p>
         </div>
 

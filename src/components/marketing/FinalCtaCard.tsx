@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { ArrowRight, Globe2, Zap } from "lucide-react";
+import { ArrowRight, Link2, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/analytics";
 import { signupCtaTarget, signupCtaLabel, INVITE_ONLY_BETA } from "@/config/access";
@@ -13,13 +13,13 @@ export function FinalCtaCard() {
         <div className="glass-strong relative overflow-hidden rounded-[2.5rem] p-8 text-center shadow-glass-lg sm:p-14">
           <span aria-hidden className="animate-sheen pointer-events-none absolute inset-y-0 left-0 w-1/4 -skew-x-12 bg-white/35 blur-xl" />
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[1.4rem] bg-gradient-primary text-primary-foreground shadow-glow">
-            <Globe2 className="h-7 w-7" />
+            <Link2 className="h-7 w-7" />
           </div>
           <h2 className="mx-auto mt-6 max-w-3xl text-3xl font-semibold tracking-tight text-foreground sm:text-5xl">
-            Put one better intake button on your website.
+            Send the next customer one better link.
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
-            Your next website lead can become a photo-ready job brief automatically — customer info, right template, guided photos, and a clean summary for your team.
+            Start with one manual PhotoBrief request. When it saves the back-and-forth, Pro turns your website into the same guided intake flow automatically.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Button asChild size="xl" className="rounded-full">
