@@ -113,7 +113,7 @@ export function useChatFlow({
       if (promoteAcceptedCapture && photo.capturedMediaId && photo.originalFile) {
         try {
           const promoted = await promoteAcceptedCapture(photo);
-          if (promoted?.processedStorageKey) {
+          if (promoted && promoted.processedStorageKey) {
             photo.storagePath = promoted.processedStorageKey;
           }
         } catch (e) {
