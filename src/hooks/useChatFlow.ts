@@ -143,7 +143,6 @@ export function useChatFlow({
       };
       append({ id: nextId(), kind: "user_photo", photo });
 
-      let mediaUrlForAi: string | undefined;
       if (uploadCapture && file) {
         try {
           const ext = (file.type.split("/")[1] ?? "jpg").replace("jpeg", "jpg") || "jpg";
@@ -151,21 +150,22 @@ export function useChatFlow({
           photo.publicUrl = up.publicUrl;
           photo.storagePath = up.storagePath;
           photo.capturedMediaId = up.capturedMediaId;
-          mediaUrlForAi = up.publicUrl;
         } catch (e) {
           console.warn("upload failed before AI check", e);
         }
-      } else if (/^https?:\/\//.test(previewUrl)) {
-        mediaUrlForAi = previewUrl;
       }
 
-      const { checks, verdict } = await aiService.analyzeCapturedMedia({
-        step,
-        mediaUrl: mediaUrlForAi,
-        capturedMediaId: photo.capturedMediaId,
-        recipientNote: undefined,
-        requestToken,
-      });
+      const { checks, verdict } = photo.capturedMediaId
+        ? await aiService.analyzeCapturedMedia({
+            step,
+            capturedMediaId: photo.capturedMediaId,
+            recipientNote: undefined,
+            requestToken,
+          })
+        : {
+            checks: [],
+            verdict: "unavailable" as AICheckSeverity,
+          };
       photo.checks = checks.map((c) => ({ id: c.type, severity: c.severity, message: c.message }));
       append({ id: nextId(), kind: "ai_feedback", photo, verdict: verdict as AICheckSeverity });
 

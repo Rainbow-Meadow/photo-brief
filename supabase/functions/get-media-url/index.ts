@@ -1,6 +1,6 @@
 // get-media-url
-// Returns a short-lived signed read URL for a captured media object. Supports
-// R2-backed rows first and legacy Supabase Storage fallback.
+// Returns a short-lived signed read URL for a captured media object.
+// Relaunch context: R2 is the only supported submission media object store.
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
 import { presignR2Url } from "../_shared/r2Storage.ts";
@@ -38,7 +38,7 @@ Deno.serve(async (req) => {
   const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
   const { data: media, error } = await admin
     .from("captured_media")
-    .select("id, file_url, storage_provider, original_storage_key, processed_storage_key, preview_storage_key, thumbnail_storage_key, submissions!inner(id, workspace_id, request_id)")
+    .select("id, storage_provider, original_storage_key, processed_storage_key, preview_storage_key, thumbnail_storage_key, submissions!inner(id, workspace_id, request_id)")
     .eq("id", body.capturedMediaId)
     .maybeSingle();
   if (error) return json({ error: error.message }, 500);
@@ -52,20 +52,14 @@ Deno.serve(async (req) => {
   const authorized = await authorizeRequest(req, workspaceId, requestId);
   if (!authorized.ok) return json({ error: authorized.error }, authorized.status);
 
-  if ((media as any).storage_provider === "r2") {
-    const key = selectR2Key(media as any, body.variant ?? "full");
-    if (!key) return json({ error: "No media object is available yet" }, 404);
-    const url = await presignR2Url({ key, method: "GET", expiresSeconds: 900 });
-    return json({ url, key, storageProvider: "r2", expiresIn: 900 });
+  if ((media as any).storage_provider !== "r2") {
+    return json({ error: "Captured media is not stored in R2" }, 409);
   }
 
-  const fileUrl = (media as any).file_url as string | null;
-  if (!fileUrl) return json({ error: "No legacy media URL found" }, 404);
-  if (fileUrl.startsWith("http")) {
-    return json({ url: fileUrl, key: fileUrl, storageProvider: "supabase" });
-  }
-  const { data } = admin.storage.from("submission-media").getPublicUrl(fileUrl);
-  return json({ url: data.publicUrl, key: fileUrl, storageProvider: "supabase" });
+  const key = selectR2Key(media as any, body.variant ?? "full");
+  if (!key) return json({ error: "No R2 media object is available yet" }, 404);
+  const url = await presignR2Url({ key, method: "GET", expiresSeconds: 900 });
+  return json({ url, key, storageProvider: "r2", expiresIn: 900 });
 });
 
 function selectR2Key(media: any, variant: Variant) {
