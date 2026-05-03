@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { Camera, Clock, MessageCircleQuestion, ArrowRight, Sparkles, BookOpen } from "lucide-react";
+import { Camera, Clock, MessageCircleQuestion, ArrowRight, Sparkles, Plus } from "lucide-react";
 import { BrandMark } from "@/components/layout/BrandMark";
 import { Button } from "@/components/ui/button";
 import { getStarterForIndustry } from "@/config/industryGuideMap";
@@ -30,50 +30,64 @@ export function StarterRequestCard({ industry }: Props) {
   }
 
   return (
-    <section className="surface-card-elevated relative isolate overflow-hidden p-6 sm:p-10">
+    <section className="relative isolate overflow-hidden rounded-[2rem] border border-border/70 bg-card/75 p-6 shadow-[0_30px_80px_-45px_hsl(222_47%_11%/0.45)] backdrop-blur sm:p-10">
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-64 bg-ambient-sky opacity-70"
+        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-72 bg-ambient-sky opacity-80"
       />
-      <div className="mx-auto max-w-2xl">
-        <div className="mb-5">
-          <BrandMark variant="mark" tone="color" size={36} />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -right-24 -top-24 -z-10 h-72 w-72 rounded-full bg-primary/10 blur-3xl"
+      />
+      <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+        <div>
+          <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-background/80 shadow-sm ring-1 ring-border/70">
+            <BrandMark variant="mark" tone="color" size={34} />
+          </div>
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-background/70 px-3 py-1 text-xs font-medium text-muted-foreground shadow-sm">
+            <Sparkles className="h-3 w-3 text-primary" /> Start here
+          </span>
+
+          <h2 className="mt-5 max-w-xl text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+            Send your first photo request in under a minute.
+          </h2>
+          <p className="mt-3 max-w-lg text-sm text-muted-foreground sm:text-base">
+            Use a simple starter tailored to your business, or build a custom request from one photo prompt.
+          </p>
+
+          <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+            <Button size="lg" className="gap-1.5 rounded-full px-6" onClick={handleUse}>
+              Use starter request <ArrowRight className="h-4 w-4" />
+            </Button>
+            <Button asChild size="lg" variant="outline" className="gap-1.5 rounded-full px-6 bg-background/60">
+              <NavLink to="/requests/new">
+                <Plus className="h-4 w-4" /> Start from scratch
+              </NavLink>
+            </Button>
+          </div>
         </div>
-        <span className="inline-flex items-center gap-1.5 rounded-full glass px-3 py-1 text-xs font-medium text-foreground/80">
-          <Sparkles className="h-3 w-3 text-primary" /> Recommended for your business
-        </span>
 
-        <h2 className="mt-4 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
-          {starter.starterTitle}
-        </h2>
-        <p className="mt-2 max-w-md text-sm text-muted-foreground">
-          {starter.starterDescription}
-        </p>
+        <div className="rounded-[1.5rem] border border-border/70 bg-background/70 p-4 shadow-sm backdrop-blur sm:p-5">
+          <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">
+            Suggested starter
+          </p>
+          <h3 className="mt-2 text-lg font-semibold text-foreground">{starter.starterTitle}</h3>
+          <p className="mt-2 text-sm text-muted-foreground">{starter.starterDescription}</p>
 
-        <dl className="mt-5 flex flex-wrap gap-4 text-xs text-muted-foreground">
-          <div className="flex items-center gap-1.5 rounded-lg bg-muted/50 px-3 py-2">
-            <Camera className="h-3.5 w-3.5" />
-            <span className="text-foreground font-medium">{stepCount} photo{stepCount === 1 ? "" : "s"}</span>
-          </div>
-          <div className="flex items-center gap-1.5 rounded-lg bg-muted/50 px-3 py-2">
-            <MessageCircleQuestion className="h-3.5 w-3.5" />
-            <span className="text-foreground font-medium">{questionCount} question{questionCount === 1 ? "" : "s"}</span>
-          </div>
-          <div className="flex items-center gap-1.5 rounded-lg bg-muted/50 px-3 py-2">
-            <Clock className="h-3.5 w-3.5" />
-            <span className="text-foreground font-medium">~{minutes} min for recipient</span>
-          </div>
-        </dl>
-
-        <div className="mt-7 flex flex-wrap items-center gap-3">
-          <Button size="lg" className="gap-1.5" onClick={handleUse}>
-            Use this starter request <ArrowRight className="h-4 w-4" />
-          </Button>
-          <Button asChild size="lg" variant="outline" className="gap-1.5">
-            <NavLink to="/guides">
-              <BookOpen className="h-4 w-4" /> Browse all guides
-            </NavLink>
-          </Button>
+          <dl className="mt-5 grid gap-2 text-xs text-muted-foreground sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
+            <div className="flex items-center gap-2 rounded-2xl bg-muted/50 px-3 py-2.5">
+              <Camera className="h-3.5 w-3.5" />
+              <span className="font-medium text-foreground">{stepCount} photo{stepCount === 1 ? "" : "s"}</span>
+            </div>
+            <div className="flex items-center gap-2 rounded-2xl bg-muted/50 px-3 py-2.5">
+              <MessageCircleQuestion className="h-3.5 w-3.5" />
+              <span className="font-medium text-foreground">{questionCount} question{questionCount === 1 ? "" : "s"}</span>
+            </div>
+            <div className="flex items-center gap-2 rounded-2xl bg-muted/50 px-3 py-2.5">
+              <Clock className="h-3.5 w-3.5" />
+              <span className="font-medium text-foreground">~{minutes} min</span>
+            </div>
+          </dl>
         </div>
       </div>
     </section>
