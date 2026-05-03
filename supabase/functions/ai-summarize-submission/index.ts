@@ -9,6 +9,8 @@
 // Pricing note: submission summaries are included in per-photo credits. This
 // function does not block on credit balance; successful persisted summaries are
 // logged by DB trigger as included usage with credit_cost = 0.
+//
+// Relaunch context: submission media is expected to be stored in R2 only.
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
 import {
@@ -370,7 +372,7 @@ async function loadSubmission(submissionId: string) {
   const [{ data: media }, { data: requiredSteps }, { data: answers }] = await Promise.all([
     admin
       .from("captured_media")
-      .select("id, note, ai_feedback, status, step_id, file_url, storage_provider, original_storage_key, processed_storage_key, preview_storage_key, thumbnail_storage_key, guide_steps(title)")
+      .select("id, note, ai_feedback, status, step_id, storage_provider, original_storage_key, processed_storage_key, preview_storage_key, thumbnail_storage_key, guide_steps(title)")
       .eq("submission_id", submissionId),
     guideId
       ? admin.from("guide_steps").select("id, title, required").eq("guide_id", guideId)
@@ -412,14 +414,7 @@ async function loadSubmission(submissionId: string) {
 }
 
 async function mediaUrlForSummary(media: any): Promise<string | undefined> {
-  if (media.storage_provider === "r2") {
-    const key = media.processed_storage_key ?? media.preview_storage_key ?? media.original_storage_key;
-    return key ? await presignR2Url({ key, method: "GET", expiresSeconds: 900 }) : undefined;
-  }
-
-  const filePath = media.file_url as string | null;
-  if (!filePath) return undefined;
-  if (filePath.startsWith("http")) return filePath;
-  const SUPABASE_PROJECT_URL = SUPABASE_URL.replace(/\/$/, "");
-  return `${SUPABASE_PROJECT_URL}/storage/v1/object/public/submission-media/${filePath}`;
+  if (media.storage_provider !== "r2") return undefined;
+  const key = media.processed_storage_key ?? media.preview_storage_key ?? media.original_storage_key;
+  return key ? await presignR2Url({ key, method: "GET", expiresSeconds: 900 }) : undefined;
 }
