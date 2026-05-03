@@ -20,12 +20,14 @@ export interface CapturedPhoto {
   checks: AICheckResultMock[];
   /** True if recipient chose "Use anyway" despite warnings/fails. */
   acceptedDespiteWarnings: boolean;
-  /** Storage path inside `submission-media` once uploaded. */
+  /** Storage path/key once uploaded. Legacy rows use Supabase Storage paths; R2 rows use object keys. */
   storagePath?: string;
-  /** Public URL of the uploaded file (set after upload). */
+  /** Public/signed URL of the uploaded original (set after upload). */
   publicUrl?: string;
   /** captured_media row id (set after server insert). */
   capturedMediaId?: string;
+  /** Original File retained client-side until the photo is accepted and promoted to WebP. */
+  originalFile?: File;
 }
 
 export interface AnsweredQuestion {

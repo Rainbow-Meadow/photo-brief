@@ -4,6 +4,9 @@
 // Authorization and credit checks happen BEFORE model calls. Public recipient
 // traffic must include x-request-token tied to the captured_media row's request;
 // workspace traffic must be an active member of the media's workspace.
+//
+// When capturedMediaId is provided, the model image URL is resolved server-side
+// from Supabase/R2 metadata instead of trusting a client-supplied arbitrary URL.
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
 import {
@@ -16,6 +19,7 @@ import {
   creditErrorResponse,
   workspaceHasCredits,
 } from "../_shared/creditUsage.ts";
+import { presignR2Url } from "../_shared/r2Storage.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -93,7 +97,7 @@ interface Body {
   captureType?: string;
   overlayType?: string;
   aiChecks?: string[];
-  imageUrl: string;
+  imageUrl?: string;
   recipientNote?: string;
   capturedMediaId?: string;
   /** When "admin_review", router escalates to the premium tier first. */
@@ -114,8 +118,8 @@ Deno.serve(async (req) => {
   } catch {
     return json({ error: "Invalid JSON body" }, 400);
   }
-  if (!body?.imageUrl || !body?.stepTitle) {
-    return json({ error: "imageUrl and stepTitle are required" }, 400);
+  if (!body?.stepTitle || (!body.imageUrl && !body.capturedMediaId)) {
+    return json({ error: "stepTitle and either imageUrl or capturedMediaId are required" }, 400);
   }
 
   const authz = await authorizeAnalyze(req, body);
@@ -123,6 +127,13 @@ Deno.serve(async (req) => {
 
   if (authz.creditCost > 0 && !(await workspaceHasCredits(authz.workspaceId, authz.creditCost))) {
     return creditErrorResponse(authz.creditCost, corsHeaders);
+  }
+
+  let imageUrl: string;
+  try {
+    imageUrl = await resolveImageUrlForModel(body.capturedMediaId, body.imageUrl);
+  } catch (e) {
+    return json({ error: e instanceof Error ? e.message : "Could not resolve media URL" }, 400);
   }
 
   const userPrompt = [
@@ -146,7 +157,7 @@ Deno.serve(async (req) => {
           role: "user",
           content: [
             { type: "text", text: userPrompt },
-            { type: "image_url", image_url: { url: body.imageUrl } },
+            { type: "image_url", image_url: { url: imageUrl } },
           ],
         },
       ],
@@ -264,6 +275,35 @@ async function authorizeAnalyze(req: Request, body: Body): Promise<AuthzResult> 
   return member
     ? { ok: true, workspaceId, creditCost: CREDIT_COST.submittedPhoto }
     : { ok: false, status: 403, error: "Not a workspace member" };
+}
+
+async function resolveImageUrlForModel(capturedMediaId?: string, fallbackUrl?: string): Promise<string> {
+  if (!capturedMediaId) {
+    if (fallbackUrl && /^https?:\/\//.test(fallbackUrl)) return fallbackUrl;
+    throw new Error("No usable image URL provided");
+  }
+
+  const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
+  const { data: media, error } = await admin
+    .from("captured_media")
+    .select("id, file_url, storage_provider, original_storage_key, processed_storage_key, preview_storage_key")
+    .eq("id", capturedMediaId)
+    .maybeSingle();
+  if (error) throw error;
+  if (!media) throw new Error("Captured media not found");
+
+  const m: any = media;
+  if (m.storage_provider === "r2") {
+    const key = m.original_storage_key ?? m.processed_storage_key ?? m.preview_storage_key;
+    if (!key) throw new Error("R2 media has no object key");
+    return presignR2Url({ key, method: "GET", expiresSeconds: 900 });
+  }
+
+  const filePath = m.file_url as string | null;
+  if (!filePath) throw new Error("Media has no file_url");
+  if (filePath.startsWith("http")) return filePath;
+  const projectUrl = SUPABASE_URL.replace(/\/$/, "");
+  return `${projectUrl}/storage/v1/object/public/submission-media/${filePath}`;
 }
 
 async function isFirstPassFollowup(

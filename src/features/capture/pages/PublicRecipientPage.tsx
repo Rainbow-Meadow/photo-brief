@@ -15,8 +15,10 @@ import { ReadinessProgress } from "@/components/shared/ReadinessProgress";
 import { RecipientBrandingProvider } from "@/features/capture/RecipientBrandingContext";
 import { loadRecipientContext, type RecipientContext } from "@/features/capture/recipientContext";
 import { useChatFlow } from "@/hooks/useChatFlow";
+import { r2MediaService } from "@/services/r2MediaService";
 import { submissionsService } from "@/services/submissionsService";
 import { conversions, trackEvent } from "@/lib/analytics";
+import type { CapturedPhoto } from "@/types/chat";
 
 export default function PublicRecipientPage() {
   const { token } = useParams();
@@ -59,66 +61,40 @@ export default function PublicRecipientPage() {
 function RecipientChat({ ctx, token, navigate }: { ctx: RecipientContext; token: string | undefined; navigate: (to: string) => void }) {
   const submissionIdRef = useRef<string | null>(ctx.resubmit?.submissionId ?? null);
 
-  const ensureSubmission = useCallback(async (): Promise<string | null> => {
-    if (submissionIdRef.current) return submissionIdRef.current;
-    if (!token || !ctx.requestId || !ctx.workspaceId) return null;
-    const client = getTokenClient(token);
-    const { data, error } = await client
-      .from("submissions")
-      .insert({
-        request_id: ctx.requestId,
-        workspace_id: ctx.workspaceId,
-        submitter_name: ctx.recipientName || null,
-        status: "new",
-      })
-      .select("id")
-      .single();
-    if (error) {
-      console.error("create submission failed", error);
-      return null;
-    }
-    submissionIdRef.current = data.id;
-    return data.id;
-  }, [token, ctx.requestId, ctx.workspaceId, ctx.recipientName]);
-
   const uploadCapture = useCallback(
     async ({ stepId, blob, ext }: { stepId: string; blob: Blob; ext: string }) => {
       if (!token || !ctx.workspaceId || !ctx.requestId) throw new Error("No token context — preview only");
-      const submissionId = await ensureSubmission();
-      if (!submissionId) throw new Error("Could not create submission");
-      const client = getTokenClient(token);
-      const filename = `${crypto.randomUUID()}.${ext}`;
-      const path = `${ctx.workspaceId}/${ctx.requestId}/${filename}`;
-
-      let lastErr: unknown = null;
-      for (let attempt = 0; attempt < 3; attempt++) {
-        const { error: upErr } = await client.storage
-          .from("submission-media")
-          .upload(path, blob, { contentType: blob.type, upsert: false });
-        if (!upErr) {
-          lastErr = null;
-          break;
-        }
-        lastErr = upErr;
-        if (attempt < 2) await new Promise((r) => setTimeout(r, 600 * Math.pow(2, attempt)));
-      }
-      if (lastErr) throw lastErr;
-
-      const { data: pub } = client.storage.from("submission-media").getPublicUrl(path);
-      const { data: row, error: insErr } = await client
-        .from("captured_media")
-        .insert({
-          submission_id: submissionId,
-          step_id: /^[0-9a-f-]{36}$/i.test(stepId) ? stepId : null,
-          file_url: path,
-          status: "analyzing",
-        })
-        .select("id")
-        .single();
-      if (insErr) throw insErr;
-      return { publicUrl: pub.publicUrl, storagePath: path, capturedMediaId: row.id };
+      const result = await r2MediaService.uploadOriginalForAnalysis({
+        token,
+        requestId: ctx.requestId,
+        workspaceId: ctx.workspaceId,
+        stepId,
+        submissionId: submissionIdRef.current,
+        recipientName: ctx.recipientName,
+        file: blob,
+        ext,
+      });
+      submissionIdRef.current = result.submissionId;
+      return {
+        publicUrl: result.publicUrl,
+        storagePath: result.storagePath,
+        capturedMediaId: result.capturedMediaId,
+        submissionId: result.submissionId,
+      };
     },
-    [token, ctx.workspaceId, ctx.requestId, ensureSubmission],
+    [token, ctx.workspaceId, ctx.requestId, ctx.recipientName],
+  );
+
+  const promoteAcceptedCapture = useCallback(
+    async (photo: CapturedPhoto) => {
+      if (!token || !photo.capturedMediaId || !photo.originalFile) return;
+      return r2MediaService.promoteAcceptedPhotoToWebp({
+        token,
+        capturedMediaId: photo.capturedMediaId,
+        file: photo.originalFile,
+      });
+    },
+    [token],
   );
 
   const resubmitConfig = ctx.resubmit
@@ -137,6 +113,7 @@ function RecipientChat({ ctx, token, navigate }: { ctx: RecipientContext; token:
     introBody: ctx.introBody,
     requestToken: token,
     uploadCapture,
+    promoteAcceptedCapture,
     resubmit: resubmitConfig,
   });
 

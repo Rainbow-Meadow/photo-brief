@@ -4,6 +4,7 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { getTokenClient } from "@/integrations/supabase/tokenClient";
+import { r2MediaService } from "@/services/r2MediaService";
 import type {
   Submission,
   SubmissionShot,
@@ -13,7 +14,19 @@ import type {
   CustomerAnswer,
 } from "@/types/photobrief";
 
-function publicUrl(path: string | null): string | undefined {
+async function mediaUrl(row: any): Promise<string | undefined> {
+  if (row?.storage_provider === "r2" && row?.id) {
+    try {
+      const { data, error } = await supabase.functions.invoke("get-media-url", {
+        body: { capturedMediaId: row.id, variant: "preview" },
+      });
+      if (!error && data?.url) return data.url;
+    } catch (err) {
+      console.warn("get-media-url failed; falling back", err);
+    }
+  }
+
+  const path = row?.file_url as string | null;
   if (!path) return undefined;
   if (path.startsWith("http")) return path;
   const { data } = supabase.storage.from("submission-media").getPublicUrl(path);
@@ -27,13 +40,13 @@ async function hydrate(
   notesRows: any[],
   answerRows: any[] = [],
 ): Promise<Submission> {
-  const shots: SubmissionShot[] = (shotsRows ?? []).map((m) => ({
+  const shots: SubmissionShot[] = await Promise.all((shotsRows ?? []).map(async (m) => ({
     id: m.id,
     stepId: m.step_id ?? undefined,
     orderIndex: 0,
     title: m.guide_steps?.title ?? m.note ?? "Photo",
     shotType: "wide",
-    imageUrl: publicUrl(m.file_url),
+    imageUrl: await mediaUrl(m),
     capturedAt: m.created_at,
     feedback: m.ai_feedback ?? undefined,
     reviewStatus: (m.status === "approved" || m.status === "rejected" || m.status === "resubmitted")
@@ -41,7 +54,7 @@ async function hydrate(
       : "pending",
     reviewComment: m.review_comment ?? undefined,
     reviewedAt: m.reviewed_at ?? undefined,
-  }));
+  })));
   const extractedDetails: ExtractedDetail[] = (detailsRows ?? []).map((d) => ({
     label: d.label,
     value: d.value ?? "",
@@ -278,7 +291,7 @@ export const submissionsService = {
   },
 
   /**
-   * Recipient-side: create/finalize a submission row, upload any remaining
+   * Recipient-side: finalize a submission row, upload any remaining fallback
    * media, persist recipient answers, and trigger AI summary.
    */
   async submitFromRecipient(args: {
@@ -321,22 +334,25 @@ export const submissionsService = {
       submissionId = subRow.id;
     }
 
+    // Fallback path for rare cases where a photo reached review without the
+    // normal live R2 upload path. New live captures should already have
+    // captured_media rows by the time this function runs.
     for (const p of args.photos) {
-      const filename = `${crypto.randomUUID()}.${p.ext}`;
-      const path = `${args.workspaceId}/${args.requestId}/${filename}`;
-      const { error: upErr } = await client.storage
-        .from("submission-media")
-        .upload(path, p.blob, { contentType: p.blob.type, upsert: false });
-      if (upErr) throw upErr;
-
-      const { error: medErr } = await client.from("captured_media").insert({
-        submission_id: submissionId,
-        step_id: p.stepId ?? null,
-        file_url: path,
-        status: "captured",
-        note: p.note ?? null,
+      const uploaded = await r2MediaService.uploadOriginalForAnalysis({
+        token: args.token,
+        requestId: args.requestId,
+        workspaceId: args.workspaceId,
+        stepId: p.stepId ?? null,
+        submissionId,
+        recipientName: args.recipientName ?? null,
+        file: p.blob,
+        ext: p.ext,
       });
-      if (medErr) throw medErr;
+      await r2MediaService.promoteAcceptedPhotoToWebp({
+        token: args.token,
+        capturedMediaId: uploaded.capturedMediaId,
+        file: p.blob,
+      }).catch((err) => console.warn("fallback WebP promotion failed", err));
     }
 
     // Replace answers for this submission so retries / resumed submits are idempotent.

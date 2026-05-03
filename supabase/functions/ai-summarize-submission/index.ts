@@ -17,6 +17,7 @@ import {
   routerErrorResponse,
   AIUnavailableError,
 } from "../_shared/aiModelRouter.ts";
+import { presignR2Url } from "../_shared/r2Storage.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -369,7 +370,7 @@ async function loadSubmission(submissionId: string) {
   const [{ data: media }, { data: requiredSteps }, { data: answers }] = await Promise.all([
     admin
       .from("captured_media")
-      .select("id, note, ai_feedback, status, step_id, file_url, guide_steps(title)")
+      .select("id, note, ai_feedback, status, step_id, file_url, storage_provider, original_storage_key, processed_storage_key, preview_storage_key, thumbnail_storage_key, guide_steps(title)")
       .eq("submission_id", submissionId),
     guideId
       ? admin.from("guide_steps").select("id, title, required").eq("guide_id", guideId)
@@ -381,22 +382,15 @@ async function loadSubmission(submissionId: string) {
       .order("order_index", { ascending: true }),
   ]);
 
-  const SUPABASE_PROJECT_URL = SUPABASE_URL.replace(/\/$/, "");
-  const toPublicUrl = (filePath: string | null) => {
-    if (!filePath) return undefined;
-    if (filePath.startsWith("http")) return filePath;
-    return `${SUPABASE_PROJECT_URL}/storage/v1/object/public/submission-media/${filePath}`;
-  };
-
   const capturedStepIds = new Set<string>((media ?? []).map((m: any) => m.step_id).filter(Boolean));
 
-  const capturedShots: ShotIn[] = (media ?? []).map((m: any) => ({
+  const capturedShots: ShotIn[] = await Promise.all((media ?? []).map(async (m: any) => ({
     title: m.guide_steps?.title ?? m.note ?? "Photo",
     missing: false,
     feedbackSeverity: m.ai_feedback?.severity ?? m.ai_feedback?.verdict,
     feedbackHeadline: m.ai_feedback?.headline,
-    imageUrl: toPublicUrl(m.file_url),
-  }));
+    imageUrl: await mediaUrlForSummary(m),
+  })));
 
   const missingShots: ShotIn[] = ((requiredSteps as any[]) ?? [])
     .filter((s) => s.required && !capturedStepIds.has(s.id))
@@ -415,4 +409,17 @@ async function loadSubmission(submissionId: string) {
       })),
     },
   };
+}
+
+async function mediaUrlForSummary(media: any): Promise<string | undefined> {
+  if (media.storage_provider === "r2") {
+    const key = media.processed_storage_key ?? media.preview_storage_key ?? media.original_storage_key;
+    return key ? await presignR2Url({ key, method: "GET", expiresSeconds: 900 }) : undefined;
+  }
+
+  const filePath = media.file_url as string | null;
+  if (!filePath) return undefined;
+  if (filePath.startsWith("http")) return filePath;
+  const SUPABASE_PROJECT_URL = SUPABASE_URL.replace(/\/$/, "");
+  return `${SUPABASE_PROJECT_URL}/storage/v1/object/public/submission-media/${filePath}`;
 }

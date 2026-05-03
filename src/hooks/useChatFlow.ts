@@ -21,7 +21,10 @@ interface UseChatFlowArgs {
     publicUrl: string;
     storagePath: string;
     capturedMediaId: string;
+    submissionId?: string;
   }>;
+  /** Called only once a photo has been accepted by AI or by the user. */
+  promoteAcceptedCapture?: (photo: CapturedPhoto) => Promise<{ processedStorageKey?: string | null } | void>;
   resubmit?: ResubmitConfig;
 }
 
@@ -34,6 +37,7 @@ export function useChatFlow({
   introBody,
   requestToken,
   uploadCapture,
+  promoteAcceptedCapture,
   resubmit,
 }: UseChatFlowArgs) {
   const effectiveGuide = useMemo<PhotoGuide>(() => {
@@ -104,6 +108,25 @@ export function useChatFlow({
     }
   }, [stepIndex, effectiveGuide.steps, effectiveGuide.questions, append, resubmit]);
 
+  const acceptPhoto = useCallback(
+    async (photo: CapturedPhoto) => {
+      if (promoteAcceptedCapture && photo.capturedMediaId && photo.originalFile) {
+        try {
+          const promoted = await promoteAcceptedCapture(photo);
+          if (promoted && promoted.processedStorageKey) {
+            photo.storagePath = promoted.processedStorageKey;
+          }
+        } catch (e) {
+          console.warn("accepted photo WebP promotion failed", e);
+        }
+      }
+      delete photo.originalFile;
+      photosRef.current.push(photo);
+      rerender();
+    },
+    [promoteAcceptedCapture],
+  );
+
   const submitPhoto = useCallback(
     async (previewUrl: string, file?: File | null) => {
       const step = effectiveGuide.steps[stepIndex];
@@ -116,6 +139,7 @@ export function useChatFlow({
         takenAt: new Date().toISOString(),
         checks: [],
         acceptedDespiteWarnings: false,
+        originalFile: file ?? undefined,
       };
       append({ id: nextId(), kind: "user_photo", photo });
 
@@ -139,20 +163,20 @@ export function useChatFlow({
         step,
         mediaUrl: mediaUrlForAi,
         capturedMediaId: photo.capturedMediaId,
+        recipientNote: undefined,
         requestToken,
       });
       photo.checks = checks.map((c) => ({ id: c.type, severity: c.severity, message: c.message }));
       append({ id: nextId(), kind: "ai_feedback", photo, verdict: verdict as AICheckSeverity });
 
       if (verdict === "pass" || verdict === "unavailable") {
-        photosRef.current.push(photo);
-        rerender();
+        await acceptPhoto(photo);
         setTimeout(() => advanceAfterStep(), 350);
       } else {
         append({ id: nextId(), kind: "retake_decision", photo, step });
       }
     },
-    [stepIndex, effectiveGuide.steps, append, markCaptureCardPending, advanceAfterStep, uploadCapture, requestToken],
+    [stepIndex, effectiveGuide.steps, append, markCaptureCardPending, advanceAfterStep, uploadCapture, requestToken, acceptPhoto],
   );
 
   const retake = useCallback(() => {
@@ -165,13 +189,13 @@ export function useChatFlow({
   }, [stepIndex, effectiveGuide.steps, append]);
 
   const useAnyway = useCallback(
-    (photo: CapturedPhoto) => {
+    async (photo: CapturedPhoto) => {
       photo.acceptedDespiteWarnings = true;
-      photosRef.current.push(photo);
+      await acceptPhoto(photo);
       append({ id: nextId(), kind: "user_text", text: microcopy.recipient.useAnyway });
       advanceAfterStep();
     },
-    [append, advanceAfterStep],
+    [append, advanceAfterStep, acceptPhoto],
   );
 
   const answerQuestion = useCallback(
