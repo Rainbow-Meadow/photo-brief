@@ -1,6 +1,7 @@
 /* PhotoBrief sitewide theme schema
-   Light: airy paper + electric lens blue.
-   Dark: deep ink + aurora lens glow.
+   Light: warm paper + ink linework.
+   Dark: deep ink + cream linework.
+   Accents mirror the new logo set: cyan lens cue + amber flash pop.
    This file intentionally loads after index.css so it can refine global tokens
    without disturbing the existing Tailwind/shadcn setup.
 */
@@ -8,229 +9,233 @@
 :root {
   color-scheme: light;
 
-  --background: 214 45% 98%;
-  --foreground: 222 56% 10%;
+  --background: 43 52% 97%;
+  --foreground: 220 13% 8%;
 
   --card: 0 0% 100%;
-  --card-foreground: 222 56% 10%;
+  --card-foreground: 220 13% 8%;
 
   --popover: 0 0% 100%;
-  --popover-foreground: 222 56% 10%;
+  --popover-foreground: 220 13% 8%;
 
-  --primary: 217 100% 50%;
-  --primary-foreground: 0 0% 100%;
-  --primary-glow: 210 100% 66%;
+  --primary: 187 79% 40%;
+  --primary-foreground: 43 52% 97%;
+  --primary-glow: 188 79% 72%;
 
-  --secondary: 214 32% 94%;
-  --secondary-foreground: 222 50% 13%;
+  --secondary: 38 32% 91%;
+  --secondary-foreground: 220 13% 12%;
 
-  --muted: 214 34% 94%;
-  --muted-foreground: 220 12% 42%;
+  --muted: 40 30% 92%;
+  --muted-foreground: 225 8% 42%;
 
-  --accent: 211 100% 94%;
-  --accent-foreground: 217 95% 28%;
+  --accent: 187 69% 92%;
+  --accent-foreground: 188 78% 24%;
 
-  --destructive: 0 78% 54%;
+  --destructive: 0 76% 52%;
   --destructive-foreground: 0 0% 100%;
 
-  --success: 153 66% 34%;
+  --success: 151 56% 34%;
   --success-foreground: 0 0% 100%;
 
-  --warning: 39 94% 48%;
-  --warning-foreground: 222 56% 10%;
+  --warning: 37 100% 65%;
+  --warning-foreground: 220 13% 8%;
 
-  --info: 217 100% 50%;
-  --info-foreground: 0 0% 100%;
+  --info: 187 79% 40%;
+  --info-foreground: 43 52% 97%;
 
-  --border: 215 28% 88%;
-  --input: 215 26% 86%;
-  --ring: 217 100% 50%;
+  --border: 38 24% 84%;
+  --input: 38 22% 82%;
+  --ring: 187 79% 40%;
 
-  --brand-navy: 222 61% 10%;
-  --brand-navy-foreground: 0 0% 100%;
-  --brand-lens: 217 100% 48%;
+  --brand-navy: 220 13% 8%;
+  --brand-navy-foreground: 43 52% 97%;
+  --brand-lens: 187 79% 40%;
+  --brand-flash: 37 100% 65%;
+  --brand-paper: 43 52% 97%;
 
-  --gradient-primary: linear-gradient(135deg, hsl(217 100% 50%), hsl(204 100% 63%));
-  --gradient-subtle: linear-gradient(180deg, hsl(214 45% 98%), hsl(0 0% 100%));
-  --gradient-brand: linear-gradient(135deg, hsl(222 60% 11%) 0%, hsl(222 58% 17%) 52%, hsl(217 100% 50%) 126%);
-  --gradient-radial-glow: radial-gradient(60% 50% at 50% 0%, hsl(207 100% 66% / 0.24), transparent 72%);
+  --gradient-primary: linear-gradient(135deg, hsl(187 79% 40%), hsl(188 79% 72%));
+  --gradient-subtle: linear-gradient(180deg, hsl(43 52% 97%), hsl(0 0% 100%));
+  --gradient-brand: linear-gradient(135deg, hsl(220 13% 8%) 0%, hsl(217 16% 14%) 58%, hsl(187 79% 36%) 132%);
+  --gradient-radial-glow: radial-gradient(60% 50% at 50% 0%, hsl(188 79% 72% / 0.25), transparent 72%);
 
-  --shadow-sm: 0 1px 2px 0 hsl(222 47% 11% / 0.05);
-  --shadow-md: 0 6px 18px -8px hsl(222 47% 11% / 0.14);
-  --shadow-lg: 0 24px 60px -28px hsl(222 47% 11% / 0.22);
-  --shadow-glow: 0 16px 48px -20px hsl(217 100% 50% / 0.45);
-  --shadow-brand: 0 26px 80px -34px hsl(222 61% 10% / 0.46);
+  --shadow-sm: 0 1px 2px 0 hsl(220 13% 8% / 0.05);
+  --shadow-md: 0 8px 20px -12px hsl(220 13% 8% / 0.18);
+  --shadow-lg: 0 24px 64px -30px hsl(220 13% 8% / 0.26);
+  --shadow-glow: 0 18px 52px -26px hsl(187 79% 40% / 0.44);
+  --shadow-brand: 0 30px 80px -36px hsl(220 13% 8% / 0.50);
 
-  --glass-bg-strong: 0 0% 100% / 0.78;
-  --glass-bg: 0 0% 100% / 0.58;
-  --glass-bg-soft: 0 0% 100% / 0.34;
-  --glass-bg-onDark: 222 60% 13% / 0.56;
-  --glass-border: 214 36% 88% / 0.74;
-  --glass-border-strong: 214 38% 80% / 0.92;
-  --glass-border-onDark: 0 0% 100% / 0.14;
-  --glass-highlight: 0 0% 100% / 0.72;
+  --glass-bg-strong: 43 52% 98% / 0.82;
+  --glass-bg: 43 52% 98% / 0.62;
+  --glass-bg-soft: 43 52% 98% / 0.38;
+  --glass-bg-onDark: 220 13% 8% / 0.62;
+  --glass-border: 38 24% 82% / 0.72;
+  --glass-border-strong: 38 28% 76% / 0.90;
+  --glass-border-onDark: 43 52% 97% / 0.14;
+  --glass-highlight: 0 0% 100% / 0.66;
   --glass-shadow:
-    inset 0 1px 0 hsl(0 0% 100% / 0.75),
-    0 1px 0 hsl(214 35% 91% / 0.45),
-    0 22px 52px -30px hsl(222 56% 10% / 0.22),
-    0 10px 28px -18px hsl(222 56% 10% / 0.16);
+    inset 0 1px 0 hsl(0 0% 100% / 0.70),
+    0 1px 0 hsl(38 24% 86% / 0.40),
+    0 22px 54px -30px hsl(220 13% 8% / 0.24),
+    0 10px 28px -18px hsl(220 13% 8% / 0.16);
   --glass-shadow-lg:
-    inset 0 1px 0 hsl(0 0% 100% / 0.82),
-    0 38px 80px -34px hsl(222 56% 10% / 0.28),
-    0 14px 38px -20px hsl(217 100% 45% / 0.16);
+    inset 0 1px 0 hsl(0 0% 100% / 0.78),
+    0 38px 86px -36px hsl(220 13% 8% / 0.30),
+    0 16px 42px -24px hsl(187 79% 35% / 0.16);
   --glass-shadow-onDark:
     inset 0 1px 0 hsl(0 0% 100% / 0.10),
-    0 34px 72px -30px hsl(222 56% 10% / 0.58);
+    0 34px 72px -30px hsl(0 0% 0% / 0.60);
 
-  --ambient-sky: radial-gradient(78% 58% at 50% 0%, hsl(210 100% 68% / 0.22), transparent 72%);
-  --ambient-sky-soft: radial-gradient(62% 52% at 50% 0%, hsl(210 100% 68% / 0.14), transparent 76%);
+  --ambient-sky: radial-gradient(78% 58% at 50% 0%, hsl(188 79% 72% / 0.22), transparent 72%);
+  --ambient-sky-soft: radial-gradient(62% 52% at 50% 0%, hsl(188 79% 72% / 0.14), transparent 76%);
   --ambient-mesh:
-    radial-gradient(42% 30% at 12% 18%, hsl(214 100% 72% / 0.18), transparent 72%),
-    radial-gradient(34% 28% at 88% 8%, hsl(184 100% 67% / 0.12), transparent 74%),
-    radial-gradient(54% 42% at 50% 100%, hsl(217 100% 62% / 0.10), transparent 72%);
+    radial-gradient(42% 30% at 12% 18%, hsl(188 79% 72% / 0.18), transparent 72%),
+    radial-gradient(30% 24% at 88% 8%, hsl(37 100% 65% / 0.16), transparent 74%),
+    radial-gradient(54% 42% at 50% 100%, hsl(187 79% 40% / 0.10), transparent 72%);
   --ambient-future:
-    radial-gradient(48% 34% at 18% 12%, hsl(214 100% 70% / 0.24), transparent 73%),
-    radial-gradient(40% 30% at 86% 14%, hsl(183 95% 66% / 0.15), transparent 77%),
-    radial-gradient(58% 48% at 50% 94%, hsl(252 90% 72% / 0.11), transparent 74%);
+    radial-gradient(48% 34% at 18% 12%, hsl(188 79% 72% / 0.22), transparent 73%),
+    radial-gradient(36% 28% at 86% 14%, hsl(37 100% 65% / 0.16), transparent 77%),
+    radial-gradient(58% 48% at 50% 94%, hsl(187 79% 40% / 0.11), transparent 74%);
 
-  --sidebar-background: 222 50% 11%;
-  --sidebar-foreground: 0 0% 96%;
-  --sidebar-primary: 217 100% 56%;
-  --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: 217 85% 52%;
-  --sidebar-accent-foreground: 0 0% 100%;
-  --sidebar-border: 222 34% 18%;
-  --sidebar-ring: 217 100% 62%;
+  --sidebar-background: 220 13% 8%;
+  --sidebar-foreground: 43 52% 97%;
+  --sidebar-primary: 187 79% 48%;
+  --sidebar-primary-foreground: 220 13% 8%;
+  --sidebar-accent: 187 70% 28%;
+  --sidebar-accent-foreground: 43 52% 97%;
+  --sidebar-border: 218 12% 18%;
+  --sidebar-ring: 188 79% 72%;
 
-  --app-bg: 214 45% 98%;
-  --app-sidebar-bg: 222 50% 11%;
-  --app-sidebar-fg: 0 0% 96%;
-  --app-sidebar-muted: 216 20% 72%;
-  --app-sidebar-active-bg: 217 88% 54%;
-  --app-sidebar-active-fg: 0 0% 100%;
-  --app-sidebar-border: 222 34% 18%;
+  --app-bg: 43 52% 97%;
+  --app-sidebar-bg: 220 13% 8%;
+  --app-sidebar-fg: 43 52% 97%;
+  --app-sidebar-muted: 40 15% 70%;
+  --app-sidebar-active-bg: 187 70% 30%;
+  --app-sidebar-active-fg: 43 52% 97%;
+  --app-sidebar-border: 218 12% 18%;
 
-  --app-primary: 217 96% 53%;
-  --app-primary-glow: 205 100% 65%;
-  --app-primary-fg: 0 0% 100%;
+  --app-primary: 187 79% 40%;
+  --app-primary-glow: 188 79% 72%;
+  --app-primary-fg: 43 52% 97%;
 }
 
 .dark {
   color-scheme: dark;
 
-  --background: 222 56% 5%;
-  --foreground: 216 38% 96%;
+  --background: 220 13% 8%;
+  --foreground: 43 52% 97%;
 
-  --card: 222 45% 8%;
-  --card-foreground: 216 38% 96%;
+  --card: 216 13% 11%;
+  --card-foreground: 43 52% 97%;
 
-  --popover: 222 45% 8%;
-  --popover-foreground: 216 38% 96%;
+  --popover: 216 13% 11%;
+  --popover-foreground: 43 52% 97%;
 
-  --primary: 212 100% 67%;
-  --primary-foreground: 222 58% 7%;
-  --primary-glow: 188 100% 66%;
+  --primary: 188 79% 72%;
+  --primary-foreground: 220 13% 8%;
+  --primary-glow: 187 79% 48%;
 
-  --secondary: 222 32% 13%;
-  --secondary-foreground: 216 38% 94%;
+  --secondary: 218 12% 16%;
+  --secondary-foreground: 43 52% 95%;
 
-  --muted: 222 30% 13%;
-  --muted-foreground: 217 18% 70%;
+  --muted: 218 12% 16%;
+  --muted-foreground: 40 13% 70%;
 
-  --accent: 217 58% 18%;
-  --accent-foreground: 207 100% 82%;
+  --accent: 187 39% 18%;
+  --accent-foreground: 188 79% 80%;
 
   --destructive: 0 72% 58%;
   --destructive-foreground: 0 0% 100%;
 
-  --success: 152 62% 48%;
-  --success-foreground: 222 58% 7%;
+  --success: 152 59% 48%;
+  --success-foreground: 220 13% 8%;
 
-  --warning: 40 96% 58%;
-  --warning-foreground: 222 58% 7%;
+  --warning: 37 100% 65%;
+  --warning-foreground: 220 13% 8%;
 
-  --info: 212 100% 67%;
-  --info-foreground: 222 58% 7%;
+  --info: 188 79% 72%;
+  --info-foreground: 220 13% 8%;
 
-  --border: 222 30% 18%;
-  --input: 222 30% 20%;
-  --ring: 207 100% 70%;
+  --border: 218 12% 20%;
+  --input: 218 12% 22%;
+  --ring: 188 79% 72%;
 
-  --brand-navy: 222 58% 7%;
-  --brand-navy-foreground: 216 38% 96%;
-  --brand-lens: 207 100% 68%;
+  --brand-navy: 220 13% 8%;
+  --brand-navy-foreground: 43 52% 97%;
+  --brand-lens: 188 79% 72%;
+  --brand-flash: 37 100% 65%;
+  --brand-paper: 43 52% 97%;
 
-  --gradient-primary: linear-gradient(135deg, hsl(212 100% 67%), hsl(188 100% 66%));
-  --gradient-subtle: linear-gradient(180deg, hsl(222 56% 5%), hsl(222 45% 8%));
-  --gradient-brand: linear-gradient(135deg, hsl(222 58% 5%) 0%, hsl(222 48% 10%) 52%, hsl(212 100% 58%) 132%);
-  --gradient-radial-glow: radial-gradient(60% 50% at 50% 0%, hsl(205 100% 62% / 0.22), transparent 72%);
+  --gradient-primary: linear-gradient(135deg, hsl(188 79% 72%), hsl(187 79% 48%));
+  --gradient-subtle: linear-gradient(180deg, hsl(220 13% 8%), hsl(216 13% 11%));
+  --gradient-brand: linear-gradient(135deg, hsl(220 13% 6%) 0%, hsl(216 13% 11%) 58%, hsl(187 79% 28%) 132%);
+  --gradient-radial-glow: radial-gradient(60% 50% at 50% 0%, hsl(188 79% 72% / 0.21), transparent 72%);
 
   --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.30);
-  --shadow-md: 0 10px 28px -18px hsl(0 0% 0% / 0.62);
-  --shadow-lg: 0 28px 78px -36px hsl(0 0% 0% / 0.72);
-  --shadow-glow: 0 18px 62px -26px hsl(202 100% 62% / 0.50);
-  --shadow-brand: 0 32px 90px -34px hsl(0 0% 0% / 0.78);
+  --shadow-md: 0 10px 30px -18px hsl(0 0% 0% / 0.62);
+  --shadow-lg: 0 30px 86px -38px hsl(0 0% 0% / 0.76);
+  --shadow-glow: 0 18px 62px -26px hsl(188 79% 72% / 0.40);
+  --shadow-brand: 0 34px 92px -34px hsl(0 0% 0% / 0.82);
 
-  --glass-bg-strong: 222 45% 9% / 0.80;
-  --glass-bg: 222 45% 10% / 0.58;
-  --glass-bg-soft: 222 45% 12% / 0.36;
-  --glass-bg-onDark: 222 45% 10% / 0.58;
-  --glass-border: 210 60% 86% / 0.11;
-  --glass-border-strong: 210 70% 86% / 0.18;
-  --glass-border-onDark: 210 70% 86% / 0.14;
+  --glass-bg-strong: 216 13% 11% / 0.82;
+  --glass-bg: 216 13% 11% / 0.60;
+  --glass-bg-soft: 216 13% 12% / 0.38;
+  --glass-bg-onDark: 216 13% 11% / 0.60;
+  --glass-border: 43 52% 97% / 0.11;
+  --glass-border-strong: 43 52% 97% / 0.18;
+  --glass-border-onDark: 43 52% 97% / 0.14;
   --glass-highlight: 0 0% 100% / 0.08;
   --glass-shadow:
     inset 0 1px 0 hsl(0 0% 100% / 0.07),
-    0 22px 56px -28px hsl(0 0% 0% / 0.68),
-    0 12px 36px -22px hsl(205 100% 60% / 0.16);
+    0 22px 56px -28px hsl(0 0% 0% / 0.70),
+    0 12px 36px -22px hsl(188 79% 72% / 0.13);
   --glass-shadow-lg:
     inset 0 1px 0 hsl(0 0% 100% / 0.09),
-    0 40px 92px -36px hsl(0 0% 0% / 0.78),
-    0 18px 50px -28px hsl(205 100% 60% / 0.22);
+    0 42px 96px -38px hsl(0 0% 0% / 0.80),
+    0 18px 50px -30px hsl(188 79% 72% / 0.18);
   --glass-shadow-onDark:
     inset 0 1px 0 hsl(0 0% 100% / 0.09),
-    0 40px 92px -36px hsl(0 0% 0% / 0.78);
+    0 42px 96px -38px hsl(0 0% 0% / 0.80);
 
-  --ambient-sky: radial-gradient(78% 58% at 50% 0%, hsl(207 100% 54% / 0.19), transparent 72%);
-  --ambient-sky-soft: radial-gradient(62% 52% at 50% 0%, hsl(207 100% 56% / 0.13), transparent 76%);
+  --ambient-sky: radial-gradient(78% 58% at 50% 0%, hsl(188 79% 72% / 0.16), transparent 72%);
+  --ambient-sky-soft: radial-gradient(62% 52% at 50% 0%, hsl(188 79% 72% / 0.10), transparent 76%);
   --ambient-mesh:
-    radial-gradient(42% 30% at 12% 18%, hsl(215 100% 58% / 0.16), transparent 72%),
-    radial-gradient(34% 28% at 88% 8%, hsl(184 100% 62% / 0.10), transparent 74%),
-    radial-gradient(54% 42% at 50% 100%, hsl(252 86% 66% / 0.11), transparent 72%);
+    radial-gradient(42% 30% at 12% 18%, hsl(188 79% 72% / 0.13), transparent 72%),
+    radial-gradient(30% 24% at 88% 8%, hsl(37 100% 65% / 0.10), transparent 74%),
+    radial-gradient(54% 42% at 50% 100%, hsl(187 79% 40% / 0.12), transparent 72%);
   --ambient-future:
-    radial-gradient(48% 34% at 18% 12%, hsl(214 100% 58% / 0.20), transparent 73%),
-    radial-gradient(40% 30% at 86% 14%, hsl(183 95% 60% / 0.12), transparent 77%),
-    radial-gradient(58% 48% at 50% 94%, hsl(252 90% 68% / 0.12), transparent 74%);
+    radial-gradient(48% 34% at 18% 12%, hsl(188 79% 72% / 0.14), transparent 73%),
+    radial-gradient(36% 28% at 86% 14%, hsl(37 100% 65% / 0.09), transparent 77%),
+    radial-gradient(58% 48% at 50% 94%, hsl(187 79% 40% / 0.13), transparent 74%);
 
-  --sidebar-background: 222 50% 7%;
-  --sidebar-foreground: 216 38% 96%;
-  --sidebar-primary: 212 100% 67%;
-  --sidebar-primary-foreground: 222 58% 7%;
-  --sidebar-accent: 217 70% 44%;
-  --sidebar-accent-foreground: 0 0% 100%;
-  --sidebar-border: 222 30% 14%;
-  --sidebar-ring: 207 100% 70%;
+  --sidebar-background: 220 13% 6%;
+  --sidebar-foreground: 43 52% 97%;
+  --sidebar-primary: 188 79% 72%;
+  --sidebar-primary-foreground: 220 13% 8%;
+  --sidebar-accent: 187 70% 28%;
+  --sidebar-accent-foreground: 43 52% 97%;
+  --sidebar-border: 218 12% 15%;
+  --sidebar-ring: 188 79% 72%;
 
-  --app-bg: 222 56% 5%;
-  --app-sidebar-bg: 222 50% 7%;
-  --app-sidebar-fg: 216 38% 96%;
-  --app-sidebar-muted: 217 18% 66%;
-  --app-sidebar-active-bg: 217 70% 44%;
-  --app-sidebar-active-fg: 0 0% 100%;
-  --app-sidebar-border: 222 30% 14%;
+  --app-bg: 220 13% 8%;
+  --app-sidebar-bg: 220 13% 6%;
+  --app-sidebar-fg: 43 52% 97%;
+  --app-sidebar-muted: 40 13% 66%;
+  --app-sidebar-active-bg: 187 70% 28%;
+  --app-sidebar-active-fg: 43 52% 97%;
+  --app-sidebar-border: 218 12% 15%;
 
-  --app-primary: 212 100% 67%;
-  --app-primary-glow: 188 100% 66%;
-  --app-primary-fg: 222 58% 7%;
+  --app-primary: 188 79% 72%;
+  --app-primary-glow: 187 79% 48%;
+  --app-primary-fg: 220 13% 8%;
 
   --app-pill-pass-bg: 152 58% 18%;
   --app-pill-pass-fg: 152 74% 78%;
-  --app-pill-warn-bg: 39 76% 18%;
-  --app-pill-warn-fg: 40 96% 78%;
+  --app-pill-warn-bg: 37 82% 18%;
+  --app-pill-warn-fg: 37 100% 78%;
   --app-pill-fail-bg: 0 58% 20%;
   --app-pill-fail-fg: 0 82% 82%;
-  --app-pill-info-bg: 212 58% 20%;
-  --app-pill-info-fg: 207 100% 82%;
+  --app-pill-info-bg: 188 58% 20%;
+  --app-pill-info-fg: 188 90% 82%;
 }
 
 html {
@@ -254,11 +259,11 @@ body {
   box-shadow:
     inset 0 1px 0 hsl(0 0% 100% / 0.08),
     0 18px 46px -28px hsl(0 0% 0% / 0.82),
-    0 8px 24px -18px hsl(205 100% 60% / 0.22);
+    0 8px 24px -18px hsl(188 79% 72% / 0.18);
 }
 
 .dark .future-grid {
-  opacity: 0.42;
+  opacity: 0.36;
 }
 
 .dark .surface-card,

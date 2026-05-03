@@ -1,0 +1,65 @@
+/* Final brand overrides for the new PhotoBrief line-logo system.
+   Loaded after index.css and theme.css so older app-shell defaults cannot pull
+   the product back into the previous electric-blue palette.
+*/
+
+.app-shell {
+  --primary: var(--app-primary);
+  --primary-glow: var(--app-primary-glow);
+  --primary-foreground: var(--app-primary-fg);
+  --ring: var(--app-primary);
+  --background: var(--app-bg);
+  --accent: 187 69% 92%;
+  --accent-foreground: 188 78% 24%;
+  --sidebar-background: var(--app-sidebar-bg);
+  --sidebar-foreground: var(--app-sidebar-fg);
+  --sidebar-accent: var(--app-sidebar-active-bg);
+  --sidebar-accent-foreground: var(--app-sidebar-active-fg);
+  --sidebar-border: var(--app-sidebar-border);
+  --sidebar-ring: var(--app-primary);
+  --sidebar-primary: var(--app-primary);
+  --sidebar-primary-foreground: var(--app-primary-fg);
+}
+
+.dark .app-shell {
+  --accent: 187 39% 18%;
+  --accent-foreground: 188 79% 80%;
+}
+
+.recipient-shell {
+  --primary: var(--app-primary);
+  --primary-glow: var(--app-primary-glow);
+  --primary-foreground: var(--app-primary-fg);
+  --ring: var(--app-primary);
+  --accent: 187 69% 92%;
+  --accent-foreground: 188 78% 24%;
+}
+
+.dark .recipient-shell {
+  --accent: 187 39% 18%;
+  --accent-foreground: 188 79% 80%;
+}
+
+.text-gradient-future {
+  background-image: linear-gradient(
+    100deg,
+    hsl(var(--foreground)) 0%,
+    hsl(var(--primary)) 56%,
+    hsl(var(--warning)) 112%
+  );
+}
+
+.btn-primary-glass {
+  background-image: linear-gradient(180deg, hsl(var(--primary-glow)) 0%, hsl(var(--primary)) 100%);
+  box-shadow:
+    inset 0 1px 0 hsl(0 0% 100% / 0.34),
+    inset 0 -1px 0 hsl(var(--brand-navy) / 0.20),
+    0 10px 26px -13px hsl(var(--primary) / 0.52);
+}
+
+.btn-primary-glass:hover {
+  box-shadow:
+    inset 0 1px 0 hsl(0 0% 100% / 0.40),
+    inset 0 -1px 0 hsl(var(--brand-navy) / 0.20),
+    0 16px 34px -14px hsl(var(--primary) / 0.56);
+}
