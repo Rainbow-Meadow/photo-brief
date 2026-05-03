@@ -22,7 +22,7 @@ export const recipientSteps: GuideStepProps[] = [
       </>
     ),
     screenshot: {
-      src: "/help/recipient-chat.png",
+      src: "/help/recipient-capture.svg",
       alt: "Mobile PhotoBrief welcome and first photo step",
       ratio: "9/16",
       pins: [
@@ -53,7 +53,7 @@ export const recipientSteps: GuideStepProps[] = [
       </>
     ),
     screenshot: {
-      src: "/help/recipient-feedback.png",
+      src: "/help/recipient-feedback.svg",
       alt: "Simple photo feedback with retake and keep options",
       ratio: "9/16",
       pins: [
@@ -95,7 +95,7 @@ export const recipientSteps: GuideStepProps[] = [
       </>
     ),
     screenshot: {
-      src: "/help/recipient-review.png",
+      src: "/help/recipient-review.svg",
       alt: "Review screen with photo thumbnails and send button",
       ratio: "9/16",
     },
