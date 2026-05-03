@@ -1,5 +1,5 @@
-// Drives the chat-first capture flow for ANY guide.
-// Page components only render messages; logic lives here.
+// Drives the recipient capture workflow for any saved template.
+// Page components decide presentation; this hook owns linear flow state.
 import { useCallback, useMemo, useRef, useState } from "react";
 import type { PhotoGuide } from "@/types/photobrief";
 import type { AnsweredQuestion, CapturedPhoto, ChatMessage, FlowPhase } from "@/types/chat";
@@ -63,19 +63,20 @@ export function useChatFlow({
     return initial;
   });
 
-  const [phase, setPhase] = useState<FlowPhase>("intro");
+  const [phase, setPhase] = useState<FlowPhase>(effectiveGuide.steps.length > 0 ? "capturing" : "review");
   const [stepIndex, setStepIndex] = useState(0);
   const [questionIndex, setQuestionIndex] = useState(0);
   const photosRef = useRef<CapturedPhoto[]>([]);
+  const skippedStepIdsRef = useRef<string[]>([]);
   const answersRef = useRef<AnsweredQuestion[]>([]);
   const [, force] = useState(0);
   const rerender = () => force((n) => n + 1);
 
   const append = useCallback((...msgs: ChatMessage[]) => setMessages((prev) => [...prev, ...msgs]), []);
 
-  const markCaptureCardPending = useCallback((stepId: string) => {
+  const setCaptureCardPending = useCallback((stepId: string, pending: boolean) => {
     setMessages((prev) =>
-      prev.map((m) => (m.kind === "capture_card" && m.step.id === stepId ? { ...m, pending: true } : m)),
+      prev.map((m) => (m.kind === "capture_card" && m.step.id === stepId ? { ...m, pending } : m)),
     );
   }, []);
 
@@ -84,6 +85,7 @@ export function useChatFlow({
     if (nextIdx < effectiveGuide.steps.length) {
       const next = effectiveGuide.steps[nextIdx];
       setStepIndex(nextIdx);
+      setPhase("capturing");
       const nextMsgs: ChatMessage[] = [];
       const comment = resubmit?.commentsByStepId[next.id];
       if (comment) nextMsgs.push({ id: nextId(), kind: "assistant_text", text: `Reviewer note: ${comment}` });
@@ -99,7 +101,7 @@ export function useChatFlow({
       setPhase("questions");
       setQuestionIndex(0);
       append(
-        { id: nextId(), kind: "assistant_text", text: "Great photos. Just a couple of quick questions and we're done." },
+        { id: nextId(), kind: "assistant_text", text: "Great. Just a quick question and then you're done." },
         { id: nextId(), kind: "question", question: effectiveGuide.questions[0] },
       );
     } else {
@@ -132,7 +134,7 @@ export function useChatFlow({
       const step = effectiveGuide.steps[stepIndex];
       if (!step) return;
 
-      markCaptureCardPending(step.id);
+      setCaptureCardPending(step.id, true);
       const photo: CapturedPhoto = {
         stepId: step.id,
         previewUrl,
@@ -143,29 +145,31 @@ export function useChatFlow({
       };
       append({ id: nextId(), kind: "user_photo", photo });
 
-      if (uploadCapture && file) {
-        try {
-          const ext = (file.type.split("/")[1] ?? "jpg").replace("jpeg", "jpg") || "jpg";
-          const up = await uploadCapture({ stepId: step.id, blob: file, ext });
-          photo.publicUrl = up.publicUrl;
-          photo.storagePath = up.storagePath;
-          photo.capturedMediaId = up.capturedMediaId;
-        } catch (e) {
-          console.warn("upload failed before AI check", e);
-        }
+      if (!uploadCapture || !file) {
+        setCaptureCardPending(step.id, false);
+        append({ id: nextId(), kind: "assistant_text", text: "Please choose a photo from this device before continuing." });
+        return;
       }
 
-      const { checks, verdict } = photo.capturedMediaId
-        ? await aiService.analyzeCapturedMedia({
-            step,
-            capturedMediaId: photo.capturedMediaId,
-            recipientNote: undefined,
-            requestToken,
-          })
-        : {
-            checks: [],
-            verdict: "unavailable" as AICheckSeverity,
-          };
+      try {
+        const ext = (file.type.split("/")[1] ?? "jpg").replace("jpeg", "jpg") || "jpg";
+        const up = await uploadCapture({ stepId: step.id, blob: file, ext });
+        photo.publicUrl = up.publicUrl;
+        photo.storagePath = up.storagePath;
+        photo.capturedMediaId = up.capturedMediaId;
+      } catch (e) {
+        console.warn("upload failed before AI check", e);
+        setCaptureCardPending(step.id, false);
+        append({ id: nextId(), kind: "assistant_text", text: "That photo didn't upload. Please try again." });
+        return;
+      }
+
+      const { checks, verdict } = await aiService.analyzeCapturedMedia({
+        step,
+        capturedMediaId: photo.capturedMediaId,
+        recipientNote: undefined,
+        requestToken,
+      });
       photo.checks = checks.map((c) => ({ id: c.type, severity: c.severity, message: c.message }));
       append({ id: nextId(), kind: "ai_feedback", photo, verdict: verdict as AICheckSeverity });
 
@@ -173,10 +177,11 @@ export function useChatFlow({
         await acceptPhoto(photo);
         setTimeout(() => advanceAfterStep(), 350);
       } else {
+        setCaptureCardPending(step.id, false);
         append({ id: nextId(), kind: "retake_decision", photo, step });
       }
     },
-    [stepIndex, effectiveGuide.steps, append, markCaptureCardPending, advanceAfterStep, uploadCapture, requestToken, acceptPhoto],
+    [stepIndex, effectiveGuide.steps, append, setCaptureCardPending, advanceAfterStep, uploadCapture, requestToken, acceptPhoto],
   );
 
   const retake = useCallback(() => {
@@ -197,6 +202,15 @@ export function useChatFlow({
     },
     [append, advanceAfterStep, acceptPhoto],
   );
+
+  const skipPhoto = useCallback(() => {
+    const step = effectiveGuide.steps[stepIndex];
+    if (!step || step.required) return;
+    skippedStepIdsRef.current.push(step.id);
+    append({ id: nextId(), kind: "user_text", text: `Skipped: ${step.title}` });
+    rerender();
+    advanceAfterStep();
+  }, [advanceAfterStep, append, effectiveGuide.steps, stepIndex]);
 
   const answerQuestion = useCallback(
     (answer: string) => {
@@ -226,20 +240,29 @@ export function useChatFlow({
 
   const photos = photosRef.current;
   const answers = answersRef.current;
+  const skippedStepIds = skippedStepIdsRef.current;
 
   const progress = useMemo(() => {
     const totalSteps = effectiveGuide.steps.length + effectiveGuide.questions.length;
-    const done = photos.length + (phase === "questions" ? questionIndex : phase === "review" || phase === "submitted" ? effectiveGuide.questions.length : 0);
-    return { done, total: totalSteps };
-  }, [photos.length, effectiveGuide.steps.length, effectiveGuide.questions.length, phase, questionIndex]);
+    const completedPhotos = photos.length + skippedStepIds.length;
+    const completedQuestions =
+      phase === "questions"
+        ? questionIndex
+        : phase === "review" || phase === "submitted"
+          ? effectiveGuide.questions.length
+          : 0;
+    return { done: completedPhotos + completedQuestions, total: totalSteps };
+  }, [photos.length, skippedStepIds.length, effectiveGuide.steps.length, effectiveGuide.questions.length, phase, questionIndex]);
 
   return {
     messages,
     phase,
     progress,
     photos,
+    skippedStepIds,
     answers,
     submitPhoto,
+    skipPhoto,
     retake,
     useAnyway,
     answerQuestion,
