@@ -31,6 +31,29 @@ export const faqItems: FaqItem[] = [
     ),
   },
   {
+    id: "website-tools",
+    audience: "business",
+    q: "Which website tools does PhotoBrief work with?",
+    a: (
+      <>
+        Anything that can link a button to a web address can use PhotoBrief. The setup guide includes
+        simple paths for Wix, Squarespace, WordPress, Elementor, Webflow, Shopify, GoDaddy, Carrd,
+        and Zapier/Make.
+      </>
+    ),
+  },
+  {
+    id: "link-or-webhook",
+    audience: "business",
+    q: "Should I use the hosted link or the webhook?",
+    a: (
+      <>
+        Use the hosted link first. It is faster and easier to test. Use the webhook only when you
+        need to keep an existing website form exactly as-is or you already use an automation tool.
+      </>
+    ),
+  },
+  {
     id: "existing-form",
     audience: "business",
     q: "Can I use my existing website form?",
