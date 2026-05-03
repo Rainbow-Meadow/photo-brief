@@ -1,11 +1,10 @@
 // Centralized plan tiers, limits, and feature gating.
 //
 // Pricing model:
-// - The customer-facing pricing axis is simple: photos, branding, storage term,
-//   and team size.
-// - PhotoBrief Credits are photo credits.
-// - 1 submitted/analyzed photo = 1 credit.
-// - Basic AI quality checks and submission summaries are bundled into that photo credit.
+// - Free + Starter are manual-link plans: create a PhotoBrief request and send a clickable link.
+// - Pro is the first automation plan: hosted Website Intake, routing, webhook/integration setup.
+// - The customer-facing pricing axes stay simple: photos, branding, storage term, team size.
+// - 1 submitted/analyzed photo = 1 PhotoBrief Credit.
 // - First-pass guarantee: follow-up/resubmission photos requested by PhotoBrief do not consume credits.
 import type { Plan } from "@/types/photobrief";
 
@@ -13,6 +12,9 @@ import type { Plan } from "@/types/photobrief";
 export type FeatureKey =
   | "request_limit"
   | "credit_limit"
+  // Manual request links
+  | "manual_links"
+  | "clickable_links"
   // Branding / recipient experience
   | "branding"
   | "branded_links"
@@ -25,6 +27,11 @@ export type FeatureKey =
   | "ai_request_builder"
   | "advanced_ai_checks"
   | "missing_shot_followup"
+  // Website Intake / integrations
+  | "website_intake"
+  | "hosted_intake_form"
+  | "intake_routing"
+  | "api_webhooks"
   // Workflow
   | "reminders"
   | "internal_notes"
@@ -35,10 +42,9 @@ export type FeatureKey =
   | "bulk_actions"
   // Output
   | "pdf_export"
-  // Org / integrations
+  // Org
   | "multi_workspace"
   | "custom_domain"
-  | "api_webhooks"
   | "priority_support";
 
 export interface FeatureMeta {
@@ -54,6 +60,14 @@ export const featureCatalog: Record<FeatureKey, FeatureMeta> = {
   credit_limit: {
     label: "Monthly photos",
     description: "One submitted customer photo uses one PhotoBrief Credit.",
+  },
+  manual_links: {
+    label: "Manual PhotoBrief links",
+    description: "Create a request and send a clickable PhotoBrief link to a customer.",
+  },
+  clickable_links: {
+    label: "Clickable PhotoBrief links",
+    description: "Send customers a simple link that opens their mobile photo workflow.",
   },
   branding: {
     label: "Customer-facing branding",
@@ -77,23 +91,39 @@ export const featureCatalog: Record<FeatureKey, FeatureMeta> = {
   },
   ai_guide_generator: {
     label: "AI template drafting",
-    description: "Let AI draft reusable photo request templates from a short description.",
+    description: "Let AI draft reusable photo request templates from a short guided setup.",
   },
   ai_request_builder: {
     label: "AI request builder",
-    description: 'Type "I need photos for…" and get an editable request draft.',
+    description: "Answer a few questions and get an editable request draft.",
   },
   advanced_ai_checks: {
     label: "AI quality checks",
-    description: "Catch blur, glare, missing items, and more before your team reviews.",
+    description: "Catch blur, glare, missing subjects, and unreadable labels before your team reviews.",
   },
   missing_shot_followup: {
     label: "Missing-shot follow-up",
-    description: "AI nudges the customer for the exact shot you're missing.",
+    description: "AI nudges the customer for the exact shot you are missing.",
+  },
+  website_intake: {
+    label: "Website Intake",
+    description: "Turn website leads into PhotoBrief requests automatically.",
+  },
+  hosted_intake_form: {
+    label: "Hosted intake form",
+    description: "Use a PhotoBrief-hosted intake link from your website CTA.",
+  },
+  intake_routing: {
+    label: "Template routing",
+    description: "Route request types and messages to the right saved template.",
+  },
+  api_webhooks: {
+    label: "Website integrations & webhooks",
+    description: "Connect existing forms, Zapier, Make, Webflow, WordPress, and other tools to PhotoBrief.",
   },
   reminders: {
     label: "Automatic reminders",
-    description: "Send reminder messages to recipients who haven't finished.",
+    description: "Send reminder messages to recipients who have not finished.",
   },
   internal_notes: {
     label: "Internal notes",
@@ -130,10 +160,6 @@ export const featureCatalog: Record<FeatureKey, FeatureMeta> = {
   custom_domain: {
     label: "Custom domain",
     description: "Send customers to request links on your own domain.",
-  },
-  api_webhooks: {
-    label: "API & webhooks",
-    description: "Push submissions into your own systems with our API and webhooks.",
   },
   priority_support: {
     label: "Priority support",
@@ -200,8 +226,8 @@ export const planLimits: PlanLimit[] = [
     name: "Free",
     priceMonthly: 0,
     priceAnnualMonthly: 0,
-    tagline: "Try the workflow.",
-    purpose: "Validate PhotoBrief with a few real customer photos.",
+    tagline: "Send your first PhotoBrief links.",
+    purpose: "Try manual customer photo collection with a few real links.",
     pricingAxes: {
       photos: "10 photos / month",
       customerBranding: "No customer branding",
@@ -219,14 +245,19 @@ export const planLimits: PlanLimit[] = [
       savedTemplates: 0,
     },
     features: [
+      "Create and send clickable PhotoBrief links",
       "10 customer photos / month",
       "1 submitted photo = 1 photo credit",
-      "AI quality checks and summaries included",
+      "Simple AI photo checks and summaries included",
       "PhotoBrief branding shown to customers",
       "7-day media storage",
-      "1 user",
+      "Website Intake and integrations unlock on Pro",
     ],
-    capabilities: {},
+    capabilities: {
+      manual_links: true,
+      clickable_links: true,
+      advanced_ai_checks: true,
+    },
     pdfExport: false,
   },
   {
@@ -234,8 +265,8 @@ export const planLimits: PlanLimit[] = [
     name: "Starter",
     priceMonthly: 19,
     priceAnnualMonthly: 15,
-    tagline: "Branded basics for solo work.",
-    purpose: "Solo operators who want a professional customer-facing request flow.",
+    tagline: "Branded manual links.",
+    purpose: "Solo operators who want a professional manual request flow before automating website leads.",
     pricingAxes: {
       photos: "100 photos / month",
       customerBranding: "Logo, color, and custom messages",
@@ -253,17 +284,18 @@ export const planLimits: PlanLimit[] = [
       savedTemplates: 3,
     },
     features: [
+      "Create and send clickable PhotoBrief links",
       "100 customer photos / month",
       "Logo, brand color, and customer-facing messages",
-      "PhotoBrief footer remains on customer pages",
-      "30-day media storage",
-      "1 user",
+      "3 saved templates for repeat manual requests",
       "AI quality checks, readiness score, and summary",
-      "3 saved templates",
       "PDF export with PhotoBrief footer",
-      "First-pass guarantee: requested follow-up photos are free",
+      "30-day media storage",
+      "Website Intake and integrations unlock on Pro",
     ],
     capabilities: {
+      manual_links: true,
+      clickable_links: true,
       branding: true,
       branded_links: true,
       custom_messages: true,
@@ -279,8 +311,8 @@ export const planLimits: PlanLimit[] = [
     name: "Pro",
     priceMonthly: 49,
     priceAnnualMonthly: 40,
-    tagline: "More photos, no PhotoBrief branding.",
-    purpose: "High-volume solo operators and small teams that want a fully branded customer experience.",
+    tagline: "Automate website intake.",
+    purpose: "Small businesses ready to turn website leads into photo-ready requests automatically.",
     highlight: true,
     pricingAxes: {
       photos: "500 photos / month",
@@ -299,19 +331,20 @@ export const planLimits: PlanLimit[] = [
       savedTemplates: 25,
     },
     features: [
-      "500 customer photos / month",
-      "Full customer branding",
-      "Remove PhotoBrief branding from customer pages",
-      "12-month media storage",
-      "Up to 3 users",
-      "25 saved templates",
+      "Everything in Starter",
+      "Website Intake hosted form",
+      "Guided setup for common website tools",
+      "Template routing for request types",
+      "Webhook and Zapier/Make-style integrations",
       "AI request builder and AI template drafting",
-      "Missing-shot follow-up and reminders",
-      "Internal notes and assignments",
-      "Branded PDF export",
+      "Remove PhotoBrief branding from customer pages",
+      "Up to 3 users",
+      "12-month media storage",
       "First-pass guarantee: requested follow-up photos are free",
     ],
     capabilities: {
+      manual_links: true,
+      clickable_links: true,
       branding: true,
       branded_links: true,
       custom_messages: true,
@@ -320,9 +353,14 @@ export const planLimits: PlanLimit[] = [
       ai_request_builder: true,
       advanced_ai_checks: true,
       missing_shot_followup: true,
+      website_intake: true,
+      hosted_intake_form: true,
+      intake_routing: true,
+      api_webhooks: true,
       reminders: true,
       internal_notes: true,
       assignments: true,
+      team_members: true,
       saved_templates: true,
       pdf_export: true,
       white_label: true,
@@ -334,8 +372,8 @@ export const planLimits: PlanLimit[] = [
     name: "Team",
     priceMonthly: 99,
     priceAnnualMonthly: 80,
-    tagline: "Team inbox and longer storage.",
-    purpose: "Teams sharing customer photo intake across multiple reviewers.",
+    tagline: "Shared intake operations.",
+    purpose: "Teams sharing automated photo intake across reviewers.",
     pricingAxes: {
       photos: "1,500 photos / month",
       customerBranding: "Full customer branding",
@@ -353,20 +391,20 @@ export const planLimits: PlanLimit[] = [
       savedTemplates: "unlimited",
     },
     features: [
+      "Everything in Pro",
       "1,500 customer photos / month",
-      "Full customer branding",
-      "Remove PhotoBrief branding from customer pages",
-      "24-month media storage",
-      "Up to 10 users",
+      "Website Intake and webhook integrations",
       "Unlimited saved templates",
       "Team inbox, assignments, and reviewer roles",
       "Shared internal notes and activity history",
       "Bulk actions",
       "Full PDF branding",
       "Priority support",
-      "First-pass guarantee: requested follow-up photos are free",
+      "24-month media storage",
     ],
     capabilities: {
+      manual_links: true,
+      clickable_links: true,
       branding: true,
       branded_links: true,
       custom_messages: true,
@@ -375,6 +413,10 @@ export const planLimits: PlanLimit[] = [
       ai_request_builder: true,
       advanced_ai_checks: true,
       missing_shot_followup: true,
+      website_intake: true,
+      hosted_intake_form: true,
+      intake_routing: true,
+      api_webhooks: true,
       reminders: true,
       internal_notes: true,
       assignments: true,
@@ -412,6 +454,7 @@ export const planLimits: PlanLimit[] = [
       savedTemplates: "unlimited",
     },
     features: [
+      "Everything in Team",
       "5,000+ customer photos / month",
       "Custom pooled photo volume",
       "Custom branding and custom domain",
@@ -419,13 +462,12 @@ export const planLimits: PlanLimit[] = [
       "Custom media retention and export policy",
       "25+ users",
       "Multiple workspaces / locations",
-      "Unlimited saved templates",
-      "API & webhooks",
       "Advanced audit history",
       "Priority support",
-      "First-pass guarantee: requested follow-up photos are free",
     ],
     capabilities: {
+      manual_links: true,
+      clickable_links: true,
       branding: true,
       branded_links: true,
       custom_messages: true,
@@ -434,6 +476,10 @@ export const planLimits: PlanLimit[] = [
       ai_request_builder: true,
       advanced_ai_checks: true,
       missing_shot_followup: true,
+      website_intake: true,
+      hosted_intake_form: true,
+      intake_routing: true,
+      api_webhooks: true,
       reminders: true,
       internal_notes: true,
       assignments: true,
@@ -445,7 +491,6 @@ export const planLimits: PlanLimit[] = [
       multi_workspace: true,
       custom_domain: true,
       white_label: true,
-      api_webhooks: true,
       priority_support: true,
     },
     pdfExport: "custom",
