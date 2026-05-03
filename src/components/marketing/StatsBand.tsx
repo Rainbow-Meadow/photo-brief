@@ -1,37 +1,31 @@
 const stats = [
-  { value: "40%", label: "Fewer wasted service calls" },
-  { value: "8 min", label: "Avg. customer completion time" },
-  { value: "3×", label: "Faster listing sell-through" },
-  { value: "100%", label: "Refunded on rework — every time" },
+  { value: "1", label: "Website lead becomes one guided photo workflow" },
+  { value: "6", label: "Simple AI issue categories, not noisy diagnostics" },
+  { value: "0", label: "Credits used for first-pass follow-up photos" },
+  { value: "5 min", label: "Target customer completion experience" },
 ];
 
 export function StatsBand() {
   return (
     <section className="relative overflow-hidden bg-gradient-brand text-white">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 bg-gradient-radial-glow"
-      />
+      <div aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-radial-glow" />
+      <div aria-hidden className="future-grid pointer-events-none absolute inset-0 opacity-20" />
       <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-            The numbers speak for themselves
+          <p className="text-eyebrow text-white/60">Product model</p>
+          <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-5xl">
+            Built around how small businesses actually intake work.
           </h2>
           <p className="mt-4 text-white/75">
-            Real results from PhotoBrief users across industries.
+            No fake complexity. No bloated workflow builder. Just the fastest path from request to usable photos.
           </p>
         </div>
 
         <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {stats.map((s) => (
-            <div
-              key={s.label}
-              className="glass-onDark rounded-2xl p-6 text-center lift-on-hover"
-            >
-              <div className="text-4xl font-semibold tracking-tight tabular-nums sm:text-5xl">
-                {s.value}
-              </div>
-              <p className="mt-2 text-sm text-white/75">{s.label}</p>
+            <div key={s.label} className="glass-onDark magnetic-card rounded-[1.75rem] p-6 text-center">
+              <div className="text-4xl font-semibold tracking-tight tabular-nums sm:text-5xl">{s.value}</div>
+              <p className="mt-3 text-sm leading-6 text-white/75">{s.label}</p>
             </div>
           ))}
         </div>

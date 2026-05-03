@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { Zap, ArrowRight } from "lucide-react";
+import { ArrowRight, Globe2, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/analytics";
 import { signupCtaTarget, signupCtaLabel, INVITE_ONLY_BETA } from "@/config/access";
@@ -7,32 +7,34 @@ import { signupCtaTarget, signupCtaLabel, INVITE_ONLY_BETA } from "@/config/acce
 export function FinalCtaCard() {
   return (
     <section className="relative overflow-hidden bg-background">
-      <div aria-hidden className="pointer-events-none absolute inset-0 bg-ambient-sky" />
-      <div className="relative mx-auto max-w-4xl px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
-        <div className="glass-strong relative rounded-[28px] p-10 text-center shadow-glass-lg sm:p-14">
-          <span className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-primary text-primary-foreground shadow-glow">
-            <Zap className="h-6 w-6" />
-          </span>
-          <h2 className="mt-6 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-            Your next customer is about to send you the wrong photos.
+      <div aria-hidden className="pointer-events-none absolute inset-0 bg-ambient-future" />
+      <div aria-hidden className="future-grid pointer-events-none absolute inset-0 opacity-70" />
+      <div className="relative mx-auto max-w-5xl px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+        <div className="glass-strong relative overflow-hidden rounded-[2.5rem] p-8 text-center shadow-glass-lg sm:p-14">
+          <span aria-hidden className="animate-sheen pointer-events-none absolute inset-y-0 left-0 w-1/4 -skew-x-12 bg-white/35 blur-xl" />
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[1.4rem] bg-gradient-primary text-primary-foreground shadow-glow">
+            <Globe2 className="h-7 w-7" />
+          </div>
+          <h2 className="mx-auto mt-6 max-w-3xl text-3xl font-semibold tracking-tight text-foreground sm:text-5xl">
+            Put one better intake button on your website.
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-base text-muted-foreground">
-            Fix that in 5 minutes. Send your first PhotoBrief request today — free.
+          <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
+            Your next website lead can become a photo-ready job brief automatically — customer info, right template, guided photos, and a clean summary for your team.
           </p>
-          <div className="mt-8 flex justify-center">
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Button asChild size="xl" className="rounded-full">
-              <NavLink
-                to={signupCtaTarget()}
-                onClick={() => trackEvent("cta_click", { location: "final_card", label: "primary" })}
-              >
+              <NavLink to={signupCtaTarget()} onClick={() => trackEvent("cta_click", { location: "final_card", label: "primary" })}>
                 {INVITE_ONLY_BETA ? signupCtaLabel() : "Create your free account"} <ArrowRight className="ml-1 h-4 w-4" />
               </NavLink>
             </Button>
+            <Button asChild size="xl" variant="glass" className="rounded-full">
+              <a href="#how-it-works" onClick={() => trackEvent("cta_click", { location: "final_card", label: "how_it_works" })}>
+                <Zap className="mr-1 h-4 w-4" /> See the flow
+              </a>
+            </Button>
           </div>
           <p className="mt-4 text-xs text-muted-foreground">
-            {INVITE_ONLY_BETA
-              ? "Invite-only beta · We're onboarding businesses carefully"
-              : "Free forever plan · No credit card · Takes 2 minutes"}
+            {INVITE_ONLY_BETA ? "Invite-only beta · Built for small businesses that depend on customer photos" : "Free plan · No credit card · Takes 2 minutes"}
           </p>
         </div>
       </div>
