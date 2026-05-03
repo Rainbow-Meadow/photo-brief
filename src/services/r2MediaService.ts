@@ -16,9 +16,18 @@ interface CreateUploadArgs {
 export interface R2UploadResult {
   submissionId: string;
   capturedMediaId: string;
+  /** Short-lived signed URL for AI analysis of the original upload. */
   publicUrl: string;
+  /** Temporary original R2 key until accepted media is promoted to WebP. */
   storagePath: string;
+  originalStorageKey?: string | null;
   processedStorageKey?: string | null;
+}
+
+interface PromoteArgs {
+  token?: string;
+  capturedMediaId: string;
+  file: Blob;
 }
 
 function clientForToken(token?: string) {
@@ -36,14 +45,13 @@ async function putObject(url: string, blob: Blob, contentType: string) {
   }
 }
 
-function withContentType(url: string, contentType: string) {
-  // Signed R2 URLs include the signed header set. The server signs with the
-  // intended content type, so keep PUT headers exactly aligned with it.
-  return { url, contentType };
-}
-
 export const r2MediaService = {
-  async uploadSubmissionPhoto(args: CreateUploadArgs): Promise<R2UploadResult> {
+  /**
+   * Upload the original capture to a temporary R2 key and return a signed URL
+   * for AI. This does NOT create the permanent WebP asset yet; promotion happens
+   * after the AI verdict accepts the photo or the user chooses "use anyway".
+   */
+  async uploadOriginalForAnalysis(args: CreateUploadArgs): Promise<R2UploadResult> {
     const client = clientForToken(args.token);
     const contentType = args.file.type || "image/jpeg";
 
@@ -64,74 +72,68 @@ export const r2MediaService = {
       throw new Error("create-media-upload returned an invalid payload");
     }
 
-    const originalUpload = withContentType(created.uploadUrl, contentType);
-    await putObject(originalUpload.url, args.file, originalUpload.contentType);
+    await putObject(created.uploadUrl, args.file, contentType);
 
-    // Make the original available to AI immediately. This validates the upload
-    // and returns a short-lived signed read URL.
-    const { data: originalFinalized, error: originalErr } = await client.functions.invoke("finalize-media-upload", {
+    const { data: finalized, error: finalizeErr } = await client.functions.invoke("finalize-media-upload", {
       body: { capturedMediaId: created.capturedMediaId },
     });
-    if (originalErr) throw originalErr;
-    if (!originalFinalized?.aiReadUrl) {
+    if (finalizeErr) throw finalizeErr;
+    if (!finalized?.aiReadUrl) {
       throw new Error("finalize-media-upload did not return an AI read URL");
     }
 
-    // Convert after original upload/validation. If conversion fails, keep the
-    // original available for AI and mark the media as uploaded_original; the
-    // reviewer still has a usable submission.
-    try {
-      const variants = await convertImageToWebpVariants(args.file);
-      const fullKey = `submissions/${args.workspaceId}/${args.requestId}/${created.submissionId}/${created.capturedMediaId}/full.webp`;
-      const previewKey = `submissions/${args.workspaceId}/${args.requestId}/${created.submissionId}/${created.capturedMediaId}/preview.webp`;
-      const thumbKey = `submissions/${args.workspaceId}/${args.requestId}/${created.submissionId}/${created.capturedMediaId}/thumb.webp`;
+    return {
+      submissionId: created.submissionId,
+      capturedMediaId: created.capturedMediaId,
+      publicUrl: finalized.aiReadUrl,
+      storagePath: created.originalStorageKey,
+      originalStorageKey: created.originalStorageKey,
+      processedStorageKey: null,
+    };
+  },
 
-      const uploadVariant = async (key: string, blob: Blob) => {
-        const { data, error } = await client.functions.invoke("get-media-upload-url", {
-          body: { key, contentType: "image/webp" },
-        });
-        if (error) throw error;
-        if (!data?.uploadUrl) throw new Error("Missing signed variant upload URL");
-        await putObject(data.uploadUrl, blob, "image/webp");
-      };
+  /** Convert the accepted original capture to WebP variants and promote those
+   * variants to permanent R2 storage. Safe to call after AI pass/warn or after
+   * the user accepts a warning/failure with "use anyway".
+   */
+  async promoteAcceptedPhotoToWebp(args: PromoteArgs): Promise<{ processedStorageKey: string | null }> {
+    const client = clientForToken(args.token);
+    const variants = await convertImageToWebpVariants(args.file);
 
-      await Promise.all([
-        uploadVariant(fullKey, variants.full.blob),
-        uploadVariant(previewKey, variants.preview.blob),
-        uploadVariant(thumbKey, variants.thumb.blob),
-      ]);
-
-      const { data: processedFinalized, error: processedErr } = await client.functions.invoke("finalize-media-upload", {
-        body: {
-          capturedMediaId: created.capturedMediaId,
-          processed: {
-            uploaded: true,
-            width: variants.full.width,
-            height: variants.full.height,
-            sizeBytes: variants.full.blob.size,
-            checksumSha256: variants.checksumSha256,
-          },
-          deleteOriginal: false,
-        },
+    const uploadVariant = async (variant: "full" | "preview" | "thumb", blob: Blob) => {
+      const { data, error } = await client.functions.invoke("get-media-upload-url", {
+        body: { capturedMediaId: args.capturedMediaId, variant, contentType: "image/webp" },
       });
-      if (processedErr) throw processedErr;
+      if (error) throw error;
+      if (!data?.uploadUrl) throw new Error(`Missing signed ${variant} upload URL`);
+      await putObject(data.uploadUrl, blob, "image/webp");
+      return data.key as string;
+    };
 
-      return {
-        submissionId: created.submissionId,
-        capturedMediaId: created.capturedMediaId,
-        publicUrl: originalFinalized.aiReadUrl,
-        storagePath: processedFinalized?.processedStorageKey ?? fullKey,
-        processedStorageKey: processedFinalized?.processedStorageKey ?? fullKey,
-      };
-    } catch (err) {
-      console.warn("WebP conversion/upload failed; continuing with original", err);
-      return {
-        submissionId: created.submissionId,
-        capturedMediaId: created.capturedMediaId,
-        publicUrl: originalFinalized.aiReadUrl,
-        storagePath: created.originalStorageKey,
-        processedStorageKey: null,
-      };
-    }
+    const [fullKey] = await Promise.all([
+      uploadVariant("full", variants.full.blob),
+      uploadVariant("preview", variants.preview.blob),
+      uploadVariant("thumb", variants.thumb.blob),
+    ]);
+
+    const { data: processedFinalized, error: processedErr } = await client.functions.invoke("finalize-media-upload", {
+      body: {
+        capturedMediaId: args.capturedMediaId,
+        processed: {
+          uploaded: true,
+          width: variants.full.width,
+          height: variants.full.height,
+          sizeBytes: variants.full.blob.size,
+          checksumSha256: variants.checksumSha256,
+        },
+        deleteOriginal: false,
+      },
+    });
+    if (processedErr) throw processedErr;
+
+    return { processedStorageKey: processedFinalized?.processedStorageKey ?? fullKey };
   },
 };
+
+// Back-compat alias for any intermediate imports.
+export const uploadSubmissionPhoto = r2MediaService.uploadOriginalForAnalysis;
