@@ -13,6 +13,7 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { PublicRequestLayout } from "@/components/layout/PublicRequestLayout";
 import { RequireAuth } from "@/components/auth/RequireAuth";
 import { RouteTracker } from "@/components/analytics/RouteTracker";
+import { FeatureGate } from "@/components/shared/FeatureGate";
 
 // Eager: marketing + auth + recipient capture. These are the entry points
 // for unauthenticated visitors and the public recipient flow, so they stay
@@ -124,7 +125,24 @@ const App = () => (
             <Route path="/guides/:id" element={<GuideDetailPage />} />
             <Route path="/customers" element={<CustomersPage />} />
             <Route path="/customers/:id" element={<CustomerDetailPage />} />
-            <Route path="/intake" element={<WebsiteIntakePage />} />
+            <Route
+              path="/intake"
+              element={
+                <FeatureGate
+                  feature="website_intake"
+                  title="Website Intake unlocks on Pro."
+                  description="Free and Starter are for manually creating and sending clickable PhotoBrief links. Pro adds the automation layer that turns website leads into routed PhotoBrief requests."
+                  bullets={[
+                    "Hosted Website Intake form for your site CTA",
+                    "Guided setup for Wix, Squarespace, WordPress, Webflow, Shopify, GoDaddy, Carrd, Zapier, and Make",
+                    "Template routing for request types and messages",
+                    "Webhook setup for existing website forms",
+                  ]}
+                >
+                  <WebsiteIntakePage />
+                </FeatureGate>
+              }
+            />
             <Route path="/settings/brand" element={<BrandSettingsPage />} />
             <Route path="/settings/team" element={<TeamSettingsPage />} />
             <Route path="/settings/templates" element={<MessageTemplatesPage />} />
