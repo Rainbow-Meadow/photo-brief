@@ -1,5 +1,5 @@
 import { Outlet, NavLink } from "react-router-dom";
-import { Plus, LifeBuoy, KeyRound, LogOut } from "lucide-react";
+import { Plus, LifeBuoy, KeyRound, LogOut, Globe2 } from "lucide-react";
 
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/layout/AppSidebar";
@@ -28,15 +28,17 @@ export function DashboardLayout() {
     <RequireAuth>
       <SidebarProvider>
         <div className="app-shell relative flex min-h-screen w-full overflow-hidden bg-background">
-          <div aria-hidden className="pointer-events-none fixed inset-x-0 top-0 h-80 bg-ambient-sky opacity-70" />
-          <div aria-hidden className="pointer-events-none fixed -right-40 top-24 h-96 w-96 rounded-full bg-primary/5 blur-3xl" />
+          <div aria-hidden className="pointer-events-none fixed inset-x-0 top-0 h-96 bg-ambient-future opacity-80" />
+          <div aria-hidden className="future-grid pointer-events-none fixed inset-0 opacity-35" />
+          <div aria-hidden className="pointer-events-none fixed -right-40 top-24 h-96 w-96 rounded-full bg-primary/8 blur-3xl animate-pulse-glow" />
+          <div aria-hidden className="pointer-events-none fixed -left-32 bottom-24 h-80 w-80 rounded-full bg-primary-glow/10 blur-3xl" />
 
           <div className="hidden lg:block">
             <AppSidebar />
           </div>
 
           <div className="relative flex min-w-0 flex-1 flex-col">
-            <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-border/60 bg-background/75 px-3 pt-safe backdrop-blur-xl supports-[backdrop-filter]:bg-background/65 sm:px-5">
+            <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-border/50 bg-background/70 px-3 pt-safe backdrop-blur-2xl supports-[backdrop-filter]:bg-background/60 sm:px-5">
               <div className="hidden lg:block">
                 <SidebarTrigger />
               </div>
@@ -49,10 +51,16 @@ export function DashboardLayout() {
                 <p className="truncate text-sm font-medium text-foreground">
                   {workspace?.name ?? "PhotoBrief"}
                 </p>
-                <p className="text-[11px] text-muted-foreground">Workspace</p>
+                <p className="text-[11px] text-muted-foreground">Visual intake workspace</p>
               </div>
 
               <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
+                <Button asChild size="sm" variant="outline" className="hidden gap-1.5 rounded-full bg-background/70 md:inline-flex">
+                  <NavLink to="/intake">
+                    <Globe2 className="h-4 w-4" />
+                    Website Intake
+                  </NavLink>
+                </Button>
                 <Button asChild size="sm" className="hidden gap-1.5 rounded-full sm:inline-flex">
                   <NavLink to="/requests/new">
                     <Plus className="h-4 w-4" />
@@ -77,29 +85,14 @@ export function DashboardLayout() {
                   <DropdownMenuContent align="end" className="w-56 rounded-2xl">
                     <DropdownMenuLabel className="font-normal">
                       <p className="text-xs text-muted-foreground">Signed in as</p>
-                      <p className="truncate text-sm font-medium text-foreground">
-                        {email ?? "-"}
-                      </p>
+                      <p className="truncate text-sm font-medium text-foreground">{email ?? "-"}</p>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      onSelect={(e) => {
-                        e.preventDefault();
-                        resetPassword();
-                      }}
-                      disabled={resetting || !email}
-                    >
+                    <DropdownMenuItem onSelect={(e) => { e.preventDefault(); resetPassword(); }} disabled={resetting || !email}>
                       <KeyRound className="mr-2 h-4 w-4" />
                       {resetting ? "Sending link..." : "Reset password"}
                     </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onSelect={(e) => {
-                        e.preventDefault();
-                        logOut();
-                      }}
-                      disabled={signingOut}
-                      className="text-destructive focus:text-destructive"
-                    >
+                    <DropdownMenuItem onSelect={(e) => { e.preventDefault(); logOut(); }} disabled={signingOut} className="text-destructive focus:text-destructive">
                       <LogOut className="mr-2 h-4 w-4" />
                       {signingOut ? "Signing out..." : "Log out"}
                     </DropdownMenuItem>
@@ -116,11 +109,7 @@ export function DashboardLayout() {
           </div>
         </div>
 
-        <NavLink
-          to="/app/help"
-          aria-label="Open help and beta guide"
-          className="fixed right-4 z-40 flex h-12 w-12 items-center justify-center rounded-full border border-border/70 bg-card/85 text-primary shadow-lg backdrop-blur transition-transform hover:scale-105 bottom-[calc(5rem+env(safe-area-inset-bottom))] lg:bottom-6"
-        >
+        <NavLink to="/app/help" aria-label="Open help and setup guide" className="fixed right-4 z-40 flex h-12 w-12 items-center justify-center rounded-full border border-border/70 bg-card/85 text-primary shadow-lg backdrop-blur transition-transform hover:scale-105 bottom-[calc(5rem+env(safe-area-inset-bottom))] lg:bottom-6">
           <LifeBuoy className="h-5 w-5" />
         </NavLink>
 
