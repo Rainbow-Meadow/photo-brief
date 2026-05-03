@@ -93,7 +93,7 @@ export async function headR2Object(key: string) {
   return {
     contentType: res.headers.get("content-type"),
     contentLength: Number(res.headers.get("content-length") ?? 0),
-    etag: res.headers.get("etag")?.replace(/^\"|\"$/g, "") ?? null,
+    etag: res.headers.get("etag")?.replace(/^"|"$/g, "") ?? null,
   };
 }
 
