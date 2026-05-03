@@ -16,7 +16,7 @@ export type SubmissionStatus = "new" | "reviewed" | "needs_more" | "archived";
 
 /**
  * Capture type — mirrors DB `capture_type` enum.
- * Workbook uses photo|label|document; legacy values kept for request-builder UI compatibility.
+ * Legacy builder aliases remain only where the UI still needs them.
  */
 export type ShotType =
   | "photo"
@@ -29,7 +29,7 @@ export type ShotType =
   | "close_up"
   | "serial";
 
-/** Overlay type — mirrors DB `overlay_type` enum plus legacy builder aliases. */
+/** Overlay type — mirrors DB `overlay_type` enum plus builder aliases. */
 export type OverlayType =
   | "wide_scene"
   | "close_up"
@@ -49,27 +49,20 @@ export type OverlayType =
   | "before_after"
   | "scale_required";
 
-/** AI check type — mirrors DB `ai_check_type` enum plus legacy aliases used by templates. */
+/**
+ * Standard AI photo issue taxonomy.
+ *
+ * Keep this list intentionally small. The AI should answer one simple question:
+ * does this photo match the requested shot, and are there obvious issues that
+ * prevent the business from using it?
+ */
 export type AICheckType =
-  | "blur"
-  | "low_light"
+  | "wrong_subject"
+  | "too_dark"
+  | "blurry"
+  | "label_unreadable"
   | "glare"
-  | "unreadable_text"
-  | "wrong_shot"
-  | "cropped_subject"
-  | "duplicate_image"
-  | "missing_scale"
-  | "missing_required_item"
-  | "label_detected"
-  | "serial_model_detected"
-  | "receipt_order_detected"
-  | "damage_visible"
-  | "wide_shot_detected"
-  | "close_up_detected"
-  | "unsafe_condition_flag"
-  | "serial_detected"
-  | "receipt_detected"
-  | "unsafe_condition";
+  | "too_close_or_cropped";
 
 export type AICheckSeverity = "pass" | "warn" | "fail" | "unavailable";
 
@@ -84,7 +77,7 @@ export type ContextQuestionInputType =
   | "phone"
   | "email";
 
-/** Workflow archetype — one of the capture archetypes from the Template Directory. */
+/** Workflow archetype — retained for existing DB rows/types, not used for built-in template catalogs. */
 export type WorkflowType =
   | "service_repair"
   | "equipment_service"
@@ -141,7 +134,7 @@ export interface ContextQuestion {
   required: boolean;
 }
 
-/** Curated topline category — mirrors DB `topline_category` enum. */
+/** Curated topline category — retained for DB/type compatibility only. */
 export type CuratedCategory =
   | "field_service_quote_intake"
   | "property_realestate_claims"
@@ -215,7 +208,7 @@ export interface ShotAIFeedback {
   severity: ShotFeedbackSeverity;
   headline: string;
   detail?: string;
-  checks?: { type: AICheckType; severity: ShotFeedbackSeverity; label: string }[];
+  checks?: { type: AICheckType; severity: ShotFeedbackSeverity; label: string; message?: string }[];
   confidence?: number;
   flags?: string[];
   businessSummary?: string;
