@@ -80,7 +80,9 @@ Deno.serve(async (req) => {
     .insert({
       submission_id: submissionId,
       step_id: body.stepId && /^[0-9a-f-]{36}$/i.test(body.stepId) ? body.stepId : null,
-      file_url: null,
+      // Temporary placeholder updated to the real original key below. Kept
+      // non-null for compatibility with older schemas/views that expect file_url.
+      file_url: "pending-r2-upload",
       status: "analyzing",
       storage_provider: "r2",
       processing_status: "pending_upload",
@@ -102,7 +104,7 @@ Deno.serve(async (req) => {
 
   const { error: updateErr } = await admin
     .from("captured_media")
-    .update({ original_storage_key: originalKey })
+    .update({ original_storage_key: originalKey, file_url: originalKey })
     .eq("id", media.id);
   if (updateErr) return json({ error: updateErr.message }, 500);
 
