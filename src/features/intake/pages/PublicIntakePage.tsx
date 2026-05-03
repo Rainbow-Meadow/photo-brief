@@ -53,7 +53,7 @@ export default function PublicIntakePage() {
       try {
         const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/website-intake/${token}`);
         const json = await res.json();
-        if (!res.ok) throw new Error(json?.error ?? "Could not load intake form");
+        if (!res.ok) throw new Error(json?.message ?? json?.error ?? "Could not load intake form");
         if (!cancelled) {
           setConfig(json);
           if (json.requestTypeOptions?.length === 1) {
@@ -82,7 +82,7 @@ export default function PublicIntakePage() {
       const { data, error: fnError } = await supabase.functions.invoke(`website-intake/${token}`, {
         body: form,
       });
-      if (fnError) throw new Error(fnError.message);
+      if (fnError) throw new Error(data?.message ?? fnError.message);
       if (data?.ok && data.requestLink) {
         const next = new URL(data.requestLink).pathname;
         navigate(next);
@@ -111,11 +111,14 @@ export default function PublicIntakePage() {
     return (
       <PublicShell>
         <div className="rounded-[2rem] border bg-card/80 p-8 text-center shadow-sm backdrop-blur">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10 text-destructive">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
             <LockKeyhole className="h-5 w-5" />
           </div>
           <h1 className="mt-4 text-xl font-semibold text-foreground">This intake form is not available</h1>
-          <p className="mt-2 text-sm text-muted-foreground">{error}</p>
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">{error}</p>
+          <p className="mt-4 rounded-2xl bg-muted/45 p-3 text-xs leading-5 text-muted-foreground">
+            The business can still send you a manual PhotoBrief request link if they are not using Website Intake.
+          </p>
         </div>
       </PublicShell>
     );
