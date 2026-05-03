@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { WebsiteToolSetupAssistant } from "@/features/intake/components/WebsiteToolSetupAssistant";
 import { useCurrentWorkspace } from "@/hooks/useCurrentWorkspace";
 import { useWorkspaceGuides } from "@/hooks/useGuides";
 import {
@@ -95,7 +96,7 @@ export default function WebsiteIntakePage() {
               Turn website inquiries into photo-ready requests.
             </h1>
             <p className="mt-2 max-w-2xl text-base leading-7 text-muted-foreground">
-              Use the hosted form or connect your existing website form. Either way, PhotoBrief can pick the right template, create the customer, and send the photo request automatically.
+              Use the guided setup below to copy the right link, open the right website tool, and test the path without figuring out integration docs from scratch.
             </p>
             <div className="mt-5 hidden max-w-xl overflow-hidden rounded-[1.75rem] border bg-background/60 p-2 shadow-sm backdrop-blur md:block">
               <img src="/marketing/website-intake-flow.svg" alt="Website Intake automation flow" className="w-full rounded-[1.25rem]" loading="lazy" />
@@ -113,6 +114,8 @@ export default function WebsiteIntakePage() {
           </div>
         </div>
       </section>
+
+      <WebsiteToolSetupAssistant hostedLink={hostedLink} webhookUrl={webhook} />
 
       <div className="grid gap-5 lg:grid-cols-[0.95fr_1.05fr]">
         <div className="space-y-5">
