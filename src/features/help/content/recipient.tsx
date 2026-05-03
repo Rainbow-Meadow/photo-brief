@@ -3,107 +3,102 @@ import type { GuideStepProps } from "../components/GuideStep";
 export const recipientSteps: GuideStepProps[] = [
   {
     number: 1,
-    title: "Open the link your contractor sent",
+    title: "Open the link",
     body: (
       <>
-        You’ll get a link by email or text from the business you’re working with. Tap it on your
-        phone — no app or sign-in needed.
+        Tap the PhotoBrief link from the business. It works in your phone browser. You do not need
+        an app or account.
       </>
     ),
-    whatYouSee: <>A friendly chat-style page with the business’s logo at the top.</>,
+    whatYouSee: <>A simple welcome screen with the business name and how many photos are needed.</>,
   },
   {
     number: 2,
-    title: "Follow the chat",
+    title: "Tap Start",
     body: (
       <>
-        The chat tells you exactly what photo to take next, one at a time. A progress bar at the
-        top shows how close you are to finishing.
+        The first screen tells you roughly how long it will take. Most requests are designed to be
+        finished in a few minutes.
       </>
     ),
     screenshot: {
       src: "/help/recipient-chat.png",
-      alt: "Recipient chat page showing a photo prompt and a capture tile",
+      alt: "Mobile PhotoBrief welcome and first photo step",
       ratio: "9/16",
       pins: [
-        { x: 50, y: 8, label: 1, note: "Progress bar — how many photos left" },
-        { x: 50, y: 40, label: 2, note: "What to photograph next" },
-        { x: 50, y: 75, label: 3, note: "Tap to take or upload a photo" },
+        { x: 50, y: 12, label: 1, note: "Progress: how close you are to done" },
+        { x: 50, y: 42, label: 2, note: "One photo step at a time" },
+        { x: 50, y: 78, label: 3, note: "Big Take photo button" },
       ],
     },
   },
   {
     number: 3,
-    title: "Take or upload a photo",
+    title: "Take or choose a photo",
     body: (
       <>
-        Tap the camera tile. Your phone opens its camera so you can shoot the photo right then —
-        or pick one from your gallery if you already have it.
+        For each step, tap <strong>Take photo</strong>. You can also choose a photo from your
+        library if you already have one. PhotoBrief uploads it and checks that photo before moving
+        on.
       </>
     ),
   },
   {
     number: 4,
-    title: "Read the AI feedback",
+    title: "Read the simple feedback",
     body: (
       <>
-        After each photo, you’ll get a quick check from our AI:{" "}
-        <strong className="text-emerald-600 dark:text-emerald-400">green</strong> means it looks
-        good, <strong className="text-amber-600 dark:text-amber-400">yellow</strong> means it
-        could be better (e.g. blurry, too far away, wrong angle).
+        After each photo, PhotoBrief gives one simple result: <strong>Looks good</strong>,
+        <strong> Usable, but could be clearer</strong>, or <strong>This probably needs a retake</strong>.
       </>
     ),
     screenshot: {
       src: "/help/recipient-feedback.png",
-      alt: "AI feedback bubble with Retake and Use anyway buttons",
+      alt: "Simple photo feedback with retake and keep options",
       ratio: "9/16",
       pins: [
-        { x: 50, y: 35, label: 1, note: "AI feedback message" },
-        { x: 30, y: 75, label: 2, note: "Retake — recommended if it’s yellow" },
-        { x: 70, y: 75, label: 3, note: "Use anyway — keeps this photo" },
+        { x: 50, y: 35, label: 1, note: "Simple feedback" },
+        { x: 30, y: 75, label: 2, note: "Retake if it helps" },
+        { x: 70, y: 75, label: 3, note: "Keep if it is usable" },
       ],
     },
   },
   {
     number: 5,
-    title: "Retake or use anyway",
+    title: "Retake only when needed",
     body: (
       <>
-        If the feedback is yellow, <strong>Retake</strong> usually saves you time later — your
-        contractor may otherwise ask you to do it again. Tap <strong>Use anyway</strong> only if
-        you’re sure.
+        A mild warning means the photo may still work. A stronger warning means retaking is the
+        safest choice. The feedback will tell you what to fix, like glare, blur, darkness, a cut-off
+        subject, or unreadable label.
       </>
     ),
-    warn: (
-      <>
-        Using a flagged photo can delay your job if the business needs to send the request back.
-      </>
-    ),
+    warn: <>Keeping a clearly bad photo may slow things down if the business needs to ask again.</>,
   },
   {
     number: 6,
     title: "Answer any short questions",
     body: (
       <>
-        Some requests include a quick question or two (for example: “How old is the unit?”). Tap
-        an answer or type a short reply.
+        Some requests include one or two short questions. Answer them, then continue. If there are
+        no questions, you’ll go straight to review.
       </>
     ),
   },
   {
     number: 7,
-    title: "Review and submit",
+    title: "Review and send",
     body: (
       <>
-        At the end you’ll see a summary of every photo and answer. Scroll through it once, then
-        tap <strong>Submit</strong>. You’ll get a confirmation screen — that’s it, you’re done.
+        At the end, check the photos and answers once. Tap <strong>Send</strong>. You’ll see a
+        confirmation screen, and the business will receive your finished brief.
       </>
     ),
     screenshot: {
       src: "/help/recipient-review.png",
-      alt: "Review summary with all photos thumbnailed and a Submit button",
+      alt: "Review screen with photo thumbnails and send button",
       ratio: "9/16",
     },
-    whatYouSee: <>A confirmation page that thanks you and tells you what happens next.</>,
+    whatYouSee: <>A confirmation page that tells you the photos were sent.</>,
   },
 ];
