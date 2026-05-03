@@ -14,7 +14,6 @@ export const SceneLogo: React.FC = () => {
   const subOpacity = interpolate(sub, [0, 1], [0, 1]);
   const subY = interpolate(sub, [0, 1], [10, 0]);
 
-  // Tagline
   const tag = spring({ frame: frame - 30, fps, config: SPRING.smooth });
   const tagOpacity = interpolate(tag, [0, 1], [0, 1]);
   const tagY = interpolate(tag, [0, 1], [12, 0]);
@@ -23,7 +22,7 @@ export const SceneLogo: React.FC = () => {
     <AbsoluteFill style={{ alignItems: "center", justifyContent: "center" }}>
       <div style={{ textAlign: "center", fontFamily: FONT.display }}>
         <Img
-          src={staticFile("brand/photobrief-horizontal.png")}
+          src={staticFile("brand/photobrief-horizontal.svg")}
           style={{
             height: 160,
             width: "auto",
@@ -43,7 +42,7 @@ export const SceneLogo: React.FC = () => {
             letterSpacing: 0.5,
           }}
         >
-          AI-guided visual intake for service businesses
+          Visual intake for small businesses
         </div>
         <div
           style={{
@@ -55,7 +54,7 @@ export const SceneLogo: React.FC = () => {
             color: COLORS.mutedLight,
           }}
         >
-          See the job before you send the crew
+          Turn website leads into photo-ready briefs
         </div>
       </div>
     </AbsoluteFill>
