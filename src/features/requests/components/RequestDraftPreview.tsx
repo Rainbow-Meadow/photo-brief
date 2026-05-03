@@ -130,20 +130,20 @@ export function RequestDraftPreview({
         <div className="grid gap-2 sm:grid-cols-[1fr_auto_auto]">
           <Button
             size="lg"
-            className="h-13 rounded-2xl text-base shadow-glow"
+            className="h-14 rounded-2xl text-base shadow-glow"
             onClick={onCreate}
             disabled={!canCreate || isSaving}
           >
             <Send className="mr-2 h-5 w-5" />
             {isSaving ? "Creating…" : "Create request"}
           </Button>
-          <Button variant="outline" size="lg" className="h-13 rounded-2xl bg-background/70" onClick={onSaveAsGuide}>
+          <Button variant="outline" size="lg" className="h-14 rounded-2xl bg-background/70" onClick={onSaveAsGuide}>
             <Save className="mr-2 h-4 w-4" /> Save template
           </Button>
           <Button
             variant="ghost"
             size="lg"
-            className="h-13 rounded-2xl"
+            className="h-14 rounded-2xl"
             onClick={() => {
               document.getElementById("draft-preview-top")?.scrollIntoView({ behavior: "smooth" });
             }}
