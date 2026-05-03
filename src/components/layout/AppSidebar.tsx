@@ -37,7 +37,7 @@ const mainItems = [
   { title: "Requests", url: "/requests", icon: Inbox },
   { title: "Customers", url: "/customers", icon: Users },
   { title: "Guides", url: "/guides", icon: BookOpen },
-  { title: "Website Intake", url: "/intake", icon: Globe2 },
+  { title: "Website Intake", url: "/intake", icon: Globe2, feature: "website_intake" as const },
 ];
 
 const settingsItems = [
@@ -51,7 +51,7 @@ const settingsItems = [
 export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
-  const { plan, loading: planLoading } = usePlan();
+  const { plan, loading: planLoading, can } = usePlan();
   // Hide the upgrade card for users already on Pro or higher.
   // Plans below Pro: free, starter. Don't render until plan is resolved
   // to avoid flashing the wrong CTA during the brief auth/workspace load.
@@ -88,16 +88,29 @@ export function AppSidebar() {
           <SidebarGroupLabel>Workspace</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {mainItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild isActive={isActive(item.url)} tooltip={item.title}>
-                    <NavLink to={item.url} className="flex items-center gap-2">
-                      <item.icon className="h-4 w-4" />
-                      {!collapsed && <span>{item.title}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {mainItems.map((item) => {
+                const locked = item.feature ? !can(item.feature) : false;
+                const tooltip = locked ? `${item.title} · Pro` : item.title;
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild isActive={isActive(item.url)} tooltip={tooltip}>
+                      <NavLink to={item.url} className="flex items-center gap-2">
+                        <item.icon className="h-4 w-4" />
+                        {!collapsed && (
+                          <>
+                            <span className="min-w-0 flex-1">{item.title}</span>
+                            {locked ? (
+                              <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary">
+                                Pro
+                              </span>
+                            ) : null}
+                          </>
+                        )}
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -139,7 +152,7 @@ export function AppSidebar() {
 
       {!collapsed && showUpgradeCard ? (
         <SidebarFooter className="gap-2 p-2">
-          <UpgradePromptCard />
+          <UpgradePromptCard feature="website_intake" />
         </SidebarFooter>
       ) : null}
     </Sidebar>
