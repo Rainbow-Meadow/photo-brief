@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { ArrowRight, CheckCircle2, Copy, Globe2, Loader2, Plus, Send, Trash2, Wand2 } from "lucide-react";
+import { ArrowRight, CheckCircle2, Copy, ExternalLink, Globe2, Loader2, Plus, Send, Trash2, Wand2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -57,6 +57,7 @@ export default function WebsiteIntakePage() {
   });
 
   const webhook = source ? intakeWebhookUrl(source.publicToken) : "";
+  const hostedLink = source ? `${window.location.origin}/i/${source.publicToken}` : "";
 
   useMemo(() => {
     if (mappings.length > 0) {
@@ -94,7 +95,7 @@ export default function WebsiteIntakePage() {
               Turn website inquiries into photo-ready requests.
             </h1>
             <p className="mt-2 max-w-2xl text-base leading-7 text-muted-foreground">
-              When someone submits your website form, PhotoBrief can pick the right template, create the customer, and send the photo request automatically.
+              Use the hosted form or connect your existing website form. Either way, PhotoBrief can pick the right template, create the customer, and send the photo request automatically.
             </p>
           </div>
           <div className="flex items-center gap-2 rounded-full border bg-background/70 px-3 py-2 shadow-sm">
@@ -112,7 +113,31 @@ export default function WebsiteIntakePage() {
 
       <div className="grid gap-5 lg:grid-cols-[0.95fr_1.05fr]">
         <div className="space-y-5">
-          <SurfaceCard title="1. Connect your form" icon={Copy}>
+          <SurfaceCard title="1. Start with the easy link" icon={Globe2}>
+            <p className="text-sm leading-6 text-muted-foreground">
+              Put this hosted intake form behind a “Get a quote” or “Request service” button. It sends customers into the same automated PhotoBrief flow.
+            </p>
+            <div className="mt-4 rounded-2xl bg-muted/50 p-3">
+              <code className="break-all text-xs text-foreground">{hostedLink}</code>
+            </div>
+            <div className="mt-3 grid gap-2 sm:grid-cols-2">
+              <Button
+                className="h-11 rounded-2xl"
+                variant="outline"
+                onClick={async () => {
+                  await navigator.clipboard.writeText(hostedLink);
+                  toast.success("Hosted form link copied");
+                }}
+              >
+                <Copy className="mr-2 h-4 w-4" /> Copy link
+              </Button>
+              <Button className="h-11 rounded-2xl" variant="secondary" onClick={() => window.open(hostedLink, "_blank", "noopener,noreferrer")}>
+                <ExternalLink className="mr-2 h-4 w-4" /> Open form
+              </Button>
+            </div>
+          </SurfaceCard>
+
+          <SurfaceCard title="2. Or connect an existing form" icon={Copy}>
             <p className="text-sm leading-6 text-muted-foreground">
               Paste this URL into Webflow, WordPress, Zapier, Make, or any form tool that can send a webhook.
             </p>
@@ -131,9 +156,9 @@ export default function WebsiteIntakePage() {
             </Button>
           </SurfaceCard>
 
-          <SurfaceCard title="2. Choose the fallback template" icon={Wand2}>
+          <SurfaceCard title="3. Choose the fallback template" icon={Wand2}>
             <p className="text-sm leading-6 text-muted-foreground">
-              If no rule matches, this template will be used. Pick a simple general intake template.
+              If no rule or AI match is confident enough, this template will be used. Pick a simple general intake template.
             </p>
             <select
               className="mt-4 h-12 w-full rounded-2xl border bg-background px-3 text-sm"
@@ -163,9 +188,9 @@ export default function WebsiteIntakePage() {
             </div>
           </SurfaceCard>
 
-          <SurfaceCard title="3. Map your form fields" icon={ArrowRight}>
+          <SurfaceCard title="4. Map your form fields" icon={ArrowRight}>
             <p className="text-sm leading-6 text-muted-foreground">
-              Tell PhotoBrief what your website form calls each field.
+              Only needed for existing website forms. Tell PhotoBrief what your form calls each field.
             </p>
             <div className="mt-4 space-y-3">
               {(Object.keys(FIELD_LABELS) as IntakeField[]).map((field) => (
@@ -193,9 +218,9 @@ export default function WebsiteIntakePage() {
         </div>
 
         <div className="space-y-5">
-          <SurfaceCard title="4. Route request types" icon={Wand2}>
+          <SurfaceCard title="5. Route request types" icon={Wand2}>
             <p className="text-sm leading-6 text-muted-foreground">
-              Match words from the request type or message to a saved template. Keep it simple: “quote”, “repair”, “roof”, “return”.
+              Match words from the request type or message to a saved template. If rules don’t match, PhotoBrief will try a simple AI match before using the fallback.
             </p>
             <div className="mt-4 grid gap-2 sm:grid-cols-[120px_1fr]">
               <select
@@ -237,7 +262,7 @@ export default function WebsiteIntakePage() {
 
             <div className="mt-4 space-y-2">
               {rules.length === 0 ? (
-                <p className="rounded-2xl bg-muted/40 p-3 text-sm text-muted-foreground">No rules yet. The fallback template will be used.</p>
+                <p className="rounded-2xl bg-muted/40 p-3 text-sm text-muted-foreground">No rules yet. AI matching and the fallback template will be used.</p>
               ) : rules.map((rule) => (
                 <div key={rule.id} className="flex items-center justify-between gap-3 rounded-2xl border bg-background/70 p-3">
                   <div>
@@ -257,9 +282,9 @@ export default function WebsiteIntakePage() {
             </div>
           </SurfaceCard>
 
-          <SurfaceCard title="5. Test it" icon={Send}>
+          <SurfaceCard title="6. Test it" icon={Send}>
             <p className="text-sm leading-6 text-muted-foreground">
-              Send a sample lead through the same webhook path your website will use.
+              Send a sample lead through the same path your hosted form or website webhook will use.
             </p>
             <div className="mt-4 grid gap-2 sm:grid-cols-2">
               <Input className="h-11 rounded-2xl bg-background/80" value={testPayload.name} onChange={(e) => setTestPayload((p) => ({ ...p, name: e.target.value }))} placeholder="Name" />
