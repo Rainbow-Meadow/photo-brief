@@ -6,183 +6,122 @@ export const businessSteps: GuideStepProps[] = [
     title: "What PhotoBrief does",
     body: (
       <>
-        PhotoBrief turns your photo requests into a guided chat for your customer. They follow the
-        prompts, our AI checks each photo, and you get a clean, reviewable submission — no more
-        chasing blurry pictures over text.
+        PhotoBrief turns messy customer inquiries into clear photo-ready briefs. You ask for the
+        right photos once, customers complete a simple phone workflow, and you get the photos,
+        answers, AI checks, and summary in one place.
       </>
     ),
   },
   {
     number: 2,
-    title: "Tour your Dashboard",
+    title: "Start with one reusable template",
     body: (
       <>
-        Your Dashboard surfaces the four numbers that matter:{" "}
-        <strong>Ready to review</strong> (action needed from you),{" "}
-        <strong>Needs customer action</strong> (waiting on the recipient),{" "}
-        <strong>In progress</strong> (recipient has started), and{" "}
-        <strong>Refunded this period</strong> (requests we credited back under the first-pass
-        guarantee).
+        Open <strong>Requests → New request</strong> and build a request with AI. Tell it what the
+        job is, how many photos you need, which photos are required, and any questions customers
+        must answer. Save the result as a template when it looks right.
       </>
     ),
-    screenshot: {
-      src: "/help/dashboard-overview.png",
-      alt: "Dashboard with four metric cards and a recent requests list",
-      pins: [
-        { x: 12, y: 22, label: 1, note: "Click any metric to filter the inbox" },
-        { x: 50, y: 60, label: 2, note: "Recent requests with status and readiness" },
-        { x: 92, y: 12, label: 3, note: "Open the AI assistant from the corner button" },
-      ],
-    },
+    tip: <>Your best first template is usually your most common quote, repair, return, or service intake.</>,
   },
   {
     number: 3,
-    title: "Create a request",
+    title: "Send a manual request",
     body: (
       <>
-        Two ways: pick a <strong>Template</strong> from the library, or use the{" "}
-        <strong>AI builder</strong> (Pro+) to describe the job and get a draft. Edit any step,
-        question, or message before sending.
+        Add the customer’s name and email or phone, then tap <strong>Create request</strong>. If
+        you include an email, PhotoBrief sends the link automatically. You can always copy the link
+        from the request page.
       </>
     ),
-    tip: <>Save a customised draft as your own guide so you can reuse it next time.</>,
   },
   {
     number: 4,
-    title: "Customise a guide",
+    title: "Connect Website Intake",
     body: (
       <>
-        Head to <strong>Guides → New</strong> to build a reusable photo guide from scratch. Add
-        steps, written prompts, optional example images, and short context questions. Your saved
-        guides appear in the template picker.
+        Open <strong>Website Intake</strong>. Copy the hosted intake link and put it behind a
+        button on your site like “Get a quote” or “Request service.” This is the easiest setup.
       </>
     ),
+    whatYouSee: <>A hosted form link, a webhook URL, template routing rules, a test lead form, and recent intake events.</>,
   },
   {
     number: 5,
-    title: "Send the link",
+    title: "Choose what each website lead sends",
     body: (
       <>
-        If you entered an email, we send it for you the moment you create the request. Either way,
-        the request detail page has a <strong>Copy link</strong> button you can paste into SMS,
-        WhatsApp, or anywhere else.
+        In Website Intake, choose a fallback template first. Then add simple routing rules like
+        <strong> contains “repair” → Appliance repair intake</strong> or
+        <strong> contains “quote” → Quote photos</strong>. If no rule matches, PhotoBrief can try
+        a conservative AI match before using the fallback.
       </>
     ),
-    whatYouSee: (
-      <>
-        A toast saying “Email sent to {`{customer}`}” — or a “Request created” toast with a copy
-        button when no email was provided.
-      </>
-    ),
+    tip: <>Rules first. AI second. Fallback last. That keeps automation useful without getting weird.</>,
   },
   {
     number: 6,
-    title: "What your customer sees",
+    title: "Use your existing website form if you want",
     body: (
       <>
-        They open a chat-style page with your branding (set under{" "}
-        <strong>Settings → Brand</strong>), follow numbered photo prompts, get instant AI
-        feedback, answer a few short questions, and submit. See the{" "}
-        <a className="text-primary underline-offset-4 hover:underline" href="#recipient">
-          For Customers
-        </a>{" "}
-        section for the full walkthrough you can forward to them.
+        If your site already has a form, copy the <strong>webhook URL</strong> from Website Intake
+        into your form tool, Zapier, Make, Webflow, or WordPress plugin. Then map your form fields
+        to PhotoBrief fields: name, email, phone, request type, message, and address.
       </>
     ),
   },
   {
     number: 7,
-    title: "Track request status",
+    title: "Test before sharing",
     body: (
       <>
-        In the Inbox, every request carries one of these statuses:{" "}
-        <strong>Sent</strong> (link delivered), <strong>Needs customer action</strong> (we’re
-        nudging them), <strong>In progress</strong> (started capturing),{" "}
-        <strong>Submitted</strong> (ready for you), <strong>Reviewed</strong> (you accepted it),
-        and <strong>Archived</strong>. Filter by status from the top of the inbox.
+        Use the <strong>Send test lead</strong> box on Website Intake. It runs the same path as a
+        real website submission and should create a customer, choose a template, and create a
+        PhotoBrief request.
       </>
     ),
-    screenshot: {
-      src: "/help/inbox-statuses.png",
-      alt: "Requests inbox with status filter and rows showing badges",
-      pins: [
-        { x: 14, y: 16, label: 1, note: "Status filter" },
-        { x: 60, y: 50, label: 2, note: "Status badges per request" },
-        { x: 92, y: 50, label: 3, note: "Row actions: copy link, remind, archive" },
-      ],
-    },
+    warn: <>Use your own email while testing if auto-send is on.</>,
   },
   {
     number: 8,
-    title: "Review a submission",
+    title: "What your customer sees",
     body: (
       <>
-        Open any submitted request to see all photos as <strong>shot cards</strong>, the AI
-        verdict per shot, and an overall <strong>readiness score</strong> from 0–100. A higher
-        score means everything looks good on first pass.
-      </>
-    ),
-    screenshot: {
-      src: "/help/submission-review.png",
-      alt: "Submission review page with shot cards and readiness score",
-      pins: [
-        { x: 18, y: 18, label: 1, note: "Overall readiness score" },
-        { x: 50, y: 55, label: 2, note: "Per-photo AI verdict and notes" },
-        { x: 88, y: 18, label: 3, note: "Ask for more / Accept actions" },
-      ],
-    },
-    tip: (
-      <>
-        Rule of thumb: <strong>0–60</strong> needs work, <strong>60–85</strong> is acceptable,{" "}
-        <strong>85+</strong> is great.
+        Customers either open your hosted intake form or a PhotoBrief request link. The capture
+        flow is mobile-first: welcome screen, one photo at a time, simple AI feedback, quick
+        questions, review, and submit. No account. No app.
       </>
     ),
   },
   {
     number: 9,
-    title: "Ask for more photos",
+    title: "Review the finished brief",
     body: (
       <>
-        If a shot is missing or unclear, click <strong>Ask for more</strong>, tick the shots that
-        need redoing, add a short comment per shot, and send. Your customer gets a fresh link that
-        opens straight to the items you flagged — no need to redo everything.
+        Open the completed request to see all photos, answers, and AI notes. The AI checks stay
+        intentionally simple: requested subject, too dark, blurry, unreadable label, glare, or
+        cropped subject.
       </>
     ),
-    warn: (
-      <>
-        Asking for more counts as a rework on that request — but if the original was rejected on
-        first pass, the credit goes back to your monthly allowance automatically.
-      </>
-    ),
+    tip: <>Ask for more only when a specific photo blocks the job. The customer will only redo the flagged items.</>,
   },
   {
     number: 10,
-    title: "Branding, settings, and billing",
+    title: "Keep the system simple",
     body: (
       <>
-        Under <strong>Settings</strong> you can set your <strong>Brand</strong> (logo + colour
-        used on the recipient page), edit <strong>Templates</strong> for emails and SMS, hook up{" "}
-        <strong>SMS</strong> with Twilio, invite your <strong>Team</strong>, and manage{" "}
-        <strong>Billing</strong> — including buying <strong>top-up packs</strong> if you run out
-        of monthly requests before your renewal date.
+        Make one template per common job type. Keep photo steps short. Use Website Intake for
+        automatic leads. Use manual requests for one-off situations. That’s the whole operating
+        model.
       </>
     ),
-    screenshot: {
-      src: "/help/billing-topups.png",
-      alt: "Billing page showing the active plan and the top-up pack cards",
-      ratio: "16/9",
-      pins: [
-        { x: 25, y: 28, label: 1, note: "Your current plan and usage" },
-        { x: 70, y: 70, label: 2, note: "Top-up packs: 25, 100, or 500 extra requests" },
-      ],
-    },
   },
 ];
 
 export const businessChecklist = [
-  { id: "biz-brand", label: "Set my logo and brand colour in Settings → Brand" },
-  { id: "biz-template", label: "Send a test request to myself using a template" },
-  { id: "biz-customise", label: "Save a customised guide for my most common job" },
-  { id: "biz-review", label: "Walk through reviewing a submission end-to-end" },
-  { id: "biz-team", label: "Invite a teammate (if applicable)" },
+  { id: "biz-template", label: "Create one reusable template for my most common job" },
+  { id: "biz-test", label: "Send a test request to myself" },
+  { id: "biz-intake-link", label: "Copy my hosted Website Intake link" },
+  { id: "biz-routing", label: "Add one routing rule and a fallback template" },
+  { id: "biz-review", label: "Review one completed brief end-to-end" },
 ];

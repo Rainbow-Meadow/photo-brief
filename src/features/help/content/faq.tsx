@@ -2,112 +2,66 @@ export type FaqItem = { id: string; q: string; a: React.ReactNode; audience: "bu
 
 export const faqItems: FaqItem[] = [
   {
-    id: "switch-plans",
-    audience: "business",
-    q: "Can I switch plans later?",
-    a: <>Yes. Upgrade or downgrade any time — we prorate the difference automatically.</>,
-  },
-  {
-    id: "monthly-limit",
-    audience: "business",
-    q: "What happens if I hit my monthly request limit?",
-    a: (
-      <>
-        We’ll let you know before you hit it. You can upgrade in one click or buy a one-off
-        top-up pack on the same Billing page.
-      </>
-    ),
-  },
-  {
     id: "recipient-account",
     audience: "business",
-    q: "Do recipients need an account?",
-    a: <>Never. They open a link, follow the chat, and submit. PhotoBrief handles the rest.</>,
+    q: "Do customers need an account?",
+    a: <>No. They open a link, follow the mobile photo workflow, and submit. No app. No login.</>,
   },
   {
-    id: "annual-discount",
+    id: "website-intake",
     audience: "business",
-    q: "Is annual really 20% off?",
-    a: <>Yes — pay yearly and the effective monthly price drops by 20%, on every paid plan.</>,
-  },
-  {
-    id: "what-photo",
-    audience: "recipient",
-    q: "I don’t know what photo to take",
+    q: "What is Website Intake?",
     a: (
       <>
-        Re-read the prompt at the top of the chat — it tells you exactly what to capture. If
-        there’s an example image, tap it to enlarge. Still unsure? Take your best guess; the AI
-        will tell you if something’s off and let you retake.
+        Website Intake turns website leads into PhotoBrief requests automatically. Use the hosted
+        intake link for the easiest setup, or connect your existing form with the webhook URL.
       </>
     ),
   },
   {
-    id: "rejected",
-    audience: "recipient",
-    q: "My photo was rejected or flagged",
-    a: (
-      <>
-        The AI looks for things like blurriness, low light, the subject being too far away, or the
-        wrong angle. The feedback message tells you what to fix. Move closer, hold the phone
-        steady, and turn on the flash if it’s dark.
-      </>
-    ),
-  },
-  {
-    id: "already-submitted",
-    audience: "recipient",
-    q: "I already submitted — can I add more?",
-    a: (
-      <>
-        Yes, but only if the business asks for more. They’ll send you a new link that opens
-        straight to the items they need re-done.
-      </>
-    ),
-  },
-  {
-    id: "more-photos",
+    id: "hosted-intake",
     audience: "business",
-    q: "How do I ask for more photos?",
+    q: "What should I put on my website?",
     a: (
       <>
-        Open the submission, click <strong>Ask for more</strong>, tick the shots that need
-        retaking, add a one-line note for each, and send. Your customer gets a fresh link that
-        only shows the flagged items.
+        Add a button like <strong>Get a quote</strong>, <strong>Request service</strong>, or
+        <strong> Start request</strong>. Link it to your hosted intake form from
+        <strong> Website Intake</strong>.
       </>
     ),
   },
   {
-    id: "find-request",
-    audience: "recipient",
-    q: "I can’t find my request",
-    a: (
-      <>
-        Search your email or texts for the message from the business. The link works on any
-        device — just tap it again to pick up where you left off.
-      </>
-    ),
-  },
-  {
-    id: "mobile",
-    audience: "recipient",
-    q: "I’m on mobile — does this work?",
-    a: (
-      <>
-        Yes, the recipient experience is built for phones. The camera button opens your phone’s
-        camera directly so you can shoot photos right in the chat.
-      </>
-    ),
-  },
-  {
-    id: "limit-reached",
+    id: "existing-form",
     audience: "business",
-    q: "I hit my monthly request limit",
+    q: "Can I use my existing website form?",
     a: (
       <>
-        Either upgrade your plan from <strong>Settings → Billing</strong> or buy a one-off{" "}
-        <strong>top-up pack</strong> (25, 100, or 500 extra requests) on the same page. Top-ups
-        last until the end of your current billing period.
+        Yes. Copy the webhook URL from <strong>Website Intake</strong> into your form tool, then
+        map your fields to name, email, phone, request type, message, and address.
+      </>
+    ),
+  },
+  {
+    id: "ai-routing",
+    audience: "business",
+    q: "How does Website Intake choose a template?",
+    a: (
+      <>
+        It checks your exact/contains rules first. If no rule matches, it can try a conservative AI
+        match using only your configured rules. If that is not confident enough, it uses your
+        fallback template.
+      </>
+    ),
+  },
+  {
+    id: "create-template",
+    audience: "business",
+    q: "What is the best way to make a template?",
+    a: (
+      <>
+        Start from <strong>Requests → New request</strong>. Use AI to build a simple request, edit
+        it, then save it as a template. Keep templates focused: a few photos and only necessary
+        questions.
       </>
     ),
   },
@@ -117,8 +71,99 @@ export const faqItems: FaqItem[] = [
     q: "Can I show my own logo to customers?",
     a: (
       <>
-        Yes — head to <strong>Settings → Brand</strong> to upload your logo and pick your brand
-        colour. Both show up on the chat page your customer sees.
+        Yes. Go to <strong>Settings → Brand</strong> to upload your logo and pick your brand
+        colour. Those show on customer-facing request and intake pages.
+      </>
+    ),
+  },
+  {
+    id: "more-photos",
+    audience: "business",
+    q: "How do I ask for a retake?",
+    a: (
+      <>
+        Open the submission, choose <strong>Ask for more</strong>, select only the photos that need
+        redoing, add a short note, and send. The customer gets a link that opens only the flagged
+        items.
+      </>
+    ),
+  },
+  {
+    id: "pricing-photos",
+    audience: "business",
+    q: "What counts toward usage?",
+    a: (
+      <>
+        PhotoBrief is designed around photo usage, not just raw request count. Simple requests use
+        fewer photos; bigger requests use more. First-pass follow-up retakes are handled separately
+        so customers can fix a submission without feeling punished.
+      </>
+    ),
+  },
+  {
+    id: "what-photo",
+    audience: "recipient",
+    q: "I don’t know what photo to take",
+    a: (
+      <>
+        Read the photo title and short instruction on the screen. Take the clearest photo you can.
+        If something important is missing, PhotoBrief will suggest a retake.
+      </>
+    ),
+  },
+  {
+    id: "feedback-meaning",
+    audience: "recipient",
+    q: "What does the photo feedback mean?",
+    a: (
+      <>
+        <strong>Looks good</strong> means continue. <strong>Usable, but could be clearer</strong>
+        means the photo may still work. <strong>This probably needs a retake</strong> means the
+        business may not be able to use it as-is.
+      </>
+    ),
+  },
+  {
+    id: "rejected",
+    audience: "recipient",
+    q: "Why did PhotoBrief suggest a retake?",
+    a: (
+      <>
+        It looks for simple issues: the requested subject is missing, the photo is too dark, blurry,
+        has glare, cuts off the subject, or has an unreadable label/text.
+      </>
+    ),
+  },
+  {
+    id: "already-submitted",
+    audience: "recipient",
+    q: "I already submitted — can I add more?",
+    a: (
+      <>
+        Only if the business asks for more. They’ll send a new link that opens straight to the
+        photos they need redone.
+      </>
+    ),
+  },
+  {
+    id: "find-request",
+    audience: "recipient",
+    q: "I can’t find my request",
+    a: (
+      <>
+        Search your email or texts for the message from the business. The link works on any device.
+        If you still cannot find it, ask the business to resend the link.
+      </>
+    ),
+  },
+  {
+    id: "mobile",
+    audience: "recipient",
+    q: "Does this work on my phone?",
+    a: (
+      <>
+        Yes. PhotoBrief is built for phones first. Tap <strong>Take photo</strong> and your phone
+        opens the camera.
       </>
     ),
   },
@@ -128,8 +173,8 @@ export const faqItems: FaqItem[] = [
     q: "Something looks confusing",
     a: (
       <>
-        Reach out to the business that sent you the request — they can guide you through it or
-        send a fresh link if anything has gone wrong.
+        Reach out to the business that sent you the request. They can explain what they need or
+        send a fresh link if something went wrong.
       </>
     ),
   },

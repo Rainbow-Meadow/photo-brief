@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, BookOpen, Building2, HelpCircle, Rocket, Smartphone } from "lucide-react";
+import { ArrowRight, BookOpen, Building2, Globe2, HelpCircle, Rocket, Smartphone } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -23,18 +23,58 @@ import { businessSteps, businessChecklist } from "@/features/help/content/busine
 import { recipientSteps } from "@/features/help/content/recipient";
 import { faqItems } from "@/features/help/content/faq";
 
-const tocItems: TocItem[] = [
-  { id: "quick-start", label: "Quick start" },
-  { id: "business", label: "For businesses" },
-  { id: "recipient", label: "For your customers" },
-  { id: "faq", label: "FAQ & troubleshooting" },
+const intakeSteps = [
+  {
+    number: 1,
+    title: "Open Website Intake",
+    body: <>Go to <strong>Website Intake</strong> in the sidebar. PhotoBrief creates one intake setup for your workspace.</>,
+  },
+  {
+    number: 2,
+    title: "Copy the hosted form link",
+    body: <>Use this first. Put it behind a website button like <strong>Get a quote</strong> or <strong>Request service</strong>.</>,
+    whatYouSee: <>A link that starts with your site URL and opens a simple public intake form.</>,
+  },
+  {
+    number: 3,
+    title: "Choose a fallback template",
+    body: <>Pick the template PhotoBrief should use when nothing else clearly matches. This prevents dead ends.</>,
+  },
+  {
+    number: 4,
+    title: "Add one or two routing rules",
+    body: <>Use plain words: <strong>repair</strong>, <strong>quote</strong>, <strong>return</strong>, <strong>roof</strong>. Rules choose templates before AI tries to help.</>,
+    tip: <>Simple words beat clever automation. Start with the jobs customers actually ask for.</>,
+  },
+  {
+    number: 5,
+    title: "Send a test lead",
+    body: <>Use the test box on the page. A good test creates a customer, chooses a template, creates a request, and sends you into the same flow a real lead will use.</>,
+  },
 ];
 
-type TabValue = "quick" | "business" | "recipient" | "faq";
+const intakeChecklist = [
+  { id: "intake-link", label: "Copy hosted intake link" },
+  { id: "intake-fallback", label: "Choose fallback template" },
+  { id: "intake-rule", label: "Add one routing rule" },
+  { id: "intake-test", label: "Send a test lead" },
+  { id: "intake-site", label: "Put the link on my website" },
+];
+
+const tocItems: TocItem[] = [
+  { id: "quick-start", label: "Quick start" },
+  { id: "business", label: "Business setup" },
+  { id: "intake", label: "Website Intake" },
+  { id: "recipient", label: "Customer flow" },
+  { id: "faq", label: "FAQ" },
+];
+
+type TabValue = "quick" | "business" | "intake" | "recipient" | "faq";
 
 const hashToTab: Record<string, TabValue> = {
   "#quick-start": "quick",
   "#business": "business",
+  "#intake": "intake",
   "#recipient": "recipient",
   "#faq": "faq",
 };
@@ -42,6 +82,7 @@ const hashToTab: Record<string, TabValue> = {
 const tabToHash: Record<TabValue, string> = {
   quick: "#quick-start",
   business: "#business",
+  intake: "#intake",
   recipient: "#recipient",
   faq: "#faq",
 };
@@ -49,7 +90,6 @@ const tabToHash: Record<TabValue, string> = {
 export default function BetaGuidePage() {
   const [tab, setTab] = useState<TabValue>("quick");
 
-  // Sync tab with the URL hash so deep links work.
   useEffect(() => {
     const apply = () => {
       const next = hashToTab[window.location.hash];
@@ -64,7 +104,6 @@ export default function BetaGuidePage() {
     const next = v as TabValue;
     setTab(next);
     if (window.location.hash !== tabToHash[next]) {
-      // Use replaceState to avoid clobbering history on every click.
       history.replaceState(null, "", tabToHash[next]);
     }
   };
@@ -75,8 +114,8 @@ export default function BetaGuidePage() {
   return (
     <div className="space-y-8">
       <PageMeta
-        title="Help & beta guide | PhotoBrief"
-        description="Get started with PhotoBrief in 5 minutes. Step-by-step guides for sending photo requests, receiving them, and getting the most out of every brief."
+        title="Help & setup guide | PhotoBrief"
+        description="Simple visual setup guide for PhotoBrief: create requests, connect Website Intake, and show customers how photo capture works."
         canonicalPath="/help"
         ogType="article"
         jsonLd={[buildFaqJsonLd(faqItems)]}
@@ -85,30 +124,29 @@ export default function BetaGuidePage() {
           { name: "Help", path: "/help" },
         ]}
       />
-      {/* Hero */}
-      <header className="rounded-3xl border bg-gradient-to-br from-primary/10 via-background to-accent/30 p-6 sm:p-10">
+      <header className="relative isolate overflow-hidden rounded-[2rem] border border-border/70 bg-card/85 p-6 shadow-[0_30px_90px_-55px_hsl(222_47%_11%/0.55)] backdrop-blur sm:p-10">
+        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-56 bg-ambient-sky opacity-70" />
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-3">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
-              <Rocket className="h-3.5 w-3.5" /> Beta user guide
+            <span className="inline-flex items-center gap-1.5 rounded-full border bg-background/70 px-3 py-1 text-xs font-medium text-muted-foreground shadow-sm">
+              <Rocket className="h-3.5 w-3.5 text-primary" /> Simple setup guide
             </span>
-            <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-              Welcome to PhotoBrief
+            <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+              Set up PhotoBrief without overthinking it.
             </h1>
-            <p className="max-w-xl text-sm text-muted-foreground sm:text-base">
-              Get up and running in 5 minutes. Whether you’re sending requests or receiving one,
-              this guide walks you through the real screens — step by step.
+            <p className="max-w-2xl text-base leading-7 text-muted-foreground">
+              Build one useful template, send one test request, then connect Website Intake so new leads can turn into photo-ready briefs automatically.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
             <Button asChild size="sm" className="rounded-full">
               <a href="#quick-start" onClick={() => handleTabChange("quick")}>
-                Start with Quick start <ArrowRight className="ml-1 h-4 w-4" />
+                Start here <ArrowRight className="ml-1 h-4 w-4" />
               </a>
             </Button>
-            <Button asChild size="sm" variant="outline" className="rounded-full">
-              <a href="#recipient" onClick={() => handleTabChange("recipient")}>
-                I’m a customer
+            <Button asChild size="sm" variant="outline" className="rounded-full bg-background/70">
+              <a href="#intake" onClick={() => handleTabChange("intake")}>
+                Website Intake
               </a>
             </Button>
           </div>
@@ -116,7 +154,6 @@ export default function BetaGuidePage() {
       </header>
 
       <div className="grid gap-6 lg:grid-cols-[220px_minmax(0,1fr)]">
-        {/* Sticky TOC on desktop */}
         <aside className="hidden lg:block">
           <div className="sticky top-20">
             <GuideTOC items={tocItems} activeId={tabToHash[tab].slice(1)} />
@@ -125,103 +162,88 @@ export default function BetaGuidePage() {
 
         <div className="min-w-0">
           <Tabs value={tab} onValueChange={handleTabChange} className="space-y-6">
-            <TabsList className="flex w-full flex-wrap gap-1">
-              <TabsTrigger value="quick" className="gap-1.5">
-                <Rocket className="h-3.5 w-3.5" /> Quick start
+            <TabsList className="flex w-full flex-wrap gap-1 rounded-2xl bg-muted/60 p-1">
+              <TabsTrigger value="quick" className="gap-1.5 rounded-xl">
+                <Rocket className="h-3.5 w-3.5" /> Start
               </TabsTrigger>
-              <TabsTrigger value="business" className="gap-1.5">
-                <Building2 className="h-3.5 w-3.5" /> Businesses
+              <TabsTrigger value="business" className="gap-1.5 rounded-xl">
+                <Building2 className="h-3.5 w-3.5" /> Setup
               </TabsTrigger>
-              <TabsTrigger value="recipient" className="gap-1.5">
-                <Smartphone className="h-3.5 w-3.5" /> Customers
+              <TabsTrigger value="intake" className="gap-1.5 rounded-xl">
+                <Globe2 className="h-3.5 w-3.5" /> Intake
               </TabsTrigger>
-              <TabsTrigger value="faq" className="gap-1.5">
+              <TabsTrigger value="recipient" className="gap-1.5 rounded-xl">
+                <Smartphone className="h-3.5 w-3.5" /> Customer
+              </TabsTrigger>
+              <TabsTrigger value="faq" className="gap-1.5 rounded-xl">
                 <HelpCircle className="h-3.5 w-3.5" /> FAQ
               </TabsTrigger>
             </TabsList>
 
-            {/* Quick start */}
             <TabsContent value="quick" id="quick-start" className="space-y-4 scroll-mt-24">
               <SectionIntro
                 icon={<Rocket className="h-4 w-4" />}
-                title="The fastest path to your first request"
-                body="Five steps to send a request and review the result. If you only read one section, read this one."
+                title="Quick start"
+                body="The shortest path: create one request, send it to yourself, and review the result."
               />
-              <QuickChecklist
-                storageKey="pb.help.quickStart"
-                items={quickStartChecklist}
-                title="Tick these off as you go"
-              />
+              <QuickChecklist storageKey="pb.help.quickStart" items={quickStartChecklist} title="Do these first" />
               <div className="space-y-4">
-                {quickStartSteps.map((step) => (
-                  <GuideStep key={step.number} {...step} />
-                ))}
+                {quickStartSteps.map((step) => <GuideStep key={step.number} {...step} />)}
               </div>
-              <Callout variant="success" title="That’s it">
-                You’ve sent your first request. Jump into{" "}
-                <a className="font-medium text-primary underline-offset-4 hover:underline" href="#business" onClick={() => handleTabChange("business")}>
-                  For businesses
-                </a>{" "}
-                for the full tour.
-              </Callout>
             </TabsContent>
 
-            {/* Business */}
             <TabsContent value="business" id="business" className="space-y-4 scroll-mt-24">
               <SectionIntro
                 icon={<Building2 className="h-4 w-4" />}
-                title="For businesses"
-                body="Everything you need to create requests, review submissions, and configure your workspace."
+                title="Business setup"
+                body="The simple operating model: reusable templates, clean requests, automatic intake."
               />
-              <QuickChecklist
-                storageKey="pb.help.business"
-                items={businessChecklist}
-                title="Recommended setup checklist"
-              />
+              <QuickChecklist storageKey="pb.help.business" items={businessChecklist} title="Recommended setup" />
               <div className="space-y-4">
-                {businessSteps.map((step) => (
-                  <GuideStep key={step.number} {...step} />
-                ))}
+                {businessSteps.map((step) => <GuideStep key={step.number} {...step} />)}
               </div>
             </TabsContent>
 
-            {/* Recipient */}
+            <TabsContent value="intake" id="intake" className="space-y-4 scroll-mt-24">
+              <SectionIntro
+                icon={<Globe2 className="h-4 w-4" />}
+                title="Website Intake"
+                body="The easiest automation: put one hosted form link on your website and let PhotoBrief start the photo request."
+              />
+              <QuickChecklist storageKey="pb.help.intake" items={intakeChecklist} title="Website Intake setup" />
+              <div className="space-y-4">
+                {intakeSteps.map((step) => <GuideStep key={step.number} {...step} />)}
+              </div>
+              <Callout variant="tip" title="Hosted link first, webhook second">
+                Use the hosted link unless your existing website form is already easy to connect. It is faster, cleaner, and easier to test.
+              </Callout>
+            </TabsContent>
+
             <TabsContent value="recipient" id="recipient" className="space-y-4 scroll-mt-24">
               <SectionIntro
                 icon={<Smartphone className="h-4 w-4" />}
-                title="For your customers"
-                body="A short, friendly walkthrough you can forward to anyone receiving a PhotoBrief link. No app or sign-in needed."
+                title="Customer flow"
+                body="A simple walkthrough you can send to customers. No app or sign-in needed."
               />
-              <Callout variant="tip" title="Share this section">
-                The link to this guide works without an account — copy it and send it to a
-                customer who’s nervous about the chat flow.
-              </Callout>
               <div className="space-y-4">
-                {recipientSteps.map((step) => (
-                  <GuideStep key={step.number} {...step} />
-                ))}
+                {recipientSteps.map((step) => <GuideStep key={step.number} {...step} />)}
               </div>
             </TabsContent>
 
-            {/* FAQ */}
             <TabsContent value="faq" id="faq" className="space-y-6 scroll-mt-24">
               <SectionIntro
                 icon={<HelpCircle className="h-4 w-4" />}
-                title="FAQ & troubleshooting"
-                body="Quick answers to the things beta users ask most often."
+                title="FAQ"
+                body="Quick answers for setup, intake, and customer capture."
               />
 
               <div className="space-y-2">
                 <h3 className="text-sm font-semibold text-foreground">For businesses</h3>
-                <Accordion type="single" collapsible className="rounded-xl border bg-card">
+                <Accordion type="single" collapsible className="rounded-2xl border bg-card">
                   {businessFaqs.map((f) => (
                     <AccordionItem key={f.id} value={f.id} className="px-4">
-                      <AccordionTrigger className="text-left text-sm font-medium">
-                        {f.q}
-                      </AccordionTrigger>
-                      <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
-                        {f.a}
-                      </AccordionContent>
+                      <AccordionTrigger className="text-left text-sm font-medium">{f.q}</AccordionTrigger>
+                      <AccordionContent className="text-sm leading-relaxed text-muted-foreground">{f.a}</AccordionContent>
                     </AccordionItem>
                   ))}
                 </Accordion>
@@ -229,27 +251,15 @@ export default function BetaGuidePage() {
 
               <div className="space-y-2">
                 <h3 className="text-sm font-semibold text-foreground">For customers</h3>
-                <Accordion type="single" collapsible className="rounded-xl border bg-card">
+                <Accordion type="single" collapsible className="rounded-2xl border bg-card">
                   {recipientFaqs.map((f) => (
                     <AccordionItem key={f.id} value={f.id} className="px-4">
-                      <AccordionTrigger className="text-left text-sm font-medium">
-                        {f.q}
-                      </AccordionTrigger>
-                      <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
-                        {f.a}
-                      </AccordionContent>
+                      <AccordionTrigger className="text-left text-sm font-medium">{f.q}</AccordionTrigger>
+                      <AccordionContent className="text-sm leading-relaxed text-muted-foreground">{f.a}</AccordionContent>
                     </AccordionItem>
                   ))}
                 </Accordion>
               </div>
-
-              <Callout variant="tip" title="Still stuck?">
-                We read every piece of beta feedback. Email{" "}
-                <a className="font-medium text-primary underline-offset-4 hover:underline" href="mailto:hello@photobrief.ai">
-                  hello@photobrief.ai
-                </a>{" "}
-                and we’ll get back fast.
-              </Callout>
             </TabsContent>
           </Tabs>
 
@@ -257,7 +267,7 @@ export default function BetaGuidePage() {
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-2 text-foreground">
                 <BookOpen className="h-4 w-4 text-primary" />
-                <span className="font-medium">Ready to send a request?</span>
+                <span className="font-medium">Ready to build your first request?</span>
               </div>
               <Button asChild size="sm">
                 <Link to="/requests/new">Open New request</Link>
@@ -270,21 +280,13 @@ export default function BetaGuidePage() {
   );
 }
 
-function SectionIntro({
-  icon,
-  title,
-  body,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  body: string;
-}) {
+function SectionIntro({ icon, title, body }: { icon: React.ReactNode; title: string; body: string }) {
   return (
-    <div className="space-y-1">
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
+    <div className="space-y-1 rounded-2xl border bg-card/80 p-4 shadow-sm">
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
         {icon} {title}
       </span>
-      <p className="text-sm text-muted-foreground">{body}</p>
+      <p className="text-sm leading-6 text-muted-foreground">{body}</p>
     </div>
   );
 }
