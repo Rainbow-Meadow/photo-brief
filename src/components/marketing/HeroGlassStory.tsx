@@ -1,4 +1,4 @@
-import { ArrowRight, Camera, CheckCircle2, ClipboardList, Globe2, Route, Sparkles, Zap } from "lucide-react";
+import { ArrowRight, Camera, CheckCircle2, ClipboardList, Link2, Route, Sparkles, Zap } from "lucide-react";
 import wideGarage from "@/assets/junk-removal/wide-garage.jpg";
 import pileCloseup from "@/assets/junk-removal/pile-closeup.jpg";
 import appliances from "@/assets/junk-removal/appliances.jpg";
@@ -22,28 +22,28 @@ export function HeroGlassStory() {
       <div className="grid gap-5 lg:grid-cols-[0.9fr_1.15fr_0.95fr] lg:items-center">
         <div className="glass-strong magnetic-card rounded-[2rem] p-5 animate-float-slow">
           <div className="flex items-center justify-between">
-            <span className="text-eyebrow">Website Intake</span>
-            <span className="rounded-full bg-success/10 px-2.5 py-1 text-[11px] font-semibold text-success">Live</span>
+            <span className="text-eyebrow">Send the link</span>
+            <span className="rounded-full bg-primary/10 px-2.5 py-1 text-[11px] font-semibold text-primary">Free start</span>
           </div>
           <div className="mt-4 rounded-3xl bg-background/70 p-4 ring-1 ring-border/70">
             <div className="flex items-center gap-3">
               <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                <Globe2 className="h-5 w-5" />
+                <Link2 className="h-5 w-5" />
               </span>
               <div>
-                <p className="text-sm font-semibold text-foreground">New website lead</p>
+                <p className="text-sm font-semibold text-foreground">PhotoBrief request</p>
                 <p className="text-xs text-muted-foreground">Garage cleanout quote</p>
               </div>
             </div>
             <div className="mt-4 space-y-2 text-xs">
-              <Row label="Name" value="Marcus T." />
-              <Row label="Message" value="Need junk removed this week." />
-              <Row label="Source" value="Get a quote form" />
+              <Row label="Customer" value="Marcus T." />
+              <Row label="Needed" value="4 quick photos" />
+              <Row label="Link" value="photobrief.ai/r/…" />
             </div>
           </div>
           <div className="mt-4 flex items-center gap-2 rounded-2xl bg-primary/10 p-3 text-sm text-primary">
             <Route className="h-4 w-4" />
-            Rule matched: Junk removal quote
+            Pro can trigger this from your website automatically
           </div>
         </div>
 
@@ -52,7 +52,7 @@ export function HeroGlassStory() {
           <div className="flex items-center justify-between gap-3">
             <div>
               <span className="text-eyebrow">Customer capture</span>
-              <h3 className="mt-1 text-xl font-semibold tracking-tight text-foreground">Send 4 quick photos</h3>
+              <h3 className="mt-1 text-xl font-semibold tracking-tight text-foreground">One photo at a time</h3>
             </div>
             <span className="rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">2/4 done</span>
           </div>
@@ -76,8 +76,8 @@ export function HeroGlassStory() {
           <div className="flex items-start justify-between gap-3">
             <div>
               <span className="text-eyebrow">Business brief</span>
-              <p className="mt-1 text-sm font-semibold text-foreground">Quote-ready</p>
-              <p className="text-xs text-muted-foreground">Created automatically</p>
+              <p className="mt-1 text-sm font-semibold text-foreground">Ready to quote</p>
+              <p className="text-xs text-muted-foreground">Photos organized automatically</p>
             </div>
             <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-primary text-primary-foreground shadow-glow">
               <Sparkles className="h-5 w-5" />
@@ -110,7 +110,7 @@ export function HeroGlassStory() {
       </div>
 
       <div className="mx-auto mt-5 flex max-w-3xl items-center justify-center gap-2 rounded-full glass px-4 py-2 text-xs font-medium text-muted-foreground">
-        <Zap className="h-3.5 w-3.5 text-primary" /> Website lead → template → photo request → job-ready brief
+        <Zap className="h-3.5 w-3.5 text-primary" /> Manual link or website lead → guided photos → ready-to-use brief
       </div>
     </div>
   );
