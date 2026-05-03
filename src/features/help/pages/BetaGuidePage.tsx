@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, BookOpen, Building2, Globe2, HelpCircle, Rocket, Smartphone } from "lucide-react";
+import { ArrowRight, BookOpen, Building2, CheckCircle2, Clock3, Globe2, HelpCircle, Link2, PlugZap, Rocket, Smartphone, Wrench } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -22,6 +22,7 @@ import { quickStartSteps, quickStartChecklist } from "@/features/help/content/qu
 import { businessSteps, businessChecklist } from "@/features/help/content/business";
 import { recipientSteps } from "@/features/help/content/recipient";
 import { faqItems } from "@/features/help/content/faq";
+import { websiteToolChecklist, websiteToolGuides, type WebsiteToolGuide } from "@/features/help/content/websiteTools";
 
 const intakeSteps = [
   {
@@ -65,16 +66,18 @@ const tocItems: TocItem[] = [
   { id: "quick-start", label: "Quick start" },
   { id: "business", label: "Business setup" },
   { id: "intake", label: "Website Intake" },
+  { id: "website-tools", label: "Website tools" },
   { id: "recipient", label: "Customer flow" },
   { id: "faq", label: "FAQ" },
 ];
 
-type TabValue = "quick" | "business" | "intake" | "recipient" | "faq";
+type TabValue = "quick" | "business" | "intake" | "tools" | "recipient" | "faq";
 
 const hashToTab: Record<string, TabValue> = {
   "#quick-start": "quick",
   "#business": "business",
   "#intake": "intake",
+  "#website-tools": "tools",
   "#recipient": "recipient",
   "#faq": "faq",
 };
@@ -83,6 +86,7 @@ const tabToHash: Record<TabValue, string> = {
   quick: "#quick-start",
   business: "#business",
   intake: "#intake",
+  tools: "#website-tools",
   recipient: "#recipient",
   faq: "#faq",
 };
@@ -115,7 +119,7 @@ export default function BetaGuidePage() {
     <div className="space-y-8">
       <PageMeta
         title="Help & setup guide | PhotoBrief"
-        description="Simple visual setup guide for PhotoBrief: create requests, connect Website Intake, and show customers how photo capture works."
+        description="Simple visual setup guide for PhotoBrief: create requests, connect Website Intake, add PhotoBrief to common website tools, and show customers how photo capture works."
         canonicalPath="/help"
         ogType="article"
         jsonLd={[buildFaqJsonLd(faqItems)]}
@@ -135,7 +139,7 @@ export default function BetaGuidePage() {
               Set up PhotoBrief without overthinking it.
             </h1>
             <p className="max-w-2xl text-base leading-7 text-muted-foreground">
-              Build one useful template, send one test request, then connect Website Intake so new leads can turn into photo-ready briefs automatically.
+              Build one useful template, send one test request, then connect Website Intake to the website tool your business already uses.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -145,8 +149,8 @@ export default function BetaGuidePage() {
               </a>
             </Button>
             <Button asChild size="sm" variant="outline" className="rounded-full bg-background/70">
-              <a href="#intake" onClick={() => handleTabChange("intake")}>
-                Website Intake
+              <a href="#website-tools" onClick={() => handleTabChange("tools")}>
+                Website tools
               </a>
             </Button>
           </div>
@@ -171,6 +175,9 @@ export default function BetaGuidePage() {
               </TabsTrigger>
               <TabsTrigger value="intake" className="gap-1.5 rounded-xl">
                 <Globe2 className="h-3.5 w-3.5" /> Intake
+              </TabsTrigger>
+              <TabsTrigger value="tools" className="gap-1.5 rounded-xl">
+                <Wrench className="h-3.5 w-3.5" /> Tools
               </TabsTrigger>
               <TabsTrigger value="recipient" className="gap-1.5 rounded-xl">
                 <Smartphone className="h-3.5 w-3.5" /> Customer
@@ -217,6 +224,21 @@ export default function BetaGuidePage() {
               <Callout variant="tip" title="Hosted link first, webhook second">
                 Use the hosted link unless your existing website form is already easy to connect. It is faster, cleaner, and easier to test.
               </Callout>
+            </TabsContent>
+
+            <TabsContent value="tools" id="website-tools" className="space-y-4 scroll-mt-24">
+              <SectionIntro
+                icon={<Wrench className="h-4 w-4" />}
+                title="Website tool setup guides"
+                body="Ultra-simple instructions for adding PhotoBrief to the tools small businesses already use."
+              />
+              <Callout variant="tip" title="The rule: link first">
+                For most businesses, do not start with webhooks. Copy the hosted Website Intake link and put it behind the website’s main action button. Use webhook automation only when the existing form must stay exactly as-is.
+              </Callout>
+              <QuickChecklist storageKey="pb.help.websiteTools" items={websiteToolChecklist} title="Before you publish" />
+              <div className="grid gap-4">
+                {websiteToolGuides.map((guide) => <WebsiteToolCard key={guide.id} guide={guide} />)}
+              </div>
             </TabsContent>
 
             <TabsContent value="recipient" id="recipient" className="space-y-4 scroll-mt-24">
@@ -280,7 +302,7 @@ export default function BetaGuidePage() {
   );
 }
 
-function SectionIntro({ icon, title, body }: { icon: React.ReactNode; title: string; body: string }) {
+function SectionIntro({ icon, title, body }: { icon: ReactNode; title: string; body: string }) {
   return (
     <div className="space-y-1 rounded-2xl border bg-card/80 p-4 shadow-sm">
       <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
@@ -288,5 +310,79 @@ function SectionIntro({ icon, title, body }: { icon: React.ReactNode; title: str
       </span>
       <p className="text-sm leading-6 text-muted-foreground">{body}</p>
     </div>
+  );
+}
+
+function WebsiteToolCard({ guide }: { guide: WebsiteToolGuide }) {
+  return (
+    <section className="overflow-hidden rounded-2xl border bg-card shadow-sm">
+      <div className="grid gap-4 p-5 sm:p-6 lg:grid-cols-[0.82fr_1.18fr]">
+        <div className="space-y-4">
+          <div>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
+                <Wrench className="h-3.5 w-3.5" /> {guide.name}
+              </span>
+              <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
+                <Clock3 className="h-3.5 w-3.5" /> {guide.time}
+              </span>
+            </div>
+            <h3 className="mt-3 text-lg font-semibold leading-tight text-foreground sm:text-xl">
+              {guide.recommendedAction}
+            </h3>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">{guide.bestFor}</p>
+          </div>
+
+          <div className="rounded-2xl border bg-background/70 p-4">
+            <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+              <Link2 className="h-4 w-4 text-primary" /> Simple setup
+            </div>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">
+              Use the hosted PhotoBrief link unless you have a strong reason to keep the current form.
+            </p>
+          </div>
+
+          {guide.note ? <Callout variant="tip">{guide.note}</Callout> : null}
+        </div>
+
+        <div className="space-y-4">
+          <ol className="space-y-2">
+            {guide.simplestSteps.map((step, index) => (
+              <li key={step} className="flex gap-3 rounded-2xl bg-muted/40 p-3 text-sm leading-6 text-muted-foreground">
+                <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
+                  {index + 1}
+                </span>
+                <span>{step}</span>
+              </li>
+            ))}
+          </ol>
+
+          {guide.advancedSteps?.length ? (
+            <Accordion type="single" collapsible className="rounded-2xl border bg-background/60 px-4">
+              <AccordionItem value={`${guide.id}-advanced`} className="border-0">
+                <AccordionTrigger className="gap-2 text-left text-sm font-semibold text-foreground">
+                  <span className="inline-flex items-center gap-2">
+                    <PlugZap className="h-4 w-4 text-primary" /> {guide.advancedTitle ?? "Advanced option"}
+                  </span>
+                </AccordionTrigger>
+                <AccordionContent className="space-y-3 pb-4">
+                  {guide.advancedWhen ? (
+                    <p className="text-sm leading-6 text-muted-foreground">{guide.advancedWhen}</p>
+                  ) : null}
+                  <ul className="space-y-2">
+                    {guide.advancedSteps.map((step) => (
+                      <li key={step} className="flex gap-2 text-sm leading-6 text-muted-foreground">
+                        <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-success" />
+                        <span>{step}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          ) : null}
+        </div>
+      </div>
+    </section>
   );
 }
