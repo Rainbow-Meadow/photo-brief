@@ -7,10 +7,10 @@ export function ThemeProvider({ children, ...props }: Props) {
   return (
     <NextThemesProvider
       attribute="class"
-      defaultTheme="light"
-      enableSystem={false}
+      defaultTheme="system"
+      enableSystem
       storageKey="pb-theme"
-      disableTransitionOnChange
+      disableTransitionOnChange={false}
       {...props}
     >
       {children}
