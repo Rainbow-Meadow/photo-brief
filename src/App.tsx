@@ -54,6 +54,7 @@ const GuideBuilderPage = lazy(() => import("@/features/guides/pages/GuideBuilder
 const GuideDetailPage = lazy(() => import("@/features/guides/pages/GuideDetailPage"));
 const CustomersPage = lazy(() => import("@/features/customers/pages/CustomersPage"));
 const CustomerDetailPage = lazy(() => import("@/features/customers/pages/CustomerDetailPage"));
+const WebsiteIntakePage = lazy(() => import("@/features/intake/pages/WebsiteIntakePage"));
 const AcceptInvitePage = lazy(() => import("@/features/workspace/pages/AcceptInvitePage"));
 const BetaGuidePage = lazy(() => import("@/features/help/pages/BetaGuidePage"));
 const AdminInvitesPage = lazy(() => import("@/pages/AdminInvites"));
@@ -122,6 +123,7 @@ const App = () => (
             <Route path="/guides/:id" element={<GuideDetailPage />} />
             <Route path="/customers" element={<CustomersPage />} />
             <Route path="/customers/:id" element={<CustomerDetailPage />} />
+            <Route path="/intake" element={<WebsiteIntakePage />} />
             <Route path="/settings/brand" element={<BrandSettingsPage />} />
             <Route path="/settings/team" element={<TeamSettingsPage />} />
             <Route path="/settings/templates" element={<MessageTemplatesPage />} />
