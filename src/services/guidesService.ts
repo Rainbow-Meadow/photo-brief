@@ -1,10 +1,8 @@
-// Guides service — reads workspace guides from Cloud and merges in the
-// curated launch templates (config/guideTemplates.ts) as global templates.
+// Guides service — workspace guides live in Supabase.
 //
-// Workspace guides are stored in `photo_guides` + `guide_steps` +
-// `context_questions`. Until DB-seeded global templates land in a future
-// migration, the launch-ready guides ship from the local config so the
-// product is usable from day one.
+// Built-in launch templates still exist in config for legacy/public request
+// compatibility, but the business UI no longer presents them as a library.
+// Businesses create their own additive templates and reuse those.
 
 import { supabase } from "@/integrations/supabase/client";
 import { getTokenClient } from "@/integrations/supabase/tokenClient";
@@ -28,7 +26,7 @@ function rowToGuide(g: any, steps: any[], questions: any[]): PhotoGuide {
         orderIndex: s.order_index,
         title: s.title,
         instructions: s.instruction ?? "",
-        shotType: s.capture_type ?? "wide",
+        shotType: s.capture_type ?? "photo",
         overlayType: s.overlay_type ?? "full_area",
         aiChecks: s.ai_checks ?? [],
         required: !!s.required,
@@ -52,7 +50,8 @@ async function fetchWorkspaceGuides(workspaceId: string): Promise<PhotoGuide[]> 
     .from("photo_guides")
     .select("*")
     .eq("workspace_id", workspaceId)
-    .eq("is_active", true);
+    .eq("is_active", true)
+    .order("created_at", { ascending: false });
   if (error) throw error;
   if (!guides || guides.length === 0) return [];
   const ids = guides.map((g) => g.id);
@@ -64,7 +63,7 @@ async function fetchWorkspaceGuides(workspaceId: string): Promise<PhotoGuide[]> 
 }
 
 export const guidesService = {
-  // Local launch-ready templates exposed everywhere (no auth required).
+  // Legacy local template access. Do not use this for business template browsing.
   list(): PhotoGuide[] {
     return guideTemplates;
   },
@@ -72,67 +71,64 @@ export const guidesService = {
     return guideTemplates.find((g) => g.id === id);
   },
   listLaunchReady(): PhotoGuide[] {
-    return guideTemplates.filter((g) => g.launchReady === true && g.curatedCategory);
+    return [];
   },
   listInternalTemplates(): PhotoGuide[] {
-    return guideTemplates.filter((g) => !g.launchReady);
+    return [];
   },
-  listByCuratedCategory(category: CuratedCategory): PhotoGuide[] {
-    return guideTemplates.filter(
-      (g) => g.launchReady === true && g.curatedCategory === category,
-    );
+  listByCuratedCategory(_category: CuratedCategory): PhotoGuide[] {
+    return [];
   },
-  listByIndustry(starterIds: string[]): PhotoGuide[] {
-    return guideTemplates.filter((g) => starterIds.includes(g.id));
+  listByIndustry(_starterIds: string[]): PhotoGuide[] {
+    return [];
   },
 
-  // Live workspace guides (custom guides created in the builder).
+  // Live workspace guides (custom templates created by the business).
   async listForWorkspace(workspaceId: string): Promise<PhotoGuide[]> {
-    const custom = await fetchWorkspaceGuides(workspaceId);
-    // Custom guides first, then launch templates.
-    return [...custom, ...guideTemplates];
+    return fetchWorkspaceGuides(workspaceId);
   },
 
   async getByIdAsync(id: string): Promise<PhotoGuide | null> {
-    const local = guideTemplates.find((g) => g.id === id);
-    if (local) return local;
     const { data: g } = await supabase
       .from("photo_guides")
       .select("*")
       .eq("id", id)
       .maybeSingle();
-    if (!g) return null;
-    const [{ data: steps }, { data: questions }] = await Promise.all([
-      supabase.from("guide_steps").select("*").eq("guide_id", id),
-      supabase.from("context_questions").select("*").eq("guide_id", id),
-    ]);
-    return rowToGuide(g, steps ?? [], questions ?? []);
+    if (g) {
+      const [{ data: steps }, { data: questions }] = await Promise.all([
+        supabase.from("guide_steps").select("*").eq("guide_id", id),
+        supabase.from("context_questions").select("*").eq("guide_id", id),
+      ]);
+      return rowToGuide(g, steps ?? [], questions ?? []);
+    }
+
+    // Fallback keeps older requests/template IDs readable during beta.
+    const local = guideTemplates.find((tpl) => tpl.id === id);
+    return local ?? null;
   },
 
   /** Token-scoped guide read for the public recipient page. */
   async getByIdViaToken(token: string, id: string): Promise<PhotoGuide | null> {
-    const local = guideTemplates.find((g) => g.id === id);
-    if (local) return local;
     const client = getTokenClient(token);
     const { data: g } = await client
       .from("photo_guides")
       .select("*")
       .eq("id", id)
       .maybeSingle();
-    if (!g) return null;
-    const [{ data: steps }, { data: questions }] = await Promise.all([
-      client.from("guide_steps").select("*").eq("guide_id", id),
-      client.from("context_questions").select("*").eq("guide_id", id),
-    ]);
-    return rowToGuide(g, steps ?? [], questions ?? []);
+    if (g) {
+      const [{ data: steps }, { data: questions }] = await Promise.all([
+        client.from("guide_steps").select("*").eq("guide_id", id),
+        client.from("context_questions").select("*").eq("guide_id", id),
+      ]);
+      return rowToGuide(g, steps ?? [], questions ?? []);
+    }
+
+    // Fallback keeps existing public links that still point at a legacy local
+    // template working until every beta request uses workspace templates.
+    return guideTemplates.find((tpl) => tpl.id === id) ?? null;
   },
 
-  /**
-   * Persist a draft (template-based or AI-generated) as a workspace guide.
-   * Creates rows in photo_guides + guide_steps + context_questions.
-   * RLS + plan-gating triggers (`enforce_custom_guides_plan`) handle
-   * authorization and plan limits.
-   */
+  /** Persist a draft as a reusable workspace template. */
   async saveDraftAsGuide(args: {
     workspaceId: string;
     draft: RequestDraft;
@@ -144,7 +140,7 @@ export const guidesService = {
       .insert({
         workspace_id: workspaceId,
         name: draft.title,
-        description: draft.source === "ai" ? draft.prompt ?? null : null,
+        description: draft.prompt ?? null,
         is_global_template: false,
         is_active: true,
         created_by: user.user?.id ?? null,
@@ -188,10 +184,7 @@ export const guidesService = {
     return rowToGuide(guide, steps ?? [], questions ?? []);
   },
 
-  /**
-   * Update an existing workspace guide. Replaces all steps + questions
-   * (we don't track per-row diffs in the editor).
-   */
+  /** Update an existing workspace template. */
   async updateGuide(args: {
     guideId: string;
     name: string;
@@ -209,7 +202,6 @@ export const guidesService = {
       .single();
     if (guideErr) throw guideErr;
 
-    // Replace steps + questions wholesale.
     await supabase.from("guide_steps").delete().eq("guide_id", guideId);
     await supabase.from("context_questions").delete().eq("guide_id", guideId);
 
