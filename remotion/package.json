@@ -3,6 +3,11 @@
   "module": "index.ts",
   "type": "module",
   "private": true,
+  "scripts": {
+    "preview": "remotion preview src/index.ts",
+    "render": "remotion render src/index.ts main ../public/marketing/photobrief-demo.mp4 --codec=h264 --crf=18 --pixel-format=yuv420p",
+    "render:fast": "remotion render src/index.ts main ../public/marketing/photobrief-demo.mp4 --codec=h264 --crf=23 --pixel-format=yuv420p"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
@@ -12,7 +17,7 @@
   "dependencies": {
     "@remotion/bundler": "^4.0.454",
     "@remotion/cli": "^4.0.454",
-    "@remotion/compositor-linux-x64-musl": "^4.0.454",
+    "@remotion/compositor-linux-x64-gnu": "^4.0.454",
     "@remotion/google-fonts": "^4.0.454",
     "@remotion/renderer": "^4.0.454",
     "@remotion/transitions": "^4.0.454",
@@ -20,6 +25,7 @@
     "@types/react-dom": "18",
     "react": "18",
     "react-dom": "18",
-    "remotion": "^4.0.454"
+    "remotion": "^4.0.454",
+    "typescript": "^5.8.3"
   }
 }

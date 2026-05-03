@@ -104,8 +104,8 @@ export default function LandingPage() {
                   {signupCtaLabel()} <ArrowRight className="ml-1 h-4 w-4" />
                 </NavLink>
               </Button>
-              <Button size="xl" variant="glass" className="rounded-full" onClick={() => { trackEvent("cta_click", { location: "hero", label: "watch_demo" }); setDemoOpen(true); }}>
-                <PlayCircle className="mr-1 h-5 w-5" /> Watch 60-sec demo
+              <Button size="xl" variant="glass" className="rounded-full" onClick={() => { trackEvent("cta_click", { location: "hero", label: "watch_product_spotlight" }); setDemoOpen(true); }}>
+                <PlayCircle className="mr-1 h-5 w-5" /> Watch product spotlight
               </Button>
             </div>
             <div className="mt-5 flex flex-wrap justify-center gap-2 text-xs text-muted-foreground">
@@ -198,10 +198,10 @@ export default function LandingPage() {
       <FinalCtaCard />
 
       <Dialog open={demoOpen} onOpenChange={setDemoOpen}>
-        <DialogContent className="max-w-4xl overflow-hidden border-0 bg-black p-0 sm:rounded-xl">
+        <DialogContent className="max-w-5xl overflow-hidden border-0 bg-black p-0 sm:rounded-2xl">
           <VisuallyHidden>
-            <DialogTitle>PhotoBrief product demo</DialogTitle>
-            <DialogDescription>A short walkthrough of the PhotoBrief intake and request flow.</DialogDescription>
+            <DialogTitle>PhotoBrief product spotlight</DialogTitle>
+            <DialogDescription>A professionally produced product spotlight showing Website Intake, template routing, customer capture, AI photo checks, and the finished business brief.</DialogDescription>
           </VisuallyHidden>
           <video key={demoOpen ? "open" : "closed"} src="/marketing/photobrief-demo.mp4" controls autoPlay playsInline className="h-auto w-full" />
         </DialogContent>
