@@ -1,7 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { getTokenClient } from "@/integrations/supabase/tokenClient";
-import { guideTemplates } from "@/config/guideTemplates";
-import { draftFromGuide } from "@/types/requestDraft";
+import { createBlankDraft } from "@/types/requestDraft";
 import type { RequestDraft } from "@/types/requestDraft";
 import type {
   AICheckSeverity,
@@ -9,7 +8,6 @@ import type {
   ContextQuestion,
   ExtractedDetail,
   GuideStep,
-  PhotoGuide,
   ShotAIFeedback,
   SubmissionShot,
 } from "@/types/photobrief";
@@ -327,67 +325,42 @@ export const aiService = {
       if (error) throw error;
       if (data?.draft) {
         const d = data.draft;
-        const seedGuide = guideTemplates[0];
+        const blank = createBlankDraft();
         const finalDraft: RequestDraft = {
-          ...draftFromGuide(seedGuide),
+          ...blank,
           source: "ai",
           prompt,
-          title: d.title ?? titleFromPrompt(prompt, seedGuide.name),
-          introMessage: d.introMessage,
-          steps: (d.steps ?? []).map((s: any, i: number) => ({
-            id: `step_${Date.now()}_${i}`,
-            orderIndex: s.orderIndex ?? i,
-            title: s.title,
-            instructions: s.instructions ?? s.instruction ?? "",
-            shotType: (s.shotType ?? "wide") as any,
-            overlayType: "full_area" as any,
-            aiChecks: s.aiChecks ?? [],
-            required: s.required ?? true,
-          })),
-          questions: (d.questions ?? []).map((q: any, i: number) => ({
-            id: `q_${Date.now()}_${i}`,
-            orderIndex: q.orderIndex ?? i,
-            prompt: q.prompt,
-            inputType: q.inputType ?? "short_text",
-            options: q.options,
-            required: q.required ?? false,
-          })),
+          title: d.title ?? titleFromPrompt(prompt, "Custom photo request"),
+          introMessage: d.introMessage ?? defaultIntroFromPrompt(prompt),
+          steps: normalizeGeneratedSteps(d.steps, prompt),
+          questions: normalizeGeneratedQuestions(d.questions),
         };
         return {
           draft: finalDraft,
           assistantReply: data.assistantReply ?? `Drafted "${finalDraft.title}".`,
-          sourceGuideId: seedGuide.id,
+          sourceGuideId: "ai-generated",
         };
       }
     } catch (e: any) {
-      console.warn("ai-generate-guide failed, using template fallback", e?.message);
+      console.warn("ai-generate-guide failed, using blank fallback", e?.message);
     }
 
     await wait(400);
-    const tokens = prompt.toLowerCase().split(/[^a-z0-9]+/).filter((t) => t.length >= 3);
-    let best = { score: 0, guideId: guideTemplates[0].id };
-    for (const g of guideTemplates) {
-      const bag = `${g.name} ${g.nestedCategory ?? ""} ${g.workflowType ?? ""} ${g.category}`.toLowerCase();
-      let score = 0;
-      for (const t of tokens) if (bag.includes(t)) score += 1;
-      if (score > best.score) best = { score, guideId: g.id };
-    }
-    const guide: PhotoGuide = guideTemplates.find((g) => g.id === best.guideId) ?? guideTemplates[0];
-    const draft = draftFromGuide(guide);
     const finalDraft: RequestDraft = {
-      ...draft,
+      ...createBlankDraft(),
       source: "ai",
       prompt,
-      title: titleFromPrompt(prompt, guide.name),
-      introMessage: `Hi! Thanks for reaching out about ${prompt.trim().toLowerCase().slice(0, 80) || guide.category.toLowerCase()}. I'll walk you through a few quick photos so we can help you faster.`,
-      questions: augmentQuestions(prompt, draft.questions),
+      title: titleFromPrompt(prompt, "Custom photo request"),
+      introMessage: defaultIntroFromPrompt(prompt),
+      steps: fallbackStepsFromPrompt(prompt),
+      questions: augmentQuestions(prompt, []),
     };
     const stepCount = finalDraft.steps.length;
     const qCount = finalDraft.questions.length;
     return {
       draft: finalDraft,
       assistantReply: `Got it. I drafted a request titled "${finalDraft.title}" with ${stepCount} photo step${stepCount === 1 ? "" : "s"}${qCount ? ` and ${qCount} short question${qCount === 1 ? "" : "s"}` : ""}. Take a look on the right — you can edit anything before sending.`,
-      sourceGuideId: guide.id,
+      sourceGuideId: "ai-fallback",
     };
   },
 
@@ -423,6 +396,53 @@ function titleFromPrompt(prompt: string, fallback: string): string {
   if (!cleaned) return fallback;
   const short = cleaned.split(/[.!?]/)[0].slice(0, 60);
   return short.charAt(0).toUpperCase() + short.slice(1);
+}
+
+function defaultIntroFromPrompt(prompt: string): string {
+  const subject = prompt.trim().toLowerCase().slice(0, 80) || "your request";
+  return `Hi! Please follow the steps below for ${subject}. It should only take a minute or two.`;
+}
+
+function normalizeGeneratedSteps(steps: any[] | undefined, prompt: string): GuideStep[] {
+  const fallback = fallbackStepsFromPrompt(prompt);
+  if (!Array.isArray(steps) || steps.length === 0) return fallback;
+  return steps.map((s: any, i: number) => ({
+    id: `step_${Date.now()}_${i}`,
+    orderIndex: s.orderIndex ?? i,
+    title: s.title || (i === 0 ? "Photo I need" : "Another photo I need"),
+    instructions: s.instructions ?? s.instruction ?? "Take a clear, well-lit photo.",
+    shotType: (s.shotType ?? "photo") as any,
+    overlayType: (s.overlayType ?? "full_area") as any,
+    aiChecks: s.aiChecks ?? ["blur", "low_light", "wrong_shot"],
+    required: s.required ?? true,
+  }));
+}
+
+function normalizeGeneratedQuestions(questions: any[] | undefined): ContextQuestion[] {
+  if (!Array.isArray(questions)) return [];
+  return questions.map((q: any, i: number) => ({
+    id: `q_${Date.now()}_${i}`,
+    orderIndex: q.orderIndex ?? i,
+    prompt: q.prompt || "Question for the customer",
+    inputType: q.inputType ?? "short_text",
+    options: q.options,
+    required: q.required ?? false,
+  }));
+}
+
+function fallbackStepsFromPrompt(prompt: string): GuideStep[] {
+  return [
+    {
+      id: `step_${Date.now()}_0`,
+      orderIndex: 0,
+      title: titleFromPrompt(prompt, "Photo I need"),
+      instructions: "Take a clear, well-lit photo that shows the full item, area, or issue.",
+      shotType: "photo",
+      overlayType: "full_area",
+      aiChecks: ["blur", "low_light", "wrong_shot"],
+      required: true,
+    },
+  ];
 }
 
 function augmentQuestions(prompt: string, existing: ContextQuestion[]): ContextQuestion[] {
