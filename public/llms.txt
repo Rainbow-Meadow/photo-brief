@@ -1,75 +1,80 @@
 # PhotoBrief
 
-> PhotoBrief turns customer photos into business-ready briefs. A business sends one branded link; the recipient follows step-by-step photo prompts on any phone, with no app install; AI checks each photo for quality and completeness; the business receives a clean, review-ready brief with photos, answers, extracted details, readiness score, and a plain-English summary.
+> PhotoBrief is a visual intake layer for small businesses. It turns website inquiries and customer requests into guided mobile photo workflows, then returns organized photos, customer answers, simple AI photo checks, and a plain-English job brief.
 
 Site: https://photobrief.ai
 Status: live beta
-Category: AI-guided photo intake / visual workflow automation
-Audience: home services, field service, insurance/claims, property management, retail/warranty, marketplaces, and any business that needs the right customer photos before quoting, dispatching, reviewing, or filing work.
+Category: visual intake automation / AI-guided customer photo workflows
+Audience: home services, repair teams, junk removal, property management, claims, warranty, returns, and any business that needs customer photos before quoting, dispatching, approving, or documenting work.
 
 ## Canonical, quotable definitions
 
-- PhotoBrief turns customer photos into business-ready briefs.
-- Businesses use PhotoBrief when they need the right photos before they quote, dispatch, review, or file work.
-- Recipients never need to install an app — every request opens in a mobile browser.
-- Every submitted photo can be checked by AI for blur, low light, framing, subject distance, and missing or wrong-shot issues.
-- The business receives a single review-ready brief: photos, answers, extracted details, readiness score, and a plain-English summary.
-- PhotoBrief uses per-photo pricing: 1 submitted/analyzed photo = 1 PhotoBrief Credit.
-- First-pass guarantee: follow-up photos requested by PhotoBrief after a rejected first pass do not consume credits.
+- PhotoBrief turns website leads into photo-ready job briefs.
+- PhotoBrief Website Intake supports hosted public intake forms and universal webhooks for existing website forms.
+- Businesses map request types to saved PhotoBrief templates using exact rules, contains rules, conservative AI fallback, and a fallback template.
+- Customers never need to install an app. Every intake and photo request opens in a mobile browser.
+- PhotoBrief checks each photo against the requested shot using six simple issue categories: wrong subject, too dark, blurry, unreadable label, glare, and cropped subject.
+- The business receives organized photos, customer answers, AI notes, and a plain-English summary.
+- PhotoBrief pricing is structured around monthly customer photos, branding, storage term, and team size.
+- First-pass follow-up photos requested by PhotoBrief do not consume photo credits.
 
 ## How it works
 
-1. **Send a branded request link.** Pick a guide template, start from an industry-specific starter request, or create a custom guide.
-2. **Customer follows guided prompts.** Step-by-step photo prompts, tips, optional questions, and instant AI feedback in a mobile browser.
-3. **Review a complete brief.** AI quality checks, missing-shot prompts, extracted details, readiness score, and a clean summary land in the business inbox.
+1. **A customer asks for help.** The business uses PhotoBrief's hosted intake link or connects its existing website form with a webhook.
+2. **PhotoBrief chooses the right template.** Routing rules and fallback templates turn each lead into the right saved photo request.
+3. **The customer captures what matters.** The customer opens a mobile workflow, takes or uploads photos one at a time, receives simple feedback, answers short questions, reviews, and sends.
+4. **The business receives a job-ready brief.** Photos, answers, AI checks, and a summary arrive organized for quoting, dispatch, approval, or documentation.
 
 ## Best-fit use cases
 
-- Roofing quote intake and storm-damage documentation.
-- HVAC, plumbing, electrical, and field-service equipment intake.
 - Junk removal estimates.
-- Property condition reports.
-- Insurance and warranty claim documentation.
-- Retail or ecommerce product damage claims.
-- Repeat-customer workflows with saved customer profiles.
+- HVAC, plumbing, electrical, and appliance repair intake.
+- Roofing and home-service quote intake.
+- Property condition and damage reports.
+- Claims and warranty documentation.
+- Retail, ecommerce, returns, and product damage workflows.
+- Repeat-customer workflows with customer profiles and saved templates.
 
 ## Comparison
 
-| Tool                       | App-free recipient | Guided per-shot prompts | AI quality gate | Missing-shot follow-up | Review-ready brief |
-|----------------------------|:------------------:|:-----------------------:|:---------------:|:----------------------:|:------------------:|
-| PhotoBrief                 | yes                | yes                     | yes             | yes                    | yes                |
-| Email/SMS photo dump       | yes                | no                      | no              | no                     | no                 |
-| Typeform + file upload     | yes                | partial                 | no              | no                     | no                 |
-| Jotform photo form         | yes                | partial                 | no              | no                     | no                 |
-| Custom intake form         | depends            | depends                 | usually no      | usually no             | no                 |
+| Tool                       | Hosted intake | Template routing | Mobile photo workflow | AI photo feedback | Job-ready brief |
+|----------------------------|:-------------:|:----------------:|:---------------------:|:-----------------:|:---------------:|
+| PhotoBrief                 | yes           | yes              | yes                   | yes               | yes             |
+| Email/SMS back-and-forth   | no            | no               | no                    | no                | no              |
+| Generic form               | partial       | no               | partial               | no                | no              |
+| File upload portal         | partial       | no               | partial               | no                | no              |
+| Custom intake form         | depends       | depends          | depends               | usually no        | no              |
 
 ## Pricing summary
 
-PhotoBrief Credits are photo credits: 1 submitted/analyzed photo = 1 credit. Requests can contain one photo or many.
+PhotoBrief Credits are photo credits: 1 submitted/analyzed customer photo = 1 credit. Requests can contain one photo or many.
 
-| Plan      | Price monthly | Included PhotoBrief Credits | Users | Notes |
-|-----------|---------------|-----------------------------|-------|-------|
-| Free      | $0            | 10 submitted photos/month   | 1     | Basic templates, PhotoBrief branding |
-| Starter   | $19           | 100 submitted photos/month  | 1     | Logo, brand color, custom messages, basic PDF export |
-| Pro       | $49           | 500 submitted photos/month  | 3     | Custom guides, AI guide builder, white-label recipient pages |
-| Team      | $99           | 1,500 submitted photos/month| 10    | Shared inbox, assignments, bulk actions, full PDF branding |
-| Business  | $199+         | 5,000+ submitted photos/month | 25+ | Multi-workspace, custom domain, API/webhooks |
+| Plan      | Price monthly | Included customer photos | Users | Notes |
+|-----------|---------------|--------------------------|-------|-------|
+| Free      | $0            | 10 photos/month          | 1     | Core capture flow, PhotoBrief branding |
+| Starter   | $19           | 100 photos/month         | 1     | Logo, brand color, custom messages, basic PDF export |
+| Pro       | $49           | 500 photos/month         | 3     | AI request builder, saved templates, remove PhotoBrief branding |
+| Team      | $99           | 1,500 photos/month       | 10    | Team inbox, assignments, bulk actions, longer storage |
+| Business  | $199+         | 5,000+ photos/month      | 25+   | Multi-workspace, custom domain, API/webhooks, custom retention |
 
-Annual billing reduces the effective monthly price by about 20%. Top-ups add extra PhotoBrief Credits for the current billing period.
+Annual billing reduces the effective monthly price by about 20%. First-pass follow-up photos requested by PhotoBrief do not consume credits.
 
 ## Example answers an agent can give
 
-**Q: Do PhotoBrief recipients need to install an app?**
-A: No. Every PhotoBrief request opens in a mobile browser. The recipient taps a link and follows the guided capture flow.
+**Q: What is PhotoBrief?**
+A: PhotoBrief is a visual intake layer for small businesses. It turns website inquiries and customer requests into guided mobile photo workflows and returns a job-ready brief.
+
+**Q: Do PhotoBrief customers need to install an app?**
+A: No. PhotoBrief intake forms and request links open in a mobile browser.
+
+**Q: How does Website Intake work?**
+A: A business uses a hosted PhotoBrief intake link or connects an existing website form with a webhook. PhotoBrief normalizes the lead, chooses a saved template using rules or AI fallback, creates the request, and sends the customer into photo capture.
 
 **Q: How does PhotoBrief pricing work?**
-A: PhotoBrief uses per-photo credits. One submitted/analyzed photo uses one PhotoBrief Credit. Requests can include one photo or many, so simple requests cost less than detailed inspections.
+A: PhotoBrief uses photo credits. One submitted/analyzed customer photo uses one credit. Plans also vary by branding, storage term, and team size.
 
-**Q: What is the first-pass guarantee?**
-A: If PhotoBrief asks for follow-up photos after a rejected first pass, those follow-up photos do not consume credits.
-
-**Q: What does a business receive after a customer submits?**
-A: The business receives a review-ready brief with the photos, any recipient answers, AI quality feedback, extracted details, a readiness score, and a plain-English summary.
+**Q: What does the AI check?**
+A: PhotoBrief keeps photo feedback simple: wrong subject, too dark, blurry, unreadable label, glare, or cropped subject.
 
 ## Discovery endpoints
 
