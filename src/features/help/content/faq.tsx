@@ -8,13 +8,25 @@ export const faqItems: FaqItem[] = [
     a: <>No. They open a link, follow the mobile photo workflow, and submit. No app. No login.</>,
   },
   {
+    id: "manual-or-automated",
+    audience: "business",
+    q: "What can I do on Free or Starter?",
+    a: (
+      <>
+        Free and Starter let you create and send clickable PhotoBrief links manually. That is the
+        lowest-friction way to try the workflow before connecting your website.
+      </>
+    ),
+  },
+  {
     id: "website-intake",
     audience: "business",
     q: "What is Website Intake?",
     a: (
       <>
-        Website Intake turns website leads into PhotoBrief requests automatically. Use the hosted
-        intake link for the easiest setup, or connect your existing form with the webhook URL.
+        Website Intake turns website leads into PhotoBrief requests automatically. It unlocks on
+        <strong> Pro</strong> because it includes the hosted intake form, template routing,
+        auto-send behavior, and webhook/integration setup.
       </>
     ),
   },
@@ -24,9 +36,9 @@ export const faqItems: FaqItem[] = [
     q: "What should I put on my website?",
     a: (
       <>
-        Add a button like <strong>Get a quote</strong>, <strong>Request service</strong>, or
-        <strong> Start request</strong>. Link it to your hosted intake form from
-        <strong> Website Intake</strong>.
+        On <strong>Pro</strong>, add a button like <strong>Get a quote</strong>,
+        <strong> Request service</strong>, or <strong>Start request</strong>. Link it to your hosted
+        intake form from <strong>Website Intake</strong>.
       </>
     ),
   },
@@ -36,9 +48,9 @@ export const faqItems: FaqItem[] = [
     q: "Which website tools does PhotoBrief work with?",
     a: (
       <>
-        Anything that can link a button to a web address can use PhotoBrief. The setup guide includes
-        simple paths for Wix, Squarespace, WordPress, Elementor, Webflow, Shopify, GoDaddy, Carrd,
-        and Zapier/Make.
+        Anything that can link a button to a web address can use the hosted intake form on Pro. The
+        setup guide includes simple paths for Wix, Squarespace, WordPress, Elementor, Webflow,
+        Shopify, GoDaddy, Carrd, and Zapier/Make.
       </>
     ),
   },
@@ -50,6 +62,7 @@ export const faqItems: FaqItem[] = [
       <>
         Use the hosted link first. It is faster and easier to test. Use the webhook only when you
         need to keep an existing website form exactly as-is or you already use an automation tool.
+        Both Website Intake paths unlock on Pro.
       </>
     ),
   },
@@ -59,8 +72,8 @@ export const faqItems: FaqItem[] = [
     q: "Can I use my existing website form?",
     a: (
       <>
-        Yes. Copy the webhook URL from <strong>Website Intake</strong> into your form tool, then
-        map your fields to name, email, phone, request type, message, and address.
+        Yes on Pro. Copy the webhook URL from <strong>Website Intake</strong> into your form tool,
+        then map your fields to name, email, phone, request type, message, and address.
       </>
     ),
   },
@@ -95,7 +108,7 @@ export const faqItems: FaqItem[] = [
     a: (
       <>
         Yes. Go to <strong>Settings → Brand</strong> to upload your logo and pick your brand
-        colour. Those show on customer-facing request and intake pages.
+        colour. Those show on customer-facing request and intake pages according to your plan.
       </>
     ),
   },
