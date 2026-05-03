@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { ReactNode } from "react";
 import { getTokenClient } from "@/integrations/supabase/tokenClient";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
-import { ArrowRight, Camera, CheckCircle2, Clock3, ImageIcon, LockKeyhole, MessageCircleQuestion, Sparkles } from "lucide-react";
+import { ArrowRight, Camera, CheckCircle2, Clock3, LockKeyhole, MessageCircleQuestion, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CaptureUploadCard } from "@/features/capture/components/CaptureUploadCard";
 import { AIFeedbackMessage } from "@/features/capture/components/AIFeedbackMessage";
@@ -18,7 +19,7 @@ import { r2MediaService } from "@/services/r2MediaService";
 import { submissionsService } from "@/services/submissionsService";
 import { conversions, trackEvent } from "@/lib/analytics";
 import type { CapturedPhoto, ChatMessage } from "@/types/chat";
-import type { ContextQuestion, GuideStep } from "@/types/photobrief";
+import type { ContextQuestion, GuideStep, PhotoGuide } from "@/types/photobrief";
 
 export default function PublicRecipientPage() {
   const { token } = useParams();
@@ -248,7 +249,8 @@ function RecipientWorkflow({ ctx, token, navigate }: { ctx: RecipientContext; to
               active={active}
               latestFeedback={latestFeedback}
               latestRetake={latestRetake}
-              guideSteps={ctx.guide.steps}
+              guide={ctx.guide}
+              businessName={ctx.businessName}
               photos={flow.photos}
               answers={flow.answers}
               submitting={submitting}
@@ -350,7 +352,8 @@ function ActiveWorkflowCard({
   active,
   latestFeedback,
   latestRetake,
-  guideSteps,
+  guide,
+  businessName,
   photos,
   answers,
   submitting,
@@ -365,7 +368,8 @@ function ActiveWorkflowCard({
   active?: ChatMessage;
   latestFeedback?: Extract<ChatMessage, { kind: "ai_feedback" }>;
   latestRetake?: Extract<ChatMessage, { kind: "retake_decision" }>;
-  guideSteps: GuideStep[];
+  guide: PhotoGuide;
+  businessName: string;
   photos: CapturedPhoto[];
   answers: { questionId: string; prompt: string; answer: string }[];
   submitting: boolean;
@@ -376,10 +380,12 @@ function ActiveWorkflowCard({
   onAnswer: (answer: string) => void;
   onSubmit: () => void;
 }) {
+  const guideSteps = guide.steps;
+
   if (phase === "submitted") {
     return (
       <SurfaceCard>
-        <SubmitConfirmationCard businessName="the business" />
+        <SubmitConfirmationCard businessName={businessName} />
       </SurfaceCard>
     );
   }
@@ -388,7 +394,7 @@ function ActiveWorkflowCard({
     return (
       <SurfaceCard>
         <ReviewSummaryCard
-          guide={{ id: "review", name: "Photo request", category: "Custom", description: "", isTemplate: false, steps: guideSteps, questions: [] }}
+          guide={guide}
           photos={photos}
           answers={answers}
           onSubmit={onSubmit}
@@ -451,7 +457,7 @@ function ActiveWorkflowCard({
   );
 }
 
-function SurfaceCard({ children }: { children: React.ReactNode }) {
+function SurfaceCard({ children }: { children: ReactNode }) {
   return (
     <section className="rounded-[2rem] border border-border/70 bg-card/90 p-4 shadow-[0_30px_80px_-45px_hsl(222_47%_11%/0.45)] backdrop-blur sm:p-6">
       {children}
