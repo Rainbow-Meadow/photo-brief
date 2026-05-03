@@ -1,8 +1,8 @@
 const stats = [
-  { value: "1", label: "Website lead becomes one guided photo workflow" },
+  { value: "1", label: "Link starts the customer photo workflow" },
+  { value: "5 min", label: "Target customer completion experience" },
   { value: "6", label: "Simple AI issue categories, not noisy diagnostics" },
   { value: "0", label: "Credits used for first-pass follow-up photos" },
-  { value: "5 min", label: "Target customer completion experience" },
 ];
 
 export function StatsBand() {
@@ -14,10 +14,10 @@ export function StatsBand() {
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-eyebrow text-white/60">Product model</p>
           <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-5xl">
-            Built around how small businesses actually intake work.
+            Built for the fastest path from request to usable photos.
           </h2>
           <p className="mt-4 text-white/75">
-            No fake complexity. No bloated workflow builder. Just the fastest path from request to usable photos.
+            No bloated workflow builder. No customer account. No mystery upload folder. Just one clear path from “I need photos” to “here is the brief.”
           </p>
         </div>
 
