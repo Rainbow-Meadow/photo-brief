@@ -12,7 +12,7 @@ import {
   type AiBuilderMessage,
 } from "@/features/requests/components/AIRequestBuilderChat";
 import { RequestDraftPreview } from "@/features/requests/components/RequestDraftPreview";
-import { draftFromGuide } from "@/types/requestDraft";
+import { createBlankDraft, draftFromGuide } from "@/types/requestDraft";
 import type { RequestDraft } from "@/types/requestDraft";
 import { aiService } from "@/services/aiService";
 import { notificationService } from "@/services/notificationService";
@@ -23,8 +23,11 @@ import { UpgradePromptCard } from "@/components/shared/UpgradePromptCard";
 import { usePlan } from "@/hooks/usePlan";
 import { useCurrentWorkspace } from "@/hooks/useCurrentWorkspace";
 import { useUsage } from "@/hooks/useUsage";
+import { useWorkspaceGuides, useGuideAsync } from "@/hooks/useGuides";
 import { useQueryClient } from "@tanstack/react-query";
 import { trackEvent } from "@/lib/analytics";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 
 let mid = 0;
 const newId = () => `chat_${Date.now()}_${++mid}`;
@@ -43,10 +46,36 @@ export default function CreateRequestPage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
 
+  const { data: savedTemplates = [] } = useWorkspaceGuides(workspace?.id);
+  const guideParam = searchParams.get("guide") ?? undefined;
+  const { data: guideFromParam } = useGuideAsync(guideParam);
+
   // Customer prefill from URL params (e.g. /requests/new?customer_id=...&name=...&email=...)
   const prefillCustomerId = searchParams.get("customer_id");
   const prefillName = searchParams.get("name") ?? "";
   const prefillContact = searchParams.get("email") ?? searchParams.get("phone") ?? "";
+
+  useEffect(() => {
+    if (guideFromParam && !draft) {
+      const d = draftFromGuide(guideFromParam);
+      if (prefillName) d.recipientName = prefillName;
+      if (prefillContact) d.recipientContact = prefillContact;
+      setDraft(d);
+      setMode("template");
+    }
+  }, [guideFromParam, draft, prefillName, prefillContact]);
+
+  useEffect(() => {
+    if (!draft && !guideParam) {
+      setDraft(createBlankDraft({ recipientName: prefillName, recipientContact: prefillContact }));
+    }
+  }, [draft, guideParam, prefillName, prefillContact]);
+
+  const handleBlankDraft = () => {
+    setDraft(createBlankDraft({ recipientName: prefillName, recipientContact: prefillContact }));
+    setMode("template");
+    trackEvent("blank_request_started");
+  };
 
   const handleSelectTemplate = (guide: PhotoGuide) => {
     const d = draftFromGuide(guide);
@@ -71,6 +100,8 @@ export default function CreateRequestPage() {
       const { draft: generated, assistantReply } = await aiService.generateGuideFromPrompt({
         prompt,
       });
+      if (prefillName) generated.recipientName = prefillName;
+      if (prefillContact) generated.recipientContact = prefillContact;
       setDraft(generated);
       setChatMessages((m) =>
         m.map((msg) =>
@@ -114,7 +145,6 @@ export default function CreateRequestPage() {
 
     setIsCreating(true);
     try {
-      // Determine recipient channel.
       const contact = draft.recipientContact?.trim() ?? "";
       const isEmail = contact.includes("@");
       const created = await requestsService.create({
@@ -131,7 +161,6 @@ export default function CreateRequestPage() {
       const link = `${window.location.origin}/r/${created.token}`;
       const recipient = draft.recipientName || "your customer";
 
-      // Send the recipient their link via Lovable Email (best-effort).
       let delivery: "sent" | "logged_only" | "skipped" = "logged_only";
       if (isEmail) {
         try {
@@ -143,7 +172,6 @@ export default function CreateRequestPage() {
           delivery = result.delivery;
         } catch (sendErr) {
           console.error("Failed to send recipient email", sendErr);
-          // Non-fatal: the request was created; the user can resend from the detail page.
         }
       }
 
@@ -219,8 +247,8 @@ export default function CreateRequestPage() {
       return;
     }
     if (!can("custom_guides")) {
-      toast.error("Custom guides are on Pro", {
-        description: "Upgrade to save your own capture guides.",
+      toast.error("Custom templates are on Pro", {
+        description: "Upgrade to save your own reusable photo templates.",
         action: { label: "See plans", onClick: () => navigate("/settings/billing") },
       });
       return;
@@ -233,13 +261,13 @@ export default function CreateRequestPage() {
         draft,
       });
       toast.dismiss(t);
-      toast.success(`Saved "${saved.name}" to your Guide Library`);
-      queryClient.invalidateQueries({ queryKey: ["guides", workspace.id] });
+      toast.success(`Saved "${saved.name}" to your templates`);
+      queryClient.invalidateQueries({ queryKey: ["workspace-guides"] });
     } catch (err: any) {
       toast.dismiss(t);
       const msg = err?.message?.includes("PLAN_FEATURE_LOCKED")
-        ? "Custom guides are on the Pro plan."
-        : err?.message ?? "Could not save guide";
+        ? "Custom templates are on the Pro plan."
+        : err?.message ?? "Could not save template";
       toast.error(msg);
     }
   };
@@ -249,15 +277,25 @@ export default function CreateRequestPage() {
       <div id="draft-preview-top" />
       <PageHeader
         title="New request"
-        description="Choose a template or describe what you need — I'll draft a request you can edit."
+        description="Start from scratch or reuse one of your own saved templates."
       />
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
-        {/* Left — builder input */}
+      <div className="grid gap-6 lg:grid-cols-[minmax(280px,0.85fr)_minmax(0,1.25fr)]">
         <div className="space-y-4">
+          <div className="rounded-2xl border bg-card p-4 shadow-elev-sm">
+            <p className="text-sm font-semibold text-foreground">Start simple</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              One photo prompt is enough. Add more photos or questions only if they help.
+            </p>
+            <Button className="mt-4 w-full gap-1.5" onClick={handleBlankDraft}>
+              <Plus className="h-4 w-4" /> Start from scratch
+            </Button>
+          </div>
+
           <RequestBuilderModeTabs mode={mode} onChange={setMode} />
           {mode === "template" ? (
             <TemplatePicker
+              guides={savedTemplates}
               selectedGuideId={draft?.source === "template" ? draft.baseGuideId : undefined}
               onSelect={handleSelectTemplate}
             />
@@ -272,13 +310,12 @@ export default function CreateRequestPage() {
           )}
         </div>
 
-        {/* Right — editable draft preview */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-foreground">Draft preview</h2>
+            <h2 className="text-sm font-semibold text-foreground">Request setup</h2>
             {draft && (
               <span className="rounded-full bg-accent px-2 py-0.5 text-xs font-medium text-accent-foreground">
-                {draft.source === "ai" ? "AI draft" : "From template"}
+                {draft.source === "ai" ? "AI draft" : draft.source === "template" ? "Saved template" : "Custom"}
               </span>
             )}
           </div>
@@ -288,14 +325,13 @@ export default function CreateRequestPage() {
               onChange={setDraft}
               onCreate={handleCreate}
               onSaveAsGuide={handleSaveAsGuide}
+              isSaving={isCreating}
             />
           ) : (
             <div className="rounded-xl border border-dashed bg-card/50 p-8 text-center">
-              <p className="text-sm font-medium text-foreground">No draft yet</p>
+              <p className="text-sm font-medium text-foreground">Start with one photo prompt</p>
               <p className="mt-1 text-xs text-muted-foreground">
-                {mode === "template"
-                  ? "Pick a template on the left to see the editable preview."
-                  : "Describe what you need on the left to generate a draft."}
+                Choose “Start from scratch” to build exactly what you need.
               </p>
             </div>
           )}

@@ -9,17 +9,17 @@ interface RequestBuilderModeTabsProps {
   onChange: (mode: BuilderMode) => void;
 }
 
-/** Two-tab switcher between guide templates and AI chat builder. */
+/** Switcher between saved business templates and optional AI drafting. */
 export function RequestBuilderModeTabs({ mode, onChange }: RequestBuilderModeTabsProps) {
   const { can } = usePlan();
   const aiUnlocked = can("ai_request_builder");
   const tabs: Array<{ id: BuilderMode; label: string; icon: typeof Sparkles; hint: string; locked?: boolean }> = [
-    { id: "template", label: "Choose template", icon: LayoutTemplate, hint: "Start from a saved guide" },
+    { id: "template", label: "Saved templates", icon: LayoutTemplate, hint: "Reuse your own setup" },
     {
       id: "ai",
-      label: "Describe with AI",
+      label: "Draft with AI",
       icon: Sparkles,
-      hint: aiUnlocked ? "Tell us what you need" : "Available on Pro",
+      hint: aiUnlocked ? "Describe the request" : "Available on Pro",
       locked: !aiUnlocked,
     },
   ];

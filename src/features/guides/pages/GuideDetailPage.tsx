@@ -67,14 +67,14 @@ export default function GuideDetailPage() {
 
   useEffect(() => {
     if (guide) {
-      trackEvent("guide_viewed", { guide_id: guide.id, guide_name: guide.name, source: "detail_page" });
+      trackEvent("template_viewed", { guide_id: guide.id, guide_name: guide.name, source: "detail_page" });
     }
   }, [guide?.id]);
 
   const update = useMutation({
     mutationFn: async () => {
-      if (!guide || !draft) throw new Error("No guide loaded");
-      if (!draft.name.trim()) throw new Error("Give your guide a name");
+      if (!guide || !draft) throw new Error("No template loaded");
+      if (!draft.name.trim()) throw new Error("Name your template");
       return guidesService.updateGuide({
         guideId: guide.id,
         name: draft.name.trim(),
@@ -86,37 +86,37 @@ export default function GuideDetailPage() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["guide", id] });
       qc.invalidateQueries({ queryKey: ["workspace-guides"] });
-      toast.success("Guide updated");
+      toast.success("Template updated");
       setEditing(false);
     },
     onError: (err: any) =>
-      toast.error(err?.message ?? "Couldn't update guide"),
+      toast.error(err?.message ?? "Couldn't update template"),
   });
 
   const remove = useMutation({
     mutationFn: async () => {
-      if (!guide) throw new Error("No guide loaded");
+      if (!guide) throw new Error("No template loaded");
       return guidesService.deleteGuide(guide.id);
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["workspace-guides"] });
-      toast.success("Guide deleted");
+      toast.success("Template deleted");
       navigate("/guides");
     },
     onError: (err: any) =>
-      toast.error(err?.message ?? "Couldn't delete guide"),
+      toast.error(err?.message ?? "Couldn't delete template"),
   });
 
   if (isLoading) {
-    return <p className="text-sm text-muted-foreground">Loading guide…</p>;
+    return <p className="text-sm text-muted-foreground">Loading template…</p>;
   }
   if (!guide) {
     return (
       <EmptyState
         icon={BookOpen}
         illustration={noGuidesIllustration}
-        title="Guide not found"
-        description="This guide no longer exists."
+        title="Template not found"
+        description="This template no longer exists."
       />
     );
   }
@@ -127,7 +127,7 @@ export default function GuideDetailPage() {
     <div className="space-y-6 pb-12">
       <PageHeader
         title={view.name}
-        description={view.description || guide.description || `${view.steps.length} steps · ${view.questions.length} questions`}
+        description={view.description || `${view.steps.length} photo prompts · ${view.questions.length} questions`}
         actions={
           <div className="flex items-center gap-2">
             {!editing ? (
@@ -138,7 +138,7 @@ export default function GuideDetailPage() {
                   className="gap-1.5"
                   onClick={() => navigate(`/requests/new?guide=${guide.id}`)}
                 >
-                  <Send className="h-4 w-4" /> Use this guide
+                  <Send className="h-4 w-4" /> Use template
                 </Button>
                 {isCustom ? (
                   <>
@@ -159,16 +159,7 @@ export default function GuideDetailPage() {
                       <Trash2 className="h-4 w-4" /> Delete
                     </Button>
                   </>
-                ) : (
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="gap-1.5"
-                    onClick={() => navigate(`/guides/new?from=${guide.id}`)}
-                  >
-                    <Pencil className="h-4 w-4" /> Customize a copy
-                  </Button>
-                )}
+                ) : null}
               </>
             ) : (
               <>
@@ -196,10 +187,10 @@ export default function GuideDetailPage() {
       />
 
       {editing && draft ? (
-        <section className="space-y-4 rounded-xl border bg-card p-5 shadow-elev-sm">
+        <section className="space-y-4 rounded-2xl border bg-card p-5 shadow-elev-sm">
           <div className="grid gap-4">
             <div className="space-y-1.5">
-              <Label htmlFor="g-name">Guide name</Label>
+              <Label htmlFor="g-name">Template name</Label>
               <Input
                 id="g-name"
                 value={draft.name}
@@ -207,7 +198,7 @@ export default function GuideDetailPage() {
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="g-desc">Description</Label>
+              <Label htmlFor="g-desc">Team note</Label>
               <Textarea
                 id="g-desc"
                 rows={2}
@@ -219,10 +210,10 @@ export default function GuideDetailPage() {
         </section>
       ) : null}
 
-      <section className="space-y-3 rounded-xl border bg-card p-5 shadow-elev-sm">
+      <section className="space-y-3 rounded-2xl border bg-card p-5 shadow-elev-sm">
         <header>
           <h2 className="text-sm font-semibold text-foreground">
-            Capture steps ({view.steps.length})
+            Photos to request ({view.steps.length})
           </h2>
         </header>
         {editing && draft ? (
@@ -233,7 +224,7 @@ export default function GuideDetailPage() {
         ) : (
           <ol className="space-y-3">
             {view.steps.map((step, i) => (
-              <li key={step.id} className="flex gap-3 rounded-md border bg-background p-3">
+              <li key={step.id} className="flex gap-3 rounded-xl border bg-background p-3">
                 <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-semibold text-accent-foreground">
                   {i + 1}
                 </span>
@@ -246,16 +237,16 @@ export default function GuideDetailPage() {
               </li>
             ))}
             {view.steps.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No steps defined yet.</p>
+              <p className="text-sm text-muted-foreground">No photo prompts yet.</p>
             ) : null}
           </ol>
         )}
       </section>
 
-      <section className="space-y-3 rounded-xl border bg-card p-5 shadow-elev-sm">
+      <section className="space-y-3 rounded-2xl border bg-card p-5 shadow-elev-sm">
         <header>
           <h2 className="text-sm font-semibold text-foreground">
-            Context questions ({view.questions.length})
+            Questions, if any ({view.questions.length})
           </h2>
         </header>
         {editing && draft ? (
@@ -266,23 +257,23 @@ export default function GuideDetailPage() {
         ) : view.questions.length > 0 ? (
           <ul className="space-y-2">
             {view.questions.map((q) => (
-              <li key={q.id} className="rounded-md border bg-background p-3 text-sm text-foreground">
+              <li key={q.id} className="rounded-xl border bg-background p-3 text-sm text-foreground">
                 {q.prompt}
                 {q.required ? <span className="ml-1 text-destructive">*</span> : null}
               </li>
             ))}
           </ul>
         ) : (
-          <p className="text-sm text-muted-foreground">No questions for this guide.</p>
+          <p className="text-sm text-muted-foreground">No questions. Photos are enough for this template.</p>
         )}
       </section>
 
       <AlertDialog open={confirmDelete} onOpenChange={setConfirmDelete}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete this guide?</AlertDialogTitle>
+            <AlertDialogTitle>Delete this template?</AlertDialogTitle>
             <AlertDialogDescription>
-              "{view.name}" will be removed from your library. Existing requests already sent with this guide aren't affected.
+              "{view.name}" will be removed from your saved templates. Existing requests already sent with this template are not affected.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -291,7 +282,7 @@ export default function GuideDetailPage() {
               onClick={() => remove.mutate()}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              Delete guide
+              Delete template
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
