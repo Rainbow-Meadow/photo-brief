@@ -30,6 +30,7 @@ import BetaInvitePage from "@/pages/BetaInvite";
 import NotFound from "@/pages/NotFound";
 import PublicRecipientPage from "@/features/capture/pages/PublicRecipientPage";
 import RecipientConfirmationPage from "@/features/capture/pages/RecipientConfirmationPage";
+import PublicIntakePage from "@/features/intake/pages/PublicIntakePage";
 
 import { RequirePlatformAdmin } from "@/components/auth/RequirePlatformAdmin";
 import { InviteAcceptanceGuard } from "@/components/auth/InviteAcceptanceGuard";
@@ -152,7 +153,8 @@ const App = () => (
             />
           </Route>
 
-          {/* Public recipient (chat-first, no auth) */}
+          {/* Public intake + recipient capture */}
+          <Route path="/i/:token" element={<PublicIntakePage />} />
           <Route element={<PublicRequestLayout />}>
             <Route path="/r/:token" element={<PublicRecipientPage />} />
             <Route path="/r/:token/done" element={<RecipientConfirmationPage />} />
