@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   validate:
-    name: Install, lint, typecheck, test, and build
+    name: Install, lint, typecheck, test, validate hosting, and build
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -47,6 +47,9 @@ jobs:
 
       - name: Test
         run: npm test
+
+      - name: Validate hybrid hosting contract
+        run: npm run hosting:validate
 
       - name: Build
         run: npm run build

@@ -12,7 +12,9 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "build:prerender": "vite build && node scripts/prerender.mjs"
+    "hosting:validate": "node scripts/validate-hybrid-hosting.mjs",
+    "build:prerender": "vite build && node scripts/prerender.mjs",
+    "build:cloudflare-pages": "npm run hosting:validate && npm run build:prerender"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
