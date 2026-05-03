@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { ArrowRight, CheckCircle2, Sparkles } from "lucide-react";
+import { ArrowRight, BadgeCheck, CheckCircle2, HardDrive, Image, Sparkles, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { planLimits, type PlanLimit } from "@/config/planLimits";
@@ -63,6 +63,28 @@ function trackPlanSelection(plan: PlanLimit, interval: BillingInterval, surface:
   });
 }
 
+function AxisRow({
+  icon: Icon,
+  label,
+  value,
+  onDark,
+}: {
+  icon: typeof Image;
+  label: string;
+  value: string;
+  onDark: boolean;
+}) {
+  return (
+    <li className="flex gap-2 rounded-xl bg-background/55 p-2.5 text-xs dark:bg-white/5">
+      <Icon className={cn("mt-0.5 h-3.5 w-3.5 shrink-0", onDark ? "text-primary-glow" : "text-primary")} />
+      <span>
+        <span className={cn("block font-medium", onDark ? "text-white" : "text-foreground")}>{label}</span>
+        <span className={onDark ? "text-white/70" : "text-muted-foreground"}>{value}</span>
+      </span>
+    </li>
+  );
+}
+
 export function PricingCardGrid({
   ctaTarget = "signup",
   currentPlan,
@@ -118,7 +140,7 @@ export function PricingCardGrid({
         </div>
       ) : null}
 
-      <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2">
+      <div className={cn("mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2", compact && "mt-6 gap-4")}>
         {visiblePlans.map((plan) => {
           const isCurrent = currentPlan === plan.id;
           const price =
@@ -187,6 +209,14 @@ export function PricingCardGrid({
                     : "Billed monthly"}
               </p>
 
+              <ul className="mt-5 grid gap-2">
+                <AxisRow icon={Image} label="Photos" value={plan.pricingAxes.photos} onDark={onDark} />
+                <AxisRow icon={BadgeCheck} label="Your branding" value={plan.pricingAxes.customerBranding} onDark={onDark} />
+                <AxisRow icon={Sparkles} label="PhotoBrief branding" value={plan.pricingAxes.photobriefBranding} onDark={onDark} />
+                <AxisRow icon={HardDrive} label="Storage" value={plan.pricingAxes.storage} onDark={onDark} />
+                <AxisRow icon={Users} label="Team" value={plan.pricingAxes.team} onDark={onDark} />
+              </ul>
+
               {onSelectPlan && plan.id !== "free" && plan.id !== "business" ? (
                 <Button
                   size="default"
@@ -240,7 +270,7 @@ export function PricingCardGrid({
               )}
 
               <ul className="mt-6 space-y-2.5 text-sm">
-                {plan.features.slice(0, 7).map((f) => (
+                {plan.features.slice(0, compact ? 5 : 7).map((f) => (
                   <li key={f} className="flex items-start gap-2">
                     <CheckCircle2
                       className={cn(
@@ -253,14 +283,14 @@ export function PricingCardGrid({
                 ))}
               </ul>
 
-              {plan.features.length > 7 ? (
+              {plan.features.length > (compact ? 5 : 7) ? (
                 <p
                   className={cn(
                     "mt-4 text-xs",
                     onDark ? "text-white/55" : "text-muted-foreground",
                   )}
                 >
-                  + {plan.features.length - 7} more
+                  + {plan.features.length - (compact ? 5 : 7)} more included
                 </p>
               ) : null}
             </article>
@@ -276,7 +306,7 @@ export function PricingCardGrid({
       >
         ✓ <span className="font-semibold">First-pass guarantee included on every plan.</span>{" "}
         <span className={onDark ? "text-white/65" : "text-muted-foreground"}>
-          Credits are returned when PhotoBrief asks for rework.
+          If PhotoBrief asks for follow-up photos, those photos do not consume credits.
         </span>
       </p>
       <p
@@ -285,7 +315,7 @@ export function PricingCardGrid({
           onDark ? "text-white/55" : "text-muted-foreground",
         )}
       >
-        Prices in USD. Cancel anytime. Annual plans billed yearly. Credits reset each billing period.
+        Prices in USD. Cancel anytime. Annual plans billed yearly. Photo credits reset each billing period.
       </p>
     </section>
   );

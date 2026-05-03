@@ -1,7 +1,8 @@
 // Centralized plan tiers, limits, and feature gating.
 //
 // Pricing model:
-// - Requests are workflow containers.
+// - The customer-facing pricing axis is simple: photos, branding, storage term,
+//   and team size.
 // - PhotoBrief Credits are photo credits.
 // - 1 submitted/analyzed photo = 1 credit.
 // - Basic AI quality checks and submission summaries are bundled into that photo credit.
@@ -47,44 +48,44 @@ export interface FeatureMeta {
 
 export const featureCatalog: Record<FeatureKey, FeatureMeta> = {
   request_limit: {
-    label: "More active requests",
-    description: "Create more PhotoBrief request workflows without hitting an abuse-control cap.",
+    label: "Request volume",
+    description: "Requests are workflow containers. Photo volume is the main usage unit.",
   },
   credit_limit: {
-    label: "More PhotoBrief Credits",
-    description: "Credits are used when recipients submit photos. One submitted photo uses one credit.",
+    label: "Monthly photos",
+    description: "One submitted customer photo uses one PhotoBrief Credit.",
   },
   branding: {
-    label: "Branded request links",
-    description: "Add your logo, brand color, and intro copy to recipient pages.",
+    label: "Customer-facing branding",
+    description: "Add your logo, brand color, and customer-facing copy to recipient pages.",
   },
   branded_links: {
-    label: "Branded request links",
-    description: "Add your logo, brand color, and intro copy to recipient pages.",
+    label: "Customer-facing branding",
+    description: "Add your logo, brand color, and customer-facing copy to recipient pages.",
   },
   custom_messages: {
-    label: "Custom intro & completion messages",
-    description: "Set the tone with your own welcome and thank-you copy.",
+    label: "Custom customer messages",
+    description: "Set your own request intro and completion copy.",
   },
   white_label: {
-    label: "White-label",
-    description: "Remove PhotoBrief branding from recipient pages and emails.",
+    label: "Remove PhotoBrief branding",
+    description: "Hide PhotoBrief branding from customer-facing pages and exports.",
   },
   custom_guides: {
-    label: "Custom guides",
-    description: "Build and save your own capture guides beyond the included templates.",
+    label: "Saved templates",
+    description: "Build and save your own reusable photo request templates.",
   },
   ai_guide_generator: {
-    label: "AI Guide Generator",
-    description: "Let AI draft full capture guides from a short description.",
+    label: "AI template drafting",
+    description: "Let AI draft reusable photo request templates from a short description.",
   },
   ai_request_builder: {
     label: "AI request builder",
     description: 'Type "I need photos for…" and get an editable request draft.',
   },
   advanced_ai_checks: {
-    label: "Advanced AI quality gate",
-    description: "Catch blur, glare, missing items, and more — before you review.",
+    label: "AI quality checks",
+    description: "Catch blur, glare, missing items, and more before your team reviews.",
   },
   missing_shot_followup: {
     label: "Missing-shot follow-up",
@@ -103,7 +104,7 @@ export const featureCatalog: Record<FeatureKey, FeatureMeta> = {
     description: "Assign requests and submissions to teammates.",
   },
   team_members: {
-    label: "Team inbox",
+    label: "Team size",
     description: "Invite teammates to share the inbox and assign work.",
   },
   team_inbox: {
@@ -111,8 +112,8 @@ export const featureCatalog: Record<FeatureKey, FeatureMeta> = {
     description: "Invite teammates to share the inbox and assign work.",
   },
   saved_templates: {
-    label: "Saved message templates",
-    description: "Reuse polished outreach messages across requests.",
+    label: "Saved templates",
+    description: "Reuse polished request templates across customers.",
   },
   bulk_actions: {
     label: "Bulk actions",
@@ -128,7 +129,7 @@ export const featureCatalog: Record<FeatureKey, FeatureMeta> = {
   },
   custom_domain: {
     label: "Custom domain",
-    description: "Send recipients to links on your own domain.",
+    description: "Send customers to request links on your own domain.",
   },
   api_webhooks: {
     label: "API & webhooks",
@@ -154,6 +155,14 @@ export interface PlanLimit {
   tagline: string;
   purpose: string;
   features: string[];
+  /** The four customer-facing pricing axes. */
+  pricingAxes: {
+    photos: string;
+    customerBranding: string;
+    photobriefBranding: string;
+    storage: string;
+    team: string;
+  };
   highlight?: boolean;
   quotas: {
     /** Primary usage unit: 1 submitted/analyzed photo = 1 credit. */
@@ -191,8 +200,15 @@ export const planLimits: PlanLimit[] = [
     name: "Free",
     priceMonthly: 0,
     priceAnnualMonthly: 0,
-    tagline: "Try the full request flow.",
-    purpose: "Test PhotoBrief with a few simple jobs before committing.",
+    tagline: "Try the workflow.",
+    purpose: "Validate PhotoBrief with a few real customer photos.",
+    pricingAxes: {
+      photos: "10 photos / month",
+      customerBranding: "No customer branding",
+      photobriefBranding: "PhotoBrief branding shown",
+      storage: "7-day storage",
+      team: "1 user",
+    },
     quotas: {
       creditsPerMonth: 10,
       requestsPerMonth: 10,
@@ -203,12 +219,12 @@ export const planLimits: PlanLimit[] = [
       savedTemplates: 0,
     },
     features: [
-      "10 PhotoBrief Credits / month",
-      "1 submitted photo = 1 credit",
-      "Basic AI quality checks and summaries included",
-      "Built-in templates",
-      "PhotoBrief branding",
-      "7-day history",
+      "10 customer photos / month",
+      "1 submitted photo = 1 photo credit",
+      "AI quality checks and summaries included",
+      "PhotoBrief branding shown to customers",
+      "7-day media storage",
+      "1 user",
     ],
     capabilities: {},
     pdfExport: false,
@@ -218,8 +234,15 @@ export const planLimits: PlanLimit[] = [
     name: "Starter",
     priceMonthly: 19,
     priceAnnualMonthly: 15,
-    tagline: "Look professional, instantly.",
-    purpose: "Solo operators who want a branded recipient experience.",
+    tagline: "Branded basics for solo work.",
+    purpose: "Solo operators who want a professional customer-facing request flow.",
+    pricingAxes: {
+      photos: "100 photos / month",
+      customerBranding: "Logo, color, and custom messages",
+      photobriefBranding: "PhotoBrief footer remains",
+      storage: "30-day storage",
+      team: "1 user",
+    },
     quotas: {
       creditsPerMonth: 100,
       requestsPerMonth: 100,
@@ -227,28 +250,26 @@ export const planLimits: PlanLimit[] = [
       estimatedSimpleRequests: 100,
       users: 1,
       historyMonths: 1,
-      savedTemplates: 1,
+      savedTemplates: 3,
     },
     features: [
-      "100 PhotoBrief Credits / month",
-      "About 100 submitted photos",
-      "1 submitted photo = 1 credit",
-      "First-pass guarantee: follow-up photos are free",
+      "100 customer photos / month",
+      "Logo, brand color, and customer-facing messages",
+      "PhotoBrief footer remains on customer pages",
+      "30-day media storage",
       "1 user",
-      "Logo + brand color",
-      "Branded request page",
-      "Custom intro & completion messages",
-      "Standard AI checks + AI summary included",
-      "Readiness score & extracted details",
-      "Basic request inbox",
-      "PDF export (PhotoBrief footer)",
-      "30-day history",
+      "AI quality checks, readiness score, and summary",
+      "3 saved templates",
+      "PDF export with PhotoBrief footer",
+      "First-pass guarantee: requested follow-up photos are free",
     ],
     capabilities: {
       branding: true,
       branded_links: true,
       custom_messages: true,
       advanced_ai_checks: true,
+      custom_guides: true,
+      saved_templates: true,
       pdf_export: true,
     },
     pdfExport: "basic",
@@ -258,9 +279,16 @@ export const planLimits: PlanLimit[] = [
     name: "Pro",
     priceMonthly: 49,
     priceAnnualMonthly: 40,
-    tagline: "Automate intake, end to end.",
-    purpose: "Solo operators and small crews automating their request workflow.",
+    tagline: "More photos, no PhotoBrief branding.",
+    purpose: "High-volume solo operators and small teams that want a fully branded customer experience.",
     highlight: true,
+    pricingAxes: {
+      photos: "500 photos / month",
+      customerBranding: "Full customer branding",
+      photobriefBranding: "PhotoBrief branding removed",
+      storage: "12-month storage",
+      team: "Up to 3 users",
+    },
     quotas: {
       creditsPerMonth: 500,
       requestsPerMonth: 500,
@@ -268,25 +296,20 @@ export const planLimits: PlanLimit[] = [
       estimatedSimpleRequests: 500,
       users: 3,
       historyMonths: 12,
-      savedTemplates: 5,
+      savedTemplates: 25,
     },
     features: [
-      "500 PhotoBrief Credits / month",
-      "About 500 submitted photos",
-      "First-pass guarantee: follow-up photos are free",
-      "Everything in Starter",
-      "3 users",
-      "Custom Photo Guides",
-      "AI Guide Generator",
-      "AI request builder",
-      "Advanced AI quality gate",
-      "Missing-shot follow-up",
-      "Request reminders",
-      "Internal notes & assignments",
-      "Saved message templates",
+      "500 customer photos / month",
+      "Full customer branding",
+      "Remove PhotoBrief branding from customer pages",
+      "12-month media storage",
+      "Up to 3 users",
+      "25 saved templates",
+      "AI request builder and AI template drafting",
+      "Missing-shot follow-up and reminders",
+      "Internal notes and assignments",
       "Branded PDF export",
-      "White-label recipient pages",
-      "12-month history",
+      "First-pass guarantee: requested follow-up photos are free",
     ],
     capabilities: {
       branding: true,
@@ -311,8 +334,15 @@ export const planLimits: PlanLimit[] = [
     name: "Team",
     priceMonthly: 99,
     priceAnnualMonthly: 80,
-    tagline: "Run the whole operation.",
-    purpose: "Teams that share an inbox and review submissions together.",
+    tagline: "Team inbox and longer storage.",
+    purpose: "Teams sharing customer photo intake across multiple reviewers.",
+    pricingAxes: {
+      photos: "1,500 photos / month",
+      customerBranding: "Full customer branding",
+      photobriefBranding: "PhotoBrief branding removed",
+      storage: "24-month storage",
+      team: "Up to 10 users",
+    },
     quotas: {
       creditsPerMonth: 1500,
       requestsPerMonth: 1500,
@@ -323,19 +353,18 @@ export const planLimits: PlanLimit[] = [
       savedTemplates: "unlimited",
     },
     features: [
-      "1,500 PhotoBrief Credits / month",
-      "About 1,500 submitted photos",
-      "First-pass guarantee: follow-up photos are free",
-      "Everything in Pro",
-      "10 users",
-      "Team assignments & reviewer roles",
-      "Shared internal notes",
-      "Team activity history",
-      "Higher AI automation volume",
+      "1,500 customer photos / month",
+      "Full customer branding",
+      "Remove PhotoBrief branding from customer pages",
+      "24-month media storage",
+      "Up to 10 users",
+      "Unlimited saved templates",
+      "Team inbox, assignments, and reviewer roles",
+      "Shared internal notes and activity history",
       "Bulk actions",
       "Full PDF branding",
-      "White-label recipient pages",
-      "2-year history",
+      "Priority support",
+      "First-pass guarantee: requested follow-up photos are free",
     ],
     capabilities: {
       branding: true,
@@ -364,8 +393,15 @@ export const planLimits: PlanLimit[] = [
     name: "Business",
     priceMonthly: 199,
     priceAnnualMonthly: 150,
-    tagline: "Scale and integrate.",
-    purpose: "Multi-location operators who need custom domains, API access, and integrations.",
+    tagline: "Custom volume and retention.",
+    purpose: "Multi-location operators with custom storage, branding, and integration needs.",
+    pricingAxes: {
+      photos: "5,000+ photos / month",
+      customerBranding: "Custom branding and domain",
+      photobriefBranding: "Fully white-labeled",
+      storage: "Custom retention",
+      team: "25+ users",
+    },
     quotas: {
       creditsPerMonth: 5000,
       requestsPerMonth: "unlimited",
@@ -376,18 +412,18 @@ export const planLimits: PlanLimit[] = [
       savedTemplates: "unlimited",
     },
     features: [
-      "5,000+ PhotoBrief Credits / month",
-      "Custom pooled photo volume for multi-location teams",
-      "First-pass guarantee: follow-up photos are free",
-      "Everything in Team",
+      "5,000+ customer photos / month",
+      "Custom pooled photo volume",
+      "Custom branding and custom domain",
+      "Fully white-labeled customer experience",
+      "Custom media retention and export policy",
       "25+ users",
       "Multiple workspaces / locations",
-      "Custom domain",
-      "White-label recipient pages",
+      "Unlimited saved templates",
       "API & webhooks",
-      "Advanced audit & history",
-      "Data retention controls",
+      "Advanced audit history",
       "Priority support",
+      "First-pass guarantee: requested follow-up photos are free",
     ],
     capabilities: {
       branding: true,

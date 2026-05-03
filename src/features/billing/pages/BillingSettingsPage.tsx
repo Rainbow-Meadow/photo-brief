@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { CheckCircle2, ExternalLink, Loader2, Sparkles } from "lucide-react";
+import { BadgeCheck, CheckCircle2, ExternalLink, HardDrive, Image, Loader2, Sparkles, Users } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import {
   planLimits,
@@ -88,8 +88,8 @@ export default function BillingSettingsPage() {
     }
     if (searchParams.get("topup") === "success") {
       toast({
-        title: "Credits purchased",
-        description: "Your extra PhotoBrief Credits will appear within a few seconds.",
+        title: "Photo credits purchased",
+        description: "Your extra submitted-photo credits will appear within a few seconds.",
       });
       setTopupCheckout(null);
       refetchUsage();
@@ -133,7 +133,7 @@ export default function BillingSettingsPage() {
   return (
     <div className="space-y-8">
       <PaymentTestModeBanner />
-      <PageHeader title="Billing" description="Plan, credits, and usage." bordered={false} />
+      <PageHeader title="Billing" description="Photos, branding, storage, and team size." bordered={false} />
 
       <section className="overflow-hidden rounded-2xl border bg-gradient-to-br from-card to-muted/30 shadow-elev-sm">
         <div className="grid gap-6 p-6 lg:grid-cols-[1.2fr_1fr] lg:gap-10">
@@ -151,10 +151,19 @@ export default function BillingSettingsPage() {
             </h2>
             <p className="mt-1 text-sm text-muted-foreground">{current.tagline}</p>
             <p className="mt-3 max-w-xl text-sm text-muted-foreground">
-              PhotoBrief Credits are photo credits. One submitted photo uses one credit.
+              PhotoBrief pricing is based on submitted customer photos, branding control,
+              storage term, and team size. One submitted photo uses one photo credit.
               Basic AI quality checks and summaries are included, and first-pass follow-up
               photos requested by PhotoBrief are free.
             </p>
+
+            <div className="mt-5 grid gap-2 sm:grid-cols-2">
+              <PlanAxis icon={Image} label="Photos" value={current.pricingAxes.photos} />
+              <PlanAxis icon={BadgeCheck} label="Branding" value={current.pricingAxes.customerBranding} />
+              <PlanAxis icon={HardDrive} label="Storage" value={current.pricingAxes.storage} />
+              <PlanAxis icon={Users} label="Team" value={current.pricingAxes.team} />
+            </div>
+
             {workspace.cancelAtPeriodEnd ? (
               <p className="mt-2 text-xs font-medium text-warning">
                 Cancels at end of current period
@@ -184,7 +193,7 @@ export default function BillingSettingsPage() {
 
           <div className="space-y-4">
             <UsageMeter
-              label="PhotoBrief Credits"
+              label="Submitted-photo credits"
               used={usage.creditsUsed}
               cap={includedCredits as Quota}
               loading={usageLoading}
@@ -205,7 +214,7 @@ export default function BillingSettingsPage() {
             {topup.remaining > 0 ? (
               <p className="rounded-lg bg-success/10 px-3 py-2 text-xs text-success-foreground">
                 <Sparkles className="mr-1 inline h-3.5 w-3.5" />
-                <span className="font-medium">+{topup.remaining}</span> top-up credits available
+                <span className="font-medium">+{topup.remaining}</span> top-up photo credits available
                 {topup.expiresAt
                   ? ` until ${new Date(topup.expiresAt).toLocaleDateString()}`
                   : ""}
@@ -220,9 +229,9 @@ export default function BillingSettingsPage() {
         <section className="rounded-2xl border bg-card p-5 shadow-elev-sm sm:p-6">
           <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h3 className="text-base font-semibold text-foreground">Top-up credits</h3>
+              <h3 className="text-base font-semibold text-foreground">Top-up photo credits</h3>
               <p className="mt-1 text-sm text-muted-foreground">
-                Need room for more submitted photos this period? Buy one-time PhotoBrief Credits —
+                Need room for more submitted photos this period? Buy one-time photo credits —
                 they stack on top of your plan and are valid until the end of your current billing period.
               </p>
             </div>
@@ -265,7 +274,7 @@ export default function BillingSettingsPage() {
           currentPlan={workspace.plan}
           compact
           heading="Change plan"
-          subheading="Upgrade or downgrade any time. Annual saves 20%."
+          subheading="Choose by monthly photos, branding, storage term, and team size. Annual saves 20%."
           pendingPlan={checkout?.plan ?? null}
           showFoundingBanner={false}
           onSelectPlan={(plan, interval) => {
@@ -315,7 +324,7 @@ export default function BillingSettingsPage() {
       </Dialog>
 
       <section className="rounded-2xl border bg-card p-5 shadow-elev-sm">
-        <h3 className="text-sm font-semibold text-foreground">Compare features</h3>
+        <h3 className="text-sm font-semibold text-foreground">Feature details</h3>
         <div className="mt-3 overflow-x-auto">
           <table className="w-full min-w-[640px] text-sm">
             <thead>
@@ -365,8 +374,8 @@ export default function BillingSettingsPage() {
           <DialogHeader>
             <DialogTitle>
               {topupCheckout
-                ? `Buy ${topupCheckout.size} PhotoBrief Credits`
-                : "Credit checkout"}
+                ? `Buy ${topupCheckout.size} photo credits`
+                : "Photo credit checkout"}
             </DialogTitle>
           </DialogHeader>
           {topupCheckout ? (
@@ -377,6 +386,26 @@ export default function BillingSettingsPage() {
           ) : null}
         </DialogContent>
       </Dialog>
+    </div>
+  );
+}
+
+function PlanAxis({
+  icon: Icon,
+  label,
+  value,
+}: {
+  icon: typeof Image;
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="flex gap-2 rounded-xl bg-background/70 p-3 text-xs">
+      <Icon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+      <span>
+        <span className="block font-medium text-foreground">{label}</span>
+        <span className="text-muted-foreground">{value}</span>
+      </span>
     </div>
   );
 }
