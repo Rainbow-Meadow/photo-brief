@@ -25,6 +25,8 @@ const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const APP_URL = Deno.env.get("APP_PUBLIC_URL") ?? "https://photobrief.ai";
 
+type PlanTier = "free" | "starter" | "pro" | "team" | "business";
+
 interface IntakeSource {
   id: string;
   workspace_id: string;
@@ -87,6 +89,26 @@ Deno.serve(async (req) => {
 
   const intake = source as IntakeSource;
   if (!intake.enabled) return json({ error: "This intake source is disabled" }, 403);
+
+  const { data: workspace, error: workspaceErr } = await admin
+    .from("business_workspaces")
+    .select("plan")
+    .eq("id", intake.workspace_id)
+    .maybeSingle();
+  if (workspaceErr) return json({ error: workspaceErr.message }, 500);
+
+  const plan = ((workspace as any)?.plan ?? "free") as PlanTier;
+  if (!canUseWebsiteIntake(plan)) {
+    return json(
+      {
+        ok: false,
+        error: "Website Intake requires Pro",
+        message: "This PhotoBrief intake link is not active on the current plan. Ask the business to upgrade to Pro or send a manual PhotoBrief link.",
+        requiredPlan: "pro",
+      },
+      402,
+    );
+  }
 
   if (req.method === "GET") return getPublicConfig(admin, intake);
   if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
@@ -207,6 +229,10 @@ Deno.serve(async (req) => {
     return json({ error: e instanceof Error ? e.message : "Unknown error" }, 500);
   }
 });
+
+function canUseWebsiteIntake(plan: PlanTier) {
+  return plan === "pro" || plan === "team" || plan === "business";
+}
 
 async function getPublicConfig(admin: ReturnType<typeof createClient>, intake: IntakeSource) {
   const [{ data: ws }, { data: brand }, { data: rules }] = await Promise.all([
