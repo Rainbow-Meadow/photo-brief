@@ -68,7 +68,7 @@ export function DashboardLayout() {
                     New request
                   </NavLink>
                 </Button>
-                <ThemeToggle compact className="hidden sm:inline-flex" />
+                <ThemeToggle compact />
                 <NotificationBell />
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
