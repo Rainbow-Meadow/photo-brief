@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
-import { PageHeader } from "@/components/layout/PageHeader";
 import {
   RequestBuilderModeTabs,
   type BuilderMode,
@@ -27,7 +26,7 @@ import { useWorkspaceGuides, useGuideAsync } from "@/hooks/useGuides";
 import { useQueryClient } from "@tanstack/react-query";
 import { trackEvent } from "@/lib/analytics";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { ArrowRight, Plus, Sparkles } from "lucide-react";
 
 let mid = 0;
 const newId = () => `chat_${Date.now()}_${++mid}`;
@@ -40,7 +39,7 @@ export default function CreateRequestPage() {
   const { usage } = useUsage();
   const queryClient = useQueryClient();
   const aiUnlocked = can("ai_request_builder");
-  const [mode, setMode] = useState<BuilderMode>("template");
+  const [mode, setMode] = useState<BuilderMode>("ai");
   const [draft, setDraft] = useState<RequestDraft | null>(null);
   const [chatMessages, setChatMessages] = useState<AiBuilderMessage[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -50,7 +49,6 @@ export default function CreateRequestPage() {
   const guideParam = searchParams.get("guide") ?? undefined;
   const { data: guideFromParam } = useGuideAsync(guideParam);
 
-  // Customer prefill from URL params (e.g. /requests/new?customer_id=...&name=...&email=...)
   const prefillCustomerId = searchParams.get("customer_id");
   const prefillName = searchParams.get("name") ?? "";
   const prefillContact = searchParams.get("email") ?? searchParams.get("phone") ?? "";
@@ -66,10 +64,10 @@ export default function CreateRequestPage() {
   }, [guideFromParam, draft, prefillName, prefillContact]);
 
   useEffect(() => {
-    if (!draft && !guideParam) {
+    if (!draft && !guideParam && !aiUnlocked) {
       setDraft(createBlankDraft({ recipientName: prefillName, recipientContact: prefillContact }));
     }
-  }, [draft, guideParam, prefillName, prefillContact]);
+  }, [draft, guideParam, prefillName, prefillContact, aiUnlocked]);
 
   const handleBlankDraft = () => {
     setDraft(createBlankDraft({ recipientName: prefillName, recipientContact: prefillContact }));
@@ -82,7 +80,7 @@ export default function CreateRequestPage() {
     if (prefillName) d.recipientName = prefillName;
     if (prefillContact) d.recipientContact = prefillContact;
     setDraft(d);
-    toast.success(`Loaded template: ${guide.name}`);
+    toast.success(`Loaded ${guide.name}`);
   };
 
   const handleAiPrompt = async (prompt: string) => {
@@ -116,12 +114,12 @@ export default function CreateRequestPage() {
             ? {
                 ...msg,
                 pending: false,
-                text: "Sorry — something went wrong drafting that. Try again?",
+                text: "That didn’t build. Try one more time with a little more detail.",
               }
             : msg,
         ),
       );
-      toast.error("Could not generate draft");
+      toast.error("Could not build request");
     } finally {
       setIsGenerating(false);
     }
@@ -261,7 +259,7 @@ export default function CreateRequestPage() {
         draft,
       });
       toast.dismiss(t);
-      toast.success(`Saved "${saved.name}" to your templates`);
+      toast.success(`Saved "${saved.name}"`);
       queryClient.invalidateQueries({ queryKey: ["workspace-guides"] });
     } catch (err: any) {
       toast.dismiss(t);
@@ -273,25 +271,28 @@ export default function CreateRequestPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="mx-auto max-w-6xl space-y-6 pb-8">
       <div id="draft-preview-top" />
-      <PageHeader
-        title="New request"
-        description="Start from scratch or reuse one of your own saved templates."
-      />
-
-      <div className="grid gap-6 lg:grid-cols-[minmax(280px,0.85fr)_minmax(0,1.25fr)]">
-        <div className="space-y-4">
-          <div className="rounded-2xl border bg-card p-4 shadow-elev-sm">
-            <p className="text-sm font-semibold text-foreground">Start simple</p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              One photo prompt is enough. Add more photos or questions only if they help.
+      <section className="relative isolate overflow-hidden rounded-[2rem] border border-border/70 bg-card/85 p-5 shadow-[0_30px_90px_-55px_hsl(222_47%_11%/0.55)] backdrop-blur sm:p-7">
+        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-44 bg-ambient-sky opacity-70" />
+        <span className="inline-flex items-center gap-1.5 rounded-full border bg-background/70 px-3 py-1 text-xs font-medium text-muted-foreground shadow-sm">
+          <Sparkles className="h-3.5 w-3.5 text-primary" /> Simple request builder
+        </span>
+        <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">Create a photo request</h1>
+            <p className="mt-2 max-w-2xl text-base leading-7 text-muted-foreground">
+              Start with what the customer needs to capture. Keep it short, useful, and easy to finish in a few minutes.
             </p>
-            <Button className="mt-4 w-full gap-1.5" onClick={handleBlankDraft}>
-              <Plus className="h-4 w-4" /> Start from scratch
-            </Button>
           </div>
+          <Button variant="outline" className="h-11 rounded-2xl bg-background/70" onClick={handleBlankDraft}>
+            <Plus className="mr-2 h-4 w-4" /> Start blank
+          </Button>
+        </div>
+      </section>
 
+      <div className="grid gap-5 lg:grid-cols-[minmax(300px,0.9fr)_minmax(0,1.25fr)]">
+        <div className="space-y-4">
           <RequestBuilderModeTabs mode={mode} onChange={setMode} />
           {mode === "template" ? (
             <TemplatePicker
@@ -311,14 +312,6 @@ export default function CreateRequestPage() {
         </div>
 
         <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-foreground">Request setup</h2>
-            {draft && (
-              <span className="rounded-full bg-accent px-2 py-0.5 text-xs font-medium text-accent-foreground">
-                {draft.source === "ai" ? "AI draft" : draft.source === "template" ? "Saved template" : "Custom"}
-              </span>
-            )}
-          </div>
           {draft ? (
             <RequestDraftPreview
               draft={draft}
@@ -328,12 +321,15 @@ export default function CreateRequestPage() {
               isSaving={isCreating}
             />
           ) : (
-            <div className="rounded-xl border border-dashed bg-card/50 p-8 text-center">
-              <p className="text-sm font-medium text-foreground">Start with one photo prompt</p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                Choose “Start from scratch” to build exactly what you need.
+            <section className="flex min-h-[420px] flex-col items-center justify-center rounded-[2rem] border border-dashed bg-card/60 p-8 text-center shadow-sm backdrop-blur">
+              <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                <ArrowRight className="h-6 w-6" />
+              </span>
+              <h2 className="mt-5 text-xl font-semibold tracking-tight text-foreground">Your request will appear here</h2>
+              <p className="mt-2 max-w-sm text-sm leading-6 text-muted-foreground">
+                Build with AI, use a saved template, or start blank. You can edit every photo and question before sending.
               </p>
-            </div>
+            </section>
           )}
         </div>
       </div>
