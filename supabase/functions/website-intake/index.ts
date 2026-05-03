@@ -1,16 +1,24 @@
 // website-intake
 // Public webhook + hosted intake endpoint.
 //
+// GET  /functions/v1/website-intake/{public_token}
+//      Returns safe public config for PhotoBrief-hosted intake forms.
+//
 // POST /functions/v1/website-intake/{public_token}
-// Body can be either normalized fields or arbitrary form payload mapped by
-// intake_field_mappings.
+//      Body can be normalized fields or arbitrary form payload mapped by
+//      intake_field_mappings.
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
+import {
+  buildEnvelopeTool,
+  callAIWithRouter,
+  routerErrorResponse,
+} from "../_shared/aiModelRouter.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
 };
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
@@ -37,19 +45,35 @@ interface NormalizedLead {
   address?: string | null;
 }
 
+interface TemplateRule {
+  id: string;
+  match_type: "exact" | "contains";
+  match_value: string;
+  guide_id: string;
+  priority: number;
+  photo_guides?: { name?: string | null; description?: string | null } | null;
+}
+
+const CLASSIFY_TOOL = buildEnvelopeTool({
+  name: "choose_intake_template",
+  description: "Choose the best PhotoBrief template for a website inquiry.",
+  resultSchema: {
+    type: "object",
+    properties: {
+      ruleId: { type: "string", description: "The chosen intake rule id, or empty string when unsure." },
+      confidence: { type: "number", description: "0-1 confidence." },
+      reason: { type: "string", description: "Short reason." },
+    },
+    required: ["ruleId", "confidence", "reason"],
+    additionalProperties: false,
+  },
+}) as const;
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
-  if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
 
   const token = req.url.split("/website-intake/")[1]?.split(/[/?#]/)[0];
   if (!token) return json({ error: "Missing intake token" }, 400);
-
-  let payload: Record<string, unknown>;
-  try {
-    payload = await req.json();
-  } catch {
-    return json({ error: "Invalid JSON body" }, 400);
-  }
 
   const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
 
@@ -63,6 +87,16 @@ Deno.serve(async (req) => {
 
   const intake = source as IntakeSource;
   if (!intake.enabled) return json({ error: "This intake source is disabled" }, 403);
+
+  if (req.method === "GET") return getPublicConfig(admin, intake);
+  if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
+
+  let payload: Record<string, unknown>;
+  try {
+    payload = await req.json();
+  } catch {
+    return json({ error: "Invalid JSON body" }, 400);
+  }
 
   let eventId: string | null = null;
   try {
@@ -91,7 +125,7 @@ Deno.serve(async (req) => {
 
     const match = await matchGuide(admin, intake, lead);
     if (!match.guideId) {
-      await markEvent(admin, eventId, { status: "no_template_match", error: "No intake rule or default template matched" });
+      await markEvent(admin, eventId, { status: "no_template_match", error: "No intake rule, AI match, or default template matched" });
       return json({
         ok: false,
         status: "no_template_match",
@@ -163,13 +197,51 @@ Deno.serve(async (req) => {
       customerId,
       matchedGuideId: match.guideId,
       delivery,
+      matchSource: match.source,
     });
   } catch (e) {
+    const mapped = routerErrorResponse(e, corsHeaders);
+    if (mapped) return mapped;
     await markEvent(admin, eventId, { status: "error", error: e instanceof Error ? e.message : String(e) });
     console.error("website-intake error", e);
     return json({ error: e instanceof Error ? e.message : "Unknown error" }, 500);
   }
 });
+
+async function getPublicConfig(admin: ReturnType<typeof createClient>, intake: IntakeSource) {
+  const [{ data: ws }, { data: brand }, { data: rules }] = await Promise.all([
+    admin.from("business_workspaces").select("name").eq("id", intake.workspace_id).maybeSingle(),
+    admin
+      .from("brand_profiles")
+      .select("logo_url, primary_color, intro_message, hide_photobrief_branding")
+      .eq("workspace_id", intake.workspace_id)
+      .maybeSingle(),
+    admin
+      .from("intake_template_rules")
+      .select("match_value")
+      .eq("intake_source_id", intake.id)
+      .eq("enabled", true)
+      .order("priority", { ascending: true }),
+  ]);
+
+  const options = Array.from(
+    new Set((rules ?? []).map((r: any) => String(r.match_value ?? "").trim()).filter(Boolean)),
+  ).slice(0, 12);
+
+  return json({
+    ok: true,
+    sourceName: intake.name,
+    businessName: (ws as any)?.name ?? "this business",
+    logoUrl: (brand as any)?.logo_url ?? null,
+    brandColor: (brand as any)?.primary_color ?? null,
+    hidePhotobriefBranding: Boolean((brand as any)?.hide_photobrief_branding),
+    introMessage:
+      intake.intro_message ??
+      (brand as any)?.intro_message ??
+      "Tell us what you need help with. We may ask for a few photos next so we can help faster.",
+    requestTypeOptions: options,
+  });
+}
 
 function normalizeLead(payload: Record<string, unknown>, mappings: Array<{ photobrief_field: string; external_field: string }>): NormalizedLead {
   const mapped = new Map(mappings.map((m) => [m.photobrief_field, m.external_field]));
@@ -209,22 +281,69 @@ function clean(value: string) {
 async function matchGuide(admin: ReturnType<typeof createClient>, source: IntakeSource, lead: NormalizedLead) {
   const { data: rules } = await admin
     .from("intake_template_rules")
-    .select("id, match_type, match_value, guide_id, priority")
+    .select("id, match_type, match_value, guide_id, priority, photo_guides(name, description)")
     .eq("intake_source_id", source.id)
     .eq("enabled", true)
     .order("priority", { ascending: true });
 
+  const typedRules = (rules ?? []) as TemplateRule[];
   const haystack = `${lead.requestType ?? ""} ${lead.message ?? ""}`.toLowerCase();
-  for (const rule of rules ?? []) {
-    const needle = String((rule as any).match_value ?? "").toLowerCase().trim();
+  for (const rule of typedRules) {
+    const needle = String(rule.match_value ?? "").toLowerCase().trim();
     if (!needle) continue;
-    const matched = (rule as any).match_type === "exact"
+    const matched = rule.match_type === "exact"
       ? (lead.requestType ?? "").toLowerCase().trim() === needle
       : haystack.includes(needle);
-    if (matched) return { guideId: (rule as any).guide_id as string, ruleId: (rule as any).id as string };
+    if (matched) return { guideId: rule.guide_id, ruleId: rule.id, source: "rule" as const };
   }
 
-  return { guideId: source.default_guide_id, ruleId: null as string | null };
+  const ai = await classifyGuideWithAI(typedRules, lead);
+  if (ai?.guideId) return { ...ai, source: "ai" as const };
+
+  return { guideId: source.default_guide_id, ruleId: null as string | null, source: source.default_guide_id ? "fallback" as const : "none" as const };
+}
+
+async function classifyGuideWithAI(rules: TemplateRule[], lead: NormalizedLead): Promise<{ guideId: string; ruleId: string | null } | null> {
+  if (rules.length < 2) return null;
+  const options = rules.slice(0, 12).map((r) => ({
+    ruleId: r.id,
+    matchValue: r.match_value,
+    templateName: r.photo_guides?.name ?? "Template",
+    description: r.photo_guides?.description ?? "",
+  }));
+
+  try {
+    const { envelope } = await callAIWithRouter({
+      task: "classification",
+      messages: [
+        {
+          role: "system",
+          content:
+            "You classify a small-business website inquiry into one of the provided PhotoBrief routing rules. Pick only when the fit is clear. If unclear, return an empty ruleId and low confidence.",
+        },
+        {
+          role: "user",
+          content: JSON.stringify({
+            inquiry: {
+              requestType: lead.requestType,
+              message: lead.message,
+              address: lead.address,
+            },
+            options,
+          }),
+        },
+      ],
+      tools: [CLASSIFY_TOOL],
+      tool_choice: { type: "function", function: { name: "choose_intake_template" } },
+    });
+    const result = (envelope.result ?? {}) as { ruleId?: string; confidence?: number };
+    if (!result.ruleId || (result.confidence ?? 0) < 0.7) return null;
+    const rule = rules.find((r) => r.id === result.ruleId);
+    return rule ? { guideId: rule.guide_id, ruleId: rule.id } : null;
+  } catch (e) {
+    console.warn("website-intake AI classification skipped", e);
+    return null;
+  }
 }
 
 async function findOrCreateCustomer(admin: ReturnType<typeof createClient>, workspaceId: string, lead: NormalizedLead) {
