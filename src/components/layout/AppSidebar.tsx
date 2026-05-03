@@ -10,6 +10,7 @@ import {
   FileText,
   MessageSquare,
   LifeBuoy,
+  Globe2,
 } from "lucide-react";
 
 import {
@@ -37,6 +38,7 @@ const mainItems = [
   { title: "Requests", url: "/requests", icon: Inbox },
   { title: "Customers", url: "/customers", icon: Users },
   { title: "Guides", url: "/guides", icon: BookOpen },
+  { title: "Website Intake", url: "/intake", icon: Globe2 },
 ];
 
 const settingsItems = [
