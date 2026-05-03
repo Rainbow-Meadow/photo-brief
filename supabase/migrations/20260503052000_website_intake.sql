@@ -64,7 +64,8 @@ alter table public.intake_field_mappings enable row level security;
 alter table public.intake_template_rules enable row level security;
 alter table public.intake_events enable row level security;
 
-create policy if not exists "Workspace members can read intake sources"
+drop policy if exists "Workspace members can read intake sources" on public.intake_sources;
+create policy "Workspace members can read intake sources"
   on public.intake_sources for select
   using (exists (
     select 1 from public.workspace_members wm
@@ -73,7 +74,8 @@ create policy if not exists "Workspace members can read intake sources"
       and wm.status = 'active'
   ));
 
-create policy if not exists "Workspace members can manage intake sources"
+drop policy if exists "Workspace members can manage intake sources" on public.intake_sources;
+create policy "Workspace members can manage intake sources"
   on public.intake_sources for all
   using (exists (
     select 1 from public.workspace_members wm
@@ -88,7 +90,8 @@ create policy if not exists "Workspace members can manage intake sources"
       and wm.status = 'active'
   ));
 
-create policy if not exists "Workspace members can read intake field mappings"
+drop policy if exists "Workspace members can read intake field mappings" on public.intake_field_mappings;
+create policy "Workspace members can read intake field mappings"
   on public.intake_field_mappings for select
   using (exists (
     select 1 from public.intake_sources s
@@ -98,7 +101,8 @@ create policy if not exists "Workspace members can read intake field mappings"
       and wm.status = 'active'
   ));
 
-create policy if not exists "Workspace members can manage intake field mappings"
+drop policy if exists "Workspace members can manage intake field mappings" on public.intake_field_mappings;
+create policy "Workspace members can manage intake field mappings"
   on public.intake_field_mappings for all
   using (exists (
     select 1 from public.intake_sources s
@@ -115,7 +119,8 @@ create policy if not exists "Workspace members can manage intake field mappings"
       and wm.status = 'active'
   ));
 
-create policy if not exists "Workspace members can read intake template rules"
+drop policy if exists "Workspace members can read intake template rules" on public.intake_template_rules;
+create policy "Workspace members can read intake template rules"
   on public.intake_template_rules for select
   using (exists (
     select 1 from public.intake_sources s
@@ -125,7 +130,8 @@ create policy if not exists "Workspace members can read intake template rules"
       and wm.status = 'active'
   ));
 
-create policy if not exists "Workspace members can manage intake template rules"
+drop policy if exists "Workspace members can manage intake template rules" on public.intake_template_rules;
+create policy "Workspace members can manage intake template rules"
   on public.intake_template_rules for all
   using (exists (
     select 1 from public.intake_sources s
@@ -142,7 +148,8 @@ create policy if not exists "Workspace members can manage intake template rules"
       and wm.status = 'active'
   ));
 
-create policy if not exists "Workspace members can read intake events"
+drop policy if exists "Workspace members can read intake events" on public.intake_events;
+create policy "Workspace members can read intake events"
   on public.intake_events for select
   using (exists (
     select 1 from public.workspace_members wm
