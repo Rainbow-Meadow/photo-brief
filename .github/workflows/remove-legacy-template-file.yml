@@ -1,6 +1,9 @@
 name: Remove Legacy Template File
 
 on:
+  pull_request:
+    branches:
+      - main
   push:
     branches:
       - cleanup/remove-legacy-templates
@@ -16,6 +19,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: cleanup/remove-legacy-templates
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Remove generated legacy template file
         run: |
           set -euo pipefail
