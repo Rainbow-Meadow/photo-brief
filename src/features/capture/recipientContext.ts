@@ -1,9 +1,8 @@
 // Resolve recipient context (request + guide + branding) for a token.
-// Used by the public recipient page. Falls back to the local launch
-// templates if the token resolves a guide that exists only in config.
+// Used by the public recipient page. Guides/templates are loaded only from
+// Supabase workspace data; there is no built-in template fallback.
 
 import { getTokenClient } from "@/integrations/supabase/tokenClient";
-import { guideTemplates } from "@/config/guideTemplates";
 import { guidesService } from "@/services/guidesService";
 import type { PhotoGuide } from "@/types/photobrief";
 
@@ -38,7 +37,26 @@ export interface RecipientContext {
   resubmit?: ResubmitContext;
 }
 
-const DEFAULT_GUIDE = guideTemplates[0];
+const PREVIEW_GUIDE: PhotoGuide = {
+  id: "preview-guideless-request",
+  name: "Photo request",
+  category: "Custom",
+  description: "Preview photo request",
+  isTemplate: false,
+  steps: [
+    {
+      id: "preview-step-1",
+      orderIndex: 0,
+      title: "Photo I need",
+      instructions: "Take a clear, well-lit photo of the item or issue.",
+      shotType: "photo",
+      overlayType: "full_area",
+      aiChecks: ["blur", "low_light", "wrong_shot"],
+      required: true,
+    },
+  ],
+  questions: [],
+};
 
 export async function loadRecipientContext(
   token: string | undefined,
@@ -49,7 +67,7 @@ export async function loadRecipientContext(
       workspaceId: null,
       recipientName: "",
       businessName: "Your business",
-      guide: DEFAULT_GUIDE,
+      guide: PREVIEW_GUIDE,
     };
   }
 
@@ -62,13 +80,11 @@ export async function loadRecipientContext(
     .maybeSingle();
 
   if (!req) {
-    return {
-      requestId: null,
-      workspaceId: null,
-      recipientName: "",
-      businessName: "Your business",
-      guide: DEFAULT_GUIDE,
-    };
+    throw new Error("This request link is no longer available.");
+  }
+
+  if (!req.guide_id) {
+    throw new Error("This request is missing its saved template.");
   }
 
   const [{ data: ws }, { data: brand }, guide] = await Promise.all([
@@ -82,10 +98,12 @@ export async function loadRecipientContext(
       .select("logo_url, primary_color, intro_message, completion_message, hide_photobrief_branding")
       .eq("workspace_id", req.workspace_id)
       .maybeSingle(),
-    req.guide_id
-      ? guidesService.getByIdViaToken(token, req.guide_id)
-      : Promise.resolve(DEFAULT_GUIDE),
+    guidesService.getByIdViaToken(token, req.guide_id),
   ]);
+
+  if (!guide) {
+    throw new Error("This request's saved template could not be loaded.");
+  }
 
   const firstName = (req.recipient_name ?? "").split(" ")[0] || "there";
   const businessName = ws?.name ?? "Your business";
@@ -144,7 +162,7 @@ export async function loadRecipientContext(
       brand?.intro_message ??
       `Hi ${firstName}! ${businessName} here — I'll walk you through a few quick photos.`,
     completionBody: brand?.completion_message ?? undefined,
-    guide: guide ?? DEFAULT_GUIDE,
+    guide,
     resubmit,
   };
 }

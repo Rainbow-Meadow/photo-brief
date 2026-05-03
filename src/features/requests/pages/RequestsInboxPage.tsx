@@ -20,7 +20,7 @@ import { useRequests } from "@/hooks/useRequests";
 import { useCurrentWorkspace } from "@/hooks/useCurrentWorkspace";
 import { requestStatusOptions } from "@/config/statusOptions";
 import { formatRelativeTime } from "@/utils/format";
-import { guideTemplates } from "@/config/guideTemplates";
+import { useWorkspaceGuides } from "@/hooks/useGuides";
 import { useTeamMembers } from "@/hooks/useTeamMembers";
 import { toast } from "sonner";
 import { notificationService } from "@/services/notificationService";
@@ -41,6 +41,7 @@ import type { RequestStatus } from "@/types/photobrief";
 export default function RequestsInboxPage() {
   const requests = useRequests();
   const { workspace } = useCurrentWorkspace();
+  const { data: workspaceGuides = [] } = useWorkspaceGuides(workspace?.id);
   const teamMembers = useTeamMembers();
   const queryClient = useQueryClient();
   const { can } = usePlan();
@@ -81,8 +82,8 @@ export default function RequestsInboxPage() {
   const filtered = useMemo(() => applyInboxFilters(requests, filters), [requests, filters]);
 
   const guides = useMemo(
-    () => guideTemplates.map((g) => ({ id: g.id, name: g.name })),
-    [],
+    () => workspaceGuides.map((g) => ({ id: g.id, name: g.name })),
+    [workspaceGuides],
   );
 
   // Drop selections that are no longer in the filtered view

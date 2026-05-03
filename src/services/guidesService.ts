@@ -1,12 +1,10 @@
-// Guides service — workspace guides live in Supabase.
+// Guides service — workspace templates live in Supabase.
 //
-// Built-in launch templates still exist in config for legacy/public request
-// compatibility, but the business UI no longer presents them as a library.
-// Businesses create their own additive templates and reuse those.
+// There are no built-in templates in the product. Businesses create additive
+// photo request templates from scratch and reuse only their own saved templates.
 
 import { supabase } from "@/integrations/supabase/client";
 import { getTokenClient } from "@/integrations/supabase/tokenClient";
-import { guideTemplates } from "@/config/guideTemplates";
 import type { CuratedCategory, PhotoGuide } from "@/types/photobrief";
 import type { RequestDraft } from "@/types/requestDraft";
 
@@ -17,7 +15,7 @@ function rowToGuide(g: any, steps: any[], questions: any[]): PhotoGuide {
     name: g.name,
     category: g.category ?? "Custom",
     description: g.description ?? "",
-    isTemplate: g.is_global_template === true,
+    isTemplate: false,
     steps: (steps ?? [])
       .filter((s) => s.guide_id === g.id)
       .sort((a, b) => a.order_index - b.order_index)
@@ -63,12 +61,13 @@ async function fetchWorkspaceGuides(workspaceId: string): Promise<PhotoGuide[]> 
 }
 
 export const guidesService = {
-  // Legacy local template access. Do not use this for business template browsing.
+  // Deprecated compatibility methods kept as harmless empty responses for older
+  // callers. The app should use listForWorkspace/getByIdAsync for live data.
   list(): PhotoGuide[] {
-    return guideTemplates;
+    return [];
   },
-  getById(id: string): PhotoGuide | undefined {
-    return guideTemplates.find((g) => g.id === id);
+  getById(_id: string): PhotoGuide | undefined {
+    return undefined;
   },
   listLaunchReady(): PhotoGuide[] {
     return [];
@@ -83,7 +82,6 @@ export const guidesService = {
     return [];
   },
 
-  // Live workspace guides (custom templates created by the business).
   async listForWorkspace(workspaceId: string): Promise<PhotoGuide[]> {
     return fetchWorkspaceGuides(workspaceId);
   },
@@ -94,17 +92,13 @@ export const guidesService = {
       .select("*")
       .eq("id", id)
       .maybeSingle();
-    if (g) {
-      const [{ data: steps }, { data: questions }] = await Promise.all([
-        supabase.from("guide_steps").select("*").eq("guide_id", id),
-        supabase.from("context_questions").select("*").eq("guide_id", id),
-      ]);
-      return rowToGuide(g, steps ?? [], questions ?? []);
-    }
+    if (!g) return null;
 
-    // Fallback keeps older requests/template IDs readable during beta.
-    const local = guideTemplates.find((tpl) => tpl.id === id);
-    return local ?? null;
+    const [{ data: steps }, { data: questions }] = await Promise.all([
+      supabase.from("guide_steps").select("*").eq("guide_id", id),
+      supabase.from("context_questions").select("*").eq("guide_id", id),
+    ]);
+    return rowToGuide(g, steps ?? [], questions ?? []);
   },
 
   /** Token-scoped guide read for the public recipient page. */
@@ -115,17 +109,13 @@ export const guidesService = {
       .select("*")
       .eq("id", id)
       .maybeSingle();
-    if (g) {
-      const [{ data: steps }, { data: questions }] = await Promise.all([
-        client.from("guide_steps").select("*").eq("guide_id", id),
-        client.from("context_questions").select("*").eq("guide_id", id),
-      ]);
-      return rowToGuide(g, steps ?? [], questions ?? []);
-    }
+    if (!g) return null;
 
-    // Fallback keeps existing public links that still point at a legacy local
-    // template working until every beta request uses workspace templates.
-    return guideTemplates.find((tpl) => tpl.id === id) ?? null;
+    const [{ data: steps }, { data: questions }] = await Promise.all([
+      client.from("guide_steps").select("*").eq("guide_id", id),
+      client.from("context_questions").select("*").eq("guide_id", id),
+    ]);
+    return rowToGuide(g, steps ?? [], questions ?? []);
   },
 
   /** Persist a draft as a reusable workspace template. */
@@ -249,4 +239,3 @@ export const guidesService = {
     if (error) throw error;
   },
 };
-
