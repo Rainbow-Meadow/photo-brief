@@ -12,7 +12,7 @@ export const quickStartSteps: GuideStepProps[] = [
       </>
     ),
     screenshot: {
-      src: "/help/requests-new-template.png",
+      src: "/help/requests-new-template.svg",
       alt: "The Create a photo request page with simple AI setup and draft preview",
       pins: [
         { x: 18, y: 18, label: 1, note: "Build with AI, use a saved template, or start blank" },
