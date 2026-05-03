@@ -21,6 +21,7 @@ interface MetricCardProps {
   className?: string;
   subStat?: MetricSubStat;
   footnote?: MetricFootnote;
+  variant?: "default" | "quiet";
 }
 
 export function MetricCard({
@@ -31,30 +32,43 @@ export function MetricCard({
   className,
   subStat,
   footnote,
+  variant = "default",
 }: MetricCardProps) {
+  const quiet = variant === "quiet";
   return (
     <div
       className={cn(
-        "surface-card p-4 transition-shadow hover:shadow-elev-md sm:p-5",
+        quiet
+          ? "rounded-3xl border border-border/70 bg-card/70 p-4 shadow-sm backdrop-blur transition duration-200 hover:-translate-y-0.5 hover:bg-card hover:shadow-elev-sm sm:p-5"
+          : "surface-card p-4 transition duration-200 hover:-translate-y-0.5 hover:shadow-elev-md sm:p-5",
         className,
       )}
     >
-      <div className="flex items-start justify-between gap-2">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+            {label}
+          </p>
+          <p className="mt-2 text-3xl font-semibold tracking-tight text-foreground tabular-nums sm:text-[2rem] sm:leading-[1.1]">
+            {value}
+          </p>
+        </div>
         {Icon ? (
-          <span className="rounded-lg bg-accent p-2 text-accent-foreground">
+          <span
+            className={cn(
+              "rounded-2xl p-2.5",
+              quiet ? "bg-muted text-muted-foreground" : "bg-accent text-accent-foreground",
+            )}
+          >
             <Icon className="h-4 w-4" />
           </span>
         ) : null}
       </div>
-      <p className="mt-3 text-3xl font-semibold tracking-tight text-foreground tabular-nums sm:text-[2rem] sm:leading-[1.1]">
-        {value}
-      </p>
-      <p className="mt-1.5 text-xs font-medium text-foreground/80">{label}</p>
-      {hint ? <p className="mt-0.5 text-[11px] text-muted-foreground">{hint}</p> : null}
+      {hint ? <p className="mt-2 text-xs text-muted-foreground">{hint}</p> : null}
       {subStat ? (
         <p
           className={cn(
-            "mt-3 border-t pt-2.5 text-xs",
+            "mt-4 border-t border-border/70 pt-3 text-xs",
             subStat.tone === "success" && "text-success",
             subStat.tone === "muted" && "text-muted-foreground",
             (!subStat.tone || subStat.tone === "default") && "text-foreground",
