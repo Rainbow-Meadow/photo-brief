@@ -1,0 +1,44 @@
+# Cloudflare Pages routing contract for PhotoBrief hybrid hosting.
+#
+# The Cloudflare router Worker should normally send only public marketing and
+# discovery routes to Pages. These rules make Pages fail closed if an app,
+# admin, invite, or tokenized recipient route accidentally reaches the static
+# Pages origin.
+
+# Public prerendered Pages routes.
+/ /index.html 200
+/pricing /pricing/index.html 200
+/for-ai-agents /for-ai-agents/index.html 200
+/help /help/index.html 200
+/waitlist /waitlist/index.html 200
+
+# Public discovery files.
+/robots.txt /robots.txt 200
+/sitemap.xml /sitemap.xml 200
+/llms.txt /llms.txt 200
+/llms-full.txt /llms-full.txt 200
+/openapi.json /openapi.json 200
+/mcp.json /mcp.json 200
+/.well-known/ai-plugin.json /.well-known/ai-plugin.json 200
+/.well-known/agent.json /.well-known/agent.json 200
+
+# Fail closed for routes that belong to Lovable/Supabase origin.
+/auth* /404.html 404
+/forgot-password* /404.html 404
+/reset-password* /404.html 404
+/unsubscribe* /404.html 404
+/signup* /404.html 404
+/onboarding* /404.html 404
+/dashboard* /404.html 404
+/requests* /404.html 404
+/submissions* /404.html 404
+/guides* /404.html 404
+/customers* /404.html 404
+/settings* /404.html 404
+/admin* /404.html 404
+/invite/* /404.html 404
+/beta-invite/* /404.html 404
+/r/* /404.html 404
+
+# Any other unknown path should not hydrate the app shell from Pages.
+/* /404.html 404
