@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, CheckCircle2, Save, Sparkles } from "lucide-react";
 import { toast } from "sonner";
@@ -16,7 +16,7 @@ import { UpgradePromptCard } from "@/components/shared/UpgradePromptCard";
 import { guidesService } from "@/services/guidesService";
 import { useCurrentWorkspace } from "@/hooks/useCurrentWorkspace";
 import { usePlan } from "@/hooks/usePlan";
-import { createBlankDraft, draftFromGuide } from "@/types/requestDraft";
+import { createBlankDraft } from "@/types/requestDraft";
 import type { ContextQuestion, GuideStep } from "@/types/photobrief";
 import { trackEvent } from "@/lib/analytics";
 
@@ -29,36 +29,20 @@ interface BuilderState {
 
 export default function GuideBuilderPage() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const seedTemplateId = searchParams.get("from");
   const { workspace } = useCurrentWorkspace();
   const { can } = usePlan();
   const canCustom = can("custom_guides");
   const qc = useQueryClient();
 
   const initial = useMemo<BuilderState>(() => {
-    if (!seedTemplateId) {
-      const blank = createBlankDraft();
-      return {
-        name: "",
-        description: "",
-        steps: blank.steps,
-        questions: [],
-      };
-    }
-    const seed = guidesService.getById(seedTemplateId);
-    if (!seed) {
-      const blank = createBlankDraft();
-      return { name: "", description: "", steps: blank.steps, questions: [] };
-    }
-    const draft = draftFromGuide(seed);
+    const blank = createBlankDraft();
     return {
-      name: `${seed.name} (custom)`,
-      description: seed.description ?? "",
-      steps: draft.steps,
-      questions: draft.questions,
+      name: "",
+      description: "",
+      steps: blank.steps,
+      questions: [],
     };
-  }, [seedTemplateId]);
+  }, []);
 
   const [state, setState] = useState<BuilderState>(initial);
   useEffect(() => {
@@ -78,7 +62,6 @@ export default function GuideBuilderPage() {
         draft: {
           draftId: `builder_${Date.now()}`,
           source: "blank",
-          baseGuideId: seedTemplateId ?? undefined,
           title: state.name.trim(),
           introMessage: "",
           completionMessage: "",
@@ -100,7 +83,7 @@ export default function GuideBuilderPage() {
       const message = err?.message ?? "Couldn't save template";
       if (message.includes("PLAN_FEATURE_LOCKED")) {
         toast.error("Custom templates require Pro", {
-          description: "Upgrade your plan to create your own templates.",
+          description: "Upgrade to create your own reusable templates.",
         });
       } else {
         toast.error(message);
