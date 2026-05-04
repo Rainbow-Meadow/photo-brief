@@ -1,16 +1,178 @@
-/* Final brand overrides for the new PhotoBrief line-logo system.
-   Loaded after index.css and theme.css so older app-shell defaults cannot pull
-   the product back into the previous electric-blue palette.
+/* Palette B: Graphite + Electric Violet.
+   Loaded after index.css and theme.css so these values are authoritative across
+   marketing, authenticated app, recipient capture, and shared components.
 */
 
-.app-shell {
+:root {
+  --background: 260 23% 97%; /* #F8F7FA */
+  --foreground: 255 11% 7%; /* #111014 */
+  --card: 0 0% 100%; /* #FFFFFF */
+  --card-foreground: 255 11% 7%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 255 11% 7%;
+  --primary: 262 83% 58%; /* #7C3AED */
+  --primary-foreground: 0 0% 100%;
+  --primary-glow: 255 92% 76%; /* #A78BFA */
+  --secondary: 260 23% 95%;
+  --secondary-foreground: 255 11% 7%;
+  --muted: 260 23% 95%;
+  --muted-foreground: 260 5% 39%; /* #625F68 */
+  --accent: 262 83% 94%;
+  --accent-foreground: 263 70% 34%;
+  --border: 260 16% 89%; /* #E1DEE7 */
+  --input: 260 16% 89%;
+  --ring: 262 83% 58%;
+
+  --brand-navy: 255 11% 7%;
+  --brand-navy-foreground: 260 33% 98%;
+  --brand-lens: 262 83% 58%;
+  --brand-flash: 255 92% 76%;
+  --brand-paper: 260 23% 97%;
+  --brand-violet: 262 83% 58%;
+  --brand-violet-hover: 263 70% 50%;
+  --brand-graphite: 255 11% 7%;
+
+  --gradient-primary: linear-gradient(135deg, hsl(262 83% 58%), hsl(255 92% 76%));
+  --gradient-subtle: linear-gradient(180deg, hsl(260 23% 97%), hsl(0 0% 100%));
+  --gradient-brand: linear-gradient(135deg, hsl(255 11% 7%) 0%, hsl(257 16% 9%) 62%, hsl(262 83% 42%) 138%);
+  --gradient-radial-glow: radial-gradient(60% 50% at 50% 0%, hsl(255 92% 76% / 0.24), transparent 72%);
+
+  --shadow-glow: 0 18px 52px -26px hsl(262 83% 58% / 0.42);
+  --shadow-brand: 0 30px 80px -36px hsl(255 11% 7% / 0.50);
+
+  --glass-bg-strong: 260 23% 98% / 0.84;
+  --glass-bg: 260 23% 98% / 0.64;
+  --glass-bg-soft: 260 23% 98% / 0.40;
+  --glass-border: 260 16% 89% / 0.74;
+  --glass-border-strong: 260 16% 82% / 0.90;
+  --glass-shadow-lg:
+    inset 0 1px 0 hsl(0 0% 100% / 0.80),
+    0 38px 86px -36px hsl(255 11% 7% / 0.30),
+    0 16px 42px -24px hsl(262 83% 58% / 0.16);
+
+  --ambient-sky: radial-gradient(78% 58% at 50% 0%, hsl(255 92% 76% / 0.20), transparent 72%);
+  --ambient-sky-soft: radial-gradient(62% 52% at 50% 0%, hsl(255 92% 76% / 0.13), transparent 76%);
+  --ambient-mesh:
+    radial-gradient(42% 30% at 12% 18%, hsl(255 92% 76% / 0.18), transparent 72%),
+    radial-gradient(30% 24% at 88% 8%, hsl(262 83% 58% / 0.11), transparent 74%),
+    radial-gradient(54% 42% at 50% 100%, hsl(263 70% 50% / 0.10), transparent 72%);
+  --ambient-future:
+    radial-gradient(48% 34% at 18% 12%, hsl(255 92% 76% / 0.21), transparent 73%),
+    radial-gradient(36% 28% at 86% 14%, hsl(262 83% 58% / 0.12), transparent 77%),
+    radial-gradient(58% 48% at 50% 94%, hsl(263 70% 50% / 0.10), transparent 74%);
+
+  --sidebar-background: 270 17% 2%;
+  --sidebar-foreground: 260 33% 98%;
+  --sidebar-primary: 255 92% 76%;
+  --sidebar-primary-foreground: 270 17% 2%;
+  --sidebar-accent: 258 30% 20%;
+  --sidebar-accent-foreground: 260 33% 98%;
+  --sidebar-border: 258 11% 18%;
+  --sidebar-ring: 255 92% 76%;
+
+  --app-bg: 260 23% 97%;
+  --app-sidebar-bg: 270 17% 2%;
+  --app-sidebar-fg: 260 33% 98%;
+  --app-sidebar-muted: 276 6% 70%;
+  --app-sidebar-active-bg: 258 30% 20%;
+  --app-sidebar-active-fg: 260 33% 98%;
+  --app-sidebar-border: 258 11% 18%;
+  --app-primary: 262 83% 58%;
+  --app-primary-glow: 255 92% 76%;
+  --app-primary-fg: 0 0% 100%;
+}
+
+.dark {
+  --background: 270 17% 2%; /* #060507 */
+  --foreground: 260 33% 98%; /* #FAF9FC */
+  --card: 257 16% 9%; /* #15131A */
+  --card-foreground: 260 33% 98%;
+  --popover: 257 16% 9%;
+  --popover-foreground: 260 33% 98%;
+  --primary: 255 92% 76%; /* #A78BFA */
+  --primary-foreground: 270 17% 2%;
+  --primary-glow: 258 90% 66%; /* #8B5CF6 */
+  --secondary: 258 11% 14%;
+  --secondary-foreground: 260 33% 98%;
+  --muted: 258 11% 14%;
+  --muted-foreground: 276 6% 70%; /* #B3ADB7 */
+  --accent: 258 30% 20%;
+  --accent-foreground: 255 92% 82%;
+  --border: 258 11% 18%; /* #2C2933 */
+  --input: 258 11% 18%;
+  --ring: 255 92% 76%;
+
+  --brand-navy: 270 17% 2%;
+  --brand-navy-foreground: 260 33% 98%;
+  --brand-lens: 255 92% 76%;
+  --brand-flash: 258 90% 66%;
+  --brand-paper: 260 33% 98%;
+  --brand-violet: 255 92% 76%;
+  --brand-violet-hover: 258 90% 66%;
+  --brand-graphite: 270 17% 2%;
+
+  --gradient-primary: linear-gradient(135deg, hsl(255 92% 76%), hsl(258 90% 66%));
+  --gradient-subtle: linear-gradient(180deg, hsl(270 17% 2%), hsl(257 16% 9%));
+  --gradient-brand: linear-gradient(135deg, hsl(270 17% 2%) 0%, hsl(257 16% 9%) 58%, hsl(258 90% 28%) 132%);
+  --gradient-radial-glow: radial-gradient(60% 50% at 50% 0%, hsl(255 92% 76% / 0.20), transparent 72%);
+
+  --shadow-glow: 0 18px 62px -26px hsl(255 92% 76% / 0.40);
+  --shadow-brand: 0 34px 92px -34px hsl(0 0% 0% / 0.82);
+
+  --glass-bg-strong: 257 16% 9% / 0.84;
+  --glass-bg: 257 16% 9% / 0.62;
+  --glass-bg-soft: 257 16% 9% / 0.40;
+  --glass-border: 260 33% 98% / 0.11;
+  --glass-border-strong: 260 33% 98% / 0.18;
+  --glass-shadow-lg:
+    inset 0 1px 0 hsl(0 0% 100% / 0.09),
+    0 42px 96px -38px hsl(0 0% 0% / 0.80),
+    0 18px 50px -30px hsl(255 92% 76% / 0.18);
+
+  --ambient-sky: radial-gradient(78% 58% at 50% 0%, hsl(255 92% 76% / 0.16), transparent 72%);
+  --ambient-sky-soft: radial-gradient(62% 52% at 50% 0%, hsl(255 92% 76% / 0.10), transparent 76%);
+  --ambient-mesh:
+    radial-gradient(42% 30% at 12% 18%, hsl(255 92% 76% / 0.13), transparent 72%),
+    radial-gradient(30% 24% at 88% 8%, hsl(258 90% 66% / 0.10), transparent 74%),
+    radial-gradient(54% 42% at 50% 100%, hsl(262 83% 58% / 0.12), transparent 72%);
+  --ambient-future:
+    radial-gradient(48% 34% at 18% 12%, hsl(255 92% 76% / 0.14), transparent 73%),
+    radial-gradient(36% 28% at 86% 14%, hsl(258 90% 66% / 0.10), transparent 77%),
+    radial-gradient(58% 48% at 50% 94%, hsl(262 83% 58% / 0.13), transparent 74%);
+
+  --sidebar-background: 270 17% 2%;
+  --sidebar-foreground: 260 33% 98%;
+  --sidebar-primary: 255 92% 76%;
+  --sidebar-primary-foreground: 270 17% 2%;
+  --sidebar-accent: 258 30% 20%;
+  --sidebar-accent-foreground: 260 33% 98%;
+  --sidebar-border: 258 11% 18%;
+  --sidebar-ring: 255 92% 76%;
+
+  --app-bg: 270 17% 2%;
+  --app-sidebar-bg: 270 17% 2%;
+  --app-sidebar-fg: 260 33% 98%;
+  --app-sidebar-muted: 276 6% 70%;
+  --app-sidebar-active-bg: 258 30% 20%;
+  --app-sidebar-active-fg: 260 33% 98%;
+  --app-sidebar-border: 258 11% 18%;
+  --app-primary: 255 92% 76%;
+  --app-primary-glow: 258 90% 66%;
+  --app-primary-fg: 270 17% 2%;
+
+  --app-pill-info-bg: 258 30% 20%;
+  --app-pill-info-fg: 255 92% 82%;
+}
+
+.app-shell,
+.recipient-shell {
   --primary: var(--app-primary);
   --primary-glow: var(--app-primary-glow);
   --primary-foreground: var(--app-primary-fg);
   --ring: var(--app-primary);
   --background: var(--app-bg);
-  --accent: 187 69% 92%;
-  --accent-foreground: 188 78% 24%;
+  --accent: 262 83% 94%;
+  --accent-foreground: 263 70% 34%;
   --sidebar-background: var(--app-sidebar-bg);
   --sidebar-foreground: var(--app-sidebar-fg);
   --sidebar-accent: var(--app-sidebar-active-bg);
@@ -21,31 +183,18 @@
   --sidebar-primary-foreground: var(--app-primary-fg);
 }
 
-.dark .app-shell {
-  --accent: 187 39% 18%;
-  --accent-foreground: 188 79% 80%;
-}
-
-.recipient-shell {
-  --primary: var(--app-primary);
-  --primary-glow: var(--app-primary-glow);
-  --primary-foreground: var(--app-primary-fg);
-  --ring: var(--app-primary);
-  --accent: 187 69% 92%;
-  --accent-foreground: 188 78% 24%;
-}
-
+.dark .app-shell,
 .dark .recipient-shell {
-  --accent: 187 39% 18%;
-  --accent-foreground: 188 79% 80%;
+  --accent: 258 30% 20%;
+  --accent-foreground: 255 92% 82%;
 }
 
 .text-gradient-future {
   background-image: linear-gradient(
     100deg,
     hsl(var(--foreground)) 0%,
-    hsl(var(--primary)) 56%,
-    hsl(var(--warning)) 112%
+    hsl(var(--primary)) 58%,
+    hsl(var(--primary-glow)) 112%
   );
 }
 
@@ -53,13 +202,14 @@
   background-image: linear-gradient(180deg, hsl(var(--primary-glow)) 0%, hsl(var(--primary)) 100%);
   box-shadow:
     inset 0 1px 0 hsl(0 0% 100% / 0.34),
-    inset 0 -1px 0 hsl(var(--brand-navy) / 0.20),
+    inset 0 -1px 0 hsl(var(--brand-graphite) / 0.20),
     0 10px 26px -13px hsl(var(--primary) / 0.52);
 }
 
 .btn-primary-glass:hover {
+  background-image: linear-gradient(180deg, hsl(var(--primary)) 0%, hsl(var(--brand-violet-hover)) 100%);
   box-shadow:
     inset 0 1px 0 hsl(0 0% 100% / 0.40),
-    inset 0 -1px 0 hsl(var(--brand-navy) / 0.20),
+    inset 0 -1px 0 hsl(var(--brand-graphite) / 0.20),
     0 16px 34px -14px hsl(var(--primary) / 0.56);
 }
