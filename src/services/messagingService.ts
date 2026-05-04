@@ -43,6 +43,52 @@ export const messagingService = {
     }));
   },
 
+  async logManualSend(input: {
+    requestId: string;
+    workspaceId: string;
+    channel: RequestMessageChannel;
+    toAddress?: string | null;
+    body: string;
+  }) {
+    const { data: userData } = await supabase.auth.getUser();
+    const { data, error } = await supabase
+      .from("request_messages")
+      .insert({
+        request_id: input.requestId,
+        workspace_id: input.workspaceId,
+        kind: "initial",
+        channel: input.channel,
+        direction: "outbound",
+        to_address: input.toAddress ?? null,
+        subject: "Manual text message",
+        body: input.body,
+        sent_by: userData.user?.id ?? null,
+        metadata: {
+          delivery: "manual",
+          source: "copy_paste_sms",
+          logged_by_user: true,
+        },
+      })
+      .select("*")
+      .single();
+
+    if (error) throw error;
+    return {
+      id: data.id,
+      requestId: data.request_id,
+      workspaceId: data.workspace_id,
+      kind: data.kind as RequestMessageKind,
+      channel: (data.channel ?? "sms") as RequestMessageChannel,
+      direction: (data.direction ?? "outbound") as RequestMessageDirection,
+      toAddress: data.to_address,
+      subject: data.subject,
+      body: data.body,
+      sentAt: data.sent_at,
+      sentBy: data.sent_by,
+      metadata: (data.metadata ?? {}) as Record<string, unknown>,
+    } satisfies RequestMessage;
+  },
+
   async send(input: {
     requestId: string;
     kind: RequestMessageKind;
