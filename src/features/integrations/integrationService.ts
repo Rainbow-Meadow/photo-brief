@@ -58,6 +58,8 @@ const db = supabase as unknown as {
   };
 };
 
+type OAuthProvider = "google" | "microsoft" | "hubspot";
+
 export const integrationService = {
   async listConnections(workspaceId: string): Promise<IntegrationConnection[]> {
     const { data, error } = await db
@@ -94,6 +96,28 @@ export const integrationService = {
 
     if (error) throw error;
     return mapConnection(data as IntegrationConnectionRow);
+  },
+
+  async startOAuth(input: {
+    workspaceId: string;
+    provider: OAuthProvider;
+    redirectTo?: string;
+  }): Promise<{ authorizationUrl: string }> {
+    const { data, error } = await supabase.functions.invoke("integration-oauth-start", {
+      body: input,
+    });
+
+    if (error) {
+      const context = error as { context?: { error?: string; missingSecret?: string } };
+      const message = context.context?.missingSecret
+        ? `${context.context.missingSecret} is not configured yet.`
+        : context.context?.error ?? error.message;
+      throw new Error(message);
+    }
+
+    const url = (data as { authorizationUrl?: string })?.authorizationUrl;
+    if (!url) throw new Error("OAuth provider did not return an authorization URL.");
+    return { authorizationUrl: url };
   },
 
   async disableConnection(connectionId: string): Promise<void> {
