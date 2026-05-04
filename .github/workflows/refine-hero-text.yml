@@ -55,3 +55,4 @@ jobs:
           git add src/pages/Landing.tsx src/index.css .github/workflows/refine-hero-text.yml
           git commit -m "Refine landing hero typography and copy"
           git push
+# trigger: 2
