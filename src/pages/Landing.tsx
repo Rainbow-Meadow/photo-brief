@@ -207,10 +207,9 @@ export default function LandingPage() {
             <span className="inline-flex items-center gap-1.5 rounded-full glass px-3 py-1 text-xs font-medium text-foreground/80">
               <Sparkles className="h-3 w-3 text-primary" /> Founding Partner Beta now open
             </span>
-            <h1 className="mx-auto mt-5 max-w-[14.5ch] text-[clamp(3.25rem,5.9vw,6.25rem)] font-semibold leading-[0.95] tracking-[-0.055em] text-foreground sm:max-w-[17ch] lg:max-w-[18ch]">
-              Stop chasing customer photos.
-              <br />
-              <span className="text-gradient-future">Become a founding partner.</span>
+            <h1 className="mx-auto mt-5 max-w-[min(100%,62rem)] text-[clamp(2.65rem,4.6vw,4.95rem)] font-semibold leading-[0.96] tracking-[-0.055em] text-foreground">
+              <span className="block md:whitespace-nowrap">Stop chasing customer photos.</span>
+              <span className="block text-gradient-future md:whitespace-nowrap">Become a founding partner.</span>
             </h1>
             <p className="mx-auto mt-5 max-w-3xl text-base leading-7 text-muted-foreground sm:text-lg">
               PhotoBrief turns “can you send a few photos?” into a short mobile workflow. Founding partners get early access, concierge setup, direct support, and the chance to shape the product before public launch.
