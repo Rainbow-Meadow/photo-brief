@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   complete-logo-ci-runs:
-    name: Locate, rerun, and verify failed logo CI runs
+    name: Locate, rerun, verify, report, and clean up logo CI runs
     runs-on: ubuntu-latest
     timeout-minutes: 25
     env:
@@ -22,9 +22,10 @@ jobs:
       REPO: ${{ github.repository }}
       REPAIR_SHA: ${{ github.sha }}
       TEMP_WORKFLOW_PATH: .github/workflows/tmp-complete-logo-runs.yml
+      REPORT_PATH: tmp/logo-run-repair-report.json
       STATUS_CONTEXT: logo-run-repair
     steps:
-      - name: Rerun failed logo CI checks
+      - name: Complete logo CI runs
         shell: bash
         run: |
           set -Eeuo pipefail
@@ -39,7 +40,39 @@ jobs:
               >/dev/null
           }
 
-          cleanup() {
+          write_report() {
+            local state="$1"
+            local summary="$2"
+            local details="$3"
+            local content
+            content="$(jq -cn \
+              --arg state "${state}" \
+              --arg summary "${summary}" \
+              --arg details "${details}" \
+              --arg repairSha "${REPAIR_SHA}" \
+              --arg generatedAt "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+              '{state:$state, summary:$summary, details:$details, repairSha:$repairSha, generatedAt:$generatedAt}')"
+            local encoded
+            encoded="$(printf '%s' "${content}" | base64 -w0)"
+            local existing_sha=""
+            existing_sha="$(gh api "repos/${REPO}/contents/${REPORT_PATH}?ref=main" --jq .sha 2>/dev/null || true)"
+            if [[ -n "${existing_sha}" ]]; then
+              gh api -X PUT "repos/${REPO}/contents/${REPORT_PATH}" \
+                -f message="Update logo run repair report [skip ci]" \
+                -f content="${encoded}" \
+                -f sha="${existing_sha}" \
+                -f branch="main" \
+                >/dev/null
+            else
+              gh api -X PUT "repos/${REPO}/contents/${REPORT_PATH}" \
+                -f message="Add logo run repair report [skip ci]" \
+                -f content="${encoded}" \
+                -f branch="main" \
+                >/dev/null
+            fi
+          }
+
+          cleanup_workflow() {
             local file_sha=""
             file_sha="$(gh api "repos/${REPO}/contents/${TEMP_WORKFLOW_PATH}?ref=main" --jq .sha 2>/dev/null || true)"
             if [[ -n "${file_sha}" ]]; then
@@ -51,9 +84,19 @@ jobs:
             fi
           }
 
-          trap 'code=$?; if [[ ${code} -ne 0 ]]; then set_status failure "Logo CI run repair failed" || true; fi; cleanup; exit ${code}' EXIT
+          fail() {
+            local msg="$1"
+            echo "${msg}"
+            set_status failure "${msg}" || true
+            write_report failure "${msg}" "${report_details:-No details captured}" || true
+            cleanup_workflow || true
+            exit 1
+          }
 
-          set_status pending "Locating failed logo CI runs"
+          trap 'code=$?; if [[ ${code} -ne 0 ]]; then set_status failure "Logo CI run repair failed" || true; write_report failure "Logo CI run repair failed" "${report_details:-No details captured}" || true; cleanup_workflow || true; fi; exit ${code}' EXIT
+
+          set_status pending "Locating logo CI runs"
+          report_details=""
 
           targets=(
             "24805581b30fb84d0102758349c01f70cbb3d06c"
@@ -61,35 +104,48 @@ jobs:
           )
 
           rerun_count=0
-          already_complete=0
-          failed=()
-          checked=0
+          already_success=0
+          completed_success=0
+          failures=()
 
           for target_sha in "${targets[@]}"; do
-            checked=$((checked + 1))
             short_sha="${target_sha:0:7}"
-            echo "Checking CI run for ${short_sha}"
-
-            run_id="$(gh api "repos/${REPO}/actions/runs?branch=main&event=push&per_page=100" \
-              --jq ".workflow_runs[] | select(.name == \"CI\" and .head_sha == \"${target_sha}\") | select(.conclusion != \"success\") | .id" \
+            echo "Resolving CI run for ${short_sha}"
+            run_json="$(gh api "repos/${REPO}/actions/runs?branch=main&event=push&per_page=100" \
+              --jq ".workflow_runs[] | select(.name == \"CI\" and .head_sha == \"${target_sha}\") | {id, run_number, status, conclusion, html_url} | @base64" \
               | head -n 1 || true)"
 
-            if [[ -z "${run_id}" ]]; then
-              echo "No non-success CI run found for ${short_sha}; treating as already complete."
-              already_complete=$((already_complete + 1))
+            if [[ -z "${run_json}" ]]; then
+              failures+=("${short_sha}:missing-ci-run")
+              report_details+="${short_sha}: no CI run found; "
               continue
             fi
 
-            run_number="$(gh api "repos/${REPO}/actions/runs/${run_id}" --jq .run_number)"
-            current_conclusion="$(gh api "repos/${REPO}/actions/runs/${run_id}" --jq '.conclusion // "none"')"
-            echo "Rerunning CI #${run_number} for ${short_sha}; current conclusion: ${current_conclusion}"
+            run_id="$(printf '%s' "${run_json}" | base64 -d | jq -r .id)"
+            run_number="$(printf '%s' "${run_json}" | base64 -d | jq -r .run_number)"
+            status="$(printf '%s' "${run_json}" | base64 -d | jq -r .status)"
+            conclusion="$(printf '%s' "${run_json}" | base64 -d | jq -r '.conclusion // "none"')"
+            html_url="$(printf '%s' "${run_json}" | base64 -d | jq -r .html_url)"
 
-            gh api -X POST "repos/${REPO}/actions/runs/${run_id}/rerun" >/dev/null
-            rerun_count=$((rerun_count + 1))
+            echo "CI #${run_number} for ${short_sha}: ${status}/${conclusion}"
+            report_details+="#${run_number} ${short_sha} initial ${status}/${conclusion} ${html_url}; "
 
-            final_status=""
-            final_conclusion=""
-            for attempt in {1..90}; do
+            if [[ "${status}" == "completed" && "${conclusion}" == "success" ]]; then
+              already_success=$((already_success + 1))
+              continue
+            fi
+
+            if [[ "${status}" == "completed" ]]; then
+              echo "Rerunning CI #${run_number}"
+              gh api -X POST "repos/${REPO}/actions/runs/${run_id}/rerun" >/dev/null
+              rerun_count=$((rerun_count + 1))
+            else
+              echo "CI #${run_number} is already ${status}; waiting."
+            fi
+
+            final_status="${status}"
+            final_conclusion="${conclusion}"
+            for attempt in {1..120}; do
               sleep 10
               final_status="$(gh api "repos/${REPO}/actions/runs/${run_id}" --jq .status)"
               final_conclusion="$(gh api "repos/${REPO}/actions/runs/${run_id}" --jq '.conclusion // "none"')"
@@ -99,19 +155,21 @@ jobs:
               fi
             done
 
-            if [[ "${final_status}" != "completed" || "${final_conclusion}" != "success" ]]; then
-              echo "CI #${run_number} for ${short_sha} finished as ${final_status}/${final_conclusion}"
-              failed+=("#${run_number}:${short_sha}:${final_status}/${final_conclusion}")
+            report_details+="#${run_number} ${short_sha} final ${final_status}/${final_conclusion}; "
+            if [[ "${final_status}" == "completed" && "${final_conclusion}" == "success" ]]; then
+              completed_success=$((completed_success + 1))
             else
-              echo "CI #${run_number} for ${short_sha} completed successfully."
+              failures+=("#${run_number}:${short_sha}:${final_status}/${final_conclusion}")
             fi
           done
 
-          if (( ${#failed[@]} > 0 )); then
-            printf 'Failed after rerun: %s\n' "${failed[*]}"
-            set_status failure "Logo CI reruns still failing: ${failed[*]}"
-            exit 1
+          if (( ${#failures[@]} > 0 )); then
+            fail "Logo CI reruns incomplete: ${failures[*]}"
           fi
 
-          set_status success "Logo CI runs complete; reran ${rerun_count}, already complete ${already_complete}"
-          echo "Logo CI run repair complete. Checked ${checked}, reran ${rerun_count}, already complete ${already_complete}."
+          summary="Logo CI runs complete; reran ${rerun_count}, already success ${already_success}, completed success ${completed_success}"
+          set_status success "${summary}"
+          write_report success "${summary}" "${report_details}"
+          cleanup_workflow
+          trap - EXIT
+          echo "${summary}"
