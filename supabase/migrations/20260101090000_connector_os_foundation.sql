@@ -3,6 +3,8 @@
 -- Microsoft 365, Twilio, Website Intake, Zapier, Make, HubSpot, and future
 -- vertical systems map into the same internal PhotoBrief primitives.
 
+create extension if not exists pgcrypto;
+
 create table if not exists public.integration_providers (
   key text primary key,
   name text not null,
