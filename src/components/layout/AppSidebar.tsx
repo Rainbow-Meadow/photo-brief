@@ -11,6 +11,7 @@ import {
   MessageSquare,
   LifeBuoy,
   Globe2,
+  Plug,
 } from "lucide-react";
 
 import {
@@ -45,6 +46,7 @@ const settingsItems = [
   { title: "Team", url: "/settings/team", icon: Settings },
   { title: "Templates", url: "/settings/templates", icon: FileText },
   { title: "SMS", url: "/settings/sms", icon: MessageSquare },
+  { title: "Integrations", url: "/settings/integrations", icon: Plug },
   { title: "Billing", url: "/settings/billing", icon: CreditCard },
 ];
 
