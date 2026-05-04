@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="PhotoBrief.ai mark">
+  <defs>
+    <mask id="body-cutouts" maskUnits="userSpaceOnUse" x="0" y="0" width="512" height="512">
+      <rect width="512" height="512" fill="#000"/>
+      <path d="M64 102h384c34 0 56 22 56 56v224c0 34-22 56-56 56H64c-34 0-56-22-56-56V158c0-34 22-56 56-56Z" fill="#fff"/>
+      <circle cx="430" cy="159" r="18" fill="#000"/>
+      <path d="M256 241l36 21v42l-36 21-36-21v-42l36-21Z" fill="#000"/>
+    </mask>
+  </defs>
+  <path d="M64 102h384c34 0 56 22 56 56v224c0 34-22 56-56 56H64c-34 0-56-22-56-56V158c0-34 22-56 56-56Z" fill="#ffffff" mask="url(#body-cutouts)"/>
+  <g fill="none" stroke="#c8a8ff" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M8 181l171 111c16 10 37 4 45-13" stroke-width="18"/>
+    <path d="M504 181L333 292c-16 10-37 4-45-13" stroke-width="18"/>
+  </g>
+  <g fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="256" cy="282" r="96" stroke-width="20"/>
+    <circle cx="256" cy="282" r="66" stroke-width="7"/>
+  </g>
+  <g fill="#c8a8ff">
+    <path d="M248 214c25-2 50 7 69 24l-25 28h-49l-8-10 13-42Z"/>
+    <path d="M327 247c17 21 23 48 17 75l-39-13-24-42 6-13 40-7Z"/>
+    <path d="M333 331c-17 21-42 35-70 36l10-40 25-43 15-2 20 49Z"/>
+    <path d="M254 367c-28-1-53-13-71-33l39-12h50l8 10-26 35Z"/>
+    <path d="M176 322c-12-25-13-53-2-78l29 29 24 42-6 14-45-7Z"/>
+    <path d="M179 234c16-22 40-36 67-40l-11 41-25 43-15 3-16-47Z"/>
+  </g>
+</svg>
