@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, NavLink } from "react-router-dom";
-import { CheckCircle2, MailCheck, Sparkles } from "lucide-react";
+import { BadgeCheck, CheckCircle2, MailCheck, Sparkles } from "lucide-react";
 import { SEOHead } from "@/components/seo/SEOHead";
 
 import { Button } from "@/components/ui/button";
@@ -33,6 +33,14 @@ const VOLUMES = [
   "100 – 500 / month",
   "500 – 2,000 / month",
   "2,000+ / month",
+];
+
+const partnerBenefits = [
+  "90-day free beta access",
+  "Concierge setup for first briefs and templates",
+  "Biweekly feedback check-ins",
+  "50% off first year after launch",
+  "Optional Founding Partner recognition",
 ];
 
 interface FormState {
@@ -96,7 +104,7 @@ export default function WaitlistPage() {
           ...form,
           email: form.email.trim().toLowerCase(),
           notes: interest ? `${form.notes ? form.notes + "\n\n" : ""}interest=${interest}` : form.notes,
-          source: interest ? `web:${interest}` : "web",
+          source: interest ? `founding-partner-beta:${interest}` : "founding-partner-beta",
         },
       });
       if (error) throw error;
@@ -131,170 +139,191 @@ export default function WaitlistPage() {
   return (
     <div className="relative isolate overflow-hidden">
       <SEOHead
-        title="Join the PhotoBrief beta waitlist"
-        description="PhotoBrief is invite-only while we onboard beta businesses. Join the waitlist and we'll reach out when your workspace is ready."
+        title="Apply for the PhotoBrief.ai Founding Partner Beta"
+        description="Apply for PhotoBrief.ai founding partner beta access: 90 days free, concierge setup, direct support, feature influence, and first-year founding partner pricing."
         canonicalPath="/waitlist"
       />
       <div className="pointer-events-none absolute inset-0 -z-10 bg-ambient-mesh" aria-hidden />
       <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[60vh] bg-ambient-sky" aria-hidden />
 
-      <div className="mx-auto w-full max-w-3xl px-4 py-16 sm:py-20">
-        <div className="mb-8 flex flex-col items-center text-center animate-brand-entrance">
-          <BrandMark variant="stacked" tone="color" size={96} eager withGlow />
+      <div className="mx-auto grid w-full max-w-6xl gap-8 px-4 py-16 sm:py-20 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+        <div className="animate-brand-entrance text-center lg:sticky lg:top-28 lg:text-left">
+          <div className="flex justify-center lg:justify-start">
+            <BrandMark variant="stacked" tone="auto" size={112} eager withGlow />
+          </div>
           <span className="mt-6 inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-medium text-primary">
-            <Sparkles className="h-3.5 w-3.5" /> Invite-only beta
+            <Sparkles className="h-3.5 w-3.5" /> Limited Founding Partner Beta
           </span>
           <h1 className="mt-4 text-balance text-4xl font-semibold tracking-tight sm:text-5xl">
-            Get early access to PhotoBrief
+            Apply to become a PhotoBrief founding partner.
           </h1>
-          <p className="mt-4 max-w-xl text-balance text-base text-muted-foreground sm:text-lg">
-            PhotoBrief is currently invite-only while we onboard beta businesses. Join the
-            waitlist and we'll reach out when your workspace is ready.
+          <p className="mt-4 max-w-xl text-balance text-base text-muted-foreground sm:text-lg lg:max-w-none">
+            We’re inviting a small group of businesses to get early access, hands-on setup, direct support, and the chance to shape PhotoBrief before public launch.
+          </p>
+
+          <div className="mt-6 grid gap-3 text-left">
+            {partnerBenefits.map((benefit) => (
+              <div key={benefit} className="flex gap-3 rounded-2xl border bg-card/70 p-3 text-sm text-muted-foreground">
+                <BadgeCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                <span>{benefit}</span>
+              </div>
+            ))}
+          </div>
+          <p className="mt-5 text-sm leading-6 text-muted-foreground">
+            In return, we ask that beta partners use PhotoBrief in real workflows and share honest feedback every two weeks.
           </p>
         </div>
 
-        {done === "new" && (
-          <GlassPanel variant="modal" elevation="lg" className="p-8 text-center animate-lift-in">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary">
-              <CheckCircle2 className="h-7 w-7" />
-            </div>
-            <h2 className="mt-5 text-xl font-semibold">You're on the list</h2>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Thanks — we'll review your request and reach out if PhotoBrief is a fit for the beta.
-            </p>
-            <Button asChild variant="outline" className="mt-6">
-              <NavLink to="/">Back to home</NavLink>
-            </Button>
-          </GlassPanel>
-        )}
+        <div>
+          {done === "new" && (
+            <GlassPanel variant="modal" elevation="lg" className="p-8 text-center animate-lift-in">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <CheckCircle2 className="h-7 w-7" />
+              </div>
+              <h2 className="mt-5 text-xl font-semibold">Application received</h2>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Thanks — we’ll review your request and reach out if PhotoBrief is a fit for the Founding Partner Beta.
+              </p>
+              <Button asChild variant="outline" className="mt-6">
+                <NavLink to="/founding-partner-beta">View the beta program</NavLink>
+              </Button>
+            </GlassPanel>
+          )}
 
-        {done === "already" && (
-          <GlassPanel variant="modal" elevation="lg" className="p-8 text-center animate-lift-in">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary">
-              <MailCheck className="h-7 w-7" />
-            </div>
-            <h2 className="mt-5 text-xl font-semibold">Looks like you're already on the list</h2>
-            <p className="mt-2 text-sm text-muted-foreground">
-              We've got your details. We'll reach out as soon as a spot opens up for your workspace.
-            </p>
-            <Button asChild variant="outline" className="mt-6">
-              <NavLink to="/">Back to home</NavLink>
-            </Button>
-          </GlassPanel>
-        )}
+          {done === "already" && (
+            <GlassPanel variant="modal" elevation="lg" className="p-8 text-center animate-lift-in">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <MailCheck className="h-7 w-7" />
+              </div>
+              <h2 className="mt-5 text-xl font-semibold">Looks like you already applied</h2>
+              <p className="mt-2 text-sm text-muted-foreground">
+                We’ve got your details. We’ll reach out as soon as a spot opens up for your workspace.
+              </p>
+              <Button asChild variant="outline" className="mt-6">
+                <NavLink to="/founding-partner-beta">View the beta program</NavLink>
+              </Button>
+            </GlassPanel>
+          )}
 
-        {done === null && (
-          <GlassPanel variant="modal" elevation="lg" className="p-6 sm:p-8">
-            <form onSubmit={onSubmit} className="grid gap-5">
-              <div className="grid gap-5 sm:grid-cols-2">
-                <Field id="name" label="Your name" required>
-                  <Input id="name" value={form.name} onChange={update("name")} autoComplete="name" required />
-                </Field>
-                <Field id="business_name" label="Business name">
+          {done === null && (
+            <GlassPanel variant="modal" elevation="lg" className="p-6 sm:p-8">
+              <div className="mb-6 rounded-2xl border border-primary/20 bg-primary/5 p-4">
+                <p className="text-sm font-semibold text-primary">This is an application, not a public signup.</p>
+                <p className="mt-1 text-sm leading-6 text-muted-foreground">
+                  We’re onboarding carefully so founding partners get useful setup help and the product gets feedback from real workflows.
+                </p>
+              </div>
+              <form onSubmit={onSubmit} className="grid gap-5">
+                <div className="grid gap-5 sm:grid-cols-2">
+                  <Field id="name" label="Your name" required>
+                    <Input id="name" value={form.name} onChange={update("name")} autoComplete="name" required />
+                  </Field>
+                  <Field id="business_name" label="Business name">
+                    <Input
+                      id="business_name"
+                      value={form.business_name}
+                      onChange={update("business_name")}
+                      autoComplete="organization"
+                    />
+                  </Field>
+                </div>
+
+                <Field id="email" label="Work email" required>
                   <Input
-                    id="business_name"
-                    value={form.business_name}
-                    onChange={update("business_name")}
-                    autoComplete="organization"
+                    id="email"
+                    type="email"
+                    value={form.email}
+                    onChange={update("email")}
+                    autoComplete="email"
+                    required
                   />
                 </Field>
-              </div>
 
-              <Field id="email" label="Work email" required>
-                <Input
-                  id="email"
-                  type="email"
-                  value={form.email}
-                  onChange={update("email")}
-                  autoComplete="email"
-                  required
-                />
-              </Field>
+                <div className="grid gap-5 sm:grid-cols-2">
+                  <Field id="business_type" label="Business type">
+                    <select
+                      id="business_type"
+                      value={form.business_type}
+                      onChange={update("business_type")}
+                      className="flex h-11 w-full rounded-xl border border-glass-border bg-background/60 px-3 py-2 text-sm shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    >
+                      <option value="">Select…</option>
+                      {BUSINESS_TYPES.map((t) => (
+                        <option key={t} value={t}>
+                          {t}
+                        </option>
+                      ))}
+                    </select>
+                  </Field>
+                  <Field id="website" label="Website">
+                    <Input
+                      id="website"
+                      value={form.website}
+                      onChange={update("website")}
+                      placeholder="https://"
+                      autoComplete="url"
+                    />
+                  </Field>
+                </div>
 
-              <div className="grid gap-5 sm:grid-cols-2">
-                <Field id="business_type" label="Business type">
+                <Field
+                  id="use_case"
+                  label="What real workflow would you use PhotoBrief for?"
+                >
+                  <Textarea
+                    id="use_case"
+                    value={form.use_case}
+                    onChange={update("use_case")}
+                    rows={3}
+                    placeholder="e.g. Roof inspection photos before we send a quote."
+                  />
+                </Field>
+
+                <Field id="estimated_monthly_requests" label="Estimated monthly customer photo requests">
                   <select
-                    id="business_type"
-                    value={form.business_type}
-                    onChange={update("business_type")}
+                    id="estimated_monthly_requests"
+                    value={form.estimated_monthly_requests}
+                    onChange={update("estimated_monthly_requests")}
                     className="flex h-11 w-full rounded-xl border border-glass-border bg-background/60 px-3 py-2 text-sm shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   >
                     <option value="">Select…</option>
-                    {BUSINESS_TYPES.map((t) => (
-                      <option key={t} value={t}>
-                        {t}
+                    {VOLUMES.map((v) => (
+                      <option key={v} value={v}>
+                        {v}
                       </option>
                     ))}
                   </select>
                 </Field>
-                <Field id="website" label="Website">
-                  <Input
-                    id="website"
-                    value={form.website}
-                    onChange={update("website")}
-                    placeholder="https://"
-                    autoComplete="url"
+
+                <Field id="notes" label="Why would your business be a good founding partner? (optional)">
+                  <Textarea
+                    id="notes"
+                    value={form.notes}
+                    onChange={update("notes")}
+                    rows={3}
+                    placeholder="Anything that would help us prioritize your spot."
                   />
                 </Field>
-              </div>
 
-              <Field
-                id="use_case"
-                label="What do you want customers to send photos for?"
-              >
-                <Textarea
-                  id="use_case"
-                  value={form.use_case}
-                  onChange={update("use_case")}
-                  rows={3}
-                  placeholder="e.g. Roof inspection photos before we send a quote."
-                />
-              </Field>
+                <div className="flex items-center justify-between gap-4 pt-2">
+                  <p className="text-xs text-muted-foreground">
+                    Limited spots. We typically reply within a few days.
+                  </p>
+                  <Button type="submit" size="lg" disabled={submitting}>
+                    {submitting ? "Submitting…" : "Apply to join"}
+                  </Button>
+                </div>
+              </form>
+            </GlassPanel>
+          )}
 
-              <Field id="estimated_monthly_requests" label="Estimated monthly customer photo requests">
-                <select
-                  id="estimated_monthly_requests"
-                  value={form.estimated_monthly_requests}
-                  onChange={update("estimated_monthly_requests")}
-                  className="flex h-11 w-full rounded-xl border border-glass-border bg-background/60 px-3 py-2 text-sm shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                >
-                  <option value="">Select…</option>
-                  {VOLUMES.map((v) => (
-                    <option key={v} value={v}>
-                      {v}
-                    </option>
-                  ))}
-                </select>
-              </Field>
-
-              <Field id="notes" label="Anything else? (optional)">
-                <Textarea
-                  id="notes"
-                  value={form.notes}
-                  onChange={update("notes")}
-                  rows={3}
-                  placeholder="Anything that would help us prioritize your spot."
-                />
-              </Field>
-
-              <div className="flex items-center justify-between gap-4 pt-2">
-                <p className="text-xs text-muted-foreground">
-                  We're onboarding businesses carefully. We typically reply within a few days.
-                </p>
-                <Button type="submit" size="lg" disabled={submitting}>
-                  {submitting ? "Submitting…" : "Join waitlist"}
-                </Button>
-              </div>
-            </form>
-          </GlassPanel>
-        )}
-
-        <p className="mt-8 text-center text-sm text-muted-foreground">
-          Already have an account?{" "}
-          <NavLink to="/auth" className="font-medium text-primary hover:underline">
-            Sign in
-          </NavLink>
-        </p>
+          <p className="mt-8 text-center text-sm text-muted-foreground">
+            Already have an account?{" "}
+            <NavLink to="/auth" className="font-medium text-primary hover:underline">
+              Sign in
+            </NavLink>
+          </p>
+        </div>
       </div>
     </div>
   );
