@@ -23,7 +23,8 @@ interface BrandMarkProps {
   invert?: boolean;
 }
 
-const ALT = "PhotoBrief";
+const ALT = "PhotoBrief.ai";
+const WORDMARK = "PhotoBrief.ai";
 const FONT_FAMILY =
   "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
 
@@ -88,9 +89,9 @@ export function BrandMark({
   const resolvedTone: BrandTone = tone !== "auto" ? tone : invert ? "light" : "auto";
 
   const aspectByVariant: Record<BrandVariant, number> = {
-    horizontal: 720 / 160,
+    horizontal: 790 / 160,
     stacked: 1,
-    wordmark: 520 / 120,
+    wordmark: 650 / 120,
     mark: 1,
     primary: 1,
   };
@@ -123,7 +124,7 @@ export function BrandMark({
       fontWeight="700"
       letterSpacing="-4.5"
     >
-      PhotoBrief
+      {WORDMARK}
     </text>
   );
 
@@ -136,13 +137,13 @@ export function BrandMark({
       )}
 
       {resolvedVariant === "wordmark" && (
-        <svg {...svgProps} viewBox="0 0 520 120">
+        <svg {...svgProps} viewBox="0 0 650 120">
           {wordmark}
         </svg>
       )}
 
       {resolvedVariant === "horizontal" && (
-        <svg {...svgProps} viewBox="0 0 720 160">
+        <svg {...svgProps} viewBox="0 0 790 160">
           <LogoSymbol x={0} y={5} size={150} />
           <g transform="translate(182 22)">{wordmark}</g>
         </svg>
@@ -156,12 +157,12 @@ export function BrandMark({
             y="410"
             fill="currentColor"
             fontFamily={FONT_FAMILY}
-            fontSize="78"
+            fontSize="66"
             fontWeight="700"
-            letterSpacing="-4.5"
+            letterSpacing="-3.5"
             textAnchor="middle"
           >
-            PhotoBrief
+            {WORDMARK}
           </text>
         </svg>
       )}
