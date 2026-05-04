@@ -36,6 +36,8 @@ import {
 
 const categoryOrder: IntegrationCategory[] = ["website", "communication", "automation", "crm"];
 
+type OAuthProvider = "google" | "microsoft" | "hubspot";
+
 const stageMeta: Record<IntegrationStage, { label: string; compactLabel: string; className: string }> = {
   live: {
     label: "Live",
@@ -79,6 +81,13 @@ function connectorTint(key: string) {
   ];
   const hash = [...key].reduce((acc, char) => acc + char.charCodeAt(0), 0);
   return tints[hash % tints.length];
+}
+
+function oauthProviderForKey(key: string): OAuthProvider | null {
+  if (key === "gmail") return "google";
+  if (key === "microsoft-365") return "microsoft";
+  if (key === "hubspot") return "hubspot";
+  return null;
 }
 
 async function copyText(value: string, description?: string) {
@@ -137,6 +146,7 @@ function ConnectorRow({
   const planAllowed = isAvailableForPlan(plan, integration.plan);
   const [busy, setBusy] = useState(false);
   const canProvisionWebhook = integration.key === "webhook-bridge" || integration.key === "zapier" || integration.key === "make";
+  const oauthProvider = oauthProviderForKey(integration.key);
 
   async function enableWebhookBridge() {
     if (!workspaceId) {
@@ -149,14 +159,41 @@ function ConnectorRow({
         workspaceId,
         providerKey: integration.key,
         displayName: integration.name,
-        config: { source: "integrations_page" },
+        config: {
+          source: "integrations_page",
+          auto_create_request: true,
+          default_mode: "create_draft_request",
+        },
       });
       onConnectionCreated(next);
-      await copyText(buildIntegrationWebhookUrl(next), "Webhook URL copied. Add it to your website form or automation tool.");
+      await copyText(buildIntegrationWebhookUrl(next), "Webhook URL copied. Incoming leads will create draft PhotoBrief requests.");
     } catch (err) {
       console.error(err);
       toast.error("Could not create connector", {
-        description: "Make sure the Connector OS migration has been applied in Supabase.",
+        description: "Make sure the Connector OS database migrations have applied.",
+      });
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function startOAuth() {
+    if (!workspaceId || !oauthProvider) {
+      toast.error("Workspace is still loading");
+      return;
+    }
+    setBusy(true);
+    try {
+      const { authorizationUrl } = await integrationService.startOAuth({
+        workspaceId,
+        provider: oauthProvider,
+        redirectTo: `${window.location.origin}/settings/integrations`,
+      });
+      window.location.assign(authorizationUrl);
+    } catch (err) {
+      console.error(err);
+      toast.error("Connector setup is not ready yet", {
+        description: err instanceof Error ? err.message : String(err),
       });
     } finally {
       setBusy(false);
@@ -170,6 +207,7 @@ function ConnectorRow({
 
   const primaryAction = integration.actions[0];
   const isPlanned = integration.stage === "planned";
+  const showOAuthButton = Boolean(oauthProvider) && !isPlanned;
 
   return (
     <article
@@ -202,6 +240,9 @@ function ConnectorRow({
           <p className="mt-1 line-clamp-2 text-sm leading-5 text-muted-foreground sm:line-clamp-1">
             {integration.tagline}
           </p>
+          {connection?.lastError ? (
+            <p className="mt-1 line-clamp-1 text-xs text-destructive">{connection.lastError}</p>
+          ) : null}
           <div className="mt-2 flex flex-wrap gap-1.5">
             <Badge variant="secondary" className="rounded-full px-2 py-0 text-[10px] capitalize">
               {integrationCategories[integration.category].label}
@@ -230,14 +271,26 @@ function ConnectorRow({
             </Button>
           ) : null}
 
-          {!canProvisionWebhook && primaryAction && !isPlanned ? (
+          {showOAuthButton && !connection ? (
+            <Button size="sm" className="hidden h-9 rounded-full px-4 sm:inline-flex" onClick={startOAuth} disabled={busy || !planAllowed}>
+              {busy ? "Opening…" : "Connect"}
+            </Button>
+          ) : null}
+
+          {showOAuthButton && connection?.status === "needs_attention" ? (
+            <Button size="sm" variant="outline" className="hidden h-9 rounded-full bg-background/70 px-4 sm:inline-flex" onClick={startOAuth} disabled={busy || !planAllowed}>
+              Reconnect
+            </Button>
+          ) : null}
+
+          {!canProvisionWebhook && !showOAuthButton && primaryAction && !isPlanned ? (
             <div className="hidden sm:block">
               <PrimaryIntegrationAction action={primaryAction} />
             </div>
           ) : null}
 
           <Badge variant="outline" className={cn("h-8 shrink-0 rounded-full px-3 text-xs", connection ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300" : stage.className)}>
-            {connection ? "Connected" : stage.compactLabel}
+            {connection ? (connection.status === "needs_attention" ? "Attention" : "Connected") : stage.compactLabel}
           </Badge>
           <ChevronRight className="h-4 w-4 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-foreground" />
         </div>
@@ -254,7 +307,17 @@ function ConnectorRow({
             {busy ? "Creating…" : "Connect"}
           </Button>
         ) : null}
-        {!canProvisionWebhook && primaryAction && !isPlanned ? <PrimaryIntegrationAction action={primaryAction} /> : null}
+        {showOAuthButton && !connection ? (
+          <Button size="sm" className="h-9 rounded-full px-4" onClick={startOAuth} disabled={busy || !planAllowed}>
+            {busy ? "Opening…" : "Connect"}
+          </Button>
+        ) : null}
+        {showOAuthButton && connection?.status === "needs_attention" ? (
+          <Button size="sm" variant="outline" className="h-9 rounded-full bg-background/70 px-4" onClick={startOAuth} disabled={busy || !planAllowed}>
+            Reconnect
+          </Button>
+        ) : null}
+        {!canProvisionWebhook && !showOAuthButton && primaryAction && !isPlanned ? <PrimaryIntegrationAction action={primaryAction} /> : null}
         {isPlanned ? <span className="text-xs text-muted-foreground">Coming soon after beta demand confirms the connector.</span> : null}
       </div>
     </article>
