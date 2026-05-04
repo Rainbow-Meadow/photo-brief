@@ -166,13 +166,12 @@ function CompactSectionNav() {
 function HeroBrandFeature() {
   return (
     <div className="mb-5 flex justify-center lg:justify-start">
-      <div className="relative overflow-hidden rounded-[1.5rem] border border-primary/20 bg-card/75 p-3 shadow-glow backdrop-blur-xl sm:p-4">
+      <div className="relative w-full max-w-[31rem] overflow-hidden rounded-[1.5rem] border border-primary/20 bg-card/75 p-3 shadow-glow backdrop-blur-xl sm:p-4 lg:max-w-[34rem]">
         <div aria-hidden className="absolute inset-0 bg-gradient-to-br from-primary/14 via-transparent to-accent/10" />
         <div aria-hidden className="absolute -right-12 -top-12 h-28 w-28 rounded-full bg-primary/20 blur-3xl" />
-        <div className="relative flex flex-col items-center gap-2.5 sm:flex-row sm:gap-3">
-          <BrandMark variant="horizontal" tone="auto" size={44} eager withGlow />
-          <span className="hidden h-10 w-px bg-border/80 sm:block" />
-          <p className="max-w-[16rem] text-center text-[11px] font-medium leading-5 text-muted-foreground sm:text-left">
+        <div className="relative grid gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(12rem,0.78fr)] sm:items-center">
+          <BrandMark variant="horizontal" tone="auto" size={36} eager withGlow />
+          <p className="border-t border-border/80 pt-3 text-center text-[11px] font-medium leading-5 text-muted-foreground sm:border-l sm:border-t-0 sm:pl-4 sm:pt-0 sm:text-left">
             The guided photo request layer for quotes, reviews, dispatch, returns, and service intake.
           </p>
         </div>
@@ -202,16 +201,16 @@ export default function LandingPage() {
         <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[640px] bg-ambient-future" />
         <div aria-hidden className="future-grid pointer-events-none absolute inset-0 -z-10 opacity-60" />
 
-        <div className="relative mx-auto grid max-w-7xl gap-8 px-4 pb-12 pt-10 sm:px-6 sm:pb-14 sm:pt-12 lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:px-8 lg:pb-16 lg:pt-14 xl:gap-10">
+        <div className="relative mx-auto grid max-w-7xl gap-8 px-4 pb-12 pt-10 sm:px-6 sm:pb-14 sm:pt-12 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-center lg:px-8 lg:pb-16 lg:pt-14 xl:gap-10">
           <div className="max-w-2xl animate-lift-in text-center lg:text-left">
             <HeroBrandFeature />
             <span className="inline-flex items-center gap-1.5 rounded-full glass px-3 py-1 text-xs font-medium text-foreground/80">
               <Sparkles className="h-3 w-3 text-primary" /> Founding Partner Beta now open
             </span>
-            <h1 className="mt-5 max-w-[11ch] text-[clamp(3.4rem,5.7vw,5.6rem)] font-semibold leading-[0.94] tracking-[-0.055em] text-foreground sm:max-w-[12ch] lg:max-w-[10.8ch]">
+            <h1 className="mt-5 max-w-[12.5ch] text-[clamp(3.35rem,4.9vw,5.25rem)] font-semibold leading-[0.95] tracking-[-0.055em] text-foreground sm:max-w-[13ch] lg:max-w-[12.25ch]">
               Stop chasing customer photos.
               <br />
-              <span className="text-gradient-future">Join the founding beta.</span>
+              <span className="text-gradient-future">Become a founding partner.</span>
             </h1>
             <p className="mt-5 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg lg:max-w-xl">
               PhotoBrief turns “can you send a few photos?” into a short mobile workflow. Founding partners get early access, concierge setup, direct support, and the chance to shape the product before public launch.
@@ -246,8 +245,8 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="mx-auto w-full max-w-[620px] lg:pl-0 xl:max-w-[680px]">
-            <HeroGlassStory />
+          <div className="mx-auto w-full max-w-[640px] lg:pl-0 xl:max-w-[720px]">
+            <HeroGlassStory density="hero" />
           </div>
         </div>
       </section>
