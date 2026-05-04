@@ -72,10 +72,10 @@ const pathCards = [
   {
     href: "#automation",
     icon: Globe2,
-    label: "Next step",
-    title: "Turn website leads into PhotoBrief requests.",
-    body: "When the manual workflow proves itself, Pro adds hosted Website Intake, routing, and automation.",
-    points: ["Hosted intake form", "Template routing", "Webhook / Zapier / Make paths"],
+    label: "Pro and above",
+    title: "Keep manual links. Unlock the true magic too.",
+    body: "Pro and higher plans still include manual PhotoBrief links for one-off jobs, VIP customers, and quick follow-ups. They also unlock Website Intake, routing, and automation for leads that should not wait on a copy-paste step.",
+    points: ["Manual links still included", "Hosted intake form", "Template routing + automation"],
     cta: "See automation",
     eventLabel: "automation_path",
   },
@@ -101,6 +101,11 @@ const outcomeCards = [
 
 const automationSteps = [
   {
+    icon: Link2,
+    title: "Use manual links anytime",
+    body: "Pro does not replace the simple send-a-link workflow. It keeps it available for human-triggered requests.",
+  },
+  {
     icon: Globe2,
     title: "Replace the vague form CTA",
     body: "Put a hosted PhotoBrief intake link behind Get a quote, Request service, or Start a return.",
@@ -108,7 +113,7 @@ const automationSteps = [
   {
     icon: Route,
     title: "Route by request type",
-    body: "Map common jobs to the right template so every lead receives the right photo request.",
+    body: "Map common jobs to the right template so every lead receives the right photo request automatically.",
   },
   {
     icon: Sparkles,
@@ -131,7 +136,7 @@ const pricingTiers = [
   {
     name: "Pro",
     price: "$49/mo",
-    summary: "Unlock Website Intake automation.",
+    summary: "Keep manual links and unlock Website Intake automation.",
   },
 ];
 
@@ -211,8 +216,8 @@ export default function LandingPage() {
             </div>
             <div className="mt-5 flex flex-wrap justify-center gap-2 text-xs text-muted-foreground lg:justify-start">
               <span className="rounded-full glass px-3 py-1">No app for customers</span>
-              <span className="rounded-full glass px-3 py-1">Manual links on Free</span>
-              <span className="rounded-full glass px-3 py-1">Automation on Pro</span>
+              <span className="rounded-full glass px-3 py-1">Manual links on every plan</span>
+              <span className="rounded-full glass px-3 py-1">Automation on Pro+</span>
             </div>
           </div>
 
@@ -230,10 +235,10 @@ export default function LandingPage() {
           <div className="mx-auto max-w-3xl text-center">
             <p className="text-eyebrow">Pick the next action</p>
             <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground sm:text-5xl">
-              Two paths. No scavenger hunt.
+              Two paths. You can keep both.
             </h2>
             <p className="mt-4 text-base text-muted-foreground sm:text-lg">
-              The landing page now points people to the right move instead of making them read every proof point first.
+              Start with manual links because they are fast. Upgrade when you want automation, not because manual links go away.
             </p>
           </div>
 
@@ -330,10 +335,10 @@ export default function LandingPage() {
           <div>
             <p className="text-eyebrow">Pro automation</p>
             <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground sm:text-5xl">
-              Automate only after the core flow is clear.
+              Pro adds the magic. Manual links stay.
             </h2>
             <p className="mt-4 text-base leading-7 text-muted-foreground sm:text-lg">
-              Website Intake should feel like the next action, not a second product pitch. Put PhotoBrief behind your site CTA and route leads to the right request template.
+              Pro and higher plans do not force every request through automation. Your team can still create and send manual PhotoBrief links whenever that is the right move. The unlock is that your website, forms, and routing rules can now create the same guided request automatically.
             </p>
             <Button asChild size="lg" className="mt-7 rounded-full">
               <NavLink to="/pricing" onClick={() => trackEvent("cta_click", { location: "automation", label: "view_pro_pricing" })}>
@@ -351,7 +356,7 @@ export default function LandingPage() {
                 className="w-full rounded-[1.25rem]"
               />
             </div>
-            <div className="grid gap-4">
+            <div className="grid gap-4 sm:grid-cols-2">
               {automationSteps.map((step) => {
                 const Icon = step.icon;
                 return (
@@ -383,7 +388,7 @@ export default function LandingPage() {
                 Enough pricing to choose. Full details one click away.
               </h2>
               <p className="mt-4 text-base leading-7 text-muted-foreground sm:text-lg">
-                Free and Starter prove the manual-link workflow. Pro is the first automation plan. Larger teams can compare Team and Business on the pricing page.
+                Every plan can create manual PhotoBrief links. Free and Starter prove that workflow. Pro is the first automation plan, adding Website Intake and routing on top of the manual-link foundation.
               </p>
               <Button asChild size="lg" className="mt-7 rounded-full">
                 <NavLink to="/pricing" onClick={() => trackEvent("cta_click", { location: "pricing_snapshot", label: "view_full_pricing" })}>
