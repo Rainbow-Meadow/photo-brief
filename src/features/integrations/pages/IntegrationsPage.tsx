@@ -1,9 +1,19 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { ArrowRight, CheckCircle2, Clipboard, ExternalLink, Plug, ShieldCheck, Wrench } from "lucide-react";
+import {
+  ArrowRight,
+  CheckCircle2,
+  ChevronRight,
+  Clipboard,
+  ExternalLink,
+  Plug,
+  Search,
+  ShieldCheck,
+  Wrench,
+  X,
+} from "lucide-react";
 import { toast } from "sonner";
 
-import { PageHeader } from "@/components/layout/PageHeader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useCurrentWorkspace } from "@/hooks/useCurrentWorkspace";
@@ -26,17 +36,20 @@ import {
 
 const categoryOrder: IntegrationCategory[] = ["website", "communication", "automation", "crm"];
 
-const stageMeta: Record<IntegrationStage, { label: string; className: string }> = {
+const stageMeta: Record<IntegrationStage, { label: string; compactLabel: string; className: string }> = {
   live: {
     label: "Live",
+    compactLabel: "Ready",
     className: "border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
   },
   setup_ready: {
     label: "Scaffolded",
+    compactLabel: "Setup",
     className: "border-primary/30 bg-primary/10 text-primary",
   },
   planned: {
     label: "Planned",
+    compactLabel: "Soon",
     className: "border-border bg-muted text-muted-foreground",
   },
 };
@@ -55,6 +68,19 @@ function stageIcon(stage: IntegrationStage) {
   return Plug;
 }
 
+function connectorTint(key: string) {
+  const tints = [
+    "bg-sky-500/12 text-sky-600 dark:text-sky-300",
+    "bg-violet-500/12 text-violet-600 dark:text-violet-300",
+    "bg-emerald-500/12 text-emerald-600 dark:text-emerald-300",
+    "bg-amber-500/12 text-amber-700 dark:text-amber-300",
+    "bg-rose-500/12 text-rose-600 dark:text-rose-300",
+    "bg-cyan-500/12 text-cyan-600 dark:text-cyan-300",
+  ];
+  const hash = [...key].reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  return tints[hash % tints.length];
+}
+
 async function copyText(value: string, description?: string) {
   await navigator.clipboard.writeText(value);
   toast.success("Copied", description ? { description } : undefined);
@@ -65,10 +91,10 @@ async function copyValue(action: IntegrationActionDefinition) {
   await copyText(action.copyValue, action.helper);
 }
 
-function IntegrationAction({ action }: { action: IntegrationActionDefinition }) {
+function PrimaryIntegrationAction({ action }: { action: IntegrationActionDefinition }) {
   if (action.kind === "internal_route" && action.to) {
     return (
-      <Button asChild size="sm" className="rounded-full">
+      <Button asChild size="sm" className="h-9 rounded-full px-4">
         <NavLink to={action.to}>
           {action.label} <ArrowRight className="ml-1 h-4 w-4" />
         </NavLink>
@@ -78,21 +104,21 @@ function IntegrationAction({ action }: { action: IntegrationActionDefinition }) 
 
   if (action.kind === "copy") {
     return (
-      <Button size="sm" variant="outline" className="rounded-full bg-background/70" onClick={() => copyValue(action)}>
+      <Button size="sm" variant="outline" className="h-9 rounded-full bg-background/70 px-4" onClick={() => copyValue(action)}>
         <Clipboard className="mr-2 h-4 w-4" /> {action.label}
       </Button>
     );
   }
 
   return (
-    <Button size="sm" variant="outline" className="rounded-full bg-background/70" disabled>
+    <Button size="sm" variant="outline" className="h-9 rounded-full bg-background/70 px-4" disabled>
       {action.kind === "oauth_placeholder" ? <ExternalLink className="mr-2 h-4 w-4" /> : <Clipboard className="mr-2 h-4 w-4" />}
       {action.label}
     </Button>
   );
 }
 
-function IntegrationCard({
+function ConnectorRow({
   integration,
   plan,
   workspaceId,
@@ -110,6 +136,7 @@ function IntegrationCard({
   const stage = stageMeta[integration.stage];
   const planAllowed = isAvailableForPlan(plan, integration.plan);
   const [busy, setBusy] = useState(false);
+  const canProvisionWebhook = integration.key === "webhook-bridge" || integration.key === "zapier" || integration.key === "make";
 
   async function enableWebhookBridge() {
     if (!workspaceId) {
@@ -141,91 +168,94 @@ function IntegrationCard({
     await copyText(buildIntegrationWebhookUrl(connection), "Paste this URL into your form tool, Zapier, Make, or custom website form.");
   }
 
-  const canProvisionWebhook = integration.key === "webhook-bridge" || integration.key === "zapier" || integration.key === "make";
+  const primaryAction = integration.actions[0];
+  const isPlanned = integration.stage === "planned";
 
   return (
-    <article className="surface-card-elevated flex h-full flex-col overflow-hidden p-5 transition hover:-translate-y-0.5 hover:border-primary/30 sm:p-6">
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex min-w-0 items-center gap-3">
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-            <Icon className="h-5 w-5" />
-          </span>
-          <div className="min-w-0">
-            <h3 className="truncate text-lg font-semibold tracking-tight text-foreground">{integration.name}</h3>
-            <p className="mt-0.5 text-xs font-medium text-muted-foreground">{connection ? "Connected" : integration.statusLabel}</p>
-          </div>
-        </div>
-        <div className="flex shrink-0 flex-col items-end gap-2">
-          {connection ? (
-            <Badge variant="outline" className="gap-1 border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300">
-              <CheckCircle2 className="h-3 w-3" /> Connected
-            </Badge>
-          ) : (
-            <Badge variant="outline" className={cn("gap-1", stage.className)}>
-              <StageIcon className="h-3 w-3" /> {stage.label}
-            </Badge>
-          )}
-        </div>
-      </div>
-
-      <p className="mt-5 text-sm font-medium text-foreground">{integration.tagline}</p>
-      <p className="mt-2 text-sm leading-6 text-muted-foreground">{integration.description}</p>
-
-      {connection ? (
-        <div className="mt-5 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-4 text-sm">
-          <p className="font-semibold text-foreground">Connection key</p>
-          <code className="mt-2 block truncate rounded-lg bg-background/70 px-3 py-2 text-xs text-muted-foreground">
-            {connection.connectionKey}
-          </code>
-        </div>
-      ) : (
-        <div className="mt-5 grid gap-4 rounded-2xl border bg-muted/30 p-4 text-sm">
-          <div>
-            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Enables</p>
-            <ul className="space-y-1.5 text-muted-foreground">
-              {integration.enables.map((item) => (
-                <li key={item} className="flex gap-2">
-                  <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" /> {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
+    <article
+      className={cn(
+        "group relative overflow-hidden rounded-[1.45rem] border bg-card/82 p-3 shadow-sm transition duration-200",
+        "hover:-translate-y-0.5 hover:border-primary/30 hover:bg-card hover:shadow-[0_18px_60px_-42px_hsl(var(--primary)/0.75)]",
+        isPlanned && "opacity-78 hover:translate-y-0 hover:border-border hover:shadow-sm",
       )}
+    >
+      <div className="flex items-center gap-3 sm:gap-4">
+        <span
+          className={cn(
+            "flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl ring-1 ring-border/70 sm:h-16 sm:w-16",
+            connectorTint(integration.key),
+            isPlanned && "grayscale",
+          )}
+        >
+          <Icon className="h-7 w-7" />
+        </span>
 
-      <div className="mt-5 flex flex-wrap gap-2">
-        <Badge variant="secondary" className="rounded-full capitalize">{integration.category}</Badge>
-        <Badge variant={planAllowed ? "secondary" : "outline"} className="rounded-full">
-          {integration.plan === "free" ? "All plans" : `${integration.plan}+`}
-        </Badge>
+        <div className="min-w-0 flex-1 py-1">
+          <div className="flex min-w-0 items-center gap-2">
+            <h3 className="truncate text-base font-semibold tracking-tight text-foreground sm:text-lg">{integration.name}</h3>
+            {connection ? (
+              <Badge variant="outline" className="hidden gap-1 border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 sm:inline-flex">
+                <CheckCircle2 className="h-3 w-3" /> Connected
+              </Badge>
+            ) : null}
+          </div>
+          <p className="mt-1 line-clamp-2 text-sm leading-5 text-muted-foreground sm:line-clamp-1">
+            {integration.tagline}
+          </p>
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            <Badge variant="secondary" className="rounded-full px-2 py-0 text-[10px] capitalize">
+              {integrationCategories[integration.category].label}
+            </Badge>
+            <Badge variant={planAllowed ? "secondary" : "outline"} className="rounded-full px-2 py-0 text-[10px]">
+              {integration.plan === "free" ? "All plans" : `${integration.plan}+`}
+            </Badge>
+          </div>
+        </div>
+
+        <div className="flex shrink-0 items-center gap-2">
+          {connection && canProvisionWebhook ? (
+            <Button size="sm" variant="outline" className="hidden h-9 rounded-full bg-background/70 px-4 sm:inline-flex" onClick={copyWebhookUrl}>
+              <Clipboard className="mr-2 h-4 w-4" /> Webhook
+            </Button>
+          ) : null}
+
+          {!connection && canProvisionWebhook && !isPlanned ? (
+            <Button
+              size="sm"
+              className="hidden h-9 rounded-full px-4 sm:inline-flex"
+              onClick={enableWebhookBridge}
+              disabled={busy || !planAllowed}
+            >
+              {busy ? "Creating…" : "Connect"}
+            </Button>
+          ) : null}
+
+          {!canProvisionWebhook && primaryAction && !isPlanned ? (
+            <div className="hidden sm:block">
+              <PrimaryIntegrationAction action={primaryAction} />
+            </div>
+          ) : null}
+
+          <Badge variant="outline" className={cn("h-8 shrink-0 rounded-full px-3 text-xs", connection ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300" : stage.className)}>
+            {connection ? "Connected" : stage.compactLabel}
+          </Badge>
+          <ChevronRight className="h-4 w-4 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-foreground" />
+        </div>
       </div>
 
-      <div className="mt-auto pt-5">
-        <div className="flex flex-wrap gap-2">
-          {connection && canProvisionWebhook ? (
-            <Button size="sm" variant="outline" className="rounded-full bg-background/70" onClick={copyWebhookUrl}>
-              <Clipboard className="mr-2 h-4 w-4" /> Copy webhook URL
-            </Button>
-          ) : null}
-          {!connection && canProvisionWebhook ? (
-            <Button size="sm" className="rounded-full" onClick={enableWebhookBridge} disabled={busy || !planAllowed || integration.stage === "planned"}>
-              {busy ? "Creating…" : "Create connector"}
-            </Button>
-          ) : null}
-          {integration.actions.map((action) => (
-            <IntegrationAction key={`${integration.key}-${action.label}`} action={action} />
-          ))}
-        </div>
-        {integration.actions.some((action) => !!action.helper && action.kind !== "copy") ? (
-          <p className="mt-3 text-xs leading-5 text-muted-foreground">
-            {integration.actions.find((action) => action.helper)?.helper}
-          </p>
+      <div className="mt-3 flex flex-wrap gap-2 border-t pt-3 sm:hidden">
+        {connection && canProvisionWebhook ? (
+          <Button size="sm" variant="outline" className="h-9 rounded-full bg-background/70 px-4" onClick={copyWebhookUrl}>
+            <Clipboard className="mr-2 h-4 w-4" /> Copy webhook
+          </Button>
         ) : null}
-        {!planAllowed ? (
-          <p className="mt-3 text-xs leading-5 text-muted-foreground">
-            This connector is designed for {integration.plan}+ workspaces.
-          </p>
+        {!connection && canProvisionWebhook && !isPlanned ? (
+          <Button size="sm" className="h-9 rounded-full px-4" onClick={enableWebhookBridge} disabled={busy || !planAllowed}>
+            {busy ? "Creating…" : "Connect"}
+          </Button>
         ) : null}
+        {!canProvisionWebhook && primaryAction && !isPlanned ? <PrimaryIntegrationAction action={primaryAction} /> : null}
+        {isPlanned ? <span className="text-xs text-muted-foreground">Coming soon after beta demand confirms the connector.</span> : null}
       </div>
     </article>
   );
@@ -233,38 +263,37 @@ function IntegrationCard({
 
 function ConnectorContractPanel() {
   return (
-    <section className="surface-card-elevated overflow-hidden p-5 sm:p-6">
+    <section className="rounded-[1.75rem] border bg-card/70 p-4 shadow-sm sm:p-5">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="max-w-2xl">
           <span className="inline-flex items-center gap-2 rounded-full border bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
-            <ShieldCheck className="h-3.5 w-3.5" /> Connector OS contract
+            <ShieldCheck className="h-3.5 w-3.5" /> Connector OS
           </span>
-          <h2 className="mt-4 text-2xl font-semibold tracking-tight text-foreground">One internal model, many providers.</h2>
+          <h2 className="mt-3 text-xl font-semibold tracking-tight text-foreground">One clean integration contract under the hood.</h2>
           <p className="mt-2 text-sm leading-6 text-muted-foreground">
-            Every provider should map into the same PhotoBrief primitives: customers, requests, templates, messages, submissions, briefs, and activity. That keeps Gmail, Twilio, website forms, Zapier, and future CRMs from becoming one-off spaghetti.
+            Each provider maps into the same PhotoBrief primitives: customers, requests, messages, submissions, briefs, and activity logs.
           </p>
         </div>
         <Button asChild variant="outline" className="rounded-full bg-background/70">
-          <NavLink to="/intake">Open Website Intake <ArrowRight className="ml-2 h-4 w-4" /></NavLink>
+          <NavLink to="/intake">Website Intake <ArrowRight className="ml-2 h-4 w-4" /></NavLink>
         </Button>
       </div>
-
-      <div className="mt-6 grid gap-4 lg:grid-cols-2">
-        <div className="rounded-2xl border bg-muted/30 p-4">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Standard triggers</p>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {integrationContract.triggers.map((trigger) => (
-              <Badge key={trigger} variant="outline" className="rounded-full bg-background/70 font-mono text-[11px]">
+      <div className="mt-4 grid gap-3 lg:grid-cols-2">
+        <div className="rounded-2xl border bg-muted/30 p-3">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Triggers</p>
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {integrationContract.triggers.slice(0, 6).map((trigger) => (
+              <Badge key={trigger} variant="outline" className="rounded-full bg-background/70 font-mono text-[10px]">
                 {trigger}
               </Badge>
             ))}
           </div>
         </div>
-        <div className="rounded-2xl border bg-muted/30 p-4">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Standard actions</p>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {integrationContract.actions.map((action) => (
-              <Badge key={action} variant="outline" className="rounded-full bg-background/70 font-mono text-[11px]">
+        <div className="rounded-2xl border bg-muted/30 p-3">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Actions</p>
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {integrationContract.actions.slice(0, 6).map((action) => (
+              <Badge key={action} variant="outline" className="rounded-full bg-background/70 font-mono text-[10px]">
                 {action}
               </Badge>
             ))}
@@ -279,6 +308,7 @@ export default function IntegrationsPage() {
   const { workspace } = useCurrentWorkspace();
   const { plan, loading } = usePlan();
   const [selectedCategory, setSelectedCategory] = useState<IntegrationCategory | "all">("all");
+  const [query, setQuery] = useState("");
   const [connections, setConnections] = useState<Record<string, IntegrationConnection>>({});
   const [connectionLoadError, setConnectionLoadError] = useState<string | null>(null);
   const currentPlan = loading ? "free" : plan;
@@ -300,48 +330,86 @@ export default function IntegrationsPage() {
   }, [loadConnections]);
 
   const visibleIntegrations = useMemo(() => {
-    if (selectedCategory === "all") return integrationDefinitions;
-    return integrationDefinitions.filter((integration) => integration.category === selectedCategory);
-  }, [selectedCategory]);
+    const normalizedQuery = query.trim().toLowerCase();
+    return integrationDefinitions.filter((integration) => {
+      const categoryMatches = selectedCategory === "all" || integration.category === selectedCategory;
+      if (!categoryMatches) return false;
+      if (!normalizedQuery) return true;
+      const searchable = [
+        integration.name,
+        integration.tagline,
+        integration.description,
+        integration.statusLabel,
+        integration.category,
+        integration.enables.join(" "),
+      ]
+        .join(" ")
+        .toLowerCase();
+      return searchable.includes(normalizedQuery);
+    });
+  }, [selectedCategory, query]);
 
   function handleConnectionCreated(connection: IntegrationConnection) {
     setConnections((current) => ({ ...current, [connection.providerKey]: connection }));
   }
 
+  const connectedCount = Object.keys(connections).length;
+
   return (
-    <div className="space-y-6">
-      <PageHeader
-        eyebrow="Settings"
-        title="Integrations"
-        description="Connect PhotoBrief to websites, inboxes, SMS, automation tools, and business systems without breaking the core request workflow."
-        actions={
-          <Button asChild className="rounded-full">
-            <NavLink to="/requests/new">Create request <ArrowRight className="ml-2 h-4 w-4" /></NavLink>
-          </Button>
-        }
-      />
-
-      <ConnectorContractPanel />
-
-      {connectionLoadError ? (
-        <section className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-800 dark:text-amber-200">
-          {connectionLoadError}
-        </section>
-      ) : null}
-
-      <section className="surface-card p-4 sm:p-5">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+    <div className="mx-auto max-w-5xl space-y-6 pb-8">
+      <section className="relative overflow-hidden rounded-[2rem] border bg-card/80 p-5 shadow-[0_30px_90px_-70px_hsl(var(--primary)/0.75)] sm:p-7">
+        <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
+        <div className="relative flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
           <div>
-            <h2 className="text-lg font-semibold tracking-tight text-foreground">Connector catalog</h2>
-            <p className="mt-1 text-sm text-muted-foreground">Live workflows are usable now. Scaffolded connectors have the product contract ready and need provider credentials/back-end OAuth to become native.</p>
+            <span className="inline-flex items-center gap-2 rounded-full border bg-background/70 px-3 py-1 text-xs font-semibold text-primary">
+              <Plug className="h-3.5 w-3.5" /> Connector repository
+            </span>
+            <h1 className="mt-4 text-3xl font-semibold tracking-tight text-foreground sm:text-5xl">Connectors</h1>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
+              Plug PhotoBrief into websites, inboxes, SMS, automation tools, and business systems. Search, connect, or mark what is coming next.
+            </p>
           </div>
-          <div className="flex flex-wrap gap-2">
+          <div className="grid grid-cols-2 gap-2 text-sm sm:min-w-60">
+            <div className="rounded-2xl border bg-background/70 p-3">
+              <p className="text-2xl font-semibold text-foreground">{connectedCount}</p>
+              <p className="text-xs text-muted-foreground">Connected</p>
+            </div>
+            <div className="rounded-2xl border bg-background/70 p-3">
+              <p className="text-2xl font-semibold text-foreground">{integrationDefinitions.length}</p>
+              <p className="text-xs text-muted-foreground">Available</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="sticky top-20 z-20 rounded-[1.75rem] border bg-background/90 p-3 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-background/74">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+          <label className="relative flex min-w-0 flex-1 items-center">
+            <Search className="pointer-events-none absolute left-4 h-4 w-4 text-muted-foreground" />
+            <input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search connectors"
+              className="h-12 w-full rounded-2xl border bg-card px-11 text-base outline-none transition placeholder:text-muted-foreground/80 focus:border-primary focus:ring-4 focus:ring-primary/10"
+            />
+            {query ? (
+              <button
+                type="button"
+                onClick={() => setQuery("")}
+                className="absolute right-3 flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
+                aria-label="Clear connector search"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            ) : null}
+          </label>
+          <div className="flex gap-2 overflow-x-auto pb-1 lg:pb-0">
             <button
               type="button"
               onClick={() => setSelectedCategory("all")}
               className={cn(
-                "rounded-full border px-3 py-1.5 text-sm font-medium transition",
-                selectedCategory === "all" ? "bg-primary text-primary-foreground" : "bg-background/70 text-muted-foreground hover:text-foreground",
+                "shrink-0 rounded-full border px-4 py-2 text-sm font-medium transition",
+                selectedCategory === "all" ? "bg-foreground text-background" : "bg-card text-muted-foreground hover:text-foreground",
               )}
             >
               All
@@ -352,8 +420,8 @@ export default function IntegrationsPage() {
                 type="button"
                 onClick={() => setSelectedCategory(category)}
                 className={cn(
-                  "rounded-full border px-3 py-1.5 text-sm font-medium transition",
-                  selectedCategory === category ? "bg-primary text-primary-foreground" : "bg-background/70 text-muted-foreground hover:text-foreground",
+                  "shrink-0 rounded-full border px-4 py-2 text-sm font-medium transition",
+                  selectedCategory === category ? "bg-foreground text-background" : "bg-card text-muted-foreground hover:text-foreground",
                 )}
               >
                 {integrationCategories[category].label}
@@ -363,32 +431,52 @@ export default function IntegrationsPage() {
         </div>
       </section>
 
-      {categoryOrder
-        .filter((category) => selectedCategory === "all" || selectedCategory === category)
-        .map((category) => {
-          const integrations = visibleIntegrations.filter((integration) => integration.category === category);
-          if (integrations.length === 0) return null;
-          return (
-            <section key={category} className="space-y-4">
-              <div>
-                <h2 className="text-xl font-semibold tracking-tight text-foreground">{integrationCategories[category].label}</h2>
-                <p className="mt-1 text-sm text-muted-foreground">{integrationCategories[category].description}</p>
+      {connectionLoadError ? (
+        <section className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-800 dark:text-amber-200">
+          {connectionLoadError}
+        </section>
+      ) : null}
+
+      <section className="space-y-4">
+        {categoryOrder
+          .filter((category) => selectedCategory === "all" || selectedCategory === category)
+          .map((category) => {
+            const integrations = visibleIntegrations.filter((integration) => integration.category === category);
+            if (integrations.length === 0) return null;
+            return (
+              <div key={category} className="space-y-3">
+                <div className="flex items-center justify-between gap-3 px-1">
+                  <div>
+                    <h2 className="text-lg font-semibold tracking-tight text-foreground">{integrationCategories[category].label}</h2>
+                    <p className="text-sm text-muted-foreground">{integrationCategories[category].description}</p>
+                  </div>
+                  <Badge variant="secondary" className="rounded-full">{integrations.length}</Badge>
+                </div>
+                <div className="space-y-3">
+                  {integrations.map((integration) => (
+                    <ConnectorRow
+                      key={integration.key}
+                      integration={integration}
+                      plan={currentPlan}
+                      workspaceId={workspace?.id}
+                      connection={connections[integration.key]}
+                      onConnectionCreated={handleConnectionCreated}
+                    />
+                  ))}
+                </div>
               </div>
-              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                {integrations.map((integration) => (
-                  <IntegrationCard
-                    key={integration.key}
-                    integration={integration}
-                    plan={currentPlan}
-                    workspaceId={workspace?.id}
-                    connection={connections[integration.key]}
-                    onConnectionCreated={handleConnectionCreated}
-                  />
-                ))}
-              </div>
-            </section>
-          );
-        })}
+            );
+          })}
+
+        {visibleIntegrations.length === 0 ? (
+          <div className="rounded-[1.5rem] border bg-card/80 p-8 text-center">
+            <p className="text-lg font-semibold text-foreground">No connectors found</p>
+            <p className="mt-2 text-sm text-muted-foreground">Try searching for “SMS,” “website,” “email,” “CRM,” or “automation.”</p>
+          </div>
+        ) : null}
+      </section>
+
+      <ConnectorContractPanel />
     </div>
   );
 }
