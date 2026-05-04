@@ -15,7 +15,6 @@ import {
   LockKeyhole,
   MessageSquareText,
   MousePointerClick,
-  Route,
   Sparkles,
   Star,
   WandSparkles,
@@ -43,7 +42,7 @@ const launchFacts = [
   { label: "Product", value: "Guided customer photo intake" },
   { label: "Audience", value: "Service, quote, review, return, and field teams" },
   { label: "Primary wedge", value: "One link replaces the photo chase" },
-  { label: "Beta offer", value: "90-day founding partner program" },
+  { label: "Beta offer", value: "Exclusive founding partner program" },
 ];
 
 const coreSurfaces = [
@@ -77,41 +76,46 @@ const betaBenefits = [
   {
     icon: Clock3,
     title: "90 days of free beta access",
-    body: "Enough time to use PhotoBrief in actual business workflows instead of a one-session trial.",
+    body: "Enough time to use PhotoBrief in actual business workflows instead of poking around once and forgetting.",
   },
   {
     icon: HeartHandshake,
-    title: "Concierge setup",
-    body: "Hands-on help creating first templates, request flows, and team process so adoption does not stall.",
+    title: "Concierge onboarding and setup",
+    body: "Hands-on help creating first briefs, templates, workflows, and team process so adoption does not stall.",
   },
   {
     icon: MessageSquareText,
-    title: "Direct product influence",
-    body: "Beta partner workflows help decide what gets built and refined before public launch.",
+    title: "Priority support and direct channel",
+    body: "Beta partners get a human support path for questions, confusing moments, workflow fit, and setup help.",
+  },
+  {
+    icon: Sparkles,
+    title: "Priority feature influence",
+    body: "Your feedback helps decide what gets built, refined, and prioritized before public launch.",
   },
   {
     icon: BadgeCheck,
-    title: "Founding partner pricing",
-    body: "Accepted beta partners receive 50% off their first year after launch.",
+    title: "50% off the first year after launch",
+    body: "Founding partners get launch-year savings without creating a forever discount that hurts the business later.",
   },
   {
     icon: Star,
-    title: "Optional partner recognition",
-    body: "Businesses that want visibility can be featured as early adopters or founding partners.",
+    title: "Optional Founding Partner recognition",
+    body: "Businesses that want visibility can be listed, spotlighted, or recognized as early adopters.",
   },
   {
     icon: WandSparkles,
-    title: "Early access to new tools",
+    title: "Early access to future tools",
     body: "Partner teams see new capture, routing, AI, and review features before the public rollout.",
   },
 ];
 
 const partnerCommitments = [
-  "Use PhotoBrief on 3–5 real projects or workflows during beta.",
-  "Share honest feedback every two weeks.",
+  "Use PhotoBrief on at least 3–5 real projects, jobs, or workflows during the beta.",
+  "Share brief feedback every two weeks.",
   "Report bugs, confusing moments, or missing workflow details.",
   "Allow anonymized quotes, learnings, or results to guide marketing.",
-  "Optionally provide a testimonial or case study if the product creates value.",
+  "Optionally provide a testimonial or case study if PhotoBrief creates value.",
 ];
 
 const positioningPairs = [
@@ -133,12 +137,16 @@ const launchAssets = [
     label: "BetaList angle",
     body: "A practical AI workflow tool for businesses that need better photos before quoting, dispatching, approving, returning, or documenting work.",
   },
+  {
+    label: "Founding Partner copy",
+    body: "PhotoBrief is opening a limited beta for businesses that want a better way to collect and manage photo-based project briefs. Founding partners get early access, hands-on setup, direct support, feature input, and exclusive first-year pricing after launch.",
+  },
 ];
 
 const workflowStats = [
-  { value: "1", label: "shareable request link" },
-  { value: "4", label: "core product surfaces" },
-  { value: "90", label: "founding beta days" },
+  { value: "90", label: "free beta days" },
+  { value: "50%", label: "off first year" },
+  { value: "3–5", label: "real workflows requested" },
 ];
 
 export default function BetaPortfolioPage() {
@@ -147,7 +155,7 @@ export default function BetaPortfolioPage() {
   return (
     <>
       <PageMeta
-        title="PhotoBrief.ai Beta Portfolio | Founding Partner Program"
+        title="PhotoBrief.ai Founding Partner Beta | Product Portfolio"
         description="A polished product portfolio and founding partner beta offer for PhotoBrief.ai, designed for BetaList, launch directories, and early customer review."
         canonicalPath="/beta-portfolio"
         jsonLd={[jsonLd]}
@@ -164,12 +172,12 @@ export default function BetaPortfolioPage() {
               <div className="mb-7 inline-flex max-w-full rounded-[2rem] border border-primary/20 bg-card/78 p-4 shadow-glow backdrop-blur-xl sm:p-5">
                 <BrandMark variant="horizontal" tone="auto" size={58} eager withGlow />
               </div>
-              <p className="text-eyebrow">BetaList / launch portfolio</p>
+              <p className="text-eyebrow">Founding Partner Beta</p>
               <h1 className="mt-4 text-4xl font-semibold tracking-tight text-foreground sm:text-6xl lg:text-7xl">
-                The North Star for the PhotoBrief.ai beta.
+                Become a PhotoBrief.ai founding partner.
               </h1>
               <p className="mt-6 max-w-2xl text-base leading-7 text-muted-foreground sm:text-xl">
-                A polished product portfolio for launch directories, beta applications, and founding partner conversations — showing the problem, the surfaces, the offer, and the action we want early businesses to take.
+                PhotoBrief is opening a limited beta for businesses that want a better way to collect, organize, and act on photo-based project briefs. Founding partners get early access, hands-on setup, direct support, and the chance to shape the product before public launch.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <Button asChild size="xl" className="rounded-full">
@@ -179,7 +187,7 @@ export default function BetaPortfolioPage() {
                 </Button>
                 <Button asChild size="xl" variant="glass" className="rounded-full">
                   <a href="#portfolio" onClick={() => trackEvent("cta_click", { location: "beta_portfolio_hero", label: "view_surfaces" })}>
-                    View product surfaces
+                    View product portfolio
                   </a>
                 </Button>
               </div>
@@ -197,11 +205,11 @@ export default function BetaPortfolioPage() {
               </div>
               <div className="relative mt-5 rounded-[2rem] bg-primary/10 p-5 ring-1 ring-primary/20">
                 <p className="flex items-center gap-2 text-sm font-semibold text-primary">
-                  <Sparkles className="h-4 w-4" /> Founding Partner Beta
+                  <Sparkles className="h-4 w-4" /> The positioning
                 </p>
-                <p className="mt-2 text-2xl font-semibold tracking-tight text-foreground">Exclusive access, direct influence, and launch-year savings.</p>
+                <p className="mt-2 text-2xl font-semibold tracking-tight text-foreground">Access, influence, savings, and hands-on help.</p>
                 <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                  The offer should feel like a business is getting a strategic advantage — not like it is being asked to test unfinished software.
+                  This is not “please test my unfinished thing.” It is a limited founding partner program for businesses willing to use PhotoBrief in real workflows.
                 </p>
               </div>
             </div>
@@ -274,6 +282,9 @@ export default function BetaPortfolioPage() {
                     </div>
                   ))}
                 </div>
+                <p className="mt-5 rounded-[1.5rem] border border-primary/20 bg-primary/5 p-4 text-sm leading-6 text-primary">
+                  Recommended structure: 90-day free beta, concierge setup, biweekly feedback check-ins, 50% off first year after launch, founder pricing locked for 12 months, and optional public Founding Partner mention.
+                </p>
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 {betaBenefits.map((benefit) => {
@@ -333,7 +344,7 @@ export default function BetaPortfolioPage() {
                 The goal is one consistent story across BetaList, startup directories, social posts, and early partner outreach.
               </p>
             </div>
-            <div className="mt-10 grid gap-5 lg:grid-cols-3">
+            <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
               {launchAssets.map((asset) => (
                 <article key={asset.label} className="glass-strong rounded-[2rem] p-6">
                   <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">{asset.label}</p>
@@ -348,10 +359,10 @@ export default function BetaPortfolioPage() {
           <div className="mx-auto max-w-5xl overflow-hidden rounded-[2.5rem] border bg-card/80 p-8 text-center shadow-glass-lg sm:p-12">
             <BrandMark variant="horizontal" tone="auto" size={52} className="justify-center" withGlow />
             <p className="mx-auto mt-6 max-w-2xl text-3xl font-semibold tracking-tight text-foreground sm:text-5xl">
-              Become a PhotoBrief Founding Partner.
+              Limited spots available.
             </p>
             <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
-              We’re inviting a limited group of businesses to get early access, hands-on setup, direct support, and founding partner pricing before public launch.
+              We’re inviting businesses willing to use PhotoBrief in real workflows and share honest feedback along the way.
             </p>
             <Button asChild size="xl" className="mt-8 rounded-full">
               <NavLink to={signupCtaTarget()} onClick={() => trackEvent("cta_click", { location: "beta_portfolio_final", label: "apply_beta" })}>
