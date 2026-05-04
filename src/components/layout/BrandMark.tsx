@@ -1,3 +1,5 @@
+import { useId } from "react";
+
 import { cn } from "@/lib/utils";
 
 export type BrandVariant = "horizontal" | "stacked" | "wordmark" | "mark" | "primary";
@@ -33,9 +35,17 @@ function toneClass(tone: BrandTone): string {
 
 function LogoSymbol({ x = 0, y = 0, size = 256 }: { x?: number; y?: number; size?: number }) {
   const scale = size / 256;
+  const lensMaskId = useId().replace(/:/g, "");
 
   return (
     <g transform={`translate(${x} ${y}) scale(${scale})`}>
+      <defs>
+        <mask id={lensMaskId} maskUnits="userSpaceOnUse" x="80" y="80" width="96" height="96">
+          <rect x="80" y="80" width="96" height="96" fill="white" />
+          <ellipse cx="116" cy="119" rx="15" ry="7" fill="black" transform="rotate(-20 116 119)" />
+          <circle cx="146" cy="111" r="5" fill="black" />
+        </mask>
+      </defs>
       <path
         d="M44 62V30c0-5.5 4.5-10 10-10h34M168 20h34c5.5 0 10 4.5 10 10v32M212 194v32c0 5.5-4.5 10-10 10h-34M88 236H54c-5.5 0-10-4.5-10-10v-32"
         fill="none"
@@ -59,9 +69,7 @@ function LogoSymbol({ x = 0, y = 0, size = 256 }: { x?: number; y?: number; size
         strokeLinecap="round"
         strokeWidth="8"
       />
-      <circle cx="128" cy="128" r="39" fill="currentColor" />
-      <ellipse cx="116" cy="119" rx="15" ry="7" fill="hsl(var(--background))" transform="rotate(-20 116 119)" />
-      <circle cx="146" cy="111" r="5" fill="hsl(var(--background))" />
+      <circle cx="128" cy="128" r="39" fill="currentColor" mask={`url(#${lensMaskId})`} />
     </g>
   );
 }
