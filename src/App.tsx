@@ -51,6 +51,7 @@ const TeamSettingsPage = lazy(() => import("@/features/workspace/pages/TeamSetti
 const MessageTemplatesPage = lazy(() => import("@/features/workspace/pages/MessageTemplatesPage"));
 const SmsSettingsPage = lazy(() => import("@/features/workspace/pages/SmsSettingsPage"));
 const BillingSettingsPage = lazy(() => import("@/features/billing/pages/BillingSettingsPage"));
+const IntegrationsPage = lazy(() => import("@/features/integrations/pages/IntegrationsPage"));
 const RequestsInboxPage = lazy(() => import("@/features/requests/pages/RequestsInboxPage"));
 const CreateRequestPage = lazy(() => import("@/features/requests/pages/CreateRequestPage"));
 const RequestDetailPage = lazy(() => import("@/features/requests/pages/RequestDetailPage"));
@@ -158,6 +159,7 @@ const App = () => (
             <Route path="/settings/team" element={<TeamSettingsPage />} />
             <Route path="/settings/templates" element={<MessageTemplatesPage />} />
             <Route path="/settings/sms" element={<SmsSettingsPage />} />
+            <Route path="/settings/integrations" element={<IntegrationsPage />} />
             <Route path="/settings/billing" element={<BillingSettingsPage />} />
             <Route path="/app/help" element={<BetaGuidePage />} />
             <Route
