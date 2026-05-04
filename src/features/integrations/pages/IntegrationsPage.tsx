@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { useCurrentWorkspace } from "@/hooks/useCurrentWorkspace";
 import { usePlan } from "@/hooks/usePlan";
 import { cn } from "@/lib/utils";
+import { ConnectorLogo } from "@/features/integrations/components/ConnectorLogo";
 import {
   buildIntegrationWebhookUrl,
   integrationService,
@@ -68,19 +69,6 @@ function stageIcon(stage: IntegrationStage) {
   if (stage === "live") return CheckCircle2;
   if (stage === "setup_ready") return Wrench;
   return Plug;
-}
-
-function connectorTint(key: string) {
-  const tints = [
-    "bg-sky-500/12 text-sky-600 dark:text-sky-300",
-    "bg-violet-500/12 text-violet-600 dark:text-violet-300",
-    "bg-emerald-500/12 text-emerald-600 dark:text-emerald-300",
-    "bg-amber-500/12 text-amber-700 dark:text-amber-300",
-    "bg-rose-500/12 text-rose-600 dark:text-rose-300",
-    "bg-cyan-500/12 text-cyan-600 dark:text-cyan-300",
-  ];
-  const hash = [...key].reduce((acc, char) => acc + char.charCodeAt(0), 0);
-  return tints[hash % tints.length];
 }
 
 function oauthProviderForKey(key: string): OAuthProvider | null {
@@ -218,15 +206,7 @@ function ConnectorRow({
       )}
     >
       <div className="flex items-center gap-3 sm:gap-4">
-        <span
-          className={cn(
-            "flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl ring-1 ring-border/70 sm:h-16 sm:w-16",
-            connectorTint(integration.key),
-            isPlanned && "grayscale",
-          )}
-        >
-          <Icon className="h-7 w-7" />
-        </span>
+        <ConnectorLogo integrationKey={integration.key} name={integration.name} fallbackIcon={Icon} planned={isPlanned} />
 
         <div className="min-w-0 flex-1 py-1">
           <div className="flex min-w-0 items-center gap-2">
@@ -238,7 +218,7 @@ function ConnectorRow({
             ) : null}
           </div>
           <p className="mt-1 line-clamp-2 text-sm leading-5 text-muted-foreground sm:line-clamp-1">
-            {integration.tagline}
+            {connection?.connectedAccount ? `Connected as ${connection.connectedAccount}` : integration.tagline}
           </p>
           {connection?.lastError ? (
             <p className="mt-1 line-clamp-1 text-xs text-destructive">{connection.lastError}</p>
