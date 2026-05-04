@@ -29,11 +29,11 @@ import { signupCtaTarget, signupCtaLabel } from "@/config/access";
 const SOFTWARE_APP_JSONLD: Record<string, unknown> = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
-  name: "PhotoBrief",
+  name: "PhotoBrief.ai",
   applicationCategory: "BusinessApplication",
   operatingSystem: "Web",
   description:
-    "PhotoBrief helps small businesses collect customer photos without email back-and-forth: send clickable request links manually, or upgrade to Pro to automate website intake with hosted forms, routing, mobile capture, AI photo checks, and clean summaries.",
+    "PhotoBrief.ai helps businesses collect customer photos without email back-and-forth. Founding beta partners get early access, concierge setup, direct support, and 50% off their first year after launch.",
   offers: [
     { "@type": "Offer", name: "Free", price: "0", priceCurrency: "USD" },
     { "@type": "Offer", name: "Starter", price: "19", priceCurrency: "USD" },
@@ -53,22 +53,22 @@ const SOFTWARE_APP_JSONLD: Record<string, unknown> = {
 };
 
 const sectionLinks = [
-  { href: "#start", label: "Start" },
+  { href: "#start", label: "Apply" },
   { href: "#flow", label: "Flow" },
   { href: "#automation", label: "Automate" },
-  { href: "#pricing", label: "Pricing" },
+  { href: "#pricing", label: "Beta offer" },
 ];
 
 const pathCards = [
   {
     href: signupCtaTarget(),
-    icon: Link2,
-    label: "Start now",
-    title: "Send a guided photo link manually.",
-    body: "Best first move: create a request, send one link, and stop chasing photos through email or text threads.",
-    points: ["Free to start", "No website changes", "Customers do not need an app"],
+    icon: Sparkles,
+    label: "Founding beta",
+    title: "Apply as a founding partner.",
+    body: "Get 90 days of free beta access, concierge setup, direct support, and a chance to shape PhotoBrief before public launch.",
+    points: ["Limited beta spots", "Hands-on setup", "50% off first year after launch"],
     cta: signupCtaLabel(),
-    eventLabel: "manual_link_path",
+    eventLabel: "founding_partner_path",
   },
   {
     href: "#automation",
@@ -125,19 +125,19 @@ const automationSteps = [
 
 const pricingTiers = [
   {
-    name: "Free",
-    price: "$0",
-    summary: "Try the manual-link workflow.",
+    name: "90 days",
+    price: "Free",
+    summary: "Use PhotoBrief in real workflows during the founding beta.",
   },
   {
-    name: "Starter",
-    price: "$19/mo",
-    summary: "Add branding, templates, and more volume.",
+    name: "Setup",
+    price: "Concierge",
+    summary: "Get help building first briefs, templates, and team process.",
   },
   {
-    name: "Pro",
-    price: "$49/mo",
-    summary: "Keep manual links and unlock Website Intake automation.",
+    name: "After launch",
+    price: "50% off",
+    summary: "Accepted partners get half off their first year after launch.",
   },
 ];
 
@@ -191,8 +191,8 @@ export default function LandingPage() {
   return (
     <>
       <PageMeta
-        title="PhotoBrief | Stop chasing customer photos"
-        description="Send clickable PhotoBrief links manually, or automate website intake on Pro. Customers follow a mobile photo workflow and your business gets organized, AI-checked photo briefs."
+        title="PhotoBrief.ai | Founding Partner Beta"
+        description="Apply for the PhotoBrief.ai Founding Partner Beta. Get early access, hands-on setup, direct support, and a better way to collect customer photos."
         canonicalPath="/"
         jsonLd={jsonLd}
         breadcrumbs={[{ name: "Home", path: "/" }]}
@@ -206,20 +206,25 @@ export default function LandingPage() {
           <div className="max-w-3xl animate-lift-in text-center lg:text-left">
             <HeroBrandFeature />
             <span className="inline-flex items-center gap-1.5 rounded-full glass px-3 py-1 text-xs font-medium text-foreground/80">
-              <Sparkles className="h-3 w-3 text-primary" /> Customer photo intake, curated to action
+              <Sparkles className="h-3 w-3 text-primary" /> Founding Partner Beta now open
             </span>
             <h1 className="text-display mt-6 text-foreground">
               Stop chasing customer photos.
               <br />
-              <span className="text-gradient-future">Send one guided link.</span>
+              <span className="text-gradient-future">Become a founding partner.</span>
             </h1>
             <p className="mt-6 text-base leading-7 text-muted-foreground sm:text-xl">
-              PhotoBrief turns “can you send a few photos?” into a short mobile workflow. Customers capture what you need, AI flags simple issues, and your team gets one organized brief.
+              PhotoBrief turns “can you send a few photos?” into a short mobile workflow. Founding partners get early access, concierge setup, direct support, and the chance to shape the product before public launch.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
               <Button asChild size="xl" className="rounded-full">
-                <NavLink to={signupCtaTarget()} onClick={() => trackEvent("cta_click", { location: "hero", label: "primary_start" })}>
+                <NavLink to={signupCtaTarget()} onClick={() => trackEvent("cta_click", { location: "hero", label: "apply_founding_partner" })}>
                   {signupCtaLabel()} <ArrowRight className="ml-1 h-4 w-4" />
+                </NavLink>
+              </Button>
+              <Button asChild size="xl" variant="glass" className="rounded-full">
+                <NavLink to="/founding-partner-beta" onClick={() => trackEvent("cta_click", { location: "hero", label: "view_beta_program" })}>
+                  View beta program
                 </NavLink>
               </Button>
               <Button
@@ -231,13 +236,13 @@ export default function LandingPage() {
                   setDemoOpen(true);
                 }}
               >
-                <PlayCircle className="mr-1 h-5 w-5" /> Watch product spotlight
+                <PlayCircle className="mr-1 h-5 w-5" /> Product spotlight
               </Button>
             </div>
             <div className="mt-5 flex flex-wrap justify-center gap-2 text-xs text-muted-foreground lg:justify-start">
-              <span className="rounded-full glass px-3 py-1">No app for customers</span>
-              <span className="rounded-full glass px-3 py-1">Manual links on every plan</span>
-              <span className="rounded-full glass px-3 py-1">Automation on Pro+</span>
+              <span className="rounded-full glass px-3 py-1">90-day free beta</span>
+              <span className="rounded-full glass px-3 py-1">Concierge setup</span>
+              <span className="rounded-full glass px-3 py-1">50% off first year</span>
             </div>
           </div>
 
@@ -255,10 +260,10 @@ export default function LandingPage() {
           <div className="mx-auto max-w-3xl text-center">
             <p className="text-eyebrow">Pick the next action</p>
             <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground sm:text-5xl">
-              Two paths. You can keep both.
+              Join as a partner. Use it in real work.
             </h2>
             <p className="mt-4 text-base text-muted-foreground sm:text-lg">
-              Start with manual links because they are fast. Upgrade when you want automation, not because manual links go away.
+              The founding beta is for businesses willing to use PhotoBrief in real workflows and share honest feedback along the way.
             </p>
           </div>
 
@@ -403,16 +408,16 @@ export default function LandingPage() {
         <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
           <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
             <div>
-              <p className="text-eyebrow">Pricing</p>
+              <p className="text-eyebrow">Beta offer</p>
               <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground sm:text-5xl">
-                Enough pricing to choose. Full details one click away.
+                Exclusive enough to be worth your time. Sustainable enough to keep.
               </h2>
               <p className="mt-4 text-base leading-7 text-muted-foreground sm:text-lg">
-                Every plan can create manual PhotoBrief links. Free and Starter prove that workflow. Pro is the first automation plan, adding Website Intake and routing on top of the manual-link foundation.
+                Accepted founding partners get 90 days free, concierge setup, biweekly feedback check-ins, and 50% off their first year after launch.
               </p>
               <Button asChild size="lg" className="mt-7 rounded-full">
-                <NavLink to="/pricing" onClick={() => trackEvent("cta_click", { location: "pricing_snapshot", label: "view_full_pricing" })}>
-                  View full pricing <ArrowRight className="ml-1 h-4 w-4" />
+                <NavLink to="/founding-partner-beta" onClick={() => trackEvent("cta_click", { location: "pricing_snapshot", label: "view_beta_program" })}>
+                  View full beta program <ArrowRight className="ml-1 h-4 w-4" />
                 </NavLink>
               </Button>
             </div>
@@ -430,12 +435,12 @@ export default function LandingPage() {
 
           <div className="mt-10 rounded-[2rem] border bg-card/70 p-6 text-center shadow-sm sm:p-8">
             <p className="text-eyebrow">Ready action</p>
-            <h3 className="mt-3 text-2xl font-semibold tracking-tight text-foreground sm:text-4xl">Create the first request. See if customers actually finish it.</h3>
+            <h3 className="mt-3 text-2xl font-semibold tracking-tight text-foreground sm:text-4xl">Apply now. Help shape what gets built next.</h3>
             <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
-              That answer matters more than another section of marketing copy.
+              We’re looking for businesses willing to use PhotoBrief on real projects and share honest feedback along the way.
             </p>
             <Button asChild size="xl" className="mt-6 rounded-full">
-              <NavLink to={signupCtaTarget()} onClick={() => trackEvent("cta_click", { location: "final", label: "start_first_request" })}>
+              <NavLink to={signupCtaTarget()} onClick={() => trackEvent("cta_click", { location: "final", label: "apply_founding_partner" })}>
                 {signupCtaLabel()} <ArrowRight className="ml-1 h-4 w-4" />
               </NavLink>
             </Button>
