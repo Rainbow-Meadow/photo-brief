@@ -25,6 +25,8 @@ interface BrandMarkProps {
 
 const ALT = "PhotoBrief.ai";
 const WORDMARK = "PhotoBrief.ai";
+const WORDMARK_GRADIENT =
+  "linear-gradient(135deg, #f3ebff 0%, #d9bbff 28%, #b98cff 58%, #8f63ff 100%)";
 
 function toneClass(tone: BrandTone): string {
   if (tone === "light") return "text-white";
@@ -58,7 +60,13 @@ function MarkImage({ tone, size, withGlow, eager }: { tone: BrandTone; size: num
 
 function Wordmark({ className, style }: { className?: string; style?: CSSProperties }) {
   return (
-    <span className={cn("font-bold tracking-[-0.055em] leading-none", className)} style={style}>
+    <span
+      className={cn("font-bold tracking-[-0.055em] leading-none bg-clip-text text-transparent", className)}
+      style={{
+        ...style,
+        backgroundImage: WORDMARK_GRADIENT,
+      }}
+    >
       {WORDMARK}
     </span>
   );
