@@ -1,8 +1,9 @@
 /**
  * Centralized access / signup configuration.
  *
- * PhotoBrief is in invite-only beta. Public visitors can join the waitlist;
- * only invited emails can create accounts. Existing users sign in normally.
+ * PhotoBrief is in an invite-only Founding Partner Beta. Public visitors can
+ * apply for beta access; only invited emails can create accounts. Existing
+ * users sign in normally.
  *
  * Flip `INVITE_ONLY_BETA` to `false` (and `PUBLIC_SIGNUP_ENABLED` to `true`)
  * once we open public signup.
@@ -17,12 +18,12 @@ export function signupCtaTarget(): string {
 
 /** Label for the primary "create account" CTA. */
 export function signupCtaLabel(): string {
-  return INVITE_ONLY_BETA ? "Join waitlist" : "Start free";
+  return INVITE_ONLY_BETA ? "Apply to join the beta" : "Start free";
 }
 
 /** Short label, suitable for tight nav slots. */
 export function signupCtaShortLabel(): string {
-  return INVITE_ONLY_BETA ? "Join waitlist" : "Try free";
+  return INVITE_ONLY_BETA ? "Apply" : "Try free";
 }
 
 /** Where pricing tier CTAs should send visitors when they pick a plan. */
@@ -38,7 +39,7 @@ export function planCtaTarget(planId: string): string {
 /** Label for plan-tier CTAs. */
 export function planCtaLabel(planId: string): string {
   if (INVITE_ONLY_BETA) {
-    return planId === "free" ? "Join waitlist" : "Request beta access";
+    return planId === "free" ? "Apply for beta" : "Request founding access";
   }
   if (planId === "free") return "Start free";
   return "Get started";
