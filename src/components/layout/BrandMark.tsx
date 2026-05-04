@@ -1,5 +1,3 @@
-import { useId } from "react";
-
 import { cn } from "@/lib/utils";
 
 export type BrandVariant = "horizontal" | "stacked" | "wordmark" | "mark" | "primary";
