@@ -13,6 +13,12 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 
+const marketingAnchors = [
+  { href: "/#start", label: "Start" },
+  { href: "/#flow", label: "Flow" },
+  { href: "/#automation", label: "Automate" },
+];
+
 /**
  * MarketingLayout — landing, pricing, auth pages.
  * Mobile: compact header + hamburger sheet for nav.
@@ -31,10 +37,7 @@ export function MarketingLayout() {
           </NavLink>
 
           <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
-            {[
-              { href: "/#how-it-works", label: "How it works" },
-              { href: "/#use-cases", label: "Use cases" },
-            ].map((l) => (
+            {marketingAnchors.map((l) => (
               <a
                 key={l.href}
                 href={l.href}
@@ -98,24 +101,17 @@ export function MarketingLayout() {
             <ThemeToggle className="w-full justify-between" />
           </div>
           <ul className="divide-y">
-            <li>
-              <a
-                href="/#how-it-works"
-                onClick={() => setMenuOpen(false)}
-                className="block px-5 py-4 text-base font-medium text-foreground active:bg-muted"
-              >
-                How it works
-              </a>
-            </li>
-            <li>
-              <a
-                href="/#use-cases"
-                onClick={() => setMenuOpen(false)}
-                className="block px-5 py-4 text-base font-medium text-foreground active:bg-muted"
-              >
-                Use cases
-              </a>
-            </li>
+            {marketingAnchors.map((l) => (
+              <li key={l.href}>
+                <a
+                  href={l.href}
+                  onClick={() => setMenuOpen(false)}
+                  className="block px-5 py-4 text-base font-medium text-foreground active:bg-muted"
+                >
+                  {l.label}
+                </a>
+              </li>
+            ))}
             <li>
               <NavLink
                 to="/pricing"
