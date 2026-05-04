@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { ArrowRight, CheckCircle2, Clipboard, ExternalLink, Plug, ShieldCheck, Wrench } from "lucide-react";
 import { toast } from "sonner";
@@ -6,8 +6,14 @@ import { toast } from "sonner";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useCurrentWorkspace } from "@/hooks/useCurrentWorkspace";
 import { usePlan } from "@/hooks/usePlan";
 import { cn } from "@/lib/utils";
+import {
+  buildIntegrationWebhookUrl,
+  integrationService,
+  type IntegrationConnection,
+} from "@/features/integrations/integrationService";
 import {
   integrationCategories,
   integrationContract,
@@ -49,10 +55,14 @@ function stageIcon(stage: IntegrationStage) {
   return Plug;
 }
 
+async function copyText(value: string, description?: string) {
+  await navigator.clipboard.writeText(value);
+  toast.success("Copied", description ? { description } : undefined);
+}
+
 async function copyValue(action: IntegrationActionDefinition) {
   if (!action.copyValue) return;
-  await navigator.clipboard.writeText(action.copyValue);
-  toast.success("Copied", { description: action.helper });
+  await copyText(action.copyValue, action.helper);
 }
 
 function IntegrationAction({ action }: { action: IntegrationActionDefinition }) {
@@ -82,11 +92,56 @@ function IntegrationAction({ action }: { action: IntegrationActionDefinition }) 
   );
 }
 
-function IntegrationCard({ integration, plan }: { integration: IntegrationDefinition; plan: string }) {
+function IntegrationCard({
+  integration,
+  plan,
+  workspaceId,
+  connection,
+  onConnectionCreated,
+}: {
+  integration: IntegrationDefinition;
+  plan: string;
+  workspaceId?: string;
+  connection?: IntegrationConnection;
+  onConnectionCreated: (connection: IntegrationConnection) => void;
+}) {
   const Icon = integration.icon;
   const StageIcon = stageIcon(integration.stage);
   const stage = stageMeta[integration.stage];
   const planAllowed = isAvailableForPlan(plan, integration.plan);
+  const [busy, setBusy] = useState(false);
+
+  async function enableWebhookBridge() {
+    if (!workspaceId) {
+      toast.error("Workspace is still loading");
+      return;
+    }
+    setBusy(true);
+    try {
+      const next = await integrationService.createOrEnableConnection({
+        workspaceId,
+        providerKey: integration.key,
+        displayName: integration.name,
+        config: { source: "integrations_page" },
+      });
+      onConnectionCreated(next);
+      await copyText(buildIntegrationWebhookUrl(next), "Webhook URL copied. Add it to your website form or automation tool.");
+    } catch (err) {
+      console.error(err);
+      toast.error("Could not create connector", {
+        description: "Make sure the Connector OS migration has been applied in Supabase.",
+      });
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function copyWebhookUrl() {
+    if (!connection) return;
+    await copyText(buildIntegrationWebhookUrl(connection), "Paste this URL into your form tool, Zapier, Make, or custom website form.");
+  }
+
+  const canProvisionWebhook = integration.key === "webhook-bridge" || integration.key === "zapier" || integration.key === "make";
 
   return (
     <article className="surface-card-elevated flex h-full flex-col overflow-hidden p-5 transition hover:-translate-y-0.5 hover:border-primary/30 sm:p-6">
@@ -97,29 +152,46 @@ function IntegrationCard({ integration, plan }: { integration: IntegrationDefini
           </span>
           <div className="min-w-0">
             <h3 className="truncate text-lg font-semibold tracking-tight text-foreground">{integration.name}</h3>
-            <p className="mt-0.5 text-xs font-medium text-muted-foreground">{integration.statusLabel}</p>
+            <p className="mt-0.5 text-xs font-medium text-muted-foreground">{connection ? "Connected" : integration.statusLabel}</p>
           </div>
         </div>
-        <Badge variant="outline" className={cn("shrink-0 gap-1", stage.className)}>
-          <StageIcon className="h-3 w-3" /> {stage.label}
-        </Badge>
+        <div className="flex shrink-0 flex-col items-end gap-2">
+          {connection ? (
+            <Badge variant="outline" className="gap-1 border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300">
+              <CheckCircle2 className="h-3 w-3" /> Connected
+            </Badge>
+          ) : (
+            <Badge variant="outline" className={cn("gap-1", stage.className)}>
+              <StageIcon className="h-3 w-3" /> {stage.label}
+            </Badge>
+          )}
+        </div>
       </div>
 
       <p className="mt-5 text-sm font-medium text-foreground">{integration.tagline}</p>
       <p className="mt-2 text-sm leading-6 text-muted-foreground">{integration.description}</p>
 
-      <div className="mt-5 grid gap-4 rounded-2xl border bg-muted/30 p-4 text-sm">
-        <div>
-          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Enables</p>
-          <ul className="space-y-1.5 text-muted-foreground">
-            {integration.enables.map((item) => (
-              <li key={item} className="flex gap-2">
-                <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" /> {item}
-              </li>
-            ))}
-          </ul>
+      {connection ? (
+        <div className="mt-5 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-4 text-sm">
+          <p className="font-semibold text-foreground">Connection key</p>
+          <code className="mt-2 block truncate rounded-lg bg-background/70 px-3 py-2 text-xs text-muted-foreground">
+            {connection.connectionKey}
+          </code>
         </div>
-      </div>
+      ) : (
+        <div className="mt-5 grid gap-4 rounded-2xl border bg-muted/30 p-4 text-sm">
+          <div>
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Enables</p>
+            <ul className="space-y-1.5 text-muted-foreground">
+              {integration.enables.map((item) => (
+                <li key={item} className="flex gap-2">
+                  <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" /> {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
 
       <div className="mt-5 flex flex-wrap gap-2">
         <Badge variant="secondary" className="rounded-full capitalize">{integration.category}</Badge>
@@ -130,6 +202,16 @@ function IntegrationCard({ integration, plan }: { integration: IntegrationDefini
 
       <div className="mt-auto pt-5">
         <div className="flex flex-wrap gap-2">
+          {connection && canProvisionWebhook ? (
+            <Button size="sm" variant="outline" className="rounded-full bg-background/70" onClick={copyWebhookUrl}>
+              <Clipboard className="mr-2 h-4 w-4" /> Copy webhook URL
+            </Button>
+          ) : null}
+          {!connection && canProvisionWebhook ? (
+            <Button size="sm" className="rounded-full" onClick={enableWebhookBridge} disabled={busy || !planAllowed || integration.stage === "planned"}>
+              {busy ? "Creating…" : "Create connector"}
+            </Button>
+          ) : null}
           {integration.actions.map((action) => (
             <IntegrationAction key={`${integration.key}-${action.label}`} action={action} />
           ))}
@@ -137,6 +219,11 @@ function IntegrationCard({ integration, plan }: { integration: IntegrationDefini
         {integration.actions.some((action) => !!action.helper && action.kind !== "copy") ? (
           <p className="mt-3 text-xs leading-5 text-muted-foreground">
             {integration.actions.find((action) => action.helper)?.helper}
+          </p>
+        ) : null}
+        {!planAllowed ? (
+          <p className="mt-3 text-xs leading-5 text-muted-foreground">
+            This connector is designed for {integration.plan}+ workspaces.
           </p>
         ) : null}
       </div>
@@ -189,14 +276,37 @@ function ConnectorContractPanel() {
 }
 
 export default function IntegrationsPage() {
+  const { workspace } = useCurrentWorkspace();
   const { plan, loading } = usePlan();
   const [selectedCategory, setSelectedCategory] = useState<IntegrationCategory | "all">("all");
+  const [connections, setConnections] = useState<Record<string, IntegrationConnection>>({});
+  const [connectionLoadError, setConnectionLoadError] = useState<string | null>(null);
   const currentPlan = loading ? "free" : plan;
+
+  const loadConnections = useCallback(async () => {
+    if (!workspace?.id) return;
+    try {
+      const rows = await integrationService.listConnections(workspace.id);
+      setConnections(Object.fromEntries(rows.filter((row) => row.status !== "disabled").map((row) => [row.providerKey, row])));
+      setConnectionLoadError(null);
+    } catch (err) {
+      console.error(err);
+      setConnectionLoadError("Connector status will appear after the Connector OS database migration is applied.");
+    }
+  }, [workspace?.id]);
+
+  useEffect(() => {
+    loadConnections();
+  }, [loadConnections]);
 
   const visibleIntegrations = useMemo(() => {
     if (selectedCategory === "all") return integrationDefinitions;
     return integrationDefinitions.filter((integration) => integration.category === selectedCategory);
   }, [selectedCategory]);
+
+  function handleConnectionCreated(connection: IntegrationConnection) {
+    setConnections((current) => ({ ...current, [connection.providerKey]: connection }));
+  }
 
   return (
     <div className="space-y-6">
@@ -212,6 +322,12 @@ export default function IntegrationsPage() {
       />
 
       <ConnectorContractPanel />
+
+      {connectionLoadError ? (
+        <section className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-800 dark:text-amber-200">
+          {connectionLoadError}
+        </section>
+      ) : null}
 
       <section className="surface-card p-4 sm:p-5">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
@@ -260,7 +376,14 @@ export default function IntegrationsPage() {
               </div>
               <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                 {integrations.map((integration) => (
-                  <IntegrationCard key={integration.key} integration={integration} plan={currentPlan} />
+                  <IntegrationCard
+                    key={integration.key}
+                    integration={integration}
+                    plan={currentPlan}
+                    workspaceId={workspace?.id}
+                    connection={connections[integration.key]}
+                    onConnectionCreated={handleConnectionCreated}
+                  />
                 ))}
               </div>
             </section>
