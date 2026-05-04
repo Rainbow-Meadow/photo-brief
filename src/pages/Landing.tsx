@@ -165,14 +165,14 @@ function CompactSectionNav() {
 
 function HeroBrandFeature() {
   return (
-    <div className="mb-7 flex justify-center lg:justify-start">
-      <div className="relative overflow-hidden rounded-[2rem] border border-primary/20 bg-card/75 p-4 shadow-glow backdrop-blur-xl sm:p-5">
+    <div className="mb-5 flex justify-center lg:justify-start">
+      <div className="relative overflow-hidden rounded-[1.5rem] border border-primary/20 bg-card/75 p-3 shadow-glow backdrop-blur-xl sm:p-4">
         <div aria-hidden className="absolute inset-0 bg-gradient-to-br from-primary/14 via-transparent to-accent/10" />
-        <div aria-hidden className="absolute -right-12 -top-12 h-32 w-32 rounded-full bg-primary/20 blur-3xl" />
-        <div className="relative flex flex-col items-center gap-3 sm:flex-row sm:gap-4">
-          <BrandMark variant="horizontal" tone="auto" size={56} eager withGlow />
-          <span className="hidden h-12 w-px bg-border/80 sm:block" />
-          <p className="max-w-[18rem] text-center text-xs font-medium leading-5 text-muted-foreground sm:text-left">
+        <div aria-hidden className="absolute -right-12 -top-12 h-28 w-28 rounded-full bg-primary/20 blur-3xl" />
+        <div className="relative flex flex-col items-center gap-2.5 sm:flex-row sm:gap-3">
+          <BrandMark variant="horizontal" tone="auto" size={44} eager withGlow />
+          <span className="hidden h-10 w-px bg-border/80 sm:block" />
+          <p className="max-w-[16rem] text-center text-[11px] font-medium leading-5 text-muted-foreground sm:text-left">
             The guided photo request layer for quotes, reviews, dispatch, returns, and service intake.
           </p>
         </div>
@@ -199,38 +199,38 @@ export default function LandingPage() {
       />
 
       <section className="relative overflow-hidden" id="overview">
-        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[700px] bg-ambient-future" />
+        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[640px] bg-ambient-future" />
         <div aria-hidden className="future-grid pointer-events-none absolute inset-0 -z-10 opacity-60" />
 
-        <div className="relative mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 sm:py-18 lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:px-8 lg:py-24">
-          <div className="max-w-3xl animate-lift-in text-center lg:text-left">
+        <div className="relative mx-auto grid max-w-7xl gap-8 px-4 pb-12 pt-10 sm:px-6 sm:pb-14 sm:pt-12 lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:px-8 lg:pb-16 lg:pt-14 xl:gap-10">
+          <div className="max-w-2xl animate-lift-in text-center lg:text-left">
             <HeroBrandFeature />
             <span className="inline-flex items-center gap-1.5 rounded-full glass px-3 py-1 text-xs font-medium text-foreground/80">
               <Sparkles className="h-3 w-3 text-primary" /> Founding Partner Beta now open
             </span>
-            <h1 className="text-display mt-6 text-foreground">
+            <h1 className="mt-5 max-w-[11ch] text-[clamp(3.4rem,5.7vw,5.6rem)] font-semibold leading-[0.94] tracking-[-0.055em] text-foreground sm:max-w-[12ch] lg:max-w-[10.8ch]">
               Stop chasing customer photos.
               <br />
-              <span className="text-gradient-future">Become a founding partner.</span>
+              <span className="text-gradient-future">Join the founding beta.</span>
             </h1>
-            <p className="mt-6 text-base leading-7 text-muted-foreground sm:text-xl">
+            <p className="mt-5 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg lg:max-w-xl">
               PhotoBrief turns “can you send a few photos?” into a short mobile workflow. Founding partners get early access, concierge setup, direct support, and the chance to shape the product before public launch.
             </p>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
-              <Button asChild size="xl" className="rounded-full">
+            <div className="mt-7 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+              <Button asChild size="lg" className="rounded-full sm:h-12 sm:px-6">
                 <NavLink to={signupCtaTarget()} onClick={() => trackEvent("cta_click", { location: "hero", label: "apply_founding_partner" })}>
                   {signupCtaLabel()} <ArrowRight className="ml-1 h-4 w-4" />
                 </NavLink>
               </Button>
-              <Button asChild size="xl" variant="glass" className="rounded-full">
+              <Button asChild size="lg" variant="glass" className="rounded-full sm:h-12 sm:px-6">
                 <NavLink to="/founding-partner-beta" onClick={() => trackEvent("cta_click", { location: "hero", label: "view_beta_program" })}>
                   View beta program
                 </NavLink>
               </Button>
               <Button
-                size="xl"
+                size="lg"
                 variant="glass"
-                className="rounded-full"
+                className="rounded-full sm:h-12 sm:px-6"
                 onClick={() => {
                   trackEvent("cta_click", { location: "hero", label: "watch_product_spotlight" });
                   setDemoOpen(true);
@@ -239,14 +239,14 @@ export default function LandingPage() {
                 <PlayCircle className="mr-1 h-5 w-5" /> Product spotlight
               </Button>
             </div>
-            <div className="mt-5 flex flex-wrap justify-center gap-2 text-xs text-muted-foreground lg:justify-start">
+            <div className="mt-4 flex flex-wrap justify-center gap-2 text-xs text-muted-foreground lg:justify-start">
               <span className="rounded-full glass px-3 py-1">90-day free beta</span>
               <span className="rounded-full glass px-3 py-1">Concierge setup</span>
               <span className="rounded-full glass px-3 py-1">50% off first year</span>
             </div>
           </div>
 
-          <div className="lg:pl-4">
+          <div className="mx-auto w-full max-w-[620px] lg:pl-0 xl:max-w-[680px]">
             <HeroGlassStory />
           </div>
         </div>
