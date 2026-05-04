@@ -1,6 +1,5 @@
 import { Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useFoundingPro } from "@/hooks/useFoundingPro";
 
 interface Props {
   variant?: "default" | "onDark" | "inline";
@@ -8,13 +7,10 @@ interface Props {
 }
 
 /**
- * "Founding Pro" availability pill — surfaces remaining seats from the
- * `founding_pro_remaining()` RPC. Hidden once all 50 seats are claimed.
+ * Founding Partner Beta pill — keeps public pricing aligned with the current
+ * invite-only beta offer instead of the retired lifetime Founding Pro language.
  */
 export function FoundingProBadge({ variant = "default", className }: Props) {
-  const { remaining, total, available, loading } = useFoundingPro();
-  if (loading || !available) return null;
-
   return (
     <span
       className={cn(
@@ -22,12 +18,12 @@ export function FoundingProBadge({ variant = "default", className }: Props) {
         variant === "onDark" && "border border-white/20 bg-white/10 text-white",
         variant === "default" &&
           "border border-primary/30 bg-primary/10 text-primary",
-        variant === "inline" && "bg-warning/10 text-warning",
+        variant === "inline" && "bg-primary/10 text-primary",
         className,
       )}
     >
       <Sparkles className="h-3 w-3" />
-      Founding Pro · {remaining}/{total} left
+      Founding Partner Beta · limited spots
     </span>
   );
 }
