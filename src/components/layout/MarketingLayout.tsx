@@ -19,6 +19,12 @@ const marketingAnchors = [
   { href: "/#automation", label: "Automate" },
 ];
 
+const marketingRoutes = [
+  { to: "/founding-partner-beta", label: "Founding Beta" },
+  { to: "/pricing", label: "Pricing" },
+  { to: "/help", label: "Help" },
+];
+
 /**
  * MarketingLayout — landing, pricing, auth pages.
  * Mobile: compact header + hamburger sheet for nav.
@@ -30,7 +36,7 @@ export function MarketingLayout() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <div className="sticky top-0 z-40 px-3 pt-3 sm:px-6 sm:pt-4 pt-safe">
-        <header className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between gap-4 rounded-full glass-nav px-3 sm:h-16 sm:px-5">
+        <header className="mx-auto flex h-14 w-full max-w-7xl items-center justify-between gap-4 rounded-full glass-nav px-3 sm:h-16 sm:px-5">
           <NavLink to="/" aria-label="PhotoBrief home" className="flex items-center pl-1">
             <BrandMark variant="horizontal" tone="auto" size={32} eager className="sm:hidden" />
             <BrandMark variant="horizontal" tone="auto" size={38} eager className="hidden sm:block" />
@@ -46,10 +52,7 @@ export function MarketingLayout() {
                 {l.label}
               </a>
             ))}
-            {[
-              { to: "/pricing", label: "Pricing" },
-              { to: "/help", label: "Help" },
-            ].map((l) => (
+            {marketingRoutes.map((l) => (
               <NavLink
                 key={l.to}
                 to={l.to}
@@ -112,24 +115,17 @@ export function MarketingLayout() {
                 </a>
               </li>
             ))}
-            <li>
-              <NavLink
-                to="/pricing"
-                onClick={() => setMenuOpen(false)}
-                className="block px-5 py-4 text-base font-medium text-foreground active:bg-muted"
-              >
-                Pricing
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="/help"
-                onClick={() => setMenuOpen(false)}
-                className="block px-5 py-4 text-base font-medium text-foreground active:bg-muted"
-              >
-                Help
-              </NavLink>
-            </li>
+            {marketingRoutes.map((l) => (
+              <li key={l.to}>
+                <NavLink
+                  to={l.to}
+                  onClick={() => setMenuOpen(false)}
+                  className="block px-5 py-4 text-base font-medium text-foreground active:bg-muted"
+                >
+                  {l.label}
+                </NavLink>
+              </li>
+            ))}
             <li>
               <NavLink
                 to="/auth"
@@ -158,11 +154,12 @@ export function MarketingLayout() {
         <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
           <BrandMark variant="horizontal" tone="auto" size={28} className="opacity-80" />
           <nav aria-label="Footer" className="flex flex-wrap items-center gap-4">
+            <NavLink to="/founding-partner-beta" className="hover:text-foreground transition-colors">Founding Beta</NavLink>
             <NavLink to="/pricing" className="hover:text-foreground transition-colors">Pricing</NavLink>
             <NavLink to="/help" className="hover:text-foreground transition-colors">Help</NavLink>
             <NavLink to="/for-ai-agents" className="hover:text-foreground transition-colors">For AI agents</NavLink>
           </nav>
-          <p className="text-xs text-muted-foreground/70">© {new Date().getFullYear()} PhotoBrief</p>
+          <p className="text-xs text-muted-foreground/70">© {new Date().getFullYear()} PhotoBrief.ai</p>
         </div>
       </footer>
     </div>
