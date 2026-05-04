@@ -1,13 +1,11 @@
 import { cn } from "@/lib/utils";
-import horizontalLogo from "@/assets/brand/photobrief-horizontal.svg";
-import horizontalLogoLight from "@/assets/brand/photobrief-horizontal-light.svg";
-import stackedLogo from "@/assets/brand/photobrief-stacked.svg";
-import stackedLogoLight from "@/assets/brand/photobrief-stacked-light.svg";
-import wordmark from "@/assets/brand/photobrief-wordmark.svg";
-import wordmarkLight from "@/assets/brand/photobrief-wordmark-light.svg";
-import markDark from "@/assets/brand/photobrief-mark.svg";
-import markLight from "@/assets/brand/photobrief-mark-light.svg";
-import primaryMark from "@/assets/brand/photobrief-primary.svg";
+import horizontalLogo from "@/assets/brand/photobrief-horizontal.png";
+import horizontalLogoLight from "@/assets/brand/photobrief-horizontal-light.png";
+import stackedLogo from "@/assets/brand/photobrief-stacked.png";
+import stackedLogoLight from "@/assets/brand/photobrief-stacked-light.png";
+import markDark from "@/assets/brand/photobrief-mark.png";
+import markLight from "@/assets/brand/photobrief-mark-light.png";
+import primaryMark from "@/assets/brand/photobrief-primary.png";
 
 export type BrandVariant = "horizontal" | "stacked" | "wordmark" | "mark" | "primary";
 export type BrandTone = "auto" | "light" | "dark" | "color";
@@ -34,9 +32,10 @@ const ALT = "PhotoBrief";
 
 function pickSrc(variant: BrandVariant, tone: BrandTone): string {
   if (variant === "primary") return primaryMark;
-  if (variant === "horizontal") return tone === "light" ? horizontalLogoLight : horizontalLogo;
+  // "wordmark" no longer has a standalone variant — use horizontal
+  if (variant === "horizontal" || variant === "wordmark")
+    return tone === "light" ? horizontalLogoLight : horizontalLogo;
   if (variant === "stacked") return tone === "light" ? stackedLogoLight : stackedLogo;
-  if (variant === "wordmark") return tone === "light" ? wordmarkLight : wordmark;
   // variant === "mark"
   if (tone === "color") return primaryMark;
   if (tone === "light") return markLight;
@@ -60,13 +59,12 @@ export function BrandMark({
 
   const loading = eager ? "eager" : "lazy";
   const style = { height: size, width: "auto" as const };
-  // Intrinsic aspect ratios for each variant (width:height) so we can emit
-  // explicit width/height attributes — prevents CLS and satisfies the
-  // Lighthouse "unsized-images" audit without changing displayed size.
+
+  // Intrinsic aspect ratios for each variant (width:height)
   const aspectByVariant: Record<BrandVariant, number> = {
-    horizontal: 1200 / 320,
+    horizontal: 2172 / 724,  // new PNG dimensions
     stacked: 1,
-    wordmark: 900 / 180,
+    wordmark: 2172 / 724,    // mapped to horizontal
     mark: 1,
     primary: 1,
   };
@@ -78,8 +76,7 @@ export function BrandMark({
     withGlow && "drop-shadow-[0_8px_28px_hsl(var(--primary)/0.45)]",
   );
 
-  // For "auto" tone on a swappable variant (mark / horizontal / stacked / wordmark),
-  // render two images and toggle them with the dark: class — no JS, no FOUC.
+  // For "auto" tone render two images toggled via dark: class
   if (resolvedTone === "auto") {
     const lightSrc = pickSrc(resolvedVariant, "dark"); // dark ink for light bg
     const darkSrc = pickSrc(resolvedVariant, "light");

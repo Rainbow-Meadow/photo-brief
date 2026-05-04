@@ -22,7 +22,7 @@ export const SceneLogo: React.FC = () => {
     <AbsoluteFill style={{ alignItems: "center", justifyContent: "center" }}>
       <div style={{ textAlign: "center", fontFamily: FONT.display }}>
         <Img
-          src={staticFile("brand/photobrief-horizontal.svg")}
+          src={staticFile("brand/photobrief-horizontal.png")}
           style={{
             height: 160,
             width: "auto",
