@@ -17,6 +17,11 @@
   font-weight: 620;
 }
 
+/* Remove the duplicate logo highlight card above the hero copy. */
+.pb-landing section:first-of-type .pb-container > .relative.z-10 > .mb-7.inline-flex {
+  display: none !important;
+}
+
 @media (max-width: 640px) {
   .pb-landing .pb-hero-title {
     max-width: 10.75ch !important;
