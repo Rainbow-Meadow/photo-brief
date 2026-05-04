@@ -1,3 +1,5 @@
+import type { CSSProperties } from "react";
+
 import { cn } from "@/lib/utils";
 
 export type BrandVariant = "horizontal" | "stacked" | "wordmark" | "mark" | "primary";
@@ -54,7 +56,7 @@ function MarkImage({ tone, size, withGlow, eager }: { tone: BrandTone; size: num
   );
 }
 
-function Wordmark({ className, style }: { className?: string; style?: React.CSSProperties }) {
+function Wordmark({ className, style }: { className?: string; style?: CSSProperties }) {
   return (
     <span className={cn("font-bold tracking-[-0.055em] leading-none", className)} style={style}>
       {WORDMARK}
