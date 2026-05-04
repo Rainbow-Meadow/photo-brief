@@ -152,7 +152,7 @@ export function BrandMark({
 
       {resolvedVariant === "stacked" && (
         <svg {...svgProps} viewBox="0 0 500 500">
-          <LogoSymbol x="52" y="45" size={396} />
+          <LogoSymbol x={52} y={45} size={396} />
           <text
             x="250"
             y="410"
