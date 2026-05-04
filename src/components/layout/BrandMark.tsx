@@ -1,11 +1,6 @@
+import { useId } from "react";
+
 import { cn } from "@/lib/utils";
-import horizontalLogo from "@/assets/brand/photobrief-horizontal.png";
-import horizontalLogoLight from "@/assets/brand/photobrief-horizontal-light.png";
-import stackedLogo from "@/assets/brand/photobrief-stacked.png";
-import stackedLogoLight from "@/assets/brand/photobrief-stacked-light.png";
-import markDark from "@/assets/brand/photobrief-mark.png";
-import markLight from "@/assets/brand/photobrief-mark-light.png";
-import primaryMark from "@/assets/brand/photobrief-primary.png";
 
 export type BrandVariant = "horizontal" | "stacked" | "wordmark" | "mark" | "primary";
 export type BrandTone = "auto" | "light" | "dark" | "color";
@@ -14,13 +9,13 @@ interface BrandMarkProps {
   className?: string;
   /** Which lockup to render. Defaults to "horizontal". */
   variant?: BrandVariant;
-  /** Color treatment. "auto" swaps with the dark: class. */
+  /** Color treatment. "auto" swaps from black ink to white ink in dark mode. */
   tone?: BrandTone;
   /** Visual height in px. Defaults to 28. */
   size?: number;
   /** Drop a soft brand glow behind the mark — for dark hero placements. */
   withGlow?: boolean;
-  /** Eager-load above-the-fold logos for better LCP. */
+  /** Kept for API parity with the old image-based implementation. */
   eager?: boolean;
   /** @deprecated Use `variant="mark"` instead. */
   markOnly?: boolean;
@@ -29,17 +24,48 @@ interface BrandMarkProps {
 }
 
 const ALT = "PhotoBrief";
+const FONT_FAMILY =
+  "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
 
-function pickSrc(variant: BrandVariant, tone: BrandTone): string {
-  if (variant === "primary") return primaryMark;
-  // "wordmark" no longer has a standalone variant — use horizontal
-  if (variant === "horizontal" || variant === "wordmark")
-    return tone === "light" ? horizontalLogoLight : horizontalLogo;
-  if (variant === "stacked") return tone === "light" ? stackedLogoLight : stackedLogo;
-  // variant === "mark"
-  if (tone === "color") return primaryMark;
-  if (tone === "light") return markLight;
-  return markDark;
+function toneClass(tone: BrandTone): string {
+  if (tone === "light") return "text-white";
+  if (tone === "auto") return "text-black dark:text-white";
+  return "text-black";
+}
+
+function LogoSymbol({ x = 0, y = 0, size = 256 }: { x?: number; y?: number; size?: number }) {
+  const scale = size / 256;
+
+  return (
+    <g transform={`translate(${x} ${y}) scale(${scale})`}>
+      <path
+        d="M44 62V30c0-5.5 4.5-10 10-10h34M168 20h34c5.5 0 10 4.5 10 10v32M212 194v32c0 5.5-4.5 10-10 10h-34M88 236H54c-5.5 0-10-4.5-10-10v-32"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="8"
+      />
+      <circle cx="128" cy="128" r="72" fill="none" stroke="currentColor" strokeWidth="8" />
+      <path
+        d="M90 82a62 62 0 0 1 36-17M166 76a62 62 0 0 1 14 13M184 114a62 62 0 0 1-16 63M137 190a62 62 0 0 1-46-16M74 148a62 62 0 0 1 8-45"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeWidth="8"
+      />
+      <path
+        d="M102 128a35 35 0 0 1 54-29"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeWidth="8"
+      />
+      <circle cx="128" cy="128" r="39" fill="currentColor" />
+      <ellipse cx="116" cy="119" rx="15" ry="7" fill="hsl(var(--background))" transform="rotate(-20 116 119)" />
+      <circle cx="146" cy="111" r="5" fill="hsl(var(--background))" />
+    </g>
+  );
 }
 
 export function BrandMark({
@@ -48,83 +74,91 @@ export function BrandMark({
   tone = "auto",
   size = 28,
   withGlow = false,
-  eager = false,
   markOnly,
   invert,
 }: BrandMarkProps) {
   // Backwards-compat for old call sites
-  const resolvedVariant: BrandVariant =
-    variant ?? (markOnly ? "mark" : "horizontal");
+  const resolvedVariant: BrandVariant = variant ?? (markOnly ? "mark" : "horizontal");
   const resolvedTone: BrandTone = tone !== "auto" ? tone : invert ? "light" : "auto";
 
-  const loading = eager ? "eager" : "lazy";
-  const style = { height: size, width: "auto" as const };
-
-  // Intrinsic aspect ratios for each variant (width:height)
   const aspectByVariant: Record<BrandVariant, number> = {
-    horizontal: 2172 / 724,  // new PNG dimensions
+    horizontal: 720 / 160,
     stacked: 1,
-    wordmark: 2172 / 724,    // mapped to horizontal
+    wordmark: 520 / 120,
     mark: 1,
     primary: 1,
   };
   const aspect = aspectByVariant[resolvedVariant];
   const intrinsicHeight = size;
   const intrinsicWidth = Math.round(size * aspect);
-  const imgClass = cn(
+  const style = { height: size, width: "auto" as const };
+  const svgClass = cn(
     "block select-none",
     withGlow && "drop-shadow-[0_8px_28px_hsl(var(--primary)/0.45)]",
   );
 
-  // For "auto" tone render two images toggled via dark: class
-  if (resolvedTone === "auto") {
-    const lightSrc = pickSrc(resolvedVariant, "dark"); // dark ink for light bg
-    const darkSrc = pickSrc(resolvedVariant, "light");
-    return (
-      <span
-        className={cn("inline-flex items-center", className)}
-        aria-label={ALT}
-      >
-        <img
-          src={lightSrc}
-          alt={ALT}
-          width={intrinsicWidth}
-          height={intrinsicHeight}
-          style={style}
-          loading={loading}
-          draggable={false}
-          className={cn(imgClass, "dark:hidden")}
-        />
-        <img
-          src={darkSrc}
-          alt=""
-          aria-hidden
-          width={intrinsicWidth}
-          height={intrinsicHeight}
-          style={style}
-          loading={loading}
-          draggable={false}
-          className={cn(imgClass, "hidden dark:block")}
-        />
-      </span>
-    );
-  }
+  const svgProps = {
+    role: "img",
+    "aria-label": ALT,
+    width: intrinsicWidth,
+    height: intrinsicHeight,
+    style,
+    focusable: "false",
+    className: svgClass,
+  } as const;
+
+  const wordmark = (
+    <text
+      x="0"
+      y="82"
+      fill="currentColor"
+      fontFamily={FONT_FAMILY}
+      fontSize="78"
+      fontWeight="700"
+      letterSpacing="-4.5"
+    >
+      PhotoBrief
+    </text>
+  );
 
   return (
-    <span
-      className={cn("inline-flex items-center", className)}
-      aria-label={ALT}
-    >
-      <img
-        src={pickSrc(resolvedVariant, resolvedTone)}
-        alt={ALT}
-        width={intrinsicWidth}
-        height={intrinsicHeight}
-        style={style}
-        loading={loading}
-        draggable={false}
-        className={imgClass}
-      />
+    <span className={cn("inline-flex items-center", toneClass(resolvedTone), className)}>
+      {(resolvedVariant === "mark" || resolvedVariant === "primary") && (
+        <svg {...svgProps} viewBox="0 0 256 256">
+          <LogoSymbol />
+        </svg>
+      )}
+
+      {resolvedVariant === "wordmark" && (
+        <svg {...svgProps} viewBox="0 0 520 120">
+          {wordmark}
+        </svg>
+      )}
+
+      {resolvedVariant === "horizontal" && (
+        <svg {...svgProps} viewBox="0 0 720 160">
+          <LogoSymbol x={0} y={5} size={150} />
+          <g transform="translate(182 22)">{wordmark}</g>
+        </svg>
+      )}
+
+      {resolvedVariant === "stacked" && (
+        <svg {...svgProps} viewBox="0 0 500 500">
+          <LogoSymbol x={122} y={70} size={256} />
+          <text
+            x="250"
+            y="410"
+            fill="currentColor"
+            fontFamily={FONT_FAMILY}
+            fontSize="78"
+            fontWeight="700"
+            letterSpacing="-4.5"
+            textAnchor="middle"
+          >
+            PhotoBrief
+          </text>
+        </svg>
+      )}
     </span>
   );
 }
