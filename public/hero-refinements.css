@@ -1,0 +1,30 @@
+/* Small landing typography refinement loaded after the app bundle.
+   Keeps the hero premium without the heavy stacked-block feel. */
+.pb-landing .pb-hero-title {
+  max-width: min(100%, 13.5ch) !important;
+  font-size: clamp(2.9rem, 6.15vw, 6.35rem) !important;
+  line-height: 1.015 !important;
+  letter-spacing: -0.057em !important;
+  font-weight: 690 !important;
+  text-wrap: balance;
+}
+
+.pb-landing .pb-hero-title > span {
+  margin-top: clamp(0.35rem, 0.8vw, 0.75rem);
+  font-size: clamp(1.85rem, 3.45vw, 3.35rem);
+  line-height: 1.08;
+  letter-spacing: -0.045em;
+  font-weight: 620;
+}
+
+@media (max-width: 640px) {
+  .pb-landing .pb-hero-title {
+    max-width: 10.75ch !important;
+    font-size: clamp(2.65rem, 14vw, 4.1rem) !important;
+    line-height: 1.01 !important;
+  }
+
+  .pb-landing .pb-hero-title > span {
+    font-size: clamp(1.55rem, 8vw, 2.35rem);
+  }
+}
