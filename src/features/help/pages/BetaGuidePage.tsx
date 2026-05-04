@@ -32,34 +32,40 @@ const intakeSteps = [
   },
   {
     number: 2,
-    title: "Copy the hosted form link",
-    body: <>Use this first. Put it behind a website button like <strong>Get a quote</strong> or <strong>Request service</strong>.</>,
-    whatYouSee: <>A link that starts with your site URL and opens a simple public intake form.</>,
+    title: "Copy the branded badge embed",
+    body: <>Use this first when your website supports iframe, embed, or custom HTML blocks. The badge shows the PhotoBrief.ai logo, explains the guided photo request, and sends customers into your hosted intake flow.</>,
+    whatYouSee: <>A small branded website block with PhotoBrief.ai, a customer explanation, and a call-to-action button.</>,
   },
   {
     number: 3,
+    title: "Keep the hosted link as fallback",
+    body: <>If your website builder does not allow embeds, copy the hosted intake link and put it behind a button like <strong>Get a quote</strong>, <strong>Request service</strong>, or <strong>Send photos</strong>.</>,
+  },
+  {
+    number: 4,
     title: "Choose a fallback template",
     body: <>Pick the template PhotoBrief should use when nothing else clearly matches. This prevents dead ends.</>,
   },
   {
-    number: 4,
+    number: 5,
     title: "Add one or two routing rules",
     body: <>Use plain words: <strong>repair</strong>, <strong>quote</strong>, <strong>return</strong>, <strong>roof</strong>. Rules choose templates before AI tries to help.</>,
     tip: <>Simple words beat clever automation. Start with the jobs customers actually ask for.</>,
   },
   {
-    number: 5,
+    number: 6,
     title: "Send a test lead",
-    body: <>Use the test box on the page. A good test creates a customer, chooses a template, creates a request, and sends you into the same flow a real lead will use.</>,
+    body: <>Use the test box on the page, then test the live website badge or button. A good test creates a customer, chooses a template, creates a request, and sends you into the same flow a real lead will use.</>,
   },
 ];
 
 const intakeChecklist = [
-  { id: "intake-link", label: "Copy hosted intake link" },
+  { id: "intake-badge", label: "Copy branded badge embed" },
+  { id: "intake-link", label: "Copy hosted intake link as fallback" },
   { id: "intake-fallback", label: "Choose fallback template" },
   { id: "intake-rule", label: "Add one routing rule" },
   { id: "intake-test", label: "Send a test lead" },
-  { id: "intake-site", label: "Put the link on my website" },
+  { id: "intake-site", label: "Put the badge or link on my website" },
 ];
 
 const tocItems: TocItem[] = [
@@ -118,8 +124,8 @@ export default function BetaGuidePage() {
   return (
     <div className="space-y-8">
       <PageMeta
-        title="Help & setup guide | PhotoBrief"
-        description="Simple visual setup guide for PhotoBrief: create requests, connect Website Intake, add PhotoBrief to common website tools, and show customers how photo capture works."
+        title="Help & setup guide | PhotoBrief.ai"
+        description="Simple visual setup guide for PhotoBrief.ai: create requests, add the branded Website Intake badge, connect common website tools, and show customers how photo capture works."
         canonicalPath="/help"
         ogType="article"
         jsonLd={[buildFaqJsonLd(faqItems)]}
@@ -139,7 +145,7 @@ export default function BetaGuidePage() {
               Set up PhotoBrief without overthinking it.
             </h1>
             <p className="max-w-2xl text-base leading-7 text-muted-foreground">
-              Build one useful template, send one test request, then connect Website Intake to the website tool your business already uses.
+              Build one useful template, send one test request, then put the branded PhotoBrief.ai badge on your website so customers understand why the guided photo request helps them.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -167,98 +173,51 @@ export default function BetaGuidePage() {
         <div className="min-w-0">
           <Tabs value={tab} onValueChange={handleTabChange} className="space-y-6">
             <TabsList className="flex w-full flex-wrap gap-1 rounded-2xl bg-muted/60 p-1">
-              <TabsTrigger value="quick" className="gap-1.5 rounded-xl">
-                <Rocket className="h-3.5 w-3.5" /> Start
-              </TabsTrigger>
-              <TabsTrigger value="business" className="gap-1.5 rounded-xl">
-                <Building2 className="h-3.5 w-3.5" /> Setup
-              </TabsTrigger>
-              <TabsTrigger value="intake" className="gap-1.5 rounded-xl">
-                <Globe2 className="h-3.5 w-3.5" /> Intake
-              </TabsTrigger>
-              <TabsTrigger value="tools" className="gap-1.5 rounded-xl">
-                <Wrench className="h-3.5 w-3.5" /> Tools
-              </TabsTrigger>
-              <TabsTrigger value="recipient" className="gap-1.5 rounded-xl">
-                <Smartphone className="h-3.5 w-3.5" /> Customer
-              </TabsTrigger>
-              <TabsTrigger value="faq" className="gap-1.5 rounded-xl">
-                <HelpCircle className="h-3.5 w-3.5" /> FAQ
-              </TabsTrigger>
+              <TabsTrigger value="quick" className="gap-1.5 rounded-xl"><Rocket className="h-3.5 w-3.5" /> Start</TabsTrigger>
+              <TabsTrigger value="business" className="gap-1.5 rounded-xl"><Building2 className="h-3.5 w-3.5" /> Setup</TabsTrigger>
+              <TabsTrigger value="intake" className="gap-1.5 rounded-xl"><Globe2 className="h-3.5 w-3.5" /> Intake</TabsTrigger>
+              <TabsTrigger value="tools" className="gap-1.5 rounded-xl"><Wrench className="h-3.5 w-3.5" /> Tools</TabsTrigger>
+              <TabsTrigger value="recipient" className="gap-1.5 rounded-xl"><Smartphone className="h-3.5 w-3.5" /> Customer</TabsTrigger>
+              <TabsTrigger value="faq" className="gap-1.5 rounded-xl"><HelpCircle className="h-3.5 w-3.5" /> FAQ</TabsTrigger>
             </TabsList>
 
             <TabsContent value="quick" id="quick-start" className="space-y-4 scroll-mt-24">
-              <SectionIntro
-                icon={<Rocket className="h-4 w-4" />}
-                title="Quick start"
-                body="The shortest path: create one request, send it to yourself, and review the result."
-              />
+              <SectionIntro icon={<Rocket className="h-4 w-4" />} title="Quick start" body="The shortest path: create one request, send it to yourself, and review the result." />
               <QuickChecklist storageKey="pb.help.quickStart" items={quickStartChecklist} title="Do these first" />
-              <div className="space-y-4">
-                {quickStartSteps.map((step) => <GuideStep key={step.number} {...step} />)}
-              </div>
+              <div className="space-y-4">{quickStartSteps.map((step) => <GuideStep key={step.number} {...step} />)}</div>
             </TabsContent>
 
             <TabsContent value="business" id="business" className="space-y-4 scroll-mt-24">
-              <SectionIntro
-                icon={<Building2 className="h-4 w-4" />}
-                title="Business setup"
-                body="The simple operating model: reusable templates, clean requests, automatic intake."
-              />
+              <SectionIntro icon={<Building2 className="h-4 w-4" />} title="Business setup" body="The simple operating model: reusable templates, clean requests, branded website intake, and automatic routing." />
               <QuickChecklist storageKey="pb.help.business" items={businessChecklist} title="Recommended setup" />
-              <div className="space-y-4">
-                {businessSteps.map((step) => <GuideStep key={step.number} {...step} />)}
-              </div>
+              <div className="space-y-4">{businessSteps.map((step) => <GuideStep key={step.number} {...step} />)}</div>
             </TabsContent>
 
             <TabsContent value="intake" id="intake" className="space-y-4 scroll-mt-24">
-              <SectionIntro
-                icon={<Globe2 className="h-4 w-4" />}
-                title="Website Intake"
-                body="The easiest automation: put one hosted form link on your website and let PhotoBrief start the photo request."
-              />
+              <SectionIntro icon={<Globe2 className="h-4 w-4" />} title="Website Intake" body="The easiest automation: put the branded PhotoBrief.ai badge on your site, or use the hosted link when embeds are not available." />
               <QuickChecklist storageKey="pb.help.intake" items={intakeChecklist} title="Website Intake setup" />
-              <div className="space-y-4">
-                {intakeSteps.map((step) => <GuideStep key={step.number} {...step} />)}
-              </div>
-              <Callout variant="tip" title="Hosted link first, webhook second">
-                Use the hosted link unless your existing website form is already easy to connect. It is faster, cleaner, and easier to test.
+              <div className="space-y-4">{intakeSteps.map((step) => <GuideStep key={step.number} {...step} />)}</div>
+              <Callout variant="tip" title="Badge first, hosted link second, webhook third">
+                Use the branded badge when your site supports embeds. Use the hosted link behind a button when it does not. Use the webhook only when an existing form must stay exactly as-is.
               </Callout>
             </TabsContent>
 
             <TabsContent value="tools" id="website-tools" className="space-y-4 scroll-mt-24">
-              <SectionIntro
-                icon={<Wrench className="h-4 w-4" />}
-                title="Website tool setup guides"
-                body="Ultra-simple instructions for adding PhotoBrief to the tools small businesses already use."
-              />
-              <Callout variant="tip" title="The rule: link first">
-                For most businesses, do not start with webhooks. Copy the hosted Website Intake link and put it behind the website’s main action button. Use webhook automation only when the existing form must stay exactly as-is.
+              <SectionIntro icon={<Wrench className="h-4 w-4" />} title="Website tool setup guides" body="Ultra-simple instructions for adding the PhotoBrief.ai badge or hosted link to the tools small businesses already use." />
+              <Callout variant="tip" title="The rule: badge first">
+                The badge is the most consistent customer-facing option because it explains the guided photo request before the customer clicks. If the site builder blocks embeds, link a normal button to the hosted intake form. Use webhook automation only when the existing form must stay exactly as-is.
               </Callout>
               <QuickChecklist storageKey="pb.help.websiteTools" items={websiteToolChecklist} title="Before you publish" />
-              <div className="grid gap-4">
-                {websiteToolGuides.map((guide) => <WebsiteToolCard key={guide.id} guide={guide} />)}
-              </div>
+              <div className="grid gap-4">{websiteToolGuides.map((guide) => <WebsiteToolCard key={guide.id} guide={guide} />)}</div>
             </TabsContent>
 
             <TabsContent value="recipient" id="recipient" className="space-y-4 scroll-mt-24">
-              <SectionIntro
-                icon={<Smartphone className="h-4 w-4" />}
-                title="Customer flow"
-                body="A simple walkthrough you can send to customers. No app or sign-in needed."
-              />
-              <div className="space-y-4">
-                {recipientSteps.map((step) => <GuideStep key={step.number} {...step} />)}
-              </div>
+              <SectionIntro icon={<Smartphone className="h-4 w-4" />} title="Customer flow" body="A simple walkthrough you can send to customers. No app or sign-in needed." />
+              <div className="space-y-4">{recipientSteps.map((step) => <GuideStep key={step.number} {...step} />)}</div>
             </TabsContent>
 
             <TabsContent value="faq" id="faq" className="space-y-6 scroll-mt-24">
-              <SectionIntro
-                icon={<HelpCircle className="h-4 w-4" />}
-                title="FAQ"
-                body="Quick answers for setup, intake, and customer capture."
-              />
-
+              <SectionIntro icon={<HelpCircle className="h-4 w-4" />} title="FAQ" body="Quick answers for beta access, setup, intake, badge embeds, and customer capture." />
               <div className="space-y-2">
                 <h3 className="text-sm font-semibold text-foreground">For businesses</h3>
                 <Accordion type="single" collapsible className="rounded-2xl border bg-card">
@@ -270,7 +229,6 @@ export default function BetaGuidePage() {
                   ))}
                 </Accordion>
               </div>
-
               <div className="space-y-2">
                 <h3 className="text-sm font-semibold text-foreground">For customers</h3>
                 <Accordion type="single" collapsible className="rounded-2xl border bg-card">
@@ -305,9 +263,7 @@ export default function BetaGuidePage() {
 function SectionIntro({ icon, title, body }: { icon: ReactNode; title: string; body: string }) {
   return (
     <div className="space-y-1 rounded-2xl border bg-card/80 p-4 shadow-sm">
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
-        {icon} {title}
-      </span>
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">{icon} {title}</span>
       <p className="text-sm leading-6 text-muted-foreground">{body}</p>
     </div>
   );
@@ -320,61 +276,36 @@ function WebsiteToolCard({ guide }: { guide: WebsiteToolGuide }) {
         <div className="space-y-4">
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
-                <Wrench className="h-3.5 w-3.5" /> {guide.name}
-              </span>
-              <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
-                <Clock3 className="h-3.5 w-3.5" /> {guide.time}
-              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary"><Wrench className="h-3.5 w-3.5" /> {guide.name}</span>
+              <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground"><Clock3 className="h-3.5 w-3.5" /> {guide.time}</span>
             </div>
-            <h3 className="mt-3 text-lg font-semibold leading-tight text-foreground sm:text-xl">
-              {guide.recommendedAction}
-            </h3>
+            <h3 className="mt-3 text-lg font-semibold leading-tight text-foreground sm:text-xl">{guide.recommendedAction}</h3>
             <p className="mt-2 text-sm leading-6 text-muted-foreground">{guide.bestFor}</p>
           </div>
-
           <div className="rounded-2xl border bg-background/70 p-4">
-            <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-              <Link2 className="h-4 w-4 text-primary" /> Simple setup
-            </div>
-            <p className="mt-2 text-sm leading-6 text-muted-foreground">
-              Use the hosted PhotoBrief link unless you have a strong reason to keep the current form.
-            </p>
+            <div className="flex items-center gap-2 text-sm font-semibold text-foreground"><Link2 className="h-4 w-4 text-primary" /> Simple setup</div>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">Use the branded PhotoBrief.ai badge when possible. Fall back to the hosted link when your website builder only supports button links.</p>
           </div>
-
           {guide.note ? <Callout variant="tip">{guide.note}</Callout> : null}
         </div>
-
         <div className="space-y-4">
           <ol className="space-y-2">
             {guide.simplestSteps.map((step, index) => (
               <li key={step} className="flex gap-3 rounded-2xl bg-muted/40 p-3 text-sm leading-6 text-muted-foreground">
-                <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
-                  {index + 1}
-                </span>
+                <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">{index + 1}</span>
                 <span>{step}</span>
               </li>
             ))}
           </ol>
-
           {guide.advancedSteps?.length ? (
             <Accordion type="single" collapsible className="rounded-2xl border bg-background/60 px-4">
               <AccordionItem value={`${guide.id}-advanced`} className="border-0">
-                <AccordionTrigger className="gap-2 text-left text-sm font-semibold text-foreground">
-                  <span className="inline-flex items-center gap-2">
-                    <PlugZap className="h-4 w-4 text-primary" /> {guide.advancedTitle ?? "Advanced option"}
-                  </span>
-                </AccordionTrigger>
+                <AccordionTrigger className="gap-2 text-left text-sm font-semibold text-foreground"><span className="inline-flex items-center gap-2"><PlugZap className="h-4 w-4 text-primary" /> {guide.advancedTitle ?? "Advanced option"}</span></AccordionTrigger>
                 <AccordionContent className="space-y-3 pb-4">
-                  {guide.advancedWhen ? (
-                    <p className="text-sm leading-6 text-muted-foreground">{guide.advancedWhen}</p>
-                  ) : null}
+                  {guide.advancedWhen ? <p className="text-sm leading-6 text-muted-foreground">{guide.advancedWhen}</p> : null}
                   <ul className="space-y-2">
                     {guide.advancedSteps.map((step) => (
-                      <li key={step} className="flex gap-2 text-sm leading-6 text-muted-foreground">
-                        <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-success" />
-                        <span>{step}</span>
-                      </li>
+                      <li key={step} className="flex gap-2 text-sm leading-6 text-muted-foreground"><CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-success" /><span>{step}</span></li>
                     ))}
                   </ul>
                 </AccordionContent>
