@@ -38,7 +38,7 @@ function ctaLabel(plan: PlanLimit, currentPlan?: Plan, pending?: boolean, target
   if (currentPlan && currentPlan === plan.id) return "Current plan";
   if (plan.id === "business") return "Talk to us";
   if (INVITE_ONLY_BETA && target !== "billing") {
-    return plan.id === "free" ? "Join waitlist" : "Request beta access";
+    return plan.id === "free" ? "Apply for beta" : "Request founding access";
   }
   if (plan.id === "free") return "Start free";
   return `Choose ${plan.name}`;
@@ -315,7 +315,7 @@ export function PricingCardGrid({
           onDark ? "text-white/55" : "text-muted-foreground",
         )}
       >
-        Prices in USD. Cancel anytime. Annual plans billed yearly. Photo credits reset each billing period.
+        Prices in USD. Cancel anytime after public launch. Annual plans billed yearly. Photo credits reset each billing period.
       </p>
     </section>
   );
