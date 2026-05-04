@@ -1,8 +1,6 @@
-import { NavLink } from "react-router-dom";
-import { ArrowRight, LockKeyhole, Mail, ShieldCheck } from "lucide-react";
+import { Mail, ShieldCheck } from "lucide-react";
 
 import { PageMeta } from "@/hooks/seo/usePageMeta";
-import { Button } from "@/components/ui/button";
 
 const updatedAt = "January 2026";
 
@@ -105,17 +103,7 @@ export default function PrivacyPage() {
           </div>
         </section>
 
-        <section className="relative mx-auto grid max-w-5xl gap-6 px-4 pb-16 sm:px-6 lg:grid-cols-[15rem_minmax(0,1fr)] lg:px-8 lg:pb-24">
-          <aside className="h-fit rounded-[1.5rem] border bg-card/70 p-4 text-sm text-muted-foreground shadow-sm backdrop-blur lg:sticky lg:top-28">
-            <p className="font-semibold text-foreground">Quick note</p>
-            <p className="mt-2 leading-6">
-              This page is a practical product policy draft. Have counsel review it before relying on it as your final legal policy.
-            </p>
-            <Button asChild variant="outline" className="mt-4 w-full rounded-2xl bg-background/70">
-              <NavLink to="/terms">View Terms <ArrowRight className="ml-2 h-4 w-4" /></NavLink>
-            </Button>
-          </aside>
-
+        <section className="relative mx-auto max-w-5xl px-4 pb-16 sm:px-6 lg:px-8 lg:pb-24">
           <div className="space-y-4">
             {sections.map((section) => (
               <article key={section.title} className="rounded-[1.5rem] border bg-card/80 p-5 shadow-sm backdrop-blur sm:p-6">
