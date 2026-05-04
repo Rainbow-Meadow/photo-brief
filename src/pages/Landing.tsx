@@ -19,6 +19,7 @@ import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { PageMeta } from "@/hooks/seo/usePageMeta";
 import { buildHowToJsonLd } from "@/hooks/seo/buildHowToJsonLd";
 import { buildFaqJsonLd } from "@/hooks/seo/buildFaqJsonLd";
+import { BrandMark } from "@/components/layout/BrandMark";
 import { HeroGlassStory } from "@/components/marketing/HeroGlassStory";
 import { howItWorksSteps } from "@/components/marketing/HowItWorksSteps";
 import { faqItems } from "@/features/help/content/faq";
@@ -162,6 +163,24 @@ function CompactSectionNav() {
   );
 }
 
+function HeroBrandFeature() {
+  return (
+    <div className="mb-7 flex justify-center lg:justify-start">
+      <div className="relative overflow-hidden rounded-[2rem] border border-primary/20 bg-card/75 p-4 shadow-glow backdrop-blur-xl sm:p-5">
+        <div aria-hidden className="absolute inset-0 bg-gradient-to-br from-primary/14 via-transparent to-accent/10" />
+        <div aria-hidden className="absolute -right-12 -top-12 h-32 w-32 rounded-full bg-primary/20 blur-3xl" />
+        <div className="relative flex flex-col items-center gap-3 sm:flex-row sm:gap-4">
+          <BrandMark variant="horizontal" tone="auto" size={56} eager withGlow />
+          <span className="hidden h-12 w-px bg-border/80 sm:block" />
+          <p className="max-w-[18rem] text-center text-xs font-medium leading-5 text-muted-foreground sm:text-left">
+            The guided photo request layer for quotes, reviews, dispatch, returns, and service intake.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function LandingPage() {
   const [demoOpen, setDemoOpen] = useState(false);
   const jsonLd = useMemo(
@@ -185,6 +204,7 @@ export default function LandingPage() {
 
         <div className="relative mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 sm:py-18 lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:px-8 lg:py-24">
           <div className="max-w-3xl animate-lift-in text-center lg:text-left">
+            <HeroBrandFeature />
             <span className="inline-flex items-center gap-1.5 rounded-full glass px-3 py-1 text-xs font-medium text-foreground/80">
               <Sparkles className="h-3 w-3 text-primary" /> Customer photo intake, curated to action
             </span>
