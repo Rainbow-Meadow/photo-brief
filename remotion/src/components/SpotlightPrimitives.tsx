@@ -86,7 +86,7 @@ export const GlassCard: React.FC<{ children: React.ReactNode; style?: React.CSSP
 
 export const LogoLockup: React.FC<{ light?: boolean; height?: number }> = ({ light, height = 62 }) => (
   <Img
-    src={staticFile(light ? "brand/photobrief-horizontal-light.svg" : "brand/photobrief-horizontal.svg")}
+    src={staticFile(light ? "brand/photobrief-horizontal-light.png" : "brand/photobrief-horizontal.png")}
     style={{ height, width: "auto", filter: light ? "drop-shadow(0 18px 50px rgba(70, 168, 255, 0.28))" : "drop-shadow(0 18px 50px rgba(11, 103, 255, 0.20))" }}
   />
 );

@@ -112,7 +112,7 @@ export const SceneClosing: React.FC = () => {
           opacity: interpolate(logoSpring, [0, 1], [0, 1]),
         }}>
           <Img
-            src={staticFile("brand/photobrief-horizontal.svg")}
+            src={staticFile("brand/photobrief-horizontal.png")}
             style={{
               height: 48,
               width: "auto",

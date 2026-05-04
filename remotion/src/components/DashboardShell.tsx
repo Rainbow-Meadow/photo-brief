@@ -29,7 +29,7 @@ export const DashboardShell: React.FC<{
       >
         <div style={{ padding: "0 20px", marginBottom: 32, display: "flex", alignItems: "center", gap: 10 }}>
           <Img
-            src={staticFile("brand/photobrief-horizontal-light.svg")}
+            src={staticFile("brand/photobrief-horizontal-light.png")}
             style={{ height: 32, width: "auto" }}
           />
         </div>
