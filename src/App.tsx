@@ -29,6 +29,7 @@ import WaitlistPage from "@/pages/Waitlist";
 import SignupPage from "@/pages/Signup";
 import BetaInvitePage from "@/pages/BetaInvite";
 import BetaPortfolioPage from "@/pages/BetaPortfolio";
+import IntakeBadgePage from "@/pages/IntakeBadge";
 import NotFound from "@/pages/NotFound";
 import PublicRecipientPage from "@/features/capture/pages/PublicRecipientPage";
 import RecipientConfirmationPage from "@/features/capture/pages/RecipientConfirmationPage";
@@ -94,6 +95,9 @@ const App = () => (
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/beta-invite/:token" element={<BetaInvitePage />} />
           </Route>
+
+          {/* Lightweight embeddable brand surface for customer websites. */}
+          <Route path="/badge/intake" element={<IntakeBadgePage />} />
 
           {/* Onboarding + invite acceptance (no sidebar, but still auth-only).
               Onboarding intentionally skips the onboarding gate to avoid loops. */}
