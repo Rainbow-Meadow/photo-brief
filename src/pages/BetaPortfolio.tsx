@@ -18,7 +18,6 @@ import {
   Route,
   Sparkles,
   Star,
-  Users,
   WandSparkles,
 } from "lucide-react";
 
