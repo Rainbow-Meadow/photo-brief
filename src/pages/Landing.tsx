@@ -57,6 +57,31 @@ const SOFTWARE_APP_JSONLD: Record<string, unknown> = {
   ],
 };
 
+const landingNavItems = [
+  { href: "#start", label: "Start", hint: "Manual or Pro" },
+  { href: "#workflow", label: "Workflow", hint: "What happens" },
+  { href: "#automation", label: "Automation", hint: "Website Intake" },
+  { href: "#proof", label: "Proof", hint: "Use cases" },
+  { href: "#pricing", label: "Pricing", hint: "Plans" },
+];
+
+const quickPaths = [
+  {
+    href: "#start",
+    icon: Link2,
+    label: "I just need better photo requests",
+    title: "Send a link manually",
+    body: "Best for trying PhotoBrief today with no website changes.",
+  },
+  {
+    href: "#automation",
+    icon: Globe2,
+    label: "I want my website to trigger this",
+    title: "Automate intake on Pro",
+    body: "Best when your site should turn leads into PhotoBrief requests.",
+  },
+];
+
 const painPoints = [
   "Vague contact forms",
   "Email threads asking for photos",
@@ -117,6 +142,29 @@ const automationCards = [
   },
 ];
 
+function SectionJumpNav() {
+  return (
+    <div className="sticky top-16 z-30 border-y border-border/70 bg-background/82 backdrop-blur-xl supports-[backdrop-filter]:bg-background/72">
+      <nav aria-label="Landing page sections" className="mx-auto flex max-w-7xl gap-2 overflow-x-auto px-4 py-3 sm:px-6 lg:px-8">
+        {landingNavItems.map((item) => (
+          <a
+            key={item.href}
+            href={item.href}
+            onClick={() => trackEvent("landing_jump_nav_click", { target: item.href })}
+            className="group flex min-w-max items-center gap-3 rounded-full border border-border/75 bg-card/78 px-4 py-2 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-primary/45 hover:bg-primary/8 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <span className="flex h-2.5 w-2.5 rounded-full bg-primary/70 transition group-hover:bg-primary" />
+            <span>
+              <span className="block text-xs font-semibold text-foreground">{item.label}</span>
+              <span className="block text-[11px] leading-none text-muted-foreground">{item.hint}</span>
+            </span>
+          </a>
+        ))}
+      </nav>
+    </div>
+  );
+}
+
 export default function LandingPage() {
   const [demoOpen, setDemoOpen] = useState(false);
   const jsonLd = useMemo(() => [SOFTWARE_APP_JSONLD, buildHowToJsonLd("Collect customer photos with PhotoBrief", howItWorksSteps), buildFaqJsonLd(faqItems)], []);
@@ -130,7 +178,7 @@ export default function LandingPage() {
         breadcrumbs={[{ name: "Home", path: "/" }]}
       />
 
-      <section className="relative overflow-hidden">
+      <section className="relative overflow-hidden" id="overview">
         <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[760px] bg-ambient-future" />
         <div aria-hidden className="future-grid pointer-events-none absolute inset-0 -z-10 opacity-70" />
 
@@ -169,6 +217,29 @@ export default function LandingPage() {
             </div>
           </div>
 
+          <div className="mx-auto mt-8 grid max-w-4xl gap-3 sm:grid-cols-2">
+            {quickPaths.map((path) => {
+              const Icon = path.icon;
+              return (
+                <a
+                  key={path.href}
+                  href={path.href}
+                  onClick={() => trackEvent("landing_quick_path_click", { target: path.href })}
+                  className="group glass-strong magnetic-card rounded-[1.5rem] p-4 text-left transition hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:p-5"
+                >
+                  <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-primary">
+                    <Icon className="h-4 w-4" /> {path.label}
+                  </span>
+                  <span className="mt-3 block text-lg font-semibold tracking-tight text-foreground">{path.title}</span>
+                  <span className="mt-1 block text-sm leading-6 text-muted-foreground">{path.body}</span>
+                  <span className="mt-4 inline-flex items-center text-sm font-medium text-primary">
+                    Jump there <ArrowRight className="ml-1 h-4 w-4 transition group-hover:translate-x-0.5" />
+                  </span>
+                </a>
+              );
+            })}
+          </div>
+
           <div className="mt-14 sm:mt-16 lg:mt-20">
             <HeroGlassStory />
           </div>
@@ -177,10 +248,11 @@ export default function LandingPage() {
       </section>
 
       <TrustLogosStrip />
+      <SectionJumpNav />
 
-      <section className="relative overflow-hidden bg-background">
+      <section className="relative overflow-hidden bg-background scroll-mt-28" id="problem">
         <div aria-hidden className="pointer-events-none absolute inset-0 bg-ambient-sky opacity-60" />
-        <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+        <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-18">
           <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
             <div>
               <p className="text-eyebrow">The problem</p>
@@ -203,9 +275,9 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="relative overflow-hidden bg-background">
+      <section className="relative overflow-hidden bg-background scroll-mt-28" id="start">
         <div aria-hidden className="pointer-events-none absolute inset-0 bg-ambient-future opacity-65" />
-        <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+        <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
           <div className="mx-auto max-w-3xl text-center">
             <p className="text-eyebrow">Two ways to start</p>
             <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground sm:text-5xl">
@@ -240,11 +312,13 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <HowItWorksSteps />
+      <div id="workflow" className="scroll-mt-28">
+        <HowItWorksSteps />
+      </div>
 
-      <section className="relative overflow-hidden bg-background">
+      <section className="relative overflow-hidden bg-background scroll-mt-28" id="value">
         <div aria-hidden className="pointer-events-none absolute inset-0 bg-ambient-future opacity-70" />
-        <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+        <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
           <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
             <div>
               <p className="text-eyebrow">Why businesses switch</p>
@@ -274,9 +348,9 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="relative overflow-hidden bg-background">
+      <section className="relative overflow-hidden bg-background scroll-mt-28" id="automation">
         <div aria-hidden className="pointer-events-none absolute inset-0 bg-ambient-future opacity-70" />
-        <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+        <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
           <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
             <div>
               <p className="text-eyebrow">Pro automation</p>
@@ -321,12 +395,23 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <StatsBand />
-      <FirstPassGuaranteeBand />
-      <IndustryGrid />
-      <TestimonialsRow />
+      <section id="proof" className="scroll-mt-28 bg-background">
+        <div className="mx-auto max-w-3xl px-4 pt-16 text-center sm:px-6 lg:px-8">
+          <p className="text-eyebrow">Proof and fit</p>
+          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground sm:text-5xl">
+            Skim the evidence. Skip what you do not need.
+          </h2>
+          <p className="mt-4 text-base text-muted-foreground sm:text-lg">
+            Results, first-pass guarantee, industry fit, and customer proof are grouped here so the page does not keep restarting the pitch.
+          </p>
+        </div>
+        <StatsBand />
+        <FirstPassGuaranteeBand />
+        <IndustryGrid />
+        <TestimonialsRow />
+      </section>
 
-      <section id="pricing" className="relative overflow-hidden border-t bg-background">
+      <section id="pricing" className="relative overflow-hidden border-t bg-background scroll-mt-28">
         <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[420px] bg-ambient-sky opacity-70" />
         <div className="relative mx-auto max-w-3xl px-4 pt-16 text-center sm:px-6 sm:pt-20 lg:px-8">
           <h2 className="text-3xl font-semibold tracking-tight text-foreground sm:text-5xl">
