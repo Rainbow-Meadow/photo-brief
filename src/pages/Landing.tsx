@@ -12,6 +12,7 @@ import {
   Route,
   Sparkles,
 } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
@@ -19,14 +20,7 @@ import { PageMeta } from "@/hooks/seo/usePageMeta";
 import { buildHowToJsonLd } from "@/hooks/seo/buildHowToJsonLd";
 import { buildFaqJsonLd } from "@/hooks/seo/buildFaqJsonLd";
 import { HeroGlassStory } from "@/components/marketing/HeroGlassStory";
-import { TrustLogosStrip } from "@/components/marketing/TrustLogosStrip";
-import { HowItWorksSteps, howItWorksSteps } from "@/components/marketing/HowItWorksSteps";
-import { StatsBand } from "@/components/marketing/StatsBand";
-import { IndustryGrid } from "@/components/marketing/IndustryGrid";
-import { TestimonialsRow } from "@/components/marketing/TestimonialsRow";
-import { FinalCtaCard } from "@/components/marketing/FinalCtaCard";
-import { FirstPassGuaranteeBand } from "@/components/marketing/FirstPassGuaranteeBand";
-import { PricingCardGrid } from "@/components/pricing/PricingCardGrid";
+import { howItWorksSteps } from "@/components/marketing/HowItWorksSteps";
 import { faqItems } from "@/features/help/content/faq";
 import { trackEvent } from "@/lib/analytics";
 import { signupCtaTarget, signupCtaLabel } from "@/config/access";
@@ -57,117 +51,119 @@ const SOFTWARE_APP_JSONLD: Record<string, unknown> = {
   ],
 };
 
-const landingNavItems = [
-  { href: "#start", label: "Start", hint: "Manual or Pro" },
-  { href: "#workflow", label: "Workflow", hint: "What happens" },
-  { href: "#automation", label: "Automation", hint: "Website Intake" },
-  { href: "#proof", label: "Proof", hint: "Use cases" },
-  { href: "#pricing", label: "Pricing", hint: "Plans" },
+const sectionLinks = [
+  { href: "#start", label: "Start" },
+  { href: "#flow", label: "Flow" },
+  { href: "#automation", label: "Automate" },
+  { href: "#pricing", label: "Pricing" },
 ];
 
-const quickPaths = [
+const pathCards = [
   {
-    href: "#start",
+    href: signupCtaTarget(),
     icon: Link2,
-    label: "I just need better photo requests",
-    title: "Send a link manually",
-    body: "Best for trying PhotoBrief today with no website changes.",
+    label: "Start now",
+    title: "Send a guided photo link manually.",
+    body: "Best first move: create a request, send one link, and stop chasing photos through email or text threads.",
+    points: ["Free to start", "No website changes", "Customers do not need an app"],
+    cta: signupCtaLabel(),
+    eventLabel: "manual_link_path",
   },
   {
     href: "#automation",
     icon: Globe2,
-    label: "I want my website to trigger this",
-    title: "Automate intake on Pro",
-    body: "Best when your site should turn leads into PhotoBrief requests.",
-  },
-];
-
-const painPoints = [
-  "Vague contact forms",
-  "Email threads asking for photos",
-  "Blurry uploads with no context",
-  "Missed details before quoting",
-];
-
-const startModes = [
-  {
-    icon: Link2,
-    label: "Free + Starter",
-    title: "Send one clickable PhotoBrief link.",
-    body: "Create a request, send the link by email/text/DM, and get organized photos back without forcing customers to create an account.",
-    points: ["Fastest first win", "No website changes", "Good for one-off jobs and early testing"],
-  },
-  {
-    icon: Globe2,
-    label: "Pro and above",
-    title: "Turn website leads into requests automatically.",
-    body: "Put Website Intake behind your site CTA or connect an existing form so new leads become routed PhotoBrief requests automatically.",
+    label: "Next step",
+    title: "Turn website leads into PhotoBrief requests.",
+    body: "When the manual workflow proves itself, Pro adds hosted Website Intake, routing, and automation.",
     points: ["Hosted intake form", "Template routing", "Webhook / Zapier / Make paths"],
+    cta: "See automation",
+    eventLabel: "automation_path",
   },
 ];
 
-const proofCards = [
+const outcomeCards = [
   {
     icon: Camera,
-    title: "Customers know what to capture",
-    body: "Each photo has one plain instruction, one capture action, and simple feedback if the image may not be usable.",
+    title: "Customers capture the right shots",
+    body: "One plain instruction at a time, on mobile, with simple feedback before submit.",
   },
   {
     icon: ClipboardList,
-    title: "Your team gets the useful version",
-    body: "Photos, answers, labels, AI checks, and a plain-English summary arrive as one organized brief.",
+    title: "Your team gets one clean brief",
+    body: "Photos, answers, labels, quality checks, and summary are grouped for action.",
   },
   {
     icon: BadgeCheck,
-    title: "You control the customer experience",
-    body: "Starter adds your logo and messages. Pro removes PhotoBrief branding and adds automated intake.",
+    title: "You keep control of the experience",
+    body: "Templates, branding, messages, and routing keep intake consistent as you scale.",
   },
 ];
 
-const automationCards = [
+const automationSteps = [
   {
     icon: Globe2,
-    title: "Hosted intake link",
-    body: "Put a clean PhotoBrief form behind your website’s Get a quote or Request service button.",
+    title: "Replace the vague form CTA",
+    body: "Put a hosted PhotoBrief intake link behind Get a quote, Request service, or Start a return.",
   },
   {
     icon: Route,
-    title: "Template routing",
-    body: "Map request types like repair, quote, return, or roof to the exact photo template you want sent.",
+    title: "Route by request type",
+    body: "Map common jobs to the right template so every lead receives the right photo request.",
   },
   {
     icon: Sparkles,
-    title: "AI fallback",
-    body: "If a rule does not match, PhotoBrief can choose from your configured rules only when it is confident.",
+    title: "Use AI only where it helps",
+    body: "AI checks photos and can assist routing inside your configured rules, without making the page feel magic-for-magic's-sake.",
   },
 ];
 
-function SectionJumpNav() {
+const pricingTiers = [
+  {
+    name: "Free",
+    price: "$0",
+    summary: "Try the manual-link workflow.",
+  },
+  {
+    name: "Starter",
+    price: "$19/mo",
+    summary: "Add branding, templates, and more volume.",
+  },
+  {
+    name: "Pro",
+    price: "$49/mo",
+    summary: "Unlock Website Intake automation.",
+  },
+];
+
+function CompactSectionNav() {
   return (
-    <div className="sticky top-16 z-30 border-y border-border/70 bg-background/82 backdrop-blur-xl supports-[backdrop-filter]:bg-background/72">
-      <nav aria-label="Landing page sections" className="mx-auto flex max-w-7xl gap-2 overflow-x-auto px-4 py-3 sm:px-6 lg:px-8">
-        {landingNavItems.map((item) => (
+    <nav
+      aria-label="Landing page sections"
+      className="sticky top-[4.5rem] z-30 border-y border-border/70 bg-background/85 backdrop-blur-xl supports-[backdrop-filter]:bg-background/75"
+    >
+      <div className="mx-auto flex max-w-5xl justify-center gap-2 overflow-x-auto px-4 py-3 sm:px-6 lg:px-8">
+        {sectionLinks.map((item) => (
           <a
             key={item.href}
             href={item.href}
             onClick={() => trackEvent("landing_jump_nav_click", { target: item.href })}
-            className="group flex min-w-max items-center gap-3 rounded-full border border-border/75 bg-card/78 px-4 py-2 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-primary/45 hover:bg-primary/8 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="min-w-max rounded-full px-4 py-2 text-sm font-medium text-muted-foreground transition hover:bg-muted/70 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
-            <span className="flex h-2.5 w-2.5 rounded-full bg-primary/70 transition group-hover:bg-primary" />
-            <span>
-              <span className="block text-xs font-semibold text-foreground">{item.label}</span>
-              <span className="block text-[11px] leading-none text-muted-foreground">{item.hint}</span>
-            </span>
+            {item.label}
           </a>
         ))}
-      </nav>
-    </div>
+      </div>
+    </nav>
   );
 }
 
 export default function LandingPage() {
   const [demoOpen, setDemoOpen] = useState(false);
-  const jsonLd = useMemo(() => [SOFTWARE_APP_JSONLD, buildHowToJsonLd("Collect customer photos with PhotoBrief", howItWorksSteps), buildFaqJsonLd(faqItems)], []);
+  const jsonLd = useMemo(
+    () => [SOFTWARE_APP_JSONLD, buildHowToJsonLd("Collect customer photos with PhotoBrief", howItWorksSteps), buildFaqJsonLd(faqItems)],
+    [],
+  );
+
   return (
     <>
       <PageMeta
@@ -179,132 +175,148 @@ export default function LandingPage() {
       />
 
       <section className="relative overflow-hidden" id="overview">
-        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[760px] bg-ambient-future" />
-        <div aria-hidden className="future-grid pointer-events-none absolute inset-0 -z-10 opacity-70" />
+        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[700px] bg-ambient-future" />
+        <div aria-hidden className="future-grid pointer-events-none absolute inset-0 -z-10 opacity-60" />
 
-        <div className="relative mx-auto max-w-7xl px-4 pt-14 sm:px-6 sm:pt-20 lg:px-8 lg:pt-24">
-          <div className="mx-auto max-w-5xl text-center animate-lift-in">
+        <div className="relative mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 sm:py-18 lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:px-8 lg:py-24">
+          <div className="max-w-3xl animate-lift-in text-center lg:text-left">
             <span className="inline-flex items-center gap-1.5 rounded-full glass px-3 py-1 text-xs font-medium text-foreground/80">
-              <Sparkles className="h-3 w-3 text-primary" /> Customer photo intake without the back-and-forth
+              <Sparkles className="h-3 w-3 text-primary" /> Customer photo intake, curated to action
             </span>
             <h1 className="text-display mt-6 text-foreground">
               Stop chasing customer photos.
               <br />
-              <span className="text-gradient-future">Send one link instead.</span>
+              <span className="text-gradient-future">Send one guided link.</span>
             </h1>
-            <p className="mx-auto mt-6 max-w-3xl text-base leading-7 text-muted-foreground sm:text-xl">
-              PhotoBrief turns “can you send a few photos?” into a guided mobile workflow. Customers take the right photos, AI flags simple issues, and your team gets a clean brief that is ready to quote, dispatch, review, or document.
+            <p className="mt-6 text-base leading-7 text-muted-foreground sm:text-xl">
+              PhotoBrief turns “can you send a few photos?” into a short mobile workflow. Customers capture what you need, AI flags simple issues, and your team gets one organized brief.
             </p>
-            <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-muted-foreground/90">
-              Start free with manual PhotoBrief links. Upgrade to Pro when you want website leads and existing forms to create routed PhotoBrief requests automatically.
-            </p>
-
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
               <Button asChild size="xl" className="rounded-full">
-                <NavLink to={signupCtaTarget()} onClick={() => trackEvent("cta_click", { location: "hero", label: "start_manual_link" })}>
+                <NavLink to={signupCtaTarget()} onClick={() => trackEvent("cta_click", { location: "hero", label: "primary_start" })}>
                   {signupCtaLabel()} <ArrowRight className="ml-1 h-4 w-4" />
                 </NavLink>
               </Button>
-              <Button size="xl" variant="glass" className="rounded-full" onClick={() => { trackEvent("cta_click", { location: "hero", label: "watch_product_spotlight" }); setDemoOpen(true); }}>
+              <Button
+                size="xl"
+                variant="glass"
+                className="rounded-full"
+                onClick={() => {
+                  trackEvent("cta_click", { location: "hero", label: "watch_product_spotlight" });
+                  setDemoOpen(true);
+                }}
+              >
                 <PlayCircle className="mr-1 h-5 w-5" /> Watch product spotlight
               </Button>
             </div>
-            <div className="mt-5 flex flex-wrap justify-center gap-2 text-xs text-muted-foreground">
+            <div className="mt-5 flex flex-wrap justify-center gap-2 text-xs text-muted-foreground lg:justify-start">
               <span className="rounded-full glass px-3 py-1">No app for customers</span>
               <span className="rounded-full glass px-3 py-1">Manual links on Free</span>
-              <span className="rounded-full glass px-3 py-1">Website Intake on Pro</span>
-              <span className="rounded-full glass px-3 py-1">Photo-credit pricing</span>
+              <span className="rounded-full glass px-3 py-1">Automation on Pro</span>
             </div>
           </div>
 
-          <div className="mx-auto mt-8 grid max-w-4xl gap-3 sm:grid-cols-2">
-            {quickPaths.map((path) => {
-              const Icon = path.icon;
-              return (
-                <a
-                  key={path.href}
-                  href={path.href}
-                  onClick={() => trackEvent("landing_quick_path_click", { target: path.href })}
-                  className="group glass-strong magnetic-card rounded-[1.5rem] p-4 text-left transition hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:p-5"
-                >
-                  <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-primary">
-                    <Icon className="h-4 w-4" /> {path.label}
-                  </span>
-                  <span className="mt-3 block text-lg font-semibold tracking-tight text-foreground">{path.title}</span>
-                  <span className="mt-1 block text-sm leading-6 text-muted-foreground">{path.body}</span>
-                  <span className="mt-4 inline-flex items-center text-sm font-medium text-primary">
-                    Jump there <ArrowRight className="ml-1 h-4 w-4 transition group-hover:translate-x-0.5" />
-                  </span>
-                </a>
-              );
-            })}
-          </div>
-
-          <div className="mt-14 sm:mt-16 lg:mt-20">
+          <div className="lg:pl-4">
             <HeroGlassStory />
           </div>
-          <div className="h-16 sm:h-20" />
         </div>
       </section>
 
-      <TrustLogosStrip />
-      <SectionJumpNav />
+      <CompactSectionNav />
 
-      <section className="relative overflow-hidden bg-background scroll-mt-28" id="problem">
-        <div aria-hidden className="pointer-events-none absolute inset-0 bg-ambient-sky opacity-60" />
-        <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-18">
-          <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
-            <div>
-              <p className="text-eyebrow">The problem</p>
-              <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground sm:text-5xl">
-                Your intake process breaks the moment photos are needed.
-              </h2>
-              <p className="mt-4 text-base leading-7 text-muted-foreground sm:text-lg">
-                Most businesses already know what they need to see. The hard part is getting customers to send the right photos with enough context, without three days of email cleanup.
-              </p>
-            </div>
-            <div className="grid gap-3 sm:grid-cols-2">
-              {painPoints.map((pain) => (
-                <div key={pain} className="glass-strong magnetic-card rounded-[1.5rem] p-4 text-sm font-medium text-foreground">
-                  <span className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-destructive/10 text-destructive">×</span>
-                  {pain}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="relative overflow-hidden bg-background scroll-mt-28" id="start">
-        <div aria-hidden className="pointer-events-none absolute inset-0 bg-ambient-future opacity-65" />
-        <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+      <section id="start" className="relative overflow-hidden bg-background scroll-mt-28">
+        <div aria-hidden className="pointer-events-none absolute inset-0 bg-ambient-sky opacity-55" />
+        <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
           <div className="mx-auto max-w-3xl text-center">
-            <p className="text-eyebrow">Two ways to start</p>
+            <p className="text-eyebrow">Pick the next action</p>
             <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground sm:text-5xl">
-              Start simple. Automate when it is worth it.
+              Two paths. No scavenger hunt.
             </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-base text-muted-foreground sm:text-lg">
-              The first win should not require a website project. Send one link today, then turn your website into the intake engine on Pro.
+            <p className="mt-4 text-base text-muted-foreground sm:text-lg">
+              The landing page now points people to the right move instead of making them read every proof point first.
             </p>
           </div>
 
-          <div className="mt-12 grid gap-5 lg:grid-cols-2">
-            {startModes.map((mode) => {
-              const Icon = mode.icon;
-              return (
-                <article key={mode.title} className="glass-strong magnetic-card rounded-[2.25rem] p-6 sm:p-8">
+          <div className="mt-10 grid gap-5 lg:grid-cols-2">
+            {pathCards.map((card) => {
+              const Icon = card.icon;
+              const isAnchor = card.href.startsWith("#");
+              const content = (
+                <>
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary">
-                    <Icon className="h-3.5 w-3.5" /> {mode.label}
+                    <Icon className="h-3.5 w-3.5" /> {card.label}
                   </span>
-                  <h3 className="mt-5 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">{mode.title}</h3>
-                  <p className="mt-3 text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">{mode.body}</p>
+                  <h3 className="mt-5 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">{card.title}</h3>
+                  <p className="mt-3 text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">{card.body}</p>
                   <ul className="mt-5 grid gap-2">
-                    {mode.points.map((point) => (
+                    {card.points.map((point) => (
                       <li key={point} className="flex gap-2 rounded-2xl bg-muted/45 p-3 text-sm text-muted-foreground">
                         <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-success" /> {point}
                       </li>
                     ))}
                   </ul>
+                  <span className="mt-6 inline-flex items-center text-sm font-semibold text-primary">
+                    {card.cta} <ArrowRight className="ml-1 h-4 w-4 transition group-hover:translate-x-0.5" />
+                  </span>
+                </>
+              );
+
+              const className = "group glass-strong magnetic-card block rounded-[2rem] p-6 text-left transition hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:p-8";
+
+              return isAnchor ? (
+                <a key={card.title} href={card.href} className={className} onClick={() => trackEvent("landing_path_click", { label: card.eventLabel })}>
+                  {content}
+                </a>
+              ) : (
+                <NavLink key={card.title} to={card.href} className={className} onClick={() => trackEvent("landing_path_click", { label: card.eventLabel })}>
+                  {content}
+                </NavLink>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      <section id="flow" className="relative overflow-hidden bg-background scroll-mt-28">
+        <div aria-hidden className="future-grid pointer-events-none absolute inset-0 opacity-45" />
+        <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
+          <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
+            <div>
+              <p className="text-eyebrow">The workflow</p>
+              <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground sm:text-5xl">
+                Four steps, then the page moves on.
+              </h2>
+              <p className="mt-4 text-base leading-7 text-muted-foreground sm:text-lg">
+                This is the whole product motion: request, guide, capture, brief. Everything else supports one of those steps.
+              </p>
+            </div>
+            <div className="grid gap-4 md:grid-cols-2">
+              {howItWorksSteps.map((step, index) => {
+                const Icon = step.icon;
+                return (
+                  <article key={step.title} className="glass-strong magnetic-card rounded-[1.75rem] p-5">
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                        <Icon className="h-5 w-5" />
+                      </span>
+                      <span className="text-eyebrow tabular-nums">0{index + 1}</span>
+                    </div>
+                    <h3 className="mt-5 text-base font-semibold text-foreground">{step.title}</h3>
+                    <p className="mt-2 text-sm leading-6 text-muted-foreground">{step.body}</p>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="mt-8 grid gap-4 md:grid-cols-3">
+            {outcomeCards.map((card) => {
+              const Icon = card.icon;
+              return (
+                <article key={card.title} className="rounded-[1.5rem] border bg-card/55 p-5">
+                  <Icon className="h-5 w-5 text-primary" />
+                  <h3 className="mt-4 text-base font-semibold text-foreground">{card.title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">{card.body}</p>
                 </article>
               );
             })}
@@ -312,124 +324,99 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <div id="workflow" className="scroll-mt-28">
-        <HowItWorksSteps />
-      </div>
+      <section id="automation" className="relative overflow-hidden bg-background scroll-mt-28">
+        <div aria-hidden className="pointer-events-none absolute inset-0 bg-ambient-future opacity-60" />
+        <div className="relative mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:px-8 lg:py-20">
+          <div>
+            <p className="text-eyebrow">Pro automation</p>
+            <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground sm:text-5xl">
+              Automate only after the core flow is clear.
+            </h2>
+            <p className="mt-4 text-base leading-7 text-muted-foreground sm:text-lg">
+              Website Intake should feel like the next action, not a second product pitch. Put PhotoBrief behind your site CTA and route leads to the right request template.
+            </p>
+            <Button asChild size="lg" className="mt-7 rounded-full">
+              <NavLink to="/pricing" onClick={() => trackEvent("cta_click", { location: "automation", label: "view_pro_pricing" })}>
+                Compare Pro plans <ArrowRight className="ml-1 h-4 w-4" />
+              </NavLink>
+            </Button>
+          </div>
 
-      <section className="relative overflow-hidden bg-background scroll-mt-28" id="value">
-        <div aria-hidden className="pointer-events-none absolute inset-0 bg-ambient-future opacity-70" />
-        <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
-          <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-            <div>
-              <p className="text-eyebrow">Why businesses switch</p>
-              <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground sm:text-5xl">
-                Less chasing. Better photos. Faster decisions.
-              </h2>
-              <p className="mt-4 text-base leading-7 text-muted-foreground sm:text-lg">
-                PhotoBrief is not another generic form builder. It is a customer-facing photo workflow that makes intake clearer for the customer and more useful for the business.
-              </p>
+          <div className="space-y-4">
+            <div className="glass-strong overflow-hidden rounded-[1.75rem] p-3">
+              <img
+                src="/marketing/website-intake-flow.svg"
+                alt="Website lead routed into a mobile PhotoBrief request and job-ready brief"
+                loading="lazy"
+                className="w-full rounded-[1.25rem]"
+              />
             </div>
             <div className="grid gap-4">
-              {proofCards.map((card) => (
-                <article key={card.title} className="glass-strong magnetic-card rounded-[1.75rem] p-5">
-                  <div className="flex items-start gap-3">
-                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                      <card.icon className="h-5 w-5" />
-                    </span>
-                    <div>
-                      <h3 className="text-base font-semibold text-foreground">{card.title}</h3>
-                      <p className="mt-1 text-sm leading-6 text-muted-foreground">{card.body}</p>
+              {automationSteps.map((step) => {
+                const Icon = step.icon;
+                return (
+                  <article key={step.title} className="glass-strong magnetic-card rounded-[1.5rem] p-5">
+                    <div className="flex items-start gap-3">
+                      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                        <Icon className="h-5 w-5" />
+                      </span>
+                      <div>
+                        <h3 className="text-base font-semibold text-foreground">{step.title}</h3>
+                        <p className="mt-1 text-sm leading-6 text-muted-foreground">{step.body}</p>
+                      </div>
                     </div>
-                  </div>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="pricing" className="relative overflow-hidden border-t bg-background scroll-mt-28">
+        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[360px] bg-ambient-sky opacity-70" />
+        <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
+          <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
+            <div>
+              <p className="text-eyebrow">Pricing</p>
+              <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground sm:text-5xl">
+                Enough pricing to choose. Full details one click away.
+              </h2>
+              <p className="mt-4 text-base leading-7 text-muted-foreground sm:text-lg">
+                Free and Starter prove the manual-link workflow. Pro is the first automation plan. Larger teams can compare Team and Business on the pricing page.
+              </p>
+              <Button asChild size="lg" className="mt-7 rounded-full">
+                <NavLink to="/pricing" onClick={() => trackEvent("cta_click", { location: "pricing_snapshot", label: "view_full_pricing" })}>
+                  View full pricing <ArrowRight className="ml-1 h-4 w-4" />
+                </NavLink>
+              </Button>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-3">
+              {pricingTiers.map((tier) => (
+                <article key={tier.name} className="glass-strong magnetic-card rounded-[1.75rem] p-5">
+                  <h3 className="text-lg font-semibold text-foreground">{tier.name}</h3>
+                  <p className="mt-3 text-3xl font-semibold tracking-tight text-foreground">{tier.price}</p>
+                  <p className="mt-3 text-sm leading-6 text-muted-foreground">{tier.summary}</p>
                 </article>
               ))}
             </div>
           </div>
-        </div>
-      </section>
 
-      <section className="relative overflow-hidden bg-background scroll-mt-28" id="automation">
-        <div aria-hidden className="pointer-events-none absolute inset-0 bg-ambient-future opacity-70" />
-        <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
-          <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-            <div>
-              <p className="text-eyebrow">Pro automation</p>
-              <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground sm:text-5xl">
-                When your website should do more than collect a message.
-              </h2>
-              <p className="mt-4 text-base leading-7 text-muted-foreground sm:text-lg">
-                Once PhotoBrief is working for manual requests, Pro lets your website start the same structured workflow automatically. One CTA can replace the contact-form-to-email-to-photo-chase routine.
-              </p>
-              <ul className="mt-6 space-y-3 text-sm text-muted-foreground">
-                <li className="flex gap-2"><CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-success" /> Paste a hosted Website Intake link behind your main CTA.</li>
-                <li className="flex gap-2"><CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-success" /> Route each request type to a saved photo template.</li>
-                <li className="flex gap-2"><CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-success" /> Use webhooks only when you need to keep an existing form.</li>
-              </ul>
-            </div>
-            <div className="space-y-4">
-              <div className="glass-strong magnetic-card overflow-hidden rounded-[1.75rem] p-3">
-                <img
-                  src="/marketing/website-intake-flow.svg"
-                  alt="Website lead routed into a mobile PhotoBrief request and job-ready brief"
-                  loading="lazy"
-                  className="w-full rounded-[1.25rem]"
-                />
-              </div>
-              <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-1">
-                {automationCards.map((card) => (
-                  <article key={card.title} className="glass-strong magnetic-card rounded-[1.75rem] p-5">
-                    <div className="flex items-start gap-3">
-                      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                        <card.icon className="h-5 w-5" />
-                      </span>
-                      <div>
-                        <h3 className="text-base font-semibold text-foreground">{card.title}</h3>
-                        <p className="mt-1 text-sm leading-6 text-muted-foreground">{card.body}</p>
-                      </div>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </div>
+          <div className="mt-10 rounded-[2rem] border bg-card/70 p-6 text-center shadow-sm sm:p-8">
+            <p className="text-eyebrow">Ready action</p>
+            <h3 className="mt-3 text-2xl font-semibold tracking-tight text-foreground sm:text-4xl">Create the first request. See if customers actually finish it.</h3>
+            <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
+              That answer matters more than another section of marketing copy.
+            </p>
+            <Button asChild size="xl" className="mt-6 rounded-full">
+              <NavLink to={signupCtaTarget()} onClick={() => trackEvent("cta_click", { location: "final", label: "start_first_request" })}>
+                {signupCtaLabel()} <ArrowRight className="ml-1 h-4 w-4" />
+              </NavLink>
+            </Button>
           </div>
         </div>
       </section>
-
-      <section id="proof" className="scroll-mt-28 bg-background">
-        <div className="mx-auto max-w-3xl px-4 pt-16 text-center sm:px-6 lg:px-8">
-          <p className="text-eyebrow">Proof and fit</p>
-          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground sm:text-5xl">
-            Skim the evidence. Skip what you do not need.
-          </h2>
-          <p className="mt-4 text-base text-muted-foreground sm:text-lg">
-            Results, first-pass guarantee, industry fit, and customer proof are grouped here so the page does not keep restarting the pitch.
-          </p>
-        </div>
-        <StatsBand />
-        <FirstPassGuaranteeBand />
-        <IndustryGrid />
-        <TestimonialsRow />
-      </section>
-
-      <section id="pricing" className="relative overflow-hidden border-t bg-background scroll-mt-28">
-        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[420px] bg-ambient-sky opacity-70" />
-        <div className="relative mx-auto max-w-3xl px-4 pt-16 text-center sm:px-6 sm:pt-20 lg:px-8">
-          <h2 className="text-3xl font-semibold tracking-tight text-foreground sm:text-5xl">
-            Pricing that matches how businesses adopt this.
-          </h2>
-          <p className="mt-4 text-base text-muted-foreground sm:text-lg">
-            Free and Starter help you prove the manual PhotoBrief link workflow. Pro adds Website Intake automation, routing, and integrations.
-          </p>
-          <p className="mt-2 text-sm text-primary">
-            Photo plans scale by monthly photos, branding, storage term, and team size. First-pass follow-up photos requested by PhotoBrief do not consume credits.
-          </p>
-        </div>
-        <div className="relative px-4 pb-16 pt-12 sm:px-6 lg:px-8 lg:pb-20">
-          <PricingCardGrid />
-        </div>
-      </section>
-
-      <FinalCtaCard />
 
       <Dialog open={demoOpen} onOpenChange={setDemoOpen}>
         <DialogContent className="max-w-5xl overflow-hidden border-0 bg-black p-0 sm:rounded-2xl">
