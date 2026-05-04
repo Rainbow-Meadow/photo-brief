@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, NavLink } from "react-router-dom";
 import { BrandMark } from "@/components/layout/BrandMark";
 import { PoweredByBadge } from "@/components/shared/PoweredByBadge";
 import { useRecipientBranding } from "@/features/capture/RecipientBrandingContext";
@@ -42,8 +42,12 @@ export function PublicRequestLayout() {
 
       {!hidePhotobriefBranding ? (
         <footer className="hairline-t bg-background/60 py-4 backdrop-blur">
-          <div className="mx-auto w-full max-w-2xl px-4">
+          <div className="mx-auto flex w-full max-w-2xl flex-col gap-3 px-4 sm:flex-row sm:items-center sm:justify-between">
             <PoweredByBadge size={42} />
+            <nav aria-label="Legal" className="flex items-center gap-4 text-xs text-muted-foreground">
+              <NavLink to="/privacy" className="hover:text-foreground transition-colors">Privacy</NavLink>
+              <NavLink to="/terms" className="hover:text-foreground transition-colors">Terms</NavLink>
+            </nav>
           </div>
         </footer>
       ) : null}
