@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="PhotoBrief" preserveAspectRatio="xMidYMid meet">
+  <defs>
+    <mask id="pb-lens-cutout" maskUnits="userSpaceOnUse" x="80" y="80" width="96" height="96">
+      <rect x="80" y="80" width="96" height="96" fill="#fff"/>
+      <ellipse cx="116" cy="119" rx="15" ry="7" fill="#000" transform="rotate(-20 116 119)"/>
+      <circle cx="146" cy="111" r="5" fill="#000"/>
+    </mask>
+  </defs>
+  <g fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="8">
+    <path d="M44 62V30c0-5.5 4.5-10 10-10h34M168 20h34c5.5 0 10 4.5 10 10v32M212 194v32c0 5.5-4.5 10-10 10h-34M88 236H54c-5.5 0-10-4.5-10-10v-32"/>
+    <circle cx="128" cy="128" r="72"/>
+    <path d="M90 82a62 62 0 0 1 36-17M166 76a62 62 0 0 1 14 13M184 114a62 62 0 0 1-16 63M137 190a62 62 0 0 1-46-16M74 148a62 62 0 0 1 8-45"/>
+    <path d="M102 128a35 35 0 0 1 54-29"/>
+  </g>
+  <circle cx="128" cy="128" r="39" fill="#000" mask="url(#pb-lens-cutout)"/>
+</svg>
