@@ -38,6 +38,7 @@ function toneClass(tone: BrandTone): string {
 function LogoSymbol({ x = 0, y = 0, size = 256 }: { x?: number; y?: number; size?: number }) {
   const scale = size / 512;
   const bodyMaskId = useId().replace(/:/g, "");
+  const apertureMaskId = useId().replace(/:/g, "");
   const bodyPath = "M64 102h384c34 0 56 22 56 56v224c0 34-22 56-56 56H64c-34 0-56-22-56-56V158c0-34 22-56 56-56Z";
   const centerHolePath = "M256 241l36 21v42l-36 21-36-21v-42l36-21Z";
 
@@ -48,6 +49,10 @@ function LogoSymbol({ x = 0, y = 0, size = 256 }: { x?: number; y?: number; size
           <rect width="512" height="512" fill="black" />
           <path d={bodyPath} fill="white" />
           <circle cx="430" cy="159" r="18" fill="black" />
+          <path d={centerHolePath} fill="black" />
+        </mask>
+        <mask id={apertureMaskId} maskUnits="userSpaceOnUse" x="160" y="180" width="192" height="204">
+          <rect x="160" y="180" width="192" height="204" fill="white" />
           <path d={centerHolePath} fill="black" />
         </mask>
       </defs>
@@ -64,7 +69,7 @@ function LogoSymbol({ x = 0, y = 0, size = 256 }: { x?: number; y?: number; size
         <circle cx="256" cy="282" r="66" strokeWidth="7" />
       </g>
 
-      <g fill={ACCENT}>
+      <g fill={ACCENT} mask={`url(#${apertureMaskId})`}>
         <path d="M248 214c25-2 50 7 69 24l-25 28h-49l-8-10 13-42Z" />
         <path d="M327 247c17 21 23 48 17 75l-39-13-24-42 6-13 40-7Z" />
         <path d="M333 331c-17 21-42 35-70 36l10-40 25-43 15-2 20 49Z" />
