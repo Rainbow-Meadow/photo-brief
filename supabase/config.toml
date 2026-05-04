@@ -5,3 +5,9 @@ verify_jwt = true
 
 [functions.integration-webhook]
 verify_jwt = false
+
+[functions.integration-oauth-start]
+verify_jwt = true
+
+[functions.integration-oauth-callback]
+verify_jwt = false
