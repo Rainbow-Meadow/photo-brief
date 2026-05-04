@@ -28,6 +28,7 @@ import UnsubscribePage from "@/pages/Unsubscribe";
 import WaitlistPage from "@/pages/Waitlist";
 import SignupPage from "@/pages/Signup";
 import BetaInvitePage from "@/pages/BetaInvite";
+import BetaPortfolioPage from "@/pages/BetaPortfolio";
 import NotFound from "@/pages/NotFound";
 import PublicRecipientPage from "@/features/capture/pages/PublicRecipientPage";
 import RecipientConfirmationPage from "@/features/capture/pages/RecipientConfirmationPage";
@@ -82,6 +83,8 @@ const App = () => (
             <Route path="/" element={<LandingPage />} />
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/for-ai-agents" element={<ForAiAgentsPage />} />
+            <Route path="/beta-portfolio" element={<BetaPortfolioPage />} />
+            <Route path="/founding-partner-beta" element={<BetaPortfolioPage />} />
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
