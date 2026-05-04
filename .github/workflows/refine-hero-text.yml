@@ -1,0 +1,57 @@
+name: Refine hero text
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/refine-hero-text.yml
+
+permissions:
+  contents: write
+
+jobs:
+  refine:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ github.token }}
+      - name: Refine landing hero typography and copy
+        run: |
+          python <<'PY'
+          from pathlib import Path
+
+          landing = Path('src/pages/Landing.tsx')
+          text = landing.read_text()
+          old = '''          <h1 className="pb-hero-title mt-5 max-w-[10ch] pb-2 text-white sm:max-w-[12ch] lg:max-w-[9.9ch]">
+            Stop chasing customer photos.
+            <span className="block pb-2 text-[hsl(var(--pb-lavender))]">Send one guided link instead.</span>
+          </h1>'''
+          new = '''          <h1 className="pb-hero-title mt-5 max-w-[12.5ch] pb-3 text-white sm:max-w-[13.5ch] lg:max-w-[12.5ch]">
+            Customer photos,
+            <span className="block text-white/82">without the chase.</span>
+            <span className="mt-3 block text-[clamp(1.45rem,2.2vw,2.15rem)] font-semibold leading-[1.12] tracking-[-0.035em] text-[hsl(var(--pb-lavender))]">
+              Send one guided link and get a clean brief back.
+            </span>
+          </h1>'''
+          if old not in text:
+              raise SystemExit('Hero headline block not found')
+          landing.write_text(text.replace(old, new))
+
+          css = Path('src/index.css')
+          css_text = css.read_text()
+          old_css = '''  .pb-hero-title { font-size: clamp(3.1rem, 7.6vw, 7.8rem); line-height: 0.92; letter-spacing: -0.07em; font-weight: 760; }'''
+          new_css = '''  .pb-hero-title { font-size: clamp(3.05rem, 6.55vw, 6.85rem); line-height: 0.965; letter-spacing: -0.061em; font-weight: 700; text-wrap: balance; }'''
+          if old_css not in css_text:
+              raise SystemExit('Hero title CSS rule not found')
+          css.write_text(css_text.replace(old_css, new_css))
+
+          Path('.github/workflows/refine-hero-text.yml').unlink()
+          PY
+      - name: Commit hero refinement
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/pages/Landing.tsx src/index.css .github/workflows/refine-hero-text.yml
+          git commit -m "Refine landing hero typography and copy"
+          git push
