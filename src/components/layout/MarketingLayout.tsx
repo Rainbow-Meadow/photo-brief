@@ -25,6 +25,11 @@ const marketingRoutes = [
   { to: "/help", label: "Help" },
 ];
 
+const legalRoutes = [
+  { to: "/privacy", label: "Privacy" },
+  { to: "/terms", label: "Terms" },
+];
+
 /**
  * MarketingLayout — landing, pricing, auth pages.
  * Mobile: compact header + hamburger sheet for nav.
@@ -126,6 +131,17 @@ export function MarketingLayout() {
                 </NavLink>
               </li>
             ))}
+            {legalRoutes.map((l) => (
+              <li key={l.to}>
+                <NavLink
+                  to={l.to}
+                  onClick={() => setMenuOpen(false)}
+                  className="block px-5 py-4 text-base font-medium text-foreground active:bg-muted"
+                >
+                  {l.label}
+                </NavLink>
+              </li>
+            ))}
             <li>
               <NavLink
                 to="/auth"
@@ -158,6 +174,8 @@ export function MarketingLayout() {
             <NavLink to="/pricing" className="hover:text-foreground transition-colors">Pricing</NavLink>
             <NavLink to="/help" className="hover:text-foreground transition-colors">Help</NavLink>
             <NavLink to="/for-ai-agents" className="hover:text-foreground transition-colors">For AI agents</NavLink>
+            <NavLink to="/privacy" className="hover:text-foreground transition-colors">Privacy</NavLink>
+            <NavLink to="/terms" className="hover:text-foreground transition-colors">Terms</NavLink>
           </nav>
           <p className="text-xs text-muted-foreground/70">© {new Date().getFullYear()} PhotoBrief.ai</p>
         </div>
