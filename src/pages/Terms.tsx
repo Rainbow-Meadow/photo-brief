@@ -100,8 +100,8 @@ export default function TermsPage() {
         <div aria-hidden className="future-grid pointer-events-none absolute inset-0 opacity-45" />
 
         <section className="relative mx-auto max-w-5xl px-4 pb-10 pt-16 sm:px-6 lg:px-8 lg:pt-20">
-          <div className="rounded-[2rem] border bg-card/80 p-6 shadow-[0_30px_90px_-60px_hsl(222_47%_11%/0.55)] backdrop-blur sm:p-8 lg:p-10">
-            <span className="inline-flex items-center gap-2 rounded-full border bg-background/70 px-3 py-1 text-xs font-semibold text-primary">
+          <div className="rounded-[2rem] border-white/[0.06] border bg-white/[0.03] p-6 shadow-[0_30px_90px_-60px_hsl(222_47%_11%/0.35)] backdrop-blur sm:p-8 lg:p-10">
+            <span className="inline-flex items-center gap-2 rounded-full border-white/[0.08] border bg-white/[0.04] px-3 py-1 text-xs font-semibold text-primary">
               <Scale className="h-3.5 w-3.5" /> Terms of Service
             </span>
             <h1 className="mt-5 max-w-3xl text-4xl font-semibold tracking-tight text-foreground sm:text-6xl">
@@ -117,7 +117,7 @@ export default function TermsPage() {
         <section className="relative mx-auto max-w-5xl px-4 pb-16 sm:px-6 lg:px-8 lg:pb-24">
           <div className="space-y-4">
             {sections.map((section) => (
-              <article key={section.title} className="rounded-[1.5rem] border bg-card/80 p-5 shadow-sm backdrop-blur sm:p-6">
+              <article key={section.title} className="rounded-[1.5rem] border border-white/[0.06] bg-white/[0.03] p-5 backdrop-blur sm:p-6">
                 <h2 className="flex items-center gap-2 text-xl font-semibold tracking-tight text-foreground">
                   <FileText className="h-5 w-5 text-primary" /> {section.title}
                 </h2>
@@ -129,7 +129,7 @@ export default function TermsPage() {
               </article>
             ))}
 
-            <article className="rounded-[1.5rem] border bg-primary/5 p-5 sm:p-6">
+            <article className="rounded-[1.5rem] border border-white/[0.06] bg-primary/5 p-5 sm:p-6">
               <h2 className="flex items-center gap-2 text-xl font-semibold tracking-tight text-foreground">
                 <Mail className="h-5 w-5 text-primary" /> Contact
               </h2>
