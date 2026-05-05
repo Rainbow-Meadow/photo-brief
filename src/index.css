@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
 /* PhotoBrief design system — premium consumer-business experience.
    Direction: small-business intake should feel as simple as a camera app,
    as polished as a premium OS surface, and as useful as a back-office automation.
