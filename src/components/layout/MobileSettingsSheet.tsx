@@ -80,7 +80,7 @@ export function MobileSettingsSheet({ open, onOpenChange }: Props) {
                 Signed in as <span className="font-medium text-foreground">{email}</span>
               </p>
             ) : null}
-            <ul className="divide-y">
+            <ul className="divide-y divide-[hsl(var(--glass-border))]">
               <li>
                 <button
                   type="button"
@@ -88,9 +88,9 @@ export function MobileSettingsSheet({ open, onOpenChange }: Props) {
                   onClick={() => {
                     resetPassword();
                   }}
-                  className="flex w-full items-center gap-3 px-5 py-4 text-left transition active:bg-muted disabled:opacity-60"
+                  className="pb-settings-row flex w-full items-center gap-3 px-5 py-4 text-left disabled:opacity-60"
                 >
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-accent text-accent-foreground">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
                     <KeyRound className="h-5 w-5" />
                   </span>
                   <div className="min-w-0 flex-1">
