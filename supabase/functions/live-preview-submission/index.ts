@@ -20,6 +20,7 @@ Deno.serve(async (req) => {
   const supabaseUrl = Deno.env.get('SUPABASE_URL')
   const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
   const workspaceId = Deno.env.get('MARKETING_WORKSPACE_ID')
+  const resendKey = Deno.env.get('RESEND_API_KEY')
 
   if (!supabaseUrl || !serviceKey || !workspaceId) {
     return json({ error: 'Server misconfigured' }, 500)
@@ -33,10 +34,9 @@ Deno.serve(async (req) => {
   }
 
   const sessionId = payload?.session_id || crypto.randomUUID()
-
   const supabase = createClient(supabaseUrl, serviceKey)
 
-  const record = {
+  await supabase.from('marketing_live_submissions').insert({
     session_id: sessionId,
     workflow_mode: payload?.workflow_mode || 'capture',
     selected_count: payload?.brief?.selected_count || 0,
@@ -45,86 +45,79 @@ Deno.serve(async (req) => {
     issue: payload?.brief?.issue || null,
     summary: payload?.brief?.summary || null,
     payload,
-    updated_at: new Date().toISOString(),
-  }
-
-  await supabase.from('marketing_live_submissions').insert(record)
+  })
 
   const lead = payload?.lead
+  let requestUrl = null
 
   if (lead?.email) {
-    const { data: existingLead } = await supabase
-      .from('marketing_live_leads')
+    let { data: customer } = await supabase
+      .from('customers')
       .select('*')
-      .eq('session_id', sessionId)
       .eq('email', lead.email)
       .maybeSingle()
 
-    let customerId = existingLead?.customer_id
-    let requestId = existingLead?.request_id
-    let requestToken = existingLead?.request_token
-
-    // Create customer if needed
-    if (!customerId) {
-      const { data: customer } = await supabase
+    if (!customer) {
+      const { data } = await supabase
         .from('customers')
         .insert({
           workspace_id: workspaceId,
           email: lead.email,
-          name: lead.name || null,
-          phone: lead.phone || null,
+          display_name: lead.name || null,
         })
         .select()
         .single()
-
-      customerId = customer?.id
+      customer = data
     }
 
-    // Create request if ready and not yet created
-    if (!requestId && payload?.brief?.readiness === 'ready') {
+    if (payload?.brief?.readiness === 'ready') {
       const token = crypto.randomUUID().replace(/-/g, '').slice(0, 12)
 
       const { data: request } = await supabase
         .from('photo_brief_requests')
         .insert({
           workspace_id: workspaceId,
-          customer_id: customerId,
-          title: 'PhotoBrief from landing page',
+          customer_id: customer.id,
+          recipient_name: customer.display_name || lead.email,
+          recipient_email: lead.email,
           status: 'draft',
-          request_token: token,
+          token,
         })
         .select()
         .single()
 
-      requestId = request?.id
-      requestToken = token
-    }
+      requestUrl = `https://photobrief.ai/r/${request.token}`
 
-    const requestUrl = requestToken
-      ? `https://photobrief.ai/r/${requestToken}`
-      : null
+      if (resendKey) {
+        try {
+          await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${resendKey}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              from: 'PhotoBrief <hello@photobrief.ai>',
+              to: [lead.email],
+              subject: 'Your PhotoBrief is ready',
+              html: `<p>Your PhotoBrief is ready:</p><p><a href="${requestUrl}">Open your request</a></p>`,
+            }),
+          })
+        } catch (e) {
+          console.error('Email send failed', e)
+        }
+      }
+    }
 
     await supabase.from('marketing_live_leads').upsert({
       session_id: sessionId,
       email: lead.email,
-      name: lead.name || null,
-      company: lead.company || null,
-      phone: lead.phone || null,
-      readiness: payload?.brief?.readiness || 'incomplete',
-      selected_count: payload?.brief?.selected_count || 0,
-      required_count: payload?.brief?.required_count || 4,
-      issue: payload?.brief?.issue || null,
-      summary: payload?.brief?.summary || null,
+      readiness: payload?.brief?.readiness,
       payload,
-      customer_id: customerId,
-      request_id: requestId,
-      request_token: requestToken,
       request_url: requestUrl,
-      converted_at: requestId ? new Date().toISOString() : null,
-      consented_at: lead.consented ? new Date().toISOString() : null,
-      updated_at: new Date().toISOString(),
+      converted_at: requestUrl ? new Date().toISOString() : null,
     })
   }
 
-  return json({ ok: true, session_id: sessionId })
+  return json({ ok: true, session_id: sessionId, request_url: requestUrl })
 })
