@@ -29,7 +29,7 @@ export function MobileTabBar() {
         aria-label="Primary"
         className={cn(
           "fixed inset-x-0 bottom-0 z-40 lg:hidden",
-          "border-t bg-background/95 backdrop-blur",
+          "pb-nav-bar border-t",
           "pb-safe",
         )}
       >
@@ -66,8 +66,8 @@ export function MobileTabBar() {
             onClick={() => setSettingsOpen(true)}
             aria-label="Settings"
             className={cn(
-              "flex flex-col items-center justify-center gap-0.5 text-xs font-medium transition",
-              isSettingsActive ? "text-primary" : "text-muted-foreground",
+              "pb-nav-link flex flex-col items-center justify-center gap-0.5 rounded-xl px-1 py-1 text-xs font-medium",
+              isSettingsActive ? "active text-primary" : "text-muted-foreground",
             )}
           >
             <Settings className="h-5 w-5" />
@@ -96,8 +96,8 @@ function TabLink({
     <NavLink
       to={to}
       className={cn(
-        "flex flex-col items-center justify-center gap-0.5 text-xs font-medium transition",
-        active ? "text-primary" : "text-muted-foreground",
+        "pb-nav-link flex flex-col items-center justify-center gap-0.5 rounded-xl px-1 py-1 text-xs font-medium",
+        active ? "active text-primary" : "text-muted-foreground",
       )}
     >
       <Icon className="h-5 w-5" />

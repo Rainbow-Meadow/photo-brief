@@ -96,7 +96,7 @@ export function AppSidebar() {
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild isActive={isActive(item.url)} tooltip={tooltip}>
-                      <NavLink to={item.url} className="flex items-center gap-2">
+                      <NavLink to={item.url} className="pb-nav-link flex items-center gap-2">
                         <item.icon className="h-4 w-4" />
                         {!collapsed && (
                           <>
@@ -124,7 +124,7 @@ export function AppSidebar() {
               {settingsItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild isActive={isActive(item.url)} tooltip={item.title}>
-                    <NavLink to={item.url} className="flex items-center gap-2">
+                    <NavLink to={item.url} className="pb-nav-link flex items-center gap-2">
                       <item.icon className="h-4 w-4" />
                       {!collapsed && <span>{item.title}</span>}
                     </NavLink>
@@ -141,7 +141,7 @@ export function AppSidebar() {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild isActive={isActive("/app/help")} tooltip="Help & Guide">
-                  <NavLink to="/app/help" className="flex items-center gap-2">
+                  <NavLink to="/app/help" className="pb-nav-link flex items-center gap-2">
                     <LifeBuoy className="h-4 w-4" />
                     {!collapsed && <span>Help & Guide</span>}
                   </NavLink>
