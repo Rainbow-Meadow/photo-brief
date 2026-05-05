@@ -167,17 +167,17 @@ export function MarketingLayout() {
       </main>
 
       <footer className="pb-safe">
-        <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-          <BrandMark variant="horizontal" tone="auto" size={28} className="opacity-80" />
+        <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-8 text-sm text-[hsl(var(--pb-muted))] sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+          <BrandMark variant="horizontal" tone="light" size={28} className="opacity-80" />
           <nav aria-label="Footer" className="flex flex-wrap items-center gap-4">
-            <NavLink to="/founding-partner-beta" className="hover:text-foreground transition-colors">Founding Beta</NavLink>
-            <NavLink to="/pricing" className="hover:text-foreground transition-colors">Pricing</NavLink>
-            <NavLink to="/help" className="hover:text-foreground transition-colors">Help</NavLink>
-            <NavLink to="/for-ai-agents" className="hover:text-foreground transition-colors">For AI agents</NavLink>
-            <NavLink to="/privacy" className="hover:text-foreground transition-colors">Privacy</NavLink>
-            <NavLink to="/terms" className="hover:text-foreground transition-colors">Terms</NavLink>
+            <NavLink to="/founding-partner-beta" className="hover:text-white transition-colors">Founding Beta</NavLink>
+            <NavLink to="/pricing" className="hover:text-white transition-colors">Pricing</NavLink>
+            <NavLink to="/help" className="hover:text-white transition-colors">Help</NavLink>
+            <NavLink to="/for-ai-agents" className="hover:text-white transition-colors">For AI agents</NavLink>
+            <NavLink to="/privacy" className="hover:text-white transition-colors">Privacy</NavLink>
+            <NavLink to="/terms" className="hover:text-white transition-colors">Terms</NavLink>
           </nav>
-          <p className="text-xs text-muted-foreground/70">© {new Date().getFullYear()} PhotoBrief.ai</p>
+          <p className="text-xs text-white/36">© {new Date().getFullYear()} PhotoBrief.ai</p>
         </div>
       </footer>
     </div>
