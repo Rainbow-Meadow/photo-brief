@@ -6,7 +6,7 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 }
 
-type Provider = 'google' | 'microsoft' | 'hubspot'
+type Provider = 'google' | 'hubspot'
 
 interface Body {
   workspaceId: string
@@ -35,7 +35,6 @@ async function sha256Base64Url(value: string) {
 
 function providerKey(provider: Provider) {
   if (provider === 'google') return 'gmail'
-  if (provider === 'microsoft') return 'microsoft-365'
   return 'hubspot'
 }
 
@@ -61,18 +60,6 @@ function oauthConfig(provider: Provider) {
         prompt: 'consent',
         include_granted_scopes: 'true',
       },
-    }
-  }
-
-  if (provider === 'microsoft') {
-    const tenant = Deno.env.get('MICROSOFT_TENANT_ID') ?? 'common'
-    return {
-      providerKey: 'microsoft-365',
-      clientId: Deno.env.get('MICROSOFT_CLIENT_ID'),
-      redirectUri: Deno.env.get('MICROSOFT_REDIRECT_URI') ?? `${fallbackBase}/integration-oauth-callback/microsoft`,
-      authUrl: `https://login.microsoftonline.com/${tenant}/oauth2/v2.0/authorize`,
-      scopes: ['openid', 'email', 'profile', 'offline_access', 'User.Read', 'Mail.Send'],
-      extra: {},
     }
   }
 
@@ -105,7 +92,7 @@ Deno.serve(async (req) => {
 
     const body = (await req.json()) as Body
     if (!body.workspaceId || !body.provider) return json({ error: 'Missing workspaceId or provider' }, 400)
-    if (!['google', 'microsoft', 'hubspot'].includes(body.provider)) return json({ error: 'Unsupported provider' }, 400)
+    if (!['google', 'hubspot'].includes(body.provider)) return json({ error: 'Unsupported provider' }, 400)
 
     const { data: canManage, error: manageErr } = await userClient.rpc('can_manage_workspace_integrations', {
       p_workspace_id: body.workspaceId,
@@ -123,13 +110,13 @@ Deno.serve(async (req) => {
       })
       return json({
         error: 'Provider OAuth client is not configured yet',
-        missingSecret: body.provider === 'google' ? 'GOOGLE_CLIENT_ID' : body.provider === 'microsoft' ? 'MICROSOFT_CLIENT_ID' : 'HUBSPOT_CLIENT_ID',
+        missingSecret: body.provider === 'google' ? 'GOOGLE_CLIENT_ID' : 'HUBSPOT_CLIENT_ID',
       }, 400)
     }
 
     const state = randomToken(32)
-    const codeVerifier = body.provider === 'microsoft' ? randomToken(64) : null
-    const codeChallenge = codeVerifier ? await sha256Base64Url(codeVerifier) : null
+    const codeVerifier: string | null = null
+    const codeChallenge: string | null = null
     const key = providerKey(body.provider)
 
     const { error: stateErr } = await admin.from('integration_oauth_states').insert({

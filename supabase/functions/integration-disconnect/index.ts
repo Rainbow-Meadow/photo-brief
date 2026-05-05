@@ -75,7 +75,7 @@ Deno.serve(async (req) => {
       if (conn.provider_key === 'gmail' || conn.provider_key === 'google-sheets') {
         await revokeGoogle(access_token)
       }
-      // Microsoft doesn't have a simple revocation endpoint
+      
     } catch (e) {
       revocationErrors.push(`access_token revocation: ${e instanceof Error ? e.message : String(e)}`)
     }

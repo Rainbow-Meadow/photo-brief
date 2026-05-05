@@ -35,14 +35,6 @@ async function checkGoogle(accessToken: string): Promise<ProfileResult> {
   return { healthy: true, account: data.email }
 }
 
-async function checkMicrosoft(accessToken: string): Promise<ProfileResult> {
-  const res = await fetch('https://graph.microsoft.com/v1.0/me', {
-    headers: { Authorization: `Bearer ${accessToken}` },
-  })
-  if (!res.ok) return { healthy: false, error: `Graph API returned ${res.status}` }
-  const data = await res.json() as { userPrincipalName?: string; mail?: string }
-  return { healthy: true, account: data.mail ?? data.userPrincipalName }
-}
 
 async function checkHubSpot(accessToken: string): Promise<ProfileResult> {
   const res = await fetch(`https://api.hubapi.com/oauth/v1/access-tokens/${encodeURIComponent(accessToken)}`)
@@ -129,8 +121,6 @@ Deno.serve(async (req) => {
     case 'google-sheets':
       result = await checkGoogle(accessToken)
       break
-    case 'microsoft-365':
-      result = await checkMicrosoft(accessToken)
       break
     case 'hubspot':
       result = await checkHubSpot(accessToken)

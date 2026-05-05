@@ -40,14 +40,6 @@ function providerTokenConfig(providerKey: string) {
     }
   }
 
-  if (providerKey === 'microsoft-365') {
-    const tenant = Deno.env.get('MICROSOFT_TENANT_ID') ?? 'common'
-    return {
-      tokenUrl: `https://login.microsoftonline.com/${tenant}/oauth2/v2.0/token`,
-      clientId: Deno.env.get('MICROSOFT_CLIENT_ID'),
-      clientSecret: Deno.env.get('MICROSOFT_CLIENT_SECRET'),
-    }
-  }
 
   if (providerKey === 'hubspot') {
     return {
@@ -104,7 +96,7 @@ Deno.serve(async (req) => {
 
   const cfg = providerTokenConfig(conn.provider_key)
   if (!cfg) return json({ error: `Unsupported provider: ${conn.provider_key}` }, 400)
-  // Google and Microsoft are public clients (no secret needed); HubSpot requires a secret
+  // Google is a public client (no secret needed); HubSpot requires a secret
   const requiresSecret = conn.provider_key === 'hubspot'
   if (!cfg.clientId || (requiresSecret && !cfg.clientSecret)) {
     return json({ error: 'OAuth client credentials not configured for this provider' }, 400)

@@ -12,7 +12,7 @@
  *   replyTo?: string,
  * }
  *
- * Supports provider_key: "gmail" (Google Gmail API) and "microsoft-365" (Microsoft Graph).
+ * Supports provider_key: "gmail" (Google Gmail API).
  * Decrypts the stored access token, auto-refreshes if expired, then sends.
  */
 
@@ -156,49 +156,6 @@ async function sendViaGmail(accessToken: string, payload: SendPayload): Promise<
   return { messageId: data.id as string }
 }
 
-// ── Microsoft Graph sender ─────────────────────────────────────────────
-
-async function sendViaMicrosoft(accessToken: string, payload: SendPayload): Promise<{ messageId: string }> {
-  const toRecipients = payload.to.split(',').map((e) => ({
-    emailAddress: { address: e.trim() },
-  }))
-  const ccRecipients = payload.cc
-    ? payload.cc.split(',').map((e) => ({ emailAddress: { address: e.trim() } }))
-    : []
-  const bccRecipients = payload.bcc
-    ? payload.bcc.split(',').map((e) => ({ emailAddress: { address: e.trim() } }))
-    : []
-
-  const message: Record<string, unknown> = {
-    subject: payload.subject,
-    body: {
-      contentType: payload.htmlBody ? 'HTML' : 'Text',
-      content: payload.htmlBody ?? payload.textBody ?? '',
-    },
-    toRecipients,
-  }
-  if (ccRecipients.length) message.ccRecipients = ccRecipients
-  if (bccRecipients.length) message.bccRecipients = bccRecipients
-  if (payload.replyTo) {
-    message.replyTo = [{ emailAddress: { address: payload.replyTo } }]
-  }
-
-  const res = await fetch('https://graph.microsoft.com/v1.0/me/sendMail', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${accessToken}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ message, saveToSentItems: true }),
-  })
-
-  if (res.status === 202 || res.status === 200) {
-    return { messageId: `ms-${Date.now()}` }
-  }
-  const data = await res.json() as Record<string, unknown>
-  const errObj = data.error as Record<string, unknown> | undefined
-  throw new Error(`Graph API error [${res.status}]: ${errObj?.message ?? JSON.stringify(data)}`)
-}
 
 // ── Main handler ───────────────────────────────────────────────────────
 
@@ -248,19 +205,13 @@ Deno.serve(async (req) => {
   }
 
   // Check provider is an email provider
-  if (conn.provider_key !== 'gmail' && conn.provider_key !== 'microsoft-365') {
+  if (conn.provider_key !== 'gmail') {
     return json({ error: `Provider "${conn.provider_key}" does not support email sending` }, 400)
   }
 
   try {
     const accessToken = await getAccessToken(admin, conn)
-    let result: { messageId: string }
-
-    if (conn.provider_key === 'gmail') {
-      result = await sendViaGmail(accessToken, payload)
-    } else {
-      result = await sendViaMicrosoft(accessToken, payload)
-    }
+    const result = await sendViaGmail(accessToken, payload)
 
     // Log success
     await admin.from('integration_action_runs').insert({

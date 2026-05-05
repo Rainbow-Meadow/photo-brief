@@ -1,7 +1,7 @@
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import { encryptJson as sharedEncryptJson, getTokenSecret } from '../_shared/integration-crypto.ts'
 
-type Provider = 'google' | 'microsoft' | 'hubspot'
+type Provider = 'google' | 'hubspot'
 
 type TokenJson = Record<string, unknown> & {
   access_token?: string
@@ -45,13 +45,12 @@ function providerFromUrl(req: Request): Provider | null {
   const parts = url.pathname.split('/').filter(Boolean)
   const fnIndex = parts.indexOf('integration-oauth-callback')
   const value = parts[fnIndex >= 0 ? fnIndex + 1 : parts.length - 1]
-  if (value === 'google' || value === 'microsoft' || value === 'hubspot') return value
+  if (value === 'google' || value === 'hubspot') return value
   return null
 }
 
 function providerKey(provider: Provider) {
   if (provider === 'google') return 'gmail'
-  if (provider === 'microsoft') return 'microsoft-365'
   return 'hubspot'
 }
 
@@ -67,19 +66,6 @@ function callbackConfig(provider: Provider, supabaseUrl: string) {
       clientId: Deno.env.get('GOOGLE_CLIENT_ID'),
       clientSecret: Deno.env.get('GOOGLE_CLIENT_SECRET'),
       redirectUri: Deno.env.get('GOOGLE_REDIRECT_URI') ?? `${fallbackBase}/integration-oauth-callback/google`,
-      appReturn: `${appUrl.replace(/\/$/, '')}/settings/integrations`,
-    }
-  }
-
-  if (provider === 'microsoft') {
-    const tenant = Deno.env.get('MICROSOFT_TENANT_ID') ?? 'common'
-    return {
-      providerKey: 'microsoft-365',
-      tokenUrl: `https://login.microsoftonline.com/${tenant}/oauth2/v2.0/token`,
-      profileUrl: 'https://graph.microsoft.com/v1.0/me',
-      clientId: Deno.env.get('MICROSOFT_CLIENT_ID'),
-      clientSecret: Deno.env.get('MICROSOFT_CLIENT_SECRET'),
-      redirectUri: Deno.env.get('MICROSOFT_REDIRECT_URI') ?? `${fallbackBase}/integration-oauth-callback/microsoft`,
       appReturn: `${appUrl.replace(/\/$/, '')}/settings/integrations`,
     }
   }
@@ -173,9 +159,6 @@ Deno.serve(async (req) => {
     form.set('client_secret', cfg.clientSecret)
   }
 
-  if (provider === 'microsoft' && stateRow.code_verifier) {
-    form.set('code_verifier', stateRow.code_verifier)
-  }
 
   const tokenRes = await fetch(cfg.tokenUrl, {
     method: 'POST',
@@ -207,7 +190,7 @@ Deno.serve(async (req) => {
     workspace_id: stateRow.workspace_id,
     provider_key: cfg.providerKey,
     status: 'connected',
-    display_name: provider === 'google' ? 'Gmail' : provider === 'microsoft' ? 'Microsoft 365 Outlook' : 'HubSpot',
+    display_name: provider === 'google' ? 'Gmail' : 'HubSpot',
     connected_account: connectedAccount,
     scopes: typeof tokenJson.scope === 'string' ? tokenJson.scope.split(' ') : [],
     config: {
@@ -237,5 +220,5 @@ Deno.serve(async (req) => {
     context: { provider, connectedAccount },
   })
 
-  return html('Connector connected', `${provider === 'google' ? 'Gmail' : provider === 'microsoft' ? 'Microsoft 365' : 'HubSpot'} is now connected to PhotoBrief.`, redirectTo)
+  return html('Connector connected', `${provider === 'google' ? 'Gmail' : 'HubSpot'} is now connected to PhotoBrief.`, redirectTo)
 })
