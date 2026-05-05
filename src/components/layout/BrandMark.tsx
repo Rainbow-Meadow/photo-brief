@@ -25,17 +25,14 @@ interface BrandMarkProps {
 
 const ALT = "PhotoBrief.ai";
 const MARK_SRC = "/brand/mark-color.png";
-const MICRO_MARK_SRC = "/brand/mark-micro.svg";
-const MICRO_MARK_THRESHOLD = 28;
 const WORDMARK = "PhotoBrief.ai";
 const WORDMARK_GRADIENT =
   "linear-gradient(135deg, #f6f0ff 0%, #e7d4ff 24%, #c99aff 52%, #9f73ff 78%, #7f55ff 100%)";
 
 function MarkImage({ size, withGlow, eager }: { size: number; withGlow: boolean; eager?: boolean }) {
-  const src = size <= MICRO_MARK_THRESHOLD ? MICRO_MARK_SRC : MARK_SRC;
   return (
     <img
-      src={src}
+      src={MARK_SRC}
       alt=""
       aria-hidden="true"
       className={cn(
