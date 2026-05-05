@@ -30,6 +30,7 @@ import { buildHowToJsonLd } from "@/hooks/seo/buildHowToJsonLd";
 import { buildFaqJsonLd } from "@/hooks/seo/buildFaqJsonLd";
 import { BrandMark } from "@/components/layout/BrandMark";
 import { howItWorksSteps } from "@/components/marketing/HowItWorksSteps";
+import { InteractiveHeroBriefAssembly } from "@/components/marketing/InteractiveHeroBriefAssembly";
 import { faqItems } from "@/features/help/content/faq";
 import { trackEvent } from "@/lib/analytics";
 import { signupCtaTarget, signupCtaLabel } from "@/config/access";
@@ -284,67 +285,7 @@ function HeroSection({ onOpenDemo }: { onOpenDemo: () => void }) {
 }
 
 function HeroBriefAssembly() {
-  return (
-    <div className="pb-command-panel pb-focus-corners pb-scanlines relative min-h-[560px] p-4 sm:p-6 lg:p-7">
-      <div className="relative z-10 flex items-center justify-between gap-4 border-b border-white/10 pb-4">
-        <div>
-          <p className="pb-eyebrow border-white/12 bg-white/[0.03]">Intake command view</p>
-          <h2 className="mt-3 text-2xl font-semibold tracking-tight text-white">Photos assemble into a brief.</h2>
-        </div>
-        <div className="hidden rounded-full border border-[hsl(var(--pb-mint)/0.5)] px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-[hsl(var(--pb-mint))] sm:block">Ready</div>
-      </div>
-
-      <div className="relative z-10 mt-6 grid gap-5 lg:grid-cols-[0.78fr_1fr]">
-        <div className="rounded-[1.4rem] border border-white/12 bg-black/24 p-4">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-[0.16em] text-white/48">Customer phone</span>
-            <span className="rounded-full bg-[hsl(var(--pb-violet)/0.18)] px-2.5 py-1 text-xs font-bold text-[hsl(var(--pb-lavender))]">3 / 4</span>
-          </div>
-          <div className="mt-4 overflow-hidden rounded-[1.25rem] border border-white/12 bg-[hsl(var(--pb-ink))]">
-            <img src={pileCloseup} alt="Customer-submitted garage cleanup photo" className="h-56 w-full object-cover" loading="eager" />
-          </div>
-          <div className="mt-4 rounded-2xl border border-[hsl(var(--pb-mint)/0.35)] bg-[hsl(var(--pb-mint)/0.07)] p-3">
-            <p className="flex items-center gap-2 text-sm font-bold text-white"><ScanLine className="h-4 w-4 text-[hsl(var(--pb-mint))]" /> Main pile close-up</p>
-            <p className="mt-1 text-sm text-white/58">Stand back enough to show the full amount.</p>
-            <p className="mt-3 inline-flex rounded-full bg-[hsl(var(--pb-mint)/0.14)] px-2.5 py-1 text-xs font-bold text-[hsl(var(--pb-mint))]">Looks usable</p>
-          </div>
-        </div>
-
-        <div className="relative">
-          <div className="pb-route-line hidden lg:block" />
-          <div className="grid grid-cols-2 gap-3">
-            {loosePhotos.map((photo, index) => (
-              <figure key={photo.label} className="pb-photo-frame relative" data-status={index === 2 ? "warn" : "ok"}>
-                <img src={photo.src} alt={`${photo.label} submission example`} className="h-28 w-full object-cover sm:h-32" loading={index === 0 ? "eager" : "lazy"} />
-                <figcaption className="flex items-center justify-between gap-2 bg-black/58 px-3 py-2 text-xs font-semibold text-white/78">
-                  <span>{photo.label}</span>
-                  <span className={index === 2 ? "text-[hsl(var(--pb-lavender))]" : "text-[hsl(var(--pb-mint))]"}>{photo.status}</span>
-                </figcaption>
-              </figure>
-            ))}
-          </div>
-
-          <div className="pb-brief-paper mt-4 rounded-[1.4rem] p-4 sm:p-5">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-black/44">Brief packet</p>
-                <h3 className="mt-1 text-xl font-black tracking-tight">Garage cleanout quote</h3>
-              </div>
-              <span className="pb-stamp rounded-full px-3 py-1">Quote-ready</span>
-            </div>
-            <div className="mt-4 grid gap-2 text-sm text-black/68 sm:grid-cols-3">
-              <BriefMetric label="Shots" value="4/4" />
-              <BriefMetric label="Issue" value="Appliance" />
-              <BriefMetric label="Access" value="Ground" />
-            </div>
-            <p className="mt-4 rounded-2xl bg-black/[0.055] p-3 text-sm font-medium leading-6 text-black/72">
-              Single-car garage cleanout, about half truckload. Ground-level access. Appliance handling likely needed.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  return <InteractiveHeroBriefAssembly />;
 }
 
 function BriefMetric({ label, value }: { label: string; value: string }) {
