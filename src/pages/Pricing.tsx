@@ -52,107 +52,114 @@ export default function PricingPage() {
         jsonLd={jsonLd}
         breadcrumbs={[{ name: "Home", path: "/" }, { name: "Pricing", path: "/pricing" }]}
       />
-      <section className="relative overflow-hidden">
-        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[620px] bg-ambient-future" />
-        <div aria-hidden className="future-grid pointer-events-none absolute inset-0 -z-10 opacity-70" />
-        <div className="pb-container pb-section text-center animate-lift-in">
-          <p className="text-eyebrow">Founding Partner Beta Pricing</p>
-          <h1 className="text-display mt-3 text-foreground">Apply now. Lock in launch-year savings if accepted.</h1>
-          <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-muted-foreground sm:text-xl">
+
+      {/* Hero */}
+      <section className="relative isolate overflow-hidden -mt-[4.5rem] pt-[5.5rem] sm:-mt-[5rem] sm:pt-[6rem]">
+        <div className="pb-lens-field" />
+        <div className="pb-container pb-section text-center">
+          <span className="pb-eyebrow"><Sparkles className="h-3.5 w-3.5" /> Founding Partner Beta Pricing</span>
+          <h1 className="pb-section-title mx-auto mt-4 max-w-3xl text-white">Apply now. Lock in launch-year savings if accepted.</h1>
+          <p className="pb-copy mx-auto mt-5 max-w-2xl text-base sm:text-xl">
             PhotoBrief.ai is invite-only while we onboard founding partners. Accepted beta businesses get 90 days free, concierge setup, direct support, and 50% off their first year after launch.
           </p>
-          <p className="mt-3 inline-flex items-center gap-1.5 rounded-full glass px-3 py-1 text-sm font-medium text-primary">
+          <p className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-[hsl(var(--pb-mint)/0.4)] bg-[hsl(var(--pb-mint)/0.08)] px-3 py-1 text-sm font-medium text-[hsl(var(--pb-mint))]">
             <ShieldCheck className="h-4 w-4" /> First-pass follow-up photos do not consume credits.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <Button asChild size="xl" className="rounded-full">
+            <Button asChild size="xl" className="rounded-full bg-[hsl(var(--pb-violet))] text-[hsl(var(--pb-night))] hover:bg-[hsl(var(--pb-lavender))]">
               <NavLink to={signupCtaTarget()}>
                 {signupCtaLabel()} <ArrowRight className="ml-1 h-4 w-4" />
               </NavLink>
             </Button>
-            <Button asChild size="xl" variant="glass" className="rounded-full">
+            <Button asChild size="xl" variant="outline" className="rounded-full border-white/16 bg-white/[0.03] text-white hover:bg-white/10 hover:text-white">
               <NavLink to="/founding-partner-beta">View beta program</NavLink>
             </Button>
           </div>
         </div>
       </section>
 
+      {/* Beta offer cards */}
       <section className="pb-section-tight">
         <div className="pb-container grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {betaOffer.map((item) => {
             const Icon = item.icon;
             return (
-              <div key={item.label} className="glass-strong magnetic-card rounded-[1.75rem] p-5">
-                <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+              <div key={item.label} className="pb-card rounded-[1.75rem] p-5">
+                <span className="flex h-11 w-11 items-center justify-center rounded-2xl border border-[hsl(var(--pb-line-strong))] bg-[hsl(var(--pb-ink))] text-[hsl(var(--pb-lavender))]">
                   <Icon className="h-5 w-5" />
                 </span>
-                <p className="mt-4 text-sm font-semibold text-foreground">{item.label}</p>
-                <p className="mt-1 text-xs leading-5 text-muted-foreground">{item.copy}</p>
+                <p className="mt-4 text-sm font-semibold text-white">{item.label}</p>
+                <p className="mt-1 text-xs leading-5 text-[hsl(var(--pb-muted))]">{item.copy}</p>
               </div>
             );
           })}
         </div>
       </section>
 
+      {/* Intake modes */}
       <section className="pb-section-tight">
         <div className="pb-container grid gap-4 md:grid-cols-2">
           {intakeModes.map((mode) => {
             const Icon = mode.icon;
             return (
-              <article key={mode.title} className="glass-strong magnetic-card rounded-[2rem] p-6">
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary">
+              <article key={mode.title} className="pb-card rounded-[2rem] p-6">
+                <span className="pb-eyebrow">
                   <Icon className="h-3.5 w-3.5" /> {mode.title}
                 </span>
-                <h2 className="mt-4 text-2xl font-semibold tracking-tight text-foreground">{mode.label}</h2>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">{mode.copy}</p>
+                <h2 className="mt-4 text-2xl font-semibold tracking-tight text-white">{mode.label}</h2>
+                <p className="pb-copy mt-2 text-sm leading-6">{mode.copy}</p>
               </article>
             );
           })}
         </div>
       </section>
 
+      {/* Pricing cards */}
       <section className="pb-section">
         <div className="pb-container-narrow pb-8 text-center">
-          <p className="text-eyebrow">Public launch plans</p>
-          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+          <span className="pb-eyebrow">Public launch plans</span>
+          <h2 className="pb-section-title mt-4 text-white">
             These are the planned tiers after beta.
           </h2>
-          <p className="mt-3 text-sm leading-6 text-muted-foreground sm:text-base">
+          <p className="pb-copy mt-3 text-sm sm:text-base">
             During beta, pricing is handled through the Founding Partner program. Apply now if you want early access and launch-year savings.
           </p>
         </div>
         <PricingCardGrid />
       </section>
 
-      <section className="relative overflow-hidden">
-        <div aria-hidden className="pointer-events-none absolute inset-0 bg-ambient-future opacity-60" />
-        <div className="pb-container-narrow pb-section">
+      {/* FAQ */}
+      <section className="pb-section">
+        <div className="pb-container-narrow">
           <div className="text-center">
-            <p className="text-eyebrow">FAQ</p>
-            <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+            <span className="pb-eyebrow">FAQ</span>
+            <h2 className="pb-section-title mt-4 text-white">
               Questions, answered.
             </h2>
           </div>
-          <Accordion type="single" collapsible className="mt-8 glass-strong rounded-2xl px-4 sm:px-6">
+          <Accordion type="single" collapsible className="mt-8 pb-command-panel rounded-2xl px-4 sm:px-6">
             {businessFaqs.map((f) => (
-              <AccordionItem key={f.id} value={f.id}>
-                <AccordionTrigger className="text-left">{f.q}</AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">{f.a}</AccordionContent>
+              <AccordionItem key={f.id} value={f.id} className="border-white/10">
+                <AccordionTrigger className="text-left text-white/90">{f.q}</AccordionTrigger>
+                <AccordionContent className="text-[hsl(var(--pb-muted))]">{f.a}</AccordionContent>
               </AccordionItem>
             ))}
           </Accordion>
 
-          <div className="glass-strong magnetic-card mt-12 flex flex-col items-center gap-3 rounded-[2rem] p-8 text-center shadow-glass-lg">
-            <Sparkles className="h-8 w-8 text-primary" />
-            <p className="text-base font-semibold text-foreground">Become a founding partner before public launch.</p>
-            <p className="max-w-md text-sm text-muted-foreground">
-              Get early access, hands-on setup, feature influence, and first-year savings in exchange for using PhotoBrief in real workflows and sharing honest feedback.
-            </p>
-            <Button asChild size="xl" className="mt-2 rounded-full">
-              <NavLink to={signupCtaTarget()}>
-                {signupCtaLabel()} <ArrowRight className="ml-1 h-4 w-4" />
-              </NavLink>
-            </Button>
+          <div className="relative mt-12 overflow-hidden rounded-[2.4rem] border border-[hsl(var(--pb-lavender)/0.35)] bg-[hsl(var(--pb-panel)/0.84)] p-8 text-center shadow-[0_36px_100px_-64px_hsl(var(--pb-violet))]">
+            <div className="pb-lens-field" />
+            <div className="relative z-10 flex flex-col items-center gap-3">
+              <Sparkles className="h-8 w-8 text-[hsl(var(--pb-lavender))]" />
+              <p className="text-base font-semibold text-white">Become a founding partner before public launch.</p>
+              <p className="pb-copy max-w-md text-sm">
+                Get early access, hands-on setup, feature influence, and first-year savings in exchange for using PhotoBrief in real workflows and sharing honest feedback.
+              </p>
+              <Button asChild size="xl" className="mt-2 rounded-full bg-[hsl(var(--pb-violet))] text-[hsl(var(--pb-night))] hover:bg-[hsl(var(--pb-lavender))]">
+                <NavLink to={signupCtaTarget()}>
+                  {signupCtaLabel()} <ArrowRight className="ml-1 h-4 w-4" />
+                </NavLink>
+              </Button>
+            </div>
           </div>
         </div>
       </section>

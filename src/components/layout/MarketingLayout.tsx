@@ -39,7 +39,7 @@ export function MarketingLayout() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
+    <div className="pb-landing flex min-h-screen flex-col">
       <div className="sticky top-0 z-40 px-3 pt-3 sm:px-6 sm:pt-4 pt-safe">
         <header className="mx-auto flex h-14 w-full max-w-7xl items-center justify-between gap-4 rounded-full glass-nav px-3 sm:h-16 sm:px-5">
           <NavLink to="/" aria-label="PhotoBrief home" className="flex items-center pl-1">
@@ -52,7 +52,7 @@ export function MarketingLayout() {
               <a
                 key={l.href}
                 href={l.href}
-                className="rounded-full px-3 py-1.5 text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground"
+                className="rounded-full px-3 py-1.5 text-white/62 transition-colors hover:bg-white/7 hover:text-white"
               >
                 {l.label}
               </a>
@@ -64,8 +64,8 @@ export function MarketingLayout() {
                 className={({ isActive }) =>
                   `rounded-full px-3 py-1.5 transition-colors ${
                     isActive
-                      ? "bg-primary/10 text-primary"
-                      : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"
+                      ? "bg-[hsl(var(--pb-lavender)/0.12)] text-[hsl(var(--pb-lavender))]"
+                      : "text-white/62 hover:bg-white/7 hover:text-white"
                   }`
                 }
               >
@@ -167,17 +167,17 @@ export function MarketingLayout() {
       </main>
 
       <footer className="pb-safe">
-        <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-          <BrandMark variant="horizontal" tone="auto" size={28} className="opacity-80" />
+        <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-8 text-sm text-[hsl(var(--pb-muted))] sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+          <BrandMark variant="horizontal" tone="light" size={28} className="opacity-80" />
           <nav aria-label="Footer" className="flex flex-wrap items-center gap-4">
-            <NavLink to="/founding-partner-beta" className="hover:text-foreground transition-colors">Founding Beta</NavLink>
-            <NavLink to="/pricing" className="hover:text-foreground transition-colors">Pricing</NavLink>
-            <NavLink to="/help" className="hover:text-foreground transition-colors">Help</NavLink>
-            <NavLink to="/for-ai-agents" className="hover:text-foreground transition-colors">For AI agents</NavLink>
-            <NavLink to="/privacy" className="hover:text-foreground transition-colors">Privacy</NavLink>
-            <NavLink to="/terms" className="hover:text-foreground transition-colors">Terms</NavLink>
+            <NavLink to="/founding-partner-beta" className="hover:text-white transition-colors">Founding Beta</NavLink>
+            <NavLink to="/pricing" className="hover:text-white transition-colors">Pricing</NavLink>
+            <NavLink to="/help" className="hover:text-white transition-colors">Help</NavLink>
+            <NavLink to="/for-ai-agents" className="hover:text-white transition-colors">For AI agents</NavLink>
+            <NavLink to="/privacy" className="hover:text-white transition-colors">Privacy</NavLink>
+            <NavLink to="/terms" className="hover:text-white transition-colors">Terms</NavLink>
           </nav>
-          <p className="text-xs text-muted-foreground/70">© {new Date().getFullYear()} PhotoBrief.ai</p>
+          <p className="text-xs text-white/36">© {new Date().getFullYear()} PhotoBrief.ai</p>
         </div>
       </footer>
     </div>
