@@ -16,7 +16,7 @@ const ROWS: Array<{ feature: string; values: Array<boolean | string> }> = [
 function Cell({ value }: { value: boolean | string }) {
   if (value === true) {
     return (
-      <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-primary">
+      <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[hsl(var(--pb-mint)/0.12)] text-[hsl(var(--pb-mint))]">
         <Check className="h-4 w-4" />
         <span className="sr-only">Yes</span>
       </span>
@@ -24,39 +24,38 @@ function Cell({ value }: { value: boolean | string }) {
   }
   if (value === false) {
     return (
-      <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-muted text-muted-foreground">
+      <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/8 text-white/30">
         <Minus className="h-4 w-4" />
         <span className="sr-only">No</span>
       </span>
     );
   }
-  return <span className="text-xs font-medium uppercase text-muted-foreground">{value}</span>;
+  return <span className="text-xs font-medium uppercase text-[hsl(var(--pb-muted))]">{value}</span>;
 }
 
 export function ComparisonTable() {
   return (
-    <section aria-labelledby="comparison-heading" className="relative">
-      <div aria-hidden className="pointer-events-none absolute inset-0 bg-ambient-future opacity-40" />
-      <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+    <section aria-labelledby="comparison-heading" className="pb-section">
+      <div className="pb-container">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="text-eyebrow">Comparison</p>
-          <h2 id="comparison-heading" className="mt-3 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+          <span className="pb-eyebrow">Comparison</span>
+          <h2 id="comparison-heading" className="pb-section-title mt-4 text-white">
             PhotoBrief vs. generic intake tools
           </h2>
-          <p className="mt-4 text-base text-muted-foreground">
+          <p className="pb-copy mt-4 text-base">
             Forms collect text. PhotoBrief collects the visual proof a business actually needs.
           </p>
         </div>
 
-        <div className="mt-10 overflow-x-auto rounded-[1.75rem] glass-strong p-2">
-          <table className="mx-auto w-full max-w-5xl border-separate border-spacing-0 text-sm">
+        <div className="mt-10 overflow-x-auto rounded-[1.75rem] pb-command-panel p-2">
+          <table className="relative z-10 mx-auto w-full max-w-5xl border-separate border-spacing-0 text-sm">
             <thead>
               <tr>
-                <th scope="col" className="hairline-b sticky left-0 bg-background/80 px-4 py-3 text-left font-semibold text-foreground backdrop-blur">
+                <th scope="col" className="border-b border-white/10 sticky left-0 bg-[hsl(var(--pb-panel))] px-4 py-3 text-left font-semibold text-white backdrop-blur">
                   Capability
                 </th>
                 {COLUMNS.map((c, i) => (
-                  <th key={c} scope="col" className={`hairline-b px-4 py-3 text-center font-semibold ${i === 0 ? "text-primary" : "text-foreground"}`}>
+                  <th key={c} scope="col" className={`border-b border-white/10 px-4 py-3 text-center font-semibold ${i === 0 ? "text-[hsl(var(--pb-lavender))]" : "text-white"}`}>
                     {c}
                   </th>
                 ))}
@@ -65,11 +64,11 @@ export function ComparisonTable() {
             <tbody>
               {ROWS.map((row) => (
                 <tr key={row.feature}>
-                  <th scope="row" className="hairline-b sticky left-0 bg-background/80 px-4 py-3 text-left font-medium text-foreground backdrop-blur">
+                  <th scope="row" className="border-b border-white/10 sticky left-0 bg-[hsl(var(--pb-panel))] px-4 py-3 text-left font-medium text-white backdrop-blur">
                     {row.feature}
                   </th>
                   {row.values.map((v, i) => (
-                    <td key={i} className="hairline-b px-4 py-3 text-center"><Cell value={v} /></td>
+                    <td key={i} className="border-b border-white/10 px-4 py-3 text-center"><Cell value={v} /></td>
                   ))}
                 </tr>
               ))}

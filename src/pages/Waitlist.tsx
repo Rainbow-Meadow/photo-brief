@@ -183,7 +183,7 @@ export default function WaitlistPage() {
                 <p className="mt-2 text-sm text-[hsl(var(--pb-muted))]">
                   Thanks — we'll review your request and reach out if PhotoBrief is a fit for the Founding Partner Beta.
                 </p>
-                <Button asChild variant="outline" className="mt-6 rounded-full border-white/16 bg-white/[0.03] text-white hover:bg-white/10 hover:text-white">
+                <Button asChild variant="pb-secondary" className="mt-6">
                   <NavLink to="/founding-partner-beta">View the beta program</NavLink>
                 </Button>
               </div>
@@ -200,7 +200,7 @@ export default function WaitlistPage() {
                 <p className="mt-2 text-sm text-[hsl(var(--pb-muted))]">
                   We've got your details. We'll reach out as soon as a spot opens up for your workspace.
                 </p>
-                <Button asChild variant="outline" className="mt-6 rounded-full border-white/16 bg-white/[0.03] text-white hover:bg-white/10 hover:text-white">
+                <Button asChild variant="pb-secondary" className="mt-6">
                   <NavLink to="/founding-partner-beta">View the beta program</NavLink>
                 </Button>
               </div>
@@ -275,7 +275,7 @@ export default function WaitlistPage() {
                     <p className="text-xs text-[hsl(var(--pb-muted))]">
                       Limited spots. We typically reply within a few days.
                     </p>
-                    <Button type="submit" size="lg" disabled={submitting} className="rounded-full bg-[hsl(var(--pb-violet))] text-[hsl(var(--pb-night))] hover:bg-[hsl(var(--pb-lavender))]">
+                    <Button type="submit" size="lg" disabled={submitting} variant="pb-primary">
                       {submitting ? "Submitting…" : "Apply to join"}
                     </Button>
                   </div>
