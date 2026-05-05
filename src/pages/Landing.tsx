@@ -349,7 +349,7 @@ function ComparisonSection({ mode, onModeChange }: { mode: "messy" | "clean"; on
               key={item.id}
               type="button"
               onClick={() => onModeChange(item.id as "messy" | "clean")}
-              className={`flex-1 rounded-full px-4 py-3 text-sm font-extrabold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--pb-lavender))] ${mode === item.id ? "bg-[hsl(var(--pb-lavender))] text-[hsl(var(--pb-night))]" : "text-white/58 hover:text-white"}`}
+              className={`flex-1 rounded-full px-4 py-2.5 text-sm font-extrabold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--pb-lavender))] sm:py-3 ${mode === item.id ? "bg-[hsl(var(--pb-lavender))] text-[hsl(var(--pb-night))]" : "text-white/58 hover:text-white"}`}
             >
               {item.label}
             </button>
@@ -357,16 +357,16 @@ function ComparisonSection({ mode, onModeChange }: { mode: "messy" | "clean"; on
         </div>
 
         <div className="mt-8 grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
-          <div className="pb-command-panel p-5 sm:p-6">
+          <div className="pb-command-panel p-4 sm:p-5 md:p-6">
             <div className="relative z-10 flex items-center justify-between gap-3 border-b border-white/10 pb-4">
               <p className="text-sm font-extrabold uppercase tracking-[0.18em] text-white/48">{isClean ? "Structured intake" : "Scattered intake"}</p>
               <span className={`rounded-full px-3 py-1 text-xs font-black ${isClean ? "bg-[hsl(var(--pb-mint)/0.12)] text-[hsl(var(--pb-mint))]" : "bg-[hsl(var(--pb-lavender)/0.12)] text-[hsl(var(--pb-lavender))]"}`}>{isClean ? "Ready" : "Messy"}</span>
             </div>
             <div className="relative z-10 mt-5 grid gap-3">
               {signals.map((signal, index) => (
-                <div key={signal} className={`flex items-center gap-3 rounded-2xl border p-4 ${isClean ? "border-[hsl(var(--pb-mint)/0.24)] bg-[hsl(var(--pb-mint)/0.055)]" : "border-white/10 bg-white/[0.035]"}`}>
-                  <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-black ${isClean ? "bg-[hsl(var(--pb-mint)/0.14)] text-[hsl(var(--pb-mint))]" : "bg-[hsl(var(--pb-lavender)/0.13)] text-[hsl(var(--pb-lavender))]"}`}>{index + 1}</span>
-                  <p className="font-semibold text-white/82">{signal}</p>
+                <div key={signal} className={`flex items-center gap-3 rounded-2xl border p-3 sm:p-4 ${isClean ? "border-[hsl(var(--pb-mint)/0.24)] bg-[hsl(var(--pb-mint)/0.055)]" : "border-white/10 bg-white/[0.035]"}`}>
+                  <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-black sm:h-8 sm:w-8 ${isClean ? "bg-[hsl(var(--pb-mint)/0.14)] text-[hsl(var(--pb-mint))]" : "bg-[hsl(var(--pb-lavender)/0.13)] text-[hsl(var(--pb-lavender))]"}`}>{index + 1}</span>
+                  <p className="text-sm font-semibold text-white/82 sm:text-base">{signal}</p>
                 </div>
               ))}
             </div>
