@@ -549,7 +549,7 @@ function PricingPathSection() {
           {pricingPath.map((tier) => (
             <article key={tier.label} className="pb-card p-5 sm:p-6 lg:p-8">
               <span className="pb-eyebrow border-white/12 bg-white/[0.03]">{tier.label}</span>
-              <h3 className="mt-4 text-2xl font-semibold tracking-tight text-white sm:mt-5 sm:text-3xl">{tier.title}</h3>
+              <h3 className="mt-4 text-2xl font-semibold tracking-tight text-white sm:text-3xl">{tier.title}</h3>
               <p className="pb-copy mt-2.5 text-sm leading-6 sm:mt-3 sm:text-base sm:leading-7">{tier.body}</p>
               <ul className="mt-5 grid gap-2.5 sm:mt-6 sm:gap-3">
                 {tier.bullets.map((bullet) => (
@@ -574,9 +574,9 @@ function FinalCta() {
           <div className="pb-lens-field" />
           <div className="relative z-10 mx-auto max-w-4xl">
             <BrandMark variant="horizontal" tone="light" size={48} className="justify-center" withGlow />
-            <h2 className="pb-section-title mt-6 text-white sm:mt-8">Send one link. Get a usable brief.</h2>
-            <p className="pb-copy mx-auto mt-4 max-w-2xl text-base sm:mt-5 sm:text-lg">Give customers a clear path, give your team a clean packet, and stop turning every quote into a photo scavenger hunt.</p>
-            <div className="mt-6 flex flex-col justify-center gap-2.5 sm:mt-8 sm:flex-row sm:gap-3">
+            <h2 className="pb-section-title mt-5 text-white">Send one link. Get a usable brief.</h2>
+            <p className="pb-copy mx-auto mt-4 max-w-2xl text-base sm:text-lg">Give customers a clear path, give your team a clean packet, and stop turning every quote into a photo scavenger hunt.</p>
+            <div className="mt-6 flex flex-col justify-center gap-2.5 sm:flex-row sm:gap-3">
               <Button asChild size="xl" className="rounded-full bg-[hsl(var(--pb-violet))] px-8 text-[hsl(var(--pb-night))] hover:bg-[hsl(var(--pb-lavender))]">
                 <NavLink to={signupCtaTarget()} onClick={() => trackEvent("cta_click", { location: "final", label: "primary" })}>
                   {signupCtaLabel()} <ArrowRight className="ml-1 h-4 w-4" />
@@ -586,7 +586,7 @@ function FinalCta() {
                 <NavLink to="/pricing">See plans</NavLink>
               </Button>
             </div>
-            <p className="mt-4 text-xs font-medium text-white/46 sm:mt-5 sm:text-sm">Customers do not need an account or app to complete a PhotoBrief request.</p>
+            <p className="mt-4 text-xs font-medium text-white/46 sm:text-sm">Customers do not need an account or app to complete a PhotoBrief request.</p>
           </div>
         </div>
       </div>
