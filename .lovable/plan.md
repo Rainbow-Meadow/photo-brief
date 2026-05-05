@@ -1,32 +1,66 @@
 
-# Seamless Site-Wide Visual Consistency
+# Unified Page Spacing Schema
 
-The landing page now has a unified, borderless dark aesthetic with a smooth gradient background. Several other pages still use visible card borders, alternating backgrounds, and hard dividers that break the seamless feel.
+The landing page already uses a consistent set of utility classes (`pb-container`, `pb-section`, `pb-section-tight`) defined in `index.css`. Other marketing pages (Pricing, Privacy, Terms, Waitlist, BetaPortfolio, ForAiAgents, BetaGuidePage) use ad-hoc Tailwind with inconsistent max-widths (`max-w-3xl` to `max-w-7xl`), padding (`px-4 sm:px-6 lg:px-8`), and section spacing (`py-14 sm:py-20`, `py-16`, `pt-16 lg:pt-20`, etc.).
 
-## Changes
+## The master schema
 
-### 1. Footer -- remove border and background tint
+Already defined in `index.css`:
 
-In `MarketingLayout.tsx`, the footer has `border-t bg-muted/30` creating a visible horizontal line and a different background band. Remove both so the footer blends into the page background.
+```
+pb-container  → width: min(100% - 2rem, 1180px); margin-inline: auto;
+               @sm: min(100% - 3rem, 1180px)
+pb-section    → padding-block: clamp(3.5rem, 7vw, 7rem); position: relative;
+pb-section-tight → padding-block: clamp(2.5rem, 4.5vw, 4rem); position: relative;
+```
 
-### 2. Privacy page -- soften card borders
+Add one new utility for narrower content pages (Privacy, Terms, FAQ):
 
-In `Privacy.tsx`, all content cards use `border bg-card/80` with hard rounded borders, making each section look boxed. Replace with subtle `border-white/[0.06]` (matching the landing page glass aesthetic) so cards feel embedded in the page rather than floating on it. Same for the hero header card and the contact card.
+```
+pb-container-narrow → width: min(100% - 2rem, 860px); margin-inline: auto;
+                      @sm: min(100% - 3rem, 860px)
+```
 
-### 3. Terms page -- same card softening
+## Pages to refactor
 
-`Terms.tsx` uses the same card pattern as Privacy. Apply identical treatment: soften borders to `border-white/[0.06]` and reduce the shadow intensity.
+### Pricing (`src/pages/Pricing.tsx`)
+- Hero: replace `mx-auto max-w-4xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8` with `pb-container pb-section`
+- Beta offer grid: replace `px-4 pb-8 pt-4 sm:px-6 lg:px-8` + `mx-auto max-w-6xl` with `pb-container pb-section-tight`
+- Intake modes: same pattern
+- Plan cards section: same pattern
+- FAQ section: replace `mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8` with `pb-container-narrow pb-section`
 
-### 4. Badge chips on Privacy/Terms
+### Privacy (`src/pages/Privacy.tsx`)
+- Hero card section: replace `mx-auto max-w-5xl px-4 pb-10 pt-16 sm:px-6 lg:px-8 lg:pt-20` with `pb-container-narrow pb-section`
+- Content cards section: replace `mx-auto max-w-5xl px-4 pb-16 sm:px-6 lg:px-8 lg:pb-24` with `pb-container-narrow pb-section`
 
-The eyebrow badge chips use `border bg-background/70` which is visibly lighter than the ambient. Shift to `border-white/[0.08] bg-white/[0.04]` for a subtle glass look matching the landing page chips.
+### Terms (`src/pages/Terms.tsx`)
+- Same as Privacy — apply identical refactor
+
+### Waitlist (`src/pages/Waitlist.tsx`)
+- Main grid: replace `mx-auto max-w-6xl px-4 py-16 sm:py-20` with `pb-container pb-section`
+
+### ForAiAgents (`src/pages/ForAiAgents.tsx`)
+- All sections: replace various `mx-auto max-w-Xyl px-4 py-16 sm:px-6 lg:px-8 lg:py-20` with `pb-container pb-section`
+
+### BetaPortfolio (`src/pages/BetaPortfolio.tsx`)
+- Remove leftover `border-y bg-muted/25` on one section (violates seamless rule)
+- Normalize all sections to use `pb-container pb-section`
+
+### BetaGuidePage (`src/features/help/pages/BetaGuidePage.tsx`)
+- Normalize badge chip to match `border-white/[0.08] bg-white/[0.04]` glass style
 
 ## Files affected
 
 | File | Change |
 |------|--------|
-| `src/components/layout/MarketingLayout.tsx` | Footer: remove `border-t bg-muted/30` |
-| `src/pages/Privacy.tsx` | Soften card borders and badge chip |
-| `src/pages/Terms.tsx` | Same border softening as Privacy |
+| `src/index.css` | Add `pb-container-narrow` utility |
+| `src/pages/Pricing.tsx` | Replace ad-hoc spacing with schema classes |
+| `src/pages/Privacy.tsx` | Replace ad-hoc spacing with schema classes |
+| `src/pages/Terms.tsx` | Replace ad-hoc spacing with schema classes |
+| `src/pages/Waitlist.tsx` | Replace ad-hoc spacing with schema classes |
+| `src/pages/ForAiAgents.tsx` | Replace ad-hoc spacing with schema classes |
+| `src/pages/BetaPortfolio.tsx` | Normalize spacing + remove border-y divider |
+| `src/features/help/pages/BetaGuidePage.tsx` | Normalize badge chip style |
 
-No structural or layout changes -- purely border/background refinements to eliminate visual "seams" between sections.
+Result: every marketing page uses the same 4 utility classes for layout, creating predictable, uniform spacing site-wide.

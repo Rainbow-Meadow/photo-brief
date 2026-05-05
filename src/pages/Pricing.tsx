@@ -55,7 +55,7 @@ export default function PricingPage() {
       <section className="relative overflow-hidden">
         <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[620px] bg-ambient-future" />
         <div aria-hidden className="future-grid pointer-events-none absolute inset-0 -z-10 opacity-70" />
-        <div className="relative mx-auto max-w-4xl px-4 py-16 text-center sm:px-6 sm:py-20 lg:px-8 animate-lift-in">
+        <div className="pb-container pb-section text-center animate-lift-in">
           <p className="text-eyebrow">Founding Partner Beta Pricing</p>
           <h1 className="text-display mt-3 text-foreground">Apply now. Lock in launch-year savings if accepted.</h1>
           <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-muted-foreground sm:text-xl">
@@ -77,8 +77,8 @@ export default function PricingPage() {
         </div>
       </section>
 
-      <section className="relative px-4 pb-8 pt-4 sm:px-6 lg:px-8">
-        <div className="mx-auto grid max-w-6xl gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <section className="pb-section-tight">
+        <div className="pb-container grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {betaOffer.map((item) => {
             const Icon = item.icon;
             return (
@@ -94,8 +94,8 @@ export default function PricingPage() {
         </div>
       </section>
 
-      <section className="relative px-4 pb-8 pt-2 sm:px-6 lg:px-8">
-        <div className="mx-auto grid max-w-5xl gap-4 md:grid-cols-2">
+      <section className="pb-section-tight">
+        <div className="pb-container grid gap-4 md:grid-cols-2">
           {intakeModes.map((mode) => {
             const Icon = mode.icon;
             return (
@@ -111,8 +111,8 @@ export default function PricingPage() {
         </div>
       </section>
 
-      <section className="relative px-4 pb-16 pt-4 sm:px-6 lg:px-8 lg:pb-20">
-        <div className="mx-auto max-w-3xl pb-8 text-center">
+      <section className="pb-section">
+        <div className="pb-container-narrow pb-8 text-center">
           <p className="text-eyebrow">Public launch plans</p>
           <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
             These are the planned tiers after beta.
@@ -124,9 +124,9 @@ export default function PricingPage() {
         <PricingCardGrid />
       </section>
 
-      <section className="relative overflow-hidden bg-background">
+      <section className="relative overflow-hidden">
         <div aria-hidden className="pointer-events-none absolute inset-0 bg-ambient-future opacity-60" />
-        <div className="relative mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="pb-container-narrow pb-section">
           <div className="text-center">
             <p className="text-eyebrow">FAQ</p>
             <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">

@@ -166,8 +166,8 @@ export default function BetaPortfolioPage() {
         <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[780px] bg-ambient-future" />
         <div aria-hidden className="future-grid pointer-events-none absolute inset-0 opacity-45" />
 
-        <section className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
-          <div className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
+        <section className="pb-section">
+          <div className="pb-container grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
             <div className="animate-lift-in">
               <div className="mb-7 inline-flex max-w-full rounded-[2rem] border border-primary/20 bg-card/78 p-4 shadow-glow backdrop-blur-xl sm:p-5">
                 <BrandMark variant="horizontal" tone="auto" size={58} eager withGlow />
@@ -216,8 +216,8 @@ export default function BetaPortfolioPage() {
           </div>
         </section>
 
-        <section id="portfolio" className="relative border-y bg-background/82 py-14 backdrop-blur-sm sm:py-18">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <section id="portfolio" className="pb-section">
+          <div className="pb-container">
             <div className="mx-auto max-w-3xl text-center">
               <p className="text-eyebrow">Product portfolio</p>
               <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground sm:text-5xl">One workflow, all core surfaces.</h2>
@@ -231,8 +231,8 @@ export default function BetaPortfolioPage() {
           </div>
         </section>
 
-        <section className="relative py-14 sm:py-20">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <section className="pb-section">
+          <div className="pb-container">
             <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
               {coreSurfaces.map((surface) => {
                 const Icon = surface.icon;
@@ -251,9 +251,9 @@ export default function BetaPortfolioPage() {
           </div>
         </section>
 
-        <section className="relative overflow-hidden bg-background py-14 sm:py-20">
+        <section className="relative overflow-hidden pb-section">
           <div aria-hidden className="pointer-events-none absolute inset-0 bg-ambient-sky opacity-60" />
-          <div className="relative mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[0.85fr_1.15fr] lg:items-center lg:px-8">
+          <div className="pb-container relative grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
             <div>
               <p className="text-eyebrow">Core surface gallery</p>
               <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground sm:text-5xl">Show reviewers the actual product motion, not just a claim.</h2>
@@ -265,8 +265,8 @@ export default function BetaPortfolioPage() {
           </div>
         </section>
 
-        <section className="relative border-y bg-muted/25 py-14 sm:py-20">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <section className="pb-section">
+          <div className="pb-container">
             <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
               <div>
                 <p className="text-eyebrow">Founding Partner Beta Offer</p>
@@ -302,8 +302,8 @@ export default function BetaPortfolioPage() {
           </div>
         </section>
 
-        <section className="relative py-14 sm:py-20">
-          <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
+        <section className="pb-section">
+          <div className="pb-container grid gap-8 lg:grid-cols-2">
             <div className="glass-strong rounded-[2rem] p-6 sm:p-8">
               <p className="text-eyebrow">What partners give back</p>
               <h2 className="mt-3 text-2xl font-semibold tracking-tight text-foreground sm:text-4xl">Clear expectations keep the beta serious.</h2>
@@ -334,9 +334,9 @@ export default function BetaPortfolioPage() {
           </div>
         </section>
 
-        <section className="relative overflow-hidden bg-background py-14 sm:py-20">
+        <section className="relative overflow-hidden pb-section">
           <div aria-hidden className="pointer-events-none absolute inset-0 bg-ambient-future opacity-60" />
-          <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="pb-container relative">
             <div className="mx-auto max-w-3xl text-center">
               <p className="text-eyebrow">Submission copy bank</p>
               <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground sm:text-5xl">Copy that can move from this page into launch forms.</h2>
@@ -355,8 +355,8 @@ export default function BetaPortfolioPage() {
           </div>
         </section>
 
-        <section className="relative px-4 py-14 sm:px-6 sm:py-20 lg:px-8">
-          <div className="mx-auto max-w-5xl overflow-hidden rounded-[2.5rem] border bg-card/80 p-8 text-center shadow-glass-lg sm:p-12">
+        <section className="pb-section">
+          <div className="pb-container-narrow overflow-hidden rounded-[2.5rem] border border-white/[0.06] bg-white/[0.03] p-8 text-center shadow-glass-lg sm:p-12">
             <BrandMark variant="horizontal" tone="auto" size={52} className="justify-center" withGlow />
             <p className="mx-auto mt-6 max-w-2xl text-3xl font-semibold tracking-tight text-foreground sm:text-5xl">
               Limited spots available.
