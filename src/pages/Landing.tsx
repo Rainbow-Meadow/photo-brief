@@ -284,7 +284,7 @@ function HeroSection({ onOpenDemo }: { onOpenDemo: () => void }) {
                 See how it works
               </a>
             </Button>
-            <Button size="xl" variant="outline" className="rounded-full border-white/10 bg-white/[0.02] px-7 text-white/80 hover:bg-white/8 hover:text-white" onClick={onOpenDemo}>
+            <Button size="xl" variant="pb-ghost" onClick={onOpenDemo}>
               <PlayCircle className="mr-1.5 h-4.5 w-4.5" /> Product spotlight
             </Button>
           </div>
