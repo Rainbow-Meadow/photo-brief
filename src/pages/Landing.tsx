@@ -251,6 +251,15 @@ function HeroSection({ onOpenDemo }: { onOpenDemo: () => void }) {
       <div aria-hidden className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[hsl(var(--pb-lavender)/0.55)] to-transparent" />
       <div className="pb-container relative grid gap-8 pb-12 sm:pb-14 lg:grid-cols-[0.88fr_1.12fr] lg:items-center lg:gap-10 lg:pb-20">
         <div className="relative z-10 max-w-3xl lg:max-w-none">
+          {/* Logo spotlight */}
+          <div className="mb-6 sm:mb-8">
+            <div className="relative inline-flex items-center justify-center">
+              <div aria-hidden className="pointer-events-none absolute h-32 w-32 rounded-full bg-[hsl(var(--pb-violet)/0.35)] blur-[60px] sm:h-44 sm:w-44 sm:blur-[80px]" />
+              <BrandMark variant="mark" size={72} withGlow eager className="relative sm:hidden" />
+              <BrandMark variant="mark" size={96} withGlow eager className="relative hidden sm:inline-flex lg:hidden" />
+              <BrandMark variant="mark" size={112} withGlow eager className="relative hidden lg:inline-flex" />
+            </div>
+          </div>
           <span className="pb-eyebrow"><Sparkles className="h-3.5 w-3.5" /> Founding Partner Beta now open</span>
           <h1 className="pb-hero-title mt-4 pb-2 text-white sm:mt-5">
             Get quote-ready customer photos.
