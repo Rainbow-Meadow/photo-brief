@@ -146,7 +146,7 @@ export default function WaitlistPage() {
       <div className="pointer-events-none absolute inset-0 -z-10 bg-ambient-mesh" aria-hidden />
       <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[60vh] bg-ambient-sky" aria-hidden />
 
-      <div className="mx-auto grid w-full max-w-6xl gap-8 px-4 py-16 sm:py-20 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+      <div className="pb-container pb-section grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
         <div className="animate-brand-entrance text-center lg:sticky lg:top-28 lg:text-left">
           <div className="flex justify-center lg:justify-start">
             <BrandMark variant="stacked" tone="auto" size={112} eager withGlow />
