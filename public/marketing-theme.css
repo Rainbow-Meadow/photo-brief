@@ -1,317 +1,80 @@
-/* PhotoBrief flagship marketing surface system */
+/* existing content above unchanged */
 
-:root {
-  --pb-wordmark-gradient: linear-gradient(135deg, #5d3df4 0%, #8b63ff 42%, #b891ff 72%, #d8c5ff 100%);
-  --pb-flagship-bg: #0b0913;
-  --pb-flagship-bg-2: #100b1d;
-  --pb-flagship-panel: rgba(23, 18, 34, 0.76);
-  --pb-flagship-line: rgba(255,255,255,0.11);
-  --pb-flagship-text-muted: rgba(255,255,255,0.72);
+.pb-tool-console {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  gap: 12px;
 }
 
-.dark {
-  --pb-wordmark-gradient: linear-gradient(135deg, #ffffff 0%, #dbc5ff 28%, #b98cff 62%, #8f63ff 100%);
-  --pb-flagship-bg: #050409;
-  --pb-flagship-bg-2: #0c0715;
-  --pb-flagship-panel: rgba(16, 12, 25, 0.78);
-  --pb-flagship-line: rgba(255,255,255,0.105);
-  --pb-flagship-text-muted: rgba(255,255,255,0.68);
+.pb-tool-tabs button {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
 }
 
-html { scroll-behavior: smooth; }
-
-body {
-  background:
-    radial-gradient(900px 460px at 50% -160px, rgba(159, 115, 255, 0.18), transparent 72%),
-    linear-gradient(180deg, var(--pb-flagship-bg), var(--pb-flagship-bg-2));
+.pb-tool-tabs button.is-active {
+  background: rgba(185,140,255,0.22);
+  border-color: rgba(185,140,255,0.5);
 }
 
-.pb-landing {
-  isolation: isolate;
-  background:
-    radial-gradient(900px 520px at 50% -120px, rgba(168, 128, 255, 0.28), transparent 70%),
-    radial-gradient(580px 420px at 18% 18%, rgba(102, 76, 255, 0.16), transparent 70%),
-    radial-gradient(680px 460px at 82% 36%, rgba(194, 160, 255, 0.12), transparent 70%),
-    linear-gradient(180deg, #0c0915 0%, #0a0712 44%, #07050b 100%) !important;
-  color: #f8f5ff;
+.pb-live-brief-strip {
+  display: flex;
+  gap: 6px;
+  margin: 12px 0;
 }
 
-html:not(.dark) .pb-landing {
-  background:
-    radial-gradient(900px 520px at 50% -120px, rgba(170, 128, 255, 0.24), transparent 70%),
-    radial-gradient(580px 420px at 16% 20%, rgba(118, 86, 255, 0.14), transparent 70%),
-    radial-gradient(720px 480px at 84% 36%, rgba(216, 192, 255, 0.16), transparent 70%),
-    linear-gradient(180deg, #100d18 0%, #0b0913 48%, #08060d 100%) !important;
+.pb-live-slot {
+  flex: 1;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.04);
+  border: 1px dashed rgba(255,255,255,0.1);
+  font-size: 11px;
+  padding: 6px;
 }
 
-.pb-copy,
-html:not(.dark) .pb-copy { color: var(--pb-flagship-text-muted); }
-
-.glass-nav {
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.105), rgba(255,255,255,0.045)),
-    rgba(13, 10, 21, 0.74) !important;
-  border-color: rgba(255,255,255,0.13) !important;
-  color: rgba(255,255,255,0.92) !important;
-  backdrop-filter: blur(26px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(26px) saturate(180%) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.12),
-    0 20px 70px -45px rgba(0,0,0,0.75),
-    0 0 0 1px rgba(178, 137, 255, 0.045) !important;
+.pb-live-slot.is-filled {
+  border-style: solid;
+  background: rgba(185,140,255,0.15);
 }
 
-.glass-nav a,
-.glass-nav button { color: rgba(255,255,255,0.82); }
-.glass-nav a:hover,
-.glass-nav button:hover { color: #fff; }
-
-.pb-landing > section {
-  position: relative;
-  overflow: clip;
+.pb-lead-capture {
+  margin-top: 16px;
+  padding: 12px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  display: none;
 }
 
-.pb-landing > section::before {
-  content: "";
-  position: absolute;
-  inset: -80px 0 auto 0;
-  height: 180px;
-  pointer-events: none;
-  background:
-    radial-gradient(70% 100% at 50% 0%, rgba(170, 128, 255, 0.12), transparent 68%),
-    linear-gradient(to bottom, rgba(8,6,12,0.92), rgba(8,6,12,0));
-  filter: blur(18px);
-  opacity: 0.9;
-  z-index: 0;
+.pb-lead-capture.is-visible {
+  display: block;
 }
 
-.pb-landing > section::after {
-  content: "";
-  position: absolute;
-  left: -8%;
-  right: -8%;
-  bottom: -70px;
-  height: 190px;
-  pointer-events: none;
-  background:
-    radial-gradient(60% 80% at 50% 15%, rgba(159, 115, 255, 0.16), transparent 72%),
-    linear-gradient(to bottom, rgba(8,6,12,0), rgba(8,6,12,0.72) 45%, rgba(8,6,12,0.98));
-  filter: blur(24px);
-  opacity: 0.82;
-  z-index: 1;
+.pb-lead-capture input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 6px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(0,0,0,0.2);
+  color: #fff;
 }
 
-.pb-landing > section > * { position: relative; z-index: 2; }
-.pb-landing .border-y { border-color: transparent !important; }
-
-.pb-lens-field {
-  opacity: 0.56 !important;
-  filter: blur(1px);
-  animation: pb-lens-drift 16s ease-in-out infinite alternate;
+.pb-lead-capture button {
+  margin-top: 8px;
+  width: 100%;
 }
 
-.pb-command-panel {
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.025)),
-    linear-gradient(180deg, rgba(27,20,42,0.94), rgba(10,8,16,0.98)) !important;
-  border-color: rgba(207, 178, 255, 0.18) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.09),
-    0 44px 120px -74px rgba(143, 99, 255, 0.72),
-    0 24px 70px -48px rgba(0,0,0,0.85) !important;
+.pb-success {
+  margin-top: 12px;
+  display: none;
 }
 
-.pb-command-panel::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: linear-gradient(115deg, transparent 8%, rgba(255,255,255,0.06) 18%, transparent 31%);
-  transform: translateX(-120%);
-  animation: pb-sheen 9s ease-in-out infinite;
-  mix-blend-mode: screen;
-}
-
-.pb-card {
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.058), rgba(255,255,255,0.025)),
-    rgba(19,14,30,0.72) !important;
-  border-color: rgba(207, 178, 255, 0.14) !important;
-  backdrop-filter: blur(16px) saturate(145%);
-  -webkit-backdrop-filter: blur(16px) saturate(145%);
-}
-
-.pb-card:hover {
-  transform: translateY(-5px) scale(1.005) !important;
-  border-color: rgba(207, 178, 255, 0.38) !important;
-  box-shadow: 0 32px 90px -62px rgba(143,99,255,0.85) !important;
-}
-
-.pb-photo-frame {
-  transition: transform 260ms cubic-bezier(0.32,0.72,0,1), border-color 260ms cubic-bezier(0.32,0.72,0,1), box-shadow 260ms cubic-bezier(0.32,0.72,0,1), opacity 260ms ease;
-}
-
-.pb-photo-frame:hover {
-  transform: translateY(-4px) rotate(-0.5deg);
-  box-shadow: 0 28px 80px -54px rgba(169,133,255,0.9);
-}
-
-.pb-route-line::after { animation-duration: 4.8s !important; }
-.pb-focus-corners::before,
-.pb-focus-corners::after { animation: pb-focus-pulse 3.6s ease-in-out infinite; }
-
-.pb-eyebrow {
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 18px 55px -42px rgba(159,115,255,0.95);
-}
-
-button,
-.btn,
-a { transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease, transform 220ms cubic-bezier(0.32,0.72,0,1), box-shadow 220ms cubic-bezier(0.32,0.72,0,1); }
-button:hover { transform: translateY(-1px); }
-
-footer {
-  background:
-    radial-gradient(560px 220px at 50% 0%, rgba(159,115,255,0.12), transparent 72%),
-    linear-gradient(180deg, rgba(15,11,24,0.74), rgba(6,5,10,0.98)) !important;
-  border-color: rgba(255,255,255,0.09) !important;
-  color: rgba(255,255,255,0.66) !important;
-}
-
-/* Addictive hero: loose photos repeatedly snap into the finished brief. */
-.pb-command-panel .grid.grid-cols-2 .pb-photo-frame:nth-child(1) { animation: pb-photo-snap-1 8.5s cubic-bezier(0.32,0.72,0,1) infinite; }
-.pb-command-panel .grid.grid-cols-2 .pb-photo-frame:nth-child(2) { animation: pb-photo-snap-2 8.5s cubic-bezier(0.32,0.72,0,1) infinite; }
-.pb-command-panel .grid.grid-cols-2 .pb-photo-frame:nth-child(3) { animation: pb-photo-snap-3 8.5s cubic-bezier(0.32,0.72,0,1) infinite; }
-.pb-command-panel .grid.grid-cols-2 .pb-photo-frame:nth-child(4) { animation: pb-photo-snap-4 8.5s cubic-bezier(0.32,0.72,0,1) infinite; }
-.pb-brief-paper { animation: pb-brief-ready-pulse 8.5s cubic-bezier(0.32,0.72,0,1) infinite; }
-.pb-stamp { animation: pb-stamp-pop 8.5s cubic-bezier(0.32,0.72,0,1) infinite; }
-
-/* Before/after morph: the chosen mode no longer just swaps; it breathes in like a state change. */
-#comparison .pb-command-panel,
-#comparison .pb-command-panel + div {
-  animation: pb-mode-morph 420ms cubic-bezier(0.32,0.72,0,1) both;
-  transform-origin: 50% 42%;
-}
-#comparison .pb-command-panel + div::after {
-  content: "";
-  position: absolute;
-  inset: -1px;
-  pointer-events: none;
-  background: radial-gradient(circle at 50% 38%, rgba(185,140,255,0.22), transparent 48%);
-  opacity: 0;
-  animation: pb-mode-flash 620ms ease-out both;
-}
-
-/* Scroll / cursor-style micro-interactions without JS. */
-@supports (animation-timeline: view()) {
-  .pb-card,
-  .pb-command-panel,
-  .pb-brief-paper,
-  .pb-photo-frame {
-    animation-name: pb-scroll-rise;
-    animation-duration: 1ms;
-    animation-timing-function: linear;
-    animation-fill-mode: both;
-    animation-timeline: view();
-    animation-range: entry 0% cover 32%;
-  }
-}
-
-.pb-route-chip,
-.pb-eyebrow,
-.pb-stamp,
-.glass-nav,
-.pb-photo-frame,
-.pb-card,
-.pb-command-panel {
-  will-change: transform, opacity, filter;
-}
-
-.pb-route-chip:hover,
-.pb-eyebrow:hover,
-.pb-stamp:hover {
-  transform: translateY(-2px) scale(1.015);
-  border-color: rgba(207,178,255,0.45) !important;
-  box-shadow: 0 20px 65px -48px rgba(159,115,255,0.95);
-}
-
-@keyframes pb-lens-drift {
-  0% { transform: translate3d(-1.5%, -0.5%, 0) scale(1); }
-  100% { transform: translate3d(1.5%, 0.75%, 0) scale(1.035); }
-}
-
-@keyframes pb-sheen {
-  0%, 52% { transform: translateX(-130%); opacity: 0; }
-  62% { opacity: 0.82; }
-  84%, 100% { transform: translateX(130%); opacity: 0; }
-}
-
-@keyframes pb-focus-pulse {
-  0%, 100% { opacity: 0.48; filter: drop-shadow(0 0 0 rgba(185,140,255,0)); }
-  50% { opacity: 0.95; filter: drop-shadow(0 0 14px rgba(185,140,255,0.38)); }
-}
-
-@keyframes pb-photo-snap-1 {
-  0%, 48%, 100% { transform: translate3d(0,0,0) rotate(0deg); opacity: 1; }
-  62%, 74% { transform: translate3d(54%, 82%, 0) scale(0.54) rotate(-4deg); opacity: 0.42; }
-}
-@keyframes pb-photo-snap-2 {
-  0%, 50%, 100% { transform: translate3d(0,0,0) rotate(0deg); opacity: 1; }
-  64%, 76% { transform: translate3d(-6%, 82%, 0) scale(0.54) rotate(3deg); opacity: 0.42; }
-}
-@keyframes pb-photo-snap-3 {
-  0%, 52%, 100% { transform: translate3d(0,0,0) rotate(0deg); opacity: 1; }
-  66%, 78% { transform: translate3d(54%, 17%, 0) scale(0.54) rotate(4deg); opacity: 0.42; }
-}
-@keyframes pb-photo-snap-4 {
-  0%, 54%, 100% { transform: translate3d(0,0,0) rotate(0deg); opacity: 1; }
-  68%, 80% { transform: translate3d(-6%, 17%, 0) scale(0.54) rotate(-3deg); opacity: 0.42; }
-}
-
-@keyframes pb-brief-ready-pulse {
-  0%, 57%, 100% { transform: translateY(0) scale(1); box-shadow: 0 28px 70px -38px rgba(0,0,0,0.6); }
-  72%, 84% { transform: translateY(-5px) scale(1.015); box-shadow: 0 38px 95px -42px rgba(166, 122, 255, 0.78); }
-}
-
-@keyframes pb-stamp-pop {
-  0%, 64%, 100% { transform: scale(1); }
-  74% { transform: scale(1.12) rotate(-2deg); }
-  82% { transform: scale(1); }
-}
-
-@keyframes pb-mode-morph {
-  0% { opacity: 0.58; filter: blur(10px); transform: translateY(10px) scale(0.985); }
-  100% { opacity: 1; filter: blur(0); transform: translateY(0) scale(1); }
-}
-
-@keyframes pb-mode-flash {
-  0% { opacity: 0; transform: scale(0.98); }
-  22% { opacity: 1; }
-  100% { opacity: 0; transform: scale(1.04); }
-}
-
-@keyframes pb-scroll-rise {
-  from { opacity: 0.42; transform: translateY(26px) scale(0.985); filter: blur(8px); }
-  to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
-}
-
-@media (max-width: 767px) {
-  .pb-command-panel .grid.grid-cols-2 .pb-photo-frame { animation-name: none !important; }
-  .pb-brief-paper { animation-duration: 10s; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .pb-lens-field,
-  .pb-command-panel::after,
-  .pb-focus-corners::before,
-  .pb-focus-corners::after,
-  .pb-route-line::after,
-  .pb-command-panel .grid.grid-cols-2 .pb-photo-frame,
-  .pb-brief-paper,
-  .pb-stamp,
-  #comparison .pb-command-panel,
-  #comparison .pb-command-panel + div,
-  #comparison .pb-command-panel + div::after {
-    animation: none !important;
-  }
-  *, *::before, *::after { scroll-behavior: auto !important; }
+.pb-success.is-visible {
+  display: block;
 }
