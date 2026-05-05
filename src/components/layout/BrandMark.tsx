@@ -27,7 +27,7 @@ const ALT = "PhotoBrief.ai";
 const MARK_SRC = "/brand/mark-color.png";
 const WORDMARK = "PhotoBrief.ai";
 const WORDMARK_GRADIENT =
-  "linear-gradient(135deg, #f6f0ff 0%, #e7d4ff 24%, #c99aff 52%, #9f73ff 78%, #7f55ff 100%)";
+  "var(--pb-wordmark-gradient, linear-gradient(135deg, #f6f0ff 0%, #e7d4ff 24%, #c99aff 52%, #9f73ff 78%, #7f55ff 100%))";
 
 function MarkImage({ size, withGlow, eager }: { size: number; withGlow: boolean; eager?: boolean }) {
   return (
