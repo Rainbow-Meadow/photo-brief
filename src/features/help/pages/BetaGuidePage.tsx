@@ -138,7 +138,7 @@ export default function BetaGuidePage() {
         <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-56 bg-ambient-sky opacity-70" />
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-3">
-            <span className="inline-flex items-center gap-1.5 rounded-full border bg-background/70 px-3 py-1 text-xs font-medium text-muted-foreground shadow-sm">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.08] bg-white/[0.04] px-3 py-1 text-xs font-medium text-muted-foreground">
               <Rocket className="h-3.5 w-3.5 text-primary" /> Simple setup guide
             </span>
             <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
