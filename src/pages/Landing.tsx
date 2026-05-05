@@ -186,13 +186,13 @@ const pricingPath = [
 function SectionNav() {
   return (
     <nav aria-label="Landing page sections" className="sticky top-[4.5rem] z-30 border-y border-white/10 bg-[hsl(var(--pb-night)/0.82)] backdrop-blur-xl">
-      <div className="pb-container flex justify-start gap-2 overflow-x-auto py-3 sm:justify-center">
+      <div className="pb-container flex justify-start gap-1.5 overflow-x-auto py-2 sm:gap-2 sm:py-3 sm:justify-center">
         {sectionLinks.map((item) => (
           <a
             key={item.href}
             href={item.href}
             onClick={() => trackEvent("landing_jump_nav_click", { target: item.href })}
-            className="min-w-max rounded-full border border-transparent px-4 py-2 text-sm font-semibold text-white/62 transition hover:border-white/14 hover:bg-white/7 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--pb-lavender))]"
+            className="min-w-max rounded-full border border-transparent px-3 py-1.5 text-xs font-semibold text-white/62 transition hover:border-white/14 hover:bg-white/7 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--pb-lavender))] sm:px-4 sm:py-2 sm:text-sm"
           >
             {item.label}
           </a>
@@ -249,10 +249,10 @@ function HeroSection({ onOpenDemo }: { onOpenDemo: () => void }) {
     <section className="relative isolate overflow-hidden pt-10 sm:pt-14 lg:pt-18">
       <div className="pb-lens-field" />
       <div aria-hidden className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[hsl(var(--pb-lavender)/0.55)] to-transparent" />
-      <div className="pb-container relative grid gap-10 pb-14 lg:grid-cols-[0.88fr_1.12fr] lg:items-center lg:pb-20">
+      <div className="pb-container relative grid gap-8 pb-12 sm:pb-14 lg:grid-cols-[0.88fr_1.12fr] lg:items-center lg:gap-10 lg:pb-20">
         <div className="relative z-10 max-w-3xl lg:max-w-none">
           <span className="pb-eyebrow"><Sparkles className="h-3.5 w-3.5" /> Founding Partner Beta now open</span>
-          <h1 className="pb-hero-title mt-5 pb-2 text-white">
+          <h1 className="pb-hero-title mt-4 pb-2 text-white sm:mt-5">
             Get quote-ready customer photos.
             <span className="block pb-2 text-[hsl(var(--pb-lavender))]">Send one guided link.</span>
           </h1>
@@ -295,15 +295,15 @@ function WorkflowSection() {
   return (
     <section id="workflow" className="pb-section">
       <div className="pb-container">
-        <div className="grid gap-10 lg:grid-cols-[0.7fr_1.3fr] lg:items-start">
+        <div className="grid gap-8 lg:grid-cols-[0.7fr_1.3fr] lg:items-start lg:gap-10">
           <div>
             <span className="pb-eyebrow"><Route className="h-3.5 w-3.5" /> How it works</span>
-            <h2 className="pb-section-title mt-5 max-w-xl text-white">From vague request to usable brief.</h2>
-            <p className="pb-copy mt-5 max-w-lg text-base sm:text-lg">PhotoBrief does not just collect uploads. It guides the customer, keeps context attached, and packages the result for the next business step.</p>
+            <h2 className="pb-section-title mt-4 max-w-xl text-white sm:mt-5">From vague request to usable brief.</h2>
+            <p className="pb-copy mt-4 max-w-lg text-base sm:mt-5 sm:text-lg">PhotoBrief does not just collect uploads. It guides the customer, keeps context attached, and packages the result for the next business step.</p>
           </div>
           <div className="relative">
             <div className="absolute left-6 top-8 hidden h-[calc(100%-4rem)] w-px bg-gradient-to-b from-[hsl(var(--pb-lavender))] via-[hsl(var(--pb-mint))] to-transparent md:block" />
-            <div className="grid gap-4">
+            <div className="grid gap-3 sm:gap-4">
               {workflowSteps.map((step, index) => {
                 const Icon = step.icon;
                 return (
@@ -340,7 +340,7 @@ function ComparisonSection({ mode, onModeChange }: { mode: "messy" | "clean"; on
           <p className="pb-copy mt-5 text-lg">The value is not “more photos.” The value is getting the right photos, tied to the right job, with enough context to act.</p>
         </div>
 
-        <div className="mx-auto mt-10 flex max-w-md rounded-full border border-white/12 bg-[hsl(var(--pb-panel)/0.72)] p-1">
+        <div className="mx-auto mt-8 flex max-w-md rounded-full border border-white/12 bg-[hsl(var(--pb-panel)/0.72)] p-1 sm:mt-10">
           {[
             { id: "messy", label: "Before" },
             { id: "clean", label: "PhotoBrief" },
@@ -356,13 +356,13 @@ function ComparisonSection({ mode, onModeChange }: { mode: "messy" | "clean"; on
           ))}
         </div>
 
-        <div className="mt-8 grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
+        <div className="mt-6 grid gap-4 sm:mt-8 sm:gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
           <div className="pb-command-panel p-4 sm:p-5 md:p-6">
             <div className="relative z-10 flex items-center justify-between gap-3 border-b border-white/10 pb-4">
               <p className="text-sm font-extrabold uppercase tracking-[0.18em] text-white/48">{isClean ? "Structured intake" : "Scattered intake"}</p>
               <span className={`rounded-full px-3 py-1 text-xs font-black ${isClean ? "bg-[hsl(var(--pb-mint)/0.12)] text-[hsl(var(--pb-mint))]" : "bg-[hsl(var(--pb-lavender)/0.12)] text-[hsl(var(--pb-lavender))]"}`}>{isClean ? "Ready" : "Messy"}</span>
             </div>
-            <div className="relative z-10 mt-5 grid gap-3">
+            <div className="relative z-10 mt-4 grid gap-2 sm:mt-5 sm:gap-3">
               {signals.map((signal, index) => (
                 <div key={signal} className={`flex items-center gap-3 rounded-2xl border p-3 sm:p-4 ${isClean ? "border-[hsl(var(--pb-mint)/0.24)] bg-[hsl(var(--pb-mint)/0.055)]" : "border-white/10 bg-white/[0.035]"}`}>
                   <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-black sm:h-8 sm:w-8 ${isClean ? "bg-[hsl(var(--pb-mint)/0.14)] text-[hsl(var(--pb-mint))]" : "bg-[hsl(var(--pb-lavender)/0.13)] text-[hsl(var(--pb-lavender))]"}`}>{index + 1}</span>
@@ -372,7 +372,7 @@ function ComparisonSection({ mode, onModeChange }: { mode: "messy" | "clean"; on
             </div>
           </div>
 
-          <div className="relative min-h-[420px] overflow-hidden rounded-[2rem] border border-white/12 bg-[hsl(var(--pb-panel)/0.58)] p-5">
+          <div className="relative min-h-[320px] overflow-hidden rounded-[1.5rem] border border-white/12 bg-[hsl(var(--pb-panel)/0.58)] p-4 sm:min-h-[420px] sm:rounded-[2rem] sm:p-5">
             <div className="absolute inset-0 opacity-35">
               <div className="pb-lens-field" />
             </div>
@@ -392,17 +392,17 @@ function MessyThreadVisual() {
     { text: "Which job was this for?", x: "right-10", y: "bottom-12", rot: "-rotate-3" },
   ];
   return (
-    <div className="relative z-10 h-full min-h-[380px]">
+    <div className="relative z-10 h-full min-h-[280px] sm:min-h-[380px]">
       {items.map((item) => (
-        <div key={item.text} className={`absolute ${item.x} ${item.y} ${item.rot} max-w-[15rem] rounded-3xl border border-white/10 bg-black/35 p-4 shadow-2xl`}>
-          <p className="text-sm font-semibold text-white/74">{item.text}</p>
+        <div key={item.text} className={`absolute ${item.x} ${item.y} ${item.rot} max-w-[12rem] rounded-2xl border border-white/10 bg-black/35 p-3 shadow-2xl sm:max-w-[15rem] sm:rounded-3xl sm:p-4`}>
+          <p className="text-xs font-semibold text-white/74 sm:text-sm">{item.text}</p>
         </div>
       ))}
-      <figure className="pb-photo-frame absolute bottom-20 left-8 w-36 -rotate-6 opacity-80">
-        <img src={appliances} alt="Loose customer photo without context" className="h-28 w-full object-cover" />
+      <figure className="pb-photo-frame absolute bottom-16 left-4 w-28 -rotate-6 opacity-80 sm:bottom-20 sm:left-8 sm:w-36">
+        <img src={appliances} alt="Loose customer photo without context" className="h-20 w-full object-cover sm:h-28" />
       </figure>
-      <figure className="pb-photo-frame absolute bottom-28 right-12 w-36 rotate-6 opacity-70">
-        <img src={drivewayAccess} alt="Another loose customer photo without context" className="h-28 w-full object-cover" />
+      <figure className="pb-photo-frame absolute bottom-24 right-6 w-28 rotate-6 opacity-70 sm:bottom-28 sm:right-12 sm:w-36">
+        <img src={drivewayAccess} alt="Another loose customer photo without context" className="h-20 w-full object-cover sm:h-28" />
       </figure>
     </div>
   );
@@ -438,7 +438,7 @@ function UseCaseSection() {
       <div className="pb-container">
         <div className="max-w-3xl">
           <span className="pb-eyebrow"><ClipboardList className="h-3.5 w-3.5" /> Use cases</span>
-          <h2 className="pb-section-title mt-5 text-white">Useful anywhere a missing photo slows the next step.</h2>
+          <h2 className="pb-section-title mt-4 text-white sm:mt-5">Useful anywhere a missing photo slows the next step.</h2>
           <p className="pb-copy mt-5 max-w-2xl text-base sm:text-lg">PhotoBrief is built for teams that need customer media before quoting, scheduling, approving, reviewing, or documenting work.</p>
         </div>
         <div className="mt-8 grid gap-4 sm:mt-10 md:grid-cols-2 lg:grid-cols-3">
@@ -491,9 +491,9 @@ function FoundingPartnerSection() {
 
 function BetaList({ title, items }: { title: string; items: string[] }) {
   return (
-    <div className="rounded-[1.4rem] border border-white/12 bg-white/[0.035] p-5">
-      <h3 className="text-lg font-semibold tracking-tight text-white">{title}</h3>
-      <ul className="mt-4 grid gap-3">
+    <div className="rounded-[1.2rem] border border-white/12 bg-white/[0.035] p-4 sm:rounded-[1.4rem] sm:p-5">
+      <h3 className="text-base font-semibold tracking-tight text-white sm:text-lg">{title}</h3>
+      <ul className="mt-3 grid gap-2.5 sm:mt-4 sm:gap-3">
         {items.map((item) => (
           <li key={item} className="flex gap-3 text-sm font-semibold leading-6 text-white/76">
             <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-[hsl(var(--pb-mint))]" />
@@ -511,16 +511,16 @@ function PricingPathSection() {
       <div className="pb-container">
         <div className="mx-auto max-w-3xl text-center">
           <span className="pb-eyebrow"><TimerReset className="h-3.5 w-3.5" /> Start manual. Automate later.</span>
-          <h2 className="pb-section-title mt-5 text-white">Use one link first. Add automation when it pays for itself.</h2>
+          <h2 className="pb-section-title mt-4 text-white sm:mt-5">Use one link first. Add automation when it pays for itself.</h2>
           <p className="pb-copy mt-5 text-base sm:text-lg">Start with manual PhotoBrief links. Upgrade to Pro when website leads, routed requests, and form handoffs should happen without copy/paste.</p>
         </div>
-        <div className="mt-10 grid gap-5 lg:grid-cols-2">
+        <div className="mt-8 grid gap-4 sm:mt-10 sm:gap-5 lg:grid-cols-2">
           {pricingPath.map((tier) => (
             <article key={tier.label} className="pb-card p-5 sm:p-6 lg:p-8">
               <span className="pb-eyebrow border-white/12 bg-white/[0.03]">{tier.label}</span>
               <h3 className="mt-4 text-2xl font-semibold tracking-tight text-white sm:mt-5 sm:text-3xl">{tier.title}</h3>
               <p className="pb-copy mt-2.5 text-sm leading-6 sm:mt-3 sm:text-base sm:leading-7">{tier.body}</p>
-              <ul className="mt-6 grid gap-3">
+              <ul className="mt-5 grid gap-2.5 sm:mt-6 sm:gap-3">
                 {tier.bullets.map((bullet) => (
                   <li key={bullet} className="flex items-center gap-3 text-sm font-semibold text-white/78">
                     <CheckCircle2 className="h-4 w-4 shrink-0 text-[hsl(var(--pb-mint))]" /> {bullet}
@@ -543,9 +543,9 @@ function FinalCta() {
           <div className="pb-lens-field" />
           <div className="relative z-10 mx-auto max-w-4xl">
             <BrandMark variant="horizontal" tone="light" size={48} className="justify-center" withGlow />
-            <h2 className="pb-section-title mt-8 text-white">Send one link. Get a usable brief.</h2>
+            <h2 className="pb-section-title mt-6 text-white sm:mt-8">Send one link. Get a usable brief.</h2>
             <p className="pb-copy mx-auto mt-4 max-w-2xl text-base sm:mt-5 sm:text-lg">Give customers a clear path, give your team a clean packet, and stop turning every quote into a photo scavenger hunt.</p>
-            <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+            <div className="mt-6 flex flex-col justify-center gap-2.5 sm:mt-8 sm:flex-row sm:gap-3">
               <Button asChild size="xl" className="rounded-full bg-[hsl(var(--pb-violet))] px-8 text-[hsl(var(--pb-night))] hover:bg-[hsl(var(--pb-lavender))]">
                 <NavLink to={signupCtaTarget()} onClick={() => trackEvent("cta_click", { location: "final", label: "primary" })}>
                   {signupCtaLabel()} <ArrowRight className="ml-1 h-4 w-4" />
