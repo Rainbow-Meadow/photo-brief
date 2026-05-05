@@ -256,10 +256,10 @@ function HeroSection({ onOpenDemo }: { onOpenDemo: () => void }) {
             Get quote-ready customer photos.
             <span className="block pb-2 text-[hsl(var(--pb-lavender))]">Send one guided link.</span>
           </h1>
-          <p className="pb-copy mt-6 max-w-2xl text-lg leading-8 sm:text-xl">
+          <p className="pb-copy mt-5 max-w-2xl text-base leading-7 sm:text-lg sm:leading-8">
             PhotoBrief is a one-link photo intake tool for service, repair, review, and documentation workflows. Customers follow mobile prompts, obvious issues get flagged, and your team receives a clean brief instead of a messy thread.
           </p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+          <div className="mt-7 flex flex-col gap-2.5 sm:mt-8 sm:flex-row sm:flex-wrap sm:gap-3">
             <Button asChild size="xl" className="rounded-full bg-[hsl(var(--pb-violet))] px-7 text-[hsl(var(--pb-night))] hover:bg-[hsl(var(--pb-lavender))]">
               <NavLink to={signupCtaTarget()} onClick={() => trackEvent("cta_click", { location: "hero", label: "primary" })}>
                 {signupCtaLabel()} <ArrowRight className="ml-1 h-4 w-4" />
@@ -274,13 +274,13 @@ function HeroSection({ onOpenDemo }: { onOpenDemo: () => void }) {
               <PlayCircle className="mr-1 h-5 w-5" /> Product spotlight
             </Button>
           </div>
-          <div className="mt-7 grid max-w-2xl gap-2 sm:grid-cols-3">
+          <div className="mt-6 grid max-w-2xl gap-1.5 sm:mt-7 sm:grid-cols-3 sm:gap-2">
             {[
               "No app for customers",
               "Manual links first",
               "Automation on Pro",
             ].map((item) => (
-              <span key={item} className="pb-route-chip px-3 py-2 text-center text-xs font-semibold">{item}</span>
+              <span key={item} className="pb-route-chip px-3 py-1.5 text-center text-[0.7rem] font-semibold sm:py-2 sm:text-xs">{item}</span>
             ))}
           </div>
         </div>
@@ -299,7 +299,7 @@ function WorkflowSection() {
           <div>
             <span className="pb-eyebrow"><Route className="h-3.5 w-3.5" /> How it works</span>
             <h2 className="pb-section-title mt-5 max-w-xl text-white">From vague request to usable brief.</h2>
-            <p className="pb-copy mt-5 max-w-lg text-lg">PhotoBrief does not just collect uploads. It guides the customer, keeps context attached, and packages the result for the next business step.</p>
+            <p className="pb-copy mt-5 max-w-lg text-base sm:text-lg">PhotoBrief does not just collect uploads. It guides the customer, keeps context attached, and packages the result for the next business step.</p>
           </div>
           <div className="relative">
             <div className="absolute left-6 top-8 hidden h-[calc(100%-4rem)] w-px bg-gradient-to-b from-[hsl(var(--pb-lavender))] via-[hsl(var(--pb-mint))] to-transparent md:block" />
@@ -307,14 +307,14 @@ function WorkflowSection() {
               {workflowSteps.map((step, index) => {
                 const Icon = step.icon;
                 return (
-                  <article key={step.title} className="pb-card relative grid gap-4 p-5 md:grid-cols-[4rem_1fr] md:p-6">
-                    <div className="relative z-10 flex h-14 w-14 items-center justify-center rounded-2xl border border-[hsl(var(--pb-line-strong))] bg-[hsl(var(--pb-ink))] text-[hsl(var(--pb-lavender))]">
-                      <Icon className="h-6 w-6" />
+                  <article key={step.title} className="pb-card relative grid gap-3 p-4 sm:gap-4 sm:p-5 md:grid-cols-[4rem_1fr] md:p-6">
+                    <div className="relative z-10 flex h-12 w-12 items-center justify-center rounded-2xl border border-[hsl(var(--pb-line-strong))] bg-[hsl(var(--pb-ink))] text-[hsl(var(--pb-lavender))] sm:h-14 sm:w-14">
+                      <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
                     </div>
                     <div>
                       <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[hsl(var(--pb-lavender))]">0{index + 1} · {step.eyebrow}</p>
-                      <h3 className="mt-2 text-2xl font-semibold tracking-tight text-white">{step.title}</h3>
-                      <p className="pb-copy mt-2 max-w-2xl text-base">{step.body}</p>
+                      <h3 className="mt-1.5 text-xl font-semibold tracking-tight text-white sm:mt-2 sm:text-2xl">{step.title}</h3>
+                      <p className="pb-copy mt-1.5 max-w-2xl text-sm sm:mt-2 sm:text-base">{step.body}</p>
                     </div>
                   </article>
                 );
@@ -349,7 +349,7 @@ function ComparisonSection({ mode, onModeChange }: { mode: "messy" | "clean"; on
               key={item.id}
               type="button"
               onClick={() => onModeChange(item.id as "messy" | "clean")}
-              className={`flex-1 rounded-full px-4 py-3 text-sm font-extrabold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--pb-lavender))] ${mode === item.id ? "bg-[hsl(var(--pb-lavender))] text-[hsl(var(--pb-night))]" : "text-white/58 hover:text-white"}`}
+              className={`flex-1 rounded-full px-4 py-2.5 text-sm font-extrabold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--pb-lavender))] sm:py-3 ${mode === item.id ? "bg-[hsl(var(--pb-lavender))] text-[hsl(var(--pb-night))]" : "text-white/58 hover:text-white"}`}
             >
               {item.label}
             </button>
@@ -357,16 +357,16 @@ function ComparisonSection({ mode, onModeChange }: { mode: "messy" | "clean"; on
         </div>
 
         <div className="mt-8 grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
-          <div className="pb-command-panel p-5 sm:p-6">
+          <div className="pb-command-panel p-4 sm:p-5 md:p-6">
             <div className="relative z-10 flex items-center justify-between gap-3 border-b border-white/10 pb-4">
               <p className="text-sm font-extrabold uppercase tracking-[0.18em] text-white/48">{isClean ? "Structured intake" : "Scattered intake"}</p>
               <span className={`rounded-full px-3 py-1 text-xs font-black ${isClean ? "bg-[hsl(var(--pb-mint)/0.12)] text-[hsl(var(--pb-mint))]" : "bg-[hsl(var(--pb-lavender)/0.12)] text-[hsl(var(--pb-lavender))]"}`}>{isClean ? "Ready" : "Messy"}</span>
             </div>
             <div className="relative z-10 mt-5 grid gap-3">
               {signals.map((signal, index) => (
-                <div key={signal} className={`flex items-center gap-3 rounded-2xl border p-4 ${isClean ? "border-[hsl(var(--pb-mint)/0.24)] bg-[hsl(var(--pb-mint)/0.055)]" : "border-white/10 bg-white/[0.035]"}`}>
-                  <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-black ${isClean ? "bg-[hsl(var(--pb-mint)/0.14)] text-[hsl(var(--pb-mint))]" : "bg-[hsl(var(--pb-lavender)/0.13)] text-[hsl(var(--pb-lavender))]"}`}>{index + 1}</span>
-                  <p className="font-semibold text-white/82">{signal}</p>
+                <div key={signal} className={`flex items-center gap-3 rounded-2xl border p-3 sm:p-4 ${isClean ? "border-[hsl(var(--pb-mint)/0.24)] bg-[hsl(var(--pb-mint)/0.055)]" : "border-white/10 bg-white/[0.035]"}`}>
+                  <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-black sm:h-8 sm:w-8 ${isClean ? "bg-[hsl(var(--pb-mint)/0.14)] text-[hsl(var(--pb-mint))]" : "bg-[hsl(var(--pb-lavender)/0.13)] text-[hsl(var(--pb-lavender))]"}`}>{index + 1}</span>
+                  <p className="text-sm font-semibold text-white/82 sm:text-base">{signal}</p>
                 </div>
               ))}
             </div>
@@ -439,17 +439,17 @@ function UseCaseSection() {
         <div className="max-w-3xl">
           <span className="pb-eyebrow"><ClipboardList className="h-3.5 w-3.5" /> Use cases</span>
           <h2 className="pb-section-title mt-5 text-white">Useful anywhere a missing photo slows the next step.</h2>
-          <p className="pb-copy mt-5 max-w-2xl text-lg">PhotoBrief is built for teams that need customer media before quoting, scheduling, approving, reviewing, or documenting work.</p>
+          <p className="pb-copy mt-5 max-w-2xl text-base sm:text-lg">PhotoBrief is built for teams that need customer media before quoting, scheduling, approving, reviewing, or documenting work.</p>
         </div>
-        <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 grid gap-4 sm:mt-10 md:grid-cols-2 lg:grid-cols-3">
           {useCases.map((item) => {
             const Icon = item.icon;
             return (
-              <article key={item.title} className="pb-card p-5 sm:p-6">
-                <Icon className="h-7 w-7 text-[hsl(var(--pb-lavender))]" />
-                <span className="pb-stamp mt-6 inline-flex rounded-full px-3 py-1">{item.stamp}</span>
-                <h3 className="mt-5 text-xl font-semibold tracking-tight text-white">{item.title}</h3>
-                <p className="pb-copy mt-3 text-sm leading-6">{item.body}</p>
+              <article key={item.title} className="pb-card p-4 sm:p-5 md:p-6">
+                <Icon className="h-6 w-6 text-[hsl(var(--pb-lavender))] sm:h-7 sm:w-7" />
+                <span className="pb-stamp mt-5 inline-flex rounded-full px-3 py-1 sm:mt-6">{item.stamp}</span>
+                <h3 className="mt-4 text-lg font-semibold tracking-tight text-white sm:mt-5 sm:text-xl">{item.title}</h3>
+                <p className="pb-copy mt-2 text-sm leading-6 sm:mt-3">{item.body}</p>
               </article>
             );
           })}
@@ -463,12 +463,12 @@ function FoundingPartnerSection() {
   return (
     <section id="beta-offer" className="pb-section-tight">
       <div className="pb-container">
-        <div className="pb-command-panel grid gap-8 p-6 sm:p-8 lg:grid-cols-[0.85fr_1.15fr] lg:p-10">
+        <div className="pb-command-panel grid gap-6 p-5 sm:gap-8 sm:p-6 lg:grid-cols-[0.85fr_1.15fr] lg:p-8 xl:p-10">
           <div className="relative z-10">
             <span className="pb-eyebrow"><Stamp className="h-3.5 w-3.5" /> Founding beta</span>
-            <h2 className="mt-5 text-3xl font-semibold tracking-tight text-white sm:text-5xl">Built with real workflows, not toy testing.</h2>
-            <p className="pb-copy mt-5 text-lg">We are inviting a small group of businesses to use PhotoBrief in real intake scenarios before public launch. You get hands-on setup and early influence; we get honest workflow feedback.</p>
-            <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+            <h2 className="mt-4 text-2xl font-semibold tracking-tight text-white sm:mt-5 sm:text-3xl lg:text-4xl">Built with real workflows, not toy testing.</h2>
+            <p className="pb-copy mt-4 text-base sm:mt-5 sm:text-lg">We are inviting a small group of businesses to use PhotoBrief in real intake scenarios before public launch. You get hands-on setup and early influence; we get honest workflow feedback.</p>
+            <div className="mt-6 flex flex-col gap-2.5 sm:mt-7 sm:flex-row sm:gap-3">
               <Button asChild size="lg" className="rounded-full bg-[hsl(var(--pb-violet))] text-[hsl(var(--pb-night))] hover:bg-[hsl(var(--pb-lavender))]">
                 <NavLink to={signupCtaTarget()} onClick={() => trackEvent("cta_click", { location: "beta_offer", label: "primary" })}>
                   {signupCtaLabel()} <ArrowRight className="ml-1 h-4 w-4" />
@@ -512,14 +512,14 @@ function PricingPathSection() {
         <div className="mx-auto max-w-3xl text-center">
           <span className="pb-eyebrow"><TimerReset className="h-3.5 w-3.5" /> Start manual. Automate later.</span>
           <h2 className="pb-section-title mt-5 text-white">Use one link first. Add automation when it pays for itself.</h2>
-          <p className="pb-copy mt-5 text-lg">Start with manual PhotoBrief links. Upgrade to Pro when website leads, routed requests, and form handoffs should happen without copy/paste.</p>
+          <p className="pb-copy mt-5 text-base sm:text-lg">Start with manual PhotoBrief links. Upgrade to Pro when website leads, routed requests, and form handoffs should happen without copy/paste.</p>
         </div>
         <div className="mt-10 grid gap-5 lg:grid-cols-2">
           {pricingPath.map((tier) => (
-            <article key={tier.label} className="pb-card p-6 sm:p-8">
+            <article key={tier.label} className="pb-card p-5 sm:p-6 lg:p-8">
               <span className="pb-eyebrow border-white/12 bg-white/[0.03]">{tier.label}</span>
-              <h3 className="mt-5 text-3xl font-semibold tracking-tight text-white">{tier.title}</h3>
-              <p className="pb-copy mt-3 text-base leading-7">{tier.body}</p>
+              <h3 className="mt-4 text-2xl font-semibold tracking-tight text-white sm:mt-5 sm:text-3xl">{tier.title}</h3>
+              <p className="pb-copy mt-2.5 text-sm leading-6 sm:mt-3 sm:text-base sm:leading-7">{tier.body}</p>
               <ul className="mt-6 grid gap-3">
                 {tier.bullets.map((bullet) => (
                   <li key={bullet} className="flex items-center gap-3 text-sm font-semibold text-white/78">
@@ -539,12 +539,12 @@ function FinalCta() {
   return (
     <section className="pb-section">
       <div className="pb-container">
-        <div className="relative overflow-hidden rounded-[2.4rem] border border-[hsl(var(--pb-lavender)/0.35)] bg-[hsl(var(--pb-panel)/0.84)] p-7 text-center shadow-[0_36px_100px_-64px_hsl(var(--pb-violet))] sm:p-12">
+        <div className="relative overflow-hidden rounded-[2.4rem] border border-[hsl(var(--pb-lavender)/0.35)] bg-[hsl(var(--pb-panel)/0.84)] p-6 text-center shadow-[0_36px_100px_-64px_hsl(var(--pb-violet))] sm:p-8 lg:p-12">
           <div className="pb-lens-field" />
           <div className="relative z-10 mx-auto max-w-4xl">
             <BrandMark variant="horizontal" tone="light" size={48} className="justify-center" withGlow />
             <h2 className="pb-section-title mt-8 text-white">Send one link. Get a usable brief.</h2>
-            <p className="pb-copy mx-auto mt-5 max-w-2xl text-lg">Give customers a clear path, give your team a clean packet, and stop turning every quote into a photo scavenger hunt.</p>
+            <p className="pb-copy mx-auto mt-4 max-w-2xl text-base sm:mt-5 sm:text-lg">Give customers a clear path, give your team a clean packet, and stop turning every quote into a photo scavenger hunt.</p>
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
               <Button asChild size="xl" className="rounded-full bg-[hsl(var(--pb-violet))] px-8 text-[hsl(var(--pb-night))] hover:bg-[hsl(var(--pb-lavender))]">
                 <NavLink to={signupCtaTarget()} onClick={() => trackEvent("cta_click", { location: "final", label: "primary" })}>
@@ -555,7 +555,7 @@ function FinalCta() {
                 <NavLink to="/pricing">See plans</NavLink>
               </Button>
             </div>
-            <p className="mt-5 text-sm font-medium text-white/46">Customers do not need an account or app to complete a PhotoBrief request.</p>
+            <p className="mt-4 text-xs font-medium text-white/46 sm:mt-5 sm:text-sm">Customers do not need an account or app to complete a PhotoBrief request.</p>
           </div>
         </div>
       </div>
