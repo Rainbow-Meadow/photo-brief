@@ -313,7 +313,7 @@ function WorkflowSection() {
   return (
     <section id="workflow" className="pb-section">
       <div className="pb-container">
-        <div className="grid gap-8 lg:grid-cols-[0.7fr_1.3fr] lg:items-start lg:gap-10">
+        <div className="grid gap-8 lg:grid-cols-[0.7fr_1.3fr] lg:items-center lg:gap-10">
           <div>
             <span className="pb-eyebrow"><Route className="h-3.5 w-3.5" /> How it works</span>
             <h2 className="pb-section-title mt-4 max-w-xl text-white">From vague request to usable brief.</h2>
