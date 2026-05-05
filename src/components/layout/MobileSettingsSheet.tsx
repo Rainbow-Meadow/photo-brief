@@ -111,9 +111,9 @@ export function MobileSettingsSheet({ open, onOpenChange }: Props) {
                     onOpenChange(false);
                     logOut();
                   }}
-                  className="flex w-full items-center gap-3 px-5 py-4 text-left transition active:bg-muted disabled:opacity-60"
+                  className="pb-settings-row flex w-full items-center gap-3 px-5 py-4 text-left disabled:opacity-60"
                 >
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-destructive/10 text-destructive">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-destructive/10 text-destructive">
                     <LogOut className="h-5 w-5" />
                   </span>
                   <div className="min-w-0 flex-1">
