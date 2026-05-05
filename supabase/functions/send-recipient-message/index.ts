@@ -218,6 +218,85 @@ Deno.serve(async (req) => {
       }
     }
 
+    // ── Gmail / Outlook OAuth-connected provider send ──
+    if ((channel === "gmail" || channel === "outlook") && toEmail) {
+      const providerKey = channel === "gmail" ? "gmail" : "microsoft-365";
+      const { data: providerConn } = await admin
+        .from("integration_connections")
+        .select("id, status")
+        .eq("workspace_id", request.workspace_id)
+        .eq("provider_key", providerKey)
+        .eq("status", "connected")
+        .maybeSingle();
+
+      if (!providerConn) {
+        // Fall back to Lovable transactional email if no active connection
+        channel = "email";
+      } else {
+        // Use the connected inbox to send
+        const { error: sendErr } = await admin.functions.invoke(
+          "integration-send-email",
+          {
+            body: {
+              connectionId: providerConn.id,
+              to: toEmail,
+              subject: subject ?? `${businessName}: photo request`,
+              textBody: body,
+              htmlBody: undefined, // Plain text for now; HTML templates can be added later
+            },
+          },
+        );
+        if (sendErr) {
+          deliveryError = `${channel} send failed: ${sendErr.message}`;
+          deliveryStatus = "logged_only";
+          // Fall through to log the message
+        } else {
+          deliveryStatus = "sent";
+        }
+
+        // Skip the standard email path below
+        const skipStandardEmail = true;
+        if (skipStandardEmail) {
+          // Insert message log and handle status update
+          const { error: insErr } = await admin.from("request_messages").insert({
+            request_id: request.id,
+            workspace_id: request.workspace_id,
+            kind: payload.kind,
+            channel,
+            to_address: toEmail,
+            subject,
+            body,
+            sent_by: userData.user.id,
+            metadata: {
+              delivery: deliveryStatus,
+              provider: providerKey,
+              ...(deliveryError ? { error: deliveryError } : {}),
+              ...(payload.missingItems ? { missingItems: payload.missingItems } : {}),
+            },
+          });
+          if (insErr) {
+            return new Response(JSON.stringify({ error: insErr.message }), {
+              status: 500,
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            });
+          }
+
+          if (payload.kind === "initial") {
+            await admin
+              .from("photo_brief_requests")
+              .update({ status: "sent" })
+              .eq("id", request.id)
+              .in("status", ["draft"]);
+          }
+
+          return new Response(
+            JSON.stringify({ ok: true, delivery: deliveryStatus, provider: providerKey }),
+            { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+          );
+        }
+      }
+    }
+
     const includeEmail = channel === "email" || channel === "both";
     if (includeEmail && toEmail) {
       const templateName =
