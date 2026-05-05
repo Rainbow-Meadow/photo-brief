@@ -186,13 +186,13 @@ const pricingPath = [
 function SectionNav() {
   return (
     <nav aria-label="Landing page sections" className="sticky top-[4.5rem] z-30 border-y border-white/10 bg-[hsl(var(--pb-night)/0.82)] backdrop-blur-xl">
-      <div className="pb-container flex justify-start gap-2 overflow-x-auto py-3 sm:justify-center">
+      <div className="pb-container flex justify-start gap-1.5 overflow-x-auto py-2 sm:gap-2 sm:py-3 sm:justify-center">
         {sectionLinks.map((item) => (
           <a
             key={item.href}
             href={item.href}
             onClick={() => trackEvent("landing_jump_nav_click", { target: item.href })}
-            className="min-w-max rounded-full border border-transparent px-4 py-2 text-sm font-semibold text-white/62 transition hover:border-white/14 hover:bg-white/7 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--pb-lavender))]"
+            className="min-w-max rounded-full border border-transparent px-3 py-1.5 text-xs font-semibold text-white/62 transition hover:border-white/14 hover:bg-white/7 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--pb-lavender))] sm:px-4 sm:py-2 sm:text-sm"
           >
             {item.label}
           </a>
@@ -249,10 +249,10 @@ function HeroSection({ onOpenDemo }: { onOpenDemo: () => void }) {
     <section className="relative isolate overflow-hidden pt-10 sm:pt-14 lg:pt-18">
       <div className="pb-lens-field" />
       <div aria-hidden className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[hsl(var(--pb-lavender)/0.55)] to-transparent" />
-      <div className="pb-container relative grid gap-10 pb-14 lg:grid-cols-[0.88fr_1.12fr] lg:items-center lg:pb-20">
+      <div className="pb-container relative grid gap-8 pb-12 sm:pb-14 lg:grid-cols-[0.88fr_1.12fr] lg:items-center lg:gap-10 lg:pb-20">
         <div className="relative z-10 max-w-3xl lg:max-w-none">
           <span className="pb-eyebrow"><Sparkles className="h-3.5 w-3.5" /> Founding Partner Beta now open</span>
-          <h1 className="pb-hero-title mt-5 pb-2 text-white">
+          <h1 className="pb-hero-title mt-4 pb-2 text-white sm:mt-5">
             Get quote-ready customer photos.
             <span className="block pb-2 text-[hsl(var(--pb-lavender))]">Send one guided link.</span>
           </h1>
