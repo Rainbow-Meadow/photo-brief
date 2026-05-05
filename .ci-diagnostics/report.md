@@ -1,7 +1,7 @@
 # CI diagnostics
 
-Commit: 57df500bdb66e4fdc5626f19f1211c1665e8f6f2
-Run started: 2026-05-05T03:35:55Z
+Commit: 3397c54dc85c858393fb7af60a68ecbf71afb799
+Run started: 2026-05-05T03:37:12Z
 
 ## npm-ci
 ```text
@@ -9,7 +9,7 @@ npm warn deprecated whatwg-encoding@2.0.0: Use @exodus/bytes instead for a more 
 npm warn deprecated abab@2.0.6: Use your platform's native atob() and btoa() methods instead
 npm warn deprecated domexception@4.0.0: Use your platform's native DOMException instead
 
-added 593 packages, and audited 594 packages in 14s
+added 593 packages, and audited 594 packages in 15s
 
 106 packages are looking for funding
   run `npm fund` for details
@@ -232,10 +232,14 @@ computing gzip size...
 - Using dynamic import() to code-split the application
 - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
-[32m✓ built in 8.03s[39m
+[32m✓ built in 8.29s[39m
 ```
 
 ## Summary
+npm-ci=0
+typecheck=0
+lint=0
+build=0
 npm-ci=0
 typecheck=0
 lint=0
