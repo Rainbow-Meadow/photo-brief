@@ -43,8 +43,8 @@ export function MarketingLayout() {
       <div className="sticky top-0 z-40 px-3 pt-3 sm:px-6 sm:pt-4 pt-safe">
         <header className="mx-auto flex h-14 w-full max-w-7xl items-center justify-between gap-4 rounded-full glass-nav px-3 sm:h-16 sm:px-5">
           <NavLink to="/" aria-label="PhotoBrief home" className="flex items-center pl-1">
-            <BrandMark variant="horizontal" tone="auto" size={32} eager className="sm:hidden" />
-            <BrandMark variant="horizontal" tone="auto" size={38} eager className="hidden sm:block" />
+            <BrandMark variant="wordmark" tone="auto" size={22} eager className="sm:hidden" />
+            <BrandMark variant="wordmark" tone="auto" size={26} eager className="hidden sm:block" />
           </NavLink>
 
           <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
