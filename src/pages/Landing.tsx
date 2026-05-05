@@ -279,7 +279,7 @@ function HeroSection({ onOpenDemo }: { onOpenDemo: () => void }) {
                 {signupCtaLabel()} <ArrowRight className="ml-1 h-4 w-4" />
               </NavLink>
             </Button>
-            <Button asChild size="xl" variant="outline" className="rounded-full border-white/16 bg-white/[0.03] px-7 text-white hover:bg-white/10 hover:text-white">
+            <Button asChild size="xl" variant="pb-secondary">
               <a href="#workflow" onClick={() => trackEvent("cta_click", { location: "hero", label: "workflow" })}>
                 See how it works
               </a>
@@ -511,7 +511,7 @@ function FoundingPartnerSection() {
                   {signupCtaLabel()} <ArrowRight className="ml-1 h-4 w-4" />
                 </NavLink>
               </Button>
-              <Button asChild size="lg" variant="outline" className="rounded-full border-white/16 bg-white/[0.03] text-white hover:bg-white/10 hover:text-white">
+              <Button asChild size="lg" variant="pb-secondary">
                 <NavLink to="/founding-partner-beta">Read beta details</NavLink>
               </Button>
             </div>
@@ -588,7 +588,7 @@ function FinalCta() {
                   {signupCtaLabel()} <ArrowRight className="ml-1 h-4 w-4" />
                 </NavLink>
               </Button>
-              <Button asChild size="xl" variant="outline" className="rounded-full border-white/16 bg-white/[0.03] px-8 text-white hover:bg-white/10 hover:text-white">
+              <Button asChild size="xl" variant="pb-secondary">
                 <NavLink to="/pricing">See plans</NavLink>
               </Button>
             </div>

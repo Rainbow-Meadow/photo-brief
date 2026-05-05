@@ -71,7 +71,7 @@ export default function PricingPage() {
                 {signupCtaLabel()} <ArrowRight className="ml-1 h-4 w-4" />
               </NavLink>
             </Button>
-            <Button asChild size="xl" variant="outline" className="rounded-full border-white/16 bg-white/[0.03] text-white hover:bg-white/10 hover:text-white">
+            <Button asChild size="xl" variant="pb-secondary">
               <NavLink to="/founding-partner-beta">View beta program</NavLink>
             </Button>
           </div>
