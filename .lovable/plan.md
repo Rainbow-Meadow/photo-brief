@@ -1,46 +1,60 @@
 
-# Landing Page Layout Harmonization
+# Deploy New Logo/Icon Across the Site
 
-## Problems Found
+The uploaded image (purple camera-envelope 3D icon) will replace every existing logo, favicon, icon, and OG image asset throughout the project.
 
-1. **Hero is too tall on desktop** — the dual-phone interactive demo is inside the hero's `lg:grid-cols` layout, causing the hero to stretch vertically to accommodate ~800px of phone content. The hero text and the demo compete for attention.
-2. **Interactive demo has redundant header** — "See how a PhotoBrief comes together" title + subtitle inside the hero grid is redundant alongside the main hero headline.
-3. **Section gaps are uneven** — the space between Comparison → Use Cases and Use Cases → Founding Beta is visibly larger than other section transitions (roughly 200px of dead dark space).
-4. **Use case cards orphan** — 5 cards in a 3-col grid leaves 2 orphans on the bottom row, creating asymmetry.
-5. **Section Nav** isn't sticky-visible when scrolling — it sits between the very tall hero and the workflow section, often hidden.
+## What will be done
 
-## Changes
+### 1. Generate all required asset sizes from the uploaded image
 
-### 1. Separate Interactive Demo from Hero (`Landing.tsx` — `HeroSection`)
-- Remove `<InteractiveHeroBriefAssembly />` from inside the hero's grid
-- Place it as its own standalone section below the hero (but above `SectionNav`)
-- Remove the hero's `lg:grid-cols-[0.88fr_1.12fr]` layout — hero becomes a simple centered/left-aligned block
-- The interactive demo keeps its own header ("See how a PhotoBrief comes together")
+Using ImageMagick, create the following from the uploaded PNG:
 
-### 2. Tighten Hero (`Landing.tsx` — `HeroSection`)
-- Remove the 2-column grid; hero content flows as a single centered or left-aligned column
-- Reduce bottom padding: `pb-12 sm:pb-14 lg:pb-20` → `pb-8 sm:pb-10 lg:pb-14`
-- This makes the hero fit in ~one viewport on desktop
+| File | Size | Purpose |
+|------|------|---------|
+| `public/brand/mark-color.png` | 1024x1024 | Primary mark (used by BrandMark component) |
+| `public/brand/mark-color.webp` | 1024x1024 | WebP variant |
+| `public/favicon.svg` | removed | No SVG source for raster logo |
+| `public/favicon.png` | 32x32 | Favicon PNG |
+| `public/favicon.ico` | 48x48 | ICO favicon |
+| `public/favicon-16x16.png` | 16x16 | Small favicon |
+| `public/favicon-32x32.png` | 32x32 | Medium favicon |
+| `public/brand/favicon-16.png` | 16x16 | Brand dir copy |
+| `public/brand/favicon-32.png` | 32x32 | Brand dir copy |
+| `public/brand/favicon-color.png` | 180x180 | Brand favicon |
+| `public/brand/favicon.ico` | 48x48 | Brand dir ICO |
+| `public/icon-192.png` | 192x192 | PWA icon |
+| `public/icon-512.png` | 512x512 | PWA icon |
+| `public/brand/icon-192.png` | 192x192 | PWA maskable |
+| `public/brand/icon-512.png` | 512x512 | PWA maskable |
+| `public/brand/apple-touch-icon.png` | 180x180 | Apple touch icon |
+| `public/apple-touch-icon.png` | 180x180 | Root apple touch |
+| `public/og-image.png` | 1200x630 | OG image (icon centered on dark bg) |
+| `public/og-image.jpg` | 1200x630 | OG image JPG variant |
+| `public/brand/mark-micro.svg` | keep or replace | Micro mark |
 
-### 3. Create InteractiveDemo section (`Landing.tsx`)
-- New `<section>` wrapping `<InteractiveHeroBriefAssembly />` with `pb-section-tight` spacing
-- Centered layout, max-width constraint for the phone pair
-- Remove the inline header from the component since it's now a standalone section
+### 2. Update index.html
 
-### 4. Normalize section spacing (`index.css`)
-- `pb-section`: keep `clamp(3.5rem, 7vw, 7rem)` — fine for primary sections
-- `pb-section-tight`: tighten to `clamp(2.5rem, 4.5vw, 4rem)` (was `clamp(3rem, 5.5vw, 5rem)`)
-- This reduces the dead-space gaps between sections
+- Remove the SVG favicon link (no SVG version of this raster icon)
+- Update OG image meta tags to point to `/og-image.png` instead of the old SVG
+- Update structured data logo URL to `/og-image.png`
 
-### 5. Use case grid fix (`Landing.tsx` — `UseCaseSection`)
-- Change from `lg:grid-cols-3` to `md:grid-cols-2 lg:grid-cols-3` with the 5th card spanning or centering
-- Or: keep 5 cards but add `last:md:col-span-2 last:lg:col-span-1` to center the orphan row
+### 3. Update BrandMark component
 
-### 6. Consistent section header spacing
-- All sections use the same pattern: eyebrow → mt-4 → title → mt-4 → body → mt-8 → content
-- Audit each section for deviations (some use mt-5, some mt-4, some mt-3) and normalize
+- `MARK_SRC` already points to `/brand/mark-color.png` -- just replacing the file is sufficient
+- No code change needed unless we want to also update horizontal/stacked variants
 
-## Files Modified
-- `src/pages/Landing.tsx` — restructure hero, create demo section, normalize spacing
-- `src/index.css` — tighten `pb-section-tight`
-- `src/components/marketing/InteractiveHeroBriefAssembly.tsx` — adjust header (may keep or simplify since it becomes standalone)
+### 4. Clean up old SVG logo files
+
+Remove obsolete SVG logo files that are no longer the brand mark:
+- `public/favicon.svg` (raster logo, no SVG equivalent)
+- Optionally keep the old SVGs in `/public/` for backwards compat but they won't be referenced
+
+### 5. Update site.webmanifest
+
+Already references `/icon-192.png` and `/icon-512.png` -- replacing files is sufficient.
+
+## Files affected
+
+- ~15 image files regenerated in `public/` and `public/brand/`
+- `index.html` -- minor meta tag updates
+- No component code changes needed (BrandMark already references the correct paths)
