@@ -439,17 +439,17 @@ function UseCaseSection() {
         <div className="max-w-3xl">
           <span className="pb-eyebrow"><ClipboardList className="h-3.5 w-3.5" /> Use cases</span>
           <h2 className="pb-section-title mt-5 text-white">Useful anywhere a missing photo slows the next step.</h2>
-          <p className="pb-copy mt-5 max-w-2xl text-lg">PhotoBrief is built for teams that need customer media before quoting, scheduling, approving, reviewing, or documenting work.</p>
+          <p className="pb-copy mt-5 max-w-2xl text-base sm:text-lg">PhotoBrief is built for teams that need customer media before quoting, scheduling, approving, reviewing, or documenting work.</p>
         </div>
-        <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 grid gap-4 sm:mt-10 md:grid-cols-2 lg:grid-cols-3">
           {useCases.map((item) => {
             const Icon = item.icon;
             return (
-              <article key={item.title} className="pb-card p-5 sm:p-6">
-                <Icon className="h-7 w-7 text-[hsl(var(--pb-lavender))]" />
-                <span className="pb-stamp mt-6 inline-flex rounded-full px-3 py-1">{item.stamp}</span>
-                <h3 className="mt-5 text-xl font-semibold tracking-tight text-white">{item.title}</h3>
-                <p className="pb-copy mt-3 text-sm leading-6">{item.body}</p>
+              <article key={item.title} className="pb-card p-4 sm:p-5 md:p-6">
+                <Icon className="h-6 w-6 text-[hsl(var(--pb-lavender))] sm:h-7 sm:w-7" />
+                <span className="pb-stamp mt-5 inline-flex rounded-full px-3 py-1 sm:mt-6">{item.stamp}</span>
+                <h3 className="mt-4 text-lg font-semibold tracking-tight text-white sm:mt-5 sm:text-xl">{item.title}</h3>
+                <p className="pb-copy mt-2 text-sm leading-6 sm:mt-3">{item.body}</p>
               </article>
             );
           })}
@@ -463,12 +463,12 @@ function FoundingPartnerSection() {
   return (
     <section id="beta-offer" className="pb-section-tight">
       <div className="pb-container">
-        <div className="pb-command-panel grid gap-8 p-6 sm:p-8 lg:grid-cols-[0.85fr_1.15fr] lg:p-10">
+        <div className="pb-command-panel grid gap-6 p-5 sm:gap-8 sm:p-6 lg:grid-cols-[0.85fr_1.15fr] lg:p-8 xl:p-10">
           <div className="relative z-10">
             <span className="pb-eyebrow"><Stamp className="h-3.5 w-3.5" /> Founding beta</span>
-            <h2 className="mt-5 text-3xl font-semibold tracking-tight text-white sm:text-5xl">Built with real workflows, not toy testing.</h2>
-            <p className="pb-copy mt-5 text-lg">We are inviting a small group of businesses to use PhotoBrief in real intake scenarios before public launch. You get hands-on setup and early influence; we get honest workflow feedback.</p>
-            <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+            <h2 className="mt-4 text-2xl font-semibold tracking-tight text-white sm:mt-5 sm:text-3xl lg:text-4xl">Built with real workflows, not toy testing.</h2>
+            <p className="pb-copy mt-4 text-base sm:mt-5 sm:text-lg">We are inviting a small group of businesses to use PhotoBrief in real intake scenarios before public launch. You get hands-on setup and early influence; we get honest workflow feedback.</p>
+            <div className="mt-6 flex flex-col gap-2.5 sm:mt-7 sm:flex-row sm:gap-3">
               <Button asChild size="lg" className="rounded-full bg-[hsl(var(--pb-violet))] text-[hsl(var(--pb-night))] hover:bg-[hsl(var(--pb-lavender))]">
                 <NavLink to={signupCtaTarget()} onClick={() => trackEvent("cta_click", { location: "beta_offer", label: "primary" })}>
                   {signupCtaLabel()} <ArrowRight className="ml-1 h-4 w-4" />
