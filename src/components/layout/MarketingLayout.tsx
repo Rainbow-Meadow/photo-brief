@@ -13,11 +13,6 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 
-const marketingAnchors = [
-  { href: "/#start", label: "Start" },
-  { href: "/#flow", label: "Flow" },
-  { href: "/#automation", label: "Automate" },
-];
 
 const marketingRoutes = [
   { to: "/founding-partner-beta", label: "Founding Beta" },
@@ -48,15 +43,6 @@ export function MarketingLayout() {
           </NavLink>
 
           <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
-            {marketingAnchors.map((l) => (
-              <a
-                key={l.href}
-                href={l.href}
-                className="rounded-full px-3 py-1.5 text-white/62 transition-colors hover:bg-white/7 hover:text-white"
-              >
-                {l.label}
-              </a>
-            ))}
             {marketingRoutes.map((l) => (
               <NavLink
                 key={l.to}
@@ -109,17 +95,6 @@ export function MarketingLayout() {
             <ThemeToggle className="w-full justify-between" />
           </div>
           <ul className="divide-y">
-            {marketingAnchors.map((l) => (
-              <li key={l.href}>
-                <a
-                  href={l.href}
-                  onClick={() => setMenuOpen(false)}
-                  className="block px-5 py-4 text-base font-medium text-foreground active:bg-muted"
-                >
-                  {l.label}
-                </a>
-              </li>
-            ))}
             {marketingRoutes.map((l) => (
               <li key={l.to}>
                 <NavLink
