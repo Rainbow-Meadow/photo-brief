@@ -19,8 +19,9 @@ Deno.serve(async (req) => {
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL')
   const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+  const workspaceId = Deno.env.get('MARKETING_WORKSPACE_ID')
 
-  if (!supabaseUrl || !serviceKey) {
+  if (!supabaseUrl || !serviceKey || !workspaceId) {
     return json({ error: 'Server misconfigured' }, 500)
   }
 
@@ -49,9 +50,60 @@ Deno.serve(async (req) => {
 
   await supabase.from('marketing_live_submissions').insert(record)
 
-  // Lead capture
   const lead = payload?.lead
+
   if (lead?.email) {
+    const { data: existingLead } = await supabase
+      .from('marketing_live_leads')
+      .select('*')
+      .eq('session_id', sessionId)
+      .eq('email', lead.email)
+      .maybeSingle()
+
+    let customerId = existingLead?.customer_id
+    let requestId = existingLead?.request_id
+    let requestToken = existingLead?.request_token
+
+    // Create customer if needed
+    if (!customerId) {
+      const { data: customer } = await supabase
+        .from('customers')
+        .insert({
+          workspace_id: workspaceId,
+          email: lead.email,
+          name: lead.name || null,
+          phone: lead.phone || null,
+        })
+        .select()
+        .single()
+
+      customerId = customer?.id
+    }
+
+    // Create request if ready and not yet created
+    if (!requestId && payload?.brief?.readiness === 'ready') {
+      const token = crypto.randomUUID().replace(/-/g, '').slice(0, 12)
+
+      const { data: request } = await supabase
+        .from('photo_brief_requests')
+        .insert({
+          workspace_id: workspaceId,
+          customer_id: customerId,
+          title: 'PhotoBrief from landing page',
+          status: 'draft',
+          request_token: token,
+        })
+        .select()
+        .single()
+
+      requestId = request?.id
+      requestToken = token
+    }
+
+    const requestUrl = requestToken
+      ? `https://photobrief.ai/r/${requestToken}`
+      : null
+
     await supabase.from('marketing_live_leads').upsert({
       session_id: sessionId,
       email: lead.email,
@@ -64,6 +116,11 @@ Deno.serve(async (req) => {
       issue: payload?.brief?.issue || null,
       summary: payload?.brief?.summary || null,
       payload,
+      customer_id: customerId,
+      request_id: requestId,
+      request_token: requestToken,
+      request_url: requestUrl,
+      converted_at: requestId ? new Date().toISOString() : null,
       consented_at: lead.consented ? new Date().toISOString() : null,
       updated_at: new Date().toISOString(),
     })
