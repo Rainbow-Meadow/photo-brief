@@ -211,13 +211,7 @@ Deno.serve(async (req) => {
 
   try {
     const accessToken = await getAccessToken(admin, conn)
-    let result: { messageId: string }
-
-    if (conn.provider_key === 'gmail') {
-      result = await sendViaGmail(accessToken, payload)
-    } else {
-      result = await sendViaMicrosoft(accessToken, payload)
-    }
+    const result = await sendViaGmail(accessToken, payload)
 
     // Log success
     await admin.from('integration_action_runs').insert({
