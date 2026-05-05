@@ -222,6 +222,7 @@ export default function LandingPage() {
 
       <main className="pb-landing">
         <HeroSection onOpenDemo={() => setDemoOpen(true)} />
+        <InteractiveDemoSection />
         <SectionNav />
         <WorkflowSection />
         <ComparisonSection mode={comparisonMode} onModeChange={setComparisonMode} />
@@ -246,13 +247,13 @@ export default function LandingPage() {
 
 function HeroSection({ onOpenDemo }: { onOpenDemo: () => void }) {
   return (
-    <section className="relative isolate overflow-hidden pt-10 sm:pt-14 lg:pt-18">
+    <section className="relative isolate overflow-hidden pt-10 sm:pt-14 lg:pt-16">
       <div className="pb-lens-field" />
       <div aria-hidden className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[hsl(var(--pb-lavender)/0.55)] to-transparent" />
-      <div className="pb-container relative grid gap-8 pb-12 sm:pb-14 lg:grid-cols-[0.88fr_1.12fr] lg:items-center lg:gap-10 lg:pb-20">
-        <div className="relative z-10 max-w-3xl lg:max-w-none">
+      <div className="pb-container relative pb-8 sm:pb-10 lg:pb-14">
+        <div className="relative z-10 mx-auto max-w-3xl text-center">
           {/* Logo spotlight */}
-          <div className="mb-6 sm:mb-8">
+          <div className="mb-5 sm:mb-6">
             <div className="relative inline-flex items-center justify-center">
               <div aria-hidden className="pointer-events-none absolute h-32 w-32 rounded-full bg-[hsl(var(--pb-violet)/0.35)] blur-[60px] sm:h-44 sm:w-44 sm:blur-[80px]" />
               <BrandMark variant="mark" size={72} withGlow eager className="relative sm:hidden" />
@@ -261,14 +262,14 @@ function HeroSection({ onOpenDemo }: { onOpenDemo: () => void }) {
             </div>
           </div>
           <span className="pb-eyebrow"><Sparkles className="h-3.5 w-3.5" /> Founding Partner Beta now open</span>
-          <h1 className="pb-hero-title mt-4 pb-2 text-white sm:mt-5">
+          <h1 className="pb-hero-title mt-4 pb-2 text-white">
             Get quote-ready customer photos.
             <span className="block pb-2 text-[hsl(var(--pb-lavender))]">Send one guided link.</span>
           </h1>
-          <p className="pb-copy mt-5 max-w-2xl text-base leading-7 sm:text-lg sm:leading-8">
+          <p className="pb-copy mx-auto mt-4 max-w-2xl text-base leading-7 sm:text-lg sm:leading-8">
             PhotoBrief is a one-link photo intake tool for service, repair, review, and documentation workflows. Customers follow mobile prompts, obvious issues get flagged, and your team receives a clean brief instead of a messy thread.
           </p>
-          <div className="mt-7 flex flex-col gap-2.5 sm:mt-8 sm:flex-row sm:flex-wrap sm:gap-3">
+          <div className="mt-6 flex flex-col items-center gap-2.5 sm:mt-7 sm:flex-row sm:justify-center sm:gap-3">
             <Button asChild size="xl" className="rounded-full bg-[hsl(var(--pb-violet))] px-7 text-[hsl(var(--pb-night))] hover:bg-[hsl(var(--pb-lavender))]">
               <NavLink to={signupCtaTarget()} onClick={() => trackEvent("cta_click", { location: "hero", label: "primary" })}>
                 {signupCtaLabel()} <ArrowRight className="ml-1 h-4 w-4" />
@@ -283,7 +284,7 @@ function HeroSection({ onOpenDemo }: { onOpenDemo: () => void }) {
               <PlayCircle className="mr-1 h-5 w-5" /> Product spotlight
             </Button>
           </div>
-          <div className="mt-6 grid max-w-2xl gap-1.5 sm:mt-7 sm:grid-cols-3 sm:gap-2">
+          <div className="mx-auto mt-5 grid max-w-md gap-1.5 sm:mt-6 sm:grid-cols-3 sm:gap-2">
             {[
               "No app for customers",
               "Manual links first",
@@ -293,7 +294,15 @@ function HeroSection({ onOpenDemo }: { onOpenDemo: () => void }) {
             ))}
           </div>
         </div>
+      </div>
+    </section>
+  );
+}
 
+function InteractiveDemoSection() {
+  return (
+    <section className="pb-section-tight border-t border-white/10">
+      <div className="pb-container">
         <InteractiveHeroBriefAssembly />
       </div>
     </section>
@@ -307,8 +316,8 @@ function WorkflowSection() {
         <div className="grid gap-8 lg:grid-cols-[0.7fr_1.3fr] lg:items-start lg:gap-10">
           <div>
             <span className="pb-eyebrow"><Route className="h-3.5 w-3.5" /> How it works</span>
-            <h2 className="pb-section-title mt-4 max-w-xl text-white sm:mt-5">From vague request to usable brief.</h2>
-            <p className="pb-copy mt-4 max-w-lg text-base sm:mt-5 sm:text-lg">PhotoBrief does not just collect uploads. It guides the customer, keeps context attached, and packages the result for the next business step.</p>
+            <h2 className="pb-section-title mt-4 max-w-xl text-white">From vague request to usable brief.</h2>
+            <p className="pb-copy mt-4 max-w-lg text-base sm:text-lg">PhotoBrief does not just collect uploads. It guides the customer, keeps context attached, and packages the result for the next business step.</p>
           </div>
           <div className="relative">
             <div className="absolute left-6 top-8 hidden h-[calc(100%-4rem)] w-px bg-gradient-to-b from-[hsl(var(--pb-lavender))] via-[hsl(var(--pb-mint))] to-transparent md:block" />
@@ -345,8 +354,8 @@ function ComparisonSection({ mode, onModeChange }: { mode: "messy" | "clean"; on
       <div className="pb-container">
         <div className="mx-auto max-w-3xl text-center">
           <span className="pb-eyebrow"><MessageSquareWarning className="h-3.5 w-3.5" /> Before / after</span>
-          <h2 className="pb-section-title mt-5 text-white">Your team should not have to decode a camera roll.</h2>
-          <p className="pb-copy mt-5 text-lg">The value is not “more photos.” The value is getting the right photos, tied to the right job, with enough context to act.</p>
+          <h2 className="pb-section-title mt-4 text-white">Your team should not have to decode a camera roll.</h2>
+          <p className="pb-copy mt-4 text-lg">The value is not “more photos.” The value is getting the right photos, tied to the right job, with enough context to act.</p>
         </div>
 
         <div className="mx-auto mt-8 flex max-w-md rounded-full border border-white/12 bg-[hsl(var(--pb-panel)/0.72)] p-1 sm:mt-10">
@@ -447,18 +456,31 @@ function UseCaseSection() {
       <div className="pb-container">
         <div className="max-w-3xl">
           <span className="pb-eyebrow"><ClipboardList className="h-3.5 w-3.5" /> Use cases</span>
-          <h2 className="pb-section-title mt-4 text-white sm:mt-5">Useful anywhere a missing photo slows the next step.</h2>
-          <p className="pb-copy mt-5 max-w-2xl text-base sm:text-lg">PhotoBrief is built for teams that need customer media before quoting, scheduling, approving, reviewing, or documenting work.</p>
+          <h2 className="pb-section-title mt-4 text-white">Useful anywhere a missing photo slows the next step.</h2>
+          <p className="pb-copy mt-4 max-w-2xl text-base sm:text-lg">PhotoBrief is built for teams that need customer media before quoting, scheduling, approving, reviewing, or documenting work.</p>
         </div>
         <div className="mt-8 grid gap-4 sm:mt-10 md:grid-cols-2 lg:grid-cols-3">
-          {useCases.map((item) => {
+          {useCases.slice(0, 3).map((item) => {
             const Icon = item.icon;
             return (
               <article key={item.title} className="pb-card p-4 sm:p-5 md:p-6">
                 <Icon className="h-6 w-6 text-[hsl(var(--pb-lavender))] sm:h-7 sm:w-7" />
-                <span className="pb-stamp mt-5 inline-flex rounded-full px-3 py-1 sm:mt-6">{item.stamp}</span>
-                <h3 className="mt-4 text-lg font-semibold tracking-tight text-white sm:mt-5 sm:text-xl">{item.title}</h3>
-                <p className="pb-copy mt-2 text-sm leading-6 sm:mt-3">{item.body}</p>
+                <span className="pb-stamp mt-4 inline-flex rounded-full px-3 py-1 sm:mt-5">{item.stamp}</span>
+                <h3 className="mt-3 text-lg font-semibold tracking-tight text-white sm:mt-4 sm:text-xl">{item.title}</h3>
+                <p className="pb-copy mt-2 text-sm leading-6">{item.body}</p>
+              </article>
+            );
+          })}
+        </div>
+        <div className="mx-auto mt-4 grid max-w-3xl gap-4 md:grid-cols-2">
+          {useCases.slice(3).map((item) => {
+            const Icon = item.icon;
+            return (
+              <article key={item.title} className="pb-card p-4 sm:p-5 md:p-6">
+                <Icon className="h-6 w-6 text-[hsl(var(--pb-lavender))] sm:h-7 sm:w-7" />
+                <span className="pb-stamp mt-4 inline-flex rounded-full px-3 py-1 sm:mt-5">{item.stamp}</span>
+                <h3 className="mt-3 text-lg font-semibold tracking-tight text-white sm:mt-4 sm:text-xl">{item.title}</h3>
+                <p className="pb-copy mt-2 text-sm leading-6">{item.body}</p>
               </article>
             );
           })}
@@ -475,9 +497,9 @@ function FoundingPartnerSection() {
         <div className="pb-command-panel grid gap-6 p-5 sm:gap-8 sm:p-6 lg:grid-cols-[0.85fr_1.15fr] lg:p-8 xl:p-10">
           <div className="relative z-10">
             <span className="pb-eyebrow"><Stamp className="h-3.5 w-3.5" /> Founding beta</span>
-            <h2 className="mt-4 text-2xl font-semibold tracking-tight text-white sm:mt-5 sm:text-3xl lg:text-4xl">Built with real workflows, not toy testing.</h2>
-            <p className="pb-copy mt-4 text-base sm:mt-5 sm:text-lg">We are inviting a small group of businesses to use PhotoBrief in real intake scenarios before public launch. You get hands-on setup and early influence; we get honest workflow feedback.</p>
-            <div className="mt-6 flex flex-col gap-2.5 sm:mt-7 sm:flex-row sm:gap-3">
+            <h2 className="mt-4 text-2xl font-semibold tracking-tight text-white sm:text-3xl lg:text-4xl">Built with real workflows, not toy testing.</h2>
+            <p className="pb-copy mt-4 text-base sm:text-lg">We are inviting a small group of businesses to use PhotoBrief in real intake scenarios before public launch. You get hands-on setup and early influence; we get honest workflow feedback.</p>
+            <div className="mt-6 flex flex-col gap-2.5 sm:flex-row sm:gap-3">
               <Button asChild size="lg" className="rounded-full bg-[hsl(var(--pb-violet))] text-[hsl(var(--pb-night))] hover:bg-[hsl(var(--pb-lavender))]">
                 <NavLink to={signupCtaTarget()} onClick={() => trackEvent("cta_click", { location: "beta_offer", label: "primary" })}>
                   {signupCtaLabel()} <ArrowRight className="ml-1 h-4 w-4" />
@@ -520,14 +542,14 @@ function PricingPathSection() {
       <div className="pb-container">
         <div className="mx-auto max-w-3xl text-center">
           <span className="pb-eyebrow"><TimerReset className="h-3.5 w-3.5" /> Start manual. Automate later.</span>
-          <h2 className="pb-section-title mt-4 text-white sm:mt-5">Use one link first. Add automation when it pays for itself.</h2>
-          <p className="pb-copy mt-5 text-base sm:text-lg">Start with manual PhotoBrief links. Upgrade to Pro when website leads, routed requests, and form handoffs should happen without copy/paste.</p>
+          <h2 className="pb-section-title mt-4 text-white">Use one link first. Add automation when it pays for itself.</h2>
+          <p className="pb-copy mt-4 text-base sm:text-lg">Start with manual PhotoBrief links. Upgrade to Pro when website leads, routed requests, and form handoffs should happen without copy/paste.</p>
         </div>
         <div className="mt-8 grid gap-4 sm:mt-10 sm:gap-5 lg:grid-cols-2">
           {pricingPath.map((tier) => (
             <article key={tier.label} className="pb-card p-5 sm:p-6 lg:p-8">
               <span className="pb-eyebrow border-white/12 bg-white/[0.03]">{tier.label}</span>
-              <h3 className="mt-4 text-2xl font-semibold tracking-tight text-white sm:mt-5 sm:text-3xl">{tier.title}</h3>
+              <h3 className="mt-4 text-2xl font-semibold tracking-tight text-white sm:text-3xl">{tier.title}</h3>
               <p className="pb-copy mt-2.5 text-sm leading-6 sm:mt-3 sm:text-base sm:leading-7">{tier.body}</p>
               <ul className="mt-5 grid gap-2.5 sm:mt-6 sm:gap-3">
                 {tier.bullets.map((bullet) => (
@@ -552,9 +574,9 @@ function FinalCta() {
           <div className="pb-lens-field" />
           <div className="relative z-10 mx-auto max-w-4xl">
             <BrandMark variant="horizontal" tone="light" size={48} className="justify-center" withGlow />
-            <h2 className="pb-section-title mt-6 text-white sm:mt-8">Send one link. Get a usable brief.</h2>
-            <p className="pb-copy mx-auto mt-4 max-w-2xl text-base sm:mt-5 sm:text-lg">Give customers a clear path, give your team a clean packet, and stop turning every quote into a photo scavenger hunt.</p>
-            <div className="mt-6 flex flex-col justify-center gap-2.5 sm:mt-8 sm:flex-row sm:gap-3">
+            <h2 className="pb-section-title mt-5 text-white">Send one link. Get a usable brief.</h2>
+            <p className="pb-copy mx-auto mt-4 max-w-2xl text-base sm:text-lg">Give customers a clear path, give your team a clean packet, and stop turning every quote into a photo scavenger hunt.</p>
+            <div className="mt-6 flex flex-col justify-center gap-2.5 sm:flex-row sm:gap-3">
               <Button asChild size="xl" className="rounded-full bg-[hsl(var(--pb-violet))] px-8 text-[hsl(var(--pb-night))] hover:bg-[hsl(var(--pb-lavender))]">
                 <NavLink to={signupCtaTarget()} onClick={() => trackEvent("cta_click", { location: "final", label: "primary" })}>
                   {signupCtaLabel()} <ArrowRight className="ml-1 h-4 w-4" />
@@ -564,7 +586,7 @@ function FinalCta() {
                 <NavLink to="/pricing">See plans</NavLink>
               </Button>
             </div>
-            <p className="mt-4 text-xs font-medium text-white/46 sm:mt-5 sm:text-sm">Customers do not need an account or app to complete a PhotoBrief request.</p>
+            <p className="mt-4 text-xs font-medium text-white/46 sm:text-sm">Customers do not need an account or app to complete a PhotoBrief request.</p>
           </div>
         </div>
       </div>

@@ -381,7 +381,7 @@
   .pb-container { width: min(100% - 2rem, 1180px); margin-inline: auto; }
   @media (min-width: 640px) { .pb-container { width: min(100% - 3rem, 1180px); } }
   .pb-section { padding-block: clamp(3.5rem, 7vw, 7rem); position: relative; }
-  .pb-section-tight { padding-block: clamp(3rem, 5.5vw, 5rem); position: relative; }
+  .pb-section-tight { padding-block: clamp(2.5rem, 4.5vw, 4rem); position: relative; }
   .pb-eyebrow {
     display: inline-flex; align-items: center; gap: 0.45rem; border: 1px solid hsl(var(--pb-line));
     border-radius: 999px; padding: 0.4rem 0.7rem; color: hsl(var(--pb-lavender));
