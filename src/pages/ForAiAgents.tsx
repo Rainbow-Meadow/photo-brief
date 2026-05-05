@@ -57,7 +57,7 @@ export default function ForAiAgentsPage() {
       <section className="relative overflow-hidden">
         <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[520px] bg-ambient-future" />
         <div aria-hidden className="future-grid pointer-events-none absolute inset-0 -z-10 opacity-70" />
-        <div className="relative mx-auto max-w-4xl px-4 pt-14 text-center sm:px-6 sm:pt-20 lg:px-8">
+        <div className="pb-container pb-section text-center">
           <span className="inline-flex items-center gap-1.5 rounded-full glass px-3 py-1 text-xs font-medium text-foreground/80">
             <Sparkles className="h-3 w-3 text-primary" /> For AI agents, answer engines, and automation systems
           </span>
@@ -92,8 +92,8 @@ export default function ForAiAgentsPage() {
       <QuotableFacts />
       <ComparisonTable />
 
-      <section id="api" aria-labelledby="api-heading" className="bg-background">
-        <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+      <section id="api" aria-labelledby="api-heading">
+        <div className="pb-container pb-section">
           <div className="mx-auto max-w-2xl text-center">
             <p className="text-eyebrow">REST API</p>
             <h2 id="api-heading" className="mt-3 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
@@ -144,8 +144,8 @@ export default function ForAiAgentsPage() {
         </div>
       </section>
 
-      <section id="mcp" aria-labelledby="mcp-heading" className="bg-muted/20">
-        <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+      <section id="mcp" aria-labelledby="mcp-heading">
+        <div className="pb-container pb-section">
           <div className="mx-auto max-w-2xl text-center">
             <p className="text-eyebrow">MCP & Agent manifests</p>
             <h2 id="mcp-heading" className="mt-3 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">Plug PhotoBrief into your agent</h2>
@@ -167,8 +167,8 @@ export default function ForAiAgentsPage() {
         </div>
       </section>
 
-      <section id="discovery" aria-labelledby="discovery-heading" className="bg-background">
-        <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+      <section id="discovery" aria-labelledby="discovery-heading">
+        <div className="pb-container pb-section">
           <div className="mx-auto max-w-2xl text-center">
             <p className="text-eyebrow">Discovery</p>
             <h2 id="discovery-heading" className="mt-3 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">Every machine-readable endpoint</h2>
@@ -186,8 +186,8 @@ export default function ForAiAgentsPage() {
         </div>
       </section>
 
-      <section id="faq" aria-labelledby="faq-heading" className="bg-muted/20">
-        <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+      <section id="faq" aria-labelledby="faq-heading">
+        <div className="pb-container-narrow pb-section">
           <div className="text-center">
             <p className="text-eyebrow">FAQ</p>
             <h2 id="faq-heading" className="mt-3 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">Quotable answers</h2>
