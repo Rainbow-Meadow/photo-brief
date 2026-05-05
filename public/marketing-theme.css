@@ -1,6 +1,5 @@
 /* PhotoBrief flagship marketing surface system
-   Loaded after the app bundle to align light/dark marketing pages, hero tooling,
-   section transitions, and interactive lead capture without touching app surfaces. */
+   Keeps the landing page cinematic without letting blur effects wash out content. */
 
 :root {
   --pb-wordmark-gradient: linear-gradient(135deg, #5d3df4 0%, #8b63ff 42%, #b891ff 72%, #d8c5ff 100%);
@@ -55,8 +54,8 @@ html:not(.dark) .pb-copy { color: var(--pb-flagship-text-muted); }
     rgba(13, 10, 21, 0.74) !important;
   border-color: rgba(255,255,255,0.13) !important;
   color: rgba(255,255,255,0.92) !important;
-  backdrop-filter: blur(26px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(26px) saturate(180%) !important;
+  backdrop-filter: blur(22px) saturate(170%) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(170%) !important;
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.12),
     0 20px 70px -45px rgba(0,0,0,0.75),
@@ -73,42 +72,42 @@ html:not(.dark) .pb-copy { color: var(--pb-flagship-text-muted); }
   overflow: clip;
 }
 
-.pb-landing > section::before {
-  content: "";
-  position: absolute;
-  inset: -80px 0 auto 0;
-  height: 180px;
-  pointer-events: none;
-  background:
-    radial-gradient(70% 100% at 50% 0%, rgba(170, 128, 255, 0.12), transparent 68%),
-    linear-gradient(to bottom, rgba(8,6,12,0.92), rgba(8,6,12,0));
-  filter: blur(18px);
-  opacity: 0.9;
-  z-index: 0;
-}
-
+.pb-landing > section::before,
 .pb-landing > section::after {
   content: "";
   position: absolute;
   left: -8%;
   right: -8%;
-  bottom: -70px;
-  height: 190px;
   pointer-events: none;
+  z-index: 0;
+}
+
+.pb-landing > section::before {
+  top: -70px;
+  height: 150px;
   background:
-    radial-gradient(60% 80% at 50% 15%, rgba(159, 115, 255, 0.16), transparent 72%),
-    linear-gradient(to bottom, rgba(8,6,12,0), rgba(8,6,12,0.72) 45%, rgba(8,6,12,0.98));
-  filter: blur(24px);
-  opacity: 0.82;
-  z-index: 1;
+    radial-gradient(70% 100% at 50% 0%, rgba(170, 128, 255, 0.10), transparent 68%),
+    linear-gradient(to bottom, rgba(8,6,12,0.70), rgba(8,6,12,0));
+  filter: blur(14px);
+  opacity: 0.72;
+}
+
+.pb-landing > section::after {
+  bottom: -78px;
+  height: 170px;
+  background:
+    radial-gradient(60% 80% at 50% 15%, rgba(159, 115, 255, 0.12), transparent 72%),
+    linear-gradient(to bottom, rgba(8,6,12,0), rgba(8,6,12,0.52) 52%, rgba(8,6,12,0.92));
+  filter: blur(18px);
+  opacity: 0.62;
 }
 
 .pb-landing > section > * { position: relative; z-index: 2; }
 .pb-landing .border-y { border-color: transparent !important; }
 
 .pb-lens-field {
-  opacity: 0.56 !important;
-  filter: blur(1px);
+  opacity: 0.48 !important;
+  filter: blur(0.5px);
   animation: pb-lens-drift 16s ease-in-out infinite alternate;
 }
 
@@ -121,6 +120,7 @@ html:not(.dark) .pb-copy { color: var(--pb-flagship-text-muted); }
     inset 0 1px 0 rgba(255,255,255,0.09),
     0 44px 120px -74px rgba(143, 99, 255, 0.72),
     0 24px 70px -48px rgba(0,0,0,0.85) !important;
+  filter: none !important;
 }
 
 .pb-command-panel::after {
@@ -128,9 +128,9 @@ html:not(.dark) .pb-copy { color: var(--pb-flagship-text-muted); }
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(115deg, transparent 8%, rgba(255,255,255,0.06) 18%, transparent 31%);
+  background: linear-gradient(115deg, transparent 8%, rgba(255,255,255,0.045) 18%, transparent 31%);
   transform: translateX(-120%);
-  animation: pb-sheen 9s ease-in-out infinite;
+  animation: pb-sheen 11s ease-in-out infinite;
   mix-blend-mode: screen;
 }
 
@@ -139,8 +139,9 @@ html:not(.dark) .pb-copy { color: var(--pb-flagship-text-muted); }
     linear-gradient(180deg, rgba(255,255,255,0.058), rgba(255,255,255,0.025)),
     rgba(19,14,30,0.72) !important;
   border-color: rgba(207, 178, 255, 0.14) !important;
-  backdrop-filter: blur(16px) saturate(145%);
-  -webkit-backdrop-filter: blur(16px) saturate(145%);
+  backdrop-filter: blur(12px) saturate(130%);
+  -webkit-backdrop-filter: blur(12px) saturate(130%);
+  filter: none !important;
 }
 
 .pb-card:hover {
@@ -159,8 +160,8 @@ html:not(.dark) .pb-copy { color: var(--pb-flagship-text-muted); }
 }
 
 .pb-photo-frame.is-dimmed {
-  opacity: 0.42;
-  filter: saturate(0.55) brightness(0.75);
+  opacity: 0.46;
+  filter: saturate(0.72) brightness(0.82);
 }
 
 .pb-photo-frame.is-selected {
@@ -345,9 +346,8 @@ footer {
 .pb-success p { margin: 0 0 6px; color: rgba(18,14,26,0.78); font-weight: 900; }
 .pb-success a { color: #5d3df4; font-weight: 900; }
 
-/* Keep ambient hero automation subtle; React interaction is the primary motion. */
-.pb-brief-paper { animation: pb-brief-ready-pulse 8.5s cubic-bezier(0.32,0.72,0,1) infinite; }
-.pb-stamp { animation: pb-stamp-pop 8.5s cubic-bezier(0.32,0.72,0,1) infinite; }
+.pb-brief-paper { animation: pb-brief-ready-pulse 12s cubic-bezier(0.32,0.72,0,1) infinite; }
+.pb-stamp { animation: pb-stamp-pop 9s cubic-bezier(0.32,0.72,0,1) infinite; }
 
 #comparison .pb-command-panel,
 #comparison .pb-command-panel + div {
@@ -360,23 +360,17 @@ footer {
   position: absolute;
   inset: -1px;
   pointer-events: none;
-  background: radial-gradient(circle at 50% 38%, rgba(185,140,255,0.22), transparent 48%);
+  background: radial-gradient(circle at 50% 38%, rgba(185,140,255,0.18), transparent 48%);
   opacity: 0;
   animation: pb-mode-flash 620ms ease-out both;
 }
 
-@supports (animation-timeline: view()) {
-  .pb-card,
-  .pb-command-panel,
-  .pb-brief-paper,
-  .pb-photo-frame {
-    animation-name: pb-scroll-rise;
-    animation-duration: 1ms;
-    animation-timing-function: linear;
-    animation-fill-mode: both;
-    animation-timeline: view();
-    animation-range: entry 0% cover 32%;
-  }
+/* Scroll-linked filter blur looked broken on iOS/Safari. Keep content sharp. */
+.pb-card,
+.pb-command-panel,
+.pb-brief-paper,
+.pb-photo-frame {
+  filter: none;
 }
 
 .pb-route-chip,
@@ -386,7 +380,7 @@ footer {
 .pb-photo-frame,
 .pb-card,
 .pb-command-panel {
-  will-change: transform, opacity, filter;
+  will-change: transform, opacity;
 }
 
 .pb-route-chip:hover,
@@ -399,45 +393,40 @@ footer {
 
 @keyframes pb-lens-drift {
   0% { transform: translate3d(-1.5%, -0.5%, 0) scale(1); }
-  100% { transform: translate3d(1.5%, 0.75%, 0) scale(1.035); }
+  100% { transform: translate3d(1.5%, 0.75%, 0) scale(1.025); }
 }
 
 @keyframes pb-sheen {
-  0%, 52% { transform: translateX(-130%); opacity: 0; }
-  62% { opacity: 0.82; }
-  84%, 100% { transform: translateX(130%); opacity: 0; }
+  0%, 58% { transform: translateX(-130%); opacity: 0; }
+  66% { opacity: 0.62; }
+  88%, 100% { transform: translateX(130%); opacity: 0; }
 }
 
 @keyframes pb-focus-pulse {
-  0%, 100% { opacity: 0.48; filter: drop-shadow(0 0 0 rgba(185,140,255,0)); }
-  50% { opacity: 0.95; filter: drop-shadow(0 0 14px rgba(185,140,255,0.38)); }
+  0%, 100% { opacity: 0.45; filter: drop-shadow(0 0 0 rgba(185,140,255,0)); }
+  50% { opacity: 0.82; filter: drop-shadow(0 0 10px rgba(185,140,255,0.28)); }
 }
 
 @keyframes pb-brief-ready-pulse {
-  0%, 57%, 100% { transform: translateY(0) scale(1); box-shadow: 0 28px 70px -38px rgba(0,0,0,0.6); }
-  72%, 84% { transform: translateY(-5px) scale(1.015); box-shadow: 0 38px 95px -42px rgba(166, 122, 255, 0.78); }
+  0%, 68%, 100% { transform: translateY(0) scale(1); box-shadow: 0 28px 70px -38px rgba(0,0,0,0.6); }
+  78%, 86% { transform: translateY(-3px) scale(1.006); box-shadow: 0 34px 82px -46px rgba(166, 122, 255, 0.55); }
 }
 
 @keyframes pb-stamp-pop {
-  0%, 64%, 100% { transform: scale(1); }
-  74% { transform: scale(1.12) rotate(-2deg); }
-  82% { transform: scale(1); }
+  0%, 72%, 100% { transform: scale(1); }
+  80% { transform: scale(1.07) rotate(-1deg); }
+  86% { transform: scale(1); }
 }
 
 @keyframes pb-mode-morph {
-  0% { opacity: 0.58; filter: blur(10px); transform: translateY(10px) scale(0.985); }
-  100% { opacity: 1; filter: blur(0); transform: translateY(0) scale(1); }
+  0% { opacity: 0.72; transform: translateY(8px) scale(0.99); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 @keyframes pb-mode-flash {
   0% { opacity: 0; transform: scale(0.98); }
-  22% { opacity: 1; }
+  22% { opacity: 0.72; }
   100% { opacity: 0; transform: scale(1.04); }
-}
-
-@keyframes pb-scroll-rise {
-  from { opacity: 0.42; transform: translateY(26px) scale(0.985); filter: blur(8px); }
-  to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
 }
 
 @keyframes route-dot {
@@ -450,7 +439,38 @@ footer {
   .pb-tool-console { align-items: stretch; flex-direction: column; }
   .pb-tool-tabs { justify-content: center; }
   .pb-tool-status { justify-content: center; }
-  .pb-brief-paper { animation-duration: 10s; }
+
+  .pb-landing > section::before {
+    height: 96px;
+    top: -48px;
+    filter: blur(10px);
+    opacity: 0.48;
+  }
+
+  .pb-landing > section::after {
+    height: 118px;
+    bottom: -56px;
+    filter: blur(10px);
+    opacity: 0.42;
+  }
+
+  .pb-card,
+  .pb-command-panel,
+  .pb-brief-paper,
+  .pb-photo-frame {
+    animation-name: none !important;
+    filter: none !important;
+  }
+
+  .pb-lens-field {
+    opacity: 0.34 !important;
+    filter: none;
+  }
+
+  .pb-brief-paper,
+  .pb-stamp {
+    animation: none !important;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
