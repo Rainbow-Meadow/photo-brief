@@ -104,7 +104,9 @@ Deno.serve(async (req) => {
 
   const cfg = providerTokenConfig(conn.provider_key)
   if (!cfg) return json({ error: `Unsupported provider: ${conn.provider_key}` }, 400)
-  if (!cfg.clientId || !cfg.clientSecret) {
+  // Google and Microsoft are public clients (no secret needed); HubSpot requires a secret
+  const requiresSecret = conn.provider_key === 'hubspot'
+  if (!cfg.clientId || (requiresSecret && !cfg.clientSecret)) {
     return json({ error: 'OAuth client credentials not configured for this provider' }, 400)
   }
 
