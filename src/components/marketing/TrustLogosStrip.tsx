@@ -25,7 +25,7 @@ const SIGNALS = [
 
 export function TrustLogosStrip() {
   return (
-    <section className="bg-background">
+    <section className="relative">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <p className="text-center text-eyebrow">The new intake layer for small business</p>
         <div className="mx-auto mt-6 grid max-w-6xl gap-4 sm:grid-cols-2 lg:grid-cols-4">
