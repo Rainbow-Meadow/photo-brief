@@ -247,18 +247,17 @@ export default function LandingPage() {
 
 function HeroSection({ onOpenDemo }: { onOpenDemo: () => void }) {
   return (
-    <section className="relative isolate overflow-hidden pt-8 sm:pt-12 lg:pt-14">
+    <section className="relative isolate overflow-hidden -mt-[4.5rem] pt-[5.5rem] sm:-mt-[5rem] sm:pt-[6rem] lg:pt-[6.5rem]">
       <div className="pb-lens-field" />
-      <div aria-hidden className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[hsl(var(--pb-lavender)/0.55)] to-transparent" />
       <div className="pb-container relative pb-8 sm:pb-10 lg:pb-12">
         <div className="relative z-10 mx-auto max-w-3xl text-center">
           {/* Logo spotlight */}
           <div className="mb-4 sm:mb-5">
             <div className="relative inline-flex items-center justify-center">
-              <div aria-hidden className="pointer-events-none absolute h-28 w-28 rounded-full bg-[hsl(var(--pb-violet)/0.35)] blur-[50px] sm:h-40 sm:w-40 sm:blur-[70px]" />
-              <BrandMark variant="mark" size={64} withGlow eager className="relative sm:hidden" />
-              <BrandMark variant="mark" size={88} withGlow eager className="relative hidden sm:inline-flex lg:hidden" />
-              <BrandMark variant="mark" size={104} withGlow eager className="relative hidden lg:inline-flex" />
+              <div aria-hidden className="pointer-events-none absolute h-36 w-36 rounded-full bg-[hsl(var(--pb-violet)/0.35)] blur-[60px] sm:h-48 sm:w-48 sm:blur-[80px]" />
+              <BrandMark variant="mark" size={88} withGlow eager className="relative sm:hidden" />
+              <BrandMark variant="mark" size={120} withGlow eager className="relative hidden sm:inline-flex lg:hidden" />
+              <BrandMark variant="mark" size={144} withGlow eager className="relative hidden lg:inline-flex" />
             </div>
           </div>
 
