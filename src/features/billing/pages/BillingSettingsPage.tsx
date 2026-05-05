@@ -135,7 +135,7 @@ export default function BillingSettingsPage() {
       <PaymentTestModeBanner />
       <PageHeader title="Billing" description="Photos, branding, storage, and team size." bordered={false} />
 
-      <section className="overflow-hidden rounded-2xl border bg-gradient-to-br from-card to-muted/30 shadow-elev-sm">
+      <section className="surface-card-elevated overflow-hidden">
         <div className="grid gap-6 p-6 lg:grid-cols-[1.2fr_1fr] lg:gap-10">
           <div>
             <div className="flex items-center gap-2">
@@ -226,7 +226,7 @@ export default function BillingSettingsPage() {
       </section>
 
       {workspace.plan !== "free" ? (
-        <section className="rounded-2xl border bg-card p-5 shadow-elev-sm sm:p-6">
+        <section className="surface-card p-5 sm:p-6">
           <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <h3 className="text-base font-semibold text-foreground">Top-up photo credits</h3>
@@ -323,7 +323,7 @@ export default function BillingSettingsPage() {
         </DialogContent>
       </Dialog>
 
-      <section className="rounded-2xl border bg-card p-5 shadow-elev-sm">
+      <section className="surface-card p-5">
         <h3 className="text-sm font-semibold text-foreground">Feature details</h3>
         <div className="mt-3 overflow-x-auto">
           <table className="w-full min-w-[640px] text-sm">
