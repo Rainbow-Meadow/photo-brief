@@ -460,14 +460,27 @@ function UseCaseSection() {
           <p className="pb-copy mt-4 max-w-2xl text-base sm:text-lg">PhotoBrief is built for teams that need customer media before quoting, scheduling, approving, reviewing, or documenting work.</p>
         </div>
         <div className="mt-8 grid gap-4 sm:mt-10 md:grid-cols-2 lg:grid-cols-3">
-          {useCases.map((item) => {
+          {useCases.slice(0, 3).map((item) => {
             const Icon = item.icon;
             return (
               <article key={item.title} className="pb-card p-4 sm:p-5 md:p-6">
                 <Icon className="h-6 w-6 text-[hsl(var(--pb-lavender))] sm:h-7 sm:w-7" />
-                <span className="pb-stamp mt-5 inline-flex rounded-full px-3 py-1 sm:mt-6">{item.stamp}</span>
-                <h3 className="mt-4 text-lg font-semibold tracking-tight text-white sm:mt-5 sm:text-xl">{item.title}</h3>
-                <p className="pb-copy mt-2 text-sm leading-6 sm:mt-3">{item.body}</p>
+                <span className="pb-stamp mt-4 inline-flex rounded-full px-3 py-1 sm:mt-5">{item.stamp}</span>
+                <h3 className="mt-3 text-lg font-semibold tracking-tight text-white sm:mt-4 sm:text-xl">{item.title}</h3>
+                <p className="pb-copy mt-2 text-sm leading-6">{item.body}</p>
+              </article>
+            );
+          })}
+        </div>
+        <div className="mx-auto mt-4 grid max-w-3xl gap-4 md:grid-cols-2">
+          {useCases.slice(3).map((item) => {
+            const Icon = item.icon;
+            return (
+              <article key={item.title} className="pb-card p-4 sm:p-5 md:p-6">
+                <Icon className="h-6 w-6 text-[hsl(var(--pb-lavender))] sm:h-7 sm:w-7" />
+                <span className="pb-stamp mt-4 inline-flex rounded-full px-3 py-1 sm:mt-5">{item.stamp}</span>
+                <h3 className="mt-3 text-lg font-semibold tracking-tight text-white sm:mt-4 sm:text-xl">{item.title}</h3>
+                <p className="pb-copy mt-2 text-sm leading-6">{item.body}</p>
               </article>
             );
           })}
