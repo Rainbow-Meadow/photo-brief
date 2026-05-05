@@ -38,9 +38,8 @@ export function MetricCard({
   return (
     <div
       className={cn(
-        quiet
-          ? "rounded-3xl border border-border/70 bg-card/70 p-4 shadow-sm backdrop-blur transition duration-200 hover:-translate-y-0.5 hover:bg-card hover:shadow-elev-sm sm:p-5"
-          : "surface-card p-4 transition duration-200 hover:-translate-y-0.5 hover:shadow-elev-md sm:p-5",
+        "p-4 transition duration-200 hover:-translate-y-0.5 sm:p-5",
+        quiet ? "surface-card hover:shadow-elev-sm" : "surface-card hover:shadow-elev-md",
         className,
       )}
     >
@@ -68,7 +67,7 @@ export function MetricCard({
       {subStat ? (
         <p
           className={cn(
-            "mt-4 border-t border-border/70 pt-3 text-xs",
+            "mt-4 surface-divider pt-3 text-xs",
             subStat.tone === "success" && "text-success",
             subStat.tone === "muted" && "text-muted-foreground",
             (!subStat.tone || subStat.tone === "default") && "text-foreground",

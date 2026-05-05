@@ -199,9 +199,9 @@ function ConnectorRow({
   return (
     <article
       className={cn(
-        "group relative overflow-hidden rounded-[1.45rem] border bg-card/82 p-3 shadow-sm transition duration-200",
-        "hover:-translate-y-0.5 hover:border-primary/30 hover:bg-card hover:shadow-[0_18px_60px_-42px_hsl(var(--primary)/0.75)]",
-        isPlanned && "opacity-78 hover:translate-y-0 hover:border-border hover:shadow-sm",
+        "surface-card group relative overflow-hidden p-3 transition duration-200",
+        "hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-[0_18px_60px_-42px_hsl(var(--primary)/0.75)]",
+        isPlanned && "opacity-78 hover:translate-y-0 hover:border-[hsl(var(--glass-border))] hover:shadow-sm",
       )}
     >
       <div className="flex items-center gap-3 sm:gap-4">
@@ -305,7 +305,7 @@ function ConnectorRow({
 
 function ConnectorContractPanel() {
   return (
-    <section className="rounded-[1.75rem] border bg-card/70 p-4 shadow-sm sm:p-5">
+    <section className="surface-card p-4 sm:p-5">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="max-w-2xl">
           <span className="inline-flex items-center gap-2 rounded-full border bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
@@ -399,7 +399,7 @@ export default function IntegrationsPage() {
 
   return (
     <div className="mx-auto max-w-5xl space-y-6 pb-8">
-      <section className="relative overflow-hidden rounded-[2rem] border bg-card/80 p-5 shadow-[0_30px_90px_-70px_hsl(var(--primary)/0.75)] sm:p-7">
+      <section className="surface-card-elevated relative overflow-hidden p-5 sm:p-7">
         <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
         <div className="relative flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
           <div>
@@ -424,7 +424,7 @@ export default function IntegrationsPage() {
         </div>
       </section>
 
-      <section className="sticky top-20 z-20 rounded-[1.75rem] border bg-background/90 p-3 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-background/74">
+      <section className="surface-card sticky top-20 z-20 p-3 backdrop-blur">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <label className="relative flex min-w-0 flex-1 items-center">
             <Search className="pointer-events-none absolute left-4 h-4 w-4 text-muted-foreground" />

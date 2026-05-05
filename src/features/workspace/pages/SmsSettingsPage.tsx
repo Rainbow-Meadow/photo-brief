@@ -14,16 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 
 import { useCurrentWorkspace } from "@/hooks/useCurrentWorkspace";
 import {
@@ -93,7 +84,6 @@ export default function SmsSettingsPage() {
         apiKeySid: apiKeySid.trim(),
         apiKeySecret: apiKeySecret.trim(),
       });
-      // Immediately verify
       const result = await smsConfigService.verify({ workspaceId: wsId });
       if (!result.ok) {
         toast.error(result.error ?? "Verification failed");
@@ -230,23 +220,22 @@ export default function SmsSettingsPage() {
       />
 
       {!isConnected ? (
-        <Card>
-          <CardHeader>
-            <CardTitle>Connect your Twilio account</CardTitle>
-            <CardDescription>
+        <section className="surface-card p-5 space-y-4">
+          <div>
+            <h2 className="text-sm font-semibold text-foreground">Connect your Twilio account</h2>
+            <p className="mt-1 text-xs text-muted-foreground">
               SMS is opt-in per workspace. You bring your own Twilio account so
               messages come from your number and are billed to you.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Alert>
-              <ShieldCheck className="h-4 w-4" />
-              <AlertTitle>What you'll need</AlertTitle>
-              <AlertDescription>
-                <ol className="ml-4 mt-2 list-decimal space-y-1 text-sm">
-                  <li>
-                    A Twilio account with at least one SMS-capable phone number.
-                  </li>
+            </p>
+          </div>
+
+          <div className="rounded-xl border border-primary/20 bg-primary/[0.04] p-4">
+            <div className="flex items-start gap-3">
+              <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+              <div>
+                <p className="text-sm font-medium text-foreground">What you'll need</p>
+                <ol className="ml-4 mt-2 list-decimal space-y-1 text-sm text-muted-foreground">
+                  <li>A Twilio account with at least one SMS-capable phone number.</li>
                   <li>
                     An <strong>API Key</strong> created in Twilio Console →
                     Account → API keys & tokens. Use a Standard key (not your
@@ -257,326 +246,316 @@ export default function SmsSettingsPage() {
                     in Twilio. PhotoBrief doesn't manage this for you.
                   </li>
                 </ol>
-              </AlertDescription>
-            </Alert>
-
-            <div className="grid gap-4">
-              <div className="space-y-1.5">
-                <Label htmlFor="account-sid">Account SID</Label>
-                <Input
-                  id="account-sid"
-                  placeholder="AC…"
-                  value={accountSid}
-                  onChange={(e) => setAccountSid(e.target.value)}
-                  autoComplete="off"
-                  spellCheck={false}
-                  className="font-mono"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="api-key-sid">API Key SID</Label>
-                <Input
-                  id="api-key-sid"
-                  placeholder="SK…"
-                  value={apiKeySid}
-                  onChange={(e) => setApiKeySid(e.target.value)}
-                  autoComplete="off"
-                  spellCheck={false}
-                  className="font-mono"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="api-key-secret">API Key Secret</Label>
-                <Input
-                  id="api-key-secret"
-                  type="password"
-                  placeholder="Shown once when you created the key"
-                  value={apiKeySecret}
-                  onChange={(e) => setApiKeySecret(e.target.value)}
-                  autoComplete="new-password"
-                  spellCheck={false}
-                  className="font-mono"
-                />
-                <p className="text-xs text-muted-foreground">
-                  Stored encrypted. PhotoBrief uses it server-side only — it's
-                  never returned to your browser after saving.
-                </p>
               </div>
             </div>
+          </div>
 
-            <Button
-              onClick={handleSaveCredentials}
-              disabled={saving || !accountSid || !apiKeySid || !apiKeySecret}
-              className="w-full"
-            >
-              {saving ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Verifying with Twilio…
-                </>
-              ) : (
-                "Connect & verify"
-              )}
-            </Button>
-          </CardContent>
-        </Card>
+          <div className="grid gap-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="account-sid">Account SID</Label>
+              <Input
+                id="account-sid"
+                placeholder="AC…"
+                value={accountSid}
+                onChange={(e) => setAccountSid(e.target.value)}
+                autoComplete="off"
+                spellCheck={false}
+                className="font-mono"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="api-key-sid">API Key SID</Label>
+              <Input
+                id="api-key-sid"
+                placeholder="SK…"
+                value={apiKeySid}
+                onChange={(e) => setApiKeySid(e.target.value)}
+                autoComplete="off"
+                spellCheck={false}
+                className="font-mono"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="api-key-secret">API Key Secret</Label>
+              <Input
+                id="api-key-secret"
+                type="password"
+                placeholder="Shown once when you created the key"
+                value={apiKeySecret}
+                onChange={(e) => setApiKeySecret(e.target.value)}
+                autoComplete="new-password"
+                spellCheck={false}
+                className="font-mono"
+              />
+              <p className="text-xs text-muted-foreground">
+                Stored encrypted. PhotoBrief uses it server-side only — it's
+                never returned to your browser after saving.
+              </p>
+            </div>
+          </div>
+
+          <Button
+            onClick={handleSaveCredentials}
+            disabled={saving || !accountSid || !apiKeySid || !apiKeySecret}
+            className="w-full"
+          >
+            {saving ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Verifying with Twilio…
+              </>
+            ) : (
+              "Connect & verify"
+            )}
+          </Button>
+        </section>
       ) : (
         <>
           {/* Connection status */}
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                  <CardTitle className="flex items-center gap-2">
-                    Twilio account
-                    {isVerified ? (
-                      <Badge variant="default" className="gap-1">
-                        <ShieldCheck className="h-3 w-3" />
-                        Verified
-                      </Badge>
-                    ) : (
-                      <Badge variant="destructive" className="gap-1">
-                        <AlertCircle className="h-3 w-3" />
-                        Unverified
-                      </Badge>
-                    )}
-                  </CardTitle>
-                  <CardDescription className="font-mono text-xs">
-                    {config.accountSid} · key {config.apiKeySid} · secret
-                    ••••{config.apiKeySecretLast4}
-                  </CardDescription>
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleReverify}
-                    disabled={verifying}
-                  >
-                    {verifying ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      "Re-verify"
-                    )}
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleDisconnect}
-                    disabled={savingSettings}
-                  >
-                    <Trash2 className="mr-1 h-4 w-4" />
-                    Disconnect
-                  </Button>
+          <section className="surface-card p-5">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <h2 className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                  Twilio account
+                  {isVerified ? (
+                    <Badge variant="default" className="gap-1">
+                      <ShieldCheck className="h-3 w-3" />
+                      Verified
+                    </Badge>
+                  ) : (
+                    <Badge variant="destructive" className="gap-1">
+                      <AlertCircle className="h-3 w-3" />
+                      Unverified
+                    </Badge>
+                  )}
+                </h2>
+                <p className="font-mono text-xs text-muted-foreground">
+                  {config.accountSid} · key {config.apiKeySid} · secret
+                  ••••{config.apiKeySecretLast4}
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleReverify}
+                  disabled={verifying}
+                >
+                  {verifying ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    "Re-verify"
+                  )}
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleDisconnect}
+                  disabled={savingSettings}
+                >
+                  <Trash2 className="mr-1 h-4 w-4" />
+                  Disconnect
+                </Button>
+              </div>
+            </div>
+            {config.lastError && (
+              <div className="mt-4 rounded-xl border border-destructive/30 bg-destructive/[0.06] p-4">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
+                  <div>
+                    <p className="text-sm font-medium text-foreground">Last error</p>
+                    <p className="mt-1 text-sm text-muted-foreground">{config.lastError}</p>
+                  </div>
                 </div>
               </div>
-            </CardHeader>
-            {config.lastError && (
-              <CardContent>
-                <Alert variant="destructive">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertTitle>Last error</AlertTitle>
-                  <AlertDescription>{config.lastError}</AlertDescription>
-                </Alert>
-              </CardContent>
             )}
-          </Card>
+          </section>
 
           {/* From number */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Sending number</CardTitle>
-              <CardDescription>
+          <section className="surface-card p-5 space-y-3">
+            <div>
+              <h2 className="text-sm font-semibold text-foreground">Sending number</h2>
+              <p className="mt-1 text-xs text-muted-foreground">
                 Pick which of your Twilio numbers PhotoBrief sends from.
                 {numbers.length === 0 &&
                   " Click Re-verify above to refresh the list."}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {numbers.length > 0 ? (
-                <div className="space-y-2">
-                  <Label>Available SMS-capable numbers</Label>
-                  <Select
-                    value={config.fromNumber ?? ""}
-                    onValueChange={handleSelectNumber}
-                    disabled={savingSettings}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Choose a number" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {numbers.map((n) => (
-                        <SelectItem key={n.phoneNumber} value={n.phoneNumber}>
-                          <span className="font-mono">{n.phoneNumber}</span>
-                          {n.friendlyName &&
-                            n.friendlyName !== n.phoneNumber && (
-                              <span className="ml-2 text-muted-foreground">
-                                — {n.friendlyName}
-                              </span>
-                            )}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              ) : config.fromNumber ? (
-                <p className="text-sm">
-                  Currently sending from{" "}
-                  <span className="font-mono">{config.fromNumber}</span>
-                  {config.fromNumberFriendly &&
-                    config.fromNumberFriendly !== config.fromNumber && (
-                      <span className="text-muted-foreground">
-                        {" "}
-                        ({config.fromNumberFriendly})
-                      </span>
-                    )}
-                </p>
-              ) : (
-                <p className="text-sm text-muted-foreground">
-                  No number selected yet.
-                </p>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Behavior */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Sending behavior</CardTitle>
-              <CardDescription>
-                How PhotoBrief uses SMS when you send a request or reminder.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label htmlFor="sms-enabled" className="text-base">
-                    SMS enabled
-                  </Label>
-                  <p className="text-sm text-muted-foreground">
-                    When off, the SMS option is hidden everywhere in the app.
-                  </p>
-                </div>
-                <Switch
-                  id="sms-enabled"
-                  checked={config.enabled}
-                  onCheckedChange={handleEnabledChange}
-                  disabled={savingSettings}
-                />
-              </div>
-
-              <Separator />
-
+              </p>
+            </div>
+            {numbers.length > 0 ? (
               <div className="space-y-2">
-                <Label>Default channel for new requests</Label>
+                <Label>Available SMS-capable numbers</Label>
                 <Select
-                  value={config.defaultChannel}
-                  onValueChange={(v) =>
-                    handleDefaultChannel(v as SmsDefaultChannel)
-                  }
-                  disabled={savingSettings || !config.enabled}
+                  value={config.fromNumber ?? ""}
+                  onValueChange={handleSelectNumber}
+                  disabled={savingSettings}
                 >
                   <SelectTrigger>
-                    <SelectValue />
+                    <SelectValue placeholder="Choose a number" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="email">
-                      Email only (default)
-                    </SelectItem>
-                    <SelectItem value="sms">SMS only</SelectItem>
-                    <SelectItem value="both">Both email and SMS</SelectItem>
+                    {numbers.map((n) => (
+                      <SelectItem key={n.phoneNumber} value={n.phoneNumber}>
+                        <span className="font-mono">{n.phoneNumber}</span>
+                        {n.friendlyName &&
+                          n.friendlyName !== n.phoneNumber && (
+                            <span className="ml-2 text-muted-foreground">
+                              — {n.friendlyName}
+                            </span>
+                          )}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
-                <p className="text-xs text-muted-foreground">
-                  You can override this per-send in the Send Request modal.
+              </div>
+            ) : config.fromNumber ? (
+              <p className="text-sm">
+                Currently sending from{" "}
+                <span className="font-mono">{config.fromNumber}</span>
+                {config.fromNumberFriendly &&
+                  config.fromNumberFriendly !== config.fromNumber && (
+                    <span className="text-muted-foreground">
+                      {" "}
+                      ({config.fromNumberFriendly})
+                    </span>
+                  )}
+              </p>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                No number selected yet.
+              </p>
+            )}
+          </section>
+
+          {/* Behavior */}
+          <section className="surface-card p-5 space-y-6">
+            <div>
+              <h2 className="text-sm font-semibold text-foreground">Sending behavior</h2>
+              <p className="mt-1 text-xs text-muted-foreground">
+                How PhotoBrief uses SMS when you send a request or reminder.
+              </p>
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="sms-enabled" className="text-base">
+                  SMS enabled
+                </Label>
+                <p className="text-sm text-muted-foreground">
+                  When off, the SMS option is hidden everywhere in the app.
                 </p>
               </div>
-            </CardContent>
-          </Card>
+              <Switch
+                id="sms-enabled"
+                checked={config.enabled}
+                onCheckedChange={handleEnabledChange}
+                disabled={savingSettings}
+              />
+            </div>
+
+            <div className="surface-divider" />
+
+            <div className="space-y-2">
+              <Label>Default channel for new requests</Label>
+              <Select
+                value={config.defaultChannel}
+                onValueChange={(v) =>
+                  handleDefaultChannel(v as SmsDefaultChannel)
+                }
+                disabled={savingSettings || !config.enabled}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="email">
+                    Email only (default)
+                  </SelectItem>
+                  <SelectItem value="sms">SMS only</SelectItem>
+                  <SelectItem value="both">Both email and SMS</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">
+                You can override this per-send in the Send Request modal.
+              </p>
+            </div>
+          </section>
 
           {/* Inbound webhook */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Inbound replies & STOP handling</CardTitle>
-              <CardDescription>
+          <section className="surface-card p-5 space-y-3">
+            <div>
+              <h2 className="text-sm font-semibold text-foreground">Inbound replies & STOP handling</h2>
+              <p className="mt-1 text-xs text-muted-foreground">
                 Paste this URL into your Twilio number's "A MESSAGE COMES IN"
                 webhook so STOP/HELP and recipient replies flow into PhotoBrief.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {(() => {
-                const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
-                const webhookUrl = `https://${projectId}.functions.supabase.co/twilio-inbound`;
-                return (
-                  <>
-                    <div className="flex items-center gap-2">
-                      <Input
-                        readOnly
-                        value={webhookUrl}
-                        className="font-mono text-xs"
-                        onFocus={(e) => e.currentTarget.select()}
-                      />
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          void navigator.clipboard.writeText(webhookUrl);
-                          toast.success("Webhook URL copied");
-                        }}
-                      >
-                        <Copy className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    <ol className="ml-4 list-decimal space-y-1 text-sm text-muted-foreground">
-                      <li>
-                        In Twilio Console, open <strong>Phone Numbers → Manage → Active numbers</strong>
-                        {" "}and click your sending number.
-                      </li>
-                      <li>
-                        Under <strong>Messaging Configuration</strong>, set
-                        {" "}<strong>A MESSAGE COMES IN</strong> → <em>Webhook</em>,
-                        method <em>HTTP POST</em>, and paste the URL above.
-                      </li>
-                      <li>Save. Replies and STOP/HELP keywords will now appear in request timelines and the bell icon.</li>
-                    </ol>
-                  </>
-                );
-              })()}
-            </CardContent>
-          </Card>
+              </p>
+            </div>
+            {(() => {
+              const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+              const webhookUrl = `https://${projectId}.functions.supabase.co/twilio-inbound`;
+              return (
+                <>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      readOnly
+                      value={webhookUrl}
+                      className="font-mono text-xs"
+                      onFocus={(e) => e.currentTarget.select()}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        void navigator.clipboard.writeText(webhookUrl);
+                        toast.success("Webhook URL copied");
+                      }}
+                    >
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <ol className="ml-4 list-decimal space-y-1 text-sm text-muted-foreground">
+                    <li>
+                      In Twilio Console, open <strong>Phone Numbers → Manage → Active numbers</strong>
+                      {" "}and click your sending number.
+                    </li>
+                    <li>
+                      Under <strong>Messaging Configuration</strong>, set
+                      {" "}<strong>A MESSAGE COMES IN</strong> → <em>Webhook</em>,
+                      method <em>HTTP POST</em>, and paste the URL above.
+                    </li>
+                    <li>Save. Replies and STOP/HELP keywords will now appear in request timelines and the bell icon.</li>
+                  </ol>
+                </>
+              );
+            })()}
+          </section>
 
           {/* Compliance */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Compliance reminders</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-2 text-sm">
-                <li>
-                  • US/Canada: complete{" "}
-                  <a
-                    href="https://www.twilio.com/docs/messaging/compliance/a2p-10dlc"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="underline"
-                  >
-                    A2P 10DLC registration
-                  </a>{" "}
-                  in Twilio before sending production traffic.
-                </li>
-                <li>
-                  • Capture explicit consent before texting a recipient.
-                  PhotoBrief automatically appends "Reply STOP to opt out." on
-                  the first SMS to each new number.
-                </li>
-                <li>
-                  • Keep messages transactional. Marketing-style SMS may require
-                  additional carrier approvals.
-                </li>
-              </ul>
-            </CardContent>
-          </Card>
+          <section className="surface-card p-5">
+            <h2 className="text-sm font-semibold text-foreground">Compliance reminders</h2>
+            <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+              <li>
+                • US/Canada: complete{" "}
+                <a
+                  href="https://www.twilio.com/docs/messaging/compliance/a2p-10dlc"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="underline"
+                >
+                  A2P 10DLC registration
+                </a>{" "}
+                in Twilio before sending production traffic.
+              </li>
+              <li>
+                • Capture explicit consent before texting a recipient.
+                PhotoBrief automatically appends "Reply STOP to opt out." on
+                the first SMS to each new number.
+              </li>
+              <li>
+                • Keep messages transactional. Marketing-style SMS may require
+                additional carrier approvals.
+              </li>
+            </ul>
+          </section>
         </>
       )}
     </div>

@@ -189,7 +189,7 @@ export default function DashboardPage() {
       {!isEmpty ? (
         <div className="grid gap-6 lg:grid-cols-3">
           <div className={cn("space-y-6", assistantOpen ? "lg:col-span-2" : "lg:col-span-3")}>
-            <section className="relative isolate overflow-hidden rounded-[2rem] border border-border/70 bg-card/75 p-5 shadow-[0_30px_80px_-48px_hsl(222_47%_11%/0.45)] backdrop-blur sm:p-7">
+            <section className="surface-card-elevated relative isolate overflow-hidden p-5 sm:p-7">
               <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-56 bg-ambient-sky opacity-75" />
               <div aria-hidden className="pointer-events-none absolute -right-20 -top-28 -z-10 h-72 w-72 rounded-full bg-primary/10 blur-3xl" />
               <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
@@ -333,8 +333,8 @@ interface DashboardListProps {
 
 function DashboardList({ title, emptyLabel, items, ctaLabel, ctaHref, showReminder }: DashboardListProps) {
   return (
-    <section className="overflow-hidden rounded-[1.5rem] border border-border/70 bg-card/75 shadow-sm backdrop-blur">
-      <header className="flex items-center justify-between border-b border-border/70 px-5 py-4">
+    <section className="surface-card overflow-hidden">
+      <header className="flex items-center justify-between surface-divider px-5 py-4">
         <div>
           <h2 className="text-sm font-semibold text-foreground">{title}</h2>
           <p className="text-xs text-muted-foreground">{items.length} visible</p>
@@ -354,7 +354,7 @@ function DashboardList({ title, emptyLabel, items, ctaLabel, ctaHref, showRemind
           <p className="mt-1 text-xs text-muted-foreground">New activity will appear here.</p>
         </div>
       ) : (
-        <ul className="divide-y divide-border/70">
+        <ul className="divide-y divide-[hsl(var(--glass-border))]">
           {items.map((r) => {
             const tone = requestStatusOptions[r.status].tone;
             return (
