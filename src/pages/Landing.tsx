@@ -354,8 +354,8 @@ function ComparisonSection({ mode, onModeChange }: { mode: "messy" | "clean"; on
       <div className="pb-container">
         <div className="mx-auto max-w-3xl text-center">
           <span className="pb-eyebrow"><MessageSquareWarning className="h-3.5 w-3.5" /> Before / after</span>
-          <h2 className="pb-section-title mt-5 text-white">Your team should not have to decode a camera roll.</h2>
-          <p className="pb-copy mt-5 text-lg">The value is not “more photos.” The value is getting the right photos, tied to the right job, with enough context to act.</p>
+          <h2 className="pb-section-title mt-4 text-white">Your team should not have to decode a camera roll.</h2>
+          <p className="pb-copy mt-4 text-lg">The value is not “more photos.” The value is getting the right photos, tied to the right job, with enough context to act.</p>
         </div>
 
         <div className="mx-auto mt-8 flex max-w-md rounded-full border border-white/12 bg-[hsl(var(--pb-panel)/0.72)] p-1 sm:mt-10">
