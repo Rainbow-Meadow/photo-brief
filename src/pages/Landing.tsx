@@ -222,6 +222,7 @@ export default function LandingPage() {
 
       <main className="pb-landing">
         <HeroSection onOpenDemo={() => setDemoOpen(true)} />
+        <InteractiveDemoSection />
         <SectionNav />
         <WorkflowSection />
         <ComparisonSection mode={comparisonMode} onModeChange={setComparisonMode} />
