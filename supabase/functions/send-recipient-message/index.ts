@@ -306,6 +306,43 @@ Deno.serve(async (req) => {
         .update({ status: "sent" })
         .eq("id", request.id)
         .in("status", ["draft"]);
+
+      // Best-effort: send "request ready" summary to the business user
+      const senderEmail = userData.user.email;
+      if (senderEmail && deliveryStatus === "sent") {
+        const { data: senderProfile } = await admin
+          .from("profiles")
+          .select("name")
+          .eq("id", userData.user.id)
+          .maybeSingle();
+
+        // Fetch guide/request title
+        const { data: reqDetail } = await admin
+          .from("photo_brief_requests")
+          .select("photo_guides(name)")
+          .eq("id", request.id)
+          .maybeSingle();
+        const requestTitle = (reqDetail as any)?.photo_guides?.name ?? undefined;
+
+        await admin.functions.invoke("send-transactional-email", {
+          body: {
+            templateName: "business-request-ready",
+            recipientEmail: senderEmail,
+            idempotencyKey: `biz-ready-${request.id}`,
+            templateData: {
+              ownerName: senderProfile?.name?.split(" ")[0] ?? undefined,
+              customerFirstName: firstName,
+              customerName: request.recipient_name ?? undefined,
+              businessName,
+              requestTitle,
+              requestLink: link,
+              viewUrl: `${APP_URL}/requests/${request.id}`,
+            },
+          },
+        }).catch((e: Error) => {
+          console.error("business-request-ready email failed (non-blocking)", e.message);
+        });
+      }
     }
 
     return new Response(
