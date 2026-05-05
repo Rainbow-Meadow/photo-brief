@@ -247,13 +247,13 @@ export default function LandingPage() {
 
 function HeroSection({ onOpenDemo }: { onOpenDemo: () => void }) {
   return (
-    <section className="relative isolate overflow-hidden pt-10 sm:pt-14 lg:pt-18">
+    <section className="relative isolate overflow-hidden pt-10 sm:pt-14 lg:pt-16">
       <div className="pb-lens-field" />
       <div aria-hidden className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[hsl(var(--pb-lavender)/0.55)] to-transparent" />
-      <div className="pb-container relative grid gap-8 pb-12 sm:pb-14 lg:grid-cols-[0.88fr_1.12fr] lg:items-center lg:gap-10 lg:pb-20">
-        <div className="relative z-10 max-w-3xl lg:max-w-none">
+      <div className="pb-container relative pb-8 sm:pb-10 lg:pb-14">
+        <div className="relative z-10 mx-auto max-w-3xl text-center">
           {/* Logo spotlight */}
-          <div className="mb-6 sm:mb-8">
+          <div className="mb-5 sm:mb-6">
             <div className="relative inline-flex items-center justify-center">
               <div aria-hidden className="pointer-events-none absolute h-32 w-32 rounded-full bg-[hsl(var(--pb-violet)/0.35)] blur-[60px] sm:h-44 sm:w-44 sm:blur-[80px]" />
               <BrandMark variant="mark" size={72} withGlow eager className="relative sm:hidden" />
@@ -262,14 +262,14 @@ function HeroSection({ onOpenDemo }: { onOpenDemo: () => void }) {
             </div>
           </div>
           <span className="pb-eyebrow"><Sparkles className="h-3.5 w-3.5" /> Founding Partner Beta now open</span>
-          <h1 className="pb-hero-title mt-4 pb-2 text-white sm:mt-5">
+          <h1 className="pb-hero-title mt-4 pb-2 text-white">
             Get quote-ready customer photos.
             <span className="block pb-2 text-[hsl(var(--pb-lavender))]">Send one guided link.</span>
           </h1>
-          <p className="pb-copy mt-5 max-w-2xl text-base leading-7 sm:text-lg sm:leading-8">
+          <p className="pb-copy mx-auto mt-4 max-w-2xl text-base leading-7 sm:text-lg sm:leading-8">
             PhotoBrief is a one-link photo intake tool for service, repair, review, and documentation workflows. Customers follow mobile prompts, obvious issues get flagged, and your team receives a clean brief instead of a messy thread.
           </p>
-          <div className="mt-7 flex flex-col gap-2.5 sm:mt-8 sm:flex-row sm:flex-wrap sm:gap-3">
+          <div className="mt-6 flex flex-col items-center gap-2.5 sm:mt-7 sm:flex-row sm:justify-center sm:gap-3">
             <Button asChild size="xl" className="rounded-full bg-[hsl(var(--pb-violet))] px-7 text-[hsl(var(--pb-night))] hover:bg-[hsl(var(--pb-lavender))]">
               <NavLink to={signupCtaTarget()} onClick={() => trackEvent("cta_click", { location: "hero", label: "primary" })}>
                 {signupCtaLabel()} <ArrowRight className="ml-1 h-4 w-4" />
@@ -284,7 +284,7 @@ function HeroSection({ onOpenDemo }: { onOpenDemo: () => void }) {
               <PlayCircle className="mr-1 h-5 w-5" /> Product spotlight
             </Button>
           </div>
-          <div className="mt-6 grid max-w-2xl gap-1.5 sm:mt-7 sm:grid-cols-3 sm:gap-2">
+          <div className="mx-auto mt-5 grid max-w-md gap-1.5 sm:mt-6 sm:grid-cols-3 sm:gap-2">
             {[
               "No app for customers",
               "Manual links first",
@@ -294,7 +294,15 @@ function HeroSection({ onOpenDemo }: { onOpenDemo: () => void }) {
             ))}
           </div>
         </div>
+      </div>
+    </section>
+  );
+}
 
+function InteractiveDemoSection() {
+  return (
+    <section className="pb-section-tight border-t border-white/10">
+      <div className="pb-container">
         <InteractiveHeroBriefAssembly />
       </div>
     </section>
