@@ -112,7 +112,7 @@ Deno.serve(async (req) => {
 
     // Resolve channel: explicit payload wins; otherwise use the workspace's
     // SMS default if SMS is enabled & verified, else fall back to email.
-    let channel: "email" | "sms" | "both" = payload.channel ?? "email";
+    let channel: "email" | "sms" | "both" | "gmail" | "outlook" = payload.channel ?? "email";
     if (!payload.channel) {
       const { data: smsCfg } = await admin
         .from("workspace_sms_config")
