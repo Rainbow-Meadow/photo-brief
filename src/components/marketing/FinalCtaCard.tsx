@@ -6,7 +6,7 @@ import { signupCtaTarget, signupCtaLabel, INVITE_ONLY_BETA } from "@/config/acce
 
 export function FinalCtaCard() {
   return (
-    <section className="relative overflow-hidden bg-background">
+    <section className="relative overflow-hidden">
       <div aria-hidden className="pointer-events-none absolute inset-0 bg-ambient-future" />
       <div aria-hidden className="future-grid pointer-events-none absolute inset-0 opacity-70" />
       <div className="relative mx-auto max-w-5xl px-4 py-20 sm:px-6 lg:px-8 lg:py-28">

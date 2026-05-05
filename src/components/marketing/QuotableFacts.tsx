@@ -48,7 +48,7 @@ export const QUOTABLE_FACTS = [
 
 export function QuotableFacts({ className = "" }: { className?: string }) {
   return (
-    <section aria-labelledby="quotable-facts-heading" className={`relative bg-background ${className}`}>
+    <section aria-labelledby="quotable-facts-heading" className={`relative ${className}`}>
       <div aria-hidden className="pointer-events-none absolute inset-0 bg-ambient-future opacity-50" />
       <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
         <div className="mx-auto max-w-2xl text-center">

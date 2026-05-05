@@ -6,7 +6,7 @@ import { signupCtaTarget, signupCtaLabel } from "@/config/access";
 
 export function FirstPassGuaranteeBand() {
   return (
-    <section id="first-pass-guarantee" className="relative overflow-hidden bg-background" aria-labelledby="first-pass-guarantee-heading">
+    <section id="first-pass-guarantee" className="relative overflow-hidden" aria-labelledby="first-pass-guarantee-heading">
       <div aria-hidden className="pointer-events-none absolute inset-0 bg-ambient-future opacity-70" />
       <div aria-hidden className="future-grid pointer-events-none absolute inset-0 opacity-50" />
       <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
