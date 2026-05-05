@@ -256,10 +256,10 @@ function HeroSection({ onOpenDemo }: { onOpenDemo: () => void }) {
             Get quote-ready customer photos.
             <span className="block pb-2 text-[hsl(var(--pb-lavender))]">Send one guided link.</span>
           </h1>
-          <p className="pb-copy mt-6 max-w-2xl text-lg leading-8 sm:text-xl">
+          <p className="pb-copy mt-5 max-w-2xl text-base leading-7 sm:text-lg sm:leading-8">
             PhotoBrief is a one-link photo intake tool for service, repair, review, and documentation workflows. Customers follow mobile prompts, obvious issues get flagged, and your team receives a clean brief instead of a messy thread.
           </p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+          <div className="mt-7 flex flex-col gap-2.5 sm:mt-8 sm:flex-row sm:flex-wrap sm:gap-3">
             <Button asChild size="xl" className="rounded-full bg-[hsl(var(--pb-violet))] px-7 text-[hsl(var(--pb-night))] hover:bg-[hsl(var(--pb-lavender))]">
               <NavLink to={signupCtaTarget()} onClick={() => trackEvent("cta_click", { location: "hero", label: "primary" })}>
                 {signupCtaLabel()} <ArrowRight className="ml-1 h-4 w-4" />
@@ -274,13 +274,13 @@ function HeroSection({ onOpenDemo }: { onOpenDemo: () => void }) {
               <PlayCircle className="mr-1 h-5 w-5" /> Product spotlight
             </Button>
           </div>
-          <div className="mt-7 grid max-w-2xl gap-2 sm:grid-cols-3">
+          <div className="mt-6 grid max-w-2xl gap-1.5 sm:mt-7 sm:grid-cols-3 sm:gap-2">
             {[
               "No app for customers",
               "Manual links first",
               "Automation on Pro",
             ].map((item) => (
-              <span key={item} className="pb-route-chip px-3 py-2 text-center text-xs font-semibold">{item}</span>
+              <span key={item} className="pb-route-chip px-3 py-1.5 text-center text-[0.7rem] font-semibold sm:py-2 sm:text-xs">{item}</span>
             ))}
           </div>
         </div>
