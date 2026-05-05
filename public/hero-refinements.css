@@ -1,20 +1,20 @@
 /* Landing typography refinement loaded after the app bundle.
-   Keeps the hero sharp, readable, and less blocky across mobile and desktop. */
+   Keeps the hero sharp, readable, and proportional across mobile and desktop. */
 .pb-landing .pb-hero-title {
-  max-width: min(100%, 15.8ch) !important;
-  font-size: clamp(3rem, 5.65vw, 6rem) !important;
-  line-height: 1.02 !important;
-  letter-spacing: -0.058em !important;
+  max-width: min(100%, 17ch) !important;
+  font-size: clamp(2.75rem, 5.2vw, 5rem) !important;
+  line-height: 1.04 !important;
+  letter-spacing: -0.05em !important;
   font-weight: 720 !important;
   text-wrap: balance;
 }
 
 .pb-landing .pb-hero-title > span {
-  margin-top: clamp(0.35rem, 0.8vw, 0.7rem);
-  font-size: clamp(1.8rem, 3.2vw, 3.1rem);
-  line-height: 1.08;
-  letter-spacing: -0.045em;
-  font-weight: 650;
+  margin-top: clamp(0.3rem, 0.7vw, 0.6rem);
+  font-size: clamp(1.6rem, 2.8vw, 2.6rem);
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+  font-weight: 640;
 }
 
 /* The old logo highlight card is no longer part of the production hero. */
@@ -24,14 +24,14 @@
 
 @media (max-width: 640px) {
   .pb-landing .pb-hero-title {
-    max-width: 12.25ch !important;
-    font-size: clamp(2.85rem, 13.2vw, 4rem) !important;
-    line-height: 1.015 !important;
-    letter-spacing: -0.06em !important;
+    max-width: 13ch !important;
+    font-size: clamp(2.5rem, 11vw, 3.5rem) !important;
+    line-height: 1.03 !important;
+    letter-spacing: -0.05em !important;
   }
 
   .pb-landing .pb-hero-title > span {
-    font-size: clamp(1.55rem, 7.6vw, 2.2rem);
-    line-height: 1.1;
+    font-size: clamp(1.35rem, 6.5vw, 1.9rem);
+    line-height: 1.12;
   }
 }
