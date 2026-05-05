@@ -39,6 +39,10 @@ on:
         required: true
         default: "500"
         type: string
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/run-apify-photobrief-job.yml
 
 permissions:
   contents: read
@@ -51,11 +55,11 @@ jobs:
     env:
       ACTOR_ID: YLjN3dsBlenhu5Rhn
       APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
-      INPUT_JSON: ${{ inputs.input_json }}
-      WAIT_FOR_FINISH_SECONDS: ${{ inputs.wait_for_finish_seconds }}
-      MAX_POLL_MINUTES: ${{ inputs.max_poll_minutes }}
-      FETCH_DATASET_ITEMS: ${{ inputs.fetch_dataset_items }}
-      DATASET_ITEM_LIMIT: ${{ inputs.dataset_item_limit }}
+      INPUT_JSON: ${{ github.event_name == 'workflow_dispatch' && inputs.input_json || '{"startUrls":[{"url":"https://photobrief.ai/"},{"url":"https://photobrief.ai/signup"},{"url":"https://photobrief.ai/waitlist"},{"url":"https://photobrief.ai/pricing"},{"url":"https://photobrief.ai/badge/intake"}]}' }}
+      WAIT_FOR_FINISH_SECONDS: ${{ github.event_name == 'workflow_dispatch' && inputs.wait_for_finish_seconds || '60' }}
+      MAX_POLL_MINUTES: ${{ github.event_name == 'workflow_dispatch' && inputs.max_poll_minutes || '10' }}
+      FETCH_DATASET_ITEMS: ${{ github.event_name == 'workflow_dispatch' && inputs.fetch_dataset_items || 'true' }}
+      DATASET_ITEM_LIMIT: ${{ github.event_name == 'workflow_dispatch' && inputs.dataset_item_limit || '500' }}
 
     steps:
       - name: Validate configuration
@@ -145,7 +149,7 @@ jobs:
           fi
 
       - name: Download dataset items
-        if: ${{ inputs.fetch_dataset_items == true }}
+        if: ${{ env.FETCH_DATASET_ITEMS == 'true' }}
         shell: bash
         run: |
           set -euo pipefail
