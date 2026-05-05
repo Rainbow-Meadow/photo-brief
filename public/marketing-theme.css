@@ -26,7 +26,6 @@ body {
     linear-gradient(180deg, var(--pb-flagship-bg), var(--pb-flagship-bg-2));
 }
 
-/* Marketing pages should feel like one premium cinematic surface in both modes. */
 .pb-landing {
   isolation: isolate;
   background:
@@ -48,7 +47,6 @@ html:not(.dark) .pb-landing {
 .pb-copy,
 html:not(.dark) .pb-copy { color: var(--pb-flagship-text-muted); }
 
-/* Header: same object in light/dark, just different ambience. */
 .glass-nav {
   background:
     linear-gradient(180deg, rgba(255,255,255,0.105), rgba(255,255,255,0.045)),
@@ -68,7 +66,6 @@ html:not(.dark) .pb-copy { color: var(--pb-flagship-text-muted); }
 .glass-nav a:hover,
 .glass-nav button:hover { color: #fff; }
 
-/* Section transitions: blurred handoff, not stacked blocks. */
 .pb-landing > section {
   position: relative;
   overflow: clip;
@@ -107,7 +104,6 @@ html:not(.dark) .pb-copy { color: var(--pb-flagship-text-muted); }
 .pb-landing > section > * { position: relative; z-index: 2; }
 .pb-landing .border-y { border-color: transparent !important; }
 
-/* Flagship motion system */
 .pb-lens-field {
   opacity: 0.56 !important;
   filter: blur(1px);
@@ -152,7 +148,7 @@ html:not(.dark) .pb-copy { color: var(--pb-flagship-text-muted); }
 }
 
 .pb-photo-frame {
-  transition: transform 260ms cubic-bezier(0.32,0.72,0,1), border-color 260ms cubic-bezier(0.32,0.72,0,1), box-shadow 260ms cubic-bezier(0.32,0.72,0,1);
+  transition: transform 260ms cubic-bezier(0.32,0.72,0,1), border-color 260ms cubic-bezier(0.32,0.72,0,1), box-shadow 260ms cubic-bezier(0.32,0.72,0,1), opacity 260ms ease;
 }
 
 .pb-photo-frame:hover {
@@ -181,6 +177,63 @@ footer {
   color: rgba(255,255,255,0.66) !important;
 }
 
+/* Addictive hero: loose photos repeatedly snap into the finished brief. */
+.pb-command-panel .grid.grid-cols-2 .pb-photo-frame:nth-child(1) { animation: pb-photo-snap-1 8.5s cubic-bezier(0.32,0.72,0,1) infinite; }
+.pb-command-panel .grid.grid-cols-2 .pb-photo-frame:nth-child(2) { animation: pb-photo-snap-2 8.5s cubic-bezier(0.32,0.72,0,1) infinite; }
+.pb-command-panel .grid.grid-cols-2 .pb-photo-frame:nth-child(3) { animation: pb-photo-snap-3 8.5s cubic-bezier(0.32,0.72,0,1) infinite; }
+.pb-command-panel .grid.grid-cols-2 .pb-photo-frame:nth-child(4) { animation: pb-photo-snap-4 8.5s cubic-bezier(0.32,0.72,0,1) infinite; }
+.pb-brief-paper { animation: pb-brief-ready-pulse 8.5s cubic-bezier(0.32,0.72,0,1) infinite; }
+.pb-stamp { animation: pb-stamp-pop 8.5s cubic-bezier(0.32,0.72,0,1) infinite; }
+
+/* Before/after morph: the chosen mode no longer just swaps; it breathes in like a state change. */
+#comparison .pb-command-panel,
+#comparison .pb-command-panel + div {
+  animation: pb-mode-morph 420ms cubic-bezier(0.32,0.72,0,1) both;
+  transform-origin: 50% 42%;
+}
+#comparison .pb-command-panel + div::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 38%, rgba(185,140,255,0.22), transparent 48%);
+  opacity: 0;
+  animation: pb-mode-flash 620ms ease-out both;
+}
+
+/* Scroll / cursor-style micro-interactions without JS. */
+@supports (animation-timeline: view()) {
+  .pb-card,
+  .pb-command-panel,
+  .pb-brief-paper,
+  .pb-photo-frame {
+    animation-name: pb-scroll-rise;
+    animation-duration: 1ms;
+    animation-timing-function: linear;
+    animation-fill-mode: both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 32%;
+  }
+}
+
+.pb-route-chip,
+.pb-eyebrow,
+.pb-stamp,
+.glass-nav,
+.pb-photo-frame,
+.pb-card,
+.pb-command-panel {
+  will-change: transform, opacity, filter;
+}
+
+.pb-route-chip:hover,
+.pb-eyebrow:hover,
+.pb-stamp:hover {
+  transform: translateY(-2px) scale(1.015);
+  border-color: rgba(207,178,255,0.45) !important;
+  box-shadow: 0 20px 65px -48px rgba(159,115,255,0.95);
+}
+
 @keyframes pb-lens-drift {
   0% { transform: translate3d(-1.5%, -0.5%, 0) scale(1); }
   100% { transform: translate3d(1.5%, 0.75%, 0) scale(1.035); }
@@ -197,12 +250,67 @@ footer {
   50% { opacity: 0.95; filter: drop-shadow(0 0 14px rgba(185,140,255,0.38)); }
 }
 
+@keyframes pb-photo-snap-1 {
+  0%, 48%, 100% { transform: translate3d(0,0,0) rotate(0deg); opacity: 1; }
+  62%, 74% { transform: translate3d(54%, 82%, 0) scale(0.54) rotate(-4deg); opacity: 0.42; }
+}
+@keyframes pb-photo-snap-2 {
+  0%, 50%, 100% { transform: translate3d(0,0,0) rotate(0deg); opacity: 1; }
+  64%, 76% { transform: translate3d(-6%, 82%, 0) scale(0.54) rotate(3deg); opacity: 0.42; }
+}
+@keyframes pb-photo-snap-3 {
+  0%, 52%, 100% { transform: translate3d(0,0,0) rotate(0deg); opacity: 1; }
+  66%, 78% { transform: translate3d(54%, 17%, 0) scale(0.54) rotate(4deg); opacity: 0.42; }
+}
+@keyframes pb-photo-snap-4 {
+  0%, 54%, 100% { transform: translate3d(0,0,0) rotate(0deg); opacity: 1; }
+  68%, 80% { transform: translate3d(-6%, 17%, 0) scale(0.54) rotate(-3deg); opacity: 0.42; }
+}
+
+@keyframes pb-brief-ready-pulse {
+  0%, 57%, 100% { transform: translateY(0) scale(1); box-shadow: 0 28px 70px -38px rgba(0,0,0,0.6); }
+  72%, 84% { transform: translateY(-5px) scale(1.015); box-shadow: 0 38px 95px -42px rgba(166, 122, 255, 0.78); }
+}
+
+@keyframes pb-stamp-pop {
+  0%, 64%, 100% { transform: scale(1); }
+  74% { transform: scale(1.12) rotate(-2deg); }
+  82% { transform: scale(1); }
+}
+
+@keyframes pb-mode-morph {
+  0% { opacity: 0.58; filter: blur(10px); transform: translateY(10px) scale(0.985); }
+  100% { opacity: 1; filter: blur(0); transform: translateY(0) scale(1); }
+}
+
+@keyframes pb-mode-flash {
+  0% { opacity: 0; transform: scale(0.98); }
+  22% { opacity: 1; }
+  100% { opacity: 0; transform: scale(1.04); }
+}
+
+@keyframes pb-scroll-rise {
+  from { opacity: 0.42; transform: translateY(26px) scale(0.985); filter: blur(8px); }
+  to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+
+@media (max-width: 767px) {
+  .pb-command-panel .grid.grid-cols-2 .pb-photo-frame { animation-name: none !important; }
+  .pb-brief-paper { animation-duration: 10s; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .pb-lens-field,
   .pb-command-panel::after,
   .pb-focus-corners::before,
   .pb-focus-corners::after,
-  .pb-route-line::after {
+  .pb-route-line::after,
+  .pb-command-panel .grid.grid-cols-2 .pb-photo-frame,
+  .pb-brief-paper,
+  .pb-stamp,
+  #comparison .pb-command-panel,
+  #comparison .pb-command-panel + div,
+  #comparison .pb-command-panel + div::after {
     animation: none !important;
   }
   *, *::before, *::after { scroll-behavior: auto !important; }
