@@ -264,8 +264,8 @@ function HeroSection({ onOpenDemo }: { onOpenDemo: () => void }) {
 
           <span className="pb-eyebrow"><Sparkles className="h-3.5 w-3.5" /> Founding Partner Beta now open</span>
 
-          <h1 className="pb-hero-title mt-3 text-white sm:mt-4">
-            Get quote-ready customer photos.
+          <h1 className="pb-hero-title mx-auto mt-3 max-w-2xl text-white sm:mt-4">
+            Get quote-ready<br className="sm:hidden" />{" "}customer photos.
             <span className="mt-1 block text-[hsl(var(--pb-lavender))]">Send one guided link.</span>
           </h1>
 
