@@ -11,3 +11,6 @@ verify_jwt = true
 
 [functions.integration-oauth-callback]
 verify_jwt = false
+
+[functions.live-preview-submission]
+verify_jwt = false
