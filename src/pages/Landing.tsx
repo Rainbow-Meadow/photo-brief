@@ -512,14 +512,14 @@ function PricingPathSection() {
         <div className="mx-auto max-w-3xl text-center">
           <span className="pb-eyebrow"><TimerReset className="h-3.5 w-3.5" /> Start manual. Automate later.</span>
           <h2 className="pb-section-title mt-5 text-white">Use one link first. Add automation when it pays for itself.</h2>
-          <p className="pb-copy mt-5 text-lg">Start with manual PhotoBrief links. Upgrade to Pro when website leads, routed requests, and form handoffs should happen without copy/paste.</p>
+          <p className="pb-copy mt-5 text-base sm:text-lg">Start with manual PhotoBrief links. Upgrade to Pro when website leads, routed requests, and form handoffs should happen without copy/paste.</p>
         </div>
         <div className="mt-10 grid gap-5 lg:grid-cols-2">
           {pricingPath.map((tier) => (
-            <article key={tier.label} className="pb-card p-6 sm:p-8">
+            <article key={tier.label} className="pb-card p-5 sm:p-6 lg:p-8">
               <span className="pb-eyebrow border-white/12 bg-white/[0.03]">{tier.label}</span>
-              <h3 className="mt-5 text-3xl font-semibold tracking-tight text-white">{tier.title}</h3>
-              <p className="pb-copy mt-3 text-base leading-7">{tier.body}</p>
+              <h3 className="mt-4 text-2xl font-semibold tracking-tight text-white sm:mt-5 sm:text-3xl">{tier.title}</h3>
+              <p className="pb-copy mt-2.5 text-sm leading-6 sm:mt-3 sm:text-base sm:leading-7">{tier.body}</p>
               <ul className="mt-6 grid gap-3">
                 {tier.bullets.map((bullet) => (
                   <li key={bullet} className="flex items-center gap-3 text-sm font-semibold text-white/78">
@@ -539,12 +539,12 @@ function FinalCta() {
   return (
     <section className="pb-section">
       <div className="pb-container">
-        <div className="relative overflow-hidden rounded-[2.4rem] border border-[hsl(var(--pb-lavender)/0.35)] bg-[hsl(var(--pb-panel)/0.84)] p-7 text-center shadow-[0_36px_100px_-64px_hsl(var(--pb-violet))] sm:p-12">
+        <div className="relative overflow-hidden rounded-[2.4rem] border border-[hsl(var(--pb-lavender)/0.35)] bg-[hsl(var(--pb-panel)/0.84)] p-6 text-center shadow-[0_36px_100px_-64px_hsl(var(--pb-violet))] sm:p-8 lg:p-12">
           <div className="pb-lens-field" />
           <div className="relative z-10 mx-auto max-w-4xl">
             <BrandMark variant="horizontal" tone="light" size={48} className="justify-center" withGlow />
             <h2 className="pb-section-title mt-8 text-white">Send one link. Get a usable brief.</h2>
-            <p className="pb-copy mx-auto mt-5 max-w-2xl text-lg">Give customers a clear path, give your team a clean packet, and stop turning every quote into a photo scavenger hunt.</p>
+            <p className="pb-copy mx-auto mt-4 max-w-2xl text-base sm:mt-5 sm:text-lg">Give customers a clear path, give your team a clean packet, and stop turning every quote into a photo scavenger hunt.</p>
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
               <Button asChild size="xl" className="rounded-full bg-[hsl(var(--pb-violet))] px-8 text-[hsl(var(--pb-night))] hover:bg-[hsl(var(--pb-lavender))]">
                 <NavLink to={signupCtaTarget()} onClick={() => trackEvent("cta_click", { location: "final", label: "primary" })}>
@@ -555,7 +555,7 @@ function FinalCta() {
                 <NavLink to="/pricing">See plans</NavLink>
               </Button>
             </div>
-            <p className="mt-5 text-sm font-medium text-white/46">Customers do not need an account or app to complete a PhotoBrief request.</p>
+            <p className="mt-4 text-xs font-medium text-white/46 sm:mt-5 sm:text-sm">Customers do not need an account or app to complete a PhotoBrief request.</p>
           </div>
         </div>
       </div>
