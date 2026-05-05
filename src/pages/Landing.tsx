@@ -299,7 +299,7 @@ function WorkflowSection() {
           <div>
             <span className="pb-eyebrow"><Route className="h-3.5 w-3.5" /> How it works</span>
             <h2 className="pb-section-title mt-5 max-w-xl text-white">From vague request to usable brief.</h2>
-            <p className="pb-copy mt-5 max-w-lg text-lg">PhotoBrief does not just collect uploads. It guides the customer, keeps context attached, and packages the result for the next business step.</p>
+            <p className="pb-copy mt-5 max-w-lg text-base sm:text-lg">PhotoBrief does not just collect uploads. It guides the customer, keeps context attached, and packages the result for the next business step.</p>
           </div>
           <div className="relative">
             <div className="absolute left-6 top-8 hidden h-[calc(100%-4rem)] w-px bg-gradient-to-b from-[hsl(var(--pb-lavender))] via-[hsl(var(--pb-mint))] to-transparent md:block" />
@@ -307,14 +307,14 @@ function WorkflowSection() {
               {workflowSteps.map((step, index) => {
                 const Icon = step.icon;
                 return (
-                  <article key={step.title} className="pb-card relative grid gap-4 p-5 md:grid-cols-[4rem_1fr] md:p-6">
-                    <div className="relative z-10 flex h-14 w-14 items-center justify-center rounded-2xl border border-[hsl(var(--pb-line-strong))] bg-[hsl(var(--pb-ink))] text-[hsl(var(--pb-lavender))]">
-                      <Icon className="h-6 w-6" />
+                  <article key={step.title} className="pb-card relative grid gap-3 p-4 sm:gap-4 sm:p-5 md:grid-cols-[4rem_1fr] md:p-6">
+                    <div className="relative z-10 flex h-12 w-12 items-center justify-center rounded-2xl border border-[hsl(var(--pb-line-strong))] bg-[hsl(var(--pb-ink))] text-[hsl(var(--pb-lavender))] sm:h-14 sm:w-14">
+                      <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
                     </div>
                     <div>
                       <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[hsl(var(--pb-lavender))]">0{index + 1} · {step.eyebrow}</p>
-                      <h3 className="mt-2 text-2xl font-semibold tracking-tight text-white">{step.title}</h3>
-                      <p className="pb-copy mt-2 max-w-2xl text-base">{step.body}</p>
+                      <h3 className="mt-1.5 text-xl font-semibold tracking-tight text-white sm:mt-2 sm:text-2xl">{step.title}</h3>
+                      <p className="pb-copy mt-1.5 max-w-2xl text-sm sm:mt-2 sm:text-base">{step.body}</p>
                     </div>
                   </article>
                 );
