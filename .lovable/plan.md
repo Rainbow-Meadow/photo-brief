@@ -1,101 +1,107 @@
 
-# Branded Transactional Email Overhaul
+# OAuth Wiring Plan for PhotoBrief.ai Connectors
 
-## Current State
+## What I will build (code & infrastructure)
 
-The project already has Lovable's internal email system fully operational:
-- `send-transactional-email` Edge Function with queue, suppression, and unsubscribe infrastructure
-- `send-recipient-message` orchestrator for customer-facing emails
-- `notify-event` dispatcher for server-triggered emails (signup welcome, submission notifications)
-- 6 transactional templates + 6 auth email templates
+### 1. Add dedicated encryption secret
+- Create `INTEGRATION_TOKEN_SECRET` via the secrets tool (you'll enter a random value)
 
-All templates currently use blue (#0A6BFF) branding. This plan rebrands everything to the requested purple palette and adds missing templates.
+### 2. Create shared token crypto utilities
+- `supabase/functions/_shared/integration-crypto.ts` — shared `encryptJson` / `decryptJson` / `importKey` functions (extracted from the existing callback code to avoid duplication)
 
-## Template Mapping
+### 3. Create `integration-token-refresh` edge function
+- Decrypts refresh token from `integration_connections`
+- Calls the correct provider token endpoint (Google / Microsoft / HubSpot)
+- Re-encrypts and stores the new access token + updated expiry
+- Logs result to `integration_logs`
 
-| Requested Flow | Current Template | Action |
-|---|---|---|
-| A. Customer photo request | `recipient-request-link` | Rebrand |
-| B. Customer reminder | `recipient-reminder` | Rebrand |
-| C. Submission received (customer) | *none* | **Create new** |
-| D. Business: new submission | `submission-received` | Rebrand |
-| E. Business: request ready to send | *none* | **Create new** |
-| F. Team invite | `invite.tsx` (auth email) | Rebrand |
-| G. Founding Partner Beta welcome | *none* | **Create new** |
+### 4. Create `integration-send-email` edge function
+- Accepts `{ connectionId, to, subject, htmlBody, textBody }` from authenticated workspace members
+- Decrypts access token from the connection row
+- Auto-refreshes if expired
+- **Gmail path**: builds RFC 2822 message, calls `gmail.users.messages.send`
+- **Microsoft path**: calls Graph `me/sendMail` with JSON body
+- Logs action to `integration_action_runs`
+- Returns message ID for activity logging
 
-Also rebranding: `workspace-welcome`, `waitlist-confirmation`, `waitlist-admin-notification`, and all 6 auth email templates (`signup`, `recovery`, `magic-link`, `invite`, `email-change`, `reauthentication`).
+### 5. Create `integration-disconnect` edge function
+- Revokes tokens with each provider's revocation endpoint where supported
+- Clears `access_token_ciphertext`, `refresh_token_ciphertext`
+- Sets status to `disabled`
+- Logs to `integration_logs`
 
-## What Changes
+### 6. Create `integration-health-check` edge function
+- Decrypts access token, calls a lightweight provider endpoint (Google userinfo / Graph /me / HubSpot access-tokens)
+- Updates `last_health_check_at` and `last_error`
 
-### 1. Create a shared style constants file
-New file: `supabase/functions/_shared/transactional-email-templates/brand-styles.ts`
+### 7. Wire Gmail/Microsoft into `send-recipient-message`
+- Add a `channel: "gmail" | "outlook"` option
+- When selected, call `integration-send-email` instead of the Lovable transactional email path
+- Fall back to Lovable email if no connection exists
 
-Centralizes the new palette so all templates import from one place:
-- CTA: #7C3AED, hover fallback: #6D28D9
-- Primary text: #111014, secondary: #625F68
-- Card surface: #FFFFFF, background: #F8F7FA
-- Border: #E1DEE7, lilac accent: #A78BFA
-- Font stack, container width, button radius, spacing
+### 8. Deploy all new edge functions
 
-Also exports a reusable `BrandHeader` component (text wordmark "PhotoBrief.ai" in brand purple, since SVG in emails is unreliable) and a `BrandFooter` component.
+---
 
-### 2. Rebrand all 6 existing transactional templates
-Update each `.tsx` to import shared styles and use the new palette. Key changes per template:
-- Replace #0A6BFF → #7C3AED for buttons/accents
-- Use #F8F7FA body background, #FFFFFF card surface
-- Add PhotoBrief.ai text wordmark header
-- Add clean footer with business context
-- Update copy tone per the brief
+## What you must do manually (provider app registrations)
 
-### 3. Create 3 new transactional templates
+I'll provide exact step-by-step instructions after building the code, but in summary:
 
-**C. `customer-submission-confirmation.tsx`** -- Sent to customer after submitting photos. Confirms receipt, mentions the business can now review. Clean, short, no marketing.
+### Google Cloud Console (for Gmail + Google Sheets)
+1. Go to console.cloud.google.com, create or select a project
+2. Enable Gmail API and Google Sheets API
+3. Configure OAuth consent screen (external, add `photobrief.ai` as authorized domain)
+4. Create OAuth 2.0 Client ID (Web application)
+5. Set redirect URI to: `https://mvlcefiygkzzewcdzsmj.supabase.co/functions/v1/integration-oauth-callback/google`
+6. Copy the Client ID and Client Secret — I'll prompt you to enter them as secrets
 
-**E. `business-request-ready.tsx`** -- Sent to business user when a request is created/ready. Includes the customer-facing link and recommended SMS copy block. CTA: "View request."
+### Microsoft Entra (for Outlook)
+1. Go to entra.microsoft.com, register a new application
+2. Add redirect URI (Web): `https://mvlcefiygkzzewcdzsmj.supabase.co/functions/v1/integration-oauth-callback/microsoft`
+3. Add API permissions: `Mail.Send`, `User.Read`, `offline_access`, `openid`, `email`, `profile`
+4. Create a client secret
+5. Copy Application (client) ID and secret value — I'll prompt you to enter them
 
-**G. `founding-partner-welcome.tsx`** -- Premium early-access welcome. Mentions hands-on setup, direct support, shaping the product. CTA: "Open PhotoBrief.ai."
+### HubSpot Developer Portal (for CRM)
+1. Go to developers.hubspot.com, create an app
+2. Set redirect URI: `https://mvlcefiygkzzewcdzsmj.supabase.co/functions/v1/integration-oauth-callback/hubspot`
+3. Add scopes: `crm.objects.contacts.read`, `crm.objects.contacts.write`, `crm.objects.deals.read`, `crm.objects.deals.write`
+4. Copy Client ID and Client Secret — I'll prompt you
 
-### 4. Update registry
-Add all 3 new templates to `registry.ts` with imports and TEMPLATES entries.
+---
 
-### 5. Rebrand all 6 auth email templates
-Update `_shared/email-templates/*.tsx` (signup, recovery, magic-link, invite, email-change, reauthentication) to use the same purple palette and PhotoBrief.ai wordmark header.
+## Secrets to be added (6 total)
+- `INTEGRATION_TOKEN_SECRET` — random 32+ char string for AES-GCM encryption
+- `GOOGLE_CLIENT_ID` — from Google Cloud Console
+- `GOOGLE_CLIENT_SECRET` — from Google Cloud Console
+- `MICROSOFT_CLIENT_ID` — from Microsoft Entra
+- `MICROSOFT_CLIENT_SECRET` — from Microsoft Entra
+- `HUBSPOT_CLIENT_ID` — from HubSpot Developer Portal
+- `HUBSPOT_CLIENT_SECRET` — from HubSpot Developer Portal
 
-### 6. Wire new templates into the app
+---
 
-- **Customer submission confirmation (C):** Add a `send-transactional-email` call in `notify-event/index.ts` for the `submission_received` event -- after notifying workspace members, also email the submitter if their email is available on the request.
+## Files created/modified
 
-- **Business request-ready (E):** Add a `send-transactional-email` call in `send-recipient-message/index.ts` when `kind === "initial"` -- after the initial message is sent to the customer, also send the "request ready" summary to the business user who triggered it.
+| File | Action |
+|---|---|
+| `supabase/functions/_shared/integration-crypto.ts` | Create (shared encrypt/decrypt) |
+| `supabase/functions/integration-token-refresh/index.ts` | Create |
+| `supabase/functions/integration-send-email/index.ts` | Create |
+| `supabase/functions/integration-disconnect/index.ts` | Create |
+| `supabase/functions/integration-health-check/index.ts` | Create |
+| `supabase/functions/integration-oauth-callback/index.ts` | Edit (import shared crypto) |
+| `supabase/functions/send-recipient-message/index.ts` | Edit (add Gmail/Outlook channel) |
 
-- **Founding partner welcome (G):** Will be available as `founding-partner-welcome` template in the registry for manual invocation. No auto-trigger wired (it's a special case).
+No database migrations needed — the existing schema covers everything.
 
-### 7. Deploy Edge Functions
-Deploy: `send-transactional-email`, `auth-email-hook`, `notify-event`, `send-recipient-message`, `preview-transactional-email`.
+---
 
-## Files Changed
+## Order of operations
 
-- `supabase/functions/_shared/transactional-email-templates/brand-styles.ts` (new)
-- `supabase/functions/_shared/transactional-email-templates/recipient-request-link.tsx` (rebrand)
-- `supabase/functions/_shared/transactional-email-templates/recipient-reminder.tsx` (rebrand)
-- `supabase/functions/_shared/transactional-email-templates/submission-received.tsx` (rebrand)
-- `supabase/functions/_shared/transactional-email-templates/workspace-welcome.tsx` (rebrand)
-- `supabase/functions/_shared/transactional-email-templates/waitlist-confirmation.tsx` (rebrand)
-- `supabase/functions/_shared/transactional-email-templates/waitlist-admin-notification.tsx` (rebrand)
-- `supabase/functions/_shared/transactional-email-templates/customer-submission-confirmation.tsx` (new)
-- `supabase/functions/_shared/transactional-email-templates/business-request-ready.tsx` (new)
-- `supabase/functions/_shared/transactional-email-templates/founding-partner-welcome.tsx` (new)
-- `supabase/functions/_shared/transactional-email-templates/registry.ts` (add 3 new templates)
-- `supabase/functions/_shared/email-templates/signup.tsx` (rebrand)
-- `supabase/functions/_shared/email-templates/recovery.tsx` (rebrand)
-- `supabase/functions/_shared/email-templates/magic-link.tsx` (rebrand)
-- `supabase/functions/_shared/email-templates/invite.tsx` (rebrand)
-- `supabase/functions/_shared/email-templates/email-change.tsx` (rebrand)
-- `supabase/functions/_shared/email-templates/reauthentication.tsx` (rebrand)
-- `supabase/functions/notify-event/index.ts` (wire customer confirmation)
-- `supabase/functions/send-recipient-message/index.ts` (wire business request-ready)
-
-No database changes. No new routes. No changes to existing app UI, auth flow, or request flows.
-
-## How to Test
-
-Use the existing `/admin/email-preview` route or invoke the `preview-transactional-email` Edge Function to render all templates with their preview data and visually verify the new branding.
+1. I build all the edge functions and deploy them
+2. I prompt you for `INTEGRATION_TOKEN_SECRET` (you generate a random string)
+3. I give you the exact Google/Microsoft/HubSpot registration steps with your specific redirect URIs
+4. You register the apps and come back with the credentials
+5. I prompt you for each pair of client ID + secret
+6. You test by clicking "Connect" on Gmail in `/settings/integrations`
