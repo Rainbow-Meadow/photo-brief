@@ -1,0 +1,201 @@
+name: Repair transparent logo assets
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/repair-transparent-logo-assets.yml
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ github.token }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install image tooling
+        run: python -m pip install --quiet pillow
+
+      - name: Repair alpha channels and regenerate web/app logo files
+        shell: bash
+        run: |
+          python <<'PY'
+          from __future__ import annotations
+
+          import base64
+          from collections import deque
+          from pathlib import Path
+
+          from PIL import Image, ImageDraw, ImageFilter
+
+          BRAND_DIR = Path('public/brand')
+          BRAND_DIR.mkdir(parents=True, exist_ok=True)
+
+          def is_light_neutral(pixel):
+              r, g, b, a = pixel
+              if a < 8:
+                  return True
+              mx, mn = max(r, g, b), min(r, g, b)
+              avg = (r + g + b) / 3
+              # Removes baked checkerboards / white transparent-preview mats only.
+              # It deliberately avoids removing charcoal/black pixels so the lens,
+              # letter outline, and aperture detail stay intact.
+              return (mx - mn <= 14 and avg >= 148) or (r >= 242 and g >= 242 and b >= 242)
+
+          def flood_clear_preview_background(img: Image.Image) -> Image.Image:
+              img = img.convert('RGBA')
+              w, h = img.size
+              px = img.load()
+              seen = bytearray(w * h)
+              q = deque()
+
+              def push(x, y):
+                  if x < 0 or y < 0 or x >= w or y >= h:
+                      return
+                  i = y * w + x
+                  if seen[i]:
+                      return
+                  if not is_light_neutral(px[x, y]):
+                      return
+                  seen[i] = 1
+                  q.append((x, y))
+
+              for x in range(w):
+                  push(x, 0)
+                  push(x, h - 1)
+              for y in range(h):
+                  push(0, y)
+                  push(w - 1, y)
+
+              while q:
+                  x, y = q.popleft()
+                  push(x + 1, y)
+                  push(x - 1, y)
+                  push(x, y + 1)
+                  push(x, y - 1)
+
+              out = img.copy()
+              opx = out.load()
+              for y in range(h):
+                  for x in range(w):
+                      if seen[y * w + x]:
+                          r, g, b, _a = opx[x, y]
+                          opx[x, y] = (r, g, b, 0)
+              return out
+
+          def apply_rounded_icon_alpha(img: Image.Image) -> Image.Image:
+              img = img.convert('RGBA')
+              w, h = img.size
+              if abs(w - h) > max(w, h) * 0.04:
+                  return img
+              # The approved mark is an app-icon style rounded square. This mask
+              # removes preview/background pixels in the corners without touching
+              # the envelope/lens artwork inside the mark.
+              radius = int(min(w, h) * 0.135)
+              mask = Image.new('L', (w, h), 0)
+              draw = ImageDraw.Draw(mask)
+              draw.rounded_rectangle([0, 0, w - 1, h - 1], radius=radius, fill=255)
+              mask = mask.filter(ImageFilter.GaussianBlur(max(0.25, min(w, h) / 1200)))
+              alpha = img.getchannel('A')
+              img.putalpha(Image.composite(alpha, Image.new('L', (w, h), 0), mask))
+              return img
+
+          def clean_png(path: Path) -> Image.Image:
+              img = Image.open(path).convert('RGBA')
+              img = flood_clear_preview_background(img)
+              if path.name in {
+                  'mark-color.png', 'mark-dark.png', 'favicon-color.png',
+                  'favicon.png', 'favicon-16.png', 'favicon-32.png',
+                  'apple-touch-icon.png', 'icon-192.png', 'icon-512.png',
+              } or path.name.startswith('icon-'):
+                  img = apply_rounded_icon_alpha(img)
+              img.save(path, optimize=True)
+              return img
+
+          # Clean every deployed PNG brand asset that exists now.
+          for path in sorted(BRAND_DIR.glob('*.png')):
+              clean_png(path)
+
+          # Pick the color mark as the source of truth for generated app/favicon assets.
+          source_path = BRAND_DIR / 'mark-color.png'
+          if not source_path.exists():
+              raise SystemExit('public/brand/mark-color.png is missing; cannot regenerate logo set')
+          mark = clean_png(source_path)
+
+          # Regenerate icon sizes from the cleaned, transparent mark.
+          sizes = {
+              'favicon-16.png': 16,
+              'favicon-32.png': 32,
+              'favicon-color.png': 256,
+              'apple-touch-icon.png': 180,
+              'icon-192.png': 192,
+              'icon-512.png': 512,
+          }
+          for name, size in sizes.items():
+              resized = mark.resize((size, size), Image.Resampling.LANCZOS)
+              resized.save(BRAND_DIR / name, optimize=True)
+
+          # Root fallbacks used by index.html and older caches.
+          (BRAND_DIR / 'favicon-32.png').replace('public/favicon.png') if False else None
+          mark.resize((32, 32), Image.Resampling.LANCZOS).save('public/favicon.png', optimize=True)
+          mark.resize((192, 192), Image.Resampling.LANCZOS).save('public/icon-192.png', optimize=True)
+          mark.resize((512, 512), Image.Resampling.LANCZOS).save('public/icon-512.png', optimize=True)
+          mark.resize((180, 180), Image.Resampling.LANCZOS).save('public/apple-touch-icon.png', optimize=True)
+          mark.resize((256, 256), Image.Resampling.LANCZOS).save(
+              'public/favicon.ico',
+              sizes=[(16, 16), (24, 24), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)],
+          )
+
+          # Keep a web-optimized transparent source as well.
+          mark.save(BRAND_DIR / 'mark-color.webp', quality=92, method=6)
+
+          icon512_b64 = base64.b64encode((BRAND_DIR / 'icon-512.png').read_bytes()).decode('ascii')
+          favicon_svg = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="PhotoBrief.ai">
+            <image href="data:image/png;base64,{icon512_b64}" x="0" y="0" width="512" height="512"/>
+          </svg>
+          '''
+          Path('public/favicon.svg').write_text(favicon_svg)
+          Path('public/photobrief-brand-mark.svg').write_text(favicon_svg.replace('PhotoBrief.ai', 'PhotoBrief.ai brand mark'))
+
+          # Transparent horizontal logo with embedded transparent mark and live SVG wordmark.
+          mark256_b64 = base64.b64encode((BRAND_DIR / 'favicon-color.png').read_bytes()).decode('ascii')
+          logo_svg = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 180" role="img" aria-label="PhotoBrief.ai" preserveAspectRatio="xMidYMid meet">
+            <defs>
+              <linearGradient id="pb-wordmark-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#f3ebff"/>
+                <stop offset="28%" stop-color="#d9bbff"/>
+                <stop offset="58%" stop-color="#b98cff"/>
+                <stop offset="100%" stop-color="#8f63ff"/>
+              </linearGradient>
+            </defs>
+            <image href="data:image/png;base64,{mark256_b64}" x="0" y="18" width="132" height="132"/>
+            <text x="150" y="114" fill="url(#pb-wordmark-gradient)" font-family="Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="82" font-weight="800" letter-spacing="-4.8">PhotoBrief.ai</text>
+          </svg>
+          '''
+          Path('public/photobrief-logo.svg').write_text(logo_svg)
+
+          # Verify alpha exists where it matters.
+          for verify in ['public/brand/mark-color.png', 'public/favicon.png', 'public/icon-512.png', 'public/apple-touch-icon.png']:
+              im = Image.open(verify).convert('RGBA')
+              alpha = im.getchannel('A')
+              if alpha.getextrema()[0] >= 255:
+                  raise SystemExit(f'{verify} is still fully opaque')
+          PY
+
+      - name: Remove temporary workflow and commit repaired assets
+        shell: bash
+        run: |
+          rm -f .github/workflows/repair-transparent-logo-assets.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/brand public/favicon.png public/favicon.ico public/favicon.svg public/icon-192.png public/icon-512.png public/apple-touch-icon.png public/photobrief-logo.svg public/photobrief-brand-mark.svg .github/workflows/repair-transparent-logo-assets.yml
+          git commit -m "Repair brand logo alpha transparency"
+          git push
