@@ -497,9 +497,9 @@ function FoundingPartnerSection() {
         <div className="pb-command-panel grid gap-6 p-5 sm:gap-8 sm:p-6 lg:grid-cols-[0.85fr_1.15fr] lg:p-8 xl:p-10">
           <div className="relative z-10">
             <span className="pb-eyebrow"><Stamp className="h-3.5 w-3.5" /> Founding beta</span>
-            <h2 className="mt-4 text-2xl font-semibold tracking-tight text-white sm:mt-5 sm:text-3xl lg:text-4xl">Built with real workflows, not toy testing.</h2>
-            <p className="pb-copy mt-4 text-base sm:mt-5 sm:text-lg">We are inviting a small group of businesses to use PhotoBrief in real intake scenarios before public launch. You get hands-on setup and early influence; we get honest workflow feedback.</p>
-            <div className="mt-6 flex flex-col gap-2.5 sm:mt-7 sm:flex-row sm:gap-3">
+            <h2 className="mt-4 text-2xl font-semibold tracking-tight text-white sm:text-3xl lg:text-4xl">Built with real workflows, not toy testing.</h2>
+            <p className="pb-copy mt-4 text-base sm:text-lg">We are inviting a small group of businesses to use PhotoBrief in real intake scenarios before public launch. You get hands-on setup and early influence; we get honest workflow feedback.</p>
+            <div className="mt-6 flex flex-col gap-2.5 sm:flex-row sm:gap-3">
               <Button asChild size="lg" className="rounded-full bg-[hsl(var(--pb-violet))] text-[hsl(var(--pb-night))] hover:bg-[hsl(var(--pb-lavender))]">
                 <NavLink to={signupCtaTarget()} onClick={() => trackEvent("cta_click", { location: "beta_offer", label: "primary" })}>
                   {signupCtaLabel()} <ArrowRight className="ml-1 h-4 w-4" />
@@ -542,8 +542,8 @@ function PricingPathSection() {
       <div className="pb-container">
         <div className="mx-auto max-w-3xl text-center">
           <span className="pb-eyebrow"><TimerReset className="h-3.5 w-3.5" /> Start manual. Automate later.</span>
-          <h2 className="pb-section-title mt-4 text-white sm:mt-5">Use one link first. Add automation when it pays for itself.</h2>
-          <p className="pb-copy mt-5 text-base sm:text-lg">Start with manual PhotoBrief links. Upgrade to Pro when website leads, routed requests, and form handoffs should happen without copy/paste.</p>
+          <h2 className="pb-section-title mt-4 text-white">Use one link first. Add automation when it pays for itself.</h2>
+          <p className="pb-copy mt-4 text-base sm:text-lg">Start with manual PhotoBrief links. Upgrade to Pro when website leads, routed requests, and form handoffs should happen without copy/paste.</p>
         </div>
         <div className="mt-8 grid gap-4 sm:mt-10 sm:gap-5 lg:grid-cols-2">
           {pricingPath.map((tier) => (
