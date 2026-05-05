@@ -131,8 +131,10 @@ Deno.serve(async (req) => {
     grant_type: 'refresh_token',
     refresh_token: refreshToken,
     client_id: cfg.clientId,
-    client_secret: cfg.clientSecret,
   })
+  if (cfg.clientSecret) {
+    form.set('client_secret', cfg.clientSecret)
+  }
 
   const tokenRes = await fetch(cfg.tokenUrl, {
     method: 'POST',
