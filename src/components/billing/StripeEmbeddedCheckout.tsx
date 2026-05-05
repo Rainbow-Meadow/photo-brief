@@ -28,7 +28,7 @@ export function StripeEmbeddedCheckout({ workspaceId, plan, interval, returnUrl 
         environment: getStripeEnvironment(),
         returnUrl:
           returnUrl ??
-          `${window.location.origin}/app/settings/billing?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
+          `${window.location.origin}/settings/billing?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
       },
     });
     if (error || !data?.clientSecret) {

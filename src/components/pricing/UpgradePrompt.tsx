@@ -131,7 +131,7 @@ export function UpgradePrompt({
           </Button>
           <Button asChild>
             <NavLink
-              to={`/app/settings/billing?plan=${requiredPlan ?? "pro"}`}
+              to={`/settings/billing?plan=${requiredPlan ?? "pro"}`}
               onClick={() => trackEvent("plan_upgrade_clicked", { plan: requiredPlan ?? "pro", surface: "upgrade_prompt", feature })}
             >
               Upgrade now <ArrowRight className="ml-1 h-4 w-4" />
