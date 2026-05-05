@@ -88,7 +88,7 @@ export default function PrivacyPage() {
         <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[420px] bg-ambient-future opacity-70" />
         <div aria-hidden className="future-grid pointer-events-none absolute inset-0 opacity-45" />
 
-        <section className="relative mx-auto max-w-5xl px-4 pb-10 pt-16 sm:px-6 lg:px-8 lg:pt-20">
+        <section className="pb-container-narrow pb-section">
           <div className="rounded-[2rem] border-white/[0.06] border bg-white/[0.03] p-6 shadow-[0_30px_90px_-60px_hsl(222_47%_11%/0.35)] backdrop-blur sm:p-8 lg:p-10">
             <span className="inline-flex items-center gap-2 rounded-full border-white/[0.08] border bg-white/[0.04] px-3 py-1 text-xs font-semibold text-primary">
               <ShieldCheck className="h-3.5 w-3.5" /> Privacy Policy
@@ -103,7 +103,7 @@ export default function PrivacyPage() {
           </div>
         </section>
 
-        <section className="relative mx-auto max-w-5xl px-4 pb-16 sm:px-6 lg:px-8 lg:pb-24">
+        <section className="pb-container-narrow pb-section">
           <div className="space-y-4">
             {sections.map((section) => (
               <article key={section.title} className="rounded-[1.5rem] border border-white/[0.06] bg-white/[0.03] p-5 backdrop-blur sm:p-6">
