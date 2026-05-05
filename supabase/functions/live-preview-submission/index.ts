@@ -47,13 +47,26 @@ Deno.serve(async (req) => {
     updated_at: new Date().toISOString(),
   }
 
-  const { error } = await supabase
-    .from('marketing_live_submissions')
-    .insert(record)
+  await supabase.from('marketing_live_submissions').insert(record)
 
-  if (error) {
-    console.error(error)
-    return json({ ok: false }, 500)
+  // Lead capture
+  const lead = payload?.lead
+  if (lead?.email) {
+    await supabase.from('marketing_live_leads').upsert({
+      session_id: sessionId,
+      email: lead.email,
+      name: lead.name || null,
+      company: lead.company || null,
+      phone: lead.phone || null,
+      readiness: payload?.brief?.readiness || 'incomplete',
+      selected_count: payload?.brief?.selected_count || 0,
+      required_count: payload?.brief?.required_count || 4,
+      issue: payload?.brief?.issue || null,
+      summary: payload?.brief?.summary || null,
+      payload,
+      consented_at: lead.consented ? new Date().toISOString() : null,
+      updated_at: new Date().toISOString(),
+    })
   }
 
   return json({ ok: true, session_id: sessionId })
