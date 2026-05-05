@@ -10,6 +10,7 @@ import {
   Heading,
   Html,
   Preview,
+  Section,
   Text,
 } from 'npm:@react-email/components@0.0.22'
 
@@ -26,46 +27,43 @@ export const RecoveryEmail = ({
     <Head />
     <Preview>Reset your password for {siteName}</Preview>
     <Body style={main}>
-      <Container style={container}>
-        <Heading style={h1}>Reset your password</Heading>
-        <Text style={text}>
-          We received a request to reset your password for {siteName}. Click
-          the button below to choose a new password.
-        </Text>
-        <Button style={button} href={confirmationUrl}>
-          Reset Password
-        </Button>
-        <Text style={footer}>
-          If you didn't request a password reset, you can safely ignore this
-          email. Your password will not be changed.
-        </Text>
-      </Container>
+      <Section style={outerPad}>
+        <Container style={container}>
+          <Section style={header}>
+            <Text style={wordmark}>PhotoBrief.ai</Text>
+          </Section>
+          <Section style={body}>
+            <Heading style={h1}>Reset your password</Heading>
+            <Text style={text}>
+              We received a request to reset your password for {siteName}. Click
+              the button below to choose a new password.
+            </Text>
+            <Section style={ctaWrap}>
+              <Button style={button} href={confirmationUrl}>
+                Reset Password
+              </Button>
+            </Section>
+            <Text style={footer}>
+              If you didn't request a password reset, you can safely ignore this
+              email. Your password will not be changed.
+            </Text>
+          </Section>
+        </Container>
+      </Section>
     </Body>
   </Html>
 )
 
 export default RecoveryEmail
 
-const main = { backgroundColor: '#ffffff', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif' }
-const container = { padding: '20px 25px' }
-const h1 = {
-  fontSize: '22px',
-  fontWeight: 'bold' as const,
-  color: '#101828',
-  margin: '0 0 20px',
-}
-const text = {
-  fontSize: '14px',
-  color: '#667085',
-  lineHeight: '1.5',
-  margin: '0 0 25px',
-}
-const button = {
-  backgroundColor: '#0A6BFF',
-  color: '#ffffff',
-  fontSize: '14px',
-  borderRadius: '12px',
-  padding: '12px 20px',
-  textDecoration: 'none',
-}
-const footer = { fontSize: '12px', color: '#999999', margin: '30px 0 0' }
+const main = { backgroundColor: '#ffffff', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }
+const outerPad = { backgroundColor: '#F8F7FA', padding: '40px 0' }
+const container = { maxWidth: '560px', margin: '0 auto', backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E1DEE7', overflow: 'hidden' as const }
+const header = { padding: '28px 32px 20px', borderBottom: '1px solid #E1DEE7' }
+const wordmark = { fontSize: '18px', fontWeight: 700, color: '#7C3AED', letterSpacing: '-0.02em', margin: '0', lineHeight: '1' }
+const body = { padding: '28px 32px 32px' }
+const h1 = { fontSize: '24px', fontWeight: 600 as const, color: '#111014', margin: '0 0 16px', lineHeight: '1.25' }
+const text = { fontSize: '15px', color: '#625F68', lineHeight: '1.6', margin: '0 0 16px' }
+const ctaWrap = { margin: '24px 0 20px' }
+const button = { backgroundColor: '#7C3AED', color: '#ffffff', fontSize: '15px', fontWeight: 600, borderRadius: '10px', padding: '14px 28px', textDecoration: 'none' }
+const footer = { fontSize: '12px', color: '#94909C', margin: '24px 0 0' }
