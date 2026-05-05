@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import {
   ArrowRight,
   CheckCircle2,
+  ChevronDown,
   ChevronRight,
   Clipboard,
   ExternalLink,
@@ -33,6 +34,7 @@ import {
   type IntegrationCategory,
   type IntegrationDefinition,
   type IntegrationStage,
+  type SetupStep,
 } from "@/features/integrations/integrationDefinitions";
 
 const categoryOrder: IntegrationCategory[] = ["website", "communication", "automation", "crm"];
@@ -114,6 +116,24 @@ function PrimaryIntegrationAction({ action }: { action: IntegrationActionDefinit
   );
 }
 
+function SetupStepsList({ steps }: { steps: SetupStep[] }) {
+  return (
+    <ol className="space-y-3">
+      {steps.map((step, idx) => (
+        <li key={idx} className="flex gap-3">
+          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+            {idx + 1}
+          </span>
+          <div className="min-w-0 pt-0.5">
+            <p className="text-sm font-medium text-foreground">{step.title}</p>
+            <p className="mt-0.5 text-sm leading-relaxed text-muted-foreground">{step.detail}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
 function ConnectorRow({
   integration,
   plan,
@@ -132,6 +152,7 @@ function ConnectorRow({
   const stage = stageMeta[integration.stage];
   const planAllowed = isAvailableForPlan(plan, integration.plan);
   const [busy, setBusy] = useState(false);
+  const [expanded, setExpanded] = useState(false);
   const canProvisionWebhook = integration.key === "webhook-bridge" || integration.key === "zapier" || integration.key === "make";
   const oauthProvider = oauthProviderForKey(integration.key);
 
@@ -195,16 +216,24 @@ function ConnectorRow({
   const primaryAction = integration.actions[0];
   const isPlanned = integration.stage === "planned";
   const showOAuthButton = Boolean(oauthProvider) && !isPlanned;
+  const hasSetupSteps = integration.setupSteps.length > 0;
 
   return (
     <article
       className={cn(
-        "surface-card group relative overflow-hidden p-3 transition duration-200",
-        "hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-[0_18px_60px_-42px_hsl(var(--primary)/0.75)]",
-        isPlanned && "opacity-78 hover:translate-y-0 hover:border-[hsl(var(--glass-border))] hover:shadow-sm",
+        "surface-card group relative overflow-hidden transition duration-200",
+        "hover:border-primary/30 hover:shadow-[0_18px_60px_-42px_hsl(var(--primary)/0.75)]",
+        isPlanned && "opacity-78 hover:border-[hsl(var(--glass-border))] hover:shadow-sm",
+        !expanded && "hover:-translate-y-0.5",
       )}
     >
-      <div className="flex items-center gap-3 sm:gap-4">
+      {/* Header row — clickable to expand */}
+      <button
+        type="button"
+        className="flex w-full items-center gap-3 p-3 text-left sm:gap-4"
+        onClick={() => hasSetupSteps && setExpanded((v) => !v)}
+        aria-expanded={expanded}
+      >
         <ConnectorLogo integrationKey={integration.key} name={integration.name} fallbackIcon={Icon} planned={isPlanned} />
 
         <div className="min-w-0 flex-1 py-1">
@@ -233,49 +262,23 @@ function ConnectorRow({
         </div>
 
         <div className="flex shrink-0 items-center gap-2">
-          {connection && canProvisionWebhook ? (
-            <Button size="sm" variant="outline" className="hidden h-9 rounded-full bg-background/70 px-4 sm:inline-flex" onClick={copyWebhookUrl}>
-              <Clipboard className="mr-2 h-4 w-4" /> Webhook
-            </Button>
-          ) : null}
-
-          {!connection && canProvisionWebhook && !isPlanned ? (
-            <Button
-              size="sm"
-              className="hidden h-9 rounded-full px-4 sm:inline-flex"
-              onClick={enableWebhookBridge}
-              disabled={busy || !planAllowed}
-            >
-              {busy ? "Creating…" : "Connect"}
-            </Button>
-          ) : null}
-
-          {showOAuthButton && !connection ? (
-            <Button size="sm" className="hidden h-9 rounded-full px-4 sm:inline-flex" onClick={startOAuth} disabled={busy || !planAllowed}>
-              {busy ? "Opening…" : "Connect"}
-            </Button>
-          ) : null}
-
-          {showOAuthButton && connection?.status === "needs_attention" ? (
-            <Button size="sm" variant="outline" className="hidden h-9 rounded-full bg-background/70 px-4 sm:inline-flex" onClick={startOAuth} disabled={busy || !planAllowed}>
-              Reconnect
-            </Button>
-          ) : null}
-
-          {!canProvisionWebhook && !showOAuthButton && primaryAction && !isPlanned ? (
-            <div className="hidden sm:block">
-              <PrimaryIntegrationAction action={primaryAction} />
-            </div>
-          ) : null}
-
           <Badge variant="outline" className={cn("h-8 shrink-0 rounded-full px-3 text-xs", connection ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300" : stage.className)}>
             {connection ? (connection.status === "needs_attention" ? "Attention" : "Connected") : stage.compactLabel}
           </Badge>
-          <ChevronRight className="h-4 w-4 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-foreground" />
+          {hasSetupSteps ? (
+            expanded ? (
+              <ChevronDown className="h-4 w-4 text-muted-foreground transition" />
+            ) : (
+              <ChevronRight className="h-4 w-4 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-foreground" />
+            )
+          ) : (
+            <ChevronRight className="h-4 w-4 text-muted-foreground" />
+          )}
         </div>
-      </div>
+      </button>
 
-      <div className="mt-3 flex flex-wrap gap-2 border-t pt-3 sm:hidden">
+      {/* Action buttons — always visible below header on mobile, inline on desktop */}
+      <div className="flex flex-wrap gap-2 border-t px-3 pb-3 pt-2">
         {connection && canProvisionWebhook ? (
           <Button size="sm" variant="outline" className="h-9 rounded-full bg-background/70 px-4" onClick={copyWebhookUrl}>
             <Clipboard className="mr-2 h-4 w-4" /> Copy webhook
@@ -297,8 +300,28 @@ function ConnectorRow({
           </Button>
         ) : null}
         {!canProvisionWebhook && !showOAuthButton && primaryAction && !isPlanned ? <PrimaryIntegrationAction action={primaryAction} /> : null}
-        {isPlanned ? <span className="text-xs text-muted-foreground">Coming soon after beta demand confirms the connector.</span> : null}
+        {isPlanned && !expanded ? <span className="text-xs text-muted-foreground">Coming soon after beta demand confirms the connector.</span> : null}
+
+        {hasSetupSteps ? (
+          <Button
+            size="sm"
+            variant="ghost"
+            className="ml-auto h-9 rounded-full px-3 text-xs text-muted-foreground hover:text-foreground"
+            onClick={() => setExpanded((v) => !v)}
+          >
+            {expanded ? "Hide" : "Setup guide"}
+            {expanded ? <ChevronDown className="ml-1 h-3.5 w-3.5" /> : <ChevronRight className="ml-1 h-3.5 w-3.5" />}
+          </Button>
+        ) : null}
       </div>
+
+      {/* Expandable setup steps */}
+      {expanded && hasSetupSteps ? (
+        <div className="border-t bg-muted/30 px-4 py-4 sm:px-6">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">How to integrate</p>
+          <SetupStepsList steps={integration.setupSteps} />
+        </div>
+      ) : null}
     </article>
   );
 }
@@ -513,7 +536,7 @@ export default function IntegrationsPage() {
         {visibleIntegrations.length === 0 ? (
           <div className="rounded-[1.5rem] border bg-card/80 p-8 text-center">
             <p className="text-lg font-semibold text-foreground">No connectors found</p>
-            <p className="mt-2 text-sm text-muted-foreground">Try searching for “SMS,” “website,” “email,” “CRM,” or “automation.”</p>
+            <p className="mt-2 text-sm text-muted-foreground">Try searching for "SMS," "website," "email," "CRM," or "automation."</p>
           </div>
         ) : null}
       </section>
