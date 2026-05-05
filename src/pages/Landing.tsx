@@ -392,17 +392,17 @@ function MessyThreadVisual() {
     { text: "Which job was this for?", x: "right-10", y: "bottom-12", rot: "-rotate-3" },
   ];
   return (
-    <div className="relative z-10 h-full min-h-[380px]">
+    <div className="relative z-10 h-full min-h-[280px] sm:min-h-[380px]">
       {items.map((item) => (
-        <div key={item.text} className={`absolute ${item.x} ${item.y} ${item.rot} max-w-[15rem] rounded-3xl border border-white/10 bg-black/35 p-4 shadow-2xl`}>
-          <p className="text-sm font-semibold text-white/74">{item.text}</p>
+        <div key={item.text} className={`absolute ${item.x} ${item.y} ${item.rot} max-w-[12rem] rounded-2xl border border-white/10 bg-black/35 p-3 shadow-2xl sm:max-w-[15rem] sm:rounded-3xl sm:p-4`}>
+          <p className="text-xs font-semibold text-white/74 sm:text-sm">{item.text}</p>
         </div>
       ))}
-      <figure className="pb-photo-frame absolute bottom-20 left-8 w-36 -rotate-6 opacity-80">
-        <img src={appliances} alt="Loose customer photo without context" className="h-28 w-full object-cover" />
+      <figure className="pb-photo-frame absolute bottom-16 left-4 w-28 -rotate-6 opacity-80 sm:bottom-20 sm:left-8 sm:w-36">
+        <img src={appliances} alt="Loose customer photo without context" className="h-20 w-full object-cover sm:h-28" />
       </figure>
-      <figure className="pb-photo-frame absolute bottom-28 right-12 w-36 rotate-6 opacity-70">
-        <img src={drivewayAccess} alt="Another loose customer photo without context" className="h-28 w-full object-cover" />
+      <figure className="pb-photo-frame absolute bottom-24 right-6 w-28 rotate-6 opacity-70 sm:bottom-28 sm:right-12 sm:w-36">
+        <img src={drivewayAccess} alt="Another loose customer photo without context" className="h-20 w-full object-cover sm:h-28" />
       </figure>
     </div>
   );
