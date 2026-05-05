@@ -67,7 +67,7 @@ export function MetricCard({
       {subStat ? (
         <p
           className={cn(
-            "mt-4 border-t border-border/70 pt-3 text-xs",
+            "mt-4 surface-divider pt-3 text-xs",
             subStat.tone === "success" && "text-success",
             subStat.tone === "muted" && "text-muted-foreground",
             (!subStat.tone || subStat.tone === "default") && "text-foreground",
