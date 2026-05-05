@@ -35,7 +35,7 @@ function Cell({ value }: { value: boolean | string }) {
 
 export function ComparisonTable() {
   return (
-    <section aria-labelledby="comparison-heading" className="relative bg-muted/20">
+    <section aria-labelledby="comparison-heading" className="relative">
       <div aria-hidden className="pointer-events-none absolute inset-0 bg-ambient-future opacity-40" />
       <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
         <div className="mx-auto max-w-2xl text-center">

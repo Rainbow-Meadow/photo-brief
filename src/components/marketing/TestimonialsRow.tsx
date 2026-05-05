@@ -13,7 +13,7 @@ import { trackEvent } from "@/lib/analytics";
  */
 export function TestimonialsRow() {
   return (
-    <section className="relative overflow-hidden bg-background">
+    <section className="relative overflow-hidden">
       <div aria-hidden className="pointer-events-none absolute inset-0 bg-ambient-mesh opacity-40" />
       <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
         <div className="mx-auto max-w-3xl text-center">

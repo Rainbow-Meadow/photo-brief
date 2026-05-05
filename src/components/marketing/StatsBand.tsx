@@ -7,7 +7,7 @@ const stats = [
 
 export function StatsBand() {
   return (
-    <section className="relative overflow-hidden bg-gradient-brand text-white">
+    <section className="relative overflow-hidden text-white">
       <div aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-radial-glow" />
       <div aria-hidden className="future-grid pointer-events-none absolute inset-0 opacity-20" />
       <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-24">

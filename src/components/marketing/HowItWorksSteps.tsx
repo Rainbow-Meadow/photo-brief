@@ -25,7 +25,7 @@ export const howItWorksSteps = [
 
 export function HowItWorksSteps() {
   return (
-    <section id="how-it-works" className="relative overflow-hidden bg-background">
+    <section id="how-it-works" className="relative overflow-hidden">
       <div aria-hidden className="pointer-events-none absolute inset-0 bg-ambient-future opacity-70" />
       <div aria-hidden className="future-grid pointer-events-none absolute inset-0 opacity-60" />
       <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
