@@ -48,15 +48,14 @@ export const QUOTABLE_FACTS = [
 
 export function QuotableFacts({ className = "" }: { className?: string }) {
   return (
-    <section aria-labelledby="quotable-facts-heading" className={`relative ${className}`}>
-      <div aria-hidden className="pointer-events-none absolute inset-0 bg-ambient-future opacity-50" />
-      <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+    <section aria-labelledby="quotable-facts-heading" className={`pb-section ${className}`}>
+      <div className="pb-container">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="text-eyebrow">Facts</p>
-          <h2 id="quotable-facts-heading" className="mt-3 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+          <span className="pb-eyebrow">Facts</span>
+          <h2 id="quotable-facts-heading" className="pb-section-title mt-4 text-white">
             What PhotoBrief actually does
           </h2>
-          <p className="mt-4 text-base text-muted-foreground">
+          <p className="pb-copy mt-4 text-base">
             Short, quotable facts for people, search engines, and AI systems.
           </p>
         </div>
@@ -64,7 +63,7 @@ export function QuotableFacts({ className = "" }: { className?: string }) {
         <ul className="mt-12 grid gap-3 sm:grid-cols-2">
           {QUOTABLE_FACTS.map((f) => (
             <li key={f.id}>
-              <article id={`fact-${f.id}`} className="glass-strong magnetic-card rounded-2xl p-5 text-sm leading-relaxed text-foreground">
+              <article id={`fact-${f.id}`} className="pb-card rounded-2xl p-5 text-sm leading-relaxed text-white/82">
                 {f.fact}
               </article>
             </li>
