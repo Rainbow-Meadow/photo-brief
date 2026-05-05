@@ -76,18 +76,26 @@ Deno.serve(async (req) => {
       // Fetch submission + request + guide
       const { data: sub } = await supabase
         .from('submissions')
-        .select('id, workspace_id, request_id, submitter_name, photo_brief_requests(guide_id, photo_guides(name))')
+        .select('id, workspace_id, request_id, submitter_name, photo_brief_requests(id, guide_id, recipient_email, recipient_name, photo_guides(name))')
         .eq('id', body.submission_id)
         .maybeSingle()
       if (!sub) return json({ ok: true, skipped: 'no_submission' })
 
-      const guideName = (sub as any).photo_brief_requests?.photo_guides?.name ?? null
+      const req = (sub as any).photo_brief_requests
+      const guideName = req?.photo_guides?.name ?? null
 
       // Photo count (best-effort)
       const { count: photoCount } = await supabase
         .from('captured_media')
         .select('id', { count: 'exact', head: true })
         .eq('submission_id', sub.id)
+
+      // Workspace name for customer confirmation
+      const { data: ws } = await supabase
+        .from('business_workspaces')
+        .select('name')
+        .eq('id', sub.workspace_id)
+        .maybeSingle()
 
       // Active workspace members
       const { data: members } = await supabase
@@ -114,11 +122,30 @@ Deno.serve(async (req) => {
             ownerName: p.name ?? undefined,
             recipientName: sub.submitter_name ?? undefined,
             guideName: guideName ?? undefined,
+            requestTitle: guideName ?? undefined,
             reviewUrl,
             photoCount: photoCount ?? undefined,
           },
         )
       }
+
+      // Send confirmation email to the customer who submitted
+      const customerEmail = req?.recipient_email
+      if (customerEmail) {
+        const customerName = req?.recipient_name ?? sub.submitter_name ?? undefined
+        const firstName = customerName ? customerName.split(' ')[0] : undefined
+        await send(
+          'customer-submission-confirmation',
+          customerEmail,
+          `customer-confirm-${sub.id}`,
+          {
+            recipientName: firstName,
+            businessName: ws?.name ?? undefined,
+            requestTitle: guideName ?? undefined,
+          },
+        )
+      }
+
       return json({ ok: true, notified: profiles?.length ?? 0 })
     }
 

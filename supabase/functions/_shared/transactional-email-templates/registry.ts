@@ -15,6 +15,9 @@ import { template as submissionReceived } from './submission-received.tsx'
 import { template as workspaceWelcome } from './workspace-welcome.tsx'
 import { template as waitlistConfirmation } from './waitlist-confirmation.tsx'
 import { template as waitlistAdminNotification } from './waitlist-admin-notification.tsx'
+import { template as customerSubmissionConfirmation } from './customer-submission-confirmation.tsx'
+import { template as businessRequestReady } from './business-request-ready.tsx'
+import { template as foundingPartnerWelcome } from './founding-partner-welcome.tsx'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'recipient-request-link': recipientRequestLink,
@@ -23,4 +26,7 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'workspace-welcome': workspaceWelcome,
   'waitlist-confirmation': waitlistConfirmation,
   'waitlist-admin-notification': waitlistAdminNotification,
+  'customer-submission-confirmation': customerSubmissionConfirmation,
+  'business-request-ready': businessRequestReady,
+  'founding-partner-welcome': foundingPartnerWelcome,
 }

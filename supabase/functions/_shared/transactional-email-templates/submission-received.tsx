@@ -4,43 +4,67 @@ import {
   Body, Button, Container, Head, Heading, Html, Preview, Section, Text,
 } from 'npm:@react-email/components@0.0.22'
 import type { TemplateEntry } from './registry.ts'
+import { BRAND, s, BrandHeader, BrandFooter } from './brand-styles.ts'
 
-interface SubmissionReceivedProps {
+interface Props {
   ownerName?: string
   recipientName?: string
   guideName?: string
   reviewUrl?: string
   photoCount?: number
+  requestTitle?: string
+  submittedAt?: string
 }
 
 const SubmissionReceivedEmail = ({
-  ownerName, recipientName, guideName, reviewUrl, photoCount,
-}: SubmissionReceivedProps) => {
+  ownerName, recipientName, guideName, reviewUrl, photoCount, requestTitle, submittedAt,
+}: Props) => {
   const greeting = ownerName ? `Hi ${ownerName},` : 'Hi there,'
-  const who = recipientName || 'A recipient'
-  const guide = guideName ? ` for "${guideName}"` : ''
+  const who = recipientName || 'A customer'
+  const title = requestTitle || guideName
   const cta = reviewUrl || 'https://photobrief.ai/dashboard'
   return (
     <Html lang="en" dir="ltr">
       <Head />
       <Preview>{`${who} just submitted photos`}</Preview>
-      <Body style={main}>
-        <Container style={container}>
-          <Text style={eyebrow}>NEW SUBMISSION</Text>
-          <Heading style={h1}>{greeting}</Heading>
-          <Text style={text}>
-            {who} just submitted photos{guide}
-            {typeof photoCount === 'number' ? ` — ${photoCount} photo${photoCount === 1 ? '' : 's'} attached` : ''}.
-          </Text>
-          <Text style={text}>
-            Review the submission, check completeness, and download or forward
-            the photos from your inbox.
-          </Text>
-          <Section style={ctaWrap}>
-            <Button href={cta} style={button}>Review submission</Button>
-          </Section>
-          <Text style={footer}>You're receiving this because you're a member of this PhotoBrief workspace.</Text>
-        </Container>
+      <Body style={s.main}>
+        <Section style={s.outerPad}>
+          <Container style={s.container}>
+            <BrandHeader />
+            <Section style={s.body}>
+              <Text style={s.eyebrow}>NEW SUBMISSION</Text>
+              <Heading style={s.h1}>{greeting}</Heading>
+              <Section style={s.card}>
+                <Text style={{ ...s.text, margin: '0 0 8px', fontWeight: 600, color: BRAND.colors.primary }}>
+                  {who}
+                </Text>
+                {title ? (
+                  <Text style={{ ...s.textSmall, margin: '0 0 6px' }}>
+                    Request: {title}
+                  </Text>
+                ) : null}
+                {typeof photoCount === 'number' ? (
+                  <Text style={{ ...s.textSmall, margin: '0 0 6px' }}>
+                    Photos: {photoCount}
+                  </Text>
+                ) : null}
+                {submittedAt ? (
+                  <Text style={{ ...s.textSmall, margin: '0' }}>
+                    Submitted: {submittedAt}
+                  </Text>
+                ) : null}
+              </Section>
+              <Text style={s.text}>
+                Review the submission, check completeness, and download or forward
+                the photos from your dashboard.
+              </Text>
+              <Section style={s.ctaWrap}>
+                <Button href={cta} style={s.button}>Review brief</Button>
+              </Section>
+            </Section>
+            <BrandFooter />
+          </Container>
+        </Section>
       </Body>
     </Html>
   )
@@ -49,24 +73,20 @@ const SubmissionReceivedEmail = ({
 export const template = {
   component: SubmissionReceivedEmail,
   subject: (data: Record<string, any>) => {
-    const who = data?.recipientName || 'A recipient'
-    return `${who} submitted photos`
+    const who = data?.recipientName || 'A customer'
+    const title = data?.requestTitle || data?.guideName
+    return title
+      ? `New PhotoBrief submitted: ${title}`
+      : `${who} submitted photos`
   },
-  displayName: 'Submission received',
+  displayName: 'Business: new submission',
   previewData: {
     ownerName: 'Alex',
     recipientName: 'Maria',
     guideName: 'Leak inspection',
+    requestTitle: 'Kitchen leak — 42 Elm St',
     reviewUrl: 'https://photobrief.ai/submissions/preview',
     photoCount: 5,
+    submittedAt: 'May 5, 2026 at 2:15 PM',
   },
 } satisfies TemplateEntry
-
-const main = { backgroundColor: '#ffffff', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }
-const container = { maxWidth: '560px', margin: '0 auto', padding: '32px 28px' }
-const eyebrow = { fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', color: '#0A6BFF', textTransform: 'uppercase' as const, margin: '0 0 16px' }
-const h1 = { fontSize: '24px', fontWeight: 600, color: '#101828', margin: '0 0 16px', lineHeight: '1.25' }
-const text = { fontSize: '15px', color: '#334155', lineHeight: '1.55', margin: '0 0 16px' }
-const ctaWrap = { margin: '28px 0 24px' }
-const button = { backgroundColor: '#0A6BFF', color: '#ffffff', borderRadius: '12px', padding: '14px 24px', fontSize: '15px', fontWeight: 600, textDecoration: 'none', display: 'inline-block' }
-const footer = { fontSize: '12px', color: '#94A3B8', margin: '24px 0 0', borderTop: '1px solid #E2E8F0', paddingTop: '16px' }
