@@ -1,60 +1,32 @@
 
-# Deploy New Logo/Icon Across the Site
+# Seamless Site-Wide Visual Consistency
 
-The uploaded image (purple camera-envelope 3D icon) will replace every existing logo, favicon, icon, and OG image asset throughout the project.
+The landing page now has a unified, borderless dark aesthetic with a smooth gradient background. Several other pages still use visible card borders, alternating backgrounds, and hard dividers that break the seamless feel.
 
-## What will be done
+## Changes
 
-### 1. Generate all required asset sizes from the uploaded image
+### 1. Footer -- remove border and background tint
 
-Using ImageMagick, create the following from the uploaded PNG:
+In `MarketingLayout.tsx`, the footer has `border-t bg-muted/30` creating a visible horizontal line and a different background band. Remove both so the footer blends into the page background.
 
-| File | Size | Purpose |
-|------|------|---------|
-| `public/brand/mark-color.png` | 1024x1024 | Primary mark (used by BrandMark component) |
-| `public/brand/mark-color.webp` | 1024x1024 | WebP variant |
-| `public/favicon.svg` | removed | No SVG source for raster logo |
-| `public/favicon.png` | 32x32 | Favicon PNG |
-| `public/favicon.ico` | 48x48 | ICO favicon |
-| `public/favicon-16x16.png` | 16x16 | Small favicon |
-| `public/favicon-32x32.png` | 32x32 | Medium favicon |
-| `public/brand/favicon-16.png` | 16x16 | Brand dir copy |
-| `public/brand/favicon-32.png` | 32x32 | Brand dir copy |
-| `public/brand/favicon-color.png` | 180x180 | Brand favicon |
-| `public/brand/favicon.ico` | 48x48 | Brand dir ICO |
-| `public/icon-192.png` | 192x192 | PWA icon |
-| `public/icon-512.png` | 512x512 | PWA icon |
-| `public/brand/icon-192.png` | 192x192 | PWA maskable |
-| `public/brand/icon-512.png` | 512x512 | PWA maskable |
-| `public/brand/apple-touch-icon.png` | 180x180 | Apple touch icon |
-| `public/apple-touch-icon.png` | 180x180 | Root apple touch |
-| `public/og-image.png` | 1200x630 | OG image (icon centered on dark bg) |
-| `public/og-image.jpg` | 1200x630 | OG image JPG variant |
-| `public/brand/mark-micro.svg` | keep or replace | Micro mark |
+### 2. Privacy page -- soften card borders
 
-### 2. Update index.html
+In `Privacy.tsx`, all content cards use `border bg-card/80` with hard rounded borders, making each section look boxed. Replace with subtle `border-white/[0.06]` (matching the landing page glass aesthetic) so cards feel embedded in the page rather than floating on it. Same for the hero header card and the contact card.
 
-- Remove the SVG favicon link (no SVG version of this raster icon)
-- Update OG image meta tags to point to `/og-image.png` instead of the old SVG
-- Update structured data logo URL to `/og-image.png`
+### 3. Terms page -- same card softening
 
-### 3. Update BrandMark component
+`Terms.tsx` uses the same card pattern as Privacy. Apply identical treatment: soften borders to `border-white/[0.06]` and reduce the shadow intensity.
 
-- `MARK_SRC` already points to `/brand/mark-color.png` -- just replacing the file is sufficient
-- No code change needed unless we want to also update horizontal/stacked variants
+### 4. Badge chips on Privacy/Terms
 
-### 4. Clean up old SVG logo files
-
-Remove obsolete SVG logo files that are no longer the brand mark:
-- `public/favicon.svg` (raster logo, no SVG equivalent)
-- Optionally keep the old SVGs in `/public/` for backwards compat but they won't be referenced
-
-### 5. Update site.webmanifest
-
-Already references `/icon-192.png` and `/icon-512.png` -- replacing files is sufficient.
+The eyebrow badge chips use `border bg-background/70` which is visibly lighter than the ambient. Shift to `border-white/[0.08] bg-white/[0.04]` for a subtle glass look matching the landing page chips.
 
 ## Files affected
 
-- ~15 image files regenerated in `public/` and `public/brand/`
-- `index.html` -- minor meta tag updates
-- No component code changes needed (BrandMark already references the correct paths)
+| File | Change |
+|------|--------|
+| `src/components/layout/MarketingLayout.tsx` | Footer: remove `border-t bg-muted/30` |
+| `src/pages/Privacy.tsx` | Soften card borders and badge chip |
+| `src/pages/Terms.tsx` | Same border softening as Privacy |
+
+No structural or layout changes -- purely border/background refinements to eliminate visual "seams" between sections.
