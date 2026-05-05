@@ -149,8 +149,8 @@ Deno.serve(async (req) => {
   if (!code) return html('Connector setup failed', 'OAuth authorization code was missing.', redirectTo, 400)
 
   const cfg = callbackConfig(provider, supabaseUrl)
-  // Microsoft supports public clients (no secret needed with PKCE)
-  const requiresSecret = provider !== 'microsoft'
+  // Google and Microsoft support public clients (no secret needed)
+  const requiresSecret = provider === 'hubspot'
   if (!cfg.clientId || (requiresSecret && !cfg.clientSecret)) {
     await admin.from('integration_connections').upsert({
       workspace_id: stateRow.workspace_id,
