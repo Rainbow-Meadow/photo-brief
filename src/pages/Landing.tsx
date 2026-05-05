@@ -274,7 +274,7 @@ function HeroSection({ onOpenDemo }: { onOpenDemo: () => void }) {
 
           {/* CTA buttons — row on desktop, stack on mobile with equal width */}
           <div className="mx-auto mt-5 flex max-w-lg flex-col gap-2.5 sm:mt-6 sm:max-w-none sm:flex-row sm:justify-center sm:gap-3">
-            <Button asChild size="xl" className="rounded-full bg-[hsl(var(--pb-violet))] px-7 text-[hsl(var(--pb-night))] hover:bg-[hsl(var(--pb-lavender))]">
+            <Button asChild size="xl" variant="pb-primary">
               <NavLink to={signupCtaTarget()} onClick={() => trackEvent("cta_click", { location: "hero", label: "primary" })}>
                 {signupCtaLabel()} <ArrowRight className="ml-1 h-4 w-4" />
               </NavLink>
@@ -506,7 +506,7 @@ function FoundingPartnerSection() {
             <h2 className="mt-4 text-2xl font-semibold tracking-tight text-white sm:text-3xl lg:text-4xl">Built with real workflows, not toy testing.</h2>
             <p className="pb-copy mt-4 text-base sm:text-lg">We are inviting a small group of businesses to use PhotoBrief in real intake scenarios before public launch. You get hands-on setup and early influence; we get honest workflow feedback.</p>
             <div className="mt-6 flex flex-col gap-2.5 sm:flex-row sm:gap-3">
-              <Button asChild size="lg" className="rounded-full bg-[hsl(var(--pb-violet))] text-[hsl(var(--pb-night))] hover:bg-[hsl(var(--pb-lavender))]">
+              <Button asChild size="lg" variant="pb-primary">
                 <NavLink to={signupCtaTarget()} onClick={() => trackEvent("cta_click", { location: "beta_offer", label: "primary" })}>
                   {signupCtaLabel()} <ArrowRight className="ml-1 h-4 w-4" />
                 </NavLink>
@@ -583,7 +583,7 @@ function FinalCta() {
             <h2 className="pb-section-title mt-5 text-white">Send one link. Get a usable brief.</h2>
             <p className="pb-copy mx-auto mt-4 max-w-2xl text-base sm:text-lg">Give customers a clear path, give your team a clean packet, and stop turning every quote into a photo scavenger hunt.</p>
             <div className="mt-6 flex flex-col justify-center gap-2.5 sm:flex-row sm:gap-3">
-              <Button asChild size="xl" className="rounded-full bg-[hsl(var(--pb-violet))] px-8 text-[hsl(var(--pb-night))] hover:bg-[hsl(var(--pb-lavender))]">
+              <Button asChild size="xl" variant="pb-primary">
                 <NavLink to={signupCtaTarget()} onClick={() => trackEvent("cta_click", { location: "final", label: "primary" })}>
                   {signupCtaLabel()} <ArrowRight className="ml-1 h-4 w-4" />
                 </NavLink>

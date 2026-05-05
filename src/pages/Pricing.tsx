@@ -66,7 +66,7 @@ export default function PricingPage() {
             <ShieldCheck className="h-4 w-4" /> First-pass follow-up photos do not consume credits.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <Button asChild size="xl" className="rounded-full bg-[hsl(var(--pb-violet))] text-[hsl(var(--pb-night))] hover:bg-[hsl(var(--pb-lavender))]">
+            <Button asChild size="xl" variant="pb-primary">
               <NavLink to={signupCtaTarget()}>
                 {signupCtaLabel()} <ArrowRight className="ml-1 h-4 w-4" />
               </NavLink>
@@ -154,7 +154,7 @@ export default function PricingPage() {
               <p className="pb-copy max-w-md text-sm">
                 Get early access, hands-on setup, feature influence, and first-year savings in exchange for using PhotoBrief in real workflows and sharing honest feedback.
               </p>
-              <Button asChild size="xl" className="mt-2 rounded-full bg-[hsl(var(--pb-violet))] text-[hsl(var(--pb-night))] hover:bg-[hsl(var(--pb-lavender))]">
+              <Button asChild size="xl" variant="pb-primary" className="mt-2">
                 <NavLink to={signupCtaTarget()}>
                   {signupCtaLabel()} <ArrowRight className="ml-1 h-4 w-4" />
                 </NavLink>

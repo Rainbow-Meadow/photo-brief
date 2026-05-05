@@ -275,7 +275,7 @@ export default function WaitlistPage() {
                     <p className="text-xs text-[hsl(var(--pb-muted))]">
                       Limited spots. We typically reply within a few days.
                     </p>
-                    <Button type="submit" size="lg" disabled={submitting} className="rounded-full bg-[hsl(var(--pb-violet))] text-[hsl(var(--pb-night))] hover:bg-[hsl(var(--pb-lavender))]">
+                    <Button type="submit" size="lg" disabled={submitting} variant="pb-primary">
                       {submitting ? "Submitting…" : "Apply to join"}
                     </Button>
                   </div>

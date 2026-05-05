@@ -139,7 +139,7 @@ export default function BetaPortfolioPage() {
                 PhotoBrief is opening a limited beta for businesses that want a better way to collect, organize, and act on photo-based project briefs. Founding partners get early access, hands-on setup, direct support, and the chance to shape the product before public launch.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
-                <Button asChild size="xl" className="rounded-full bg-[hsl(var(--pb-violet))] text-[hsl(var(--pb-night))] hover:bg-[hsl(var(--pb-lavender))]">
+                <Button asChild size="xl" variant="pb-primary">
                   <NavLink to={signupCtaTarget()} onClick={() => trackEvent("cta_click", { location: "beta_portfolio_hero", label: "apply_beta" })}>
                     Apply to join the beta <ArrowRight className="ml-1 h-4 w-4" />
                   </NavLink>
@@ -334,7 +334,7 @@ export default function BetaPortfolioPage() {
                 <p className="pb-copy mx-auto mt-4 max-w-2xl text-base sm:text-lg">
                   We're inviting businesses willing to use PhotoBrief in real workflows and share honest feedback along the way.
                 </p>
-                <Button asChild size="xl" className="mt-8 rounded-full bg-[hsl(var(--pb-violet))] text-[hsl(var(--pb-night))] hover:bg-[hsl(var(--pb-lavender))]">
+                <Button asChild size="xl" variant="pb-primary" className="mt-8">
                   <NavLink to={signupCtaTarget()} onClick={() => trackEvent("cta_click", { location: "beta_portfolio_final", label: "apply_beta" })}>
                     Apply to join the beta <ArrowRight className="ml-1 h-4 w-4" />
                   </NavLink>
