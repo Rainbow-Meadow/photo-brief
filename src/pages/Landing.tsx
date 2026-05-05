@@ -247,29 +247,34 @@ export default function LandingPage() {
 
 function HeroSection({ onOpenDemo }: { onOpenDemo: () => void }) {
   return (
-    <section className="relative isolate overflow-hidden pt-10 sm:pt-14 lg:pt-16">
+    <section className="relative isolate overflow-hidden pt-8 sm:pt-12 lg:pt-14">
       <div className="pb-lens-field" />
       <div aria-hidden className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[hsl(var(--pb-lavender)/0.55)] to-transparent" />
-      <div className="pb-container relative pb-8 sm:pb-10 lg:pb-14">
+      <div className="pb-container relative pb-8 sm:pb-10 lg:pb-12">
         <div className="relative z-10 mx-auto max-w-3xl text-center">
           {/* Logo spotlight */}
-          <div className="mb-5 sm:mb-6">
+          <div className="mb-4 sm:mb-5">
             <div className="relative inline-flex items-center justify-center">
-              <div aria-hidden className="pointer-events-none absolute h-32 w-32 rounded-full bg-[hsl(var(--pb-violet)/0.35)] blur-[60px] sm:h-44 sm:w-44 sm:blur-[80px]" />
-              <BrandMark variant="mark" size={72} withGlow eager className="relative sm:hidden" />
-              <BrandMark variant="mark" size={96} withGlow eager className="relative hidden sm:inline-flex lg:hidden" />
-              <BrandMark variant="mark" size={112} withGlow eager className="relative hidden lg:inline-flex" />
+              <div aria-hidden className="pointer-events-none absolute h-28 w-28 rounded-full bg-[hsl(var(--pb-violet)/0.35)] blur-[50px] sm:h-40 sm:w-40 sm:blur-[70px]" />
+              <BrandMark variant="mark" size={64} withGlow eager className="relative sm:hidden" />
+              <BrandMark variant="mark" size={88} withGlow eager className="relative hidden sm:inline-flex lg:hidden" />
+              <BrandMark variant="mark" size={104} withGlow eager className="relative hidden lg:inline-flex" />
             </div>
           </div>
+
           <span className="pb-eyebrow"><Sparkles className="h-3.5 w-3.5" /> Founding Partner Beta now open</span>
-          <h1 className="pb-hero-title mt-4 pb-2 text-white">
+
+          <h1 className="pb-hero-title mt-3 text-white sm:mt-4">
             Get quote-ready customer photos.
-            <span className="block pb-2 text-[hsl(var(--pb-lavender))]">Send one guided link.</span>
+            <span className="mt-1 block text-[hsl(var(--pb-lavender))]">Send one guided link.</span>
           </h1>
+
           <p className="pb-copy mx-auto mt-4 max-w-2xl text-base leading-7 sm:text-lg sm:leading-8">
             PhotoBrief is a one-link photo intake tool for service, repair, review, and documentation workflows. Customers follow mobile prompts, obvious issues get flagged, and your team receives a clean brief instead of a messy thread.
           </p>
-          <div className="mt-6 flex flex-col items-center gap-2.5 sm:mt-7 sm:flex-row sm:justify-center sm:gap-3">
+
+          {/* CTA buttons — row on desktop, stack on mobile with equal width */}
+          <div className="mx-auto mt-5 flex max-w-lg flex-col gap-2.5 sm:mt-6 sm:max-w-none sm:flex-row sm:justify-center sm:gap-3">
             <Button asChild size="xl" className="rounded-full bg-[hsl(var(--pb-violet))] px-7 text-[hsl(var(--pb-night))] hover:bg-[hsl(var(--pb-lavender))]">
               <NavLink to={signupCtaTarget()} onClick={() => trackEvent("cta_click", { location: "hero", label: "primary" })}>
                 {signupCtaLabel()} <ArrowRight className="ml-1 h-4 w-4" />
@@ -280,17 +285,19 @@ function HeroSection({ onOpenDemo }: { onOpenDemo: () => void }) {
                 See how it works
               </a>
             </Button>
-            <Button size="xl" variant="ghost" className="rounded-full text-white/80 hover:bg-white/8 hover:text-white" onClick={onOpenDemo}>
-              <PlayCircle className="mr-1 h-5 w-5" /> Product spotlight
+            <Button size="xl" variant="outline" className="rounded-full border-white/10 bg-white/[0.02] px-7 text-white/80 hover:bg-white/8 hover:text-white" onClick={onOpenDemo}>
+              <PlayCircle className="mr-1.5 h-4.5 w-4.5" /> Product spotlight
             </Button>
           </div>
-          <div className="mx-auto mt-5 grid max-w-md gap-1.5 sm:mt-6 sm:grid-cols-3 sm:gap-2">
+
+          {/* Feature chips — always row */}
+          <div className="mx-auto mt-4 flex max-w-md justify-center gap-2 sm:mt-5 sm:gap-2.5">
             {[
               "No app for customers",
               "Manual links first",
               "Automation on Pro",
             ].map((item) => (
-              <span key={item} className="pb-route-chip px-3 py-1.5 text-center text-[0.7rem] font-semibold sm:py-2 sm:text-xs">{item}</span>
+              <span key={item} className="pb-route-chip whitespace-nowrap px-2.5 py-1.5 text-center text-[0.65rem] font-semibold sm:px-3 sm:py-2 sm:text-xs">{item}</span>
             ))}
           </div>
         </div>
