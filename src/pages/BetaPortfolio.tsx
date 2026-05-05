@@ -73,41 +73,13 @@ const coreSurfaces = [
 ];
 
 const betaBenefits = [
-  {
-    icon: Clock3,
-    title: "90 days of free beta access",
-    body: "Enough time to use PhotoBrief in actual business workflows instead of poking around once and forgetting.",
-  },
-  {
-    icon: HeartHandshake,
-    title: "Concierge onboarding and setup",
-    body: "Hands-on help creating first briefs, templates, workflows, and team process so adoption does not stall.",
-  },
-  {
-    icon: MessageSquareText,
-    title: "Priority support and direct channel",
-    body: "Beta partners get a human support path for questions, confusing moments, workflow fit, and setup help.",
-  },
-  {
-    icon: Sparkles,
-    title: "Priority feature influence",
-    body: "Your feedback helps decide what gets built, refined, and prioritized before public launch.",
-  },
-  {
-    icon: BadgeCheck,
-    title: "50% off the first year after launch",
-    body: "Founding partners get launch-year savings without creating a forever discount that hurts the business later.",
-  },
-  {
-    icon: Star,
-    title: "Optional Founding Partner recognition",
-    body: "Businesses that want visibility can be listed, spotlighted, or recognized as early adopters.",
-  },
-  {
-    icon: WandSparkles,
-    title: "Early access to future tools",
-    body: "Partner teams see new capture, routing, AI, and review features before the public rollout.",
-  },
+  { icon: Clock3, title: "90 days of free beta access", body: "Enough time to use PhotoBrief in actual business workflows instead of poking around once and forgetting." },
+  { icon: HeartHandshake, title: "Concierge onboarding and setup", body: "Hands-on help creating first briefs, templates, workflows, and team process so adoption does not stall." },
+  { icon: MessageSquareText, title: "Priority support and direct channel", body: "Beta partners get a human support path for questions, confusing moments, workflow fit, and setup help." },
+  { icon: Sparkles, title: "Priority feature influence", body: "Your feedback helps decide what gets built, refined, and prioritized before public launch." },
+  { icon: BadgeCheck, title: "50% off the first year after launch", body: "Founding partners get launch-year savings without creating a forever discount that hurts the business later." },
+  { icon: Star, title: "Optional Founding Partner recognition", body: "Businesses that want visibility can be listed, spotlighted, or recognized as early adopters." },
+  { icon: WandSparkles, title: "Early access to future tools", body: "Partner teams see new capture, routing, AI, and review features before the public rollout." },
 ];
 
 const partnerCommitments = [
@@ -119,28 +91,16 @@ const partnerCommitments = [
 ];
 
 const positioningPairs = [
-  { avoid: "We’re looking for testers.", say: "We’re inviting a small group of businesses to become founding beta partners." },
-  { avoid: "The product is still early.", say: "You’ll get early access and direct input before public launch." },
+  { avoid: "We're looking for testers.", say: "We're inviting a small group of businesses to become founding beta partners." },
+  { avoid: "The product is still early.", say: "You'll get early access and direct input before public launch." },
   { avoid: "Please give feedback.", say: "Your workflow will help shape what we build next." },
 ];
 
 const launchAssets = [
-  {
-    label: "One-liner",
-    body: "PhotoBrief.ai turns customer photo requests into guided mobile workflows, AI-checked submissions, and business-ready briefs.",
-  },
-  {
-    label: "Short pitch",
-    body: "Stop chasing customer photos. Send one guided link, or automate Website Intake on Pro, and get the images, answers, checks, and summary your team needs to act faster.",
-  },
-  {
-    label: "BetaList angle",
-    body: "A practical AI workflow tool for businesses that need better photos before quoting, dispatching, approving, returning, or documenting work.",
-  },
-  {
-    label: "Founding Partner copy",
-    body: "PhotoBrief is opening a limited beta for businesses that want a better way to collect and manage photo-based project briefs. Founding partners get early access, hands-on setup, direct support, feature input, and exclusive first-year pricing after launch.",
-  },
+  { label: "One-liner", body: "PhotoBrief.ai turns customer photo requests into guided mobile workflows, AI-checked submissions, and business-ready briefs." },
+  { label: "Short pitch", body: "Stop chasing customer photos. Send one guided link, or automate Website Intake on Pro, and get the images, answers, checks, and summary your team needs to act faster." },
+  { label: "BetaList angle", body: "A practical AI workflow tool for businesses that need better photos before quoting, dispatching, approving, returning, or documenting work." },
+  { label: "Founding Partner copy", body: "PhotoBrief is opening a limited beta for businesses that want a better way to collect and manage photo-based project briefs. Founding partners get early access, hands-on setup, direct support, feature input, and exclusive first-year pricing after launch." },
 ];
 
 const workflowStats = [
@@ -162,30 +122,29 @@ export default function BetaPortfolioPage() {
         breadcrumbs={breadcrumbs}
       />
 
-      <main className="relative overflow-hidden bg-background">
-        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[780px] bg-ambient-future" />
-        <div aria-hidden className="future-grid pointer-events-none absolute inset-0 opacity-45" />
-
-        <section className="pb-section">
-          <div className="pb-container grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
-            <div className="animate-lift-in">
-              <div className="mb-7 inline-flex max-w-full rounded-[2rem] border border-primary/20 bg-card/78 p-4 shadow-glow backdrop-blur-xl sm:p-5">
-                <BrandMark variant="horizontal" tone="auto" size={58} eager withGlow />
+      <main>
+        {/* Hero */}
+        <section className="relative isolate overflow-hidden -mt-[4.5rem] pt-[5.5rem] sm:-mt-[5rem] sm:pt-[6rem]">
+          <div className="pb-lens-field" />
+          <div className="pb-container pb-section relative z-10 grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
+            <div>
+              <div className="mb-7 inline-flex max-w-full rounded-[2rem] border border-[hsl(var(--pb-lavender)/0.25)] bg-[hsl(var(--pb-panel)/0.78)] p-4 shadow-[0_16px_40px_-28px_hsl(var(--pb-shadow))] backdrop-blur-xl sm:p-5">
+                <BrandMark variant="horizontal" tone="light" size={58} eager withGlow />
               </div>
-              <p className="text-eyebrow">Founding Partner Beta</p>
-              <h1 className="mt-4 text-4xl font-semibold tracking-tight text-foreground sm:text-6xl lg:text-7xl">
+              <span className="pb-eyebrow"><Sparkles className="h-3.5 w-3.5" /> Founding Partner Beta</span>
+              <h1 className="mt-4 text-4xl font-semibold tracking-tight text-white sm:text-6xl lg:text-7xl">
                 Become a PhotoBrief.ai founding partner.
               </h1>
-              <p className="mt-6 max-w-2xl text-base leading-7 text-muted-foreground sm:text-xl">
+              <p className="pb-copy mt-6 max-w-2xl text-base sm:text-xl">
                 PhotoBrief is opening a limited beta for businesses that want a better way to collect, organize, and act on photo-based project briefs. Founding partners get early access, hands-on setup, direct support, and the chance to shape the product before public launch.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
-                <Button asChild size="xl" className="rounded-full">
+                <Button asChild size="xl" className="rounded-full bg-[hsl(var(--pb-violet))] text-[hsl(var(--pb-night))] hover:bg-[hsl(var(--pb-lavender))]">
                   <NavLink to={signupCtaTarget()} onClick={() => trackEvent("cta_click", { location: "beta_portfolio_hero", label: "apply_beta" })}>
                     Apply to join the beta <ArrowRight className="ml-1 h-4 w-4" />
                   </NavLink>
                 </Button>
-                <Button asChild size="xl" variant="glass" className="rounded-full">
+                <Button asChild size="xl" variant="outline" className="rounded-full border-white/16 bg-white/[0.03] text-white hover:bg-white/10 hover:text-white">
                   <a href="#portfolio" onClick={() => trackEvent("cta_click", { location: "beta_portfolio_hero", label: "view_surfaces" })}>
                     View product portfolio
                   </a>
@@ -193,35 +152,35 @@ export default function BetaPortfolioPage() {
               </div>
             </div>
 
-            <div className="glass-strong relative overflow-hidden rounded-[2.5rem] p-5 shadow-glass-lg sm:p-6">
-              <span aria-hidden className="animate-sheen pointer-events-none absolute inset-y-0 left-0 w-1/4 -skew-x-12 bg-white/35 blur-xl" />
-              <div className="relative grid gap-4 sm:grid-cols-2">
+            <div className="pb-command-panel p-5 sm:p-6">
+              <div className="relative z-10 grid gap-4 sm:grid-cols-2">
                 {launchFacts.map((fact) => (
-                  <div key={fact.label} className="rounded-[1.5rem] border bg-background/70 p-4">
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">{fact.label}</p>
-                    <p className="mt-2 text-sm font-medium leading-6 text-foreground">{fact.value}</p>
+                  <div key={fact.label} className="rounded-[1.5rem] border border-[hsl(var(--pb-line))] bg-[hsl(var(--pb-ink))] p-4">
+                    <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[hsl(var(--pb-lavender))]">{fact.label}</p>
+                    <p className="mt-2 text-sm font-medium leading-6 text-white">{fact.value}</p>
                   </div>
                 ))}
               </div>
-              <div className="relative mt-5 rounded-[2rem] bg-primary/10 p-5 ring-1 ring-primary/20">
-                <p className="flex items-center gap-2 text-sm font-semibold text-primary">
+              <div className="relative z-10 mt-5 rounded-[2rem] border border-[hsl(var(--pb-lavender)/0.3)] bg-[hsl(var(--pb-lavender)/0.08)] p-5">
+                <p className="flex items-center gap-2 text-sm font-semibold text-[hsl(var(--pb-lavender))]">
                   <Sparkles className="h-4 w-4" /> The positioning
                 </p>
-                <p className="mt-2 text-2xl font-semibold tracking-tight text-foreground">Access, influence, savings, and hands-on help.</p>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                  This is not “please test my unfinished thing.” It is a limited founding partner program for businesses willing to use PhotoBrief in real workflows.
+                <p className="mt-2 text-2xl font-semibold tracking-tight text-white">Access, influence, savings, and hands-on help.</p>
+                <p className="mt-2 text-sm leading-6 text-[hsl(var(--pb-muted))]">
+                  This is not "please test my unfinished thing." It is a limited founding partner program for businesses willing to use PhotoBrief in real workflows.
                 </p>
               </div>
             </div>
           </div>
         </section>
 
+        {/* Product portfolio */}
         <section id="portfolio" className="pb-section">
           <div className="pb-container">
             <div className="mx-auto max-w-3xl text-center">
-              <p className="text-eyebrow">Product portfolio</p>
-              <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground sm:text-5xl">One workflow, all core surfaces.</h2>
-              <p className="mt-4 text-base leading-7 text-muted-foreground sm:text-lg">
+              <span className="pb-eyebrow">Product portfolio</span>
+              <h2 className="pb-section-title mt-4 text-white">One workflow, all core surfaces.</h2>
+              <p className="pb-copy mt-4 text-base sm:text-lg">
                 These visuals are the reusable launch story: manual request, customer capture, business review, and Pro automation.
               </p>
             </div>
@@ -231,19 +190,20 @@ export default function BetaPortfolioPage() {
           </div>
         </section>
 
+        {/* Core surfaces */}
         <section className="pb-section">
           <div className="pb-container">
             <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
               {coreSurfaces.map((surface) => {
                 const Icon = surface.icon;
                 return (
-                  <article key={surface.title} className="glass-strong magnetic-card rounded-[2rem] p-5">
-                    <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                  <article key={surface.title} className="pb-card rounded-[2rem] p-5">
+                    <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-[hsl(var(--pb-line-strong))] bg-[hsl(var(--pb-ink))] text-[hsl(var(--pb-lavender))]">
                       <Icon className="h-5 w-5" />
                     </span>
-                    <p className="mt-5 text-xs font-semibold uppercase tracking-[0.2em] text-primary">{surface.eyebrow}</p>
-                    <h3 className="mt-2 text-lg font-semibold text-foreground">{surface.title}</h3>
-                    <p className="mt-2 text-sm leading-6 text-muted-foreground">{surface.body}</p>
+                    <p className="mt-5 text-xs font-extrabold uppercase tracking-[0.18em] text-[hsl(var(--pb-lavender))]">{surface.eyebrow}</p>
+                    <h3 className="mt-2 text-lg font-semibold text-white">{surface.title}</h3>
+                    <p className="mt-2 text-sm leading-6 text-[hsl(var(--pb-muted))]">{surface.body}</p>
                   </article>
                 );
               })}
@@ -251,13 +211,13 @@ export default function BetaPortfolioPage() {
           </div>
         </section>
 
-        <section className="relative overflow-hidden pb-section">
-          <div aria-hidden className="pointer-events-none absolute inset-0 bg-ambient-sky opacity-60" />
+        {/* Surface gallery */}
+        <section className="pb-section-tight">
           <div className="pb-container relative grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
             <div>
-              <p className="text-eyebrow">Core surface gallery</p>
-              <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground sm:text-5xl">Show reviewers the actual product motion, not just a claim.</h2>
-              <p className="mt-4 text-base leading-7 text-muted-foreground sm:text-lg">
+              <span className="pb-eyebrow">Core surface gallery</span>
+              <h2 className="pb-section-title mt-4 text-white">Show reviewers the actual product motion, not just a claim.</h2>
+              <p className="pb-copy mt-4 text-base sm:text-lg">
                 BetaList-style submissions need quick proof that the product has depth. This page packages the capture flow, workspace tools, AI review layer, and website automation into one curated product narrative.
               </p>
             </div>
@@ -265,24 +225,25 @@ export default function BetaPortfolioPage() {
           </div>
         </section>
 
+        {/* Beta offer */}
         <section className="pb-section">
           <div className="pb-container">
             <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
               <div>
-                <p className="text-eyebrow">Founding Partner Beta Offer</p>
-                <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground sm:text-5xl">Exclusive, useful, and sustainable.</h2>
-                <p className="mt-4 text-base leading-7 text-muted-foreground sm:text-lg">
+                <span className="pb-eyebrow">Founding Partner Beta Offer</span>
+                <h2 className="pb-section-title mt-4 text-white">Exclusive, useful, and sustainable.</h2>
+                <p className="pb-copy mt-4 text-base sm:text-lg">
                   Join the PhotoBrief beta and get white-glove access to a faster way to collect, organize, and act on photo briefs — before public launch.
                 </p>
                 <div className="mt-6 grid grid-cols-3 gap-3">
                   {workflowStats.map((stat) => (
-                    <div key={stat.label} className="rounded-[1.5rem] border bg-card/70 p-4 text-center">
-                      <p className="text-3xl font-semibold tracking-tight text-foreground">{stat.value}</p>
-                      <p className="mt-1 text-xs leading-5 text-muted-foreground">{stat.label}</p>
+                    <div key={stat.label} className="rounded-[1.5rem] border border-[hsl(var(--pb-line))] bg-[hsl(var(--pb-panel)/0.88)] p-4 text-center">
+                      <p className="text-3xl font-semibold tracking-tight text-white">{stat.value}</p>
+                      <p className="mt-1 text-xs leading-5 text-[hsl(var(--pb-muted))]">{stat.label}</p>
                     </div>
                   ))}
                 </div>
-                <p className="mt-5 rounded-[1.5rem] border border-primary/20 bg-primary/5 p-4 text-sm leading-6 text-primary">
+                <p className="mt-5 rounded-[1.5rem] border border-[hsl(var(--pb-lavender)/0.3)] bg-[hsl(var(--pb-lavender)/0.06)] p-4 text-sm leading-6 text-[hsl(var(--pb-lavender))]">
                   Recommended structure: 90-day free beta, concierge setup, biweekly feedback check-ins, 50% off first year after launch, founder pricing locked for 12 months, and optional public Founding Partner mention.
                 </p>
               </div>
@@ -290,10 +251,10 @@ export default function BetaPortfolioPage() {
                 {betaBenefits.map((benefit) => {
                   const Icon = benefit.icon;
                   return (
-                    <article key={benefit.title} className="rounded-[1.75rem] border bg-card/80 p-5 shadow-sm">
-                      <Icon className="h-5 w-5 text-primary" />
-                      <h3 className="mt-4 text-base font-semibold text-foreground">{benefit.title}</h3>
-                      <p className="mt-2 text-sm leading-6 text-muted-foreground">{benefit.body}</p>
+                    <article key={benefit.title} className="pb-card rounded-[1.75rem] p-5">
+                      <Icon className="h-5 w-5 text-[hsl(var(--pb-lavender))]" />
+                      <h3 className="mt-4 text-base font-semibold text-white">{benefit.title}</h3>
+                      <p className="mt-2 text-sm leading-6 text-[hsl(var(--pb-muted))]">{benefit.body}</p>
                     </article>
                   );
                 })}
@@ -302,73 +263,84 @@ export default function BetaPortfolioPage() {
           </div>
         </section>
 
+        {/* Partner commitments + positioning */}
         <section className="pb-section">
           <div className="pb-container grid gap-8 lg:grid-cols-2">
-            <div className="glass-strong rounded-[2rem] p-6 sm:p-8">
-              <p className="text-eyebrow">What partners give back</p>
-              <h2 className="mt-3 text-2xl font-semibold tracking-tight text-foreground sm:text-4xl">Clear expectations keep the beta serious.</h2>
-              <ul className="mt-6 space-y-3">
-                {partnerCommitments.map((item) => (
-                  <li key={item} className="flex gap-3 rounded-2xl bg-background/70 p-3 text-sm leading-6 text-muted-foreground">
-                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-success" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
+            <div className="pb-command-panel p-6 sm:p-8">
+              <div className="relative z-10">
+                <span className="pb-eyebrow">What partners give back</span>
+                <h2 className="mt-4 text-2xl font-semibold tracking-tight text-white sm:text-4xl">Clear expectations keep the beta serious.</h2>
+                <ul className="mt-6 space-y-3">
+                  {partnerCommitments.map((item) => (
+                    <li key={item} className="flex gap-3 rounded-2xl border border-[hsl(var(--pb-line))] bg-[hsl(var(--pb-ink))] p-3 text-sm leading-6 text-[hsl(var(--pb-muted))]">
+                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[hsl(var(--pb-mint))]" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
 
-            <div className="glass-strong rounded-[2rem] p-6 sm:p-8">
-              <p className="text-eyebrow">Positioning rules</p>
-              <h2 className="mt-3 text-2xl font-semibold tracking-tight text-foreground sm:text-4xl">Sound like access, not apology.</h2>
-              <div className="mt-6 space-y-4">
-                {positioningPairs.map((pair) => (
-                  <div key={pair.avoid} className="rounded-2xl border bg-background/70 p-4">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-destructive">Do not say</p>
-                    <p className="mt-1 text-sm text-muted-foreground">“{pair.avoid}”</p>
-                    <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-success">Say</p>
-                    <p className="mt-1 text-sm font-medium text-foreground">“{pair.say}”</p>
-                  </div>
-                ))}
+            <div className="pb-command-panel p-6 sm:p-8">
+              <div className="relative z-10">
+                <span className="pb-eyebrow">Positioning rules</span>
+                <h2 className="mt-4 text-2xl font-semibold tracking-tight text-white sm:text-4xl">Sound like access, not apology.</h2>
+                <div className="mt-6 space-y-4">
+                  {positioningPairs.map((pair) => (
+                    <div key={pair.avoid} className="rounded-2xl border border-[hsl(var(--pb-line))] bg-[hsl(var(--pb-ink))] p-4">
+                      <p className="text-xs font-extrabold uppercase tracking-wide text-red-400">Do not say</p>
+                      <p className="mt-1 text-sm text-[hsl(var(--pb-muted))]">"{pair.avoid}"</p>
+                      <p className="mt-4 text-xs font-extrabold uppercase tracking-wide text-[hsl(var(--pb-mint))]">Say</p>
+                      <p className="mt-1 text-sm font-medium text-white">"{pair.say}"</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        <section className="relative overflow-hidden pb-section">
-          <div aria-hidden className="pointer-events-none absolute inset-0 bg-ambient-future opacity-60" />
-          <div className="pb-container relative">
+        {/* Copy bank */}
+        <section className="pb-section">
+          <div className="pb-container">
             <div className="mx-auto max-w-3xl text-center">
-              <p className="text-eyebrow">Submission copy bank</p>
-              <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground sm:text-5xl">Copy that can move from this page into launch forms.</h2>
-              <p className="mt-4 text-base leading-7 text-muted-foreground sm:text-lg">
+              <span className="pb-eyebrow">Submission copy bank</span>
+              <h2 className="pb-section-title mt-4 text-white">Copy that can move from this page into launch forms.</h2>
+              <p className="pb-copy mt-4 text-base sm:text-lg">
                 The goal is one consistent story across BetaList, startup directories, social posts, and early partner outreach.
               </p>
             </div>
             <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
               {launchAssets.map((asset) => (
-                <article key={asset.label} className="glass-strong rounded-[2rem] p-6">
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">{asset.label}</p>
-                  <p className="mt-4 text-base leading-7 text-foreground">{asset.body}</p>
+                <article key={asset.label} className="pb-card rounded-[2rem] p-6">
+                  <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[hsl(var(--pb-lavender))]">{asset.label}</p>
+                  <p className="mt-4 text-base leading-7 text-white">{asset.body}</p>
                 </article>
               ))}
             </div>
           </div>
         </section>
 
+        {/* Final CTA */}
         <section className="pb-section">
-          <div className="pb-container-narrow overflow-hidden rounded-[2.5rem] border border-white/[0.06] bg-white/[0.03] p-8 text-center shadow-glass-lg sm:p-12">
-            <BrandMark variant="horizontal" tone="auto" size={52} className="justify-center" withGlow />
-            <p className="mx-auto mt-6 max-w-2xl text-3xl font-semibold tracking-tight text-foreground sm:text-5xl">
-              Limited spots available.
-            </p>
-            <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
-              We’re inviting businesses willing to use PhotoBrief in real workflows and share honest feedback along the way.
-            </p>
-            <Button asChild size="xl" className="mt-8 rounded-full">
-              <NavLink to={signupCtaTarget()} onClick={() => trackEvent("cta_click", { location: "beta_portfolio_final", label: "apply_beta" })}>
-                Apply to join the beta <ArrowRight className="ml-1 h-4 w-4" />
-              </NavLink>
-            </Button>
+          <div className="pb-container-narrow">
+            <div className="relative overflow-hidden rounded-[2.4rem] border border-[hsl(var(--pb-lavender)/0.35)] bg-[hsl(var(--pb-panel)/0.84)] p-8 text-center shadow-[0_36px_100px_-64px_hsl(var(--pb-violet))] sm:p-12">
+              <div className="pb-lens-field" />
+              <div className="relative z-10">
+                <BrandMark variant="horizontal" tone="light" size={52} className="justify-center" withGlow />
+                <p className="mx-auto mt-6 max-w-2xl text-3xl font-semibold tracking-tight text-white sm:text-5xl">
+                  Limited spots available.
+                </p>
+                <p className="pb-copy mx-auto mt-4 max-w-2xl text-base sm:text-lg">
+                  We're inviting businesses willing to use PhotoBrief in real workflows and share honest feedback along the way.
+                </p>
+                <Button asChild size="xl" className="mt-8 rounded-full bg-[hsl(var(--pb-violet))] text-[hsl(var(--pb-night))] hover:bg-[hsl(var(--pb-lavender))]">
+                  <NavLink to={signupCtaTarget()} onClick={() => trackEvent("cta_click", { location: "beta_portfolio_final", label: "apply_beta" })}>
+                    Apply to join the beta <ArrowRight className="ml-1 h-4 w-4" />
+                  </NavLink>
+                </Button>
+              </div>
+            </div>
           </div>
         </section>
       </main>
@@ -379,70 +351,30 @@ export default function BetaPortfolioPage() {
 function SurfaceGallery() {
   return (
     <div className="grid gap-4 sm:grid-cols-2">
-      <SurfaceMockup
-        icon={MousePointerClick}
-        label="Request builder"
-        title="Send a brief link"
-        rows={["Template: Property quote", "Recipient: New lead", "Needed: 5 photos + notes"]}
-      />
-      <SurfaceMockup
-        icon={Camera}
-        label="Customer capture"
-        title="One shot at a time"
-        rows={["Step 2 of 5", "Prompt: show the damage", "AI check: usable photo"]}
-      />
-      <SurfaceMockup
-        icon={LayoutDashboard}
-        label="Workspace inbox"
-        title="Know what needs action"
-        rows={["Ready to quote: 12", "Needs retake: 3", "Waiting on customer: 8"]}
-      />
-      <SurfaceMockup
-        icon={FileText}
-        label="Submission review"
-        title="Brief, photos, answers"
-        rows={["Summary generated", "Missing shots flagged", "Export / approve / request retake"]}
-      />
-      <SurfaceMockup
-        icon={Globe2}
-        label="Website Intake"
-        title="Automated lead routing"
-        rows={["CTA: Get a quote", "Route: Roof repair", "Template: 6-shot inspection"]}
-      />
-      <SurfaceMockup
-        icon={LockKeyhole}
-        label="Plan gates"
-        title="Manual links plus Pro magic"
-        rows={["Manual links: every plan", "Website Intake: Pro+", "Team workflows: Team+"]}
-      />
+      <SurfaceMockup icon={MousePointerClick} label="Request builder" title="Send a brief link" rows={["Template: Property quote", "Recipient: New lead", "Needed: 5 photos + notes"]} />
+      <SurfaceMockup icon={Camera} label="Customer capture" title="One shot at a time" rows={["Step 2 of 5", "Prompt: show the damage", "AI check: usable photo"]} />
+      <SurfaceMockup icon={LayoutDashboard} label="Workspace inbox" title="Know what needs action" rows={["Ready to quote: 12", "Needs retake: 3", "Waiting on customer: 8"]} />
+      <SurfaceMockup icon={FileText} label="Submission review" title="Brief, photos, answers" rows={["Summary generated", "Missing shots flagged", "Export / approve / request retake"]} />
+      <SurfaceMockup icon={Globe2} label="Website Intake" title="Automated lead routing" rows={["CTA: Get a quote", "Route: Roof repair", "Template: 6-shot inspection"]} />
+      <SurfaceMockup icon={LockKeyhole} label="Plan gates" title="Manual links plus Pro magic" rows={["Manual links: every plan", "Website Intake: Pro+", "Team workflows: Team+"]} />
     </div>
   );
 }
 
-function SurfaceMockup({
-  icon: Icon,
-  label,
-  title,
-  rows,
-}: {
-  icon: typeof Link2;
-  label: string;
-  title: string;
-  rows: string[];
-}) {
+function SurfaceMockup({ icon: Icon, label, title, rows }: { icon: typeof Link2; label: string; title: string; rows: string[] }) {
   return (
-    <article className="glass-strong magnetic-card overflow-hidden rounded-[2rem] p-5">
+    <article className="pb-card overflow-hidden rounded-[2rem] p-5">
       <div className="flex items-center justify-between gap-3">
-        <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+        <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[hsl(var(--pb-line-strong))] bg-[hsl(var(--pb-ink))] text-[hsl(var(--pb-lavender))]">
           <Icon className="h-5 w-5" />
         </span>
-        <span className="rounded-full bg-success/10 px-3 py-1 text-[11px] font-semibold text-success">Portfolio asset</span>
+        <span className="pb-stamp rounded-full px-3 py-1 text-[11px] font-semibold">Portfolio asset</span>
       </div>
-      <p className="mt-5 text-xs font-semibold uppercase tracking-[0.2em] text-primary">{label}</p>
-      <h3 className="mt-2 text-xl font-semibold tracking-tight text-foreground">{title}</h3>
+      <p className="mt-5 text-xs font-extrabold uppercase tracking-[0.18em] text-[hsl(var(--pb-lavender))]">{label}</p>
+      <h3 className="mt-2 text-xl font-semibold tracking-tight text-white">{title}</h3>
       <div className="mt-5 space-y-2">
         {rows.map((row) => (
-          <div key={row} className="rounded-2xl bg-background/70 px-4 py-3 text-sm text-muted-foreground ring-1 ring-border/60">
+          <div key={row} className="rounded-2xl border border-[hsl(var(--pb-line))] bg-[hsl(var(--pb-ink))] px-4 py-3 text-sm text-[hsl(var(--pb-muted))]">
             {row}
           </div>
         ))}
