@@ -316,8 +316,8 @@ function WorkflowSection() {
         <div className="grid gap-8 lg:grid-cols-[0.7fr_1.3fr] lg:items-start lg:gap-10">
           <div>
             <span className="pb-eyebrow"><Route className="h-3.5 w-3.5" /> How it works</span>
-            <h2 className="pb-section-title mt-4 max-w-xl text-white sm:mt-5">From vague request to usable brief.</h2>
-            <p className="pb-copy mt-4 max-w-lg text-base sm:mt-5 sm:text-lg">PhotoBrief does not just collect uploads. It guides the customer, keeps context attached, and packages the result for the next business step.</p>
+            <h2 className="pb-section-title mt-4 max-w-xl text-white">From vague request to usable brief.</h2>
+            <p className="pb-copy mt-4 max-w-lg text-base sm:text-lg">PhotoBrief does not just collect uploads. It guides the customer, keeps context attached, and packages the result for the next business step.</p>
           </div>
           <div className="relative">
             <div className="absolute left-6 top-8 hidden h-[calc(100%-4rem)] w-px bg-gradient-to-b from-[hsl(var(--pb-lavender))] via-[hsl(var(--pb-mint))] to-transparent md:block" />
