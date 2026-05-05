@@ -149,25 +149,29 @@ Deno.serve(async (req) => {
   if (!code) return html('Connector setup failed', 'OAuth authorization code was missing.', redirectTo, 400)
 
   const cfg = callbackConfig(provider, supabaseUrl)
-  if (!cfg.clientId || !cfg.clientSecret) {
+  // Microsoft supports public clients (no secret needed with PKCE)
+  const requiresSecret = provider !== 'microsoft'
+  if (!cfg.clientId || (requiresSecret && !cfg.clientSecret)) {
     await admin.from('integration_connections').upsert({
       workspace_id: stateRow.workspace_id,
       provider_key: cfg.providerKey,
       status: 'needs_attention',
       display_name: cfg.providerKey,
-      last_error: 'OAuth client secret is not configured',
+      last_error: 'OAuth client credentials are not configured',
       updated_at: new Date().toISOString(),
     }, { onConflict: 'workspace_id,provider_key' })
-    return html('Connector needs setup', 'The OAuth client secret is not configured yet. Add the provider secret and try again.', redirectTo, 400)
+    return html('Connector needs setup', 'The OAuth client credentials are not configured yet. Add the provider credentials and try again.', redirectTo, 400)
   }
 
   const form = new URLSearchParams({
     grant_type: 'authorization_code',
     code,
     client_id: cfg.clientId,
-    client_secret: cfg.clientSecret,
     redirect_uri: cfg.redirectUri,
   })
+  if (cfg.clientSecret) {
+    form.set('client_secret', cfg.clientSecret)
+  }
 
   if (provider === 'microsoft' && stateRow.code_verifier) {
     form.set('code_verifier', stateRow.code_verifier)
