@@ -96,8 +96,8 @@ function TabLink({
     <NavLink
       to={to}
       className={cn(
-        "flex flex-col items-center justify-center gap-0.5 text-xs font-medium transition",
-        active ? "text-primary" : "text-muted-foreground",
+        "pb-nav-link flex flex-col items-center justify-center gap-0.5 rounded-xl px-1 py-1 text-xs font-medium",
+        active ? "active text-primary" : "text-muted-foreground",
       )}
     >
       <Icon className="h-5 w-5" />
