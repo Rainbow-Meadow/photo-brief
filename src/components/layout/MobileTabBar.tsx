@@ -29,7 +29,7 @@ export function MobileTabBar() {
         aria-label="Primary"
         className={cn(
           "fixed inset-x-0 bottom-0 z-40 lg:hidden",
-          "border-t bg-background/95 backdrop-blur",
+          "pb-nav-bar border-t",
           "pb-safe",
         )}
       >
