@@ -38,7 +38,7 @@ const sections = [
     title: "Customer submissions and uploaded content",
     body: [
       "You retain ownership of content you upload or submit. By using PhotoBrief, you grant us the rights needed to host, process, transmit, display, analyze, summarize, and store that content so we can provide the service.",
-      "You agree not to upload illegal content, malware, content that violates another person’s rights, or highly sensitive information unless there is a clear lawful reason and the business has requested it appropriately.",
+      "You agree not to upload illegal content, malware, content that violates another person's rights, or highly sensitive information unless there is a clear lawful reason and the business has requested it appropriately.",
       "Businesses are responsible for how they use, download, store, share, or act on customer submissions after receiving them through PhotoBrief.",
     ],
   },
@@ -73,7 +73,7 @@ const sections = [
   {
     title: "Disclaimers and limitation of liability",
     body: [
-      "PhotoBrief is provided on an “as is” and “as available” basis. We do not promise uninterrupted availability, error-free operation, perfect security, or that every recipient will complete a request correctly.",
+      "PhotoBrief is provided on an \u201cas is\u201d and \u201cas available\u201d basis. We do not promise uninterrupted availability, error-free operation, perfect security, or that every recipient will complete a request correctly.",
       "To the maximum extent permitted by law, PhotoBrief and its owners, employees, contractors, and service providers will not be liable for indirect, incidental, consequential, special, exemplary, or punitive damages, or lost profits, revenue, goodwill, or data.",
     ],
   },
@@ -95,51 +95,48 @@ export default function TermsPage() {
         breadcrumbs={[{ name: "Home", path: "/" }, { name: "Terms of Service", path: "/terms" }]}
       />
 
-      <div className="relative overflow-hidden bg-background">
-        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[420px] bg-ambient-future opacity-70" />
-        <div aria-hidden className="future-grid pointer-events-none absolute inset-0 opacity-45" />
-
-        <section className="pb-container-narrow pb-section">
-          <div className="rounded-[2rem] border-white/[0.06] border bg-white/[0.03] p-6 shadow-[0_30px_90px_-60px_hsl(222_47%_11%/0.35)] backdrop-blur sm:p-8 lg:p-10">
-            <span className="inline-flex items-center gap-2 rounded-full border-white/[0.08] border bg-white/[0.04] px-3 py-1 text-xs font-semibold text-primary">
+      <section className="pb-container-narrow pb-section">
+        <div className="pb-command-panel p-6 sm:p-8 lg:p-10">
+          <div className="relative z-10">
+            <span className="pb-eyebrow">
               <Scale className="h-3.5 w-3.5" /> Terms of Service
             </span>
-            <h1 className="mt-5 max-w-3xl text-4xl font-semibold tracking-tight text-foreground sm:text-6xl">
+            <h1 className="mt-5 max-w-3xl text-4xl font-semibold tracking-tight text-white sm:text-6xl">
               The ground rules for using PhotoBrief.
             </h1>
-            <p className="mt-5 max-w-3xl text-base leading-7 text-muted-foreground sm:text-lg">
+            <p className="pb-copy mt-5 max-w-3xl text-base sm:text-lg">
               These terms are written for a practical B2B photo intake product: clear responsibilities, clear limits, and no fake legal theater.
             </p>
-            <p className="mt-4 text-sm text-muted-foreground">Last updated: {updatedAt}</p>
+            <p className="mt-4 text-sm text-[hsl(var(--pb-muted))]">Last updated: {updatedAt}</p>
           </div>
-        </section>
+        </div>
+      </section>
 
-        <section className="pb-container-narrow pb-section">
-          <div className="space-y-4">
-            {sections.map((section) => (
-              <article key={section.title} className="rounded-[1.5rem] border border-white/[0.06] bg-white/[0.03] p-5 backdrop-blur sm:p-6">
-                <h2 className="flex items-center gap-2 text-xl font-semibold tracking-tight text-foreground">
-                  <FileText className="h-5 w-5 text-primary" /> {section.title}
-                </h2>
-                <div className="mt-3 space-y-3 text-sm leading-7 text-muted-foreground sm:text-base">
-                  {section.body.map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
-                  ))}
-                </div>
-              </article>
-            ))}
-
-            <article className="rounded-[1.5rem] border border-white/[0.06] bg-primary/5 p-5 sm:p-6">
-              <h2 className="flex items-center gap-2 text-xl font-semibold tracking-tight text-foreground">
-                <Mail className="h-5 w-5 text-primary" /> Contact
+      <section className="pb-container-narrow pb-section">
+        <div className="space-y-4">
+          {sections.map((section) => (
+            <article key={section.title} className="pb-card rounded-[1.5rem] p-5 sm:p-6">
+              <h2 className="flex items-center gap-2 text-xl font-semibold tracking-tight text-white">
+                <FileText className="h-5 w-5 text-[hsl(var(--pb-lavender))]" /> {section.title}
               </h2>
-              <p className="mt-3 text-sm leading-7 text-muted-foreground sm:text-base">
-                Questions about these Terms can be sent to <a className="font-semibold text-primary underline-offset-4 hover:underline" href="mailto:hello@photobrief.ai">hello@photobrief.ai</a>.
-              </p>
+              <div className="mt-3 space-y-3 text-sm leading-7 text-[hsl(var(--pb-muted))] sm:text-base">
+                {section.body.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+              </div>
             </article>
-          </div>
-        </section>
-      </div>
+          ))}
+
+          <article className="rounded-[1.5rem] border border-[hsl(var(--pb-mint)/0.3)] bg-[hsl(var(--pb-mint)/0.06)] p-5 sm:p-6">
+            <h2 className="flex items-center gap-2 text-xl font-semibold tracking-tight text-white">
+              <Mail className="h-5 w-5 text-[hsl(var(--pb-mint))]" /> Contact
+            </h2>
+            <p className="mt-3 text-sm leading-7 text-[hsl(var(--pb-muted))] sm:text-base">
+              Questions about these Terms can be sent to <a className="font-semibold text-[hsl(var(--pb-lavender))] underline-offset-4 hover:underline" href="mailto:hello@photobrief.ai">hello@photobrief.ai</a>.
+            </p>
+          </article>
+        </div>
+      </section>
     </>
   );
 }

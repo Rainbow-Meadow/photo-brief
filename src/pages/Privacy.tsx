@@ -84,49 +84,46 @@ export default function PrivacyPage() {
         breadcrumbs={[{ name: "Home", path: "/" }, { name: "Privacy Policy", path: "/privacy" }]}
       />
 
-      <div className="relative overflow-hidden bg-background">
-        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[420px] bg-ambient-future opacity-70" />
-        <div aria-hidden className="future-grid pointer-events-none absolute inset-0 opacity-45" />
-
-        <section className="pb-container-narrow pb-section">
-          <div className="rounded-[2rem] border-white/[0.06] border bg-white/[0.03] p-6 shadow-[0_30px_90px_-60px_hsl(222_47%_11%/0.35)] backdrop-blur sm:p-8 lg:p-10">
-            <span className="inline-flex items-center gap-2 rounded-full border-white/[0.08] border bg-white/[0.04] px-3 py-1 text-xs font-semibold text-primary">
+      <section className="pb-container-narrow pb-section">
+        <div className="pb-command-panel p-6 sm:p-8 lg:p-10">
+          <div className="relative z-10">
+            <span className="pb-eyebrow">
               <ShieldCheck className="h-3.5 w-3.5" /> Privacy Policy
             </span>
-            <h1 className="mt-5 max-w-3xl text-4xl font-semibold tracking-tight text-foreground sm:text-6xl">
+            <h1 className="mt-5 max-w-3xl text-4xl font-semibold tracking-tight text-white sm:text-6xl">
               How PhotoBrief handles customer photo intake data.
             </h1>
-            <p className="mt-5 max-w-3xl text-base leading-7 text-muted-foreground sm:text-lg">
+            <p className="pb-copy mt-5 max-w-3xl text-base sm:text-lg">
               This policy explains what we collect, why we use it, and how businesses and recipients should think about PhotoBrief data.
             </p>
-            <p className="mt-4 text-sm text-muted-foreground">Last updated: {updatedAt}</p>
+            <p className="mt-4 text-sm text-[hsl(var(--pb-muted))]">Last updated: {updatedAt}</p>
           </div>
-        </section>
+        </div>
+      </section>
 
-        <section className="pb-container-narrow pb-section">
-          <div className="space-y-4">
-            {sections.map((section) => (
-              <article key={section.title} className="rounded-[1.5rem] border border-white/[0.06] bg-white/[0.03] p-5 backdrop-blur sm:p-6">
-                <h2 className="text-xl font-semibold tracking-tight text-foreground">{section.title}</h2>
-                <div className="mt-3 space-y-3 text-sm leading-7 text-muted-foreground sm:text-base">
-                  {section.body.map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
-                  ))}
-                </div>
-              </article>
-            ))}
-
-            <article className="rounded-[1.5rem] border border-white/[0.06] bg-primary/5 p-5 sm:p-6">
-              <h2 className="flex items-center gap-2 text-xl font-semibold tracking-tight text-foreground">
-                <Mail className="h-5 w-5 text-primary" /> Contact
-              </h2>
-              <p className="mt-3 text-sm leading-7 text-muted-foreground sm:text-base">
-                Questions about this policy can be sent to <a className="font-semibold text-primary underline-offset-4 hover:underline" href="mailto:hello@photobrief.ai">hello@photobrief.ai</a>.
-              </p>
+      <section className="pb-container-narrow pb-section">
+        <div className="space-y-4">
+          {sections.map((section) => (
+            <article key={section.title} className="pb-card rounded-[1.5rem] p-5 sm:p-6">
+              <h2 className="text-xl font-semibold tracking-tight text-white">{section.title}</h2>
+              <div className="mt-3 space-y-3 text-sm leading-7 text-[hsl(var(--pb-muted))] sm:text-base">
+                {section.body.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+              </div>
             </article>
-          </div>
-        </section>
-      </div>
+          ))}
+
+          <article className="rounded-[1.5rem] border border-[hsl(var(--pb-mint)/0.3)] bg-[hsl(var(--pb-mint)/0.06)] p-5 sm:p-6">
+            <h2 className="flex items-center gap-2 text-xl font-semibold tracking-tight text-white">
+              <Mail className="h-5 w-5 text-[hsl(var(--pb-mint))]" /> Contact
+            </h2>
+            <p className="mt-3 text-sm leading-7 text-[hsl(var(--pb-muted))] sm:text-base">
+              Questions about this policy can be sent to <a className="font-semibold text-[hsl(var(--pb-lavender))] underline-offset-4 hover:underline" href="mailto:hello@photobrief.ai">hello@photobrief.ai</a>.
+            </p>
+          </article>
+        </div>
+      </section>
     </>
   );
 }
