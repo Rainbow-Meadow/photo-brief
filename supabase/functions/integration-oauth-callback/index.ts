@@ -1,4 +1,5 @@
 import { createClient } from 'npm:@supabase/supabase-js@2'
+import { encryptJson as sharedEncryptJson, getTokenSecret } from '../_shared/integration-crypto.ts'
 
 type Provider = 'google' | 'microsoft' | 'hubspot'
 
