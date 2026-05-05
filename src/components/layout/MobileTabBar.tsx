@@ -66,8 +66,8 @@ export function MobileTabBar() {
             onClick={() => setSettingsOpen(true)}
             aria-label="Settings"
             className={cn(
-              "flex flex-col items-center justify-center gap-0.5 text-xs font-medium transition",
-              isSettingsActive ? "text-primary" : "text-muted-foreground",
+              "pb-nav-link flex flex-col items-center justify-center gap-0.5 rounded-xl px-1 py-1 text-xs font-medium",
+              isSettingsActive ? "active text-primary" : "text-muted-foreground",
             )}
           >
             <Settings className="h-5 w-5" />
