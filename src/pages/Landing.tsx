@@ -14,12 +14,10 @@ import {
   MessageSquareWarning,
   PlayCircle,
   Route,
-  ScanLine,
   ShieldCheck,
   Sparkles,
   Stamp,
   TimerReset,
-  WandSparkles,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -46,7 +44,7 @@ const SOFTWARE_APP_JSONLD: Record<string, unknown> = {
   applicationCategory: "BusinessApplication",
   operatingSystem: "Web",
   description:
-    "PhotoBrief.ai helps businesses collect customer photos without email back-and-forth. Send one guided link, flag simple photo issues, and receive clean customer briefs ready for action.",
+    "PhotoBrief.ai helps businesses collect customer photos without email or text-message back-and-forth. Send one guided link, flag simple photo issues, and receive clean customer briefs ready for action.",
   offers: [
     { "@type": "Offer", name: "Free", price: "0", priceCurrency: "USD" },
     { "@type": "Offer", name: "Starter", price: "19", priceCurrency: "USD" },
@@ -66,10 +64,11 @@ const SOFTWARE_APP_JSONLD: Record<string, unknown> = {
 };
 
 const sectionLinks = [
-  { href: "#workflow", label: "Workflow" },
+  { href: "#workflow", label: "How it works" },
   { href: "#comparison", label: "Before / after" },
   { href: "#use-cases", label: "Use cases" },
-  { href: "#pricing-path", label: "Pricing path" },
+  { href: "#beta-offer", label: "Beta offer" },
+  { href: "#pricing-path", label: "Upgrade path" },
 ];
 
 const loosePhotos = [
@@ -83,89 +82,103 @@ const workflowSteps = [
   {
     icon: Link2,
     eyebrow: "Request",
-    title: "Create one guided link",
-    body: "Pick a template, send the link manually, or let Pro create it from your website intake.",
+    title: "Send one guided link",
+    body: "Choose a template, send the link by text or email, or copy the branded request into any customer thread.",
   },
   {
     icon: Camera,
     eyebrow: "Capture",
-    title: "Customers follow photo prompts",
-    body: "One shot at a time, on mobile, with plain instructions instead of a vague ask.",
+    title: "Customers take the right shots",
+    body: "They see one mobile prompt at a time, with plain instructions instead of a vague “send a few photos.”",
   },
   {
-    icon: ScanLine,
+    icon: Route,
     eyebrow: "Check",
-    title: "Simple issues get flagged",
-    body: "Missing angles, blur, glare, unreadable labels, or cut-off subjects are caught before review.",
+    title: "Obvious problems get flagged",
+    body: "PhotoBrief calls out missing, unclear, or review-needed shots before your team has to sort through them.",
   },
   {
     icon: FileCheck2,
     eyebrow: "Brief",
-    title: "Your team gets the packet",
-    body: "Photos, notes, routing context, and a summary land together so the next action is obvious.",
+    title: "Your team gets a usable packet",
+    body: "Photos, notes, customer context, and next-step status land together for quoting, dispatch, review, or documentation.",
   },
 ];
 
 const messySignals = [
-  "Photos buried in text threads",
-  "Missing angles and unclear scale",
-  "Vague customer descriptions",
+  "Photos scattered across texts and emails",
+  "Missing angles, unclear scale, and bad lighting",
+  "Customer notes separated from the job",
   "Follow-up questions before anyone can quote",
-  "Images detached from the job context",
+  "No clear next action for the team",
 ];
 
 const cleanSignals = [
   "Required shots requested in order",
-  "AI flags obvious photo problems",
-  "Notes and photos stay together",
-  "Submission arrives as a clean brief",
+  "Customer notes stay with the photos",
+  "Simple photo issues are flagged early",
+  "The submission arrives as a structured brief",
   "Manual links now, routed website intake on Pro",
 ];
 
 const useCases = [
   {
     icon: BadgeCheck,
-    title: "Quote-ready customer submissions",
-    body: "Ask for exactly the photos your estimator needs before the first call turns into three follow-ups.",
+    title: "Quote-ready submissions",
+    body: "Ask for the photos your estimator needs before the first call becomes a chain of follow-ups.",
     stamp: "Quote prep",
   },
   {
     icon: MapPinned,
     title: "Dispatch prep",
-    body: "Collect access photos, site context, issue details, and safety notes before a team heads out.",
+    body: "Collect site access, issue context, and handling notes before a team heads out.",
     stamp: "Field ready",
   },
   {
     icon: ImageOff,
-    title: "Damage or issue documentation",
-    body: "Guide customers through the angles that matter so review teams can see the problem clearly.",
+    title: "Damage documentation",
+    body: "Guide customers through the angles that matter so reviewers can understand the issue quickly.",
     stamp: "Evidence packet",
   },
   {
     icon: ShieldCheck,
-    title: "Review and approval workflows",
-    body: "Turn scattered customer media into a structured packet for approvals, exceptions, or internal review.",
+    title: "Approvals and exceptions",
+    body: "Turn customer media into a packet that can be reviewed, approved, or escalated without guessing.",
     stamp: "Decision ready",
   },
   {
     icon: Globe2,
-    title: "Website lead intake on Pro",
-    body: "Replace vague forms with a hosted intake flow, branded badge, template routing, and automation.",
+    title: "Website lead intake",
+    body: "On Pro, replace vague forms with hosted intake, branded embeds, request routing, and integrations.",
     stamp: "Pro route",
   },
+];
+
+const betaBenefits = [
+  "90-day free founding beta access",
+  "Concierge setup for first templates and workflows",
+  "Direct feedback channel and priority product input",
+  "50% off the first year after launch",
+];
+
+const betaAsks = [
+  "Use PhotoBrief on 3–5 real customer workflows",
+  "Share short feedback every two weeks",
+  "Report confusing moments or missing workflow needs",
+  "Optional testimonial or case study if it helps your team",
 ];
 
 const pricingPath = [
   {
     label: "Manual start",
     title: "Send PhotoBrief links yourself",
-    body: "Create a request, copy or send the link, and prove the workflow with real customers.",
+    body: "Create a request, copy the link, and prove the workflow with real customers before changing your website.",
     bullets: ["No website changes", "Works on every plan", "Fastest path to value"],
   },
   {
-    label: "Pro path",
-    title: "Automate website intake",
-    body: "Keep manual links, then add hosted forms, branded embeds, template routing, and webhook setups.",
+    label: "Pro upgrade",
+    title: "Automate intake when it earns its keep",
+    body: "Keep manual links, then add hosted forms, branded embeds, template routing, and webhook-based handoffs.",
     bullets: ["Website lead capture", "Request type routing", "Existing form bridge"],
   },
 ];
@@ -173,7 +186,7 @@ const pricingPath = [
 function SectionNav() {
   return (
     <nav aria-label="Landing page sections" className="sticky top-[4.5rem] z-30 border-y border-white/10 bg-[hsl(var(--pb-night)/0.82)] backdrop-blur-xl">
-      <div className="pb-container flex justify-center gap-2 overflow-x-auto py-3">
+      <div className="pb-container flex justify-start gap-2 overflow-x-auto py-3 sm:justify-center">
         {sectionLinks.map((item) => (
           <a
             key={item.href}
@@ -201,7 +214,7 @@ export default function LandingPage() {
     <>
       <PageMeta
         title="PhotoBrief.ai | One-link customer photo intake"
-        description="Stop chasing customer photos. Send one guided PhotoBrief link, help customers capture the right shots, and receive structured briefs ready to quote, dispatch, review, or document."
+        description="Collect quote-ready customer photos with one guided link. PhotoBrief helps customers capture the right shots and gives your team a structured brief ready for quotes, dispatch, review, or documentation."
         canonicalPath="/"
         jsonLd={jsonLd}
         breadcrumbs={[{ name: "Home", path: "/" }]}
@@ -213,7 +226,7 @@ export default function LandingPage() {
         <WorkflowSection />
         <ComparisonSection mode={comparisonMode} onModeChange={setComparisonMode} />
         <UseCaseSection />
-        <ProofPlaceholder />
+        <FoundingPartnerSection />
         <PricingPathSection />
         <FinalCta />
       </main>
@@ -222,7 +235,7 @@ export default function LandingPage() {
         <DialogContent className="max-w-5xl overflow-hidden border-0 bg-black p-0 sm:rounded-2xl">
           <VisuallyHidden>
             <DialogTitle>PhotoBrief product spotlight</DialogTitle>
-            <DialogDescription>A product spotlight showing manual links, Website Intake, template routing, customer capture, photo checks, and the finished business brief.</DialogDescription>
+            <DialogDescription>A product spotlight showing manual links, website intake, template routing, customer capture, photo checks, and the finished business brief.</DialogDescription>
           </VisuallyHidden>
           <video key={demoOpen ? "open" : "closed"} src="/marketing/photobrief-demo.mp4" controls autoPlay playsInline className="h-auto w-full" />
         </DialogContent>
@@ -233,24 +246,18 @@ export default function LandingPage() {
 
 function HeroSection({ onOpenDemo }: { onOpenDemo: () => void }) {
   return (
-    <section className="relative isolate overflow-hidden pt-12 sm:pt-16 lg:pt-20">
+    <section className="relative isolate overflow-hidden pt-10 sm:pt-14 lg:pt-18">
       <div className="pb-lens-field" />
       <div aria-hidden className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[hsl(var(--pb-lavender)/0.55)] to-transparent" />
-      <div className="pb-container relative grid gap-10 pb-16 lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:pb-24">
-        <div className="relative z-10">
-          <div className="mb-7 inline-flex max-w-full items-center gap-4 rounded-[1.4rem] border border-[hsl(var(--pb-line))] bg-[hsl(var(--pb-panel)/0.82)] px-4 py-3 shadow-[0_24px_70px_-52px_hsl(var(--pb-violet))]">
-            <BrandMark variant="horizontal" tone="light" size={38} eager withGlow />
-            <span className="hidden h-9 w-px bg-white/12 sm:block" />
-            <p className="hidden max-w-[15rem] text-xs font-semibold leading-5 text-white/60 sm:block">One-link photo intake for teams that need the right shots before the next move.</p>
-          </div>
-
+      <div className="pb-container relative grid gap-10 pb-14 lg:grid-cols-[0.88fr_1.12fr] lg:items-center lg:pb-20">
+        <div className="relative z-10 max-w-3xl lg:max-w-none">
           <span className="pb-eyebrow"><Sparkles className="h-3.5 w-3.5" /> Founding Partner Beta now open</span>
-          <h1 className="pb-hero-title mt-5 max-w-[10ch] pb-2 text-white sm:max-w-[12ch] lg:max-w-[9.9ch]">
-            Stop chasing customer photos.
-            <span className="block pb-2 text-[hsl(var(--pb-lavender))]">Send one guided link instead.</span>
+          <h1 className="pb-hero-title mt-5 pb-2 text-white">
+            Get quote-ready customer photos.
+            <span className="block pb-2 text-[hsl(var(--pb-lavender))]">Send one guided link.</span>
           </h1>
           <p className="pb-copy mt-6 max-w-2xl text-lg leading-8 sm:text-xl">
-            PhotoBrief turns “can you send a few photos?” into a guided mobile workflow. Customers capture the right shots, simple issues get flagged, and your team gets a clean brief ready to quote, dispatch, review, or document.
+            PhotoBrief is a one-link photo intake tool for service, repair, review, and documentation workflows. Customers follow mobile prompts, obvious issues get flagged, and your team receives a clean brief instead of a messy thread.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <Button asChild size="xl" className="rounded-full bg-[hsl(var(--pb-violet))] px-7 text-[hsl(var(--pb-night))] hover:bg-[hsl(var(--pb-lavender))]">
@@ -259,9 +266,9 @@ function HeroSection({ onOpenDemo }: { onOpenDemo: () => void }) {
               </NavLink>
             </Button>
             <Button asChild size="xl" variant="outline" className="rounded-full border-white/16 bg-white/[0.03] px-7 text-white hover:bg-white/10 hover:text-white">
-              <NavLink to="/founding-partner-beta" onClick={() => trackEvent("cta_click", { location: "hero", label: "founding_beta" })}>
-                View beta program
-              </NavLink>
+              <a href="#workflow" onClick={() => trackEvent("cta_click", { location: "hero", label: "workflow" })}>
+                See how it works
+              </a>
             </Button>
             <Button size="xl" variant="ghost" className="rounded-full text-white/80 hover:bg-white/8 hover:text-white" onClick={onOpenDemo}>
               <PlayCircle className="mr-1 h-5 w-5" /> Product spotlight
@@ -269,31 +276,18 @@ function HeroSection({ onOpenDemo }: { onOpenDemo: () => void }) {
           </div>
           <div className="mt-7 grid max-w-2xl gap-2 sm:grid-cols-3">
             {[
-              "Manual links on every plan",
-              "Photo checks before review",
-              "Website intake on Pro",
+              "No app for customers",
+              "Manual links first",
+              "Automation on Pro",
             ].map((item) => (
               <span key={item} className="pb-route-chip px-3 py-2 text-center text-xs font-semibold">{item}</span>
             ))}
           </div>
         </div>
 
-        <HeroBriefAssembly />
+        <InteractiveHeroBriefAssembly />
       </div>
     </section>
-  );
-}
-
-function HeroBriefAssembly() {
-  return <InteractiveHeroBriefAssembly />;
-}
-
-function BriefMetric({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-2xl bg-black/[0.055] p-3">
-      <span className="block text-[10px] font-black uppercase tracking-[0.16em] text-black/38">{label}</span>
-      <span className="mt-1 block font-black text-black/78">{value}</span>
-    </div>
   );
 }
 
@@ -301,11 +295,11 @@ function WorkflowSection() {
   return (
     <section id="workflow" className="pb-section">
       <div className="pb-container">
-        <div className="grid gap-10 lg:grid-cols-[0.75fr_1.25fr] lg:items-start">
+        <div className="grid gap-10 lg:grid-cols-[0.7fr_1.3fr] lg:items-start">
           <div>
-            <span className="pb-eyebrow"><Route className="h-3.5 w-3.5" /> Product mechanism</span>
-            <h2 className="pb-section-title mt-5 max-w-xl text-white">One request turns into an operational packet.</h2>
-            <p className="pb-copy mt-5 max-w-lg text-lg">This is not a folder of uploads. It is a routed intake flow that gets customers to send the photos your team can actually use.</p>
+            <span className="pb-eyebrow"><Route className="h-3.5 w-3.5" /> How it works</span>
+            <h2 className="pb-section-title mt-5 max-w-xl text-white">From vague request to usable brief.</h2>
+            <p className="pb-copy mt-5 max-w-lg text-lg">PhotoBrief does not just collect uploads. It guides the customer, keeps context attached, and packages the result for the next business step.</p>
           </div>
           <div className="relative">
             <div className="absolute left-6 top-8 hidden h-[calc(100%-4rem)] w-px bg-gradient-to-b from-[hsl(var(--pb-lavender))] via-[hsl(var(--pb-mint))] to-transparent md:block" />
@@ -341,9 +335,9 @@ function ComparisonSection({ mode, onModeChange }: { mode: "messy" | "clean"; on
     <section id="comparison" className="pb-section-tight border-y border-white/10 bg-black/18">
       <div className="pb-container">
         <div className="mx-auto max-w-3xl text-center">
-          <span className="pb-eyebrow"><MessageSquareWarning className="h-3.5 w-3.5" /> Old way vs PhotoBrief</span>
-          <h2 className="pb-section-title mt-5 text-white">The problem is not photos. It is photo chaos.</h2>
-          <p className="pb-copy mt-5 text-lg">PhotoBrief changes the shape of the conversation before your team wastes time sorting it out.</p>
+          <span className="pb-eyebrow"><MessageSquareWarning className="h-3.5 w-3.5" /> Before / after</span>
+          <h2 className="pb-section-title mt-5 text-white">Your team should not have to decode a camera roll.</h2>
+          <p className="pb-copy mt-5 text-lg">The value is not “more photos.” The value is getting the right photos, tied to the right job, with enough context to act.</p>
         </div>
 
         <div className="mx-auto mt-10 flex max-w-md rounded-full border border-white/12 bg-[hsl(var(--pb-panel)/0.72)] p-1">
@@ -443,14 +437,15 @@ function UseCaseSection() {
     <section id="use-cases" className="pb-section">
       <div className="pb-container">
         <div className="max-w-3xl">
-          <span className="pb-eyebrow"><ClipboardList className="h-3.5 w-3.5" /> Practical workflows</span>
-          <h2 className="pb-section-title mt-5 text-white">Built for the jobs where one missing photo slows everyone down.</h2>
+          <span className="pb-eyebrow"><ClipboardList className="h-3.5 w-3.5" /> Use cases</span>
+          <h2 className="pb-section-title mt-5 text-white">Useful anywhere a missing photo slows the next step.</h2>
+          <p className="pb-copy mt-5 max-w-2xl text-lg">PhotoBrief is built for teams that need customer media before quoting, scheduling, approving, reviewing, or documenting work.</p>
         </div>
-        <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+        <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {useCases.map((item) => {
             const Icon = item.icon;
             return (
-              <article key={item.title} className="pb-card p-5 lg:min-h-[22rem]">
+              <article key={item.title} className="pb-card p-5 sm:p-6">
                 <Icon className="h-7 w-7 text-[hsl(var(--pb-lavender))]" />
                 <span className="pb-stamp mt-6 inline-flex rounded-full px-3 py-1">{item.stamp}</span>
                 <h3 className="mt-5 text-xl font-semibold tracking-tight text-white">{item.title}</h3>
@@ -464,31 +459,49 @@ function UseCaseSection() {
   );
 }
 
-function ProofPlaceholder() {
+function FoundingPartnerSection() {
   return (
-    <section className="pb-section-tight">
+    <section id="beta-offer" className="pb-section-tight">
       <div className="pb-container">
         <div className="pb-command-panel grid gap-8 p-6 sm:p-8 lg:grid-cols-[0.85fr_1.15fr] lg:p-10">
           <div className="relative z-10">
-            <span className="pb-eyebrow"><Stamp className="h-3.5 w-3.5" /> Pilot evidence area</span>
-            <h2 className="mt-5 text-3xl font-semibold tracking-tight text-white sm:text-5xl">Built for teams who are tired of photo chaos.</h2>
-            <p className="pb-copy mt-5 text-lg">This section is ready for real pilot quotes, before/after examples, and workflow metrics when they are available. No fake testimonials. No invented logos.</p>
+            <span className="pb-eyebrow"><Stamp className="h-3.5 w-3.5" /> Founding beta</span>
+            <h2 className="mt-5 text-3xl font-semibold tracking-tight text-white sm:text-5xl">Built with real workflows, not toy testing.</h2>
+            <p className="pb-copy mt-5 text-lg">We are inviting a small group of businesses to use PhotoBrief in real intake scenarios before public launch. You get hands-on setup and early influence; we get honest workflow feedback.</p>
+            <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+              <Button asChild size="lg" className="rounded-full bg-[hsl(var(--pb-violet))] text-[hsl(var(--pb-night))] hover:bg-[hsl(var(--pb-lavender))]">
+                <NavLink to={signupCtaTarget()} onClick={() => trackEvent("cta_click", { location: "beta_offer", label: "primary" })}>
+                  {signupCtaLabel()} <ArrowRight className="ml-1 h-4 w-4" />
+                </NavLink>
+              </Button>
+              <Button asChild size="lg" variant="outline" className="rounded-full border-white/16 bg-white/[0.03] text-white hover:bg-white/10 hover:text-white">
+                <NavLink to="/founding-partner-beta">Read beta details</NavLink>
+              </Button>
+            </div>
           </div>
-          <div className="relative z-10 grid gap-4 sm:grid-cols-3">
-            {[
-              { value: "3–5", label: "real workflows per beta partner" },
-              { value: "90", label: "days of founding beta access" },
-              { value: "50%", label: "off first year after launch" },
-            ].map((stat) => (
-              <div key={stat.label} className="rounded-[1.4rem] border border-white/12 bg-white/[0.035] p-5">
-                <p className="text-4xl font-black tracking-tight text-white">{stat.value}</p>
-                <p className="pb-copy mt-2 text-sm leading-6">{stat.label}</p>
-              </div>
-            ))}
+          <div className="relative z-10 grid gap-4 md:grid-cols-2">
+            <BetaList title="Beta partners get" items={betaBenefits} />
+            <BetaList title="We ask for" items={betaAsks} />
           </div>
         </div>
       </div>
     </section>
+  );
+}
+
+function BetaList({ title, items }: { title: string; items: string[] }) {
+  return (
+    <div className="rounded-[1.4rem] border border-white/12 bg-white/[0.035] p-5">
+      <h3 className="text-lg font-semibold tracking-tight text-white">{title}</h3>
+      <ul className="mt-4 grid gap-3">
+        {items.map((item) => (
+          <li key={item} className="flex gap-3 text-sm font-semibold leading-6 text-white/76">
+            <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-[hsl(var(--pb-mint))]" />
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
@@ -498,8 +511,8 @@ function PricingPathSection() {
       <div className="pb-container">
         <div className="mx-auto max-w-3xl text-center">
           <span className="pb-eyebrow"><TimerReset className="h-3.5 w-3.5" /> Start manual. Automate later.</span>
-          <h2 className="pb-section-title mt-5 text-white">The path is simple on purpose.</h2>
-          <p className="pb-copy mt-5 text-lg">Start with one link. Upgrade when customer photo intake should happen without a team member copying anything.</p>
+          <h2 className="pb-section-title mt-5 text-white">Use one link first. Add automation when it pays for itself.</h2>
+          <p className="pb-copy mt-5 text-lg">Start with manual PhotoBrief links. Upgrade to Pro when website leads, routed requests, and form handoffs should happen without copy/paste.</p>
         </div>
         <div className="mt-10 grid gap-5 lg:grid-cols-2">
           {pricingPath.map((tier) => (
@@ -530,7 +543,7 @@ function FinalCta() {
           <div className="pb-lens-field" />
           <div className="relative z-10 mx-auto max-w-4xl">
             <BrandMark variant="horizontal" tone="light" size={48} className="justify-center" withGlow />
-            <h2 className="pb-section-title mt-8 text-white">Send one link. Get the photos you actually needed.</h2>
+            <h2 className="pb-section-title mt-8 text-white">Send one link. Get a usable brief.</h2>
             <p className="pb-copy mx-auto mt-5 max-w-2xl text-lg">Give customers a clear path, give your team a clean packet, and stop turning every quote into a photo scavenger hunt.</p>
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
               <Button asChild size="xl" className="rounded-full bg-[hsl(var(--pb-violet))] px-8 text-[hsl(var(--pb-night))] hover:bg-[hsl(var(--pb-lavender))]">
@@ -539,9 +552,10 @@ function FinalCta() {
                 </NavLink>
               </Button>
               <Button asChild size="xl" variant="outline" className="rounded-full border-white/16 bg-white/[0.03] px-8 text-white hover:bg-white/10 hover:text-white">
-                <NavLink to="/pricing">See the upgrade path</NavLink>
+                <NavLink to="/pricing">See plans</NavLink>
               </Button>
             </div>
+            <p className="mt-5 text-sm font-medium text-white/46">Customers do not need an account or app to complete a PhotoBrief request.</p>
           </div>
         </div>
       </div>
