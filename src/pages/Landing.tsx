@@ -308,7 +308,7 @@ function HeroSection({ onOpenDemo }: { onOpenDemo: () => void }) {
 
 function InteractiveDemoSection() {
   return (
-    <section className="pb-section-tight border-t border-white/10">
+    <section className="pb-section-tight">
       <div className="pb-container">
         <InteractiveHeroBriefAssembly />
       </div>
@@ -357,7 +357,7 @@ function ComparisonSection({ mode, onModeChange }: { mode: "messy" | "clean"; on
   const signals = isClean ? cleanSignals : messySignals;
 
   return (
-    <section id="comparison" className="pb-section-tight border-y border-white/10 bg-black/18">
+    <section id="comparison" className="pb-section-tight">
       <div className="pb-container">
         <div className="mx-auto max-w-3xl text-center">
           <span className="pb-eyebrow"><MessageSquareWarning className="h-3.5 w-3.5" /> Before / after</span>
@@ -545,7 +545,7 @@ function BetaList({ title, items }: { title: string; items: string[] }) {
 
 function PricingPathSection() {
   return (
-    <section id="pricing-path" className="pb-section border-y border-white/10 bg-black/18">
+    <section id="pricing-path" className="pb-section">
       <div className="pb-container">
         <div className="mx-auto max-w-3xl text-center">
           <span className="pb-eyebrow"><TimerReset className="h-3.5 w-3.5" /> Start manual. Automate later.</span>
