@@ -30,7 +30,7 @@ export function StripeTopupCheckout({ workspaceId, pack, returnUrl }: Props) {
         environment: getStripeEnvironment(),
         returnUrl:
           returnUrl ??
-          `${window.location.origin}/app/settings/billing?topup=success&session_id={CHECKOUT_SESSION_ID}`,
+          `${window.location.origin}/settings/billing?topup=success&session_id={CHECKOUT_SESSION_ID}`,
       },
     });
     if (error || !data?.clientSecret) {

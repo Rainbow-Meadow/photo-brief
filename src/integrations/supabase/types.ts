@@ -598,6 +598,213 @@ export type Database = {
           },
         ]
       }
+      intake_events: {
+        Row: {
+          created_at: string
+          created_request_id: string | null
+          error: string | null
+          id: string
+          intake_source_id: string | null
+          matched_guide_id: string | null
+          message: string | null
+          normalized_customer: Json
+          request_type: string | null
+          status: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_request_id?: string | null
+          error?: string | null
+          id?: string
+          intake_source_id?: string | null
+          matched_guide_id?: string | null
+          message?: string | null
+          normalized_customer?: Json
+          request_type?: string | null
+          status?: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          created_request_id?: string | null
+          error?: string | null
+          id?: string
+          intake_source_id?: string | null
+          matched_guide_id?: string | null
+          message?: string | null
+          normalized_customer?: Json
+          request_type?: string | null
+          status?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "intake_events_intake_source_id_fkey"
+            columns: ["intake_source_id"]
+            isOneToOne: false
+            referencedRelation: "intake_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      intake_field_mappings: {
+        Row: {
+          external_field: string
+          id: string
+          intake_source_id: string
+          photobrief_field: string
+        }
+        Insert: {
+          external_field: string
+          id?: string
+          intake_source_id: string
+          photobrief_field: string
+        }
+        Update: {
+          external_field?: string
+          id?: string
+          intake_source_id?: string
+          photobrief_field?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "intake_field_mappings_intake_source_id_fkey"
+            columns: ["intake_source_id"]
+            isOneToOne: false
+            referencedRelation: "intake_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      intake_sources: {
+        Row: {
+          auto_send: boolean
+          created_at: string
+          created_by: string | null
+          default_guide_id: string | null
+          enabled: boolean
+          id: string
+          intro_message: string | null
+          name: string
+          public_token: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          auto_send?: boolean
+          created_at?: string
+          created_by?: string | null
+          default_guide_id?: string | null
+          enabled?: boolean
+          id?: string
+          intro_message?: string | null
+          name?: string
+          public_token?: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          auto_send?: boolean
+          created_at?: string
+          created_by?: string | null
+          default_guide_id?: string | null
+          enabled?: boolean
+          id?: string
+          intro_message?: string | null
+          name?: string
+          public_token?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: []
+      }
+      intake_template_rules: {
+        Row: {
+          created_at: string
+          enabled: boolean
+          guide_id: string
+          id: string
+          intake_source_id: string
+          match_type: string
+          match_value: string
+          priority: number
+        }
+        Insert: {
+          created_at?: string
+          enabled?: boolean
+          guide_id: string
+          id?: string
+          intake_source_id: string
+          match_type?: string
+          match_value: string
+          priority?: number
+        }
+        Update: {
+          created_at?: string
+          enabled?: boolean
+          guide_id?: string
+          id?: string
+          intake_source_id?: string
+          match_type?: string
+          match_value?: string
+          priority?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "intake_template_rules_intake_source_id_fkey"
+            columns: ["intake_source_id"]
+            isOneToOne: false
+            referencedRelation: "intake_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      integration_connections: {
+        Row: {
+          config: Json
+          connected_account: string | null
+          connection_key: string
+          created_at: string
+          display_name: string | null
+          id: string
+          last_error: string | null
+          last_success_at: string | null
+          provider_key: string
+          status: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          config?: Json
+          connected_account?: string | null
+          connection_key?: string
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          last_error?: string | null
+          last_success_at?: string | null
+          provider_key: string
+          status?: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          config?: Json
+          connected_account?: string | null
+          connection_key?: string
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          last_error?: string | null
+          last_success_at?: string | null
+          provider_key?: string
+          status?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: []
+      }
       internal_notes: {
         Row: {
           created_at: string
@@ -1112,6 +1319,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      submission_answers: {
+        Row: {
+          answer: string
+          created_at: string
+          id: string
+          order_index: number
+          prompt: string
+          question_id: string | null
+          request_id: string
+          submission_id: string
+          workspace_id: string
+        }
+        Insert: {
+          answer?: string
+          created_at?: string
+          id?: string
+          order_index?: number
+          prompt: string
+          question_id?: string | null
+          request_id: string
+          submission_id: string
+          workspace_id: string
+        }
+        Update: {
+          answer?: string
+          created_at?: string
+          id?: string
+          order_index?: number
+          prompt?: string
+          question_id?: string | null
+          request_id?: string
+          submission_id?: string
+          workspace_id?: string
+        }
+        Relationships: []
       }
       submission_reviews: {
         Row: {
