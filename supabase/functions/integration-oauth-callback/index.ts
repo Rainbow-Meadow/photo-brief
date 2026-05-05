@@ -95,18 +95,8 @@ function callbackConfig(provider: Provider, supabaseUrl: string) {
   }
 }
 
-async function importKey(secret: string) {
-  const material = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(secret))
-  return crypto.subtle.importKey('raw', material, 'AES-GCM', false, ['encrypt'])
-}
-
-async function encryptJson(value: unknown, secret: string) {
-  const key = await importKey(secret)
-  const iv = crypto.getRandomValues(new Uint8Array(12))
-  const encoded = new TextEncoder().encode(JSON.stringify(value))
-  const cipher = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, encoded)
-  return `v1.${btoa(String.fromCharCode(...iv))}.${btoa(String.fromCharCode(...new Uint8Array(cipher)))}`
-}
+// Use shared crypto from _shared/integration-crypto.ts
+const encryptJson = sharedEncryptJson
 
 async function fetchProfile(provider: Provider, accessToken: string, profileUrl: string) {
   if (provider === 'hubspot') {
