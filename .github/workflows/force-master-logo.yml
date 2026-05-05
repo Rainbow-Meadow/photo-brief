@@ -1,0 +1,69 @@
+name: Force master logo rebuild
+
+on:
+  push:
+    paths:
+      - .github/workflows/force-master-logo.yml
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install deps
+        run: python -m pip install pillow
+
+      - name: Rebuild from master logo
+        run: |
+          python << 'PY'
+          from PIL import Image
+          from pathlib import Path
+          import base64
+
+          brand = Path('public/brand')
+          brand.mkdir(parents=True, exist_ok=True)
+
+          # Embedded master logo (authoritative)
+          master_b64 = """{{BASE64}}"""
+
+          raw = Image.open(BytesIO(base64.b64decode(master_b64))).convert('RGBA')
+
+          # Remove white background via threshold
+          px = raw.load()
+          w,h = raw.size
+          for y in range(h):
+            for x in range(w):
+              r,g,b,a = px[x,y]
+              if r>240 and g>240 and b>240:
+                px[x,y] = (r,g,b,0)
+
+          # Crop to content
+          bbox = raw.getbbox()
+          img = raw.crop(bbox)
+
+          # Save master mark
+          img.save(brand/'mark-color.png')
+
+          # Generate sizes
+          for s in [16,32,64,180,192,512]:
+            img.resize((s,s), Image.LANCZOS).save(f'public/icon-{s}.png')
+
+          img.resize((32,32), Image.LANCZOS).save('public/favicon.png')
+          img.resize((180,180), Image.LANCZOS).save('public/apple-touch-icon.png')
+
+          PY
+
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public
+          git commit -m "Force rebuild logos from master" || echo "no changes"
+          git push
