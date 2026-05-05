@@ -456,8 +456,8 @@ function UseCaseSection() {
       <div className="pb-container">
         <div className="max-w-3xl">
           <span className="pb-eyebrow"><ClipboardList className="h-3.5 w-3.5" /> Use cases</span>
-          <h2 className="pb-section-title mt-4 text-white sm:mt-5">Useful anywhere a missing photo slows the next step.</h2>
-          <p className="pb-copy mt-5 max-w-2xl text-base sm:text-lg">PhotoBrief is built for teams that need customer media before quoting, scheduling, approving, reviewing, or documenting work.</p>
+          <h2 className="pb-section-title mt-4 text-white">Useful anywhere a missing photo slows the next step.</h2>
+          <p className="pb-copy mt-4 max-w-2xl text-base sm:text-lg">PhotoBrief is built for teams that need customer media before quoting, scheduling, approving, reviewing, or documenting work.</p>
         </div>
         <div className="mt-8 grid gap-4 sm:mt-10 md:grid-cols-2 lg:grid-cols-3">
           {useCases.map((item) => {
