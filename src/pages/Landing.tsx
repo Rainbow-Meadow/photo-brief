@@ -472,7 +472,7 @@ function UseCaseSection() {
             );
           })}
         </div>
-        <div className="mx-auto mt-4 grid max-w-3xl gap-4 md:grid-cols-2">
+        <div className="mx-auto mt-4 grid max-w-4xl gap-4 md:grid-cols-2">
           {useCases.slice(3).map((item) => {
             const Icon = item.icon;
             return (
