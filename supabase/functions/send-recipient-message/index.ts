@@ -21,7 +21,7 @@ interface Body {
   subject?: string;
   body?: string;
   missingItems?: string[];
-  channel?: "email" | "sms" | "both";
+  channel?: "email" | "sms" | "both" | "gmail" | "outlook";
 }
 
 Deno.serve(async (req) => {
