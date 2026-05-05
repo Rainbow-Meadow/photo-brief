@@ -58,7 +58,7 @@ const db = supabase as unknown as {
   };
 };
 
-type OAuthProvider = "google" | "microsoft" | "hubspot";
+type OAuthProvider = "google" | "hubspot";
 
 export const integrationService = {
   async listConnections(workspaceId: string): Promise<IntegrationConnection[]> {

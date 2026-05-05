@@ -37,7 +37,7 @@ import {
 
 const categoryOrder: IntegrationCategory[] = ["website", "communication", "automation", "crm"];
 
-type OAuthProvider = "google" | "microsoft" | "hubspot";
+type OAuthProvider = "google" | "hubspot";
 
 const stageMeta: Record<IntegrationStage, { label: string; compactLabel: string; className: string }> = {
   live: {
@@ -73,7 +73,6 @@ function stageIcon(stage: IntegrationStage) {
 
 function oauthProviderForKey(key: string): OAuthProvider | null {
   if (key === "gmail") return "google";
-  if (key === "microsoft-365") return "microsoft";
   if (key === "hubspot") return "hubspot";
   return null;
 }

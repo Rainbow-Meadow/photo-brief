@@ -208,22 +208,6 @@ export const integrationDefinitions: IntegrationDefinition[] = [
     statusLabel: "OAuth scaffold",
   },
   {
-    key: "microsoft-365",
-    name: "Microsoft 365 Outlook",
-    category: "communication",
-    stage: "setup_ready",
-    icon: Send,
-    plan: "starter",
-    tagline: "Send PhotoBrief requests through Microsoft 365.",
-    description:
-      "A Microsoft Graph connector can send request links from a delegated mailbox and log what was sent in PhotoBrief.",
-    enables: ["Microsoft OAuth", "Graph sendMail", "Outlook identity"],
-    inboundEvents: ["Microsoft 365 connected", "Email send result"],
-    outboundActions: ["Send initial request", "Send reminder", "Log external message"],
-    actions: [{ label: "Prepare OAuth", kind: "oauth_placeholder", helper: "Requires Microsoft Entra app registration, redirect URL, and server-side token storage." }],
-    statusLabel: "OAuth scaffold",
-  },
-  {
     key: "manual-sms",
     name: "Manual Phone Text",
     category: "communication",

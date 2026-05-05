@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 
 const connectorLogoMap: Record<string, { slug?: string; label: string; bg?: string; invertOnDark?: boolean }> = {
   gmail: { slug: "gmail", label: "Gmail", bg: "bg-white" },
-  "microsoft-365": { slug: "microsoftoutlook", label: "Microsoft Outlook", bg: "bg-white" },
+  
   twilio: { slug: "twilio", label: "Twilio", bg: "bg-white" },
   zapier: { slug: "zapier", label: "Zapier", bg: "bg-white" },
   make: { slug: "make", label: "Make", bg: "bg-white" },
