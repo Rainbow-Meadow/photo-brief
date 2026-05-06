@@ -1,32 +1,60 @@
 
-## Two changes applied everywhere
+## Problem
 
-### 1. Beta timing clarification
-The 60-day beta clock starts **2 weeks after the final seat is filled**, not from each partner's acceptance date. This 2-week buffer allows concierge setup for every account before the clock begins.
+The interactive hero demo has three issues:
 
-**Where this affects copy/config:**
-- `src/config/betaProgram.ts` — add a new constant (e.g. `BETA_SETUP_BUFFER_DAYS = 14`) and update `CONFIRMATION_SUMMARY`, `FREE_PRO_FINE_PRINT`, and any "60 days" copy to clarify the start trigger
-- `src/pages/BetaList.tsx` — update any timeline/duration references
-- `src/pages/Landing.tsx` — update beta offer section
-- `src/pages/BetaWelcome.tsx` — update the post-signup messaging to explain the setup window
-- `src/components/marketing/FoundingCustomerBanner.tsx` — if duration is mentioned
-- `src/features/help/content/faq.tsx` — if beta duration is referenced
-- `docs/founding-partner-beta-plan.md` — update the plan doc to reflect the new timing
+1. **Phone bezels resize** as content fills them — the `minHeight: 520` lets the container grow with content, breaking the illusion of a real device.
+2. **Missing business-side opening steps** — the demo starts at the customer capturing photos. In reality, the business first picks a saved template and sends the link.
+3. **No customer submit step** — photos complete and the flow just ends. Real PhotoBrief has a review-and-send screen.
 
-### 2. Async feedback preference
-Replace all references to scheduled calls, "hop on a call", "15-minute walkthrough", "schedule a call", phone calls, etc. with async-first language: chat, email, in-app feedback, web-based channels.
+## Plan
 
-**Specific changes in `src/config/betaProgram.ts`:**
-- `SCORING_RUBRIC` "Collaboration" dimension: replace "hop on a quick call" / "15-minute process walkthrough" with async equivalents (e.g. "respond to a follow-up via chat or email", "share a short async walkthrough")
-- `FREE_PRO_QUALIFIES`: replace "willingness to walk us through your process" with async phrasing
-- `DETAILED_EXPECTATIONS`: update the check-in expectation to reference async channels
-- `REWARD_CRITERIA`: "Willingness to participate in check-ins" — keep but clarify these are async
+### 1. Lock phone dimensions
 
-**Other surfaces:**
-- `src/pages/BetaWelcome.tsx` — replace "schedule a call" / "concierge call" language with "concierge setup via chat/email", remove "preferred call times" from the notes placeholder
-- `src/pages/BetaList.tsx` — replace "concierge call" with "concierge setup"
-- Email templates in `supabase/functions/_shared/transactional-email-templates/` — update any call-scheduling language in `founding-partner-welcome.tsx`, `beta-feedback-checkin.tsx`, `beta-stalled-checkin.tsx`
-- `docs/founding-partner-beta-plan.md` — align the plan doc
+Change `PhoneMockup` from `minHeight: 520` to a fixed height (~520px) with `overflow-y: auto` on the content area. This keeps both phones the same size throughout the entire flow regardless of what's inside.
 
-### Technical details
-All copy changes are in string literals and config constants. No schema, migration, or component structure changes needed.
+### 2. Add business-side opening steps (new flow phases)
+
+Replace the current two-state model with a multi-phase state machine:
+
+```text
+Phase 0: TEMPLATE_SELECT   — Business picks "Garage Cleanout" from saved templates
+Phase 1: SEND_LINK         — Business enters customer phone/name, taps Send
+Phase 2: LINK_SENT         — Business sees "Sent, waiting…" (existing LinkSentScreen)
+Phase 3: CAPTURING          — Customer captures photos (existing flow + blurry retake)
+Phase 4: CUSTOMER_REVIEW    — Customer sees review screen with thumbnails + Submit button
+Phase 5: COMPLETE           — Business sees completed brief (existing BriefCompleteScreen)
+```
+
+**Business phone shows:**
+- Phase 0: Template picker card (list of 2-3 saved templates, one highlighted)
+- Phase 1: Send form (customer name + phone, send button)
+- Phase 2: Existing "Request sent / Waiting for customer" screen
+- Phase 3: Existing in-progress screen with live photo feed
+- Phase 4: Still shows in-progress (customer hasn't submitted yet)
+- Phase 5: Existing brief-complete screen
+
+**Customer phone shows:**
+- Phase 0-1: Blank/off or a subtle "waiting for link" placeholder
+- Phase 2: "You received a PhotoBrief request" welcome screen with Start button
+- Phase 3: Existing photo capture flow (unchanged)
+- Phase 4: Review screen with photo grid + "Send to business" button
+- Phase 5: Confirmation "Sent!" screen
+
+### 3. Customer review + submit screen (Phase 4)
+
+New `CustomerReviewScreen` component showing:
+- Thumbnail grid of all 4 captured photos
+- Brief title "Garage cleanout quote"
+- "Send to [Business]" button that advances to Phase 5
+
+### 4. Small detail fixes
+
+- Progress indicator text updates to reflect the active phase
+- The section subtitle copy updates per phase so the user knows what to tap next
+- Transition between phases uses the existing button-click pattern (user taps through)
+- Business-side actions (pick template, send link) are interactive taps on the business phone, not auto-animated
+
+### Files modified
+
+- `src/components/marketing/InteractiveHeroBriefAssembly.tsx` — all changes in this single file
