@@ -265,7 +265,7 @@ export default function RequestsInboxPage() {
             </span>
           </div>
         )}
-        {/* Mobile: stacked card list. */}
+        {/* Mobile: stacked card list with larger touch targets. */}
         <ul className="divide-y md:hidden">
           {filtered.length === 0 ? (
             <li className="px-5 py-10 text-center text-sm text-muted-foreground">
@@ -278,21 +278,21 @@ export default function RequestsInboxPage() {
               return (
                 <li
                   key={r.id}
-                  className={isSel ? "bg-primary/5 px-4 py-3" : "px-4 py-3 active:bg-muted/40"}
+                  className={isSel ? "bg-primary/5 px-4 py-4" : "px-4 py-4 active:bg-muted/40"}
                 >
-                  <div className="flex items-start gap-3">
+                  <div className="flex items-start gap-3.5">
                     <Checkbox
                       aria-label={`Select request for ${r.recipientName}`}
                       checked={isSel}
                       onCheckedChange={() => toggleOne(r.id)}
-                      className="mt-1"
+                      className="mt-1.5 h-5 w-5"
                     />
                     <NavLink
                       to={`/requests/${r.id}`}
-                      className="flex min-w-0 flex-1 flex-col gap-1.5"
+                      className="flex min-w-0 flex-1 flex-col gap-2"
                     >
                       <div className="flex items-start justify-between gap-2">
-                        <p className="truncate text-sm font-medium text-foreground">
+                        <p className="truncate text-[15px] font-medium text-foreground">
                           {r.recipientName}
                         </p>
                         <StatusBadge label={status.label} tone={status.tone} />
@@ -327,7 +327,7 @@ export default function RequestsInboxPage() {
                           variant="ghost"
                           size="icon"
                           aria-label="More actions"
-                          className="h-10 w-10 shrink-0"
+                          className="h-11 w-11 shrink-0"
                         >
                           <MoreHorizontal className="h-5 w-5" />
                         </Button>
