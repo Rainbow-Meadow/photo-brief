@@ -25,7 +25,7 @@ import ForAiAgentsPage from "@/pages/ForAiAgents";
 import ForgotPasswordPage from "@/pages/ForgotPassword";
 import ResetPasswordPage from "@/pages/ResetPassword";
 import UnsubscribePage from "@/pages/Unsubscribe";
-import WaitlistPage from "@/pages/Waitlist";
+
 import SignupPage from "@/pages/Signup";
 import BetaInvitePage from "@/pages/BetaInvite";
 
