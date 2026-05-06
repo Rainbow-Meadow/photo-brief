@@ -466,7 +466,6 @@ export default function BetaListPage() {
                 {submitting ? "Submitting…" : "Apply for Founding Partner Beta"}
               </Button>
             </form>
-          )}
         </div>
       </section>
 
