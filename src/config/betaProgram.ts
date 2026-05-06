@@ -9,9 +9,13 @@
 // ── Program parameters ───────────────────────────────────────────────
 
 export const BETA_DURATION_DAYS = 60;
+export const BETA_SETUP_BUFFER_DAYS = 14;
 export const BETA_TOTAL_PARTNERS = 30;
 export const BETA_PARTNERS_PER_WEEK = 5;
 export const BETA_COHORTS = Math.ceil(BETA_TOTAL_PARTNERS / BETA_PARTNERS_PER_WEEK); // 6
+
+/** Human-readable timing explanation for public copy. */
+export const BETA_TIMING_EXPLAINER = `The ${BETA_DURATION_DAYS}-day beta clock starts ${BETA_SETUP_BUFFER_DAYS} days after the final seat is filled — giving every partner time for concierge setup before the clock begins.`;
 
 // ── Reward tiers ─────────────────────────────────────────────────────
 
@@ -103,7 +107,7 @@ export const DETAILED_EXPECTATIONS: DetailedExpectation[] = [
   {
     title: "Respond to check-ins",
     description:
-      "We'll reach out at two weeks and periodically after. A one-line reply is fine — we just need to know what's working and what isn't.",
+      "We'll reach out via email, chat, or in-app messages at two weeks and periodically after. A one-line reply is fine — we just need to know what's working and what isn't.",
   },
   {
     title: "Report bugs and friction",
@@ -128,7 +132,7 @@ export const REWARD_CRITERIA = [
   "Depth and quality of feedback responses",
   "Consistency of engagement over the 60-day period",
   "Actionability of bug reports and workflow suggestions",
-  "Willingness to participate in check-ins and case studies",
+  "Willingness to participate in async check-ins (chat, email, in-app) and case studies",
 ] as const;
 
 // ── Scoring rubric for top-2 selection ───────────────────────────────
@@ -175,9 +179,9 @@ export const SCORING_RUBRIC: ScoringDimension[] = [
     label: "Collaboration",
     weight: "20%",
     description:
-      "Willingness to hop on a quick call, answer a follow-up, or let us feature your story.",
+      "Willingness to answer a follow-up via chat or email, share a short async walkthrough, or let us feature your story.",
     examples: [
-      "Joining a 15-minute process walkthrough",
+      "Responding to a follow-up question over email or chat with context and detail",
       "Providing a short testimonial or before/after case study",
     ],
   },
@@ -189,7 +193,7 @@ export const FREE_PRO_QUALIFIES = [
   "Depth and specificity of feedback — detailed workflow observations, not just thumbs-up",
   "Consistency across the full 60 days — regular engagement, not a burst and silence",
   "Actionable bug reports with steps to reproduce and context",
-  "Participation in check-ins and willingness to walk us through your process",
+  "Participation in async check-ins (chat, email, in-app) and willingness to walk us through your process",
   "Optional but valued: a testimonial or case study we can feature at launch",
 ] as const;
 
@@ -211,4 +215,4 @@ export const FREE_PRO_FINE_PRINT = [
 
 // ── Confirmation / thank-you copy ────────────────────────────────────
 
-export const CONFIRMATION_SUMMARY = `${BETA_DURATION_DAYS} days free · concierge setup · priority support · direct roadmap input · early access to future tools · up to 75% off post-launch`;
+export const CONFIRMATION_SUMMARY = `${BETA_DURATION_DAYS} days free (starts ${BETA_SETUP_BUFFER_DAYS} days after all seats fill) · concierge setup · priority support · direct roadmap input · early access to future tools · up to 75% off post-launch`;
