@@ -1,23 +1,16 @@
 import { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import { LayoutDashboard, Inbox, BookOpen, Settings, Plus } from "lucide-react";
+import { LayoutDashboard, Settings, Plus } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { MobileSettingsSheet } from "@/components/layout/MobileSettingsSheet";
+import { mobilePrimaryNavItems, routes } from "@/routes/navigation";
 
 /**
- * Bottom tab bar used on screens below `lg`. Mirrors the desktop sidebar
- * primary nav, with Settings opening a full-screen sheet listing the
- * settings sub-pages. The centered FAB launches a new request.
- *
- * Hidden at `lg:` and above where the AppSidebar takes over.
+ * Bottom tab bar used on screens below `lg`. It mirrors the desktop sidebar
+ * primary nav from src/routes/navigation.ts, with Settings opening the
+ * settings sheet instead of crowding the main tab bar.
  */
-const tabs: Array<{ key: string; label: string; icon: typeof LayoutDashboard; to: string }> = [
-  { key: "dashboard", label: "Home", icon: LayoutDashboard, to: "/dashboard" },
-  { key: "requests", label: "Requests", icon: Inbox, to: "/requests" },
-  { key: "guides", label: "Guides", icon: BookOpen, to: "/guides" },
-];
-
 export function MobileTabBar() {
   const { pathname } = useLocation();
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -34,15 +27,13 @@ export function MobileTabBar() {
         )}
       >
         <div className="relative mx-auto grid h-16 max-w-2xl grid-cols-5 items-stretch px-2">
-          {/* First two tabs */}
-          {tabs.slice(0, 2).map((t) => (
-            <TabLink key={t.key} {...t} active={pathname === t.to || pathname.startsWith(`${t.to}/`)} />
+          {mobilePrimaryNavItems.slice(0, 2).map((item) => (
+            <TabLink key={item.key} {...item} active={pathname === item.to || pathname.startsWith(`${item.to}/`)} />
           ))}
 
-          {/* Center FAB */}
           <div className="flex flex-col items-center justify-start">
             <NavLink
-              to="/requests/new"
+              to={routes.app.newRequest}
               aria-label="New photo request"
               className={cn(
                 "-mt-6 inline-flex h-14 w-14 items-center justify-center rounded-full",
@@ -55,13 +46,11 @@ export function MobileTabBar() {
             <span className="mt-0.5 text-[10px] font-medium leading-none text-primary">Request</span>
           </div>
 
-          {/* Last regular tab */}
           <TabLink
-            {...tabs[2]}
-            active={pathname === tabs[2].to || pathname.startsWith(`${tabs[2].to}/`)}
+            {...mobilePrimaryNavItems[2]}
+            active={pathname === mobilePrimaryNavItems[2].to || pathname.startsWith(`${mobilePrimaryNavItems[2].to}/`)}
           />
 
-          {/* Settings opens sheet */}
           <button
             type="button"
             onClick={() => setSettingsOpen(true)}
