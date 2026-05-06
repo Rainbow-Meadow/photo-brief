@@ -103,6 +103,72 @@ export type Database = {
         }
         Relationships: []
       }
+      beta_welcome_submissions: {
+        Row: {
+          brand_color: string | null
+          business_name: string
+          created_at: string
+          email: string
+          id: string
+          industry: string | null
+          logo_description: string | null
+          monthly_volume: string | null
+          name: string | null
+          notes: string | null
+          phone: string | null
+          photo_use_case: string | null
+          preferred_channel: string | null
+          reviewer_info: string | null
+          status: string
+          tagline: string | null
+          template_ideas: string | null
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          brand_color?: string | null
+          business_name: string
+          created_at?: string
+          email: string
+          id?: string
+          industry?: string | null
+          logo_description?: string | null
+          monthly_volume?: string | null
+          name?: string | null
+          notes?: string | null
+          phone?: string | null
+          photo_use_case?: string | null
+          preferred_channel?: string | null
+          reviewer_info?: string | null
+          status?: string
+          tagline?: string | null
+          template_ideas?: string | null
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          brand_color?: string | null
+          business_name?: string
+          created_at?: string
+          email?: string
+          id?: string
+          industry?: string | null
+          logo_description?: string | null
+          monthly_volume?: string | null
+          name?: string | null
+          notes?: string | null
+          phone?: string | null
+          photo_use_case?: string | null
+          preferred_channel?: string | null
+          reviewer_info?: string | null
+          status?: string
+          tagline?: string | null
+          template_ideas?: string | null
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
       brand_profiles: {
         Row: {
           completion_message: string | null
