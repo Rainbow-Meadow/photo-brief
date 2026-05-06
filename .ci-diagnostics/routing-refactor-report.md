@@ -1,7 +1,7 @@
 # Routing refactor CI
 
-Commit: a261f9bde4329105df9e3faf2bc071e808ebb7fe
-Run started: 2026-05-06T10:25:09Z
+Commit: df5627f651ab487cf2ba66e49d9a7b495d2ff8d3
+Run started: 2026-05-06T10:53:33Z
 
 ## npm-ci
 ```text
@@ -253,10 +253,14 @@ computing gzip size...
 - Using dynamic import() to code-split the application
 - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
-[32m✓ built in 8.21s[39m
+[32m✓ built in 8.33s[39m
 ```
 
 ## Summary
+npm-ci=0
+typecheck=0
+lint=0
+build=0
 npm-ci=0
 typecheck=0
 lint=0
