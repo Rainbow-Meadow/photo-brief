@@ -512,7 +512,7 @@ function FoundingPartnerSection() {
                 </NavLink>
               </Button>
               <Button asChild size="lg" variant="pb-secondary">
-                <NavLink to="/founding-partner-beta">Read beta details</NavLink>
+                <NavLink to="/betalist">Read beta details</NavLink>
               </Button>
             </div>
           </div>

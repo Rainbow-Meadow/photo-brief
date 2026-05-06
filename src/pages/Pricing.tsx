@@ -72,7 +72,7 @@ export default function PricingPage() {
               </NavLink>
             </Button>
             <Button asChild size="xl" variant="pb-secondary">
-              <NavLink to="/founding-partner-beta">View beta program</NavLink>
+              <NavLink to="/betalist">View beta program</NavLink>
             </Button>
           </div>
         </div>
