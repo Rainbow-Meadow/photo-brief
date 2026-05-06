@@ -145,7 +145,7 @@ export function MarketingLayout() {
         <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-8 text-sm text-[hsl(var(--pb-muted))] sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
           <BrandMark variant="horizontal" tone="light" size={28} className="opacity-80" />
           <nav aria-label="Footer" className="flex flex-wrap items-center gap-4">
-            <NavLink to="/founding-partner-beta" className="hover:text-white transition-colors">Founding Beta</NavLink>
+            <NavLink to="/betalist" className="hover:text-white transition-colors">Beta Program</NavLink>
             <NavLink to="/pricing" className="hover:text-white transition-colors">Pricing</NavLink>
             <NavLink to="/help" className="hover:text-white transition-colors">Help</NavLink>
             <NavLink to="/for-ai-agents" className="hover:text-white transition-colors">For AI agents</NavLink>
