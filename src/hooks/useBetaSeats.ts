@@ -8,49 +8,70 @@ interface BetaSeats {
   isFull: boolean;
 }
 
-const fallback: BetaSeats = {
-  seatsFilled: BETA_SEATS_FILLED,
-  seatsRemaining: BETA_TOTAL_PARTNERS - BETA_SEATS_FILLED,
-  isFull: BETA_SEATS_FILLED >= BETA_TOTAL_PARTNERS,
-};
+function derive(filled: number): BetaSeats {
+  return {
+    seatsFilled: filled,
+    seatsRemaining: Math.max(0, BETA_TOTAL_PARTNERS - filled),
+    isFull: filled >= BETA_TOTAL_PARTNERS,
+  };
+}
+
+const fallback = derive(BETA_SEATS_FILLED);
 
 /** Shared cache so every component on the page uses the same value without re-fetching. */
 let cached: BetaSeats | null = null;
-let fetchPromise: Promise<BetaSeats> | null = null;
+let listeners: Set<(s: BetaSeats) => void> = new Set();
+let subscribed = false;
 
-function fetchSeats(): Promise<BetaSeats> {
-  if (fetchPromise) return fetchPromise;
-  fetchPromise = (supabase as any)
+function broadcast(seats: BetaSeats) {
+  cached = seats;
+  listeners.forEach((fn) => fn(seats));
+}
+
+function ensureSubscription() {
+  if (subscribed) return;
+  subscribed = true;
+
+  // Initial fetch
+  (supabase as any)
     .from("beta_program_config")
     .select("seats_filled")
     .eq("id", true)
     .maybeSingle()
     .then(({ data }: { data: { seats_filled: number } | null }) => {
-      const filled = data?.seats_filled ?? BETA_SEATS_FILLED;
-      const result: BetaSeats = {
-        seatsFilled: filled,
-        seatsRemaining: Math.max(0, BETA_TOTAL_PARTNERS - filled),
-        isFull: filled >= BETA_TOTAL_PARTNERS,
-      };
-      cached = result;
-      return result;
+      broadcast(derive(data?.seats_filled ?? BETA_SEATS_FILLED));
     })
     .catch(() => {
-      cached = fallback;
-      return fallback;
+      broadcast(fallback);
     });
-  return fetchPromise;
+
+  // Realtime subscription
+  supabase
+    .channel("beta-seats")
+    .on(
+      "postgres_changes",
+      { event: "UPDATE", schema: "public", table: "beta_program_config" },
+      (payload: any) => {
+        const filled = payload.new?.seats_filled;
+        if (typeof filled === "number") {
+          broadcast(derive(filled));
+        }
+      },
+    )
+    .subscribe();
 }
 
 export function useBetaSeats(): BetaSeats {
   const [seats, setSeats] = useState<BetaSeats>(cached ?? fallback);
 
   useEffect(() => {
-    if (cached) {
-      setSeats(cached);
-      return;
-    }
-    fetchSeats().then(setSeats);
+    listeners.add(setSeats);
+    ensureSubscription();
+    // If cached value arrived before this component mounted
+    if (cached) setSeats(cached);
+    return () => {
+      listeners.delete(setSeats);
+    };
   }, []);
 
   return seats;
