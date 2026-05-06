@@ -6,7 +6,9 @@ import {
   Camera,
   CheckCircle2,
   ClipboardList,
+  Crown,
   FileCheck2,
+  Gift,
   Globe2,
   ImageOff,
   Link2,
@@ -18,6 +20,7 @@ import {
   Sparkles,
   Stamp,
   TimerReset,
+  Trophy,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -32,7 +35,7 @@ import { InteractiveHeroBriefAssembly } from "@/components/marketing/Interactive
 import { faqItems } from "@/features/help/content/faq";
 import { trackEvent } from "@/lib/analytics";
 import { signupCtaTarget, signupCtaLabel } from "@/config/access";
-import { PARTNER_BENEFITS, PARTNER_EXPECTATIONS } from "@/config/betaProgram";
+import { PARTNER_BENEFITS, PARTNER_EXPECTATIONS, BETA_TOTAL_PARTNERS } from "@/config/betaProgram";
 import wideGarage from "@/assets/junk-removal/wide-garage.jpg";
 import pileCloseup from "@/assets/junk-removal/pile-closeup.jpg";
 import appliances from "@/assets/junk-removal/appliances.jpg";
@@ -491,6 +494,33 @@ function FoundingPartnerSection() {
   return (
     <section id="beta-offer" className="pb-section-tight">
       <div className="pb-container">
+        {/* Free Pro for Life spotlight */}
+        <div className="relative mx-auto mb-6 max-w-4xl overflow-hidden rounded-[1.5rem] border border-[hsl(var(--pb-lavender)/0.35)] bg-gradient-to-br from-[hsl(var(--pb-violet)/0.18)] via-[hsl(var(--pb-ink))] to-[hsl(var(--pb-lavender)/0.10)] p-5 sm:p-8">
+          <div aria-hidden className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-[hsl(var(--pb-lavender)/0.15)] blur-[60px]" />
+          <div aria-hidden className="pointer-events-none absolute -bottom-8 -left-8 h-32 w-32 rounded-full bg-[hsl(var(--pb-mint)/0.10)] blur-[50px]" />
+          <div className="relative z-10 flex flex-col items-center text-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-[hsl(var(--pb-lavender))] to-[hsl(var(--pb-violet))] shadow-lg shadow-[hsl(var(--pb-violet)/0.4)]">
+              <Trophy className="h-7 w-7 text-white" />
+            </div>
+            <p className="mt-4 text-xs font-extrabold uppercase tracking-[0.2em] text-[hsl(var(--pb-lavender))]">The ultimate reward</p>
+            <h2 className="mt-2 text-xl font-bold tracking-tight text-white sm:text-2xl md:text-3xl">
+              2 partners get <span className="bg-gradient-to-r from-[hsl(var(--pb-lavender))] to-[hsl(var(--pb-mint))] bg-clip-text text-transparent">Free Pro for Life</span>
+            </h2>
+            <p className="pb-copy mx-auto mt-3 max-w-lg text-sm leading-relaxed sm:text-base">
+              The two beta partners who deliver the most useful, actionable feedback
+              earn a permanent Pro plan — no invoice, no expiration, no strings.
+            </p>
+            <div className="mt-5 flex flex-wrap items-center justify-center gap-2 text-xs font-semibold text-white/70">
+              <span className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.05] px-3 py-1.5">
+                <Crown className="h-3.5 w-3.5 text-[hsl(var(--pb-lavender))]" /> Quality over quantity
+              </span>
+              <span className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.05] px-3 py-1.5">
+                <Gift className="h-3.5 w-3.5 text-[hsl(var(--pb-mint))]" /> All {BETA_TOTAL_PARTNERS} partners earn rewards
+              </span>
+            </div>
+          </div>
+        </div>
+
         <div className="pb-command-panel grid gap-6 p-5 sm:gap-8 sm:p-6 lg:grid-cols-[0.85fr_1.15fr] lg:p-8 xl:p-10">
           <div className="relative z-10">
             <span className="pb-eyebrow"><Stamp className="h-3.5 w-3.5" /> Founding beta</span>
