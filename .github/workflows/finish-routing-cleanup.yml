@@ -1,0 +1,71 @@
+name: Finish Routing Cleanup
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/finish-routing-cleanup.yml
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ github.token }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - name: Remove legacy BetaList page and run checks
+        shell: bash
+        run: |
+          set +e
+          mkdir -p .ci-diagnostics
+          rm -f src/pages/BetaList.tsx
+
+          {
+            echo "# Routing cleanup final report"
+            echo
+            echo "Commit tested: $(git rev-parse HEAD)"
+            echo "Run started: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo
+            echo "## Cleanup"
+            echo '- Removed `src/pages/BetaList.tsx` legacy duplicate page.'
+            echo '- `/betalist` is handled as a redirect in `src/routes/AppRoutes.tsx`.'
+            echo
+          } > .ci-diagnostics/routing-cleanup-final-report.md
+
+          run_check() {
+            local name="$1"
+            shift
+            echo "## ${name}" >> .ci-diagnostics/routing-cleanup-final-report.md
+            echo '```text' >> .ci-diagnostics/routing-cleanup-final-report.md
+            "$@" > .ci-diagnostics/${name}.routing-cleanup.log 2>&1
+            local code=$?
+            cat .ci-diagnostics/${name}.routing-cleanup.log >> .ci-diagnostics/routing-cleanup-final-report.md
+            echo '```' >> .ci-diagnostics/routing-cleanup-final-report.md
+            echo >> .ci-diagnostics/routing-cleanup-final-report.md
+            echo "${name}=${code}" >> .ci-diagnostics/routing-cleanup-final-status.env
+            return 0
+          }
+
+          run_check npm-ci npm ci
+          run_check typecheck npm run typecheck
+          run_check lint npm run lint
+          run_check build npm run build
+
+          echo "## Summary" >> .ci-diagnostics/routing-cleanup-final-report.md
+          cat .ci-diagnostics/routing-cleanup-final-status.env >> .ci-diagnostics/routing-cleanup-final-report.md
+      - name: Commit cleanup and remove workflow
+        shell: bash
+        run: |
+          rm -f .github/workflows/finish-routing-cleanup.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A src/pages/BetaList.tsx .ci-diagnostics .github/workflows/finish-routing-cleanup.yml
+          git commit -m "Finish routing cleanup" || echo "No cleanup changes to commit"
+          git push
