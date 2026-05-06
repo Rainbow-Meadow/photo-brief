@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { NavLink } from "react-router-dom";
 import {
+  ArrowLeft,
   ArrowRight,
   CheckCircle2,
   ChevronDown,
@@ -422,6 +423,9 @@ export default function IntegrationsPage() {
 
   return (
     <div className="mx-auto max-w-5xl space-y-6 pb-8">
+      <NavLink to="/dashboard" className="mb-2 inline-flex items-center gap-1 text-sm font-medium text-muted-foreground transition hover:text-foreground lg:hidden">
+        <ArrowLeft className="h-3.5 w-3.5" /> Settings
+      </NavLink>
       <section className="surface-card-elevated relative overflow-hidden p-5 sm:p-7">
         <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
         <div className="relative flex flex-col gap-5 md:flex-row md:items-end md:justify-between">

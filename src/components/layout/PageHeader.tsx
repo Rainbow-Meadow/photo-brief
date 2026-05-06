@@ -1,25 +1,20 @@
 import type { ReactNode } from "react";
+import { NavLink } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface PageHeaderProps {
   title: string;
   description?: string;
-  /**
-   * Optional eyebrow / breadcrumb above the title. Renders with the global
-   * `.text-eyebrow` style (uppercase, tracked, muted). Useful for section
-   * context like "Settings · Brand" or "Workspace".
-   */
   eyebrow?: ReactNode;
   actions?: ReactNode;
-  /**
-   * Render the bottom border + padding. Default true (matches Dashboard / Inbox / Detail).
-   * Set to false on settings-style pages where the next element is itself a bordered card.
-   */
   bordered?: boolean;
   className?: string;
+  /** Renders a small back arrow + label above the title. */
+  backTo?: { label: string; href: string; mobileOnly?: boolean };
 }
 
-export function PageHeader({ title, description, eyebrow, actions, bordered = true, className }: PageHeaderProps) {
+export function PageHeader({ title, description, eyebrow, actions, bordered = true, className, backTo }: PageHeaderProps) {
   return (
     <div
       className={cn(
@@ -29,6 +24,18 @@ export function PageHeader({ title, description, eyebrow, actions, bordered = tr
       )}
     >
       <div className="min-w-0">
+        {backTo ? (
+          <NavLink
+            to={backTo.href}
+            className={cn(
+              "mb-2 inline-flex items-center gap-1 text-sm font-medium text-muted-foreground transition hover:text-foreground",
+              backTo.mobileOnly && "lg:hidden",
+            )}
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+            {backTo.label}
+          </NavLink>
+        ) : null}
         {eyebrow ? <p className="text-eyebrow mb-1.5">{eyebrow}</p> : null}
         <h1 className="text-2xl font-semibold tracking-tight text-foreground">{title}</h1>
         {description ? (

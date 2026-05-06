@@ -106,6 +106,7 @@ export default function MessageTemplatesPage() {
         title="Message templates"
         description={`Reusable outreach copy for requests, reminders, and follow-ups. Plan: ${plan}.`}
         bordered={false}
+        backTo={{ label: "Settings", href: "/dashboard", mobileOnly: true }}
       />
 
       {!canTemplates ? (
