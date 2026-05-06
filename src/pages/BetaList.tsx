@@ -415,31 +415,7 @@ export default function BetaListPage() {
             Limited spots · We typically reply within a few days
           </p>
 
-          {done === "new" && (
-            <div className="mt-8 rounded-2xl border border-[hsl(var(--pb-line)/0.5)] bg-[hsl(var(--pb-panel)/0.6)] p-8 text-center">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[hsl(var(--pb-mint)/0.12)] text-[hsl(var(--pb-mint))]">
-                <CheckCircle2 className="h-7 w-7" />
-              </div>
-              <h3 className="mt-4 text-lg font-semibold">Application received</h3>
-              <p className="mt-2 text-sm text-[hsl(var(--pb-muted))]">
-                Thanks — we'll review your request and reach out if PhotoBrief is a fit.
-              </p>
-            </div>
-          )}
 
-          {done === "already" && (
-            <div className="mt-8 rounded-2xl border border-[hsl(var(--pb-line)/0.5)] bg-[hsl(var(--pb-panel)/0.6)] p-8 text-center">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[hsl(var(--pb-lavender)/0.12)] text-[hsl(var(--pb-lavender))]">
-                <MailCheck className="h-7 w-7" />
-              </div>
-              <h3 className="mt-4 text-lg font-semibold">You already applied</h3>
-              <p className="mt-2 text-sm text-[hsl(var(--pb-muted))]">
-                We've got your details. We'll reach out as soon as a spot opens.
-              </p>
-            </div>
-          )}
-
-          {done === null && (
             <form onSubmit={onSubmit} className="mt-6 grid gap-4 rounded-2xl border border-[hsl(var(--pb-line)/0.5)] bg-[hsl(var(--pb-panel)/0.55)] p-5 sm:p-6">
               <Field id="bl-email" label="Work email" required>
                 <Input id="bl-email" type="email" value={form.email} onChange={update("email")} autoComplete="email" required placeholder="you@company.com" className="border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
