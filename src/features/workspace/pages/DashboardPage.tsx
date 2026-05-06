@@ -161,7 +161,7 @@ export default function DashboardPage() {
     <div className="space-y-5 sm:space-y-7">
       <PageHeader
         title={isEmpty ? "Welcome to PhotoBrief" : "Today"}
-        description={isEmpty ? "Let's send your first request." : "A quiet overview of what needs attention."}
+        description={isEmpty ? "Let\u2019s send your first PhotoBrief." : "A quiet overview of what needs attention."}
         actions={
           <div className="flex flex-wrap items-center gap-2">
             <Button
