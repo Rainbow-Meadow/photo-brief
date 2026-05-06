@@ -27,7 +27,7 @@ export default function AuthPage() {
   // If a logged-out visitor asks for ?mode=signup while signup is closed,
   // bounce them to the waitlist instead of silently flipping to sign-in.
   if (requestedSignup && !signupAllowed && !session && !authLoading) {
-    return <Navigate to="/betalist" replace />;
+    return <Navigate to="/founding-partner-beta" replace />;
   }
 
   const [email, setEmail] = useState("");
@@ -291,7 +291,7 @@ export default function AuthPage() {
         <p className="mt-6 text-center text-sm text-muted-foreground">
           {mode === "signup" ? "Already have an account?" : "New to PhotoBrief?"}{" "}
           {mode === "signin" && !signupAllowed ? (
-            <NavLink to="/betalist" className="font-medium text-primary hover:underline">
+            <NavLink to="/founding-partner-beta" className="font-medium text-primary hover:underline">
               Apply for beta
             </NavLink>
           ) : (
