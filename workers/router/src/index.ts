@@ -35,7 +35,7 @@ const MARKETING_PATHS = new Set<string>([
   "/pricing",
   "/help",
   "/for-ai-agents",
-  "/waitlist",
+  "/founding-partner-beta",
 ]);
 
 // Path prefixes for files that ONLY exist on the Pages build (AI/answer-engine
