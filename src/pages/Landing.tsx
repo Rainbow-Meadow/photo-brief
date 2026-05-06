@@ -637,10 +637,10 @@ function MessyThreadVisual() {
         </div>
       ))}
       <figure className="pb-photo-frame absolute bottom-16 left-4 w-28 -rotate-6 opacity-80 sm:bottom-20 sm:left-8 sm:w-36">
-        <img src={appliances} alt="Loose customer photo without context" className="h-20 w-full object-cover sm:h-28" />
+        <img src={appliances} alt="Loose customer photo without context" className="h-20 w-full object-cover sm:h-28" width={300} height={300} loading="lazy" sizes="(min-width:640px) 144px, 112px" />
       </figure>
       <figure className="pb-photo-frame absolute bottom-24 right-6 w-28 rotate-6 opacity-70 sm:bottom-28 sm:right-12 sm:w-36">
-        <img src={drivewayAccess} alt="Another loose customer photo without context" className="h-20 w-full object-cover sm:h-28" />
+        <img src={drivewayAccess} alt="Another loose customer photo without context" className="h-20 w-full object-cover sm:h-28" width={300} height={300} loading="lazy" sizes="(min-width:640px) 144px, 112px" />
       </figure>
     </div>
   );
@@ -658,7 +658,7 @@ function CleanPacketVisual() {
       </div>
       <div className="mt-5 grid grid-cols-4 gap-2">
         {loosePhotos.map((photo) => (
-          <img key={photo.label} src={photo.src} alt={`${photo.label} organized in a brief`} className="h-16 rounded-xl object-cover" loading="lazy" />
+          <img key={photo.label} src={photo.src} alt={`${photo.label} organized in a brief`} className="h-16 rounded-xl object-cover" loading="lazy" width={300} height={300} sizes="80px" />
         ))}
       </div>
       <div className="mt-5 space-y-2 text-sm font-semibold text-black/64">
