@@ -29,7 +29,7 @@ const BusinessRequestReadyEmail = ({
   return (
     <Html lang="en" dir="ltr">
       <Head />
-      <Preview>Your PhotoBrief is ready to send</Preview>
+      <Preview>Your PhotoBrief link is ready — share it with {firstName}</Preview>
       <Body style={s.main}>
         <Section style={s.outerPad}>
           <Container style={s.container}>
@@ -37,8 +37,9 @@ const BusinessRequestReadyEmail = ({
             <Section style={s.body}>
               <Heading style={s.h1}>{greeting}</Heading>
               <Text style={s.text}>
-                Your PhotoBrief for <strong>{title}</strong> is ready. Share the link
-                below with {firstName} so they can submit their photos.
+                Your PhotoBrief link for <strong>{title}</strong> is ready. Send it
+                to {firstName} so they can capture and submit their photos — no app
+                or account needed on their end.
               </Text>
               <Section style={s.card}>
                 <Text style={{ ...s.text, margin: '0 0 10px', fontWeight: 600, color: BRAND.colors.primary, fontSize: '13px' }}>
@@ -52,11 +53,11 @@ const BusinessRequestReadyEmail = ({
                 </Text>
               </Section>
               <Text style={s.textSmall}>
-                Customer link:{' '}
+                PhotoBrief link:{' '}
                 <Link href={link} style={s.link}>{link}</Link>
               </Text>
               <Section style={s.ctaWrap}>
-                <Button href={cta} style={s.button}>View request</Button>
+                <Button href={cta} style={s.button}>View in dashboard</Button>
               </Section>
             </Section>
             <BrandFooter />
@@ -69,8 +70,8 @@ const BusinessRequestReadyEmail = ({
 
 export const template = {
   component: BusinessRequestReadyEmail,
-  subject: 'Your PhotoBrief is ready to send',
-  displayName: 'Business: request ready to send',
+  subject: 'Your PhotoBrief link is ready',
+  displayName: 'Business: PhotoBrief link ready',
   previewData: {
     ownerName: 'Alex',
     customerFirstName: 'Maria',
