@@ -131,6 +131,58 @@ export const REWARD_CRITERIA = [
   "Willingness to participate in check-ins and case studies",
 ] as const;
 
+// ── Scoring rubric for top-2 selection ───────────────────────────────
+
+export interface ScoringDimension {
+  label: string;
+  weight: string;
+  description: string;
+  examples: string[];
+}
+
+export const SCORING_RUBRIC: ScoringDimension[] = [
+  {
+    label: "Feedback depth",
+    weight: "30%",
+    description:
+      "Specific, contextual observations about your real workflow — not surface-level reactions.",
+    examples: [
+      '"The photo prompt order didn\'t match how my roofer walks a roof — here\'s the sequence that would."',
+      '"Step 3 confused my customer because the wording assumes they know what flashing is."',
+    ],
+  },
+  {
+    label: "Consistency",
+    weight: "25%",
+    description:
+      "Sustained engagement across the full 60 days, not a burst in week one and silence after.",
+    examples: [
+      "Responding to every bi-weekly check-in",
+      "Continuing to flag issues as you use new features",
+    ],
+  },
+  {
+    label: "Bug & friction reports",
+    weight: "25%",
+    description:
+      "Clear, reproducible reports that help us fix things fast — with context and steps.",
+    examples: [
+      '"On iPhone 14, the upload spinner hangs after the 4th photo if I switch apps mid-upload."',
+      '"The template preview doesn\'t show the customer-facing intro text — I had to send a test to see it."',
+    ],
+  },
+  {
+    label: "Collaboration",
+    weight: "20%",
+    description:
+      "Willingness to hop on a quick call, answer a follow-up, or let us feature your story.",
+    examples: [
+      "Joining a 15-minute process walkthrough",
+      "Providing a short testimonial or before/after case study",
+    ],
+  },
+];
+
 // ── Free Pro for Life eligibility ─────────────────────────────────────
 
 export const FREE_PRO_QUALIFIES = [
