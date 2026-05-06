@@ -361,7 +361,7 @@ export default function LandingPage() {
 
               <div className="mx-auto mt-5 flex max-w-lg flex-col gap-2.5 sm:mt-6 sm:max-w-none sm:flex-row sm:justify-center sm:gap-3">
                 <Button size="xl" variant="pb-primary" onClick={() => { trackEvent("cta_click", { location: "hero", label: "primary" }); document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" }); }}>
-                  {BETA_IS_FULL ? "Join the waitlist" : "Apply now"} <ArrowRight className="ml-1 h-4 w-4" />
+                  {isFull ? "Join the waitlist" : "Apply now"} <ArrowRight className="ml-1 h-4 w-4" />
                 </Button>
                 <Button asChild size="xl" variant="pb-secondary">
                   <a href="#workflow" onClick={() => trackEvent("cta_click", { location: "hero", label: "workflow" })}>See how it works</a>
@@ -411,7 +411,7 @@ export default function LandingPage() {
                   )}
                 </FreeProEligibilityModal>
                 <Button size="lg" variant="pb-primary" className="mt-4" onClick={() => { trackEvent("free_pro_cta_clicked", { location: "spotlight" }); document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" }); }}>
-                  {BETA_IS_FULL ? "Join the waitlist" : `Apply now — ${BETA_TOTAL_PARTNERS} seats, reviewed for fit`} <ArrowRight className="ml-1 h-4 w-4" />
+                  {isFull ? "Join the waitlist" : `Apply now — ${BETA_TOTAL_PARTNERS} seats, reviewed for fit`} <ArrowRight className="ml-1 h-4 w-4" />
                 </Button>
               </div>
             </div>
@@ -438,7 +438,7 @@ export default function LandingPage() {
         <UseCaseSection />
 
         {/* ━━ FOUNDING PARTNER BETA ━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-        <FoundingPartnerSection utm={utm} />
+        <FoundingPartnerSection utm={utm} isFull={isFull} />
 
         {/* ━━ PRICING PATH ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <PricingPathSection />
@@ -463,8 +463,8 @@ export default function LandingPage() {
           <div className="pb-container">
             <div className="pb-command-panel mx-auto max-w-xl p-4 sm:p-6 lg:p-8">
               <div className="relative z-10">
-                <span className="pb-eyebrow"><Stamp className="h-3.5 w-3.5" /> {BETA_IS_FULL ? "Waitlist" : "Apply for beta"}</span>
-                <h2 className="mt-3 text-lg font-semibold tracking-tight text-white sm:mt-4 sm:text-2xl">{BETA_IS_FULL ? "Join the Waitlist" : "Apply for the Founding Partner Beta"}</h2>
+                <span className="pb-eyebrow"><Stamp className="h-3.5 w-3.5" /> {isFull ? "Waitlist" : "Apply for beta"}</span>
+                <h2 className="mt-3 text-lg font-semibold tracking-tight text-white sm:mt-4 sm:text-2xl">{isFull ? "Join the Waitlist" : "Apply for the Founding Partner Beta"}</h2>
                 <p className="pb-copy mt-1.5 text-sm">Every application is reviewed for workflow fit · Limited to {BETA_TOTAL_PARTNERS} seats</p>
                 <BetaSeatTracker variant="compact" className="mt-3" />
 
@@ -496,7 +496,7 @@ export default function LandingPage() {
                     </Field>
                   </div>
                   <Button type="submit" size="lg" disabled={submitting} variant="pb-primary" className="mt-1 h-12 w-full text-base">
-                    {submitting ? "Submitting…" : BETA_IS_FULL ? "Join the waitlist" : "Submit your application"}
+                    {submitting ? "Submitting…" : isFull ? "Join the waitlist" : "Submit your application"}
                   </Button>
                 </form>
               </div>
@@ -505,7 +505,7 @@ export default function LandingPage() {
         </section>
 
         {/* ━━ FINAL CTA ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-        <FinalCta />
+        <FinalCta isFull={isFull} />
       </main>
 
       <Dialog open={demoOpen} onOpenChange={setDemoOpen}>
@@ -710,7 +710,7 @@ function UseCaseSection() {
   );
 }
 
-function FoundingPartnerSection({ utm }: { utm: Record<string, string | undefined> }) {
+function FoundingPartnerSection({ utm, isFull }: { utm: Record<string, string | undefined>; isFull: boolean }) {
   return (
     <section id="beta-program" className="pb-section">
       <div className="pb-container">
@@ -721,7 +721,7 @@ function FoundingPartnerSection({ utm }: { utm: Record<string, string | undefine
             <h2 className="mt-4 text-2xl font-semibold tracking-tight text-white sm:text-3xl lg:text-4xl">Built with real workflows, not toy testing.</h2>
             <p className="pb-copy mt-4 text-base sm:text-lg">We're accepting applications from businesses that collect photos as part of real intake, inspection, or documentation workflows. You get hands-on setup and early influence; we get honest workflow feedback.</p>
             <Button size="lg" variant="pb-primary" className="mt-6" onClick={() => { trackEvent("cta_click", { ...utm, location: "founding_beta" }); document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" }); }}>
-              {BETA_IS_FULL ? "Join the waitlist" : "Apply now"} <ArrowRight className="ml-1 h-4 w-4" />
+              {isFull ? "Join the waitlist" : "Apply now"} <ArrowRight className="ml-1 h-4 w-4" />
             </Button>
           </div>
           <div className="relative z-10 grid gap-4 md:grid-cols-2">
@@ -870,7 +870,7 @@ function PricingPathSection() {
   );
 }
 
-function FinalCta() {
+function FinalCta({ isFull }: { isFull: boolean }) {
   return (
     <section className="pb-section">
       <div className="pb-container">
@@ -882,7 +882,7 @@ function FinalCta() {
             <p className="pb-copy mx-auto mt-4 max-w-2xl text-base sm:text-lg">Give customers a clear path, give your team a clean packet, and stop turning every quote into a photo scavenger hunt.</p>
             <div className="mt-6 flex flex-col justify-center gap-2.5 sm:flex-row sm:gap-3">
               <Button size="xl" variant="pb-primary" onClick={() => document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" })}>
-                {BETA_IS_FULL ? "Join the waitlist" : "Apply now"} <ArrowRight className="ml-1 h-4 w-4" />
+                {isFull ? "Join the waitlist" : "Apply now"} <ArrowRight className="ml-1 h-4 w-4" />
               </Button>
               <Button asChild size="xl" variant="pb-secondary">
                 <NavLink to="/pricing">See plans</NavLink>
