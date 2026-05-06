@@ -1,58 +1,48 @@
 
-# BetaList Landing Page Overhaul
+## Overview
 
-## What changes
+Enhance `InteractiveHeroBriefAssembly` to tell a more complete product story across three phases: link sent, guided capture with a retake, and completed brief.
 
-### 1. Hero visual — "messy photos → clean brief" illustration
-Add a custom inline SVG/CSS illustration directly in the hero section showing the core transformation:
-- Left side: tilted, overlapping photo thumbnails with issue chips ("Blurry", "Too dark", "Wrong angle") — representing the chaos
-- Arrow/transition indicator
-- Right side: a clean brief card with organized photo grid, green check status chips ("Verified"), and structured layout
+## Changes (all in `src/components/marketing/InteractiveHeroBriefAssembly.tsx`)
 
-This is a pure CSS/React component (no external images needed), using the existing `--pb-*` design tokens. It sits between the subheadline and the CTAs, making the product mechanism instantly visible above the fold.
+### 1. Business phone: "Link sent" confirmation state
 
-### 2. Form moved immediately after hero
-Move the beta application form from deep in the page to directly below the hero section. BetaList favors front-and-center signup. The form stays short: work email, business name, website, business type, use case, and monthly request estimate. The form panel gets a slightly more prominent treatment.
+Before any photos are captured (`captured.size === 0`), the business phone (dark variant) shows a "link sent" confirmation instead of the empty dashboard grid. Content:
 
-### 3. Updated section order
-```text
-1. Hero (headline + visual + CTAs)
-2. Beta application form (immediately visible on scroll)
-3. Product workflow ("One link → guided photos → AI checks → clean brief")
-4. "Built for moments when photos decide the next step" — use cases expanded
-5. Old way vs PhotoBrief
-6. Founding Partner Beta offer (updated to 60-90 days, added "early access to future tools")
-7. Trust notes (updated: secure upload links, business-owned requests, no spammy customer experience, privacy)
-8. Final CTA
-```
+- Checkmark icon with "Request sent" heading
+- Recipient line: "Garage cleanout quote"
+- "Sent via SMS" with a timestamp ("Just now")
+- Status pill: "Waiting for customer"
+- Subtle animated pulse dot to indicate live waiting
 
-### 4. Use cases expanded
-Add two more use cases beyond the current four:
-- Returns/warranty documentation
-- Review/documentation workflows
+Once the customer captures their first photo, transition to the existing real-time dashboard view.
 
-Update the section header to: "Built for moments when photos decide the next step."
+### 2. Customer phone: blurry photo + retake flow
 
-### 5. Trust notes updated
-Replace current trust cards with BetaList-appropriate messaging:
-- "Secure, expiring upload links" — customers never see your dashboard
-- "Business-owned requests" — you control every brief and its data
-- "No spammy customer experience" — clean mobile capture, no app install, no account required
-- "Your data stays yours" — photos and briefs are never shared or used for training
+Pick one photo (e.g. index 1, "Main pile") to simulate a failed AI check on first capture:
 
-### 6. Partner benefits updated
-- Change "90 days" to "60–90 days free access"
-- Add "Early access to future tools"
-- Keep: concierge setup, feedback sessions, 50% off first year, founding partner recognition
+- Add a `retaken` state set alongside `captured`
+- On first tap of that photo's "Capture" button, show the image with a CSS blur filter and an amber overlay with the message: "This looks blurry — retake for a clearer shot"
+- Show a "Retake photo" button instead of "Next shot"
+- On retake tap, clear the blur, mark as retaken, show the normal green checkmark
+- Other photos work as before (single tap to capture, then next)
 
-### 7. Route alias
-Add `/founding-partner-beta` as an additional route pointing to the same BetaListPage component. The page reads `?ref=` from the URL and includes it in the analytics source tag so BetaList referral traffic is trackable.
+The business phone mirrors this: when the blurry photo lands, it shows an amber "Blurry" flag; after retake it flips to green "OK".
 
-### Files changed
+### 3. Business phone: completed brief state
 
-| File | Change |
-|------|--------|
-| `src/pages/BetaList.tsx` | Full rewrite: hero visual component, form moved up, sections reordered, copy updates, ref tracking |
-| `src/App.tsx` | Add `/founding-partner-beta` route alias pointing to BetaListPage |
+When all 4 photos are captured (and the blurry one retaken), the business phone transitions from the live grid to a polished "Brief complete" view:
 
-No new dependencies. No database changes. No edge function changes. The existing `waitlist-submit` edge function handles submissions as-is.
+- Green checkmark header: "Brief ready for review"
+- 2x2 thumbnail grid with all photos showing green verified badges
+- Summary card: "Garage cleanout — all shots verified. Ground-level access. Ready to quote."
+- A "Quote now" styled button (non-functional, decorative)
+
+This replaces the current behavior where the dashboard just shows the grid with status labels.
+
+### Technical notes
+
+- All state is local React state; no new API calls or data changes
+- The blurry effect uses Tailwind's `blur-sm` class on the image
+- Transitions between states use the existing `transition-all duration-500` pattern
+- No changes to any other files
