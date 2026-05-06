@@ -6,6 +6,6 @@ import { Navigate, useParams } from "react-router-dom";
  */
 export default function BetaInvitePage() {
   const { token } = useParams();
-  if (!token) return <Navigate to="/betalist" replace />;
+  if (!token) return <Navigate to="/founding-partner-beta" replace />;
   return <Navigate to={`/signup?invite=${encodeURIComponent(token)}`} replace />;
 }
