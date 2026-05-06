@@ -6,8 +6,9 @@
 // (the DB stores this in vault and forwards it via pg_net).
 //
 // Supported events:
-//   - user_signup        { user_id }
-//   - submission_received { submission_id }
+//   - user_signup                { user_id }
+//   - submission_received         { submission_id }
+//   - founding_partner_accepted   { workspace_id }
 
 import { createClient } from 'npm:@supabase/supabase-js@2'
 
