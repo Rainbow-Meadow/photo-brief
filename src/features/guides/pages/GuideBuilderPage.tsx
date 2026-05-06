@@ -214,6 +214,22 @@ export default function GuideBuilderPage() {
           onChange={(questions) => setState({ ...state, questions })}
         />
       </section>
+
+      {/* Sticky mobile save bar */}
+      <div className="fixed inset-x-0 bottom-16 z-30 border-t bg-background/90 p-3 backdrop-blur-xl sm:hidden">
+        <Button
+          className="h-12 w-full gap-1.5 rounded-2xl text-base"
+          disabled={save.isPending || !canSave}
+          onClick={() => save.mutate()}
+        >
+          {save.isPending ? (
+            <CheckCircle2 className="h-4 w-4 animate-pulse" />
+          ) : (
+            <Save className="h-4 w-4" />
+          )}
+          {save.isPending ? "Saving…" : "Save template"}
+        </Button>
+      </div>
     </div>
   );
 }
