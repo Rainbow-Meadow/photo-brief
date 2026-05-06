@@ -61,8 +61,8 @@ import {
 import { useBetaSeats } from "@/hooks/useBetaSeats";
 import wideGarage from "@/assets/junk-removal/wide-garage.jpg";
 import pileCloseup from "@/assets/junk-removal/pile-closeup.jpg";
-import appliances from "@/assets/junk-removal/appliances.jpg";
-import drivewayAccess from "@/assets/junk-removal/driveway-access.jpg";
+import appliances from "@/assets/junk-removal/appliances.webp";
+import drivewayAccess from "@/assets/junk-removal/driveway-access.webp";
 
 /* ── JSON-LD ───────────────────────────────────────────────── */
 

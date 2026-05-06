@@ -20,25 +20,34 @@ interface BrandMarkProps {
 }
 
 const ALT = "PhotoBrief.ai";
-const MARK_SRC = "/brand/mark-color.png";
+const MARK_SRC = "/brand/mark-color.webp";
+const MARK_FALLBACK = "/brand/mark-color.png";
 const WORDMARK = "PhotoBrief.ai";
 const WORDMARK_GRADIENT =
   "var(--pb-wordmark-gradient, linear-gradient(135deg, #f6f0ff 0%, #e7d4ff 24%, #c99aff 52%, #9f73ff 78%, #7f55ff 100%))";
 
 function MarkImage({ size, withGlow, eager }: { size: number; withGlow: boolean; eager?: boolean }) {
+  const imgClass = cn(
+    "block select-none object-contain shrink-0",
+    withGlow && "drop-shadow-[0_8px_28px_hsl(var(--primary)/0.45)]",
+  );
+  const imgStyle = { height: size, width: size } satisfies CSSProperties;
+
   return (
-    <img
-      src={MARK_SRC}
-      alt=""
-      aria-hidden="true"
-      className={cn(
-        "block select-none object-contain shrink-0",
-        withGlow && "drop-shadow-[0_8px_28px_hsl(var(--primary)/0.45)]",
-      )}
-      style={{ height: size, width: size } satisfies CSSProperties}
-      loading={eager ? "eager" : "lazy"}
-      decoding="async"
-    />
+    <picture>
+      <source srcSet={MARK_SRC} type="image/webp" />
+      <img
+        src={MARK_FALLBACK}
+        alt=""
+        aria-hidden="true"
+        className={imgClass}
+        style={imgStyle}
+        loading={eager ? "eager" : "lazy"}
+        decoding="async"
+        width={size}
+        height={size}
+      />
+    </picture>
   );
 }
 
