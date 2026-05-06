@@ -82,6 +82,55 @@ export const PARTNER_EXPECTATIONS = [
   "Report confusing moments or missing workflow needs",
 ] as const;
 
+// ── Detailed expectations (for the full breakdown section) ───────────
+
+export interface DetailedExpectation {
+  title: string;
+  description: string;
+}
+
+export const DETAILED_EXPECTATIONS: DetailedExpectation[] = [
+  {
+    title: "Use PhotoBrief on real jobs",
+    description:
+      "Send photo requests to actual customers on real projects — not test data. That's where the real friction shows up.",
+  },
+  {
+    title: "Send at least 5 requests in the first two weeks",
+    description:
+      "We need enough usage to know whether the workflow holds up. Five requests gives us a meaningful signal.",
+  },
+  {
+    title: "Respond to check-ins",
+    description:
+      "We'll reach out at two weeks and periodically after. A one-line reply is fine — we just need to know what's working and what isn't.",
+  },
+  {
+    title: "Report bugs and friction",
+    description:
+      "If something breaks, feels wrong, or slows you down — tell us. That's the most valuable input you can give.",
+  },
+  {
+    title: "Consent to anonymized usage data",
+    description:
+      "We use aggregate, anonymized data to make product decisions. Your business details stay private.",
+  },
+  {
+    title: "Optional: testimonial or case study",
+    description:
+      "If you're willing, a short quote or case study helps us at launch — and earns you a higher reward tier.",
+  },
+];
+
+// ── What drives reward placement ─────────────────────────────────────
+
+export const REWARD_CRITERIA = [
+  "Depth and quality of feedback responses",
+  "Consistency of engagement over the 60-day period",
+  "Actionability of bug reports and workflow suggestions",
+  "Willingness to participate in check-ins and case studies",
+] as const;
+
 // ── Confirmation / thank-you copy ────────────────────────────────────
 
 export const CONFIRMATION_SUMMARY = `${BETA_DURATION_DAYS} days free · concierge setup · priority support · direct roadmap input · early access to future tools · up to 75% off post-launch`;
