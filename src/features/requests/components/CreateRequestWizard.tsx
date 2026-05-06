@@ -86,7 +86,7 @@ export function CreateRequestWizard({
   const goNext = () => setStep((s) => Math.min(s + 1, TOTAL_STEPS - 1));
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-background">
+    <div className="flex min-h-[100svh] flex-col bg-background">
       {/* Top bar: back + progress + close */}
       <div className="flex items-center gap-3 px-4 pt-safe pb-2">
         <Button
