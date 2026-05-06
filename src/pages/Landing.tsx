@@ -410,7 +410,7 @@ export default function LandingPage() {
                   )}
                 </FreeProEligibilityModal>
                 <Button size="lg" variant="pb-primary" className="mt-4" onClick={() => { trackEvent("free_pro_cta_clicked", { location: "spotlight" }); document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" }); }}>
-                  Apply now — limited to {BETA_TOTAL_PARTNERS} spots <ArrowRight className="ml-1 h-4 w-4" />
+                  {BETA_IS_FULL ? "Join the waitlist" : `Apply now — ${BETA_TOTAL_PARTNERS} seats, reviewed for fit`} <ArrowRight className="ml-1 h-4 w-4" />
                 </Button>
               </div>
             </div>
