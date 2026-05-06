@@ -250,7 +250,7 @@ export default function BetaListPage() {
                 {[
                   "We review your application within a few business days.",
                   "If it's a fit, we send a personal invite with your login link.",
-                  "We set up your first templates together in a concierge call.",
+                  "We set up your first templates together via chat or email.",
                   "You start sending guided PhotoBrief links to real customers.",
                 ].map((text, i) => (
                   <li key={i} className="flex gap-3">
@@ -562,7 +562,7 @@ export default function BetaListPage() {
             <span className="pb-eyebrow"><Users className="h-3.5 w-3.5" /> What we expect</span>
             <h2 className="pb-section-title mt-4 text-white">What it means to be a founding beta partner.</h2>
             <p className="pb-copy mt-4 text-base sm:text-lg">
-              We're accepting {BETA_TOTAL_PARTNERS} businesses over {BETA_DURATION_DAYS} days. In exchange for free access and significant post-launch rewards, we ask for real usage and honest feedback.
+              We're accepting {BETA_TOTAL_PARTNERS} businesses. The {BETA_DURATION_DAYS}-day beta clock starts two weeks after the final seat is filled, giving every partner time for concierge setup. In exchange for free access and significant post-launch rewards, we ask for real usage and honest feedback.
             </p>
           </div>
 

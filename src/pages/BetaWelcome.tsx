@@ -53,7 +53,7 @@ const benefits = PARTNER_BENEFITS.map((text, i) => {
 const timelineSteps = [
   { icon: Send, title: "You fill out this page", body: "Tell us about your business and what you need — takes about 3 minutes." },
   { icon: Settings, title: "We configure your account", body: "Your workspace, brand settings, and first templates are set up by our team." },
-  { icon: Calendar, title: "Concierge walkthrough call", body: "A short call to walk through everything and answer questions." },
+  { icon: Calendar, title: "Concierge setup via chat or email", body: "We walk through everything async — chat, email, or in-app — on your schedule." },
   { icon: Rocket, title: "Send your first PhotoBrief", body: "You're live — send a real guided photo request to a customer." },
 ];
 
@@ -161,7 +161,7 @@ export default function BetaWelcomePage() {
             </div>
             <h1 className="pb-section-title mt-6 text-white">We've got everything we need</h1>
             <p className="pb-copy mt-4">
-              Your concierge setup is in the queue. We'll configure your account and reach out to schedule your walkthrough call — usually within 48 hours.
+              Your concierge setup is in the queue. We'll configure your account and reach out via email or chat to walk you through everything — usually within 48 hours.
             </p>
 
             <div className="pb-card mt-8 p-5 text-left sm:p-6">
@@ -170,7 +170,7 @@ export default function BetaWelcomePage() {
                 {[
                   "We set up your workspace, brand, and first templates.",
                   "You'll receive an email when your account is ready.",
-                  "We'll schedule a short concierge call to walk you through everything.",
+                  "We'll walk you through everything via chat or email — no call needed.",
                   "You send your first guided PhotoBrief to a real customer.",
                 ].map((text, i) => (
                   <li key={i} className="flex gap-3">
@@ -298,7 +298,7 @@ export default function BetaWelcomePage() {
                 Tell us about your business
               </h2>
               <p className="pb-copy mt-1.5 text-sm">
-                We'll use this to configure your account, brand settings, and first templates before your walkthrough call.
+                We'll use this to configure your account, brand settings, and first templates before your concierge walkthrough.
               </p>
 
               <form onSubmit={onSubmit} className="mt-5 space-y-6 sm:mt-6">
@@ -386,13 +386,13 @@ export default function BetaWelcomePage() {
                 {/* ── Section 4: First templates ── */}
                 <div>
                   <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[hsl(var(--pb-lavender))]">First template ideas</p>
-                  <p className="pb-copy mt-1 text-xs">We'll build your first templates based on this. Don't overthink it — we'll refine together on the call.</p>
+                  <p className="pb-copy mt-1 text-xs">We'll build your first templates based on this. Don't overthink it — we'll refine together over chat or email.</p>
                   <div className="mt-3 grid gap-3.5 sm:gap-4">
                     <Field id="bw-templates" label="What should your first 1–2 templates cover?">
                       <Textarea id="bw-templates" value={form.template_ideas} onChange={update("template_ideas")} rows={3} placeholder="e.g. Roof damage assessment — need overall roof shot, close-up of damage area, photos of gutters and flashing, and any interior water stains." className={textareaClass} />
                     </Field>
                     <Field id="bw-notes" label="Anything else we should know?">
-                      <Textarea id="bw-notes" value={form.notes} onChange={update("notes")} rows={2} placeholder="Special requirements, team size, preferred call times, etc." className={textareaClass} />
+                      <Textarea id="bw-notes" value={form.notes} onChange={update("notes")} rows={2} placeholder="Special requirements, team size, preferred communication channel, etc." className={textareaClass} />
                     </Field>
                   </div>
                 </div>
