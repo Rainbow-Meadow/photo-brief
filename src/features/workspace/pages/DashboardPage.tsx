@@ -154,7 +154,7 @@ export default function DashboardPage() {
           value: "0",
           copy: "items need your attention right now.",
           href: "/requests/new",
-          cta: "Send a request",
+          cta: "Send a PhotoBrief",
         };
 
   return (
