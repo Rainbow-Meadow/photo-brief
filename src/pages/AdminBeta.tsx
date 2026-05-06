@@ -113,6 +113,60 @@ function fmtDate(d: string | null | undefined) {
 }
 
 // ---------------------------------------------------------------------------
+// Beta health score
+// ---------------------------------------------------------------------------
+
+type HealthLevel = "Not started" | "Getting started" | "Active" | "Strong signal" | "Stalled";
+
+function computeHealthScore(ws: BetaWorkspaceRow): { level: HealthLevel; score: number; checks: { label: string; passed: boolean }[] } {
+  const fourteenDaysAgo = Date.now() - 14 * 24 * 60 * 60 * 1000;
+  const recentActivity = ws.last_activity_at ? new Date(ws.last_activity_at).getTime() > fourteenDaysAgo : false;
+
+  const checks = [
+    { label: "Created first request", passed: (ws.requests_created ?? 0) >= 1 },
+    { label: "Sent/copied first request", passed: (ws.requests_sent ?? 0) >= 1 },
+    { label: "Received first submission", passed: (ws.submissions_completed ?? 0) >= 1 },
+    { label: "Created >1 request", passed: (ws.requests_created ?? 0) > 1 },
+    { label: "Created a template", passed: (ws.templates_created ?? 0) >= 1 },
+    { label: "Submitted feedback", passed: (ws.feedback_count ?? 0) >= 1 },
+    { label: "Active in last 14 days", passed: recentActivity },
+  ];
+
+  const score = checks.filter((c) => c.passed).length;
+
+  let level: HealthLevel;
+  if (score === 0) level = "Not started";
+  else if (score <= 2) level = "Getting started";
+  else if (score <= 4) level = "Active";
+  else level = "Strong signal";
+
+  // Override to Stalled if no recent activity and they had some prior engagement
+  if (score >= 1 && !recentActivity) level = "Stalled";
+
+  return { level, score, checks };
+}
+
+function healthColor(level: HealthLevel): string {
+  switch (level) {
+    case "Not started": return "text-muted-foreground";
+    case "Getting started": return "text-blue-400";
+    case "Active": return "text-emerald-400";
+    case "Strong signal": return "text-green-400";
+    case "Stalled": return "text-orange-400";
+  }
+}
+
+function healthBg(level: HealthLevel): string {
+  switch (level) {
+    case "Not started": return "bg-muted text-muted-foreground";
+    case "Getting started": return "bg-blue-500/15 text-blue-400 border border-blue-500/20";
+    case "Active": return "bg-emerald-500/15 text-emerald-400 border border-emerald-500/20";
+    case "Strong signal": return "bg-green-500/15 text-green-400 border border-green-500/20";
+    case "Stalled": return "bg-orange-500/15 text-orange-400 border border-orange-500/20";
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
 
@@ -473,7 +527,8 @@ export default function AdminBetaPage() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Workspace</TableHead>
+                     <TableHead>Workspace</TableHead>
+                      <TableHead>Health</TableHead>
                       <TableHead>Segment</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead className="text-right">Requests</TableHead>
@@ -493,6 +548,13 @@ export default function AdminBetaPage() {
                         onClick={() => { setSelectedWs(ws); setSelected(null); }}
                       >
                         <TableCell className="font-medium text-sm">{ws.workspace_name}</TableCell>
+                        <TableCell>
+                          {(() => { const h = computeHealthScore(ws); return (
+                            <span className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[10px] font-medium ${healthBg(h.level)}`}>
+                              <span className="tabular-nums">{h.score}/7</span> {h.level}
+                            </span>
+                          ); })()}
+                        </TableCell>
                         <TableCell className="text-xs">{ws.beta_segment ?? "—"}</TableCell>
                         <TableCell>
                           <Badge variant={statusVariant(ws.beta_status)} className="text-[10px]">
@@ -625,6 +687,32 @@ export default function AdminBetaPage() {
               </SheetHeader>
 
               <div className="mt-6 space-y-6">
+                {/* Health score */}
+                {(() => {
+                  const h = computeHealthScore(selectedWs);
+                  return (
+                    <div>
+                      <Label className="text-xs text-muted-foreground mb-2 block">Health score</Label>
+                      <div className="flex items-center gap-3 mb-2">
+                        <span className={`text-lg font-bold tabular-nums ${healthColor(h.level)}`}>{h.score}/7</span>
+                        <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${healthBg(h.level)}`}>{h.level}</span>
+                      </div>
+                      <div className="grid grid-cols-1 gap-1">
+                        {h.checks.map((c) => (
+                          <div key={c.label} className="flex items-center gap-2 text-xs">
+                            {c.passed ? (
+                              <CheckCircle2 className="h-3.5 w-3.5 text-green-400 shrink-0" />
+                            ) : (
+                              <XCircle className="h-3.5 w-3.5 text-muted-foreground/40 shrink-0" />
+                            )}
+                            <span className={c.passed ? "text-foreground" : "text-muted-foreground"}>{c.label}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })()}
+
                 {/* Status badge */}
                 <div className="flex items-center gap-3">
                   <Badge variant={statusVariant(selectedWs.beta_status)} className="text-xs">
