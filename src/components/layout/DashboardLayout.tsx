@@ -1,5 +1,6 @@
 import { Outlet, NavLink } from "react-router-dom";
 import { Plus, LifeBuoy, KeyRound, LogOut, Globe2 } from "lucide-react";
+import { FeedbackWidget } from "@/features/support/components/FeedbackWidget";
 
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/layout/AppSidebar";
