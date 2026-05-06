@@ -30,7 +30,7 @@ import SignupPage from "@/pages/Signup";
 import BetaInvitePage from "@/pages/BetaInvite";
 
 import IntakeBadgePage from "@/pages/IntakeBadge";
-import BetaListPage from "@/pages/BetaList";
+
 import BetaWelcomePage from "@/pages/BetaWelcome";
 import PrivacyPage from "@/pages/Privacy";
 import TermsPage from "@/pages/Terms";
@@ -102,7 +102,7 @@ const App = () => (
             <Route path="/waitlist" element={<WaitlistPage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/beta-invite/:token" element={<BetaInvitePage />} />
-            <Route path="/betalist" element={<BetaListPage />} />
+            
             <Route path="/welcome" element={<BetaWelcomePage />} />
           </Route>
 
