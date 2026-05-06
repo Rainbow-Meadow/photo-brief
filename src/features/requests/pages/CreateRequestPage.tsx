@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import {
@@ -270,27 +270,37 @@ export default function CreateRequestPage() {
     }
   };
 
+  const draftPreviewRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll to draft preview on mobile when draft is generated
+  useEffect(() => {
+    if (draft && draftPreviewRef.current && window.innerWidth < 1024) {
+      setTimeout(() => {
+        draftPreviewRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 200);
+    }
+  }, [draft]);
+
   return (
-    <div className="mx-auto max-w-6xl space-y-6 pb-8">
+    <div className="mx-auto max-w-6xl space-y-5 pb-8 sm:space-y-6">
       <div id="draft-preview-top" />
       <section className="relative isolate overflow-hidden rounded-[2rem] border border-border/70 bg-card/85 p-5 shadow-[0_30px_90px_-55px_hsl(222_47%_11%/0.55)] backdrop-blur sm:p-7">
         <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-44 bg-ambient-sky opacity-70" />
         <span className="inline-flex items-center gap-1.5 rounded-full border bg-background/70 px-3 py-1 text-xs font-medium text-muted-foreground shadow-sm">
           <Sparkles className="h-3.5 w-3.5 text-primary" /> Simple request builder
         </span>
-        <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">Create a photo request</h1>
-            <p className="mt-2 max-w-2xl text-base leading-7 text-muted-foreground">
-              Start with what the customer needs to capture. Keep it short, useful, and easy to finish in a few minutes.
-            </p>
-          </div>
-          <Button variant="outline" className="h-11 rounded-2xl bg-background/70" onClick={handleBlankDraft}>
-            <Plus className="mr-2 h-4 w-4" /> Start blank
-          </Button>
+        <div className="mt-4">
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl lg:text-4xl">Create a photo request</h1>
+          <p className="mt-2 max-w-2xl text-[15px] leading-7 text-muted-foreground">
+            Start with what the customer needs to capture.
+          </p>
         </div>
+        <Button variant="outline" className="mt-4 h-12 w-full rounded-2xl bg-background/70 text-base sm:w-auto sm:h-11 sm:text-sm" onClick={handleBlankDraft}>
+          <Plus className="mr-2 h-4 w-4" /> Start blank
+        </Button>
       </section>
 
+      {/* On mobile: sequential flow. On desktop: side-by-side grid. */}
       <div className="grid gap-5 lg:grid-cols-[minmax(300px,0.9fr)_minmax(0,1.25fr)]">
         <div className="space-y-4">
           <RequestBuilderModeTabs mode={mode} onChange={setMode} />
@@ -311,7 +321,7 @@ export default function CreateRequestPage() {
           )}
         </div>
 
-        <div className="space-y-3">
+        <div ref={draftPreviewRef} className="space-y-3">
           {draft ? (
             <RequestDraftPreview
               draft={draft}
@@ -321,13 +331,13 @@ export default function CreateRequestPage() {
               isSaving={isCreating}
             />
           ) : (
-            <section className="flex min-h-[420px] flex-col items-center justify-center rounded-[2rem] border border-dashed bg-card/60 p-8 text-center shadow-sm backdrop-blur">
+            <section className="flex min-h-[320px] flex-col items-center justify-center rounded-[2rem] border border-dashed bg-card/60 p-6 text-center shadow-sm backdrop-blur lg:min-h-[420px] lg:p-8">
               <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                 <ArrowRight className="h-6 w-6" />
               </span>
-              <h2 className="mt-5 text-xl font-semibold tracking-tight text-foreground">Your request will appear here</h2>
+              <h2 className="mt-5 text-lg font-semibold tracking-tight text-foreground sm:text-xl">Your request will appear here</h2>
               <p className="mt-2 max-w-sm text-sm leading-6 text-muted-foreground">
-                Build with AI, use a saved template, or start blank. You can edit every photo and question before sending.
+                Build with AI, use a saved template, or start blank.
               </p>
             </section>
           )}

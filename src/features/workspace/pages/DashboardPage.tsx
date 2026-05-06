@@ -56,8 +56,6 @@ export default function DashboardPage() {
   const { workspace } = useCurrentWorkspace();
   const canRemind = can("reminders");
 
-  // Count refunds (request_credit usage events) granted this billing
-  // period — the visible payoff of the First-pass guarantee.
   const [refundedThisPeriod, setRefundedThisPeriod] = useState<number | null>(null);
   useEffect(() => {
     let cancelled = false;
@@ -160,7 +158,7 @@ export default function DashboardPage() {
         };
 
   return (
-    <div className="space-y-7">
+    <div className="space-y-5 sm:space-y-7">
       <PageHeader
         title={isEmpty ? "Welcome to PhotoBrief" : "Today"}
         description={isEmpty ? "Let's send your first request." : "A quiet overview of what needs attention."}
@@ -176,37 +174,33 @@ export default function DashboardPage() {
               <Sparkles className="h-4 w-4" />
               <span className="hidden sm:inline">Assistant</span>
             </Button>
-            <Button asChild size="sm" className="hidden gap-1.5 rounded-full sm:inline-flex">
-              <NavLink to="/requests/new">
-                <Plus className="h-4 w-4" /> New request
-              </NavLink>
-            </Button>
           </div>
         }
       />
 
       {isEmpty ? <StarterRequestCard industry={workspace?.industry} /> : null}
       {!isEmpty ? (
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className={cn("space-y-6", assistantOpen ? "lg:col-span-2" : "lg:col-span-3")}>
+        <div className="grid gap-5 sm:gap-6 lg:grid-cols-3">
+          <div className={cn("space-y-5 sm:space-y-6", assistantOpen ? "lg:col-span-2" : "lg:col-span-3")}>
+            {/* Primary focus card */}
             <section className="surface-card-elevated relative isolate overflow-hidden p-5 sm:p-7">
               <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-56 bg-ambient-sky opacity-75" />
               <div aria-hidden className="pointer-events-none absolute -right-20 -top-28 -z-10 h-72 w-72 rounded-full bg-primary/10 blur-3xl" />
-              <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+              <div className="flex flex-col gap-4">
                 <div>
                   <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-muted-foreground">
                     {primaryFocus.label}
                   </p>
                   <div className="mt-3 flex items-baseline gap-3">
-                    <span className="text-5xl font-semibold tracking-tight text-foreground tabular-nums sm:text-6xl">
+                    <span className="text-5xl font-semibold tracking-tight text-foreground tabular-nums">
                       {primaryFocus.value}
                     </span>
-                    <span className="max-w-xs text-sm text-muted-foreground sm:text-base">
+                    <span className="max-w-xs text-sm text-muted-foreground">
                       {primaryFocus.copy}
                     </span>
                   </div>
                 </div>
-                <Button asChild size="lg" className="w-full gap-1.5 rounded-full px-6 sm:w-auto">
+                <Button asChild size="lg" className="h-12 w-full gap-1.5 rounded-full px-6 sm:w-auto">
                   <NavLink to={primaryFocus.href}>
                     {primaryFocus.cta} <ArrowRight className="h-4 w-4" />
                   </NavLink>
@@ -214,35 +208,20 @@ export default function DashboardPage() {
               </div>
             </section>
 
-            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-              <MetricCard
-                variant="quiet"
-                label="Ready"
-                value={metrics.readyToReview}
-                icon={CheckCircle2}
-                hint="Submitted, awaiting review"
-              />
-              <MetricCard
-                variant="quiet"
-                label="Waiting"
-                value={metrics.needsCustomer}
-                icon={AlertCircle}
-                hint="Needs customer action"
-              />
-              <MetricCard
-                variant="quiet"
-                label="In progress"
-                value={metrics.inProgress}
-                icon={Clock}
-                hint="Recipient capturing now"
-              />
-              <MetricCard
-                variant="quiet"
-                label="This month"
-                value={metrics.requestsThisMonth}
-                icon={Inbox}
-                hint="Requests sent since the 1st"
-              />
+            {/* Metric cards – horizontal scroll on mobile, grid on desktop */}
+            <div className="-mx-3 flex gap-3 overflow-x-auto px-3 pb-1 snap-x snap-mandatory sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-3 sm:overflow-visible sm:px-0 sm:pb-0 xl:grid-cols-4">
+              <div className="min-w-[140px] snap-start sm:min-w-0">
+                <MetricCard variant="quiet" label="Ready" value={metrics.readyToReview} icon={CheckCircle2} hint="Submitted, awaiting review" />
+              </div>
+              <div className="min-w-[140px] snap-start sm:min-w-0">
+                <MetricCard variant="quiet" label="Waiting" value={metrics.needsCustomer} icon={AlertCircle} hint="Needs customer action" />
+              </div>
+              <div className="min-w-[140px] snap-start sm:min-w-0">
+                <MetricCard variant="quiet" label="In progress" value={metrics.inProgress} icon={Clock} hint="Recipient capturing now" />
+              </div>
+              <div className="min-w-[140px] snap-start sm:min-w-0">
+                <MetricCard variant="quiet" label="This month" value={metrics.requestsThisMonth} icon={Inbox} hint="Requests sent since the 1st" />
+              </div>
             </div>
 
             <MetricCard
@@ -322,6 +301,8 @@ export default function DashboardPage() {
   );
 }
 
+/* ─── Dashboard list ─── */
+
 interface DashboardListProps {
   title: string;
   emptyLabel: string;
@@ -334,7 +315,7 @@ interface DashboardListProps {
 function DashboardList({ title, emptyLabel, items, ctaLabel, ctaHref, showReminder }: DashboardListProps) {
   return (
     <section className="surface-card overflow-hidden">
-      <header className="flex items-center justify-between surface-divider px-5 py-4">
+      <header className="flex items-center justify-between surface-divider px-4 py-3 sm:px-5 sm:py-4">
         <div>
           <h2 className="text-sm font-semibold text-foreground">{title}</h2>
           <p className="text-xs text-muted-foreground">{items.length} visible</p>
@@ -361,7 +342,7 @@ function DashboardList({ title, emptyLabel, items, ctaLabel, ctaHref, showRemind
               <li key={r.id}>
                 <NavLink
                   to={`/requests/${r.id}`}
-                  className="group flex items-center justify-between gap-3 px-5 py-4 transition hover:bg-muted/45"
+                  className="group flex min-h-[52px] items-center justify-between gap-3 px-4 py-3 transition active:bg-muted/40 hover:bg-muted/45 sm:px-5 sm:py-4"
                 >
                   <div className="min-w-0">
                     <p className="truncate text-sm font-medium text-foreground group-hover:text-primary">
@@ -378,7 +359,7 @@ function DashboardList({ title, emptyLabel, items, ctaLabel, ctaHref, showRemind
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="rounded-full"
+                        className="h-11 w-11 rounded-full"
                         onClick={(e) => {
                           e.preventDefault();
                           sendReminder(r.id, r.recipientName);
@@ -392,7 +373,7 @@ function DashboardList({ title, emptyLabel, items, ctaLabel, ctaHref, showRemind
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="rounded-full"
+                        className="h-11 w-11 rounded-full"
                         onClick={(e) => {
                           e.preventDefault();
                           const plan = minPlanFor("reminders");

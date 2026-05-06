@@ -104,7 +104,7 @@ export function DashboardLayout() {
               </div>
             </header>
 
-            <main className="relative flex-1 px-4 py-6 pb-24 sm:px-6 sm:py-8 lg:px-10 lg:pb-10">
+            <main className="relative flex-1 px-3 py-5 pb-24 sm:px-6 sm:py-8 lg:px-10 lg:pb-10">
               <div className="mx-auto w-full max-w-7xl animate-lift-in">
                 <Outlet />
               </div>

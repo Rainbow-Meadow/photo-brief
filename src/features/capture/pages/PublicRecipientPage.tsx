@@ -11,7 +11,6 @@ import { RetakeDecisionCard } from "@/features/capture/components/RetakeDecision
 import { QuestionCard } from "@/features/capture/components/QuestionCard";
 import { ReviewSummaryCard } from "@/features/capture/components/ReviewSummaryCard";
 import { SubmitConfirmationCard } from "@/features/capture/components/SubmitConfirmationCard";
-import { ReadinessProgress } from "@/components/shared/ReadinessProgress";
 import { RecipientBrandingProvider } from "@/features/capture/RecipientBrandingContext";
 import { loadRecipientContext, type RecipientContext } from "@/features/capture/recipientContext";
 import { useChatFlow } from "@/hooks/useChatFlow";
@@ -43,26 +42,32 @@ export default function PublicRecipientPage() {
 
   if (error) {
     return (
-      <div className="rounded-[2rem] border bg-card/80 p-6 text-center shadow-elev-sm backdrop-blur">
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10 text-destructive">
-          <LockKeyhole className="h-5 w-5" />
+      <div className="flex min-h-[60svh] items-center justify-center">
+        <div className="rounded-[2rem] border bg-card/80 p-6 text-center shadow-elev-sm backdrop-blur">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10 text-destructive">
+            <LockKeyhole className="h-5 w-5" />
+          </div>
+          <h1 className="mt-4 text-lg font-semibold text-foreground">This link is not available</h1>
+          <p className="mt-2 text-sm text-muted-foreground">{error}</p>
         </div>
-        <h1 className="mt-4 text-lg font-semibold text-foreground">This link is not available</h1>
-        <p className="mt-2 text-sm text-muted-foreground">{error}</p>
       </div>
     );
   }
   if (!ctx) {
     return (
-      <div className="rounded-[2rem] border bg-card/80 p-6 text-center shadow-elev-sm backdrop-blur">
-        <div className="mx-auto h-10 w-10 animate-pulse rounded-full bg-muted" />
-        <p className="mt-4 text-sm text-muted-foreground">Opening your photo request…</p>
+      <div className="flex min-h-[60svh] items-center justify-center">
+        <div className="rounded-[2rem] border bg-card/80 p-6 text-center shadow-elev-sm backdrop-blur">
+          <div className="mx-auto h-10 w-10 animate-pulse rounded-full bg-muted" />
+          <p className="mt-4 text-sm text-muted-foreground">Opening your photo request…</p>
+        </div>
       </div>
     );
   }
 
   return <RecipientWorkflow ctx={ctx} token={token} navigate={navigate} />;
 }
+
+/* ─── Main workflow ─── */
 
 function RecipientWorkflow({ ctx, token, navigate }: { ctx: RecipientContext; token: string | undefined; navigate: (to: string) => void }) {
   const submissionIdRef = useRef<string | null>(ctx.resubmit?.submissionId ?? null);
@@ -132,6 +137,7 @@ function RecipientWorkflow({ ctx, token, navigate }: { ctx: RecipientContext; to
   const currentPhotoIndex = currentPhotoStep ? ctx.guide.steps.findIndex((s) => s.id === currentPhotoStep.id) + 1 : 0;
   const estimatedMinutes = Math.max(2, Math.min(5, ctx.guide.steps.length + Math.ceil(ctx.guide.questions.length / 2)));
 
+  // Analytics
   const lastDoneRef = useRef(0);
   useEffect(() => {
     if (flow.progress.done > lastDoneRef.current) {
@@ -144,6 +150,7 @@ function RecipientWorkflow({ ctx, token, navigate }: { ctx: RecipientContext; to
     }
   }, [flow.progress.done, flow.progress.total, ctx.guide.id]);
 
+  // Session persistence
   useEffect(() => {
     if (!token) return;
     const key = `pb:recipient:${token}`;
@@ -211,6 +218,9 @@ function RecipientWorkflow({ ctx, token, navigate }: { ctx: RecipientContext; to
     }
   };
 
+  // Derive a unique key for transitions
+  const stepKey = active?.id ?? flow.phase;
+
   return (
     <RecipientBrandingProvider
       value={{
@@ -220,76 +230,96 @@ function RecipientWorkflow({ ctx, token, navigate }: { ctx: RecipientContext; to
         hidePhotobriefBranding: ctx.hidePhotobriefBranding,
       }}
     >
-      <div className="mx-auto flex min-h-[calc(100svh-9rem)] max-w-xl flex-col gap-4 pb-4">
-        <WorkflowProgress
-          title={ctx.guide.name}
-          done={flow.progress.done}
-          total={flow.progress.total}
-          currentLabel={currentPhotoStep ? `Photo ${currentPhotoIndex} of ${ctx.guide.steps.length}` : flow.phase === "questions" ? "Question" : flow.phase === "review" ? "Review" : "Done"}
-        />
-
-        {!started && flow.phase !== "submitted" ? (
-          <WelcomeCard
-            businessName={ctx.businessName}
-            guideName={ctx.guide.name}
-            introBody={ctx.introBody}
-            photoCount={ctx.guide.steps.length}
-            questionCount={ctx.guide.questions.length}
-            estimatedMinutes={estimatedMinutes}
-            isResubmit={!!ctx.resubmit}
-            onStart={() => {
-              setStarted(true);
-              trackEvent("recipient_started", { guide_id: ctx.guide.id, photos: ctx.guide.steps.length, questions: ctx.guide.questions.length });
-            }}
+      <div className="mx-auto flex min-h-[calc(100svh-3.5rem)] max-w-xl flex-col">
+        {/* Slim progress bar – always visible once started */}
+        {started && flow.phase !== "submitted" && (
+          <ProgressBar
+            title={ctx.guide.name}
+            done={flow.progress.done}
+            total={flow.progress.total}
+            currentLabel={
+              currentPhotoStep
+                ? `Photo ${currentPhotoIndex} of ${ctx.guide.steps.length}`
+                : flow.phase === "questions"
+                  ? "Question"
+                  : flow.phase === "review"
+                    ? "Review"
+                    : "Done"
+            }
           />
-        ) : (
-          <div className="flex flex-1 flex-col gap-4">
-            <ActiveWorkflowCard
-              phase={flow.phase}
-              active={active}
-              latestFeedback={latestFeedback}
-              latestRetake={latestRetake}
-              guide={ctx.guide}
-              businessName={ctx.businessName}
-              photos={flow.photos}
-              answers={flow.answers}
-              submitting={submitting}
-              onCapture={flow.submitPhoto}
-              onSkip={flow.skipPhoto}
-              onRetake={flow.retake}
-              onUseAnyway={flow.useAnyway}
-              onAnswer={flow.answerQuestion}
-              onSubmit={handleSubmit}
-            />
-            {flow.phase !== "review" && flow.phase !== "submitted" ? (
-              <CompletedStrip photos={flow.photos} skipped={flow.skippedStepIds.length} />
-            ) : null}
-          </div>
         )}
+
+        {/* Single step content area */}
+        <div className="flex flex-1 flex-col justify-center px-1 py-4">
+          <div
+            key={stepKey}
+            className="animate-in fade-in duration-200"
+          >
+            {!started && flow.phase !== "submitted" ? (
+              <WelcomeScreen
+                businessName={ctx.businessName}
+                guideName={ctx.guide.name}
+                introBody={ctx.introBody}
+                photoCount={ctx.guide.steps.length}
+                questionCount={ctx.guide.questions.length}
+                estimatedMinutes={estimatedMinutes}
+                isResubmit={!!ctx.resubmit}
+                onStart={() => {
+                  setStarted(true);
+                  trackEvent("recipient_started", { guide_id: ctx.guide.id, photos: ctx.guide.steps.length, questions: ctx.guide.questions.length });
+                }}
+              />
+            ) : (
+              <StepContent
+                phase={flow.phase}
+                active={active}
+                latestFeedback={latestFeedback}
+                latestRetake={latestRetake}
+                guide={ctx.guide}
+                businessName={ctx.businessName}
+                photos={flow.photos}
+                answers={flow.answers}
+                submitting={submitting}
+                onCapture={flow.submitPhoto}
+                onSkip={flow.skipPhoto}
+                onRetake={flow.retake}
+                onUseAnyway={flow.useAnyway}
+                onAnswer={flow.answerQuestion}
+                onSubmit={handleSubmit}
+              />
+            )}
+          </div>
+        </div>
       </div>
     </RecipientBrandingProvider>
   );
 }
 
-function WorkflowProgress({ title, done, total, currentLabel }: { title: string; done: number; total: number; currentLabel: string }) {
+/* ─── Slim progress bar ─── */
+
+function ProgressBar({ title, done, total, currentLabel }: { title: string; done: number; total: number; currentLabel: string }) {
   const pct = total === 0 ? 0 : (done / total) * 100;
   return (
-    <div className="sticky top-16 z-20 rounded-[1.5rem] border border-border/70 bg-background/80 p-3 shadow-sm backdrop-blur-xl">
+    <div className="sticky top-14 z-20 bg-background/80 px-1 pb-2 pt-3 backdrop-blur-xl">
       <div className="flex items-center justify-between gap-3 text-xs">
-        <div className="min-w-0">
-          <p className="truncate font-medium text-foreground">{title}</p>
-          <p className="text-muted-foreground">{currentLabel}</p>
-        </div>
-        <span className="shrink-0 rounded-full bg-muted px-2.5 py-1 font-medium text-muted-foreground">
+        <p className="truncate font-medium text-muted-foreground">{currentLabel}</p>
+        <span className="shrink-0 tabular-nums text-muted-foreground">
           {done}/{total}
         </span>
       </div>
-      <ReadinessProgress value={pct} className="mt-3" />
+      <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-border/50">
+        <div
+          className="h-full rounded-full bg-primary transition-all duration-500 ease-out"
+          style={{ width: `${pct}%` }}
+        />
+      </div>
     </div>
   );
 }
 
-function WelcomeCard({
+/* ─── Welcome screen ─── */
+
+function WelcomeScreen({
   businessName,
   guideName,
   introBody,
@@ -314,10 +344,10 @@ function WelcomeCard({
       <span className="inline-flex items-center gap-1.5 rounded-full border bg-background/70 px-3 py-1 text-xs font-medium text-muted-foreground shadow-sm">
         <LockKeyhole className="h-3.5 w-3.5" /> Secure photo request
       </span>
-      <h1 className="mt-5 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+      <h1 className="mt-5 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
         {isResubmit ? "Quick retake request" : `${businessName} needs a few photos`}
       </h1>
-      <p className="mt-3 text-base leading-7 text-muted-foreground">
+      <p className="mt-3 text-[15px] leading-7 text-muted-foreground">
         {introBody || `Follow the steps for ${guideName}. It should take about ${estimatedMinutes} minutes.`}
       </p>
 
@@ -347,7 +377,9 @@ function MiniStat({ icon: Icon, value, label }: { icon: typeof Camera; value: st
   );
 }
 
-function ActiveWorkflowCard({
+/* ─── Step content (one visible step at a time) ─── */
+
+function StepContent({
   phase,
   active,
   latestFeedback,
@@ -384,15 +416,15 @@ function ActiveWorkflowCard({
 
   if (phase === "submitted") {
     return (
-      <SurfaceCard>
+      <StepCard>
         <SubmitConfirmationCard businessName={businessName} />
-      </SurfaceCard>
+      </StepCard>
     );
   }
 
   if (phase === "review") {
     return (
-      <SurfaceCard>
+      <StepCard>
         <ReviewSummaryCard
           guide={guide}
           photos={photos}
@@ -400,16 +432,17 @@ function ActiveWorkflowCard({
           onSubmit={onSubmit}
           submitting={submitting}
         />
-      </SurfaceCard>
+      </StepCard>
     );
   }
 
+  // Retake decision screen
   if (latestRetake && active?.kind !== "capture_card") {
     return (
-      <SurfaceCard>
+      <StepCard>
         <StepHeader step={latestRetake.step} index={guideSteps.findIndex((s) => s.id === latestRetake.step.id) + 1} total={guideSteps.length} />
-        <div className="mt-4 overflow-hidden rounded-3xl bg-muted">
-          <img src={latestRetake.photo.previewUrl} alt="Submitted" className="max-h-[45svh] w-full object-cover" />
+        <div className="mt-5 overflow-hidden rounded-3xl bg-muted">
+          <img src={latestRetake.photo.previewUrl} alt="Submitted" className="max-h-[40svh] w-full object-cover" />
         </div>
         <div className="mt-4">
           <AIFeedbackMessage photo={latestRetake.photo} verdict={latestRetake.photo.checks.some((c) => c.severity === "fail") ? "fail" : "warn"} />
@@ -417,32 +450,34 @@ function ActiveWorkflowCard({
         <div className="mt-4">
           <RetakeDecisionCard photo={latestRetake.photo} step={latestRetake.step} onRetake={onRetake} onUseAnyway={onUseAnyway} />
         </div>
-      </SurfaceCard>
+      </StepCard>
     );
   }
 
+  // Question screen
   if (active?.kind === "question") {
     return (
-      <SurfaceCard>
+      <StepCard>
         <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
           <MessageCircleQuestion className="h-5 w-5" />
         </div>
         <QuestionCard question={active.question as ContextQuestion} onAnswer={onAnswer} />
-      </SurfaceCard>
+      </StepCard>
     );
   }
 
+  // Photo capture screen
   const capture = active?.kind === "capture_card" ? active : undefined;
   const step = capture?.step ?? (active?.kind === "photo_prompt" ? active.step : guideSteps[0]);
   const index = step ? guideSteps.findIndex((s) => s.id === step.id) + 1 : 1;
   const photoForStep = step ? photos.find((p) => p.stepId === step.id) : undefined;
 
   return (
-    <SurfaceCard>
+    <StepCard>
       <StepHeader step={step} index={index} total={guideSteps.length} />
       {photoForStep ? (
         <div className="mt-5 overflow-hidden rounded-3xl bg-muted">
-          <img src={photoForStep.previewUrl} alt="Completed" className="max-h-[45svh] w-full object-cover" />
+          <img src={photoForStep.previewUrl} alt="Completed" className="max-h-[40svh] w-full object-cover" />
         </div>
       ) : null}
       {latestFeedback && latestFeedback.photo.stepId === step.id ? (
@@ -453,13 +488,15 @@ function ActiveWorkflowCard({
       <div className="mt-6">
         <CaptureUploadCard step={step} pending={capture?.pending ?? false} onCapture={onCapture} onSkip={!step.required ? onSkip : undefined} />
       </div>
-    </SurfaceCard>
+    </StepCard>
   );
 }
 
-function SurfaceCard({ children }: { children: ReactNode }) {
+/* ─── Shared card wrapper ─── */
+
+function StepCard({ children }: { children: ReactNode }) {
   return (
-    <section className="rounded-[2rem] border border-border/70 bg-card/90 p-4 shadow-[0_30px_80px_-45px_hsl(222_47%_11%/0.45)] backdrop-blur sm:p-6">
+    <section className="rounded-[2rem] border border-border/70 bg-card/90 p-5 shadow-[0_30px_80px_-45px_hsl(222_47%_11%/0.45)] backdrop-blur sm:p-6">
       {children}
     </section>
   );
@@ -471,37 +508,13 @@ function StepHeader({ step, index, total }: { step: GuideStep; index: number; to
       <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
         <Sparkles className="h-3.5 w-3.5" /> Photo {index} of {total}
       </span>
-      <h2 className="mt-4 text-2xl font-semibold tracking-tight text-foreground">{step.title}</h2>
-      {step.instructions ? <p className="mt-2 text-base leading-7 text-muted-foreground">{step.instructions}</p> : null}
+      <h2 className="mt-4 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">{step.title}</h2>
+      {step.instructions ? <p className="mt-2 text-[15px] leading-7 text-muted-foreground">{step.instructions}</p> : null}
     </header>
   );
 }
 
-function CompletedStrip({ photos, skipped }: { photos: CapturedPhoto[]; skipped: number }) {
-  if (photos.length === 0 && skipped === 0) return null;
-  return (
-    <div className="rounded-[1.5rem] border border-border/70 bg-background/70 p-3 shadow-sm backdrop-blur">
-      <div className="mb-2 flex items-center gap-2 text-xs font-medium text-muted-foreground">
-        <CheckCircle2 className="h-3.5 w-3.5 text-success" /> Completed
-      </div>
-      <div className="flex gap-2 overflow-x-auto pb-1">
-        {photos.map((p) => (
-          <div key={`${p.stepId}-${p.takenAt}`} className="relative h-14 w-14 shrink-0 overflow-hidden rounded-2xl bg-muted">
-            <img src={p.previewUrl} alt="Completed photo" className="h-full w-full object-cover" />
-            <span className="absolute bottom-1 right-1 rounded-full bg-success p-0.5 text-success-foreground">
-              <CheckCircle2 className="h-3 w-3" />
-            </span>
-          </div>
-        ))}
-        {skipped > 0 ? (
-          <div className="flex h-14 shrink-0 items-center rounded-2xl bg-muted px-3 text-xs text-muted-foreground">
-            {skipped} skipped
-          </div>
-        ) : null}
-      </div>
-    </div>
-  );
-}
+/* ─── Helpers ─── */
 
 function latestAction(messages: ChatMessage[]): ChatMessage | undefined {
   const actionKinds = new Set(["capture_card", "question", "review_summary", "submit_confirmation", "retake_decision", "photo_prompt"]);

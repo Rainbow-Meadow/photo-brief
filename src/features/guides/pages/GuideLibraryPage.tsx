@@ -61,25 +61,24 @@ export default function GuideLibraryPage() {
       {!canCustomGuides ? <UpgradePromptCard feature="custom_guides" variant="inline" /> : null}
 
       <section className="rounded-3xl border bg-card p-5 shadow-elev-sm sm:p-6">
-        <div className="grid gap-5 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-          <div>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-              <Sparkles className="h-3.5 w-3.5" /> Simple by design
-            </span>
-            <h2 className="mt-4 text-xl font-semibold tracking-tight text-foreground">
-              No giant template catalog. No guessing.
-            </h2>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Build the exact request you want customers to receive. Start with one required photo,
-              add more photos or questions if they help, then save it as your own reusable template.
-            </p>
-            <div className="mt-5 flex flex-wrap gap-2 text-xs text-muted-foreground">
-              <span className="rounded-full bg-muted px-3 py-1">1. Name it</span>
-              <span className="rounded-full bg-muted px-3 py-1">2. Add photo prompts</span>
-              <span className="rounded-full bg-muted px-3 py-1">3. Save and reuse</span>
-            </div>
+        <div>
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+            <Sparkles className="h-3.5 w-3.5" /> Simple by design
+          </span>
+          <h2 className="mt-4 text-lg font-semibold tracking-tight text-foreground sm:text-xl">
+            No giant template catalog. No guessing.
+          </h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Build the exact request you want customers to receive. Start with one required photo,
+            add more if they help, then save it as your own reusable template.
+          </p>
+          <div className="mt-4 flex flex-wrap gap-2 text-xs text-muted-foreground">
+            <span className="rounded-full bg-muted px-3 py-1">1. Name it</span>
+            <span className="rounded-full bg-muted px-3 py-1">2. Add photo prompts</span>
+            <span className="rounded-full bg-muted px-3 py-1">3. Save and reuse</span>
           </div>
-          <div className="grid gap-3 sm:grid-cols-2">
+          {/* Detail cards hidden on mobile for brevity */}
+          <div className="mt-5 hidden gap-3 sm:grid sm:grid-cols-2">
             <div className="rounded-2xl border bg-background p-4">
               <Camera className="h-5 w-5 text-primary" />
               <p className="mt-3 text-sm font-medium text-foreground">Additive photo steps</p>

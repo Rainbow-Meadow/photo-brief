@@ -14,7 +14,7 @@ interface ReviewSummaryCardProps {
 
 export function ReviewSummaryCard({ guide, photos, answers, onSubmit, submitting }: ReviewSummaryCardProps) {
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       <div className="text-center">
         <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-success/10 text-success">
           <CheckCircle2 className="h-6 w-6" />
@@ -22,7 +22,7 @@ export function ReviewSummaryCard({ guide, photos, answers, onSubmit, submitting
         <h2 className="mt-4 text-2xl font-semibold tracking-tight text-foreground">
           {microcopy.recipient.reviewTitle}
         </h2>
-        <p className="mt-2 text-sm text-muted-foreground">
+        <p className="mt-2 text-[15px] text-muted-foreground">
           Check everything once, then send it over.
         </p>
       </div>
@@ -36,7 +36,7 @@ export function ReviewSummaryCard({ guide, photos, answers, onSubmit, submitting
             {photos.length}
           </span>
         </header>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
           {photos.map((p, i) => {
             const step = guide.steps.find((s) => s.id === p.stepId);
             return (
@@ -48,7 +48,7 @@ export function ReviewSummaryCard({ guide, photos, answers, onSubmit, submitting
                     className="h-full w-full object-cover"
                   />
                 </div>
-                <p className="line-clamp-2 px-2 py-1.5 text-[10px] leading-tight text-muted-foreground">
+                <p className="line-clamp-2 px-2.5 py-2 text-xs leading-tight text-muted-foreground">
                   {step?.title ?? "Photo"}
                 </p>
               </div>
@@ -64,9 +64,9 @@ export function ReviewSummaryCard({ guide, photos, answers, onSubmit, submitting
           </header>
           <ul className="space-y-2">
             {answers.map((a) => (
-              <li key={a.questionId} className="rounded-2xl border bg-background/70 p-3 text-sm">
+              <li key={a.questionId} className="rounded-2xl border bg-background/70 p-4 text-[15px]">
                 <p className="font-medium text-foreground">{a.prompt}</p>
-                <p className="mt-1 text-foreground/80">{a.answer}</p>
+                <p className="mt-1.5 text-foreground/80">{a.answer}</p>
               </li>
             ))}
           </ul>
