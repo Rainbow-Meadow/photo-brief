@@ -419,7 +419,7 @@ export default function BetaListPage() {
       {/* Footer */}
       <footer className="border-t border-[hsl(var(--pb-line)/0.2)] px-4 py-8 sm:px-6">
         <div className="mx-auto flex max-w-3xl flex-col items-center gap-3 text-center text-xs text-[hsl(var(--pb-muted)/0.5)]">
-          <BrandMark variant="inline" tone="light" size={28} />
+          <BrandMark variant="horizontal" tone="light" size={28} />
           <p>© {new Date().getFullYear()} PhotoBrief.ai · <NavLink to="/privacy" className="hover:text-white/60">Privacy</NavLink> · <NavLink to="/terms" className="hover:text-white/60">Terms</NavLink></p>
         </div>
       </footer>
