@@ -15,6 +15,10 @@ import {
   Clock,
   MessageSquare,
   AlertTriangle,
+  FileText,
+  User,
+  Phone,
+  Smartphone,
 } from "lucide-react";
 import wideGarage from "@/assets/junk-removal/wide-garage.jpg";
 import pileCloseup from "@/assets/junk-removal/pile-closeup.jpg";
@@ -67,6 +71,25 @@ const photos = [
   },
 ];
 
+type Phase =
+  | "TEMPLATE_SELECT"
+  | "SEND_LINK"
+  | "LINK_SENT"
+  | "CUSTOMER_WELCOME"
+  | "CAPTURING"
+  | "CUSTOMER_REVIEW"
+  | "COMPLETE";
+
+const PHASE_HINTS: Record<Phase, string> = {
+  TEMPLATE_SELECT: "Tap a template on the business phone to start.",
+  SEND_LINK: "Enter customer details on the business phone and send.",
+  LINK_SENT: "The link was sent — tap Start on the customer phone.",
+  CUSTOMER_WELCOME: "The customer received the link — tap Start.",
+  CAPTURING: "Tap through the customer phone to capture photos.",
+  CUSTOMER_REVIEW: "Review the photos, then tap Send on the customer phone.",
+  COMPLETE: "The brief is complete — ready to quote.",
+};
+
 function getSessionId() {
   if (typeof window === "undefined") return "server";
   const existing = window.localStorage.getItem(SESSION_KEY);
@@ -82,7 +105,9 @@ function isValidEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 }
 
-/* ── Phone bezel ── */
+/* ── Phone bezel — FIXED SIZE ── */
+const PHONE_CONTENT_H = 520;
+
 function PhoneMockup({
   label,
   sublabel,
@@ -106,11 +131,13 @@ function PhoneMockup({
         )}
       </div>
       <div className="relative w-[260px] rounded-[2.25rem] border-[3px] border-white/[0.08] bg-[#1a1a1f] p-[3px] shadow-[0_8px_40px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,255,255,0.04)] sm:w-[280px] sm:rounded-[2.5rem]">
+        {/* Notch */}
         <div className="absolute left-1/2 top-[10px] z-20 h-[22px] w-[90px] -translate-x-1/2 rounded-full bg-black" />
         <div
           className={`relative overflow-hidden rounded-[2.25rem] ${bg}`}
-          style={{ minHeight: 520 }}
+          style={{ height: PHONE_CONTENT_H + 52 /* status bar */ }}
         >
+          {/* Status bar */}
           <div
             className={`flex items-center justify-between px-6 pb-1 pt-[38px] text-[10px] font-semibold ${variant === "dark" ? "text-white/50" : "text-black/40"}`}
           >
@@ -121,7 +148,13 @@ function PhoneMockup({
               <Battery className="h-3.5 w-3.5" />
             </div>
           </div>
-          <div className="px-4 pb-6">{children}</div>
+          {/* Scrollable content area */}
+          <div
+            className="overflow-y-auto px-4 pb-6"
+            style={{ height: PHONE_CONTENT_H }}
+          >
+            {children}
+          </div>
         </div>
       </div>
     </div>
@@ -146,208 +179,140 @@ function ConnectionLine() {
   );
 }
 
-/* ── Customer Phone Screen ── */
-function CustomerScreen({
-  currentStep,
-  captured,
-  blurryPending,
-  onCapture,
-}: {
-  currentStep: number;
-  captured: Set<number>;
-  blurryPending: boolean;
-  onCapture: () => void;
-}) {
-  const photo = photos[currentStep];
-  const capturedCount = captured.size;
-  const isBlurryShot = currentStep === BLURRY_INDEX && blurryPending && captured.has(BLURRY_INDEX);
+/* ─────────────────────────────────────────────────────── */
+/* ── BUSINESS SCREENS                                  ── */
+/* ─────────────────────────────────────────────────────── */
 
+/** Phase 0 — Business picks a saved template */
+function TemplateSelectScreen({ onSelect }: { onSelect: () => void }) {
+  const templates = [
+    { name: "Garage cleanout", steps: 4, icon: "📦" },
+    { name: "Roof inspection", steps: 6, icon: "🏠" },
+    { name: "Appliance pickup", steps: 3, icon: "🧊" },
+  ];
   return (
-    <>
-      {/* App header */}
-      <div className="mb-3 mt-1">
-        <div className="flex items-center justify-between">
-          <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-black/35">
-            PhotoBrief
-          </span>
-          <span className="rounded-full bg-[hsl(var(--pb-violet)/0.12)] px-2 py-0.5 text-[10px] font-bold text-[hsl(var(--pb-violet))]">
-            {capturedCount}/{photos.length}
-          </span>
-        </div>
-        <h3 className="mt-1 text-[15px] font-bold tracking-tight text-black/85">
-          Garage cleanout quote
+    <div className="flex min-h-[420px] flex-col">
+      <div className="mb-4 mt-1">
+        <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-white/35">
+          Dashboard
+        </span>
+        <h3 className="mt-0.5 text-[15px] font-bold tracking-tight text-white/90">
+          New request
         </h3>
+        <p className="mt-1 text-[11px] text-white/40">
+          Pick a saved template to send
+        </p>
       </div>
-
-      {/* Progress dots */}
-      <div className="mb-3 flex items-center gap-1.5">
-        {photos.map((_, i) => (
-          <div
-            key={i}
-            className={`h-1 flex-1 rounded-full transition-all duration-300 ${
-              captured.has(i)
-                ? "bg-[hsl(var(--pb-violet))]"
-                : i === currentStep
-                  ? "bg-[hsl(var(--pb-violet)/0.35)]"
-                  : "bg-black/[0.06]"
-            }`}
-          />
-        ))}
-      </div>
-
-      {/* Photo viewfinder */}
-      <div className="relative overflow-hidden rounded-2xl bg-black/[0.03]">
-        {isBlurryShot ? (
-          /* Blurry first-attempt state */
-          <div className="relative">
-            <img
-              src={photo.src}
-              alt={photo.label}
-              className="h-[200px] w-full object-cover blur-[3px]"
-            />
-            <div className="absolute inset-0 flex flex-col items-center justify-center bg-amber-900/30">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90">
-                <AlertTriangle className="h-6 w-6 text-amber-500" />
-              </div>
-            </div>
-          </div>
-        ) : captured.has(currentStep) ? (
-          <div className="relative">
-            <img
-              src={photo.src}
-              alt={photo.label}
-              className="h-[200px] w-full object-cover"
-            />
-            <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90">
-                <CheckCircle2 className="h-6 w-6 text-emerald-500" />
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className="flex h-[200px] flex-col items-center justify-center bg-gradient-to-b from-black/[0.02] to-black/[0.05]">
-            <div className="relative flex h-28 w-28 items-center justify-center">
-              <div className="absolute left-0 top-0 h-5 w-5 border-l-2 border-t-2 border-black/20 rounded-tl" />
-              <div className="absolute right-0 top-0 h-5 w-5 border-r-2 border-t-2 border-black/20 rounded-tr" />
-              <div className="absolute bottom-0 left-0 h-5 w-5 border-b-2 border-l-2 border-black/20 rounded-bl" />
-              <div className="absolute bottom-0 right-0 h-5 w-5 border-b-2 border-r-2 border-black/20 rounded-br" />
-              <Camera className="h-8 w-8 text-black/20" />
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Blurry feedback card */}
-      {isBlurryShot && (
-        <div className="mt-3 rounded-xl bg-amber-50 border border-amber-200 p-3">
-          <p className="flex items-center gap-2 text-[13px] font-semibold text-amber-700">
-            <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
-            This looks blurry
-          </p>
-          <p className="mt-1 text-[12px] leading-[1.5] text-amber-600/80">
-            Hold the camera steady and retake so the details are clear.
-          </p>
-        </div>
-      )}
-
-      {/* Normal prompt (hidden when blurry feedback is showing) */}
-      {!isBlurryShot && (
-        <div className="mt-3 rounded-xl bg-black/[0.04] p-3">
-          <p className="flex items-center gap-2 text-[13px] font-semibold text-black/70">
-            <Camera className="h-3.5 w-3.5 shrink-0 text-[hsl(var(--pb-violet))]" />
-            {photo.label}
-          </p>
-          <p className="mt-1 text-[12px] leading-[1.5] text-black/45">
-            {photo.prompt}
-          </p>
-        </div>
-      )}
-
-      {/* Capture / Next / Retake button */}
-      <button
-        type="button"
-        onClick={onCapture}
-        className={`mt-3 flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-[13px] font-bold text-white transition-all hover:brightness-110 active:scale-[0.98] ${
-          isBlurryShot
-            ? "bg-amber-500"
-            : "bg-[hsl(var(--pb-violet))]"
-        }`}
-      >
-        {isBlurryShot ? (
-          <>
-            <RefreshCw className="h-4 w-4" /> Retake photo
-          </>
-        ) : captured.has(currentStep) ? (
-          <>
-            Next shot <ChevronRight className="h-4 w-4" />
-          </>
-        ) : (
-          <>
-            <Camera className="h-4 w-4" /> Capture photo
-          </>
-        )}
-      </button>
-
-      {/* Thumbnails */}
-      <div className="mt-3 grid grid-cols-4 gap-1.5">
-        {photos.map((p, i) => (
-          <div
-            key={p.id}
-            className={`relative aspect-square overflow-hidden rounded-lg ${
-              i === currentStep
-                ? "ring-2 ring-[hsl(var(--pb-violet))]"
-                : "ring-1 ring-black/[0.06]"
+      <div className="space-y-2">
+        {templates.map((t, i) => (
+          <button
+            key={t.name}
+            type="button"
+            onClick={i === 0 ? onSelect : undefined}
+            className={`flex w-full items-center gap-3 rounded-xl p-3 text-left transition-all ${
+              i === 0
+                ? "bg-[hsl(var(--pb-violet)/0.12)] ring-1 ring-[hsl(var(--pb-violet)/0.3)] hover:bg-[hsl(var(--pb-violet)/0.18)] active:scale-[0.98]"
+                : "bg-white/[0.03] opacity-50"
             }`}
           >
-            {i === BLURRY_INDEX && blurryPending && captured.has(i) ? (
-              /* Blurry thumbnail */
-              <>
-                <img
-                  src={p.src}
-                  alt={p.label}
-                  className="h-full w-full object-cover blur-[2px]"
-                />
-                <span className="absolute right-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-amber-500">
-                  <AlertTriangle className="h-2.5 w-2.5 text-white" />
-                </span>
-              </>
-            ) : captured.has(i) ? (
-              <>
-                <img
-                  src={p.src}
-                  alt={p.label}
-                  className="h-full w-full object-cover"
-                />
-                <span className="absolute right-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500">
-                  <CheckCircle2 className="h-2.5 w-2.5 text-white" />
-                </span>
-              </>
-            ) : (
-              <div className="flex h-full w-full items-center justify-center bg-black/[0.03]">
-                <span className="text-[10px] font-bold text-black/20">
-                  {i + 1}
-                </span>
-              </div>
+            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/[0.06] text-lg">
+              {t.icon}
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-[13px] font-semibold text-white/80">{t.name}</p>
+              <p className="text-[10px] text-white/35">{t.steps} photo steps</p>
+            </div>
+            {i === 0 && (
+              <ChevronRight className="h-4 w-4 shrink-0 text-[hsl(var(--pb-lavender))]" />
             )}
-          </div>
+          </button>
         ))}
       </div>
-    </>
+      <div className="mt-4 rounded-xl bg-white/[0.03] p-3">
+        <p className="text-[10px] text-white/30 text-center">
+          Templates let you reuse photo steps across customers.
+        </p>
+      </div>
+    </div>
   );
 }
 
-/* ── Business Phone: Link Sent State ── */
+/** Phase 1 — Business enters customer details and sends */
+function SendLinkScreen({ onSend }: { onSend: () => void }) {
+  return (
+    <div className="flex min-h-[420px] flex-col">
+      <div className="mb-4 mt-1">
+        <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-white/35">
+          Dashboard
+        </span>
+        <h3 className="mt-0.5 text-[15px] font-bold tracking-tight text-white/90">
+          Send request
+        </h3>
+        <p className="mt-1 text-[11px] text-white/40">
+          Garage cleanout — 4 photo steps
+        </p>
+      </div>
+
+      {/* Template preview */}
+      <div className="mb-3 rounded-xl bg-white/[0.04] p-3">
+        <p className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/35">
+          <FileText className="h-3 w-3" /> Template
+        </p>
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {photos.map((p) => (
+            <span
+              key={p.id}
+              className="rounded-full bg-white/[0.06] px-2 py-0.5 text-[10px] text-white/50"
+            >
+              {p.label}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* Customer info fields */}
+      <div className="space-y-2">
+        <div className="flex items-center gap-2 rounded-xl bg-white/[0.06] px-3 py-2.5">
+          <User className="h-3.5 w-3.5 shrink-0 text-white/30" />
+          <span className="text-[12px] text-white/60">Sarah Johnson</span>
+        </div>
+        <div className="flex items-center gap-2 rounded-xl bg-white/[0.06] px-3 py-2.5">
+          <Phone className="h-3.5 w-3.5 shrink-0 text-white/30" />
+          <span className="text-[12px] text-white/60">(555) 012-3456</span>
+        </div>
+      </div>
+
+      {/* Delivery method */}
+      <div className="mt-3 flex items-center justify-between rounded-xl bg-white/[0.04] px-3 py-2.5">
+        <span className="flex items-center gap-2 text-[11px] text-white/40">
+          <MessageSquare className="h-3 w-3" /> Send via
+        </span>
+        <span className="rounded-full bg-[hsl(var(--pb-violet)/0.15)] px-2 py-0.5 text-[10px] font-semibold text-[hsl(var(--pb-lavender))]">
+          SMS
+        </span>
+      </div>
+
+      {/* Send button */}
+      <button
+        type="button"
+        onClick={onSend}
+        className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[hsl(var(--pb-violet))] px-4 py-3 text-[13px] font-bold text-white transition-all hover:brightness-110 active:scale-[0.98]"
+      >
+        <Send className="h-4 w-4" /> Send request
+      </button>
+    </div>
+  );
+}
+
+/** Phase 2 — Business sees "Sent, waiting…" */
 function LinkSentScreen() {
   return (
     <div className="flex min-h-[420px] flex-col items-center justify-center">
-      {/* Header */}
       <div className="mb-6 text-center">
         <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-white/35">
           Dashboard
         </span>
       </div>
-
-      {/* Sent confirmation card */}
       <div className="w-full rounded-2xl bg-white/[0.04] p-5">
         <div className="flex flex-col items-center text-center">
           <div className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500/15">
@@ -360,8 +325,13 @@ function LinkSentScreen() {
             Garage cleanout quote
           </p>
         </div>
-
         <div className="mt-4 space-y-2">
+          <div className="flex items-center justify-between rounded-lg bg-white/[0.03] px-3 py-2">
+            <span className="flex items-center gap-2 text-[11px] text-white/50">
+              <User className="h-3 w-3" /> Customer
+            </span>
+            <span className="text-[11px] font-semibold text-white/70">Sarah J.</span>
+          </div>
           <div className="flex items-center justify-between rounded-lg bg-white/[0.03] px-3 py-2">
             <span className="flex items-center gap-2 text-[11px] text-white/50">
               <MessageSquare className="h-3 w-3" /> Sent via
@@ -375,8 +345,6 @@ function LinkSentScreen() {
             <span className="text-[11px] font-semibold text-white/70">Just now</span>
           </div>
         </div>
-
-        {/* Waiting indicator */}
         <div className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-white/[0.03] py-3">
           <span className="relative flex h-2 w-2">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75" />
@@ -391,98 +359,15 @@ function LinkSentScreen() {
   );
 }
 
-/* ── Business Phone: Brief Complete State ── */
-function BriefCompleteScreen() {
-  return (
-    <>
-      <div className="mb-3 mt-1 flex items-center justify-between">
-        <div>
-          <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-white/35">
-            Dashboard
-          </span>
-          <h3 className="mt-0.5 text-[15px] font-bold tracking-tight text-white/90">
-            Brief complete
-          </h3>
-        </div>
-        <span className="rounded-full bg-emerald-500/15 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-400">
-          Ready
-        </span>
-      </div>
-
-      {/* All photos grid with green badges */}
-      <div className="grid grid-cols-2 gap-1.5">
-        {photos.map((photo) => (
-          <div
-            key={photo.id}
-            className="relative overflow-hidden rounded-xl ring-1 ring-white/[0.08]"
-          >
-            <img
-              src={photo.src}
-              alt={photo.label}
-              className="h-[72px] w-full object-cover"
-            />
-            <div className="flex items-center justify-between bg-black/50 px-2 py-1.5">
-              <span className="text-[10px] font-semibold text-white/70">
-                {photo.label}
-              </span>
-              <span className="flex items-center gap-0.5 text-[9px] font-bold text-emerald-400">
-                <ShieldCheck className="h-2.5 w-2.5" />
-                {photo.good ? "OK" : "OK"}
-              </span>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* AI check — all passed */}
-      <div className="mt-3 rounded-xl bg-white/[0.04] p-3">
-        <p className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/35">
-          <ScanLine className="h-3 w-3" /> AI check
-        </p>
-        <div className="mt-2 space-y-1.5">
-          {photos.map((p) => (
-            <div
-              key={p.id}
-              className="flex items-center justify-between rounded-lg bg-white/[0.03] px-2.5 py-1.5"
-            >
-              <span className="text-[11px] text-white/60">{p.label}</span>
-              <span className="text-[10px] font-bold text-emerald-400">
-                Verified
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Summary */}
-      <div className="mt-3 rounded-xl bg-white/[0.04] p-3">
-        <p className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/35">
-          <ClipboardList className="h-3 w-3" /> Brief summary
-        </p>
-        <p className="mt-2 text-[12px] leading-[1.6] text-white/60">
-          Garage cleanout — all shots verified. Ground-level access. Ready to quote.
-        </p>
-      </div>
-
-      {/* Decorative CTA */}
-      <button
-        type="button"
-        className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500/20 px-4 py-3 text-[13px] font-bold text-emerald-400 transition-all"
-        disabled
-      >
-        <CheckCircle2 className="h-4 w-4" /> Quote now
-      </button>
-    </>
-  );
-}
-
-/* ── Business Phone: In-Progress Screen ── */
+/** Phase 3-4 — Business sees live in-progress feed */
 function BusinessInProgressScreen({
   captured,
   blurryPending,
+  customerSubmitted,
 }: {
   captured: Set<number>;
   blurryPending: boolean;
+  customerSubmitted: boolean;
 }) {
   const capturedCount = captured.size;
 
@@ -609,17 +494,426 @@ function BusinessInProgressScreen({
         <p className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/35">
           <ClipboardList className="h-3 w-3" /> Brief summary
         </p>
-        <p className="mt-2 text-[12px] italic text-white/25">
-          Waiting for {photos.length - capturedCount} more photo
-          {photos.length - capturedCount !== 1 ? "s" : ""}…
-        </p>
+        {customerSubmitted ? (
+          <p className="mt-2 text-[12px] text-white/40 italic">
+            Customer submitted — processing…
+          </p>
+        ) : (
+          <p className="mt-2 text-[12px] italic text-white/25">
+            Waiting for {photos.length - capturedCount} more photo
+            {photos.length - capturedCount !== 1 ? "s" : ""}…
+          </p>
+        )}
       </div>
     </>
   );
 }
 
-/* ── Main component ── */
+/** Phase 5 — Business sees completed brief */
+function BriefCompleteScreen() {
+  return (
+    <>
+      <div className="mb-3 mt-1 flex items-center justify-between">
+        <div>
+          <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-white/35">
+            Dashboard
+          </span>
+          <h3 className="mt-0.5 text-[15px] font-bold tracking-tight text-white/90">
+            Brief complete
+          </h3>
+        </div>
+        <span className="rounded-full bg-emerald-500/15 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-400">
+          Ready
+        </span>
+      </div>
+
+      <div className="grid grid-cols-2 gap-1.5">
+        {photos.map((photo) => (
+          <div
+            key={photo.id}
+            className="relative overflow-hidden rounded-xl ring-1 ring-white/[0.08]"
+          >
+            <img
+              src={photo.src}
+              alt={photo.label}
+              className="h-[72px] w-full object-cover"
+            />
+            <div className="flex items-center justify-between bg-black/50 px-2 py-1.5">
+              <span className="text-[10px] font-semibold text-white/70">
+                {photo.label}
+              </span>
+              <span className="flex items-center gap-0.5 text-[9px] font-bold text-emerald-400">
+                <ShieldCheck className="h-2.5 w-2.5" />
+                OK
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-3 rounded-xl bg-white/[0.04] p-3">
+        <p className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/35">
+          <ScanLine className="h-3 w-3" /> AI check
+        </p>
+        <div className="mt-2 space-y-1.5">
+          {photos.map((p) => (
+            <div
+              key={p.id}
+              className="flex items-center justify-between rounded-lg bg-white/[0.03] px-2.5 py-1.5"
+            >
+              <span className="text-[11px] text-white/60">{p.label}</span>
+              <span className="text-[10px] font-bold text-emerald-400">
+                Verified
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-3 rounded-xl bg-white/[0.04] p-3">
+        <p className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/35">
+          <ClipboardList className="h-3 w-3" /> Brief summary
+        </p>
+        <p className="mt-2 text-[12px] leading-[1.6] text-white/60">
+          Garage cleanout — all shots verified. Ground-level access. Ready to quote.
+        </p>
+      </div>
+
+      <button
+        type="button"
+        className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500/20 px-4 py-3 text-[13px] font-bold text-emerald-400 transition-all"
+        disabled
+      >
+        <CheckCircle2 className="h-4 w-4" /> Quote now
+      </button>
+    </>
+  );
+}
+
+/* ─────────────────────────────────────────────────────── */
+/* ── CUSTOMER SCREENS                                  ── */
+/* ─────────────────────────────────────────────────────── */
+
+/** Customer phone is idle — business hasn't sent link yet */
+function CustomerIdleScreen() {
+  return (
+    <div className="flex min-h-[420px] flex-col items-center justify-center text-center">
+      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-black/[0.04]">
+        <Smartphone className="h-7 w-7 text-black/15" />
+      </div>
+      <p className="mt-4 text-[13px] font-semibold text-black/30">
+        Customer's phone
+      </p>
+      <p className="mt-1 text-[11px] text-black/20">
+        Waiting for a PhotoBrief link…
+      </p>
+    </div>
+  );
+}
+
+/** Customer received the link — welcome / Start screen */
+function CustomerWelcomeScreen({ onStart }: { onStart: () => void }) {
+  return (
+    <div className="flex min-h-[420px] flex-col">
+      <div className="flex flex-1 flex-col items-center justify-center text-center">
+        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[hsl(var(--pb-violet)/0.1)]">
+          <Camera className="h-6 w-6 text-[hsl(var(--pb-violet))]" />
+        </div>
+        <h3 className="mt-4 text-[16px] font-bold tracking-tight text-black/85">
+          Garage cleanout quote
+        </h3>
+        <p className="mt-1.5 text-[12px] leading-[1.6] text-black/45 px-2">
+          We need 4 photos to prepare your quote. It takes about 2 minutes.
+        </p>
+        <div className="mt-4 flex items-center gap-2 rounded-full bg-black/[0.04] px-3 py-1.5">
+          <Camera className="h-3 w-3 text-black/30" />
+          <span className="text-[10px] font-semibold text-black/40">4 photos · ~2 min</span>
+        </div>
+      </div>
+      <button
+        type="button"
+        onClick={onStart}
+        className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[hsl(var(--pb-violet))] px-4 py-3 text-[13px] font-bold text-white transition-all hover:brightness-110 active:scale-[0.98]"
+      >
+        Start <ArrowRight className="h-4 w-4" />
+      </button>
+      <p className="mt-3 text-center text-[10px] text-black/25">
+        No app download needed
+      </p>
+    </div>
+  );
+}
+
+/** Customer capture screen — existing flow */
+function CustomerCaptureScreen({
+  currentStep,
+  captured,
+  blurryPending,
+  onCapture,
+}: {
+  currentStep: number;
+  captured: Set<number>;
+  blurryPending: boolean;
+  onCapture: () => void;
+}) {
+  const photo = photos[currentStep];
+  const capturedCount = captured.size;
+  const isBlurryShot = currentStep === BLURRY_INDEX && blurryPending && captured.has(BLURRY_INDEX);
+
+  return (
+    <>
+      {/* App header */}
+      <div className="mb-3 mt-1">
+        <div className="flex items-center justify-between">
+          <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-black/35">
+            PhotoBrief
+          </span>
+          <span className="rounded-full bg-[hsl(var(--pb-violet)/0.12)] px-2 py-0.5 text-[10px] font-bold text-[hsl(var(--pb-violet))]">
+            {capturedCount}/{photos.length}
+          </span>
+        </div>
+        <h3 className="mt-1 text-[15px] font-bold tracking-tight text-black/85">
+          Garage cleanout quote
+        </h3>
+      </div>
+
+      {/* Progress dots */}
+      <div className="mb-3 flex items-center gap-1.5">
+        {photos.map((_, i) => (
+          <div
+            key={i}
+            className={`h-1 flex-1 rounded-full transition-all duration-300 ${
+              captured.has(i)
+                ? "bg-[hsl(var(--pb-violet))]"
+                : i === currentStep
+                  ? "bg-[hsl(var(--pb-violet)/0.35)]"
+                  : "bg-black/[0.06]"
+            }`}
+          />
+        ))}
+      </div>
+
+      {/* Photo viewfinder */}
+      <div className="relative overflow-hidden rounded-2xl bg-black/[0.03]">
+        {isBlurryShot ? (
+          <div className="relative">
+            <img
+              src={photo.src}
+              alt={photo.label}
+              className="h-[200px] w-full object-cover blur-[3px]"
+            />
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-amber-900/30">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90">
+                <AlertTriangle className="h-6 w-6 text-amber-500" />
+              </div>
+            </div>
+          </div>
+        ) : captured.has(currentStep) ? (
+          <div className="relative">
+            <img
+              src={photo.src}
+              alt={photo.label}
+              className="h-[200px] w-full object-cover"
+            />
+            <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90">
+                <CheckCircle2 className="h-6 w-6 text-emerald-500" />
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="flex h-[200px] flex-col items-center justify-center bg-gradient-to-b from-black/[0.02] to-black/[0.05]">
+            <div className="relative flex h-28 w-28 items-center justify-center">
+              <div className="absolute left-0 top-0 h-5 w-5 border-l-2 border-t-2 border-black/20 rounded-tl" />
+              <div className="absolute right-0 top-0 h-5 w-5 border-r-2 border-t-2 border-black/20 rounded-tr" />
+              <div className="absolute bottom-0 left-0 h-5 w-5 border-b-2 border-l-2 border-black/20 rounded-bl" />
+              <div className="absolute bottom-0 right-0 h-5 w-5 border-b-2 border-r-2 border-black/20 rounded-br" />
+              <Camera className="h-8 w-8 text-black/20" />
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Blurry feedback card */}
+      {isBlurryShot && (
+        <div className="mt-3 rounded-xl bg-amber-50 border border-amber-200 p-3">
+          <p className="flex items-center gap-2 text-[13px] font-semibold text-amber-700">
+            <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
+            This looks blurry
+          </p>
+          <p className="mt-1 text-[12px] leading-[1.5] text-amber-600/80">
+            Hold the camera steady and retake so the details are clear.
+          </p>
+        </div>
+      )}
+
+      {/* Normal prompt */}
+      {!isBlurryShot && (
+        <div className="mt-3 rounded-xl bg-black/[0.04] p-3">
+          <p className="flex items-center gap-2 text-[13px] font-semibold text-black/70">
+            <Camera className="h-3.5 w-3.5 shrink-0 text-[hsl(var(--pb-violet))]" />
+            {photo.label}
+          </p>
+          <p className="mt-1 text-[12px] leading-[1.5] text-black/45">
+            {photo.prompt}
+          </p>
+        </div>
+      )}
+
+      {/* Capture / Next / Retake button */}
+      <button
+        type="button"
+        onClick={onCapture}
+        className={`mt-3 flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-[13px] font-bold text-white transition-all hover:brightness-110 active:scale-[0.98] ${
+          isBlurryShot
+            ? "bg-amber-500"
+            : "bg-[hsl(var(--pb-violet))]"
+        }`}
+      >
+        {isBlurryShot ? (
+          <>
+            <RefreshCw className="h-4 w-4" /> Retake photo
+          </>
+        ) : captured.has(currentStep) ? (
+          <>
+            Next shot <ChevronRight className="h-4 w-4" />
+          </>
+        ) : (
+          <>
+            <Camera className="h-4 w-4" /> Capture photo
+          </>
+        )}
+      </button>
+
+      {/* Thumbnails */}
+      <div className="mt-3 grid grid-cols-4 gap-1.5">
+        {photos.map((p, i) => (
+          <div
+            key={p.id}
+            className={`relative aspect-square overflow-hidden rounded-lg ${
+              i === currentStep
+                ? "ring-2 ring-[hsl(var(--pb-violet))]"
+                : "ring-1 ring-black/[0.06]"
+            }`}
+          >
+            {i === BLURRY_INDEX && blurryPending && captured.has(i) ? (
+              <>
+                <img
+                  src={p.src}
+                  alt={p.label}
+                  className="h-full w-full object-cover blur-[2px]"
+                />
+                <span className="absolute right-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-amber-500">
+                  <AlertTriangle className="h-2.5 w-2.5 text-white" />
+                </span>
+              </>
+            ) : captured.has(i) ? (
+              <>
+                <img
+                  src={p.src}
+                  alt={p.label}
+                  className="h-full w-full object-cover"
+                />
+                <span className="absolute right-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500">
+                  <CheckCircle2 className="h-2.5 w-2.5 text-white" />
+                </span>
+              </>
+            ) : (
+              <div className="flex h-full w-full items-center justify-center bg-black/[0.03]">
+                <span className="text-[10px] font-bold text-black/20">
+                  {i + 1}
+                </span>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </>
+  );
+}
+
+/** Customer review screen — sees all photos, taps submit */
+function CustomerReviewScreen({ onSubmit }: { onSubmit: () => void }) {
+  return (
+    <>
+      <div className="mb-3 mt-1">
+        <div className="flex items-center justify-between">
+          <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-black/35">
+            PhotoBrief
+          </span>
+          <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold text-emerald-600">
+            {photos.length}/{photos.length}
+          </span>
+        </div>
+        <h3 className="mt-1 text-[15px] font-bold tracking-tight text-black/85">
+          Review &amp; send
+        </h3>
+        <p className="mt-1 text-[11px] text-black/40">
+          Check your photos, then send them over.
+        </p>
+      </div>
+
+      {/* All captured thumbnails */}
+      <div className="grid grid-cols-2 gap-2">
+        {photos.map((p) => (
+          <div key={p.id} className="overflow-hidden rounded-xl ring-1 ring-black/[0.06]">
+            <img
+              src={p.src}
+              alt={p.label}
+              className="h-[80px] w-full object-cover"
+            />
+            <div className="flex items-center justify-between px-2 py-1.5 bg-black/[0.02]">
+              <span className="text-[10px] font-semibold text-black/50">{p.label}</span>
+              <span className="flex items-center gap-0.5 text-[9px] font-bold text-emerald-500">
+                <CheckCircle2 className="h-2.5 w-2.5" /> OK
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Submit button */}
+      <button
+        type="button"
+        onClick={onSubmit}
+        className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[hsl(var(--pb-violet))] px-4 py-3.5 text-[13px] font-bold text-white transition-all hover:brightness-110 active:scale-[0.98]"
+      >
+        <Send className="h-4 w-4" /> Send to business
+      </button>
+      <p className="mt-2 text-center text-[10px] text-black/25">
+        The business will receive your photos instantly.
+      </p>
+    </>
+  );
+}
+
+/** Customer confirmation — after submit */
+function CustomerConfirmationScreen() {
+  return (
+    <div className="flex min-h-[420px] flex-col items-center justify-center text-center">
+      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/10">
+        <CheckCircle2 className="h-8 w-8 text-emerald-500" />
+      </div>
+      <h3 className="mt-4 text-[16px] font-bold tracking-tight text-black/85">
+        Photos sent!
+      </h3>
+      <p className="mt-2 text-[12px] leading-[1.6] text-black/45 px-4">
+        The business has your photos and will follow up with a quote.
+      </p>
+      <div className="mt-5 rounded-xl bg-black/[0.03] px-4 py-3">
+        <p className="text-[10px] text-black/30">
+          You can close this page now.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────── */
+/* ── Main component                                    ── */
+/* ─────────────────────────────────────────────────────── */
 export function InteractiveHeroBriefAssembly() {
+  const [phase, setPhase] = useState<Phase>("TEMPLATE_SELECT");
   const [currentStep, setCurrentStep] = useState(0);
   const [captured, setCaptured] = useState<Set<number>>(() => new Set());
   const [blurryPending, setBlurryPending] = useState(true);
@@ -638,7 +932,6 @@ export function InteractiveHeroBriefAssembly() {
     // If blurry photo is showing and user taps retake
     if (currentStep === BLURRY_INDEX && blurryPending && next.has(currentStep)) {
       setBlurryPending(false);
-      // Move to next step
       if (currentStep < photos.length - 1) {
         setCurrentStep(currentStep + 1);
       }
@@ -654,20 +947,23 @@ export function InteractiveHeroBriefAssembly() {
       }
     } else if (currentStep < photos.length - 1) {
       setCurrentStep(currentStep + 1);
+    } else {
+      // Last photo captured and confirmed — move to review
+      setPhase("CUSTOMER_REVIEW");
+      return;
     }
     setRequestUrl(null);
     setError(null);
   }
+
+  // Check if all photos are done after a state update — move to review if on last step
+  // This is handled in handleCapture above when the last "Next shot" is tapped
 
   async function submitLead(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
     if (!isValidEmail(email)) {
       setError("Enter a valid email to create the request.");
-      return;
-    }
-    if (!ready) {
-      setError("Capture all four shots first.");
       return;
     }
     setSubmitting(true);
@@ -719,15 +1015,51 @@ export function InteractiveHeroBriefAssembly() {
     }
   }
 
-  // Determine which business screen to show
-  const businessPhoneContent =
-    captured.size === 0 ? (
-      <LinkSentScreen />
-    ) : ready ? (
-      <BriefCompleteScreen />
-    ) : (
-      <BusinessInProgressScreen captured={captured} blurryPending={blurryPending} />
-    );
+  /* ── Determine screen content per phase ── */
+  let businessContent: React.ReactNode;
+  let customerContent: React.ReactNode;
+
+  switch (phase) {
+    case "TEMPLATE_SELECT":
+      businessContent = <TemplateSelectScreen onSelect={() => setPhase("SEND_LINK")} />;
+      customerContent = <CustomerIdleScreen />;
+      break;
+    case "SEND_LINK":
+      businessContent = <SendLinkScreen onSend={() => setPhase("LINK_SENT")} />;
+      customerContent = <CustomerIdleScreen />;
+      break;
+    case "LINK_SENT":
+      businessContent = <LinkSentScreen />;
+      customerContent = <CustomerWelcomeScreen onStart={() => setPhase("CAPTURING")} />;
+      break;
+    case "CUSTOMER_WELCOME":
+      businessContent = <LinkSentScreen />;
+      customerContent = <CustomerWelcomeScreen onStart={() => setPhase("CAPTURING")} />;
+      break;
+    case "CAPTURING":
+      businessContent = (
+        <BusinessInProgressScreen captured={captured} blurryPending={blurryPending} customerSubmitted={false} />
+      );
+      customerContent = (
+        <CustomerCaptureScreen
+          currentStep={currentStep}
+          captured={captured}
+          blurryPending={blurryPending}
+          onCapture={handleCapture}
+        />
+      );
+      break;
+    case "CUSTOMER_REVIEW":
+      businessContent = (
+        <BusinessInProgressScreen captured={captured} blurryPending={blurryPending} customerSubmitted={false} />
+      );
+      customerContent = <CustomerReviewScreen onSubmit={() => setPhase("COMPLETE")} />;
+      break;
+    case "COMPLETE":
+      businessContent = <BriefCompleteScreen />;
+      customerContent = <CustomerConfirmationScreen />;
+      break;
+  }
 
   return (
     <div className="relative mt-2">
@@ -740,21 +1072,15 @@ export function InteractiveHeroBriefAssembly() {
           See how a PhotoBrief comes together.
         </h2>
         <p className="mx-auto mt-2 max-w-lg text-sm text-white/45">
-          Tap through the customer phone to capture photos — watch the business
-          dashboard update in real time.
+          {PHASE_HINTS[phase]}
         </p>
       </div>
 
       {/* Dual phone layout */}
       <div className="flex flex-col items-center justify-center gap-6 lg:flex-row lg:items-start lg:gap-4">
-        {/* Customer phone */}
-        <PhoneMockup label="Customer" sublabel="their phone" variant="light">
-          <CustomerScreen
-            currentStep={currentStep}
-            captured={captured}
-            blurryPending={blurryPending}
-            onCapture={handleCapture}
-          />
+        {/* Business phone */}
+        <PhoneMockup label="Your dashboard" sublabel="business side" variant="dark">
+          {businessContent}
         </PhoneMockup>
 
         {/* Connection */}
@@ -769,14 +1095,14 @@ export function InteractiveHeroBriefAssembly() {
           <div className="h-px w-12 bg-white/10" />
         </div>
 
-        {/* Business phone */}
-        <PhoneMockup label="Your dashboard" sublabel="real-time" variant="dark">
-          {businessPhoneContent}
+        {/* Customer phone */}
+        <PhoneMockup label="Customer" sublabel="their phone" variant="light">
+          {customerContent}
         </PhoneMockup>
       </div>
 
-      {/* Lead capture below phones */}
-      {ready && (
+      {/* Lead capture below phones — only after complete */}
+      {phase === "COMPLETE" && (
         <div className="mx-auto mt-8 max-w-md">
           <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-5 backdrop-blur-sm">
             <form onSubmit={submitLead}>
