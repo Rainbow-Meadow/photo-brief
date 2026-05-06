@@ -6,6 +6,7 @@ import { BrandMark } from "@/components/layout/BrandMark";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { signupCtaTarget, signupCtaShortLabel, signupCtaLabel } from "@/config/access";
+import { marketingLinks, legalLinks, allFooterLinks } from "@/config/marketingNav";
 import {
   Sheet,
   SheetContent,
@@ -13,21 +14,12 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 
-
-const marketingRoutes = [
-  { to: "/pricing", label: "Pricing" },
-  { to: "/help", label: "Help" },
-];
-
-const legalRoutes = [
-  { to: "/privacy", label: "Privacy" },
-  { to: "/terms", label: "Terms" },
-];
-
 /**
  * MarketingLayout — landing, pricing, auth pages.
  * Mobile: compact header + hamburger sheet for nav.
  * Desktop (sm+): inline nav links and Sign in CTA.
+ *
+ * Navigation links are managed centrally in `@/config/marketingNav`.
  */
 export function MarketingLayout() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -42,7 +34,7 @@ export function MarketingLayout() {
           </NavLink>
 
           <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
-            {marketingRoutes.map((l) => (
+            {marketingLinks.map((l) => (
               <NavLink
                 key={l.to}
                 to={l.to}
@@ -94,18 +86,7 @@ export function MarketingLayout() {
             <ThemeToggle className="w-full justify-between" />
           </div>
           <ul className="divide-y">
-            {marketingRoutes.map((l) => (
-              <li key={l.to}>
-                <NavLink
-                  to={l.to}
-                  onClick={() => setMenuOpen(false)}
-                  className="block px-5 py-4 text-base font-medium text-foreground active:bg-muted"
-                >
-                  {l.label}
-                </NavLink>
-              </li>
-            ))}
-            {legalRoutes.map((l) => (
+            {[...marketingLinks, ...legalLinks].map((l) => (
               <li key={l.to}>
                 <NavLink
                   to={l.to}
@@ -144,12 +125,11 @@ export function MarketingLayout() {
         <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-8 text-sm text-[hsl(var(--pb-muted))] sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
           <BrandMark variant="horizontal" tone="light" size={28} className="opacity-80" />
           <nav aria-label="Footer" className="flex flex-wrap items-center gap-4">
-            
-            <NavLink to="/pricing" className="hover:text-white transition-colors">Pricing</NavLink>
-            <NavLink to="/help" className="hover:text-white transition-colors">Help</NavLink>
-            <NavLink to="/for-ai-agents" className="hover:text-white transition-colors">For AI agents</NavLink>
-            <NavLink to="/privacy" className="hover:text-white transition-colors">Privacy</NavLink>
-            <NavLink to="/terms" className="hover:text-white transition-colors">Terms</NavLink>
+            {allFooterLinks.map((l) => (
+              <NavLink key={l.to} to={l.to} className="hover:text-white transition-colors">
+                {l.label}
+              </NavLink>
+            ))}
           </nav>
           <p className="text-xs text-white/36">© {new Date().getFullYear()} PhotoBrief.ai</p>
         </div>
