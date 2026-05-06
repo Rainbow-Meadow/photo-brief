@@ -1,34 +1,43 @@
-## Problem
 
-The `/betalist` page was deleted during cleanup, but **8 files** still contain hardcoded links to `/betalist`. These are all dead links that will 404 (the `_redirects` fallback only works on Cloudflare, not in the SPA).
+## Goal
 
-## Broken links found
+Replace the current `/founding-partner-beta` page (an internal "portfolio/copy bank" aimed at reviewers) with a customer-facing conversion landing page that matches what was previously on `/betalist`.
 
-| File | What points to `/betalist` |
-|------|---------------------------|
-| `src/config/access.ts` | `signupCtaTarget()` returns `/betalist`; `planCtaTarget()` returns `/betalist?interest=...` |
-| `src/components/pricing/PricingCardGrid.tsx` | Hardcoded `/betalist?interest=${plan.id}` |
-| `src/components/marketing/FoundingCustomerBanner.tsx` | Hardcoded `/betalist?interest=founding-partner` |
-| `src/pages/Signup.tsx` | `<Navigate to="/betalist">` and `<NavLink to="/betalist">` |
-| `src/pages/Auth.tsx` | `<Navigate to="/betalist">` and `<NavLink to="/betalist">` |
-| `src/pages/BetaInvite.tsx` | `<Navigate to="/betalist">` fallback |
+## What changes
 
-## Fix
+### 1. Rewrite `src/pages/BetaPortfolio.tsx`
 
-Replace all `/betalist` references with `/founding-partner-beta` (the canonical beta application page defined in `routes.marketing.foundingBeta`).
+Transform from internal portfolio into a conversion-focused landing page with these sections:
 
-### Changes
+1. **Hero** -- "Stop chasing customer photos." headline, subheadline, primary CTA ("Apply for Founding Partner Beta") linking to the application form section, secondary CTA ("See how it works") scrolling to workflow.
+2. **Interactive product demo** -- Reuse the existing `InteractiveHeroBriefAssembly` component (already used on the landing page).
+3. **Workflow steps** -- 3-4 step visual: Request, Capture, Check, Brief.
+4. **Use cases** -- Service, quote, review, approval, return, documentation cards.
+5. **Old way vs PhotoBrief way** -- Before/after comparison panel using existing `ComparisonTable` component or inline equivalent.
+6. **Founding Partner Beta offer** -- Keep the existing benefits list (90 days free, concierge setup, 50% off, etc.) but present customer-facing (remove internal "positioning rules" and "copy bank" sections).
+7. **Application form** -- Inline beta application form (name, email, business name, use case) that submits to the existing `beta-welcome-submit` edge function, matching the pattern in `BetaWelcome.tsx`.
+8. **Trust/privacy notes** -- No app download, no credit card, privacy/terms links.
+9. **Final CTA** -- Keep the existing branded closing CTA card.
 
-1. **`src/config/access.ts`** -- Update `signupCtaTarget()` and `planCtaTarget()` to return `/founding-partner-beta` (with query params preserved).
+### 2. Remove internal-only sections
 
-2. **`src/components/pricing/PricingCardGrid.tsx`** -- Update the hardcoded `/betalist?interest=...` to `/founding-partner-beta?interest=...`.
+These sections from the current page are internal tools, not customer-facing:
+- "Submission copy bank" (one-liner, short pitch, BetaList angle, etc.)
+- "Positioning rules" (do not say / say pairs)
+- "Partner commitments" (what partners give back)
+- "Surface gallery" mockups with "Portfolio asset" stamps
 
-3. **`src/components/marketing/FoundingCustomerBanner.tsx`** -- Update link target to `/founding-partner-beta?interest=founding-partner`.
+### 3. Update SEO metadata
 
-4. **`src/pages/Signup.tsx`** -- Update Navigate and NavLink targets to `/founding-partner-beta`.
+- Update `canonicalPath` to `/founding-partner-beta`
+- Update `title` and `description` for conversion (not portfolio review)
+- Fix the JSON-LD `url` field (currently points to `/beta-portfolio`)
 
-5. **`src/pages/Auth.tsx`** -- Update Navigate and NavLink targets to `/founding-partner-beta`.
+### 4. Keep existing design system
 
-6. **`src/pages/BetaInvite.tsx`** -- Update Navigate fallback to `/founding-partner-beta`.
+Continue using `pb-landing`, `pb-container`, `pb-card`, `pb-command-panel`, `pb-eyebrow`, `pb-section-title`, `pb-copy`, `pb-lens-field`, `pb-stamp` classes. Dark premium theme stays.
 
-No route, layout, or auth guard changes. Just correcting dead link targets.
+## Files affected
+
+- `src/pages/BetaPortfolio.tsx` -- Major rewrite
+- No route changes needed (route already points here)
