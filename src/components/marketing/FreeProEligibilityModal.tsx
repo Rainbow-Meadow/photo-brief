@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CheckCircle2, Info, XCircle } from "lucide-react";
+import { CheckCircle2, Info, Target, XCircle } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -10,6 +10,7 @@ import {
   FREE_PRO_QUALIFIES,
   FREE_PRO_DOES_NOT_QUALIFY,
   FREE_PRO_FINE_PRINT,
+  SCORING_RUBRIC,
 } from "@/config/betaProgram";
 
 interface Props {
