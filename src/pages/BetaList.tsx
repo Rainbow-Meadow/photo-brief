@@ -111,11 +111,13 @@ interface FormState {
   website: string;
   use_case: string;
   estimated_monthly_requests: string;
+  workflow_type: string;
 }
 
 const EMPTY: FormState = {
   name: "", business_name: "", email: "", business_type: "",
   website: "", use_case: "", estimated_monthly_requests: "",
+  workflow_type: "",
 };
 
 /* ── Main component ─────────────────────────────────────── */
