@@ -259,6 +259,97 @@ export default function BetaListPage() {
     }
   }
 
+  /* ── Full-page thank-you after submission ─────────────── */
+  if (done) {
+    return (
+      <div className="min-h-screen bg-[hsl(var(--pb-night))] text-white">
+        <SEOHead
+          title="Application received — PhotoBrief.ai"
+          description="Your Founding Partner Beta application has been received. We'll review it and reach out."
+          canonicalPath="/betalist"
+        />
+        <div className="relative isolate overflow-hidden px-4 py-16 sm:px-6 sm:py-24">
+          <div className="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
+            <div className="absolute left-1/2 top-0 h-[400px] w-[600px] -translate-x-1/2 rounded-full bg-[hsl(var(--pb-violet)/0.08)] blur-[120px]" />
+          </div>
+          <div className="mx-auto max-w-md text-center">
+            <div className="flex justify-center">
+              <BrandMark variant="stacked" tone="light" size={64} eager withGlow />
+            </div>
+
+            {done === "new" ? (
+              <>
+                <div className="mx-auto mt-8 flex h-16 w-16 items-center justify-center rounded-full bg-[hsl(var(--pb-mint)/0.12)]">
+                  <CheckCircle2 className="h-8 w-8 text-[hsl(var(--pb-mint))]" />
+                </div>
+                <h1 className="mt-6 text-2xl font-bold sm:text-3xl">Application received</h1>
+                <p className="mt-3 text-sm leading-relaxed text-[hsl(var(--pb-muted))]">
+                  Thanks for applying to the Founding Partner Beta. PhotoBrief is invite-only right now — we review every application by hand.
+                </p>
+              </>
+            ) : (
+              <>
+                <div className="mx-auto mt-8 flex h-16 w-16 items-center justify-center rounded-full bg-[hsl(var(--pb-lavender)/0.12)]">
+                  <MailCheck className="h-8 w-8 text-[hsl(var(--pb-lavender))]" />
+                </div>
+                <h1 className="mt-6 text-2xl font-bold sm:text-3xl">You're already on the list</h1>
+                <p className="mt-3 text-sm leading-relaxed text-[hsl(var(--pb-muted))]">
+                  We already have your application. No need to resubmit — we'll be in touch as soon as a spot opens.
+                </p>
+              </>
+            )}
+
+            {/* Next steps */}
+            <div className="mt-8 rounded-2xl border border-[hsl(var(--pb-line)/0.4)] bg-[hsl(var(--pb-panel)/0.5)] p-5 text-left">
+              <p className="text-xs font-semibold uppercase tracking-widest text-[hsl(var(--pb-violet))]">What happens next</p>
+              <ol className="mt-4 grid gap-3.5">
+                {[
+                  { step: "1", text: "We review your application within a few business days." },
+                  { step: "2", text: "If it's a fit, we send a personal invite with your login link." },
+                  { step: "3", text: "We set up your first templates together in a concierge onboarding call." },
+                  { step: "4", text: "You start sending guided PhotoBrief links to real customers." },
+                ].map((s) => (
+                  <li key={s.step} className="flex gap-3">
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-[hsl(var(--pb-violet)/0.15)] text-[11px] font-bold text-[hsl(var(--pb-violet))]">
+                      {s.step}
+                    </span>
+                    <span className="text-sm leading-relaxed text-[hsl(var(--pb-muted))]">{s.text}</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+
+            {/* Founding partner reminder */}
+            <div className="mt-5 rounded-xl border border-[hsl(var(--pb-violet)/0.2)] bg-[hsl(var(--pb-violet)/0.04)] p-4">
+              <p className="text-sm font-semibold text-white/90">Founding Partner Beta includes:</p>
+              <p className="mt-1.5 text-xs leading-relaxed text-[hsl(var(--pb-muted))]">
+                60–90 days free · concierge setup · priority support · direct roadmap input · early access to future tools · 50% off your first year
+              </p>
+            </div>
+
+            <div className="mt-8 flex flex-col items-center gap-3">
+              <Button asChild variant="pb-secondary" size="lg">
+                <NavLink to="/founding-partner-beta">Learn more about the beta program</NavLink>
+              </Button>
+              <p className="text-xs text-[hsl(var(--pb-muted)/0.5)]">
+                Questions?{" "}
+                <a href="mailto:hello@photobrief.ai" className="text-[hsl(var(--pb-lavender))] hover:underline">
+                  hello@photobrief.ai
+                </a>
+              </p>
+            </div>
+          </div>
+        </div>
+        <footer className="border-t border-[hsl(var(--pb-line)/0.15)] px-4 py-8 sm:px-6">
+          <div className="mx-auto flex max-w-2xl flex-col items-center gap-2.5 text-center text-xs text-[hsl(var(--pb-muted)/0.45)]">
+            <BrandMark variant="horizontal" tone="light" size={26} />
+            <p>© {new Date().getFullYear()} PhotoBrief.ai · <NavLink to="/privacy" className="hover:text-white/60">Privacy</NavLink> · <NavLink to="/terms" className="hover:text-white/60">Terms</NavLink></p>
+          </div>
+        </footer>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[hsl(var(--pb-night))] text-white">
       <SEOHead
@@ -324,31 +415,7 @@ export default function BetaListPage() {
             Limited spots · We typically reply within a few days
           </p>
 
-          {done === "new" && (
-            <div className="mt-8 rounded-2xl border border-[hsl(var(--pb-line)/0.5)] bg-[hsl(var(--pb-panel)/0.6)] p-8 text-center">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[hsl(var(--pb-mint)/0.12)] text-[hsl(var(--pb-mint))]">
-                <CheckCircle2 className="h-7 w-7" />
-              </div>
-              <h3 className="mt-4 text-lg font-semibold">Application received</h3>
-              <p className="mt-2 text-sm text-[hsl(var(--pb-muted))]">
-                Thanks — we'll review your request and reach out if PhotoBrief is a fit.
-              </p>
-            </div>
-          )}
 
-          {done === "already" && (
-            <div className="mt-8 rounded-2xl border border-[hsl(var(--pb-line)/0.5)] bg-[hsl(var(--pb-panel)/0.6)] p-8 text-center">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[hsl(var(--pb-lavender)/0.12)] text-[hsl(var(--pb-lavender))]">
-                <MailCheck className="h-7 w-7" />
-              </div>
-              <h3 className="mt-4 text-lg font-semibold">You already applied</h3>
-              <p className="mt-2 text-sm text-[hsl(var(--pb-muted))]">
-                We've got your details. We'll reach out as soon as a spot opens.
-              </p>
-            </div>
-          )}
-
-          {done === null && (
             <form onSubmit={onSubmit} className="mt-6 grid gap-4 rounded-2xl border border-[hsl(var(--pb-line)/0.5)] bg-[hsl(var(--pb-panel)/0.55)] p-5 sm:p-6">
               <Field id="bl-email" label="Work email" required>
                 <Input id="bl-email" type="email" value={form.email} onChange={update("email")} autoComplete="email" required placeholder="you@company.com" className="border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
@@ -399,7 +466,6 @@ export default function BetaListPage() {
                 {submitting ? "Submitting…" : "Apply for Founding Partner Beta"}
               </Button>
             </form>
-          )}
         </div>
       </section>
 
