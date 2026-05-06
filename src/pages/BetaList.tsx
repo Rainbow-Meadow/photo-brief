@@ -260,6 +260,8 @@ export default function BetaListPage() {
         description="PhotoBrief.ai turns customer photo chasing into one guided mobile workflow. Send a link, collect the right shots, flag obvious photo issues, and get a clean brief ready to act on."
         canonicalPath="/betalist"
         ogImage="/og-betalist.png"
+        ogTitle="PhotoBrief.ai — Stop chasing customer photos"
+        ogDescription="Send one guided PhotoBrief link and get a clean, AI-checked brief back."
       />
 
       {/* ━━ HERO ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
