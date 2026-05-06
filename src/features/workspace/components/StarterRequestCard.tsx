@@ -7,12 +7,6 @@ interface Props {
   industry?: string | null;
 }
 
-/**
- * Empty dashboard state for the guideless model.
- *
- * Do not suggest built-in guideTemplates here. Legacy built-in templates are kept
- * only as fallback for older beta links, not as a business-facing creation path.
- */
 export function StarterRequestCard(_props: Props) {
   return (
     <section className="relative isolate overflow-hidden rounded-[2rem] border border-border/70 bg-card/75 p-6 shadow-[0_30px_80px_-45px_hsl(222_47%_11%/0.45)] backdrop-blur sm:p-10">
@@ -59,9 +53,9 @@ export function StarterRequestCard(_props: Props) {
             How it works
           </p>
           <div className="mt-4 space-y-3">
-            <GuidelessStep icon={Camera} title="Ask for one photo" copy="Example: “Take a wide photo of the damaged area.”" />
-            <GuidelessStep icon={Plus} title="Add only what helps" copy="Add extra photo prompts or questions when they make the request clearer." />
-            <GuidelessStep icon={LayoutTemplate} title="Save what you reuse" copy="Turn a polished request into your own template whenever it becomes repeatable." />
+            <GuidelessStep icon={Camera} title="Describe the photos you need" copy="Plain language: &ldquo;Take a wide shot of the damaged area.&rdquo;" />
+            <GuidelessStep icon={Plus} title="AI checks every photo" copy="Blurry, dark, or wrong angle? Your customer gets instant feedback to reshoot." />
+            <GuidelessStep icon={LayoutTemplate} title="Save & reuse as a template" copy="Turn any PhotoBrief into a one-tap template for repeat jobs." />
           </div>
         </div>
       </div>
