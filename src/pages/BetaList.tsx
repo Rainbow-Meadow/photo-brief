@@ -344,55 +344,55 @@ export default function BetaListPage() {
         </div>
       </section>
 
-      {/* ━━ INTERACTIVE DEMO ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-      <section className="pb-section-tight">
-        <div className="pb-container">
-          <InteractiveHeroBriefAssembly />
-        </div>
-      </section>
-
       {/* ━━ APPLICATION FORM ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
       <section id="apply" className="pb-section-tight scroll-mt-8">
         <div className="pb-container">
-          <div className="pb-command-panel mx-auto max-w-xl p-5 sm:p-6 lg:p-8">
+          <div className="pb-command-panel mx-auto max-w-xl p-4 sm:p-6 lg:p-8">
             <div className="relative z-10">
               <span className="pb-eyebrow"><Stamp className="h-3.5 w-3.5" /> Apply for beta access</span>
-              <h2 className="mt-4 text-xl font-semibold tracking-tight text-white sm:text-2xl">Join the Founding Partner Beta</h2>
-              <p className="pb-copy mt-2 text-sm">Limited spots · We typically reply within a few days</p>
+              <h2 className="mt-3 text-lg font-semibold tracking-tight text-white sm:mt-4 sm:text-2xl">Join the Founding Partner Beta</h2>
+              <p className="pb-copy mt-1.5 text-sm">Limited spots · We typically reply within a few days</p>
 
-              <form onSubmit={onSubmit} onFocusCapture={handleFormFocus} className="mt-6 grid gap-4">
+              <form onSubmit={onSubmit} onFocusCapture={handleFormFocus} className="mt-5 grid gap-3.5 sm:mt-6 sm:gap-4">
                 <Field id="bl-email" label="Work email" required>
-                  <Input id="bl-email" type="email" value={form.email} onChange={update("email")} autoComplete="email" required placeholder="you@company.com" className="border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
+                  <Input id="bl-email" type="email" value={form.email} onChange={update("email")} autoComplete="email" required placeholder="you@company.com" className="h-12 border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
                 </Field>
                 <Field id="bl-biz" label="Business name" required>
-                  <Input id="bl-biz" value={form.business_name} onChange={update("business_name")} autoComplete="organization" required className="border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
+                  <Input id="bl-biz" value={form.business_name} onChange={update("business_name")} autoComplete="organization" required className="h-12 border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
                 </Field>
                 <Field id="bl-web" label="Website">
-                  <Input id="bl-web" value={form.website} onChange={update("website")} placeholder="https://" autoComplete="url" className="border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
+                  <Input id="bl-web" value={form.website} onChange={update("website")} placeholder="https://" autoComplete="url" className="h-12 border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
                 </Field>
                 <Field id="bl-usecase" label="What do you need customer photos for?" required>
                   <Textarea id="bl-usecase" value={form.use_case} onChange={update("use_case")} rows={2} required placeholder="e.g. Getting roof damage photos before we send a quote." className="border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
                 </Field>
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid gap-3.5 sm:grid-cols-2 sm:gap-4">
                   <Field id="bl-vol" label="Approx. monthly photo requests">
-                    <select id="bl-vol" value={form.estimated_monthly_requests} onChange={update("estimated_monthly_requests")} className="flex h-11 w-full rounded-xl border border-white/12 bg-white/[0.05] px-3 py-2 text-sm text-white shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--pb-lavender))]">
+                    <select id="bl-vol" value={form.estimated_monthly_requests} onChange={update("estimated_monthly_requests")} className="flex h-12 w-full rounded-xl border border-white/12 bg-white/[0.05] px-3 py-2 text-sm text-white shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--pb-lavender))]">
                       <option value="" className="bg-[hsl(var(--pb-ink))]">Select…</option>
                       {VOLUMES.map((v) => <option key={v} value={v} className="bg-[hsl(var(--pb-ink))]">{v}</option>)}
                     </select>
                   </Field>
                   <Field id="bl-fit" label="Best fit">
-                    <select id="bl-fit" value={form.workflow_type} onChange={update("workflow_type")} className="flex h-11 w-full rounded-xl border border-white/12 bg-white/[0.05] px-3 py-2 text-sm text-white shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--pb-lavender))]">
+                    <select id="bl-fit" value={form.workflow_type} onChange={update("workflow_type")} className="flex h-12 w-full rounded-xl border border-white/12 bg-white/[0.05] px-3 py-2 text-sm text-white shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--pb-lavender))]">
                       <option value="" className="bg-[hsl(var(--pb-ink))]">Select…</option>
                       {WORKFLOW_TYPES.map((w) => <option key={w} value={w} className="bg-[hsl(var(--pb-ink))]">{w}</option>)}
                     </select>
                   </Field>
                 </div>
-                <Button type="submit" size="lg" disabled={submitting} variant="pb-primary" className="w-full">
+                <Button type="submit" size="lg" disabled={submitting} variant="pb-primary" className="mt-1 h-12 w-full text-base">
                   {submitting ? "Submitting…" : "Apply for beta access"}
                 </Button>
               </form>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ━━ INTERACTIVE DEMO ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+      <section className="pb-section-tight">
+        <div className="pb-container">
+          <InteractiveHeroBriefAssembly />
         </div>
       </section>
 
