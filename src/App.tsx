@@ -30,6 +30,7 @@ import SignupPage from "@/pages/Signup";
 import BetaInvitePage from "@/pages/BetaInvite";
 import BetaPortfolioPage from "@/pages/BetaPortfolio";
 import IntakeBadgePage from "@/pages/IntakeBadge";
+import BetaListPage from "@/pages/BetaList";
 import PrivacyPage from "@/pages/Privacy";
 import TermsPage from "@/pages/Terms";
 import NotFound from "@/pages/NotFound";
@@ -103,6 +104,7 @@ const App = () => (
 
           {/* Lightweight embeddable brand surface for customer websites. */}
           <Route path="/badge/intake" element={<IntakeBadgePage />} />
+          <Route path="/betalist" element={<BetaListPage />} />
 
           {/* Onboarding + invite acceptance (no sidebar, but still auth-only).
               Onboarding intentionally skips the onboarding gate to avoid loops. */}
