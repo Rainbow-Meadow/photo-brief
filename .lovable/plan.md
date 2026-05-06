@@ -1,53 +1,62 @@
 
-# Beta Welcome Page
+# Pre-Launch Cleanup: Remove Unused Code
 
-A new page at `/welcome` for companies accepted into the Founding Partner Beta. It serves as a concierge intake — congratulatory, exclusive-feeling, and actionable. The page collects everything you need to set up their account before the concierge call.
+## What gets removed
 
-## What the page includes
+### 1. Dead page: `src/pages/Waitlist.tsx`
+The Waitlist page redirects to `/betalist`, which itself redirects to `/`. It's a double-redirect that serves no purpose. The Cloudflare router worker and `_redirects` already handle `/waitlist` -> `/?utm_source=betalist` at the edge — so this React page is never reached by real traffic.
 
-### Hero section
-- Congratulatory headline ("You're in." or "Welcome to the inner circle.")
-- Short paragraph reinforcing exclusivity (limited cohort, hand-picked, concierge setup)
-- Founding Partner badge/eyebrow
+- Delete `src/pages/Waitlist.tsx`
+- Remove the `WaitlistPage` import and `<Route path={routes.marketing.waitlist} ...>` from `AppRoutes.tsx`
+- Remove `waitlist: "/waitlist"` from `navigation.ts`
 
-### What's included card
-- Bullet list of founding partner benefits (concierge setup, priority support, locked pricing, direct roadmap input, early features)
+### 2. Unused edge function: `waitlist-submit`
+No frontend code invokes `waitlist-submit`. The BetaPortfolio/welcome pages use `beta-welcome-submit` instead.
 
-### Concierge intake form (multi-section)
-Collects everything needed to configure their account:
+- Delete `supabase/functions/waitlist-submit/` directory
+- Remove the deployed function via the delete tool
 
-1. **Business basics** — Business name, industry (dropdown from existing INDUSTRIES list), website URL, phone number
-2. **Brand & identity** — Logo upload (file input), primary brand color (hex picker), tagline or short description
-3. **Photo workflow details** — What they need customer photos for (textarea), typical monthly volume (dropdown), who reviews submissions (role/name), preferred customer communication channel (email/SMS/both)
-4. **First template ideas** — What their first 1-2 PhotoBrief templates should cover (textarea), example scenarios or job types
+### 3. Unused edge functions: `cloudflare-dns`, `generate-voiceover`
+Neither is referenced anywhere in the frontend codebase.
 
-### What happens next timeline
-- Numbered steps: "We review your info" → "Your account is configured" → "Concierge call to walk through everything" → "You send your first real PhotoBrief"
+- Delete `supabase/functions/cloudflare-dns/` and `supabase/functions/generate-voiceover/`
+- Remove the deployed functions via the delete tool
 
-### Contact/support footer
-- Direct email link, reassurance that replies go to the team
+### 4. Legacy redirect route constants
+`betaPortfolioLegacy` and `betaListLegacy` in `navigation.ts` and their corresponding `<Route>` entries in `AppRoutes.tsx` duplicate redirects already handled at the Cloudflare edge and in `_redirects`. They add bundle weight with no benefit.
 
-## Technical details
+- Remove `betaPortfolioLegacy` and `betaListLegacy` from `navigation.ts`
+- Remove their two `<Route>` entries from `AppRoutes.tsx`
 
-### New files
-- `src/pages/BetaWelcome.tsx` — The full welcome page component with the intake form. Submits to a new edge function. Uses existing brand design tokens (pb-section, pb-container, pb-card, pb-lens-field, pb-eyebrow, pb-copy, etc.) matching BetaList.tsx styling.
-- `supabase/functions/beta-welcome-submit/index.ts` — Edge function that stores the concierge intake data and sends an admin notification email with all the details.
+### 5. Stale CI/diagnostics artifacts
+`.ci-diagnostics/` and `tmp/ci-report.md` are leftover audit files, not part of the product.
 
-### Database
-- New `beta_welcome_submissions` table with columns for all form fields plus `user_email`, `submitted_at`, `status` (default 'pending'). No RLS needed beyond service-role access from the edge function (public form, no auth required — the invite link is the gate).
+- Delete `.ci-diagnostics/` directory
+- Delete `tmp/ci-report.md`
 
-### Routing
-- Add `/welcome` route inside the `MarketingLayout` group in `App.tsx`
-- The invite acceptance email will link to this page (future update to the email template)
+### 6. Stale `.lovable/plan.md`
+Contains outdated plan notes from the beta welcome page implementation.
 
-### Form submission
-- Calls the `beta-welcome-submit` edge function
-- Stores submission in `beta_welcome_submissions`
-- Triggers admin notification email with all collected info
-- Shows a confirmation state after submission ("We've got everything — expect to hear from us within 48 hours")
+- Delete `.lovable/plan.md`
 
-### Design
-- Matches the dark navy brand aesthetic from BetaList.tsx
-- Uses existing UI components (Input, Textarea, Select, Button with pb-primary/pb-secondary variants)
-- Mobile-first responsive layout
-- Logo upload uses a simple file input (stores as base64 or description for now — actual logo handled in concierge call)
+## What stays (and why)
+
+- **`public/_redirects`** — consumed by the Cloudflare Pages origin; the `/waitlist` and `/betalist` 301 rules there still serve SEO/backlink purposes for anyone who bookmarked those URLs.
+- **`workers/router/src/index.ts`** — the `/waitlist` path is not in `MARKETING_PATHS` so it already falls through to Lovable. No change needed.
+- **`waitlist_entries` DB table** — historical data; no reason to drop it.
+- **`beta-welcome-submit` edge function** — actively used by `/welcome`.
+- **All other edge functions** — referenced by frontend or called by other functions.
+
+## Files changed
+
+| Action | Path |
+|--------|------|
+| Delete | `src/pages/Waitlist.tsx` |
+| Delete | `supabase/functions/waitlist-submit/` |
+| Delete | `supabase/functions/cloudflare-dns/` |
+| Delete | `supabase/functions/generate-voiceover/` |
+| Delete | `.ci-diagnostics/` (entire directory) |
+| Delete | `tmp/ci-report.md` |
+| Delete | `.lovable/plan.md` |
+| Edit | `src/routes/AppRoutes.tsx` — remove 4 lines (WaitlistPage import, 3 legacy redirect routes) |
+| Edit | `src/routes/navigation.ts` — remove 3 keys (waitlist, betaListLegacy, betaPortfolioLegacy) |
