@@ -94,6 +94,7 @@ export default function SubmissionReviewPage() {
   const live = useSubmission(id);
   const { workspace } = useCurrentWorkspace();
   const { can } = usePlan();
+  const isBetaPartner = useIsBetaPartner(workspace?.id);
   const teamMembers = useTeamMembers();
   const canPdf = can("pdf_export");
   const canReminders = can("reminders");
