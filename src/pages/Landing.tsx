@@ -59,8 +59,8 @@ import {
   MAX_DISCOUNT_LABEL,
 } from "@/config/betaProgram";
 import { useBetaSeats } from "@/hooks/useBetaSeats";
-import wideGarage from "@/assets/junk-removal/wide-garage.jpg";
-import pileCloseup from "@/assets/junk-removal/pile-closeup.jpg";
+import wideGarage from "@/assets/junk-removal/wide-garage.webp";
+import pileCloseup from "@/assets/junk-removal/pile-closeup.webp";
 import appliances from "@/assets/junk-removal/appliances.webp";
 import drivewayAccess from "@/assets/junk-removal/driveway-access.webp";
 

@@ -20,8 +20,8 @@ import {
   Phone,
   Smartphone,
 } from "lucide-react";
-import wideGarage from "@/assets/junk-removal/wide-garage.jpg";
-import pileCloseup from "@/assets/junk-removal/pile-closeup.jpg";
+import wideGarage from "@/assets/junk-removal/wide-garage.webp";
+import pileCloseup from "@/assets/junk-removal/pile-closeup.webp";
 import appliances from "@/assets/junk-removal/appliances.webp";
 import drivewayAccess from "@/assets/junk-removal/driveway-access.webp";
 
