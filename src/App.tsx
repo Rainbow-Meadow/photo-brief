@@ -198,6 +198,16 @@ const App = () => (
                 </RequireAuth>
               }
             />
+            <Route
+              path="/admin/beta"
+              element={
+                <RequireAuth requireOnboarding={false}>
+                  <RequirePlatformAdmin>
+                    <AdminBetaPage />
+                  </RequirePlatformAdmin>
+                </RequireAuth>
+              }
+            />
           </Route>
 
           {/* Public intake + recipient capture */}
