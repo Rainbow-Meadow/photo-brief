@@ -1,17 +1,23 @@
 import { useEffect, useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useSearchParams } from "react-router-dom";
 import {
+  AlertTriangle,
   ArrowRight,
   BadgeCheck,
   Camera,
   CheckCircle2,
+  ClipboardCheck,
+  FileCheck2,
   Focus,
   ImagePlus,
+  Link2,
+  Lock,
   MailCheck,
   MessageSquareWarning,
+  PackageCheck,
   Shield,
+  Smartphone,
   Sparkles,
-  TimerReset,
   Zap,
 } from "lucide-react";
 
@@ -25,7 +31,7 @@ import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { conversions, trackEvent } from "@/lib/analytics";
 
-/* ── Form state ─────────────────────────────────────────── */
+/* ── constants ──────────────────────────────────────────── */
 
 const BUSINESS_TYPES = [
   "Roofing",
@@ -43,36 +49,22 @@ const BUSINESS_TYPES = [
   "Other",
 ];
 
-interface FormState {
-  name: string;
-  business_name: string;
-  email: string;
-  business_type: string;
-  website: string;
-  use_case: string;
-  notes: string;
-}
-
-const EMPTY: FormState = {
-  name: "",
-  business_name: "",
-  email: "",
-  business_type: "",
-  website: "",
-  use_case: "",
-  notes: "",
-};
-
-/* ── Use cases ──────────────────────────────────────────── */
+const VOLUMES = [
+  "Under 25 / month",
+  "25 – 100 / month",
+  "100 – 500 / month",
+  "500 – 2,000 / month",
+  "2,000+ / month",
+];
 
 const useCases = [
   { icon: Camera, label: "Before-quote photos", desc: "Get the right shots before you price the job." },
   { icon: Focus, label: "Inspection documentation", desc: "Guided photo capture for field inspections." },
+  { icon: ClipboardCheck, label: "Dispatch prep", desc: "Know what your crew needs before they roll." },
   { icon: ImagePlus, label: "Service follow-ups", desc: "Collect completion photos from crews or customers." },
-  { icon: Zap, label: "Claims & approvals", desc: "Photo evidence packages for insurance or review." },
+  { icon: PackageCheck, label: "Returns & warranty", desc: "Structured damage photos for claims decisions." },
+  { icon: FileCheck2, label: "Review & approvals", desc: "Photo evidence packages for sign-off workflows." },
 ];
-
-/* ── Old way vs PhotoBrief ──────────────────────────────── */
 
 const comparisonRows = [
   { old: "\"Can you send me some photos?\"", pb: "Guided link with exactly what to shoot" },
@@ -82,26 +74,139 @@ const comparisonRows = [
   { old: "Manual follow-up per customer", pb: "Automated links, reminders, intake" },
 ];
 
-/* ── Partner benefits ───────────────────────────────────── */
-
 const partnerBenefits = [
-  "90 days free beta access",
+  "60–90 days free beta access",
   "Concierge setup — we build your first templates",
   "Biweekly feedback sessions with the team",
+  "Early access to future tools",
   "50% off your first year after launch",
   "Founding Partner recognition (optional)",
 ];
 
+const trustPoints = [
+  { icon: Link2, title: "Secure, expiring upload links", desc: "Customers never see your dashboard or internal data." },
+  { icon: Shield, title: "Business-owned requests", desc: "You control every brief and its data. Delete anytime." },
+  { icon: Smartphone, title: "No spammy customer experience", desc: "Clean mobile capture. No app install. No account required." },
+  { icon: Lock, title: "Your data stays yours", desc: "Photos and briefs are never shared or used for training." },
+];
+
+/* ── form state ─────────────────────────────────────────── */
+
+interface FormState {
+  name: string;
+  business_name: string;
+  email: string;
+  business_type: string;
+  website: string;
+  use_case: string;
+  estimated_monthly_requests: string;
+}
+
+const EMPTY: FormState = {
+  name: "",
+  business_name: "",
+  email: "",
+  business_type: "",
+  website: "",
+  use_case: "",
+  estimated_monthly_requests: "",
+};
+
+/* ── Hero visual — messy→brief ──────────────────────────── */
+
+function HeroBriefVisual() {
+  return (
+    <div className="relative mx-auto mt-10 flex max-w-md flex-col items-center gap-4 sm:max-w-xl sm:flex-row sm:gap-6" aria-hidden="true">
+      {/* Messy incoming photos */}
+      <div className="relative h-44 w-48 shrink-0 sm:h-52 sm:w-56">
+        {/* Photo thumbnails — tilted, overlapping */}
+        <div className="absolute left-2 top-4 h-24 w-20 rotate-[-8deg] rounded-lg bg-[hsl(var(--pb-panel-2))] shadow-lg ring-1 ring-white/[0.06]">
+          <div className="flex h-full w-full items-center justify-center rounded-lg bg-gradient-to-br from-white/[0.04] to-transparent">
+            <Camera className="h-5 w-5 text-[hsl(var(--pb-muted)/0.4)]" />
+          </div>
+          <span className="absolute -bottom-2 -right-1 rounded-full bg-red-500/90 px-1.5 py-0.5 text-[9px] font-semibold text-white shadow">
+            Blurry
+          </span>
+        </div>
+        <div className="absolute left-14 top-0 h-24 w-20 rotate-[4deg] rounded-lg bg-[hsl(var(--pb-panel-2))] shadow-lg ring-1 ring-white/[0.06]">
+          <div className="flex h-full w-full items-center justify-center rounded-lg bg-gradient-to-br from-white/[0.04] to-transparent">
+            <Camera className="h-5 w-5 text-[hsl(var(--pb-muted)/0.4)]" />
+          </div>
+          <span className="absolute -bottom-2 left-1 rounded-full bg-amber-500/90 px-1.5 py-0.5 text-[9px] font-semibold text-white shadow">
+            Too dark
+          </span>
+        </div>
+        <div className="absolute bottom-2 left-6 h-24 w-20 rotate-[-3deg] rounded-lg bg-[hsl(var(--pb-panel-2))] shadow-lg ring-1 ring-white/[0.06]">
+          <div className="flex h-full w-full items-center justify-center rounded-lg bg-gradient-to-br from-white/[0.04] to-transparent">
+            <Camera className="h-5 w-5 text-[hsl(var(--pb-muted)/0.4)]" />
+          </div>
+          <span className="absolute -right-3 top-2 rounded-full bg-red-500/80 px-1.5 py-0.5 text-[9px] font-semibold text-white shadow">
+            Wrong angle
+          </span>
+        </div>
+        <p className="absolute -bottom-6 left-0 right-0 text-center text-[11px] font-medium text-[hsl(var(--pb-muted)/0.5)]">
+          What you get today
+        </p>
+      </div>
+
+      {/* Arrow */}
+      <div className="flex shrink-0 items-center">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[hsl(var(--pb-violet)/0.15)] text-[hsl(var(--pb-violet))] ring-1 ring-[hsl(var(--pb-violet)/0.3)]">
+          <ArrowRight className="h-5 w-5" />
+        </div>
+      </div>
+
+      {/* Clean brief card */}
+      <div className="relative w-52 shrink-0 rounded-xl border border-[hsl(var(--pb-line)/0.5)] bg-[hsl(var(--pb-panel)/0.8)] p-3 shadow-xl sm:w-56">
+        <div className="flex items-center gap-2 border-b border-[hsl(var(--pb-line)/0.3)] pb-2">
+          <div className="flex h-5 w-5 items-center justify-center rounded bg-[hsl(var(--pb-violet)/0.2)]">
+            <FileCheck2 className="h-3 w-3 text-[hsl(var(--pb-violet))]" />
+          </div>
+          <span className="text-[11px] font-semibold text-white/90">PhotoBrief</span>
+          <span className="ml-auto rounded-full bg-emerald-500/20 px-1.5 py-0.5 text-[8px] font-semibold text-emerald-400">
+            4/4 shots
+          </span>
+        </div>
+        {/* Mini photo grid */}
+        <div className="mt-2 grid grid-cols-2 gap-1.5">
+          {["Wide area", "Close-up", "Damage", "Access"].map((label) => (
+            <div key={label} className="rounded-md bg-[hsl(var(--pb-panel-2))] p-1.5">
+              <div className="flex h-8 items-center justify-center rounded bg-white/[0.03]">
+                <Camera className="h-3 w-3 text-[hsl(var(--pb-muted)/0.3)]" />
+              </div>
+              <div className="mt-1 flex items-center gap-0.5">
+                <CheckCircle2 className="h-2.5 w-2.5 text-emerald-400" />
+                <span className="text-[8px] text-[hsl(var(--pb-muted))]">{label}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+        {/* Status chips */}
+        <div className="mt-2 flex flex-wrap gap-1">
+          <span className="rounded-full bg-emerald-500/15 px-1.5 py-0.5 text-[8px] font-medium text-emerald-400">Verified</span>
+          <span className="rounded-full bg-emerald-500/15 px-1.5 py-0.5 text-[8px] font-medium text-emerald-400">Complete</span>
+          <span className="rounded-full bg-[hsl(var(--pb-violet)/0.15)] px-1.5 py-0.5 text-[8px] font-medium text-[hsl(var(--pb-lavender))]">Ready to quote</span>
+        </div>
+        <p className="absolute -bottom-6 left-0 right-0 text-center text-[11px] font-medium text-[hsl(var(--pb-muted)/0.5)]">
+          What you get with PhotoBrief
+        </p>
+      </div>
+    </div>
+  );
+}
+
 /* ── Main component ─────────────────────────────────────── */
 
 export default function BetaListPage() {
+  const [params] = useSearchParams();
+  const ref = params.get("ref") || "";
   const [form, setForm] = useState<FormState>(EMPTY);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState<"new" | "already" | null>(null);
 
   useEffect(() => {
-    trackEvent("betalist_page_viewed");
-  }, []);
+    trackEvent("betalist_page_viewed", ref ? { ref } : undefined);
+  }, [ref]);
 
   const update =
     <K extends keyof FormState>(key: K) =>
@@ -109,7 +214,6 @@ export default function BetaListPage() {
       setForm((prev) => ({ ...prev, [key]: e.target.value }));
 
   function validate(): string | null {
-    if (!form.name.trim()) return "Please share your name.";
     if (!form.email.trim()) return "We need a work email.";
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) return "That email doesn't look right.";
     return null;
@@ -123,22 +227,24 @@ export default function BetaListPage() {
       return;
     }
     setSubmitting(true);
+    const source = ref ? `betalist:${ref}` : "betalist";
     try {
       const { data, error } = await supabase.functions.invoke("waitlist-submit", {
         body: {
           ...form,
+          name: form.name.trim(),
           email: form.email.trim().toLowerCase(),
-          notes: form.notes ? `${form.notes}\n\nsource=betalist` : "source=betalist",
-          source: "betalist",
+          notes: `source=${source}`,
+          source,
         },
       });
       if (error) throw error;
       const payload = data as { ok?: boolean; already?: boolean } | null;
       if (payload?.already) {
-        trackEvent("betalist_duplicate");
+        trackEvent("betalist_duplicate", { ref });
         setDone("already");
       } else {
-        trackEvent("betalist_submitted", { business_type: form.business_type || undefined });
+        trackEvent("betalist_submitted", { ref, business_type: form.business_type || undefined });
         conversions.waitlistSubmitted({ interest: "betalist", business_type: form.business_type || undefined });
         setDone("new");
       }
@@ -161,35 +267,37 @@ export default function BetaListPage() {
         canonicalPath="/betalist"
       />
 
-      {/* ── HERO ──────────────────────────────────────────── */}
-      <section className="relative isolate overflow-hidden px-4 pb-20 pt-12 sm:px-6 sm:pt-16">
-        {/* Ambient glow */}
+      {/* ━━ HERO ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+      <section className="relative isolate overflow-hidden px-4 pb-24 pt-10 sm:px-6 sm:pt-14">
         <div className="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
-          <div className="absolute left-1/2 top-0 h-[520px] w-[800px] -translate-x-1/2 rounded-full bg-[hsl(var(--pb-violet)/0.12)] blur-[120px]" />
+          <div className="absolute left-1/2 top-0 h-[520px] w-[800px] -translate-x-1/2 rounded-full bg-[hsl(var(--pb-violet)/0.10)] blur-[120px]" />
         </div>
 
         <div className="mx-auto max-w-3xl text-center">
           <div className="flex justify-center">
-            <BrandMark variant="stacked" tone="light" size={80} eager withGlow />
+            <BrandMark variant="stacked" tone="light" size={72} eager withGlow />
           </div>
 
-          <p className="mt-6 inline-flex items-center gap-1.5 rounded-full border border-[hsl(var(--pb-violet)/0.35)] bg-[hsl(var(--pb-violet)/0.08)] px-3.5 py-1.5 text-xs font-medium tracking-wide text-[hsl(var(--pb-lavender))] uppercase">
+          <p className="mt-5 inline-flex items-center gap-1.5 rounded-full border border-[hsl(var(--pb-violet)/0.35)] bg-[hsl(var(--pb-violet)/0.08)] px-3.5 py-1.5 text-[11px] font-semibold tracking-wider text-[hsl(var(--pb-lavender))] uppercase">
             <Sparkles className="h-3 w-3" /> Founding Partner Beta
           </p>
 
-          <h1 className="mt-6 text-balance text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+          <h1 className="mt-5 text-balance text-4xl font-bold tracking-tight sm:text-5xl lg:text-[3.5rem]">
             Stop chasing customer photos.
           </h1>
 
-          <p className="mx-auto mt-5 max-w-xl text-balance text-lg text-[hsl(var(--pb-muted))] sm:text-xl">
-            Send one guided PhotoBrief link and get a clean, AI-checked brief back.
+          <p className="mx-auto mt-4 max-w-xl text-balance text-lg leading-relaxed text-[hsl(var(--pb-muted))] sm:text-xl">
+            Send one guided PhotoBrief link and get a clean, AI&#8209;checked brief back.
           </p>
 
-          <p className="mx-auto mt-3 max-w-lg text-sm text-[hsl(var(--pb-muted)/0.7)]">
+          <p className="mx-auto mt-2.5 max-w-lg text-[13px] leading-relaxed text-[hsl(var(--pb-muted)/0.65)]">
             For teams that need the right photos before they quote, dispatch, approve, review, document, or follow up.
           </p>
 
-          <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+          {/* Hero visual */}
+          <HeroBriefVisual />
+
+          <div className="mt-14 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
             <Button
               variant="pb-primary"
               size="xl"
@@ -208,105 +316,12 @@ export default function BetaListPage() {
         </div>
       </section>
 
-      {/* ── HOW IT WORKS — product workflow ───────────────── */}
-      <section id="how-it-works" className="px-4 py-16 sm:px-6 sm:py-20">
-        <div className="mx-auto max-w-3xl">
-          <p className="text-center text-xs font-medium uppercase tracking-widest text-[hsl(var(--pb-violet))]">How it works</p>
-          <h2 className="mt-3 text-center text-2xl font-semibold sm:text-3xl">Three steps. One clean brief.</h2>
-
-          <div className="mt-12 grid gap-6">
-            {[
-              { step: "1", title: "Create a guided request", desc: "Pick a template or describe what you need. PhotoBrief generates a step-by-step photo guide tailored to the job." },
-              { step: "2", title: "Send the link", desc: "Your customer opens the link on their phone — no app, no login. They follow the guided steps to capture every required shot." },
-              { step: "3", title: "Get an AI-checked brief", desc: "Photos are scored for quality and completeness. You get a clean, organized brief in your dashboard — ready for quoting, dispatch, or approval." },
-            ].map((s) => (
-              <div key={s.step} className="flex gap-4 rounded-2xl border border-[hsl(var(--pb-line)/0.5)] bg-[hsl(var(--pb-panel)/0.6)] p-5">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[hsl(var(--pb-violet)/0.15)] text-sm font-bold text-[hsl(var(--pb-violet))]">
-                  {s.step}
-                </span>
-                <div>
-                  <p className="font-semibold">{s.title}</p>
-                  <p className="mt-1 text-sm leading-relaxed text-[hsl(var(--pb-muted))]">{s.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── USE CASES ─────────────────────────────────────── */}
-      <section className="px-4 py-16 sm:px-6 sm:py-20">
-        <div className="mx-auto max-w-3xl">
-          <p className="text-center text-xs font-medium uppercase tracking-widest text-[hsl(var(--pb-violet))]">Use cases</p>
-          <h2 className="mt-3 text-center text-2xl font-semibold sm:text-3xl">
-            Built for real service workflows
-          </h2>
-          <div className="mt-10 grid gap-4 sm:grid-cols-2">
-            {useCases.map(({ icon: Icon, label, desc }) => (
-              <div key={label} className="rounded-2xl border border-[hsl(var(--pb-line)/0.4)] bg-[hsl(var(--pb-ink)/0.6)] p-5">
-                <Icon className="h-5 w-5 text-[hsl(var(--pb-lavender))]" />
-                <p className="mt-3 font-semibold">{label}</p>
-                <p className="mt-1 text-sm text-[hsl(var(--pb-muted))]">{desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── OLD WAY VS PHOTOBRIEF ─────────────────────────── */}
-      <section className="px-4 py-16 sm:px-6 sm:py-20">
-        <div className="mx-auto max-w-2xl">
-          <h2 className="text-center text-2xl font-semibold sm:text-3xl">The old way vs. PhotoBrief</h2>
-          <div className="mt-10 overflow-hidden rounded-2xl border border-[hsl(var(--pb-line)/0.4)]">
-            {/* Header */}
-            <div className="grid grid-cols-2 border-b border-[hsl(var(--pb-line)/0.4)] bg-[hsl(var(--pb-panel)/0.8)]">
-              <div className="p-3 text-center text-xs font-semibold uppercase tracking-wider text-[hsl(var(--pb-muted))]">
-                <MessageSquareWarning className="mx-auto mb-1 h-4 w-4 text-red-400/60" /> Today
-              </div>
-              <div className="border-l border-[hsl(var(--pb-line)/0.4)] p-3 text-center text-xs font-semibold uppercase tracking-wider text-[hsl(var(--pb-lavender))]">
-                <CheckCircle2 className="mx-auto mb-1 h-4 w-4" /> PhotoBrief
-              </div>
-            </div>
-            {comparisonRows.map(({ old, pb }, i) => (
-              <div
-                key={i}
-                className={`grid grid-cols-2 ${i < comparisonRows.length - 1 ? "border-b border-[hsl(var(--pb-line)/0.25)]" : ""}`}
-              >
-                <div className="p-3.5 text-sm text-[hsl(var(--pb-muted)/0.7)]">{old}</div>
-                <div className="border-l border-[hsl(var(--pb-line)/0.25)] p-3.5 text-sm text-white/90">{pb}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── FOUNDING PARTNER BETA OFFER ───────────────────── */}
-      <section className="px-4 py-16 sm:px-6 sm:py-20">
-        <div className="mx-auto max-w-2xl rounded-2xl border border-[hsl(var(--pb-violet)/0.3)] bg-[hsl(var(--pb-violet)/0.06)] p-6 sm:p-8">
-          <p className="inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-widest text-[hsl(var(--pb-violet))]">
-            <Sparkles className="h-3 w-3" /> Limited spots
-          </p>
-          <h2 className="mt-3 text-2xl font-semibold sm:text-3xl">Founding Partner Beta</h2>
-          <p className="mt-3 text-sm leading-relaxed text-[hsl(var(--pb-muted))]">
-            We're inviting a small group of service businesses to shape PhotoBrief before public launch. In exchange for real-world usage and honest feedback, founding partners get:
-          </p>
-          <div className="mt-5 grid gap-2.5">
-            {partnerBenefits.map((b) => (
-              <div key={b} className="flex items-start gap-2.5 text-sm">
-                <BadgeCheck className="mt-0.5 h-4 w-4 shrink-0 text-[hsl(var(--pb-mint))]" />
-                <span className="text-white/90">{b}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── APPLICATION FORM ──────────────────────────────── */}
-      <section id="apply" className="scroll-mt-8 px-4 py-16 sm:px-6 sm:py-20">
-        <div className="mx-auto max-w-xl">
+      {/* ━━ APPLICATION FORM (front-and-center) ━━━━━━━━━━━━ */}
+      <section id="apply" className="scroll-mt-8 px-4 py-14 sm:px-6 sm:py-16">
+        <div className="mx-auto max-w-lg">
           <h2 className="text-center text-2xl font-semibold sm:text-3xl">Apply for beta access</h2>
           <p className="mt-2 text-center text-sm text-[hsl(var(--pb-muted))]">
-            Limited spots. We typically reply within a few days.
+            Limited spots · We typically reply within a few days
           </p>
 
           {done === "new" && (
@@ -334,19 +349,19 @@ export default function BetaListPage() {
           )}
 
           {done === null && (
-            <form onSubmit={onSubmit} className="mt-8 grid gap-5 rounded-2xl border border-[hsl(var(--pb-line)/0.5)] bg-[hsl(var(--pb-panel)/0.6)] p-6 sm:p-8">
-              <div className="grid gap-5 sm:grid-cols-2">
-                <Field id="bl-name" label="Your name" required>
-                  <Input id="bl-name" value={form.name} onChange={update("name")} autoComplete="name" required className="border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
+            <form onSubmit={onSubmit} className="mt-6 grid gap-4 rounded-2xl border border-[hsl(var(--pb-line)/0.5)] bg-[hsl(var(--pb-panel)/0.55)] p-5 sm:p-6">
+              <Field id="bl-email" label="Work email" required>
+                <Input id="bl-email" type="email" value={form.email} onChange={update("email")} autoComplete="email" required placeholder="you@company.com" className="border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
+              </Field>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <Field id="bl-name" label="Your name">
+                  <Input id="bl-name" value={form.name} onChange={update("name")} autoComplete="name" className="border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
                 </Field>
                 <Field id="bl-biz" label="Business name">
                   <Input id="bl-biz" value={form.business_name} onChange={update("business_name")} autoComplete="organization" className="border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
                 </Field>
               </div>
-              <Field id="bl-email" label="Work email" required>
-                <Input id="bl-email" type="email" value={form.email} onChange={update("email")} autoComplete="email" required className="border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
-              </Field>
-              <div className="grid gap-5 sm:grid-cols-2">
+              <div className="grid gap-4 sm:grid-cols-2">
                 <Field id="bl-type" label="Business type">
                   <select
                     id="bl-type"
@@ -365,7 +380,20 @@ export default function BetaListPage() {
                 </Field>
               </div>
               <Field id="bl-usecase" label="What workflow would you use PhotoBrief for?">
-                <Textarea id="bl-usecase" value={form.use_case} onChange={update("use_case")} rows={3} placeholder="e.g. Getting roof damage photos before we send a quote." className="border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
+                <Textarea id="bl-usecase" value={form.use_case} onChange={update("use_case")} rows={2} placeholder="e.g. Getting roof damage photos before we send a quote." className="border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
+              </Field>
+              <Field id="bl-vol" label="Approx. monthly photo requests">
+                <select
+                  id="bl-vol"
+                  value={form.estimated_monthly_requests}
+                  onChange={update("estimated_monthly_requests")}
+                  className="flex h-11 w-full rounded-xl border border-white/12 bg-white/[0.05] px-3 py-2 text-sm text-white shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--pb-lavender))]"
+                >
+                  <option value="" className="bg-[hsl(var(--pb-ink))]">Select…</option>
+                  {VOLUMES.map((v) => (
+                    <option key={v} value={v} className="bg-[hsl(var(--pb-ink))]">{v}</option>
+                  ))}
+                </select>
               </Field>
               <Button type="submit" size="lg" disabled={submitting} variant="pb-primary" className="w-full">
                 {submitting ? "Submitting…" : "Apply for Founding Partner Beta"}
@@ -375,29 +403,125 @@ export default function BetaListPage() {
         </div>
       </section>
 
-      {/* ── TRUST / PRIVACY ───────────────────────────────── */}
-      <section className="px-4 py-12 sm:px-6 sm:py-16">
-        <div className="mx-auto grid max-w-2xl gap-4 sm:grid-cols-3">
-          {[
-            { icon: Shield, title: "Your data stays yours", desc: "Photos and briefs are never shared or used for training." },
-            { icon: TimerReset, title: "Cancel anytime", desc: "No contracts. Beta partners can opt out at any time." },
-            { icon: BadgeCheck, title: "SOC 2-ready infra", desc: "Built on enterprise-grade cloud infrastructure." },
-          ].map(({ icon: Icon, title, desc }) => (
-            <div key={title} className="rounded-xl border border-[hsl(var(--pb-line)/0.3)] bg-[hsl(var(--pb-panel)/0.4)] p-4 text-center">
-              <Icon className="mx-auto h-5 w-5 text-[hsl(var(--pb-muted))]" />
+      {/* ━━ HOW IT WORKS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+      <section id="how-it-works" className="px-4 py-14 sm:px-6 sm:py-18">
+        <div className="mx-auto max-w-2xl">
+          <p className="text-center text-[11px] font-semibold uppercase tracking-[0.15em] text-[hsl(var(--pb-violet))]">How it works</p>
+          <h2 className="mt-3 text-center text-2xl font-semibold sm:text-3xl">One link → one clean brief.</h2>
+
+          <div className="mt-10 grid gap-5">
+            {[
+              { step: "1", title: "Create a guided request", desc: "Pick a template or describe what you need. PhotoBrief generates a step-by-step photo guide tailored to the job." },
+              { step: "2", title: "Send the link", desc: "Your customer opens the link on their phone — no app, no login. They follow guided steps to capture every required shot." },
+              { step: "3", title: "Get an AI-checked brief", desc: "Photos are scored for quality and completeness. You get a clean, organized brief — ready for quoting, dispatch, or approval." },
+            ].map((s) => (
+              <div key={s.step} className="flex gap-4 rounded-2xl border border-[hsl(var(--pb-line)/0.4)] bg-[hsl(var(--pb-panel)/0.5)] p-4">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[hsl(var(--pb-violet)/0.15)] text-sm font-bold text-[hsl(var(--pb-violet))]">
+                  {s.step}
+                </span>
+                <div>
+                  <p className="text-[15px] font-semibold">{s.title}</p>
+                  <p className="mt-1 text-sm leading-relaxed text-[hsl(var(--pb-muted))]">{s.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ━━ USE CASES ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+      <section className="px-4 py-14 sm:px-6 sm:py-18">
+        <div className="mx-auto max-w-2xl">
+          <p className="text-center text-[11px] font-semibold uppercase tracking-[0.15em] text-[hsl(var(--pb-violet))]">Use cases</p>
+          <h2 className="mt-3 text-center text-balance text-2xl font-semibold sm:text-3xl">
+            Built for moments when photos decide the next step.
+          </h2>
+          <div className="mt-8 grid gap-3 sm:grid-cols-2">
+            {useCases.map(({ icon: Icon, label, desc }) => (
+              <div key={label} className="rounded-xl border border-[hsl(var(--pb-line)/0.35)] bg-[hsl(var(--pb-ink)/0.5)] p-4">
+                <Icon className="h-4.5 w-4.5 text-[hsl(var(--pb-lavender))]" />
+                <p className="mt-2 text-[15px] font-semibold">{label}</p>
+                <p className="mt-0.5 text-sm text-[hsl(var(--pb-muted))]">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ━━ OLD WAY VS PHOTOBRIEF ━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+      <section className="px-4 py-14 sm:px-6 sm:py-18">
+        <div className="mx-auto max-w-xl">
+          <h2 className="text-center text-2xl font-semibold sm:text-3xl">The old way vs. PhotoBrief</h2>
+          <div className="mt-8 overflow-hidden rounded-2xl border border-[hsl(var(--pb-line)/0.4)]">
+            <div className="grid grid-cols-2 border-b border-[hsl(var(--pb-line)/0.4)] bg-[hsl(var(--pb-panel)/0.7)]">
+              <div className="flex items-center justify-center gap-1.5 p-3 text-[11px] font-semibold uppercase tracking-wider text-[hsl(var(--pb-muted))]">
+                <MessageSquareWarning className="h-3.5 w-3.5 text-red-400/60" /> Today
+              </div>
+              <div className="flex items-center justify-center gap-1.5 border-l border-[hsl(var(--pb-line)/0.4)] p-3 text-[11px] font-semibold uppercase tracking-wider text-[hsl(var(--pb-lavender))]">
+                <CheckCircle2 className="h-3.5 w-3.5" /> PhotoBrief
+              </div>
+            </div>
+            {comparisonRows.map(({ old, pb }, i) => (
+              <div
+                key={i}
+                className={`grid grid-cols-2 ${i < comparisonRows.length - 1 ? "border-b border-[hsl(var(--pb-line)/0.2)]" : ""}`}
+              >
+                <div className="p-3 text-[13px] leading-snug text-[hsl(var(--pb-muted)/0.65)]">{old}</div>
+                <div className="border-l border-[hsl(var(--pb-line)/0.2)] p-3 text-[13px] leading-snug text-white/90">{pb}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ━━ FOUNDING PARTNER BETA OFFER ━━━━━━━━━━━━━━━━━━━ */}
+      <section className="px-4 py-14 sm:px-6 sm:py-18">
+        <div className="mx-auto max-w-xl rounded-2xl border border-[hsl(var(--pb-violet)/0.25)] bg-[hsl(var(--pb-violet)/0.05)] p-5 sm:p-7">
+          <p className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-[hsl(var(--pb-violet))]">
+            <Sparkles className="h-3 w-3" /> Limited spots
+          </p>
+          <h2 className="mt-3 text-xl font-semibold sm:text-2xl">Founding Partner Beta</h2>
+          <p className="mt-2 text-sm leading-relaxed text-[hsl(var(--pb-muted))]">
+            We're inviting a small group of service businesses to shape PhotoBrief before public launch. In exchange for real-world usage and honest feedback, founding partners get:
+          </p>
+          <div className="mt-4 grid gap-2">
+            {partnerBenefits.map((b) => (
+              <div key={b} className="flex items-start gap-2 text-sm">
+                <BadgeCheck className="mt-0.5 h-4 w-4 shrink-0 text-[hsl(var(--pb-mint))]" />
+                <span className="text-white/90">{b}</span>
+              </div>
+            ))}
+          </div>
+          <Button
+            variant="pb-primary"
+            size="lg"
+            className="mt-5 w-full"
+            onClick={() => document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" })}
+          >
+            Apply now <ArrowRight className="ml-1 h-4 w-4" />
+          </Button>
+        </div>
+      </section>
+
+      {/* ━━ TRUST / PRIVACY ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+      <section className="px-4 py-12 sm:px-6 sm:py-14">
+        <div className="mx-auto grid max-w-xl gap-3 sm:grid-cols-2">
+          {trustPoints.map(({ icon: Icon, title, desc }) => (
+            <div key={title} className="rounded-xl border border-[hsl(var(--pb-line)/0.25)] bg-[hsl(var(--pb-panel)/0.35)] p-4">
+              <Icon className="h-4 w-4 text-[hsl(var(--pb-muted)/0.7)]" />
               <p className="mt-2 text-sm font-semibold">{title}</p>
-              <p className="mt-1 text-xs text-[hsl(var(--pb-muted))]">{desc}</p>
+              <p className="mt-0.5 text-xs leading-relaxed text-[hsl(var(--pb-muted))]">{desc}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* ── FINAL CTA ─────────────────────────────────────── */}
-      <section className="px-4 py-16 sm:px-6 sm:py-20">
-        <div className="mx-auto max-w-xl text-center">
+      {/* ━━ FINAL CTA ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+      <section className="px-4 py-14 sm:px-6 sm:py-18">
+        <div className="mx-auto max-w-md text-center">
           <h2 className="text-2xl font-semibold sm:text-3xl">Ready to stop chasing photos?</h2>
           <p className="mt-3 text-sm text-[hsl(var(--pb-muted))]">
-            Join the founding partner beta and be one of the first to turn messy photo requests into clean, AI-checked briefs.
+            Join the founding partner beta and be one of the first to turn messy photo requests into clean, AI&#8209;checked briefs.
           </p>
           <Button
             variant="pb-primary"
@@ -407,7 +531,7 @@ export default function BetaListPage() {
           >
             Apply for Founding Partner Beta <ArrowRight className="ml-1 h-4 w-4" />
           </Button>
-          <p className="mt-6 text-xs text-[hsl(var(--pb-muted)/0.6)]">
+          <p className="mt-5 text-xs text-[hsl(var(--pb-muted)/0.5)]">
             Already have an account?{" "}
             <NavLink to="/auth" className="text-[hsl(var(--pb-lavender))] hover:underline">
               Sign in
@@ -417,9 +541,9 @@ export default function BetaListPage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-[hsl(var(--pb-line)/0.2)] px-4 py-8 sm:px-6">
-        <div className="mx-auto flex max-w-3xl flex-col items-center gap-3 text-center text-xs text-[hsl(var(--pb-muted)/0.5)]">
-          <BrandMark variant="horizontal" tone="light" size={28} />
+      <footer className="border-t border-[hsl(var(--pb-line)/0.15)] px-4 py-8 sm:px-6">
+        <div className="mx-auto flex max-w-2xl flex-col items-center gap-2.5 text-center text-xs text-[hsl(var(--pb-muted)/0.45)]">
+          <BrandMark variant="horizontal" tone="light" size={26} />
           <p>© {new Date().getFullYear()} PhotoBrief.ai · <NavLink to="/privacy" className="hover:text-white/60">Privacy</NavLink> · <NavLink to="/terms" className="hover:text-white/60">Terms</NavLink></p>
         </div>
       </footer>
@@ -432,7 +556,7 @@ export default function BetaListPage() {
 function Field({ id, label, required, children }: { id: string; label: string; required?: boolean; children: React.ReactNode }) {
   return (
     <div>
-      <Label htmlFor={id} className="mb-1.5 inline-block text-white/80">
+      <Label htmlFor={id} className="mb-1 inline-block text-[13px] text-white/75">
         {label}
         {required && <span className="ml-0.5 text-[hsl(var(--pb-lavender))]">*</span>}
       </Label>
