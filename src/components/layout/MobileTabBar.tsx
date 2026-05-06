@@ -43,7 +43,7 @@ export function MobileTabBar() {
           <div className="flex flex-col items-center justify-start">
             <NavLink
               to="/requests/new"
-              aria-label="Request a PhotoBrief"
+              aria-label="New photo request"
               className={cn(
                 "-mt-6 inline-flex h-14 w-14 items-center justify-center rounded-full",
                 "bg-primary text-primary-foreground shadow-elev-md",

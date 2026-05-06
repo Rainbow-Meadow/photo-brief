@@ -28,16 +28,16 @@ export function StarterRequestCard(_props: Props) {
           </span>
 
           <h2 className="mt-5 max-w-xl text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-            Send your first PhotoBrief.
+            Get your first PhotoBrief back in minutes.
           </h2>
           <p className="mt-3 max-w-lg text-sm text-muted-foreground sm:text-base">
-            Tell your customer exactly what to photograph. AI checks the quality, and you get review-ready photos in minutes.
+            Send a photo request to your customer. AI coaches them through every shot, and you receive a complete PhotoBrief ready to review.
           </p>
 
           <div className="mt-7 flex flex-col gap-3 sm:flex-row">
             <Button asChild size="lg" className="gap-1.5 rounded-full px-6">
               <NavLink to="/requests/new">
-                Request a PhotoBrief <ArrowRight className="h-4 w-4" />
+                New photo request <ArrowRight className="h-4 w-4" />
               </NavLink>
             </Button>
             <Button asChild size="lg" variant="outline" className="gap-1.5 rounded-full bg-background/60 px-6">
@@ -55,7 +55,7 @@ export function StarterRequestCard(_props: Props) {
           <div className="mt-4 space-y-3">
             <GuidelessStep icon={Camera} title="Describe the photos you need" copy="Plain language: &ldquo;Take a wide shot of the damaged area.&rdquo;" />
             <GuidelessStep icon={Plus} title="AI checks every photo" copy="Blurry, dark, or wrong angle? Your customer gets instant feedback to reshoot." />
-            <GuidelessStep icon={LayoutTemplate} title="Save & reuse as a template" copy="Turn any PhotoBrief into a one-tap template for repeat jobs." />
+            <GuidelessStep icon={LayoutTemplate} title="Save & reuse as a template" copy="Turn any request into a one-tap template for repeat jobs." />
           </div>
         </div>
       </div>

@@ -26,7 +26,7 @@ export function StepReview({ draft, onChange, onCreate, onSaveAsGuide, isSaving 
           <CheckCircle2 className="h-7 w-7" />
         </div>
         <h2 className="mt-4 text-xl font-semibold tracking-tight text-foreground">Review & send</h2>
-        <p className="mt-1 text-sm text-muted-foreground">Make any final edits, then send the PhotoBrief.</p>
+        <p className="mt-1 text-sm text-muted-foreground">Make any final edits, then send the request.</p>
       </div>
 
       {/* Summary cards */}
@@ -94,7 +94,7 @@ export function StepReview({ draft, onChange, onCreate, onSaveAsGuide, isSaving 
           disabled={!canCreate || isSaving}
         >
           <Send className="mr-2 h-5 w-5" />
-          {isSaving ? "Creating…" : "Send PhotoBrief"}
+          {isSaving ? "Creating…" : "Send request"}
         </Button>
         <Button
           variant="outline"
