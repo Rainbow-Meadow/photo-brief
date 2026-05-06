@@ -685,7 +685,7 @@ export default function BetaListPage() {
                 Every partner earns a reward tier. The rubric above determines who lands in the top&nbsp;2.
               </p>
               <p className="pb-copy mt-1 text-xs">
-                Scores are assessed by the PhotoBrief team at the end of the {BETA_DURATION_DAYS}-day beta. No self-reporting required — we track engagement internally.
+                Scores are assessed by the PhotoBrief team at the end of the {BETA_DURATION_DAYS}-day beta (which starts two weeks after the final seat is filled). No self-reporting required — we track engagement internally.
               </p>
             </div>
           </div>

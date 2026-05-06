@@ -2,7 +2,7 @@ import { Zap, ArrowRight } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/analytics";
-import { BETA_DURATION_DAYS, MAX_DISCOUNT_LABEL } from "@/config/betaProgram";
+import { BETA_DURATION_DAYS, BETA_SETUP_BUFFER_DAYS, MAX_DISCOUNT_LABEL } from "@/config/betaProgram";
 
 export function FoundingCustomerBanner() {
   return (
@@ -17,7 +17,7 @@ export function FoundingCustomerBanner() {
               Founding Partner Beta — Limited spots available
             </p>
              <p className="mt-0.5 text-sm text-muted-foreground">
-               Accepted partners get <span className="font-semibold text-foreground">{BETA_DURATION_DAYS} days free, concierge setup, direct input, and tiered post-launch rewards</span>. {MAX_DISCOUNT_LABEL}.
+               Accepted partners get <span className="font-semibold text-foreground">{BETA_DURATION_DAYS} days free (clock starts {BETA_SETUP_BUFFER_DAYS} days after all seats fill), concierge setup, direct input, and tiered post-launch rewards</span>. {MAX_DISCOUNT_LABEL}.
              </p>
           </div>
         </div>
