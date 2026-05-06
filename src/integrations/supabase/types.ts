@@ -202,6 +202,24 @@ export type Database = {
         }
         Relationships: []
       }
+      beta_program_config: {
+        Row: {
+          id: boolean
+          seats_filled: number
+          updated_at: string
+        }
+        Insert: {
+          id?: boolean
+          seats_filled?: number
+          updated_at?: string
+        }
+        Update: {
+          id?: boolean
+          seats_filled?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       beta_welcome_submissions: {
         Row: {
           brand_color: string | null
