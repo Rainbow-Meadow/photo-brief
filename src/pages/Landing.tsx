@@ -211,7 +211,7 @@ export default function LandingPage() {
   const utm = utmContext();
 
   useEffect(() => {
-    trackEvent("betalist_page_view", utm);
+    trackEvent("landing_page_view", utm);
   }, []);
 
   const jsonLd = useMemo(
@@ -235,7 +235,7 @@ export default function LandingPage() {
   const handleFormFocus = () => {
     if (!applicationStarted) {
       setApplicationStarted(true);
-      trackEvent("betalist_application_started", utm);
+      trackEvent("application_started", utm);
     }
   };
 
@@ -255,15 +255,15 @@ export default function LandingPage() {
       if (error) throw error;
       const payload = data as { ok?: boolean; already?: boolean } | null;
       if (payload?.already) {
-        trackEvent("betalist_application_submitted", { ...utm, duplicate: true });
+        trackEvent("application_submitted", { ...utm, duplicate: true });
         setDone("already");
       } else {
-        trackEvent("betalist_application_submitted", { ...utm, business_type: form.business_type || undefined });
+        trackEvent("application_submitted", { ...utm, business_type: form.business_type || undefined });
         conversions.waitlistSubmitted({ interest: "landing", business_type: form.business_type || undefined });
         setDone("new");
       }
     } catch {
-      trackEvent("betalist_application_error", utm);
+      trackEvent("application_error", utm);
       toast({ title: "Something went wrong", description: "Please try again.", variant: "destructive" });
     } finally {
       setSubmitting(false);
