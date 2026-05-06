@@ -180,10 +180,7 @@ export default function BetaListPage() {
           ...form,
           name: form.name.trim() || undefined,
           email: form.email.trim().toLowerCase(),
-          notes: [
-            `source=${source}`,
-            form.workflow_type ? `workflow_type=${form.workflow_type}` : "",
-          ].filter(Boolean).join("; "),
+          interest,
           source,
         },
       });
