@@ -287,7 +287,7 @@ export default function BetaListPage() {
   const signals = isClean ? cleanSignals : messySignals;
 
   return (
-    <div className="pb-landing min-h-screen">
+    <>
       <SEOHead
         title="PhotoBrief.ai — Guided customer photo requests"
         description="PhotoBrief.ai turns customer photo chasing into one guided mobile workflow. Send a link, collect the right shots, flag obvious photo issues, and get a clean brief ready to act on."
