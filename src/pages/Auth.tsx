@@ -282,7 +282,7 @@ export default function AuthPage() {
         <p className="mt-6 text-center text-sm text-muted-foreground">
           {mode === "signup" ? "Already have an account?" : "New to PhotoBrief?"}{" "}
           {mode === "signin" && !signupAllowed ? (
-            <NavLink to="/betalist" className="font-medium text-primary hover:underline">
+            <NavLink to="/#apply" className="font-medium text-primary hover:underline">
               Apply for beta
             </NavLink>
           ) : (
