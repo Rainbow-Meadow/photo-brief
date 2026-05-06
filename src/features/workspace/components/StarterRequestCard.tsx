@@ -7,12 +7,6 @@ interface Props {
   industry?: string | null;
 }
 
-/**
- * Empty dashboard state for the guideless model.
- *
- * Do not suggest built-in guideTemplates here. Legacy built-in templates are kept
- * only as fallback for older beta links, not as a business-facing creation path.
- */
 export function StarterRequestCard(_props: Props) {
   return (
     <section className="relative isolate overflow-hidden rounded-[2rem] border border-border/70 bg-card/75 p-6 shadow-[0_30px_80px_-45px_hsl(222_47%_11%/0.45)] backdrop-blur sm:p-10">
@@ -30,25 +24,25 @@ export function StarterRequestCard(_props: Props) {
             <BrandMark variant="mark" tone="color" size={34} />
           </div>
           <span className="inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-background/70 px-3 py-1 text-xs font-medium text-muted-foreground shadow-sm">
-            <Sparkles className="h-3 w-3 text-primary" /> Start simple
+            <Sparkles className="h-3 w-3 text-primary" /> Get started
           </span>
 
           <h2 className="mt-5 max-w-xl text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-            Create your first photo request from scratch.
+            Send your first PhotoBrief.
           </h2>
           <p className="mt-3 max-w-lg text-sm text-muted-foreground sm:text-base">
-            Start with one plain-language photo prompt. Add more photos or questions only when the job needs them.
+            Tell your customer exactly what to photograph. AI checks the quality, and you get review-ready photos in minutes.
           </p>
 
           <div className="mt-7 flex flex-col gap-3 sm:flex-row">
             <Button asChild size="lg" className="gap-1.5 rounded-full px-6">
               <NavLink to="/requests/new">
-                Start from scratch <ArrowRight className="h-4 w-4" />
+                Request a PhotoBrief <ArrowRight className="h-4 w-4" />
               </NavLink>
             </Button>
             <Button asChild size="lg" variant="outline" className="gap-1.5 rounded-full bg-background/60 px-6">
               <NavLink to="/guides/new">
-                <LayoutTemplate className="h-4 w-4" /> Create a template
+                <LayoutTemplate className="h-4 w-4" /> Build a template
               </NavLink>
             </Button>
           </div>
@@ -59,9 +53,9 @@ export function StarterRequestCard(_props: Props) {
             How it works
           </p>
           <div className="mt-4 space-y-3">
-            <GuidelessStep icon={Camera} title="Ask for one photo" copy="Example: “Take a wide photo of the damaged area.”" />
-            <GuidelessStep icon={Plus} title="Add only what helps" copy="Add extra photo prompts or questions when they make the request clearer." />
-            <GuidelessStep icon={LayoutTemplate} title="Save what you reuse" copy="Turn a polished request into your own template whenever it becomes repeatable." />
+            <GuidelessStep icon={Camera} title="Describe the photos you need" copy="Plain language: &ldquo;Take a wide shot of the damaged area.&rdquo;" />
+            <GuidelessStep icon={Plus} title="AI checks every photo" copy="Blurry, dark, or wrong angle? Your customer gets instant feedback to reshoot." />
+            <GuidelessStep icon={LayoutTemplate} title="Save & reuse as a template" copy="Turn any PhotoBrief into a one-tap template for repeat jobs." />
           </div>
         </div>
       </div>
