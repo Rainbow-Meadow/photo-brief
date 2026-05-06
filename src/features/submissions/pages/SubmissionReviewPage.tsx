@@ -676,6 +676,14 @@ export default function SubmissionReviewPage() {
         primaryActionLabel="Mark reviewed"
       />
 
+      {isBetaPartner && workspace?.id && (
+        <BetaFeedbackCard
+          workspaceId={workspace.id}
+          requestId={submission.requestId}
+          submissionId={submission.id}
+        />
+      )}
+
       <ReviewProgressSummary
         shots={orderedShots}
         pending={pending}
