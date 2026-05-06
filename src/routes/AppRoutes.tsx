@@ -103,7 +103,6 @@ export function AppRoutes() {
           <Route path={routes.marketing.unsubscribe} element={<UnsubscribePage />} />
           <Route path={routes.marketing.help} element={<BetaGuidePage />} />
           <Route path={routes.marketing.signup} element={<SignupPage />} />
-          <Route path={routes.marketing.signup} element={<SignupPage />} />
           <Route path={routes.setup.betaInvite} element={<BetaInvitePage />} />
         </Route>
 
