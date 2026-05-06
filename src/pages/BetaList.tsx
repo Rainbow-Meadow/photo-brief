@@ -539,7 +539,7 @@ export default function BetaListPage() {
               <p className="pb-copy mx-auto mt-4 max-w-xl text-base sm:text-lg">Give customers a clear path, give your team a clean packet, and stop turning every quote into a photo scavenger hunt.</p>
               <div className="mt-6 flex flex-col justify-center gap-2.5 sm:flex-row sm:gap-3">
                 <Button size="xl" variant="pb-primary" onClick={() => { trackEvent("betalist_primary_cta_clicked", { ...utm, location: "final_cta" }); document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" }); }}>
-                  Apply for Founding Partner Beta <ArrowRight className="ml-1 h-4 w-4" />
+                  Apply for beta access <ArrowRight className="ml-1 h-4 w-4" />
                 </Button>
               </div>
               <p className="mt-4 text-xs font-medium text-white/46 sm:text-sm">Customers do not need an account or app to complete a PhotoBrief request.</p>
