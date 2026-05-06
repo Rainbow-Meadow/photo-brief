@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import {
   ArrowRight,
@@ -7,25 +7,31 @@ import {
   CheckCircle2,
   ClipboardList,
   Clock3,
-  FileText,
   Globe2,
   HeartHandshake,
-  LayoutDashboard,
   Link2,
-  LockKeyhole,
   MessageSquareText,
-  MousePointerClick,
   Sparkles,
   Star,
   WandSparkles,
+  ShieldCheck,
+  CreditCard,
+  Smartphone,
 } from "lucide-react";
 
 import { BrandMark } from "@/components/layout/BrandMark";
 import { Button } from "@/components/ui/button";
-import { HeroGlassStory } from "@/components/marketing/HeroGlassStory";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { InteractiveHeroBriefAssembly } from "@/components/marketing/InteractiveHeroBriefAssembly";
+import { ComparisonTable } from "@/components/marketing/ComparisonTable";
 import { PageMeta } from "@/hooks/seo/usePageMeta";
-import { signupCtaTarget } from "@/config/access";
+import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/analytics";
+
+/* ── constants ──────────────────────────────────────────── */
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -35,175 +41,175 @@ const jsonLd = {
   operatingSystem: "Web",
   description:
     "PhotoBrief.ai helps businesses replace photo-chasing email threads with guided customer photo requests, AI quality checks, and organized business-ready briefs.",
-  url: "https://photobrief.ai/beta-portfolio",
+  url: "https://photobrief.ai/founding-partner-beta",
 };
 
-const launchFacts = [
-  { label: "Product", value: "Guided customer photo intake" },
-  { label: "Audience", value: "Service, quote, review, return, and field teams" },
-  { label: "Primary wedge", value: "One link replaces the photo chase" },
-  { label: "Beta offer", value: "Exclusive founding partner program" },
+const workflowSteps = [
+  { icon: Link2, number: "1", title: "Request", body: "Pick a template and send one guided link to your customer." },
+  { icon: Camera, number: "2", title: "Capture", body: "Customers see one clear photo prompt at a time — no app, no login." },
+  { icon: Sparkles, number: "3", title: "Check", body: "Simple AI flags obvious issues before the customer finishes." },
+  { icon: ClipboardList, number: "4", title: "Brief", body: "Your team gets a clean brief with photos, answers, and a summary." },
 ];
 
-const coreSurfaces = [
-  {
-    icon: Link2,
-    eyebrow: "Manual request",
-    title: "Create one guided photo link",
-    body: "A team member chooses a template, sends a public link, and avoids the loose email/text thread.",
-  },
-  {
-    icon: Camera,
-    eyebrow: "Customer capture",
-    title: "Mobile-first photo workflow",
-    body: "Customers get one clear photo prompt at a time, with simple context questions and upload guidance.",
-  },
-  {
-    icon: ClipboardList,
-    eyebrow: "Review brief",
-    title: "Photos, answers, and AI checks in one place",
-    body: "The business gets a structured brief that is ready for quoting, dispatch, documentation, or follow-up.",
-  },
-  {
-    icon: Globe2,
-    eyebrow: "Website Intake",
-    title: "Pro automation for site leads",
-    body: "Pro and above keep manual links, then add hosted intake, routing, and webhook automation on top.",
-  },
+const useCases = [
+  { title: "Quotes & estimates", body: "See the job before sending a crew or pricing a project." },
+  { title: "Dispatch & scheduling", body: "Know what tools, parts, or crew to send before arriving." },
+  { title: "Inspections & documentation", body: "Collect structured photo evidence for compliance and records." },
+  { title: "Returns & warranty claims", body: "Get clear photos of damage or defects before approving a return." },
+  { title: "Approvals & sign-offs", body: "Share visual proof of completed work for customer sign-off." },
+  { title: "Follow-ups & reviews", body: "Request progress photos without another phone call or visit." },
 ];
 
 const betaBenefits = [
-  { icon: Clock3, title: "90 days of free beta access", body: "Enough time to use PhotoBrief in actual business workflows instead of poking around once and forgetting." },
-  { icon: HeartHandshake, title: "Concierge onboarding and setup", body: "Hands-on help creating first briefs, templates, workflows, and team process so adoption does not stall." },
-  { icon: MessageSquareText, title: "Priority support and direct channel", body: "Beta partners get a human support path for questions, confusing moments, workflow fit, and setup help." },
-  { icon: Sparkles, title: "Priority feature influence", body: "Your feedback helps decide what gets built, refined, and prioritized before public launch." },
-  { icon: BadgeCheck, title: "50% off the first year after launch", body: "Founding partners get launch-year savings without creating a forever discount that hurts the business later." },
-  { icon: Star, title: "Optional Founding Partner recognition", body: "Businesses that want visibility can be listed, spotlighted, or recognized as early adopters." },
-  { icon: WandSparkles, title: "Early access to future tools", body: "Partner teams see new capture, routing, AI, and review features before the public rollout." },
+  { icon: Clock3, title: "90 days of free beta access", body: "Enough time to use PhotoBrief in actual business workflows." },
+  { icon: HeartHandshake, title: "Concierge onboarding", body: "Hands-on help creating first briefs, templates, and team process." },
+  { icon: MessageSquareText, title: "Priority support", body: "A human support path for questions, workflow fit, and setup help." },
+  { icon: Sparkles, title: "Feature influence", body: "Your feedback helps decide what gets built before public launch." },
+  { icon: BadgeCheck, title: "50% off first year", body: "Founding partners get launch-year savings locked in." },
+  { icon: Star, title: "Founding Partner recognition", body: "Optional listing as an early adopter and product shaper." },
+  { icon: WandSparkles, title: "Early access to new tools", body: "See new capture, routing, AI, and review features first." },
 ];
 
-const partnerCommitments = [
-  "Use PhotoBrief on at least 3–5 real projects, jobs, or workflows during the beta.",
-  "Share brief feedback every two weeks.",
-  "Report bugs, confusing moments, or missing workflow details.",
-  "Allow anonymized quotes, learnings, or results to guide marketing.",
-  "Optionally provide a testimonial or case study if PhotoBrief creates value.",
+const trustPoints = [
+  { icon: Smartphone, text: "No app download required — customers use any mobile browser" },
+  { icon: CreditCard, text: "No credit card needed — the beta is completely free" },
+  { icon: ShieldCheck, text: "Your data stays private and is never shared with third parties" },
 ];
 
-const positioningPairs = [
-  { avoid: "We're looking for testers.", say: "We're inviting a small group of businesses to become founding beta partners." },
-  { avoid: "The product is still early.", say: "You'll get early access and direct input before public launch." },
-  { avoid: "Please give feedback.", say: "Your workflow will help shape what we build next." },
-];
+/* ── form state ─────────────────────────────────────────── */
 
-const launchAssets = [
-  { label: "One-liner", body: "PhotoBrief.ai turns customer photo requests into guided mobile workflows, AI-checked submissions, and business-ready briefs." },
-  { label: "Short pitch", body: "Stop chasing customer photos. Send one guided link, or automate Website Intake on Pro, and get the images, answers, checks, and summary your team needs to act faster." },
-  { label: "BetaList angle", body: "A practical AI workflow tool for businesses that need better photos before quoting, dispatching, approving, returning, or documenting work." },
-  { label: "Founding Partner copy", body: "PhotoBrief is opening a limited beta for businesses that want a better way to collect and manage photo-based project briefs. Founding partners get early access, hands-on setup, direct support, feature input, and exclusive first-year pricing after launch." },
-];
+interface FormState {
+  email: string;
+  name: string;
+  business_name: string;
+  photo_use_case: string;
+}
 
-const workflowStats = [
-  { value: "90", label: "free beta days" },
-  { value: "50%", label: "off first year" },
-  { value: "3–5", label: "real workflows requested" },
-];
+const EMPTY: FormState = { email: "", name: "", business_name: "", photo_use_case: "" };
+
+const inputClass = "h-12 border-white/12 bg-white/[0.05] text-white placeholder:text-white/30";
+const textareaClass = "border-white/12 bg-white/[0.05] text-white placeholder:text-white/30";
+
+/* ── component ──────────────────────────────────────────── */
 
 export default function BetaPortfolioPage() {
-  const breadcrumbs = useMemo(() => [{ name: "Beta Portfolio", path: "/beta-portfolio" }], []);
+  const [form, setForm] = useState<FormState>(EMPTY);
+  const [submitting, setSubmitting] = useState(false);
+  const [done, setDone] = useState(false);
+
+  const update = <K extends keyof FormState>(key: K) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+      setForm((prev) => ({ ...prev, [key]: e.target.value }));
+
+  function validate(): string | null {
+    if (!form.email.trim()) return "We need your email.";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) return "That email doesn't look right.";
+    if (!form.business_name.trim()) return "Please enter your business name.";
+    if (!form.photo_use_case.trim()) return "Tell us what you need customer photos for.";
+    return null;
+  }
+
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const err = validate();
+    if (err) {
+      toast({ title: "Please check the form", description: err, variant: "destructive" });
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const { error } = await supabase.functions.invoke("beta-welcome-submit", {
+        body: {
+          email: form.email.trim().toLowerCase(),
+          name: form.name.trim() || undefined,
+          business_name: form.business_name.trim(),
+          photo_use_case: form.photo_use_case.trim(),
+        },
+      });
+      if (error) throw error;
+      trackEvent("beta_application_submitted", { business_name: form.business_name });
+      setDone(true);
+    } catch {
+      toast({ title: "Something went wrong", description: "Please try again or email hello@photobrief.ai.", variant: "destructive" });
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   return (
     <>
       <PageMeta
-        title="PhotoBrief.ai Founding Partner Beta | Product Portfolio"
-        description="A polished product portfolio and founding partner beta offer for PhotoBrief.ai, designed for BetaList, launch directories, and early customer review."
-        canonicalPath="/beta-portfolio"
+        title="Founding Partner Beta — PhotoBrief.ai"
+        description="Stop chasing customer photos. Apply to PhotoBrief.ai's founding partner beta and get guided photo requests, AI quality checks, and business-ready briefs."
+        canonicalPath="/founding-partner-beta"
         jsonLd={[jsonLd]}
-        breadcrumbs={breadcrumbs}
+        breadcrumbs={[{ name: "Founding Partner Beta", path: "/founding-partner-beta" }]}
       />
 
       <main>
-        {/* Hero */}
+        {/* ── Hero ──────────────────────────────────────────── */}
         <section className="relative isolate overflow-hidden -mt-[4.5rem] pt-[5.5rem] sm:-mt-[5rem] sm:pt-[6rem]">
           <div className="pb-lens-field" />
-          <div className="pb-container pb-section relative z-10 grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
+          <div className="pb-container pb-section relative z-10 grid gap-10 lg:grid-cols-2 lg:items-center">
             <div>
               <div className="mb-7 inline-flex max-w-full rounded-[2rem] border border-[hsl(var(--pb-lavender)/0.25)] bg-[hsl(var(--pb-panel)/0.78)] p-4 shadow-[0_16px_40px_-28px_hsl(var(--pb-shadow))] backdrop-blur-xl sm:p-5">
                 <BrandMark variant="horizontal" tone="light" size={58} eager withGlow />
               </div>
               <span className="pb-eyebrow"><Sparkles className="h-3.5 w-3.5" /> Founding Partner Beta</span>
               <h1 className="mt-4 text-4xl font-semibold tracking-tight text-white sm:text-6xl lg:text-7xl">
-                Become a PhotoBrief.ai founding partner.
+                Stop chasing customer photos.
               </h1>
               <p className="pb-copy mt-6 max-w-2xl text-base sm:text-xl">
-                PhotoBrief is opening a limited beta for businesses that want a better way to collect, organize, and act on photo-based project briefs. Founding partners get early access, hands-on setup, direct support, and the chance to shape the product before public launch.
+                Send one guided PhotoBrief link and get a clean, AI-checked brief back. For teams that need the right photos before they quote, dispatch, approve, review, document, or follow up.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <Button asChild size="xl" variant="pb-primary">
-                  <NavLink to={signupCtaTarget()} onClick={() => trackEvent("cta_click", { location: "beta_portfolio_hero", label: "apply_beta" })}>
-                    Apply to join the beta <ArrowRight className="ml-1 h-4 w-4" />
-                  </NavLink>
+                  <a href="#apply" onClick={() => trackEvent("cta_click", { location: "beta_hero", label: "apply_beta" })}>
+                    Apply for Founding Partner Beta <ArrowRight className="ml-1 h-4 w-4" />
+                  </a>
                 </Button>
                 <Button asChild size="xl" variant="pb-secondary">
-                  <a href="#portfolio" onClick={() => trackEvent("cta_click", { location: "beta_portfolio_hero", label: "view_surfaces" })}>
-                    View product portfolio
+                  <a href="#how-it-works" onClick={() => trackEvent("cta_click", { location: "beta_hero", label: "see_how" })}>
+                    See how it works
                   </a>
                 </Button>
               </div>
             </div>
 
-            <div className="pb-command-panel p-5 sm:p-6">
-              <div className="relative z-10 grid gap-4 sm:grid-cols-2">
-                {launchFacts.map((fact) => (
-                  <div key={fact.label} className="rounded-[1.5rem] border border-[hsl(var(--pb-line))] bg-[hsl(var(--pb-ink))] p-4">
-                    <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[hsl(var(--pb-lavender))]">{fact.label}</p>
-                    <p className="mt-2 text-sm font-medium leading-6 text-white">{fact.value}</p>
-                  </div>
-                ))}
-              </div>
-              <div className="relative z-10 mt-5 rounded-[2rem] border border-[hsl(var(--pb-lavender)/0.3)] bg-[hsl(var(--pb-lavender)/0.08)] p-5">
-                <p className="flex items-center gap-2 text-sm font-semibold text-[hsl(var(--pb-lavender))]">
-                  <Sparkles className="h-4 w-4" /> The positioning
-                </p>
-                <p className="mt-2 text-2xl font-semibold tracking-tight text-white">Access, influence, savings, and hands-on help.</p>
-                <p className="mt-2 text-sm leading-6 text-[hsl(var(--pb-muted))]">
-                  This is not "please test my unfinished thing." It is a limited founding partner program for businesses willing to use PhotoBrief in real workflows.
-                </p>
-              </div>
+            <div className="hidden lg:block">
+              <InteractiveHeroBriefAssembly />
             </div>
           </div>
         </section>
 
-        {/* Product portfolio */}
-        <section id="portfolio" className="pb-section">
+        {/* ── Mobile interactive demo ──────────────────────── */}
+        <section className="pb-section lg:hidden">
+          <div className="pb-container">
+            <InteractiveHeroBriefAssembly />
+          </div>
+        </section>
+
+        {/* ── How it works ─────────────────────────────────── */}
+        <section id="how-it-works" className="pb-section scroll-mt-24">
           <div className="pb-container">
             <div className="mx-auto max-w-3xl text-center">
-              <span className="pb-eyebrow">Product portfolio</span>
-              <h2 className="pb-section-title mt-4 text-white">One workflow, all core surfaces.</h2>
+              <span className="pb-eyebrow">How it works</span>
+              <h2 className="pb-section-title mt-4 text-white">One workflow. Four simple steps.</h2>
               <p className="pb-copy mt-4 text-base sm:text-lg">
-                These visuals are the reusable launch story: manual request, customer capture, business review, and Pro automation.
+                PhotoBrief replaces scattered texts, emails, and voicemails with a single guided link.
               </p>
             </div>
-            <div className="mt-10">
-              <HeroGlassStory />
-            </div>
-          </div>
-        </section>
-
-        {/* Core surfaces */}
-        <section className="pb-section">
-          <div className="pb-container">
-            <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-              {coreSurfaces.map((surface) => {
-                const Icon = surface.icon;
+            <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {workflowSteps.map((step) => {
+                const Icon = step.icon;
                 return (
-                  <article key={surface.title} className="pb-card rounded-[2rem] p-5">
+                  <article key={step.title} className="pb-card rounded-[2rem] p-5">
                     <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-[hsl(var(--pb-line-strong))] bg-[hsl(var(--pb-ink))] text-[hsl(var(--pb-lavender))]">
                       <Icon className="h-5 w-5" />
                     </span>
-                    <p className="mt-5 text-xs font-extrabold uppercase tracking-[0.18em] text-[hsl(var(--pb-lavender))]">{surface.eyebrow}</p>
-                    <h3 className="mt-2 text-lg font-semibold text-white">{surface.title}</h3>
-                    <p className="mt-2 text-sm leading-6 text-[hsl(var(--pb-muted))]">{surface.body}</p>
+                    <p className="mt-5 text-xs font-extrabold uppercase tracking-[0.18em] text-[hsl(var(--pb-lavender))]">Step {step.number}</p>
+                    <h3 className="mt-2 text-lg font-semibold text-white">{step.title}</h3>
+                    <p className="mt-2 text-sm leading-6 text-[hsl(var(--pb-muted))]">{step.body}</p>
                   </article>
                 );
               })}
@@ -211,117 +217,157 @@ export default function BetaPortfolioPage() {
           </div>
         </section>
 
-        {/* Surface gallery */}
-        <section className="pb-section-tight">
-          <div className="pb-container relative grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
-            <div>
-              <span className="pb-eyebrow">Core surface gallery</span>
-              <h2 className="pb-section-title mt-4 text-white">Show reviewers the actual product motion, not just a claim.</h2>
-              <p className="pb-copy mt-4 text-base sm:text-lg">
-                BetaList-style submissions need quick proof that the product has depth. This page packages the capture flow, workspace tools, AI review layer, and website automation into one curated product narrative.
-              </p>
-            </div>
-            <SurfaceGallery />
-          </div>
-        </section>
-
-        {/* Beta offer */}
-        <section className="pb-section">
-          <div className="pb-container">
-            <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
-              <div>
-                <span className="pb-eyebrow">Founding Partner Beta Offer</span>
-                <h2 className="pb-section-title mt-4 text-white">Exclusive, useful, and sustainable.</h2>
-                <p className="pb-copy mt-4 text-base sm:text-lg">
-                  Join the PhotoBrief beta and get white-glove access to a faster way to collect, organize, and act on photo briefs — before public launch.
-                </p>
-                <div className="mt-6 grid grid-cols-3 gap-3">
-                  {workflowStats.map((stat) => (
-                    <div key={stat.label} className="rounded-[1.5rem] border border-[hsl(var(--pb-line))] bg-[hsl(var(--pb-panel)/0.88)] p-4 text-center">
-                      <p className="text-3xl font-semibold tracking-tight text-white">{stat.value}</p>
-                      <p className="mt-1 text-xs leading-5 text-[hsl(var(--pb-muted))]">{stat.label}</p>
-                    </div>
-                  ))}
-                </div>
-                <p className="mt-5 rounded-[1.5rem] border border-[hsl(var(--pb-lavender)/0.3)] bg-[hsl(var(--pb-lavender)/0.06)] p-4 text-sm leading-6 text-[hsl(var(--pb-lavender))]">
-                  Recommended structure: 90-day free beta, concierge setup, biweekly feedback check-ins, 50% off first year after launch, founder pricing locked for 12 months, and optional public Founding Partner mention.
-                </p>
-              </div>
-              <div className="grid gap-4 sm:grid-cols-2">
-                {betaBenefits.map((benefit) => {
-                  const Icon = benefit.icon;
-                  return (
-                    <article key={benefit.title} className="pb-card rounded-[1.75rem] p-5">
-                      <Icon className="h-5 w-5 text-[hsl(var(--pb-lavender))]" />
-                      <h3 className="mt-4 text-base font-semibold text-white">{benefit.title}</h3>
-                      <p className="mt-2 text-sm leading-6 text-[hsl(var(--pb-muted))]">{benefit.body}</p>
-                    </article>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Partner commitments + positioning */}
-        <section className="pb-section">
-          <div className="pb-container grid gap-8 lg:grid-cols-2">
-            <div className="pb-command-panel p-6 sm:p-8">
-              <div className="relative z-10">
-                <span className="pb-eyebrow">What partners give back</span>
-                <h2 className="mt-4 text-2xl font-semibold tracking-tight text-white sm:text-4xl">Clear expectations keep the beta serious.</h2>
-                <ul className="mt-6 space-y-3">
-                  {partnerCommitments.map((item) => (
-                    <li key={item} className="flex gap-3 rounded-2xl border border-[hsl(var(--pb-line))] bg-[hsl(var(--pb-ink))] p-3 text-sm leading-6 text-[hsl(var(--pb-muted))]">
-                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[hsl(var(--pb-mint))]" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            <div className="pb-command-panel p-6 sm:p-8">
-              <div className="relative z-10">
-                <span className="pb-eyebrow">Positioning rules</span>
-                <h2 className="mt-4 text-2xl font-semibold tracking-tight text-white sm:text-4xl">Sound like access, not apology.</h2>
-                <div className="mt-6 space-y-4">
-                  {positioningPairs.map((pair) => (
-                    <div key={pair.avoid} className="rounded-2xl border border-[hsl(var(--pb-line))] bg-[hsl(var(--pb-ink))] p-4">
-                      <p className="text-xs font-extrabold uppercase tracking-wide text-red-400">Do not say</p>
-                      <p className="mt-1 text-sm text-[hsl(var(--pb-muted))]">"{pair.avoid}"</p>
-                      <p className="mt-4 text-xs font-extrabold uppercase tracking-wide text-[hsl(var(--pb-mint))]">Say</p>
-                      <p className="mt-1 text-sm font-medium text-white">"{pair.say}"</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Copy bank */}
+        {/* ── Use cases ────────────────────────────────────── */}
         <section className="pb-section">
           <div className="pb-container">
             <div className="mx-auto max-w-3xl text-center">
-              <span className="pb-eyebrow">Submission copy bank</span>
-              <h2 className="pb-section-title mt-4 text-white">Copy that can move from this page into launch forms.</h2>
-              <p className="pb-copy mt-4 text-base sm:text-lg">
-                The goal is one consistent story across BetaList, startup directories, social posts, and early partner outreach.
-              </p>
+              <span className="pb-eyebrow">Use cases</span>
+              <h2 className="pb-section-title mt-4 text-white">Built for the workflows that need photos first.</h2>
             </div>
-            <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-              {launchAssets.map((asset) => (
-                <article key={asset.label} className="pb-card rounded-[2rem] p-6">
-                  <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[hsl(var(--pb-lavender))]">{asset.label}</p>
-                  <p className="mt-4 text-base leading-7 text-white">{asset.body}</p>
+            <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {useCases.map((uc) => (
+                <article key={uc.title} className="pb-card rounded-[2rem] p-5">
+                  <h3 className="text-base font-semibold text-white">{uc.title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-[hsl(var(--pb-muted))]">{uc.body}</p>
                 </article>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Final CTA */}
+        {/* ── Comparison ───────────────────────────────────── */}
+        <section className="pb-section">
+          <div className="pb-container">
+            <div className="mx-auto max-w-3xl text-center">
+              <span className="pb-eyebrow">Why PhotoBrief</span>
+              <h2 className="pb-section-title mt-4 text-white">The old way vs. the PhotoBrief way.</h2>
+              <p className="pb-copy mt-4 text-base sm:text-lg">
+                Email threads, generic forms, and file upload portals were never designed for guided photo intake.
+              </p>
+            </div>
+            <div className="mt-10">
+              <ComparisonTable />
+            </div>
+          </div>
+        </section>
+
+        {/* ── Beta offer ───────────────────────────────────── */}
+        <section className="pb-section">
+          <div className="pb-container">
+            <div className="mx-auto max-w-3xl text-center">
+              <span className="pb-eyebrow">Founding Partner Beta</span>
+              <h2 className="pb-section-title mt-4 text-white">Early access, real support, exclusive pricing.</h2>
+              <p className="pb-copy mt-4 text-base sm:text-lg">
+                We're inviting a limited number of businesses to use PhotoBrief in real workflows and help shape the product before public launch.
+              </p>
+            </div>
+            <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {betaBenefits.map((benefit) => {
+                const Icon = benefit.icon;
+                return (
+                  <article key={benefit.title} className="pb-card rounded-[1.75rem] p-5">
+                    <Icon className="h-5 w-5 text-[hsl(var(--pb-lavender))]" />
+                    <h3 className="mt-4 text-base font-semibold text-white">{benefit.title}</h3>
+                    <p className="mt-2 text-sm leading-6 text-[hsl(var(--pb-muted))]">{benefit.body}</p>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        {/* ── Application form ─────────────────────────────── */}
+        <section id="apply" className="pb-section scroll-mt-24">
+          <div className="pb-container-narrow">
+            {done ? (
+              <div className="relative overflow-hidden rounded-[2.4rem] border border-[hsl(var(--pb-lavender)/0.35)] bg-[hsl(var(--pb-panel)/0.84)] p-8 text-center shadow-[0_36px_100px_-64px_hsl(var(--pb-violet))] sm:p-12">
+                <div className="pb-lens-field" />
+                <div className="relative z-10">
+                  <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[hsl(var(--pb-mint)/0.12)]">
+                    <CheckCircle2 className="h-8 w-8 text-[hsl(var(--pb-mint))]" />
+                  </div>
+                  <h2 className="pb-section-title mt-6 text-white">Application received</h2>
+                  <p className="pb-copy mt-4 max-w-md mx-auto">
+                    We'll review your application and reach out within 48 hours to set up your founding partner account.
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="pb-command-panel p-6 sm:p-10">
+                <div className="relative z-10">
+                  <span className="pb-eyebrow"><Sparkles className="h-3.5 w-3.5" /> Apply now</span>
+                  <h2 className="mt-4 text-2xl font-semibold tracking-tight text-white sm:text-4xl">Apply for the Founding Partner Beta</h2>
+                  <p className="pb-copy mt-3 max-w-xl">
+                    Tell us about your business and how you collect customer photos today. Takes about 60 seconds.
+                  </p>
+
+                  <form onSubmit={onSubmit} className="mt-8 grid gap-5 sm:grid-cols-2">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="name" className="text-sm font-medium text-white/80">Your name</Label>
+                      <Input id="name" value={form.name} onChange={update("name")} placeholder="Jane Smith" className={inputClass} />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="email" className="text-sm font-medium text-white/80">
+                        Work email <span className="ml-0.5 text-[hsl(var(--pb-lavender))]">*</span>
+                      </Label>
+                      <Input id="email" type="email" value={form.email} onChange={update("email")} placeholder="jane@company.com" className={inputClass} required />
+                    </div>
+                    <div className="space-y-1.5 sm:col-span-2">
+                      <Label htmlFor="business_name" className="text-sm font-medium text-white/80">
+                        Business name <span className="ml-0.5 text-[hsl(var(--pb-lavender))]">*</span>
+                      </Label>
+                      <Input id="business_name" value={form.business_name} onChange={update("business_name")} placeholder="Apex Roofing" className={inputClass} required />
+                    </div>
+                    <div className="space-y-1.5 sm:col-span-2">
+                      <Label htmlFor="photo_use_case" className="text-sm font-medium text-white/80">
+                        What do you need customer photos for? <span className="ml-0.5 text-[hsl(var(--pb-lavender))]">*</span>
+                      </Label>
+                      <Textarea
+                        id="photo_use_case"
+                        value={form.photo_use_case}
+                        onChange={update("photo_use_case")}
+                        placeholder="e.g. We need roof damage photos before sending an estimator, but customers always send blurry or incomplete shots..."
+                        rows={4}
+                        className={textareaClass}
+                        required
+                      />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <Button type="submit" size="xl" variant="pb-primary" className="w-full" disabled={submitting}>
+                        {submitting ? "Submitting…" : "Apply for Founding Partner Beta"}
+                        {!submitting && <ArrowRight className="ml-1 h-4 w-4" />}
+                      </Button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* ── Trust / privacy ──────────────────────────────── */}
+        <section className="pb-section-tight">
+          <div className="pb-container">
+            <div className="mx-auto grid max-w-3xl gap-4 sm:grid-cols-3">
+              {trustPoints.map((tp) => {
+                const Icon = tp.icon;
+                return (
+                  <div key={tp.text} className="flex items-start gap-3 rounded-2xl border border-[hsl(var(--pb-line))] bg-[hsl(var(--pb-panel)/0.6)] p-4">
+                    <Icon className="mt-0.5 h-5 w-5 shrink-0 text-[hsl(var(--pb-mint))]" />
+                    <p className="text-sm leading-6 text-[hsl(var(--pb-muted))]">{tp.text}</p>
+                  </div>
+                );
+              })}
+            </div>
+            <p className="mt-4 text-center text-xs text-white/40">
+              By applying you agree to our{" "}
+              <NavLink to="/terms" className="underline hover:text-white/60">Terms</NavLink> and{" "}
+              <NavLink to="/privacy" className="underline hover:text-white/60">Privacy Policy</NavLink>.
+            </p>
+          </div>
+        </section>
+
+        {/* ── Final CTA ────────────────────────────────────── */}
         <section className="pb-section">
           <div className="pb-container-narrow">
             <div className="relative overflow-hidden rounded-[2.4rem] border border-[hsl(var(--pb-lavender)/0.35)] bg-[hsl(var(--pb-panel)/0.84)] p-8 text-center shadow-[0_36px_100px_-64px_hsl(var(--pb-violet))] sm:p-12">
@@ -335,9 +381,9 @@ export default function BetaPortfolioPage() {
                   We're inviting businesses willing to use PhotoBrief in real workflows and share honest feedback along the way.
                 </p>
                 <Button asChild size="xl" variant="pb-primary" className="mt-8">
-                  <NavLink to={signupCtaTarget()} onClick={() => trackEvent("cta_click", { location: "beta_portfolio_final", label: "apply_beta" })}>
+                  <a href="#apply" onClick={() => trackEvent("cta_click", { location: "beta_final_cta", label: "apply_beta" })}>
                     Apply to join the beta <ArrowRight className="ml-1 h-4 w-4" />
-                  </NavLink>
+                  </a>
                 </Button>
               </div>
             </div>
@@ -345,40 +391,5 @@ export default function BetaPortfolioPage() {
         </section>
       </main>
     </>
-  );
-}
-
-function SurfaceGallery() {
-  return (
-    <div className="grid gap-4 sm:grid-cols-2">
-      <SurfaceMockup icon={MousePointerClick} label="Request builder" title="Send a brief link" rows={["Template: Property quote", "Recipient: New lead", "Needed: 5 photos + notes"]} />
-      <SurfaceMockup icon={Camera} label="Customer capture" title="One shot at a time" rows={["Step 2 of 5", "Prompt: show the damage", "AI check: usable photo"]} />
-      <SurfaceMockup icon={LayoutDashboard} label="Workspace inbox" title="Know what needs action" rows={["Ready to quote: 12", "Needs retake: 3", "Waiting on customer: 8"]} />
-      <SurfaceMockup icon={FileText} label="Submission review" title="Brief, photos, answers" rows={["Summary generated", "Missing shots flagged", "Export / approve / request retake"]} />
-      <SurfaceMockup icon={Globe2} label="Website Intake" title="Automated lead routing" rows={["CTA: Get a quote", "Route: Roof repair", "Template: 6-shot inspection"]} />
-      <SurfaceMockup icon={LockKeyhole} label="Plan gates" title="Manual links plus Pro magic" rows={["Manual links: every plan", "Website Intake: Pro+", "Team workflows: Team+"]} />
-    </div>
-  );
-}
-
-function SurfaceMockup({ icon: Icon, label, title, rows }: { icon: typeof Link2; label: string; title: string; rows: string[] }) {
-  return (
-    <article className="pb-card overflow-hidden rounded-[2rem] p-5">
-      <div className="flex items-center justify-between gap-3">
-        <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[hsl(var(--pb-line-strong))] bg-[hsl(var(--pb-ink))] text-[hsl(var(--pb-lavender))]">
-          <Icon className="h-5 w-5" />
-        </span>
-        <span className="pb-stamp rounded-full px-3 py-1 text-[11px] font-semibold">Portfolio asset</span>
-      </div>
-      <p className="mt-5 text-xs font-extrabold uppercase tracking-[0.18em] text-[hsl(var(--pb-lavender))]">{label}</p>
-      <h3 className="mt-2 text-xl font-semibold tracking-tight text-white">{title}</h3>
-      <div className="mt-5 space-y-2">
-        {rows.map((row) => (
-          <div key={row} className="rounded-2xl border border-[hsl(var(--pb-line))] bg-[hsl(var(--pb-ink))] px-4 py-3 text-sm text-[hsl(var(--pb-muted))]">
-            {row}
-          </div>
-        ))}
-      </div>
-    </article>
   );
 }
