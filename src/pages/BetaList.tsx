@@ -41,8 +41,16 @@ const BUSINESS_TYPES = [
 ];
 
 const VOLUMES = [
-  "Under 25 / month", "25 – 100 / month", "100 – 500 / month",
-  "500 – 2,000 / month", "2,000+ / month",
+  "Fewer than 10", "10–50", "51–200", "200+",
+];
+
+const WORKFLOW_TYPES = [
+  "Quotes / estimates",
+  "Dispatch prep",
+  "Approvals / reviews",
+  "Returns / warranty",
+  "Documentation",
+  "Other",
 ];
 
 const messySignals = [
