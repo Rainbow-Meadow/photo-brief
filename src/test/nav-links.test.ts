@@ -103,40 +103,37 @@ const mobileSettingsLinks = [
 describe("Navigation link integrity", () => {
   it("all marketingLinks resolve to defined routes", () => {
     for (const link of marketingLinks) {
-      const path = toPathname(link.to);
-      expect(routeExists(path), `marketingLinks: "${link.to}" has no matching route`).toBe(true);
+      assertLinkResolves(link.to, "marketingLinks");
     }
   });
 
   it("all legalLinks resolve to defined routes", () => {
     for (const link of legalLinks) {
-      const path = toPathname(link.to);
-      expect(routeExists(path), `legalLinks: "${link.to}" has no matching route`).toBe(true);
+      assertLinkResolves(link.to, "legalLinks");
     }
   });
 
   it("all footerOnlyLinks resolve to defined routes", () => {
     for (const link of footerOnlyLinks) {
-      const path = toPathname(link.to);
-      expect(routeExists(path), `footerOnlyLinks: "${link.to}" has no matching route`).toBe(true);
+      assertLinkResolves(link.to, "footerOnlyLinks");
     }
   });
 
   it("all sidebar links resolve to defined routes", () => {
     for (const link of sidebarLinks) {
-      expect(routeExists(link), `sidebar: "${link}" has no matching route`).toBe(true);
+      assertLinkResolves(link, "sidebar");
     }
   });
 
   it("all mobile tab bar links resolve to defined routes", () => {
     for (const link of mobileTabLinks) {
-      expect(routeExists(link), `mobileTabBar: "${link}" has no matching route`).toBe(true);
+      assertLinkResolves(link, "mobileTabBar");
     }
   });
 
   it("all mobile settings sheet links resolve to defined routes", () => {
     for (const link of mobileSettingsLinks) {
-      expect(routeExists(link), `mobileSettings: "${link}" has no matching route`).toBe(true);
+      assertLinkResolves(link, "mobileSettings");
     }
   });
 
@@ -149,5 +146,56 @@ describe("Navigation link integrity", () => {
 
   it("routePaths has no duplicates", () => {
     expect(routePaths.length).toBe(routePathSet.size);
+  });
+});
+
+// ── Edge-case coverage: hash fragments, query strings, full URLs ───────
+
+describe("Link normalisation edge cases", () => {
+  it("hash-only fragment resolves to root", () => {
+    assertLinkResolves("/#beta-program", "hash-fragment");
+    assertLinkResolves("/#pricing", "hash-fragment");
+  });
+
+  it("path with hash fragment resolves to the path", () => {
+    assertLinkResolves("/pricing#annual", "path+hash");
+    assertLinkResolves("/help#faq", "path+hash");
+  });
+
+  it("path with query string resolves to the path", () => {
+    assertLinkResolves("/pricing?ref=nav", "path+query");
+    assertLinkResolves("/auth?redirect=/dashboard", "path+query");
+  });
+
+  it("path with both query and hash resolves to the path", () => {
+    assertLinkResolves("/help?ref=footer#getting-started", "path+query+hash");
+  });
+
+  it("fully qualified same-origin URLs resolve correctly", () => {
+    assertLinkResolves("https://photobrief.ai/pricing", "fqdn");
+    assertLinkResolves("https://www.photobrief.ai/help", "fqdn");
+    assertLinkResolves("https://photobrief.ai/", "fqdn-root");
+  });
+
+  it("fully qualified URLs with fragments resolve correctly", () => {
+    assertLinkResolves("https://photobrief.ai/#section", "fqdn+hash");
+    assertLinkResolves("https://photobrief.ai/pricing#annual", "fqdn+hash");
+  });
+
+  it("fully qualified URLs with query strings resolve correctly", () => {
+    assertLinkResolves("https://photobrief.ai/auth?redirect=/dashboard", "fqdn+query");
+  });
+
+  it("dynamic route patterns match concrete paths", () => {
+    assertLinkResolves("/beta-invite/abc123", "dynamic");
+    assertLinkResolves("/requests/req_xyz", "dynamic");
+    assertLinkResolves("/r/tok_abc/done", "dynamic");
+    assertLinkResolves("/i/intake_456", "dynamic");
+  });
+
+  it("non-existent paths do NOT match", () => {
+    expect(routeExists(toPathname("/nonexistent"))).toBe(false);
+    expect(routeExists(toPathname("/settings/nonexistent"))).toBe(false);
+    expect(routeExists(toPathname("/admin/nonexistent"))).toBe(false);
   });
 });
