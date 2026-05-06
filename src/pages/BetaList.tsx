@@ -160,9 +160,15 @@ export default function BetaListPage() {
       const { data, error } = await supabase.functions.invoke("waitlist-submit", {
         body: {
           ...form,
-          name: form.name.trim(),
+          name: form.name.trim() || undefined,
           email: form.email.trim().toLowerCase(),
-          notes: `source=${source}`,
+          notes: [
+            `source=${source}`,
+            form.workflow_type ? `workflow_type=${form.workflow_type}` : "",
+          ].filter(Boolean).join("; "),
+          source,
+        },
+      });
           source,
         },
       });
