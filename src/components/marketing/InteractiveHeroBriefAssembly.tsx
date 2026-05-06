@@ -407,6 +407,7 @@ function BusinessInProgressScreen({
                     src={photo.src}
                     alt={photo.label}
                     className={`h-[72px] w-full object-cover ${isBlurry ? "blur-[2px]" : ""}`}
+                    width={300} height={300} loading="lazy" sizes="150px"
                   />
                   <div className="flex items-center justify-between bg-black/50 px-2 py-1.5">
                     <span className="text-[10px] font-semibold text-white/70">
@@ -537,6 +538,7 @@ function BriefCompleteScreen() {
               src={photo.src}
               alt={photo.label}
               className="h-[72px] w-full object-cover"
+              width={300} height={300} loading="lazy" sizes="150px"
             />
             <div className="flex items-center justify-between bg-black/50 px-2 py-1.5">
               <span className="text-[10px] font-semibold text-white/70">
@@ -701,6 +703,7 @@ function CustomerCaptureScreen({
               src={photo.src}
               alt={photo.label}
               className="h-[200px] w-full object-cover blur-[3px]"
+              width={300} height={300} loading="lazy" sizes="300px"
             />
             <div className="absolute inset-0 flex flex-col items-center justify-center bg-amber-900/30">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90">
@@ -710,11 +713,12 @@ function CustomerCaptureScreen({
           </div>
         ) : captured.has(currentStep) ? (
           <div className="relative">
-            <img
-              src={photo.src}
-              alt={photo.label}
-              className="h-[200px] w-full object-cover"
-            />
+             <img
+               src={photo.src}
+               alt={photo.label}
+               className="h-[200px] w-full object-cover"
+               width={300} height={300} loading="lazy" sizes="300px"
+             />
             <div className="absolute inset-0 flex items-center justify-center bg-black/20">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90">
                 <CheckCircle2 className="h-6 w-6 text-emerald-500" />
@@ -802,6 +806,7 @@ function CustomerCaptureScreen({
                   src={p.src}
                   alt={p.label}
                   className="h-full w-full object-cover blur-[2px]"
+                  width={300} height={300} loading="lazy" sizes="48px"
                 />
                 <span className="absolute right-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-amber-500">
                   <AlertTriangle className="h-2.5 w-2.5 text-white" />
@@ -813,6 +818,7 @@ function CustomerCaptureScreen({
                   src={p.src}
                   alt={p.label}
                   className="h-full w-full object-cover"
+                  width={300} height={300} loading="lazy" sizes="48px"
                 />
                 <span className="absolute right-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500">
                   <CheckCircle2 className="h-2.5 w-2.5 text-white" />
@@ -861,6 +867,7 @@ function CustomerReviewScreen({ onSubmit }: { onSubmit: () => void }) {
               src={p.src}
               alt={p.label}
               className="h-[80px] w-full object-cover"
+              width={300} height={300} loading="lazy" sizes="150px"
             />
             <div className="flex items-center justify-between px-2 py-1.5 bg-black/[0.02]">
               <span className="text-[10px] font-semibold text-black/50">{p.label}</span>
