@@ -527,7 +527,8 @@ export default function AdminBetaPage() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Workspace</TableHead>
+                     <TableHead>Workspace</TableHead>
+                      <TableHead>Health</TableHead>
                       <TableHead>Segment</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead className="text-right">Requests</TableHead>
