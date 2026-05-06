@@ -1,5 +1,6 @@
 import { Outlet, NavLink } from "react-router-dom";
 import { Plus, LifeBuoy, KeyRound, LogOut, Globe2 } from "lucide-react";
+import { FeedbackWidget } from "@/features/support/components/FeedbackWidget";
 
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/layout/AppSidebar";
@@ -111,9 +112,7 @@ export function DashboardLayout() {
           </div>
         </div>
 
-        <NavLink to="/app/help" aria-label="Open help and setup guide" className="fixed right-4 z-40 flex h-12 w-12 items-center justify-center rounded-full border border-border/70 bg-card/85 text-primary shadow-lg backdrop-blur transition-transform hover:scale-105 bottom-[calc(5rem+env(safe-area-inset-bottom))] lg:bottom-6">
-          <LifeBuoy className="h-5 w-5" />
-        </NavLink>
+        <FeedbackWidget />
 
         <MobileTabBar />
       </SidebarProvider>

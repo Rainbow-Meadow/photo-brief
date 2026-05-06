@@ -140,6 +140,14 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
+                <SidebarMenuButton asChild isActive={isActive("/support")} tooltip="Support">
+                  <NavLink to="/support" className="pb-nav-link flex items-center gap-2">
+                    <MessageSquare className="h-4 w-4" />
+                    {!collapsed && <span>Support</span>}
+                  </NavLink>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
                 <SidebarMenuButton asChild isActive={isActive("/app/help")} tooltip="Help & Guide">
                   <NavLink to="/app/help" className="pb-nav-link flex items-center gap-2">
                     <LifeBuoy className="h-4 w-4" />

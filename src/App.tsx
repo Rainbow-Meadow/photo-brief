@@ -67,6 +67,8 @@ const AcceptInvitePage = lazy(() => import("@/features/workspace/pages/AcceptInv
 const BetaGuidePage = lazy(() => import("@/features/help/pages/BetaGuidePage"));
 const AdminInvitesPage = lazy(() => import("@/pages/AdminInvites"));
 const AdminAIRerunPage = lazy(() => import("@/pages/AdminAIRerun"));
+const AdminCommandCenter = lazy(() => import("@/pages/AdminCommandCenter"));
+const SupportPage = lazy(() => import("@/features/support/pages/SupportPage"));
 
 const queryClient = new QueryClient();
 
@@ -164,6 +166,7 @@ const App = () => (
             <Route path="/settings/integrations" element={<IntegrationsPage />} />
             <Route path="/settings/billing" element={<BillingSettingsPage />} />
             <Route path="/app/help" element={<BetaGuidePage />} />
+            <Route path="/support" element={<SupportPage />} />
             <Route
               path="/admin/invites"
               element={
@@ -180,6 +183,16 @@ const App = () => (
                 <RequireAuth requireOnboarding={false}>
                   <RequirePlatformAdmin>
                     <AdminAIRerunPage />
+                  </RequirePlatformAdmin>
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/admin/command"
+              element={
+                <RequireAuth requireOnboarding={false}>
+                  <RequirePlatformAdmin>
+                    <AdminCommandCenter />
                   </RequirePlatformAdmin>
                 </RequireAuth>
               }
