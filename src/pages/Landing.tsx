@@ -30,6 +30,7 @@ import { PageMeta } from "@/hooks/seo/usePageMeta";
 import { buildHowToJsonLd } from "@/hooks/seo/buildHowToJsonLd";
 import { buildFaqJsonLd } from "@/hooks/seo/buildFaqJsonLd";
 import { BrandMark } from "@/components/layout/BrandMark";
+import { FreeProEligibilityModal } from "@/components/marketing/FreeProEligibilityModal";
 import { howItWorksSteps } from "@/components/marketing/HowItWorksSteps";
 import { InteractiveHeroBriefAssembly } from "@/components/marketing/InteractiveHeroBriefAssembly";
 import { faqItems } from "@/features/help/content/faq";
