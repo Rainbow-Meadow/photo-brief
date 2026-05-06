@@ -12,23 +12,12 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-
-
-const marketingRoutes = [
-  { to: "/founding-partner-beta", label: "Founding Beta" },
-  { to: "/pricing", label: "Pricing" },
-  { to: "/help", label: "Help" },
-];
-
-const legalRoutes = [
-  { to: "/privacy", label: "Privacy" },
-  { to: "/terms", label: "Terms" },
-];
+import { footerNavItems, legalNavItems, marketingNavItems, routes } from "@/routes/navigation";
 
 /**
- * MarketingLayout — landing, pricing, auth pages.
- * Mobile: compact header + hamburger sheet for nav.
- * Desktop (sm+): inline nav links and Sign in CTA.
+ * MarketingLayout — landing, pricing, auth, and public marketing pages.
+ * Route names live in src/routes/navigation.ts so header, footer, sidebar,
+ * mobile nav, and router stay in sync.
  */
 export function MarketingLayout() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -37,16 +26,16 @@ export function MarketingLayout() {
     <div className="pb-landing flex min-h-screen flex-col">
       <div className="sticky top-0 z-40 px-3 pt-3 sm:px-6 sm:pt-4 pt-safe">
         <header className="mx-auto flex h-14 w-full max-w-7xl items-center justify-between gap-4 rounded-full glass-nav px-3 sm:h-16 sm:px-5">
-          <NavLink to="/" aria-label="PhotoBrief home" className="flex items-center pl-1">
+          <NavLink to={routes.marketing.home} aria-label="PhotoBrief home" className="flex items-center pl-1">
             <BrandMark variant="wordmark" tone="auto" size={22} eager className="sm:hidden" />
             <BrandMark variant="wordmark" tone="auto" size={26} eager className="hidden sm:block" />
           </NavLink>
 
           <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
-            {marketingRoutes.map((l) => (
+            {marketingNavItems.map((item) => (
               <NavLink
-                key={l.to}
-                to={l.to}
+                key={item.to}
+                to={item.to}
                 className={({ isActive }) =>
                   `rounded-full px-3 py-1.5 transition-colors ${
                     isActive
@@ -55,7 +44,7 @@ export function MarketingLayout() {
                   }`
                 }
               >
-                {l.label}
+                {item.label}
               </NavLink>
             ))}
           </nav>
@@ -63,7 +52,7 @@ export function MarketingLayout() {
           <div className="flex items-center gap-1.5">
             <ThemeToggle hideLabel className="hidden md:inline-flex" />
             <Button asChild variant="ghost" size="sm" className="hidden rounded-full sm:inline-flex">
-              <NavLink to="/auth">Sign in</NavLink>
+              <NavLink to={routes.marketing.auth}>Sign in</NavLink>
             </Button>
             <Button asChild size="sm" className="rounded-full px-4">
               <NavLink to={signupCtaTarget()}>{signupCtaShortLabel()}</NavLink>
@@ -83,7 +72,6 @@ export function MarketingLayout() {
         </header>
       </div>
 
-      {/* Mobile nav sheet */}
       <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
         <SheetContent side="right" className="w-[84vw] max-w-sm p-0">
           <SheetHeader className="border-b px-5 py-4 text-left">
@@ -95,37 +83,17 @@ export function MarketingLayout() {
             <ThemeToggle className="w-full justify-between" />
           </div>
           <ul className="divide-y">
-            {marketingRoutes.map((l) => (
-              <li key={l.to}>
+            {[...marketingNavItems, ...legalNavItems, { to: routes.marketing.auth, label: "Sign in" }].map((item) => (
+              <li key={item.to}>
                 <NavLink
-                  to={l.to}
+                  to={item.to}
                   onClick={() => setMenuOpen(false)}
                   className="block px-5 py-4 text-base font-medium text-foreground active:bg-muted"
                 >
-                  {l.label}
+                  {item.label}
                 </NavLink>
               </li>
             ))}
-            {legalRoutes.map((l) => (
-              <li key={l.to}>
-                <NavLink
-                  to={l.to}
-                  onClick={() => setMenuOpen(false)}
-                  className="block px-5 py-4 text-base font-medium text-foreground active:bg-muted"
-                >
-                  {l.label}
-                </NavLink>
-              </li>
-            ))}
-            <li>
-              <NavLink
-                to="/auth"
-                onClick={() => setMenuOpen(false)}
-                className="block px-5 py-4 text-base font-medium text-foreground active:bg-muted"
-              >
-                Sign in
-              </NavLink>
-            </li>
           </ul>
           <div className="px-5 pt-6">
             <Button asChild className="w-full rounded-full">
@@ -145,12 +113,11 @@ export function MarketingLayout() {
         <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-8 text-sm text-[hsl(var(--pb-muted))] sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
           <BrandMark variant="horizontal" tone="light" size={28} className="opacity-80" />
           <nav aria-label="Footer" className="flex flex-wrap items-center gap-4">
-            <NavLink to="/founding-partner-beta" className="hover:text-white transition-colors">Founding Beta</NavLink>
-            <NavLink to="/pricing" className="hover:text-white transition-colors">Pricing</NavLink>
-            <NavLink to="/help" className="hover:text-white transition-colors">Help</NavLink>
-            <NavLink to="/for-ai-agents" className="hover:text-white transition-colors">For AI agents</NavLink>
-            <NavLink to="/privacy" className="hover:text-white transition-colors">Privacy</NavLink>
-            <NavLink to="/terms" className="hover:text-white transition-colors">Terms</NavLink>
+            {footerNavItems.map((item) => (
+              <NavLink key={item.to} to={item.to} className="hover:text-white transition-colors">
+                {item.label}
+              </NavLink>
+            ))}
           </nav>
           <p className="text-xs text-white/36">© {new Date().getFullYear()} PhotoBrief.ai</p>
         </div>
