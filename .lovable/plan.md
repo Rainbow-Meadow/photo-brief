@@ -1,63 +1,52 @@
 
-## Overview
+## Transactional Email Audit Report
 
-The landing page uses a dark navy background (#07050d / #0c0915) with purple/lavender accents (#8f63ff, #b98cff, #7C3AED) and subtle violet radial glows. The current emails use a white body with light lavender outer padding — functional but disconnected from the premium dark aesthetic.
+### Templates (9 registered)
 
-This plan updates the shared email brand system and all templates so they feel like they came directly from the landing page.
+| Template | Trigger | Wired? | Voice OK? | Issue |
+|----------|---------|--------|-----------|-------|
+| `waitlist-confirmation` | waitlist-submit edge fn | Yes | Yes | -- |
+| `waitlist-admin-notification` | waitlist-submit edge fn | Yes | Yes | -- |
+| `recipient-request-link` | send-recipient-message edge fn | Yes | Fix needed | CTA says "Open PhotoBrief" -- recipients don't know what that is |
+| `recipient-reminder` | send-recipient-message edge fn | Yes | Yes | -- |
+| `submission-received` | notify-event edge fn | Partial | Yes | notify-event exists but no DB trigger fires it |
+| `customer-submission-confirmation` | notify-event edge fn | Partial | Yes | Same -- no DB trigger fires notify-event |
+| `business-request-ready` | send-recipient-message edge fn | Yes | Yes | -- |
+| `workspace-welcome` | notify-event (user_signup) | Dead | Yes | No DB trigger fires `user_signup` event |
+| `founding-partner-welcome` | None | Dead | Yes | Never invoked anywhere |
 
-## Visual direction
+### Auth Templates (6)
+All wired correctly via `auth-email-hook`. Brand voice is consistent. No issues.
 
-- **Outer background**: Dark navy (#0c0915) with a subtle purple radial glow at the top, mirroring the landing page body
-- **Card container**: Dark glass panel (#15121f) with a soft purple-tinted border (rgba(207,178,255,0.14)), matching `.pb-command-panel` / `.dark .pb-card`
-- **Header**: Logo image (hosted horizontal-light PNG) on the dark surface, with a subtle bottom border in violet
-- **CTA buttons**: Purple gradient (#8f63ff -> #7C3AED), matching the landing page's "Apply to join the beta" button style
-- **Text**: White/off-white headings (#f8f5ff), lavender-muted body text (rgba(255,255,255,0.68)), soft footer text (rgba(255,255,255,0.50))
-- **Cards/callout boxes**: Slightly lighter dark panel (#1b1726) with violet-tinted border
-- **Accent color for eyebrows/numbers**: Lavender (#b98cff)
-- **Footer**: Muted text, "Sent via PhotoBrief.ai"
+### Fixes
 
-## Changes
+#### 1. Recipient CTA button text
+Change "Open PhotoBrief" to "Take your photos" on `recipient-request-link`. Matches the action-oriented tone used in `recipient-reminder` ("Send your photos") and the microcopy ("I'll walk you through a few quick photos").
 
-### 1. Update `brand-styles.ts`
+#### 2. Wire `submission-received` and `customer-submission-confirmation` via DB trigger
+Create a DB trigger on `submissions` INSERT that calls `notify-event` with `{ event: 'submission_received', submission_id }` via `pg_net`. This makes both the business notification and customer confirmation emails fire automatically when a submission is created -- no client-side invocation needed.
 
-Overhaul the BRAND colors and all shared style objects:
+#### 3. Wire `workspace-welcome` via DB trigger
+Create a DB trigger on `profiles` INSERT that calls `notify-event` with `{ event: 'user_signup', user_id }` via `pg_net`. This sends the welcome email automatically when a new user signs up.
 
-| Token | Current | New |
-|-------|---------|-----|
-| bg | #F8F7FA (light lavender) | #0c0915 (dark navy) |
-| surface | #FFFFFF | #15121f (dark glass) |
-| primary | #111014 | #f8f5ff (white-lavender) |
-| secondary | #625F68 | rgba(255,255,255,0.68) |
-| border | #E1DEE7 | rgba(207,178,255,0.14) |
-| cta | #7C3AED | #8f63ff (keep purple, brighter) |
-| ctaHover | #6D28D9 | #b98cff |
-| accent | #A78BFA | #b98cff |
-| muted | #94909C | rgba(255,255,255,0.50) |
+#### 4. Wire `founding-partner-welcome`
+Add a `founding_partner_accepted` event to `notify-event`. Create a DB trigger on `workspace_subscriptions` when `is_founding_pro` is set to true, firing the founding partner welcome email. If the founding partner flow is handled manually (admin-driven), add the invocation to the admin acceptance flow instead.
 
-Update `s.main.backgroundColor` to `#0c0915` (dark), `s.container` to dark glass panel, button to purple with white text, card to darker inset panel, all text styles to light-on-dark.
+#### 5. Stub in `notificationService.ts`
+The TODO on line 155 (`// TODO(Phase 10): invoke send-transactional-email edge fn.`) indicates planned but unwired notification emails. This is a known gap -- not blocking, but noted for future work.
 
-**BrandHeader**: Replace `<Text>` wordmark with `<Img>` pointing to `https://photobrief.ai/brand/photobrief-horizontal-light.png` (the light-ink horizontal logo for dark backgrounds), ~36px height.
+### Pipeline Health Summary
 
-### 2. All 9 transactional templates
+- **Fully wired and sending**: 5 of 9 templates (waitlist pair, recipient pair, business-request-ready)
+- **Template exists, trigger exists, but no DB hook**: 3 templates (submission-received, customer-submission-confirmation, workspace-welcome) -- the notify-event edge function handles them, but nothing calls it
+- **Dead (no trigger at all)**: 1 template (founding-partner-welcome)
+- **Auth emails**: All 6 fully wired
+- **Brand voice**: Consistent across all templates except one CTA button
 
-Since they import from `brand-styles.ts`, the color/layout changes propagate automatically. No per-template changes needed -- they all use `BrandHeader`, `BrandFooter`, `s.*` styles.
+### Files to modify
 
-### 3. Auth email templates (6 files in `_shared/email-templates/`)
-
-These have their own inline styles (not shared). Each will be updated with the same dark palette:
-- `signup.tsx`, `invite.tsx`, `magic-link.tsx`, `recovery.tsx`, `email-change.tsx`, `reauthentication.tsx`
-- Same dark bg, dark card, purple CTA, light text, logo image in header
-
-### 4. Deploy edge functions
-
-Deploy `auth-email-hook`, `send-transactional-email`, and `preview-transactional-email`.
-
-## Files modified
-
-- `supabase/functions/_shared/transactional-email-templates/brand-styles.ts`
-- `supabase/functions/_shared/email-templates/signup.tsx`
-- `supabase/functions/_shared/email-templates/invite.tsx`
-- `supabase/functions/_shared/email-templates/magic-link.tsx`
-- `supabase/functions/_shared/email-templates/recovery.tsx`
-- `supabase/functions/_shared/email-templates/email-change.tsx`
-- `supabase/functions/_shared/email-templates/reauthentication.tsx`
+- `supabase/functions/_shared/transactional-email-templates/recipient-request-link.tsx` -- CTA text fix
+- New migration: DB triggers for `submissions` INSERT and `profiles` INSERT to call `notify-event` via `pg_net`
+- `supabase/functions/notify-event/index.ts` -- Add `founding_partner_accepted` event handler
+- New migration: DB trigger on `workspace_subscriptions` for founding partner welcome
+- Deploy: `notify-event`, `send-transactional-email`, `preview-transactional-email`
