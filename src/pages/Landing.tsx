@@ -362,7 +362,6 @@ export default function LandingPage() {
                 <Button size="xl" variant="pb-primary" onClick={() => { trackEvent("cta_click", { location: "hero", label: "primary" }); document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" }); }}>
                   {BETA_IS_FULL ? "Join the waitlist" : "Apply now"} <ArrowRight className="ml-1 h-4 w-4" />
                 </Button>
-                </Button>
                 <Button asChild size="xl" variant="pb-secondary">
                   <a href="#workflow" onClick={() => trackEvent("cta_click", { location: "hero", label: "workflow" })}>See how it works</a>
                 </Button>
