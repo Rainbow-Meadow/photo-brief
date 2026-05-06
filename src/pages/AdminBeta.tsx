@@ -687,6 +687,32 @@ export default function AdminBetaPage() {
               </SheetHeader>
 
               <div className="mt-6 space-y-6">
+                {/* Health score */}
+                {(() => {
+                  const h = computeHealthScore(selectedWs);
+                  return (
+                    <div>
+                      <Label className="text-xs text-muted-foreground mb-2 block">Health score</Label>
+                      <div className="flex items-center gap-3 mb-2">
+                        <span className={`text-lg font-bold tabular-nums ${healthColor(h.level)}`}>{h.score}/7</span>
+                        <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${healthBg(h.level)}`}>{h.level}</span>
+                      </div>
+                      <div className="grid grid-cols-1 gap-1">
+                        {h.checks.map((c) => (
+                          <div key={c.label} className="flex items-center gap-2 text-xs">
+                            {c.passed ? (
+                              <CheckCircle2 className="h-3.5 w-3.5 text-green-400 shrink-0" />
+                            ) : (
+                              <XCircle className="h-3.5 w-3.5 text-muted-foreground/40 shrink-0" />
+                            )}
+                            <span className={c.passed ? "text-foreground" : "text-muted-foreground"}>{c.label}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })()}
+
                 {/* Status badge */}
                 <div className="flex items-center gap-3">
                   <Badge variant={statusVariant(selectedWs.beta_status)} className="text-xs">
