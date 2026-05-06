@@ -1,18 +1,4 @@
 import { NavLink, useLocation } from "react-router-dom";
-import {
-  LayoutDashboard,
-  Inbox,
-  BookOpen,
-  Users,
-  CreditCard,
-  Settings,
-  Sparkles,
-  FileText,
-  MessageSquare,
-  LifeBuoy,
-  Globe2,
-  Plug,
-} from "lucide-react";
 
 import {
   Sidebar,
@@ -32,31 +18,12 @@ import { UpgradePromptCard } from "@/components/shared/UpgradePromptCard";
 import { WorkspaceSwitcher } from "@/features/workspace/components/WorkspaceSwitcher";
 import { usePlan } from "@/hooks/usePlan";
 import { cn } from "@/lib/utils";
-
-const mainItems = [
-  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
-  { title: "Requests", url: "/requests", icon: Inbox },
-  { title: "Customers", url: "/customers", icon: Users },
-  { title: "Guides", url: "/guides", icon: BookOpen },
-  { title: "Website Intake", url: "/intake", icon: Globe2, feature: "website_intake" as const },
-];
-
-const settingsItems = [
-  { title: "Brand", url: "/settings/brand", icon: Sparkles },
-  { title: "Team", url: "/settings/team", icon: Settings },
-  { title: "Templates", url: "/settings/templates", icon: FileText },
-  { title: "SMS", url: "/settings/sms", icon: MessageSquare },
-  { title: "Integrations", url: "/settings/integrations", icon: Plug },
-  { title: "Billing", url: "/settings/billing", icon: CreditCard },
-];
+import { resourceNavItems, settingsNavItems, workspaceNavItems } from "@/routes/navigation";
 
 export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const { plan, loading: planLoading, can } = usePlan();
-  // Hide the upgrade card for users already on Pro or higher.
-  // Plans below Pro: free, starter. Don't render until plan is resolved
-  // to avoid flashing the wrong CTA during the brief auth/workspace load.
   const showUpgradeCard = !planLoading && (plan === "free" || plan === "starter");
   const { pathname } = useLocation();
 
@@ -90,7 +57,7 @@ export function AppSidebar() {
           <SidebarGroupLabel>Workspace</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {mainItems.map((item) => {
+              {workspaceNavItems.map((item) => {
                 const locked = item.feature ? !can(item.feature) : false;
                 const tooltip = locked ? `${item.title} · Pro` : item.title;
                 return (
@@ -121,7 +88,7 @@ export function AppSidebar() {
           <SidebarGroupLabel>Settings</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {settingsItems.map((item) => (
+              {settingsNavItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild isActive={isActive(item.url)} tooltip={item.title}>
                     <NavLink to={item.url} className="pb-nav-link flex items-center gap-2">
@@ -139,22 +106,16 @@ export function AppSidebar() {
           <SidebarGroupLabel>Resources</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild isActive={isActive("/support")} tooltip="Support">
-                  <NavLink to="/support" className="pb-nav-link flex items-center gap-2">
-                    <MessageSquare className="h-4 w-4" />
-                    {!collapsed && <span>Support</span>}
-                  </NavLink>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild isActive={isActive("/app/help")} tooltip="Help & Guide">
-                  <NavLink to="/app/help" className="pb-nav-link flex items-center gap-2">
-                    <LifeBuoy className="h-4 w-4" />
-                    {!collapsed && <span>Help & Guide</span>}
-                  </NavLink>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+              {resourceNavItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild isActive={isActive(item.url)} tooltip={item.title}>
+                    <NavLink to={item.url} className="pb-nav-link flex items-center gap-2">
+                      <item.icon className="h-4 w-4" />
+                      {!collapsed && <span>{item.title}</span>}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
