@@ -652,8 +652,30 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
   .pb-nav-link { min-height: 44px; min-width: 44px; }
 }
 
-/* Desktop-only hover enhancements */
+/* ── Platform-aware button behavior ────────────────────────────────── */
+.pb-btn-platform {
+  transition-property: transform, box-shadow, background-color, border-color, opacity;
+}
+
 @media (hover: hover) and (pointer: fine) {
+  /* Desktop: hover lift, refined shadow transitions */
+  .pb-btn-platform { transition-duration: 200ms; }
+  .pb-btn-platform.btn-primary-glass:hover { brightness: 1.04; transform: translateY(-1px); }
+  .pb-btn-platform.glass:hover { box-shadow: var(--glass-shadow-lg); transform: translateY(-1px); }
+  .pb-btn-platform[class*="pb-primary"]:hover {
+    background-color: hsl(var(--pb-lavender));
+    box-shadow: 0 14px 28px -10px hsl(var(--pb-violet) / 0.6);
+    transform: translateY(-1px);
+  }
+  .pb-btn-platform[class*="pb-secondary"]:hover {
+    background-color: hsl(0 0% 100% / 0.10);
+    transform: translateY(-1px);
+  }
+
+  /* Desktop card interactive hover */
+  .surface-card-interactive {
+    transition: transform 260ms var(--ease-apple), box-shadow 260ms var(--ease-apple), border-color 260ms var(--ease-apple);
+  }
   .surface-card-interactive:hover {
     transform: translateY(-2px);
     box-shadow: var(--glass-shadow-lg);
@@ -661,13 +683,27 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
   }
 }
 
-/* Touch-only active feedback */
 @media (hover: none) {
+  /* Touch: faster transitions, press feedback, no hover dependency */
+  .pb-btn-platform {
+    transition-duration: 150ms;
+    min-height: 44px;
+  }
+  .pb-btn-platform:active {
+    transform: scale(0.97);
+    opacity: 0.88;
+  }
+
+  /* Touch card interactive feedback */
   .surface-card-interactive:active {
     transform: scale(0.98);
     opacity: 0.9;
     transition: transform 100ms ease, opacity 100ms ease;
   }
+}
+
+@media (max-width: 767px) {
+  .pb-btn-platform { min-height: 44px; }
 }
 
 @keyframes lift-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }

@@ -3,6 +3,20 @@ import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
+import {
+  DrawerContent,
+  DrawerClose,
+} from "@/components/ui/drawer";
+
+/**
+ * Dialog — platform-aware.
+ *
+ * Desktop: centered modal with backdrop blur and zoom entrance animation.
+ * Mobile: automatically renders as a bottom-sheet Drawer for thumb-friendly interaction.
+ *
+ * Consumers don't need to change their code — the platform switch is automatic.
+ */
 
 const Dialog = DialogPrimitive.Root;
 
@@ -11,6 +25,8 @@ const DialogTrigger = DialogPrimitive.Trigger;
 const DialogPortal = DialogPrimitive.Portal;
 
 const DialogClose = DialogPrimitive.Close;
+
+/* ── Desktop overlay ────────────────────────────────────────────────── */
 
 const DialogOverlay = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Overlay>,
@@ -27,7 +43,9 @@ const DialogOverlay = React.forwardRef<
 ));
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 
-const DialogContent = React.forwardRef<
+/* ── Desktop content (centered modal) ───────────────────────────────── */
+
+const DesktopDialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
 >(({ className, children, ...props }, ref) => (
@@ -49,7 +67,41 @@ const DialogContent = React.forwardRef<
     </DialogPrimitive.Content>
   </DialogPortal>
 ));
+DesktopDialogContent.displayName = "DesktopDialogContent";
+
+/* ── Platform-aware content wrapper ─────────────────────────────────── */
+
+const DialogContent = React.forwardRef<
+  React.ElementRef<typeof DialogPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
+>(({ className, children, ...props }, ref) => {
+  const isMobile = useIsMobile();
+
+  /* Mobile: render as bottom-sheet Drawer */
+  if (isMobile) {
+    return (
+      <DrawerContent className={className}>
+        <div className="px-4 pb-6 pt-2">
+          {children}
+        </div>
+        <DrawerClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+          <X className="h-4 w-4" />
+          <span className="sr-only">Close</span>
+        </DrawerClose>
+      </DrawerContent>
+    );
+  }
+
+  /* Desktop: centered modal */
+  return (
+    <DesktopDialogContent ref={ref} className={className} {...props}>
+      {children}
+    </DesktopDialogContent>
+  );
+});
 DialogContent.displayName = DialogPrimitive.Content.displayName;
+
+/* ── Shared sub-components ──────────────────────────────────────────── */
 
 const DialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div className={cn("flex flex-col space-y-1.5 text-center sm:text-left", className)} {...props} />
