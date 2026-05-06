@@ -360,7 +360,7 @@ export default function BetaListPage() {
               <h2 className="mt-4 text-xl font-semibold tracking-tight text-white sm:text-2xl">Join the Founding Partner Beta</h2>
               <p className="pb-copy mt-2 text-sm">Limited spots · We typically reply within a few days</p>
 
-              <form onSubmit={onSubmit} className="mt-6 grid gap-4">
+              <form onSubmit={onSubmit} onFocusCapture={handleFormFocus} className="mt-6 grid gap-4">
                 <Field id="bl-email" label="Work email" required>
                   <Input id="bl-email" type="email" value={form.email} onChange={update("email")} autoComplete="email" required placeholder="you@company.com" className="border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
                 </Field>
