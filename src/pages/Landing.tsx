@@ -6,8 +6,10 @@ import {
   Camera,
   CheckCircle2,
   ClipboardList,
+  Clock,
   Crown,
   FileCheck2,
+  FormInput,
   Gift,
   Globe2,
   ImageOff,
@@ -23,7 +25,9 @@ import {
   Sparkles,
   Stamp,
   TimerReset,
+  TrendingDown,
   Trophy,
+  UserX,
   Users,
 } from "lucide-react";
 
@@ -382,6 +386,9 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* ━━ PAIN POINTS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+        <PainPointSection />
+
         {/* ━━ FREE PRO FOR LIFE SPOTLIGHT ━━━━━━━━━━━━━━━━━━━━ */}
         <section className="pb-section-tight">
           <div className="pb-container">
@@ -524,6 +531,81 @@ export default function LandingPage() {
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    Sub-components
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+const painPoints = [
+  {
+    icon: Clock,
+    stat: "62% of first quotes are delayed",
+    context: "…waiting for photos the customer forgot to send.",
+  },
+  {
+    icon: MessageSquareWarning,
+    stat: "5+ back-and-forth messages",
+    context: "…just to get the right angle, scale, or context for one job.",
+  },
+  {
+    icon: FormInput,
+    stat: "Forms capture text, not proof",
+    context: "Generic intake forms never ask for the visual evidence your team actually needs to act.",
+  },
+  {
+    icon: UserX,
+    stat: "75% of consumers prefer zero human contact",
+    context: "They want to self-serve on their phone — not call, not email, not wait for a callback.",
+  },
+  {
+    icon: TrendingDown,
+    stat: "Low-quality leads look identical to good ones",
+    context: "Without photos, your team triages blind and wastes site visits on jobs that don't convert.",
+  },
+];
+
+function PainPointSection() {
+  return (
+    <section className="pb-section-tight">
+      <div className="pb-container">
+        <div className="mx-auto max-w-3xl text-center">
+          <span className="pb-eyebrow">
+            <MessageSquareWarning className="h-3.5 w-3.5" /> The gap
+          </span>
+          <h2 className="pb-section-title mt-4 text-white">
+            Your intake process is losing you money.
+          </h2>
+          <p className="pb-copy mt-4 text-base sm:text-lg">
+            Between the first "can you send a few photos?" and a quote your team can act on, hours disappear into email chains, blurry snapshots, and missing context.
+          </p>
+        </div>
+
+        <div className="mt-8 grid gap-3 sm:mt-10 sm:grid-cols-2 lg:grid-cols-3">
+          {painPoints.map((point) => {
+            const Icon = point.icon;
+            return (
+              <article
+                key={point.stat}
+                className="pb-card flex gap-4 p-4 sm:p-5"
+              >
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-[hsl(var(--pb-line-strong))] bg-[hsl(var(--pb-ink))] text-[hsl(var(--pb-lavender))]">
+                  <Icon className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold tracking-tight text-white sm:text-base">
+                    {point.stat}
+                  </p>
+                  <p className="pb-copy mt-1 text-xs leading-relaxed sm:text-sm">
+                    {point.context}
+                  </p>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+
+        <p className="pb-copy mx-auto mt-6 max-w-xl text-center text-sm italic sm:mt-8 sm:text-base">
+          PhotoBrief closes the gap between first contact and actionable information.
+        </p>
+      </div>
+    </section>
+  );
+}
 
 function SectionNav() {
   return (
