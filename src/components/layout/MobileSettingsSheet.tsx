@@ -1,15 +1,5 @@
 import { NavLink } from "react-router-dom";
-import {
-  Sparkles,
-  Users,
-  FileText,
-  MessageSquare,
-  CreditCard,
-  ChevronRight,
-  KeyRound,
-  LogOut,
-  Plug,
-} from "lucide-react";
+import { ChevronRight, KeyRound, LogOut } from "lucide-react";
 
 import {
   Sheet,
@@ -19,15 +9,7 @@ import {
   SheetDescription,
 } from "@/components/ui/sheet";
 import { useAccountActions } from "@/features/account/useAccountActions";
-
-const items = [
-  { to: "/settings/brand", label: "Brand", description: "Logo, colors, recipient page", icon: Sparkles },
-  { to: "/settings/team", label: "Team", description: "Members, roles, invites", icon: Users },
-  { to: "/settings/templates", label: "Message templates", description: "Reminders & follow-ups", icon: FileText },
-  { to: "/settings/sms", label: "SMS", description: "Phone number & delivery", icon: MessageSquare },
-  { to: "/settings/integrations", label: "Integrations", description: "Website, email, SMS, CRM", icon: Plug },
-  { to: "/settings/billing", label: "Billing & plan", description: "Subscription, usage, invoices", icon: CreditCard },
-];
+import { settingsNavItems } from "@/routes/navigation";
 
 interface Props {
   open: boolean;
@@ -36,8 +18,7 @@ interface Props {
 
 /**
  * Full-height bottom sheet that lists the workspace settings group.
- * Used by the mobile bottom tab bar in place of nesting Settings inside
- * the primary nav (which would be too crowded on a phone).
+ * Its links come from the same navigation map used by the desktop sidebar.
  */
 export function MobileSettingsSheet({ open, onOpenChange }: Props) {
   const { resetPassword, logOut, resetting, signingOut, email } = useAccountActions();
@@ -51,19 +32,19 @@ export function MobileSettingsSheet({ open, onOpenChange }: Props) {
         </SheetHeader>
         <div className="flex h-full flex-col overflow-y-auto pb-safe">
           <ul className="divide-y divide-[hsl(var(--glass-border))]">
-            {items.map((it) => (
-              <li key={it.to}>
+            {settingsNavItems.map((item) => (
+              <li key={item.url}>
                 <NavLink
-                  to={it.to}
+                  to={item.url}
                   onClick={() => onOpenChange(false)}
                   className="pb-settings-row flex items-center gap-3 px-5 py-4"
                 >
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                    <it.icon className="h-5 w-5" />
+                    <item.icon className="h-5 w-5" />
                   </span>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-foreground">{it.label}</p>
-                    <p className="truncate text-xs text-muted-foreground">{it.description}</p>
+                    <p className="text-sm font-medium text-foreground">{item.label}</p>
+                    <p className="truncate text-xs text-muted-foreground">{item.description}</p>
                   </div>
                   <ChevronRight className="h-4 w-4 text-muted-foreground" />
                 </NavLink>
