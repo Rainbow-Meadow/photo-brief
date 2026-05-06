@@ -72,7 +72,7 @@ export function BrandMark({
   if (resolvedVariant === "mark" || resolvedVariant === "primary") {
     return (
       <span role="img" aria-label={ALT} className={cn("inline-flex items-center justify-center", className)}>
-        <MarkImage size={size} withGlow={withGlow} eager={eager} />
+        <MarkImage size={size} eager={eager} />
       </span>
     );
   }
@@ -92,7 +92,7 @@ export function BrandMark({
         aria-label={ALT}
         className={cn("inline-flex flex-col items-center justify-center gap-2 min-w-0", className)}
       >
-        <MarkImage size={size} withGlow={withGlow} eager={eager} />
+        <MarkImage size={size} eager={eager} />
         <Wordmark size={Math.max(14, size * 0.26)} />
       </span>
     );
@@ -100,7 +100,7 @@ export function BrandMark({
 
   return (
     <span role="img" aria-label={ALT} className={cn("inline-flex items-center gap-2.5 min-w-0", className)}>
-      <MarkImage size={size} withGlow={withGlow} eager={eager} />
+      <MarkImage size={size} eager={eager} />
       <Wordmark size={Math.max(16, size * 0.72)} compact />
     </span>
   );

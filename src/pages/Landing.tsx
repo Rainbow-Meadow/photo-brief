@@ -281,7 +281,7 @@ export default function LandingPage() {
         <section className="pb-section relative isolate">
           <div className="pb-lens-field" />
           <div className="pb-container relative z-10 mx-auto max-w-lg text-center">
-            <BrandMark variant="stacked" tone="light" size={72} eager withGlow />
+            <BrandMark variant="stacked" tone="light" size={72} eager />
             {done === "new" ? (
               <>
                 <div className="mx-auto mt-8 flex h-16 w-16 items-center justify-center rounded-full bg-[hsl(var(--pb-mint)/0.12)]">
@@ -342,9 +342,9 @@ export default function LandingPage() {
               <div className="mb-4 sm:mb-5">
                 <div className="relative inline-flex items-center justify-center">
                   <div aria-hidden className="pointer-events-none absolute h-36 w-36 rounded-full bg-[hsl(var(--pb-violet)/0.35)] blur-[60px] sm:h-48 sm:w-48 sm:blur-[80px]" />
-                  <BrandMark variant="mark" size={88} withGlow eager className="relative sm:hidden" />
-                  <BrandMark variant="mark" size={120} withGlow eager className="relative hidden sm:inline-flex lg:hidden" />
-                  <BrandMark variant="mark" size={144} withGlow eager className="relative hidden lg:inline-flex" />
+                  <BrandMark variant="mark" size={88} eager className="relative sm:hidden" />
+                  <BrandMark variant="mark" size={120} eager className="relative hidden sm:inline-flex lg:hidden" />
+                  <BrandMark variant="mark" size={144} eager className="relative hidden lg:inline-flex" />
                 </div>
               </div>
 
@@ -877,7 +877,7 @@ function FinalCta({ isFull }: { isFull: boolean }) {
         <div className="relative overflow-hidden rounded-[2.4rem] border border-[hsl(var(--pb-lavender)/0.35)] bg-[hsl(var(--pb-panel)/0.84)] p-6 text-center shadow-[0_36px_100px_-64px_hsl(var(--pb-violet))] sm:p-8 lg:p-12">
           <div className="pb-lens-field" />
           <div className="relative z-10 mx-auto max-w-4xl">
-            <BrandMark variant="horizontal" tone="light" size={48} className="justify-center" withGlow />
+            <BrandMark variant="horizontal" tone="light" size={48} className="justify-center" />
             <h2 className="pb-section-title mt-5 text-white">Send one link. Get a usable brief.</h2>
             <p className="pb-copy mx-auto mt-4 max-w-2xl text-base sm:text-lg">Give customers a clear path, give your team a clean packet, and stop turning every quote into a photo scavenger hunt.</p>
             <div className="mt-6 flex flex-col justify-center gap-2.5 sm:flex-row sm:gap-3">
