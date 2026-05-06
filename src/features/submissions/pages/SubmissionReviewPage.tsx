@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
+import { useIsBetaPartner } from "@/hooks/useIsBetaPartner";
+import { BetaFeedbackCard } from "@/features/submissions/components/BetaFeedbackCard";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   ArrowLeft,
@@ -92,6 +94,7 @@ export default function SubmissionReviewPage() {
   const live = useSubmission(id);
   const { workspace } = useCurrentWorkspace();
   const { can } = usePlan();
+  const isBetaPartner = useIsBetaPartner(workspace?.id);
   const teamMembers = useTeamMembers();
   const canPdf = can("pdf_export");
   const canReminders = can("reminders");
@@ -145,8 +148,6 @@ export default function SubmissionReviewPage() {
     internalNotes: [...(live.internalNotes ?? []), ...extraNotes],
     activity: [...(live.activity ?? []), ...extraActivity],
   };
-
-  
 
   const orderedShots = [...(submission.shots ?? [])].sort(
     (a, b) => a.orderIndex - b.orderIndex,
@@ -674,6 +675,14 @@ export default function SubmissionReviewPage() {
         onPrimaryAction={handleMarkReviewed}
         primaryActionLabel="Mark reviewed"
       />
+
+      {isBetaPartner && workspace?.id && (
+        <BetaFeedbackCard
+          workspaceId={workspace.id}
+          requestId={submission.requestId}
+          submissionId={submission.id}
+        />
+      )}
 
       <ReviewProgressSummary
         shots={orderedShots}
