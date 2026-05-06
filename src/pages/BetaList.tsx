@@ -304,41 +304,86 @@ export default function BetaListPage() {
       />
 
       {/* ━━ HERO ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-      <section className="relative isolate overflow-hidden pt-10 sm:pt-14">
+      <section className="relative isolate overflow-hidden pt-8 sm:pt-14">
         <div className="pb-lens-field" />
-        <div className="pb-container relative z-10 pb-6 sm:pb-10">
+        <div className="pb-container relative z-10 pb-4 sm:pb-10">
           <div className="mx-auto max-w-3xl text-center">
-            <div className="mb-4 sm:mb-5">
+            <div className="mb-3 sm:mb-5">
               <div className="relative inline-flex items-center justify-center">
-                <div aria-hidden className="pointer-events-none absolute h-36 w-36 rounded-full bg-[hsl(var(--pb-violet)/0.35)] blur-[60px] sm:h-48 sm:w-48 sm:blur-[80px]" />
-                <BrandMark variant="mark" size={88} withGlow eager className="relative sm:hidden" />
+                <div aria-hidden className="pointer-events-none absolute h-28 w-28 rounded-full bg-[hsl(var(--pb-violet)/0.35)] blur-[50px] sm:h-48 sm:w-48 sm:blur-[80px]" />
+                <BrandMark variant="mark" size={56} withGlow eager className="relative sm:hidden" />
                 <BrandMark variant="mark" size={120} withGlow eager className="relative hidden sm:inline-flex" />
               </div>
             </div>
 
             <span className="pb-eyebrow"><Sparkles className="h-3.5 w-3.5" /> Founding Partner Beta</span>
 
-            <h1 className="pb-hero-title mx-auto mt-3 max-w-2xl text-white sm:mt-4">
-              Stop chasing<br className="sm:hidden" /> customer photos.
+            <h1 className="pb-hero-title mx-auto mt-2 max-w-2xl text-white sm:mt-4">
+              Stop chasing customer photos.
             </h1>
 
-            <p className="pb-copy mx-auto mt-4 max-w-2xl text-base leading-7 sm:text-lg sm:leading-8">
-              Send one guided PhotoBrief link and get a clean, AI&#8209;checked brief back. For teams that need the right photos before they quote, dispatch, approve, review, document, or follow up.
+            <p className="pb-copy mx-auto mt-3 max-w-xl text-[0.938rem] leading-[1.6] sm:mt-4 sm:max-w-2xl sm:text-lg sm:leading-8">
+              Send one guided link. Get a clean, AI&#8209;checked brief back — ready to quote, dispatch, or act on.
             </p>
 
-            <div className="mx-auto mt-5 flex max-w-lg flex-col gap-2.5 sm:mt-6 sm:max-w-none sm:flex-row sm:justify-center sm:gap-3">
+            <div className="mx-auto mt-4 flex max-w-lg flex-col gap-2 sm:mt-6 sm:max-w-none sm:flex-row sm:justify-center sm:gap-3">
               <Button size="xl" variant="pb-primary" onClick={() => { trackEvent("betalist_primary_cta_clicked", { ...utm, location: "hero" }); document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" }); }}>
-                Apply for Founding Partner Beta <ArrowRight className="ml-1 h-4 w-4" />
+                Apply for beta access <ArrowRight className="ml-1 h-4 w-4" />
               </Button>
               <Button size="xl" variant="pb-secondary" onClick={() => { trackEvent("betalist_secondary_cta_clicked", { ...utm, location: "hero" }); document.getElementById("workflow")?.scrollIntoView({ behavior: "smooth" }); }}>
                 See how it works
               </Button>
             </div>
 
-            <div className="mx-auto mt-4 flex max-w-md justify-center gap-2 sm:mt-5 sm:gap-2.5">
+            <div className="mx-auto mt-3 flex max-w-md justify-center gap-2 sm:mt-5 sm:gap-2.5">
               {["No app for customers", "Invite-only beta", "Concierge setup"].map((item) => (
-                <span key={item} className="pb-route-chip whitespace-nowrap px-2.5 py-1.5 text-center text-[0.65rem] font-semibold sm:px-3 sm:py-2 sm:text-xs">{item}</span>
+                <span key={item} className="pb-route-chip whitespace-nowrap px-2 py-1 text-center text-[0.6rem] font-semibold sm:px-3 sm:py-2 sm:text-xs">{item}</span>
               ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ━━ APPLICATION FORM ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+      <section id="apply" className="pb-section-tight scroll-mt-8">
+        <div className="pb-container">
+          <div className="pb-command-panel mx-auto max-w-xl p-4 sm:p-6 lg:p-8">
+            <div className="relative z-10">
+              <span className="pb-eyebrow"><Stamp className="h-3.5 w-3.5" /> Apply for beta access</span>
+              <h2 className="mt-3 text-lg font-semibold tracking-tight text-white sm:mt-4 sm:text-2xl">Join the Founding Partner Beta</h2>
+              <p className="pb-copy mt-1.5 text-sm">Limited spots · We typically reply within a few days</p>
+
+              <form onSubmit={onSubmit} onFocusCapture={handleFormFocus} className="mt-5 grid gap-3.5 sm:mt-6 sm:gap-4">
+                <Field id="bl-email" label="Work email" required>
+                  <Input id="bl-email" type="email" value={form.email} onChange={update("email")} autoComplete="email" required placeholder="you@company.com" className="h-12 border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
+                </Field>
+                <Field id="bl-biz" label="Business name" required>
+                  <Input id="bl-biz" value={form.business_name} onChange={update("business_name")} autoComplete="organization" required className="h-12 border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
+                </Field>
+                <Field id="bl-web" label="Website">
+                  <Input id="bl-web" value={form.website} onChange={update("website")} placeholder="https://" autoComplete="url" className="h-12 border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
+                </Field>
+                <Field id="bl-usecase" label="What do you need customer photos for?" required>
+                  <Textarea id="bl-usecase" value={form.use_case} onChange={update("use_case")} rows={2} required placeholder="e.g. Getting roof damage photos before we send a quote." className="border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
+                </Field>
+                <div className="grid gap-3.5 sm:grid-cols-2 sm:gap-4">
+                  <Field id="bl-vol" label="Approx. monthly photo requests">
+                    <select id="bl-vol" value={form.estimated_monthly_requests} onChange={update("estimated_monthly_requests")} className="flex h-12 w-full rounded-xl border border-white/12 bg-white/[0.05] px-3 py-2 text-sm text-white shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--pb-lavender))]">
+                      <option value="" className="bg-[hsl(var(--pb-ink))]">Select…</option>
+                      {VOLUMES.map((v) => <option key={v} value={v} className="bg-[hsl(var(--pb-ink))]">{v}</option>)}
+                    </select>
+                  </Field>
+                  <Field id="bl-fit" label="Best fit">
+                    <select id="bl-fit" value={form.workflow_type} onChange={update("workflow_type")} className="flex h-12 w-full rounded-xl border border-white/12 bg-white/[0.05] px-3 py-2 text-sm text-white shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--pb-lavender))]">
+                      <option value="" className="bg-[hsl(var(--pb-ink))]">Select…</option>
+                      {WORKFLOW_TYPES.map((w) => <option key={w} value={w} className="bg-[hsl(var(--pb-ink))]">{w}</option>)}
+                    </select>
+                  </Field>
+                </div>
+                <Button type="submit" size="lg" disabled={submitting} variant="pb-primary" className="mt-1 h-12 w-full text-base">
+                  {submitting ? "Submitting…" : "Apply for beta access"}
+                </Button>
+              </form>
             </div>
           </div>
         </div>
@@ -348,51 +393,6 @@ export default function BetaListPage() {
       <section className="pb-section-tight">
         <div className="pb-container">
           <InteractiveHeroBriefAssembly />
-        </div>
-      </section>
-
-      {/* ━━ APPLICATION FORM ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-      <section id="apply" className="pb-section-tight scroll-mt-8">
-        <div className="pb-container">
-          <div className="pb-command-panel mx-auto max-w-xl p-5 sm:p-6 lg:p-8">
-            <div className="relative z-10">
-              <span className="pb-eyebrow"><Stamp className="h-3.5 w-3.5" /> Apply for beta access</span>
-              <h2 className="mt-4 text-xl font-semibold tracking-tight text-white sm:text-2xl">Join the Founding Partner Beta</h2>
-              <p className="pb-copy mt-2 text-sm">Limited spots · We typically reply within a few days</p>
-
-              <form onSubmit={onSubmit} onFocusCapture={handleFormFocus} className="mt-6 grid gap-4">
-                <Field id="bl-email" label="Work email" required>
-                  <Input id="bl-email" type="email" value={form.email} onChange={update("email")} autoComplete="email" required placeholder="you@company.com" className="border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
-                </Field>
-                <Field id="bl-biz" label="Business name" required>
-                  <Input id="bl-biz" value={form.business_name} onChange={update("business_name")} autoComplete="organization" required className="border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
-                </Field>
-                <Field id="bl-web" label="Website">
-                  <Input id="bl-web" value={form.website} onChange={update("website")} placeholder="https://" autoComplete="url" className="border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
-                </Field>
-                <Field id="bl-usecase" label="What do you need customer photos for?" required>
-                  <Textarea id="bl-usecase" value={form.use_case} onChange={update("use_case")} rows={2} required placeholder="e.g. Getting roof damage photos before we send a quote." className="border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
-                </Field>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <Field id="bl-vol" label="Approx. monthly photo requests">
-                    <select id="bl-vol" value={form.estimated_monthly_requests} onChange={update("estimated_monthly_requests")} className="flex h-11 w-full rounded-xl border border-white/12 bg-white/[0.05] px-3 py-2 text-sm text-white shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--pb-lavender))]">
-                      <option value="" className="bg-[hsl(var(--pb-ink))]">Select…</option>
-                      {VOLUMES.map((v) => <option key={v} value={v} className="bg-[hsl(var(--pb-ink))]">{v}</option>)}
-                    </select>
-                  </Field>
-                  <Field id="bl-fit" label="Best fit">
-                    <select id="bl-fit" value={form.workflow_type} onChange={update("workflow_type")} className="flex h-11 w-full rounded-xl border border-white/12 bg-white/[0.05] px-3 py-2 text-sm text-white shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--pb-lavender))]">
-                      <option value="" className="bg-[hsl(var(--pb-ink))]">Select…</option>
-                      {WORKFLOW_TYPES.map((w) => <option key={w} value={w} className="bg-[hsl(var(--pb-ink))]">{w}</option>)}
-                    </select>
-                  </Field>
-                </div>
-                <Button type="submit" size="lg" disabled={submitting} variant="pb-primary" className="w-full">
-                  {submitting ? "Submitting…" : "Apply for beta access"}
-                </Button>
-              </form>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -539,7 +539,7 @@ export default function BetaListPage() {
               <p className="pb-copy mx-auto mt-4 max-w-xl text-base sm:text-lg">Give customers a clear path, give your team a clean packet, and stop turning every quote into a photo scavenger hunt.</p>
               <div className="mt-6 flex flex-col justify-center gap-2.5 sm:flex-row sm:gap-3">
                 <Button size="xl" variant="pb-primary" onClick={() => { trackEvent("betalist_primary_cta_clicked", { ...utm, location: "final_cta" }); document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" }); }}>
-                  Apply for Founding Partner Beta <ArrowRight className="ml-1 h-4 w-4" />
+                  Apply for beta access <ArrowRight className="ml-1 h-4 w-4" />
                 </Button>
               </div>
               <p className="mt-4 text-xs font-medium text-white/46 sm:text-sm">Customers do not need an account or app to complete a PhotoBrief request.</p>
