@@ -203,14 +203,14 @@ export default function RequestsInboxPage() {
 
       <div className="overflow-hidden surface-card">
         {selected.size > 0 ? (
-          <div className="flex flex-wrap items-center gap-2 border-b bg-primary/5 px-5 py-2 text-xs">
+          <div className="flex flex-wrap items-center gap-2 border-b bg-primary/5 px-4 py-2.5 text-xs sm:px-5">
             <span className="font-medium text-foreground">
               {selected.size} selected
             </span>
             <Button
               variant="outline"
               size="sm"
-              className="h-7 gap-1"
+              className="h-9 gap-1 sm:h-7"
               onClick={handleBulkArchive}
               disabled={bulkBusy}
             >
@@ -219,7 +219,7 @@ export default function RequestsInboxPage() {
             </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="h-7 gap-1" disabled={bulkBusy}>
+                <Button variant="outline" size="sm" className="h-9 gap-1 sm:h-7" disabled={bulkBusy}>
                   <UserPlus className="h-3.5 w-3.5" /> Assign
                   {!canAssign ? <PlanTag plan="pro" className="ml-1" /> : null}
                 </Button>
@@ -243,7 +243,7 @@ export default function RequestsInboxPage() {
             <Button
               variant="outline"
               size="sm"
-              className="h-7 gap-1 text-destructive hover:text-destructive"
+              className="h-9 gap-1 text-destructive hover:text-destructive sm:h-7"
               onClick={handleBulkDelete}
               disabled={bulkBusy}
             >
@@ -252,7 +252,7 @@ export default function RequestsInboxPage() {
             <Button
               variant="ghost"
               size="sm"
-              className="ml-auto h-7 gap-1"
+              className="ml-auto h-9 gap-1 sm:h-7"
               onClick={clearSelection}
             >
               <X className="h-3.5 w-3.5" /> Clear
