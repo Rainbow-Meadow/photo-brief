@@ -57,7 +57,7 @@ Score each applicant 1–5 on fit. Accept 4+ automatically, review 3s, decline 1
 
 ## Beta Offer
 
-**Duration:** 60 days
+**Duration:** 60 days (the clock starts 2 weeks after the final seat is filled, giving every partner time for concierge setup)
 **Cohort size:** 30 companies total — 5 accepted per week across 6 weekly cohorts
 
 What founding partners get:
@@ -85,7 +85,7 @@ Rewards are granted based on quality of feedback — depth, consistency, and act
 - Depth and quality of feedback responses
 - Consistency of engagement over the 60-day period
 - Actionability of bug reports and workflow suggestions
-- Willingness to participate in check-ins and case studies
+- Willingness to participate in async check-ins (chat, email, in-app) and case studies
 
 What we do NOT offer:
 - Unlimited everything forever
@@ -100,26 +100,26 @@ What we ask of partners:
 
 1. **Use PhotoBrief on real workflows** — not test data, real jobs with real customers
 2. **Send at least 5 requests** in the first two weeks
-3. **Respond to check-ins** — we'll reach out at 2 weeks and periodically after. A one-line reply is fine.
+3. **Respond to check-ins** — we'll reach out via chat, email, or in-app at 2 weeks and periodically after. A one-line reply is fine.
 4. **Report bugs and friction** — if something breaks or feels wrong, tell us
 5. **Consent to anonymized usage data** for product decisions
 6. **Optional:** Provide a short testimonial or participate in a case study
 
 We do NOT expect:
 - Technical expertise beyond basic software use
-- Hours of feedback sessions
+- Hours of feedback sessions or scheduled calls
 - Tolerance for a broken product — if it doesn't work, that's on us to fix
 
 ---
 
 ## Beta Phases
 
-30 companies total, 5 accepted per week. All partners get the full 60 days regardless of cohort start date.
+30 companies total, 5 accepted per week. The 60-day beta clock starts 2 weeks after the final (30th) seat is filled, so all partners begin and end together.
 
 ### Phase 1: Seed (Weeks 1–2)
 - **Goal:** First 10 partners onboarded and sending real requests (cohorts 1–2)
 - Accept 5 partners per week from application pool
-- Hands-on onboarding for each partner (configure first template, walk through first request)
+- Hands-on async onboarding for each partner (configure first template via chat/email, walk through first request)
 - Daily monitoring of every request and submission
 - Fix critical bugs same-day
 
@@ -127,7 +127,7 @@ We do NOT expect:
 - **Goal:** Confirm core loop retention — partners who send requests keep sending them
 - Continue accepting 5 partners per week (cohorts 3–5, reaching 25 total)
 - Track request-to-submission completion rate
-- Two-week feedback check-in with every partner
+- Two-week async feedback check-in with every partner (chat, email, or in-app)
 - Identify top 3 feature gaps from real usage
 - Begin nudging stalled partners or closing out poor-fit accounts
 
@@ -155,7 +155,7 @@ For each accepted partner:
 
 1. **Accept + invite email** — `founding-partner-welcome` template with account creation link
 2. **Account creation** — partner signs up, workspace is auto-provisioned with beta flags
-3. **First template setup** (async or live)
+3. **First template setup** (async via chat or email)
    - Review their workflow: what photos they need, from whom, when
    - Configure a template that matches their actual process
    - If they have a common scenario (e.g., "roof inspection"), use a pre-built starter
