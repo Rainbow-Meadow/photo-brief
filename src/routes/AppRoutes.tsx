@@ -7,6 +7,7 @@ import { PublicRequestLayout } from "@/components/layout/PublicRequestLayout";
 import { RequireAuth } from "@/components/auth/RequireAuth";
 import { RequirePlatformAdmin } from "@/components/auth/RequirePlatformAdmin";
 import { FeatureGate } from "@/components/shared/FeatureGate";
+import { routes } from "@/routes/navigation";
 
 // Eager entry points: marketing/auth/public capture pages are user-facing first loads.
 import LandingPage from "@/pages/Landing";
@@ -85,103 +86,68 @@ function WebsiteIntakeRoute() {
   );
 }
 
-function MarketingRoutes() {
-  return (
-    <Route element={<MarketingLayout />}>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/pricing" element={<PricingPage />} />
-      <Route path="/for-ai-agents" element={<ForAiAgentsPage />} />
-      <Route path="/founding-partner-beta" element={<BetaPortfolioPage />} />
-      <Route path="/beta-portfolio" element={<Navigate to="/founding-partner-beta" replace />} />
-      <Route path="/betalist" element={<Navigate to="/?utm_source=betalist" replace />} />
-      <Route path="/welcome" element={<BetaWelcomePage />} />
-      <Route path="/privacy" element={<PrivacyPage />} />
-      <Route path="/terms" element={<TermsPage />} />
-      <Route path="/auth" element={<AuthPage />} />
-      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-      <Route path="/reset-password" element={<ResetPasswordPage />} />
-      <Route path="/unsubscribe" element={<UnsubscribePage />} />
-      <Route path="/help" element={<BetaGuidePage />} />
-      <Route path="/waitlist" element={<WaitlistPage />} />
-      <Route path="/signup" element={<SignupPage />} />
-      <Route path="/beta-invite/:token" element={<BetaInvitePage />} />
-    </Route>
-  );
-}
-
-function AccountSetupRoutes() {
-  return (
-    <Route element={<MarketingLayout />}>
-      <Route
-        path="/onboarding"
-        element={
-          <AuthOnly requireOnboarding={false}>
-            <OnboardingPage />
-          </AuthOnly>
-        }
-      />
-      <Route
-        path="/invite/:token"
-        element={
-          <AuthOnly requireOnboarding={false}>
-            <AcceptInvitePage />
-          </AuthOnly>
-        }
-      />
-    </Route>
-  );
-}
-
-function DashboardRoutes() {
-  return (
-    <Route element={<DashboardLayout />}>
-      <Route path="/dashboard" element={<DashboardPage />} />
-      <Route path="/requests" element={<RequestsInboxPage />} />
-      <Route path="/requests/new" element={<CreateRequestPage />} />
-      <Route path="/requests/:id" element={<RequestDetailPage />} />
-      <Route path="/submissions/:id" element={<SubmissionReviewPage />} />
-      <Route path="/guides" element={<GuideLibraryPage />} />
-      <Route path="/guides/new" element={<GuideBuilderPage />} />
-      <Route path="/guides/:id" element={<GuideDetailPage />} />
-      <Route path="/customers" element={<CustomersPage />} />
-      <Route path="/customers/:id" element={<CustomerDetailPage />} />
-      <Route path="/intake" element={<WebsiteIntakeRoute />} />
-      <Route path="/settings/brand" element={<BrandSettingsPage />} />
-      <Route path="/settings/team" element={<TeamSettingsPage />} />
-      <Route path="/settings/templates" element={<MessageTemplatesPage />} />
-      <Route path="/settings/sms" element={<SmsSettingsPage />} />
-      <Route path="/settings/integrations" element={<IntegrationsPage />} />
-      <Route path="/settings/billing" element={<BillingSettingsPage />} />
-      <Route path="/app/help" element={<BetaGuidePage />} />
-      <Route path="/support" element={<SupportPage />} />
-      <Route path="/admin/invites" element={<PlatformAdminOnly><AdminInvitesPage /></PlatformAdminOnly>} />
-      <Route path="/admin/ai-rerun" element={<PlatformAdminOnly><AdminAIRerunPage /></PlatformAdminOnly>} />
-      <Route path="/admin/command" element={<PlatformAdminOnly><AdminCommandCenter /></PlatformAdminOnly>} />
-    </Route>
-  );
-}
-
-function PublicRoutes() {
-  return (
-    <>
-      <Route path="/badge/intake" element={<IntakeBadgePage />} />
-      <Route path="/i/:token" element={<PublicIntakePage />} />
-      <Route element={<PublicRequestLayout />}>
-        <Route path="/r/:token" element={<PublicRecipientPage />} />
-        <Route path="/r/:token/done" element={<RecipientConfirmationPage />} />
-      </Route>
-    </>
-  );
-}
-
 export function AppRoutes() {
   return (
     <Suspense fallback={null}>
       <Routes>
-        {MarketingRoutes()}
-        {AccountSetupRoutes()}
-        {DashboardRoutes()}
-        {PublicRoutes()}
+        <Route element={<MarketingLayout />}>
+          <Route path={routes.marketing.home} element={<LandingPage />} />
+          <Route path={routes.marketing.pricing} element={<PricingPage />} />
+          <Route path={routes.marketing.aiAgents} element={<ForAiAgentsPage />} />
+          <Route path={routes.marketing.foundingBeta} element={<BetaPortfolioPage />} />
+          <Route path={routes.marketing.betaPortfolioLegacy} element={<Navigate to={routes.marketing.foundingBeta} replace />} />
+          <Route path={routes.marketing.betaListLegacy} element={<Navigate to={`${routes.marketing.home}?utm_source=betalist`} replace />} />
+          <Route path={routes.marketing.welcome} element={<BetaWelcomePage />} />
+          <Route path={routes.marketing.privacy} element={<PrivacyPage />} />
+          <Route path={routes.marketing.terms} element={<TermsPage />} />
+          <Route path={routes.marketing.auth} element={<AuthPage />} />
+          <Route path={routes.marketing.forgotPassword} element={<ForgotPasswordPage />} />
+          <Route path={routes.marketing.resetPassword} element={<ResetPasswordPage />} />
+          <Route path={routes.marketing.unsubscribe} element={<UnsubscribePage />} />
+          <Route path={routes.marketing.help} element={<BetaGuidePage />} />
+          <Route path={routes.marketing.waitlist} element={<WaitlistPage />} />
+          <Route path={routes.marketing.signup} element={<SignupPage />} />
+          <Route path={routes.setup.betaInvite} element={<BetaInvitePage />} />
+        </Route>
+
+        <Route path={routes.public.badgeIntake} element={<IntakeBadgePage />} />
+
+        <Route element={<MarketingLayout />}>
+          <Route path={routes.setup.onboarding} element={<AuthOnly requireOnboarding={false}><OnboardingPage /></AuthOnly>} />
+          <Route path={routes.setup.invite} element={<AuthOnly requireOnboarding={false}><AcceptInvitePage /></AuthOnly>} />
+        </Route>
+
+        <Route element={<DashboardLayout />}>
+          <Route path={routes.app.dashboard} element={<DashboardPage />} />
+          <Route path={routes.app.requests} element={<RequestsInboxPage />} />
+          <Route path={routes.app.newRequest} element={<CreateRequestPage />} />
+          <Route path={routes.app.requestDetail} element={<RequestDetailPage />} />
+          <Route path={routes.app.submissionReview} element={<SubmissionReviewPage />} />
+          <Route path={routes.app.guides} element={<GuideLibraryPage />} />
+          <Route path={routes.app.newGuide} element={<GuideBuilderPage />} />
+          <Route path={routes.app.guideDetail} element={<GuideDetailPage />} />
+          <Route path={routes.app.customers} element={<CustomersPage />} />
+          <Route path={routes.app.customerDetail} element={<CustomerDetailPage />} />
+          <Route path={routes.app.intake} element={<WebsiteIntakeRoute />} />
+          <Route path={routes.settings.brand} element={<BrandSettingsPage />} />
+          <Route path={routes.settings.team} element={<TeamSettingsPage />} />
+          <Route path={routes.settings.templates} element={<MessageTemplatesPage />} />
+          <Route path={routes.settings.sms} element={<SmsSettingsPage />} />
+          <Route path={routes.settings.integrations} element={<IntegrationsPage />} />
+          <Route path={routes.settings.billing} element={<BillingSettingsPage />} />
+          <Route path={routes.app.help} element={<BetaGuidePage />} />
+          <Route path={routes.app.support} element={<SupportPage />} />
+          <Route path={routes.admin.invites} element={<PlatformAdminOnly><AdminInvitesPage /></PlatformAdminOnly>} />
+          <Route path={routes.admin.aiRerun} element={<PlatformAdminOnly><AdminAIRerunPage /></PlatformAdminOnly>} />
+          <Route path={routes.admin.command} element={<PlatformAdminOnly><AdminCommandCenter /></PlatformAdminOnly>} />
+        </Route>
+
+        <Route path={routes.public.intake} element={<PublicIntakePage />} />
+        <Route element={<PublicRequestLayout />}>
+          <Route path={routes.public.request} element={<PublicRecipientPage />} />
+          <Route path={routes.public.requestDone} element={<RecipientConfirmationPage />} />
+        </Route>
+
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>
