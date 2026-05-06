@@ -586,15 +586,31 @@ export default function BetaListPage() {
                 </p>
 
                 <div className="mt-4 grid gap-2">
-                  {REWARD_TIERS.map((tier) => (
-                    <div key={tier.label} className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.035] px-3 py-2.5 sm:px-4 sm:py-3">
-                      <div className="flex items-center gap-3">
-                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[hsl(var(--pb-lavender)/0.13)] text-[10px] font-black text-[hsl(var(--pb-lavender))] sm:h-8 sm:w-8">{tier.count}</span>
-                        <span className="text-sm font-semibold text-white">{tier.label}</span>
+                  {REWARD_TIERS.map((tier) => {
+                    const isTopTier = tier.duration === "free-pro";
+                    return (
+                      <div
+                        key={tier.label}
+                        className={`flex items-center justify-between rounded-2xl px-3 py-2.5 sm:px-4 sm:py-3 ${
+                          isTopTier
+                            ? "border-2 border-[hsl(var(--pb-lavender)/0.5)] bg-gradient-to-r from-[hsl(var(--pb-violet)/0.15)] to-[hsl(var(--pb-lavender)/0.08)] shadow-md shadow-[hsl(var(--pb-violet)/0.2)]"
+                            : "border border-white/10 bg-white/[0.035]"
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          {isTopTier ? (
+                            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[hsl(var(--pb-lavender))] to-[hsl(var(--pb-violet))] sm:h-8 sm:w-8">
+                              <Trophy className="h-3.5 w-3.5 text-white" />
+                            </span>
+                          ) : (
+                            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[hsl(var(--pb-lavender)/0.13)] text-[10px] font-black text-[hsl(var(--pb-lavender))] sm:h-8 sm:w-8">{tier.count}</span>
+                          )}
+                          <span className={`text-sm font-semibold ${isTopTier ? "text-[hsl(var(--pb-lavender))]" : "text-white"}`}>{tier.label}</span>
+                        </div>
+                        <span className={`text-xs font-bold sm:text-sm ${isTopTier ? "text-[hsl(var(--pb-mint))]" : "text-[hsl(var(--pb-mint))]"}`}>{tier.shortDescription}</span>
                       </div>
-                      <span className="text-xs font-bold text-[hsl(var(--pb-mint))] sm:text-sm">{tier.shortDescription}</span>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
 
                 <div className="mt-4 rounded-[1.2rem] border border-[hsl(var(--pb-lavender)/0.2)] bg-[hsl(var(--pb-lavender)/0.04)] p-3 sm:p-4">
