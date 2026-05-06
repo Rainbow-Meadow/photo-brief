@@ -327,10 +327,10 @@ export default function BetaListPage() {
             </p>
 
             <div className="mx-auto mt-5 flex max-w-lg flex-col gap-2.5 sm:mt-6 sm:max-w-none sm:flex-row sm:justify-center sm:gap-3">
-              <Button size="xl" variant="pb-primary" onClick={() => document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" })}>
+              <Button size="xl" variant="pb-primary" onClick={() => { trackEvent("betalist_primary_cta_clicked", { ...utm, location: "hero" }); document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" }); }}>
                 Apply for Founding Partner Beta <ArrowRight className="ml-1 h-4 w-4" />
               </Button>
-              <Button size="xl" variant="pb-secondary" onClick={() => document.getElementById("workflow")?.scrollIntoView({ behavior: "smooth" })}>
+              <Button size="xl" variant="pb-secondary" onClick={() => { trackEvent("betalist_secondary_cta_clicked", { ...utm, location: "hero" }); document.getElementById("workflow")?.scrollIntoView({ behavior: "smooth" }); }}>
                 See how it works
               </Button>
             </div>
@@ -501,7 +501,7 @@ export default function BetaListPage() {
               <span className="pb-eyebrow"><Stamp className="h-3.5 w-3.5" /> Founding beta</span>
               <h2 className="mt-4 text-2xl font-semibold tracking-tight text-white sm:text-3xl">Built with real workflows, not toy testing.</h2>
               <p className="pb-copy mt-4 text-base sm:text-lg">We are inviting a small group of businesses to use PhotoBrief in real intake scenarios before public launch. You get hands-on setup and early influence; we get honest workflow feedback.</p>
-              <Button size="lg" variant="pb-primary" className="mt-6" onClick={() => document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" })}>
+              <Button size="lg" variant="pb-primary" className="mt-6" onClick={() => { trackEvent("betalist_primary_cta_clicked", { ...utm, location: "founding_beta" }); document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" }); }}>
                 Apply now <ArrowRight className="ml-1 h-4 w-4" />
               </Button>
             </div>
@@ -538,7 +538,7 @@ export default function BetaListPage() {
               <h2 className="pb-section-title mt-5 text-white">Send one link. Get a usable brief.</h2>
               <p className="pb-copy mx-auto mt-4 max-w-xl text-base sm:text-lg">Give customers a clear path, give your team a clean packet, and stop turning every quote into a photo scavenger hunt.</p>
               <div className="mt-6 flex flex-col justify-center gap-2.5 sm:flex-row sm:gap-3">
-                <Button size="xl" variant="pb-primary" onClick={() => document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" })}>
+                <Button size="xl" variant="pb-primary" onClick={() => { trackEvent("betalist_primary_cta_clicked", { ...utm, location: "final_cta" }); document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" }); }}>
                   Apply for Founding Partner Beta <ArrowRight className="ml-1 h-4 w-4" />
                 </Button>
               </div>
