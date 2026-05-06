@@ -881,7 +881,7 @@ function FinalCta() {
             <p className="pb-copy mx-auto mt-4 max-w-2xl text-base sm:text-lg">Give customers a clear path, give your team a clean packet, and stop turning every quote into a photo scavenger hunt.</p>
             <div className="mt-6 flex flex-col justify-center gap-2.5 sm:flex-row sm:gap-3">
               <Button size="xl" variant="pb-primary" onClick={() => document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" })}>
-                Apply for beta access <ArrowRight className="ml-1 h-4 w-4" />
+                {BETA_IS_FULL ? "Join the waitlist" : "Apply now"} <ArrowRight className="ml-1 h-4 w-4" />
               </Button>
               <Button asChild size="xl" variant="pb-secondary">
                 <NavLink to="/pricing">See plans</NavLink>
