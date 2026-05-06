@@ -32,7 +32,7 @@ import { InteractiveHeroBriefAssembly } from "@/components/marketing/Interactive
 import { faqItems } from "@/features/help/content/faq";
 import { trackEvent } from "@/lib/analytics";
 import { signupCtaTarget, signupCtaLabel } from "@/config/access";
-import { PARTNER_BENEFITS, PARTNER_EXPECTATIONS } from "@/config/betaProgram";
+import { PARTNER_BENEFITS, PARTNER_EXPECTATIONS, BETA_TOTAL_PARTNERS } from "@/config/betaProgram";
 import wideGarage from "@/assets/junk-removal/wide-garage.jpg";
 import pileCloseup from "@/assets/junk-removal/pile-closeup.jpg";
 import appliances from "@/assets/junk-removal/appliances.jpg";
