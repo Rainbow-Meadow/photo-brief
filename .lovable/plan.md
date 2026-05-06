@@ -1,43 +1,44 @@
 
 ## Goal
 
-Replace the current `/founding-partner-beta` page (an internal "portfolio/copy bank" aimed at reviewers) with a customer-facing conversion landing page that matches what was previously on `/betalist`.
+Restructure `/founding-partner-beta` to match the detailed BetaList-optimized spec: hero with messy-to-clean transform visual, inline application form immediately after the hero (near above-the-fold), expanded form fields, reordered sections, and updated copy.
 
-## What changes
+## Changes to `src/pages/BetaPortfolio.tsx` (full rewrite)
 
-### 1. Rewrite `src/pages/BetaPortfolio.tsx`
+### 1. Hero section (above the fold)
+- Headline: "Stop chasing customer photos."
+- Subheadline: "Send one guided PhotoBrief link and get a clean, AI-checked brief back."
+- Primary CTA: "Apply for Founding Partner Beta" (scrolls to form)
+- Secondary CTA: "See how it works" (scrolls to workflow)
+- **Hero visual** (right column on desktop, below form on mobile): a side-by-side "messy incoming photos" (scattered cards with issue chips: "Blurry," "Too dark," "Wrong angle," "Label unreadable") transforming into a structured brief with requested shot slots, status chips ("Accepted" / "Needs retake"), and issue flags. Pure CSS/React, no images needed.
 
-Transform from internal portfolio into a conversion-focused landing page with these sections:
+### 2. Application form (immediately after hero, inside same section)
+Placed right below hero copy so it's visible at or near the fold. Short form with 5 fields:
+- Work email (required)
+- Business name (required)
+- Website (optional)
+- Monthly photo requests (dropdown: Fewer than 10, 10-50, 51-200, 200+)
+- Workflow/use case textarea (required)
 
-1. **Hero** -- "Stop chasing customer photos." headline, subheadline, primary CTA ("Apply for Founding Partner Beta") linking to the application form section, secondary CTA ("See how it works") scrolling to workflow.
-2. **Interactive product demo** -- Reuse the existing `InteractiveHeroBriefAssembly` component (already used on the landing page).
-3. **Workflow steps** -- 3-4 step visual: Request, Capture, Check, Brief.
-4. **Use cases** -- Service, quote, review, approval, return, documentation cards.
-5. **Old way vs PhotoBrief way** -- Before/after comparison panel using existing `ComparisonTable` component or inline equivalent.
-6. **Founding Partner Beta offer** -- Keep the existing benefits list (90 days free, concierge setup, 50% off, etc.) but present customer-facing (remove internal "positioning rules" and "copy bank" sections).
-7. **Application form** -- Inline beta application form (name, email, business name, use case) that submits to the existing `beta-welcome-submit` edge function, matching the pattern in `BetaWelcome.tsx`.
-8. **Trust/privacy notes** -- No app download, no credit card, privacy/terms links.
-9. **Final CTA** -- Keep the existing branded closing CTA card.
+Submits to existing `beta-welcome-submit` edge function (already accepts `website` and `monthly_volume`). Includes inline terms/privacy note and "no credit card" reassurance.
 
-### 2. Remove internal-only sections
+### 3. Sections in order (after hero+form)
+1. **Product visual / How it works** — 4-step workflow cards: Request, Capture, Check, Brief. Headline: "One link. Guided photos. Organized brief."
+2. **Use cases** — Headline: "Built for moments when photos decide the next step." Cards for: quotes, dispatch prep, approvals, returns/warranty, documentation, review workflows.
+3. **Old way vs PhotoBrief way** — Existing `ComparisonTable` component.
+4. **Founding Partner Beta offer** — Updated copy: "Free access for 60-90 days, concierge setup, priority support, direct input on the roadmap, early access to future tools, and 50% off the first year after launch." 7 benefit cards.
+5. **Repeated form** — Same form shown again for users who scrolled past the first one.
+6. **Trust notes** — Expanded from simple bullet points to 3 cards with titles: "Private & secure" (data never shared, secure expiring links), "Business-owned requests" (workspace controls access/retention/export), "No spammy customer experience" (one branded link, no app, no account, no marketing emails).
+7. **Final CTA** — "Limited spots available." with apply button.
 
-These sections from the current page are internal tools, not customer-facing:
-- "Submission copy bank" (one-liner, short pitch, BetaList angle, etc.)
-- "Positioning rules" (do not say / say pairs)
-- "Partner commitments" (what partners give back)
-- "Surface gallery" mockups with "Portfolio asset" stamps
+### 4. Removed
+- `InteractiveHeroBriefAssembly` import (replaced with custom `HeroTransformVisual` showing messy-to-clean transformation)
+- Old `name` field from form (replaced with `website` and `monthly_volume`)
 
-### 3. Update SEO metadata
-
-- Update `canonicalPath` to `/founding-partner-beta`
-- Update `title` and `description` for conversion (not portfolio review)
-- Fix the JSON-LD `url` field (currently points to `/beta-portfolio`)
-
-### 4. Keep existing design system
-
-Continue using `pb-landing`, `pb-container`, `pb-card`, `pb-command-panel`, `pb-eyebrow`, `pb-section-title`, `pb-copy`, `pb-lens-field`, `pb-stamp` classes. Dark premium theme stays.
+### 5. Other updates
+- Beta benefit copy updated to "60-90 days" (from "90 days")
+- `formState` interface expanded with `website` and `monthly_volume` fields
+- Form submission body includes new fields (already supported by edge function)
 
 ## Files affected
-
-- `src/pages/BetaPortfolio.tsx` -- Major rewrite
-- No route changes needed (route already points here)
+- `src/pages/BetaPortfolio.tsx` — Full rewrite
