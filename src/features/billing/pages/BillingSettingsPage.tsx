@@ -133,7 +133,7 @@ export default function BillingSettingsPage() {
   return (
     <div className="space-y-8">
       <PaymentTestModeBanner />
-      <PageHeader title="Billing" description="Photos, branding, storage, and team size." bordered={false} />
+      <PageHeader title="Billing" description="Photos, branding, storage, and team size." bordered={false} backTo={{ label: "Settings", href: "/dashboard", mobileOnly: true }} />
 
       <section className="surface-card-elevated overflow-hidden">
         <div className="grid gap-6 p-6 lg:grid-cols-[1.2fr_1fr] lg:gap-10">
