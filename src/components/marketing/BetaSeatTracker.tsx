@@ -1,10 +1,6 @@
 import { Lock, Users } from "lucide-react";
-import {
-  BETA_TOTAL_PARTNERS,
-  BETA_SEATS_FILLED,
-  BETA_SEATS_REMAINING,
-  BETA_IS_FULL,
-} from "@/config/betaProgram";
+import { BETA_TOTAL_PARTNERS } from "@/config/betaProgram";
+import { useBetaSeats } from "@/hooks/useBetaSeats";
 
 interface BetaSeatTrackerProps {
   /** "compact" hides the subtext for inline usage */
@@ -13,7 +9,9 @@ interface BetaSeatTrackerProps {
 }
 
 export function BetaSeatTracker({ variant = "default", className = "" }: BetaSeatTrackerProps) {
-  if (BETA_IS_FULL) {
+  const { seatsFilled, seatsRemaining, isFull } = useBetaSeats();
+
+  if (isFull) {
     return (
       <div className={`rounded-2xl border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-center ${className}`}>
         <div className="flex items-center justify-center gap-2">
@@ -37,17 +35,17 @@ export function BetaSeatTracker({ variant = "default", className = "" }: BetaSea
       <div className="flex items-center justify-center gap-2">
         <Users className="h-3.5 w-3.5 text-[hsl(var(--pb-lavender))]" />
         <span className="text-xs font-bold tracking-wide text-white/90">
-          <span className="text-[hsl(var(--pb-lavender))]">{BETA_SEATS_REMAINING}</span> of {BETA_TOTAL_PARTNERS} seats remaining
+          <span className="text-[hsl(var(--pb-lavender))]">{seatsRemaining}</span> of {BETA_TOTAL_PARTNERS} seats remaining
         </span>
       </div>
 
       {/* Segmented progress bar */}
-      <div className="mx-auto mt-2.5 flex max-w-xs gap-[3px]" role="img" aria-label={`${BETA_SEATS_FILLED} of ${BETA_TOTAL_PARTNERS} seats filled`}>
+      <div className="mx-auto mt-2.5 flex max-w-xs gap-[3px]" role="img" aria-label={`${seatsFilled} of ${BETA_TOTAL_PARTNERS} seats filled`}>
         {Array.from({ length: BETA_TOTAL_PARTNERS }, (_, i) => (
           <div
             key={i}
             className={`h-1.5 flex-1 rounded-full transition-colors ${
-              i < BETA_SEATS_FILLED
+              i < seatsFilled
                 ? "bg-[hsl(var(--pb-lavender))] shadow-[0_0_6px_hsl(var(--pb-lavender)/0.4)]"
                 : "bg-white/10"
             }`}
