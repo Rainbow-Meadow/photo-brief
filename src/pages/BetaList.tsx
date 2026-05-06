@@ -162,6 +162,14 @@ export default function BetaListPage() {
     return null;
   }
 
+  /* ── Track first form interaction ─────────────────────── */
+  const handleFormFocus = () => {
+    if (!applicationStarted) {
+      setApplicationStarted(true);
+      trackEvent("betalist_application_started", utm);
+    }
+  };
+
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     const err = validate();
@@ -187,14 +195,15 @@ export default function BetaListPage() {
       if (error) throw error;
       const payload = data as { ok?: boolean; already?: boolean } | null;
       if (payload?.already) {
-        trackEvent("betalist_duplicate", { ref });
+        trackEvent("betalist_application_submitted", { ...utm, duplicate: true });
         setDone("already");
       } else {
-        trackEvent("betalist_submitted", { ref, business_type: form.business_type || undefined });
+        trackEvent("betalist_application_submitted", { ...utm, business_type: form.business_type || undefined });
         conversions.waitlistSubmitted({ interest: "betalist", business_type: form.business_type || undefined });
         setDone("new");
       }
     } catch {
+      trackEvent("betalist_application_error", utm);
       toast({
         title: "Something went wrong",
         description: "Please try again.",
