@@ -43,7 +43,7 @@ export function StepHow({ aiUnlocked, onChoose }: StepHowProps) {
         <Sparkles className="h-7 w-7" />
       </div>
       <h1 className="mt-5 text-center text-2xl font-semibold tracking-tight text-foreground">
-        Request a PhotoBrief
+        New photo request
       </h1>
       <p className="mt-2 text-center text-[15px] leading-7 text-muted-foreground">
         How do you want to build this request?
