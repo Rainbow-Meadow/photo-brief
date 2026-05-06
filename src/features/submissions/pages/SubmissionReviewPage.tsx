@@ -150,15 +150,6 @@ export default function SubmissionReviewPage() {
   };
 
 
-      {isBetaPartner && workspace?.id && (
-        <BetaFeedbackCard
-          workspaceId={workspace.id}
-          requestId={submission.requestId}
-          submissionId={submission.id}
-        />
-      )}
-
-
   const orderedShots = [...(submission.shots ?? [])].sort(
     (a, b) => a.orderIndex - b.orderIndex,
   );
