@@ -77,7 +77,7 @@ export function DashboardLayout() {
                 <Button asChild size="sm" className="hidden gap-1.5 rounded-full sm:inline-flex">
                   <NavLink to="/requests/new">
                     <Plus className="h-4 w-4" />
-                    New request
+                    Request a PhotoBrief
                   </NavLink>
                 </Button>
                 <ThemeToggle compact />
