@@ -1,66 +1,32 @@
 
-# Brand Voice and Copy Consistency Pass
+## Two changes applied everywhere
 
-## Problems found
+### 1. Beta timing clarification
+The 60-day beta clock starts **2 weeks after the final seat is filled**, not from each partner's acceptance date. This 2-week buffer allows concierge setup for every account before the clock begins.
 
-### 1. Stale beta duration and discount numbers
-The centralized config says **60 days** and **tiered rewards (up to 75% off / free Pro for life)**, but multiple surfaces still say "90 days" and "50% off first year":
+**Where this affects copy/config:**
+- `src/config/betaProgram.ts` — add a new constant (e.g. `BETA_SETUP_BUFFER_DAYS = 14`) and update `CONFIRMATION_SUMMARY`, `FREE_PRO_FINE_PRINT`, and any "60 days" copy to clarify the start trigger
+- `src/pages/BetaList.tsx` — update any timeline/duration references
+- `src/pages/Landing.tsx` — update beta offer section
+- `src/pages/BetaWelcome.tsx` — update the post-signup messaging to explain the setup window
+- `src/components/marketing/FoundingCustomerBanner.tsx` — if duration is mentioned
+- `src/features/help/content/faq.tsx` — if beta duration is referenced
+- `docs/founding-partner-beta-plan.md` — update the plan doc to reflect the new timing
 
-| File | Stale copy |
-|------|-----------|
-| `Landing.tsx` lines 158, 161 | "90-day free founding beta access", "50% off the first year" |
-| `Pricing.tsx` lines 36, 39, 50, 63 | "90-day beta access", "50% off first year", SEO description |
-| `BetaWelcome.tsx` lines 49, 53 | "60–90 days free beta access", "50% off your first year" |
-| `FoundingCustomerBanner.tsx` line 19 | "90 days free… 50% off the first year" |
-| `faq.tsx` line 10 | "90 days of free beta access… 50% off their first year" |
-| `founding-partner-welcome.tsx` line 49 | "Locked-in Founding Partner pricing — permanently" (vague, doesn't match tiered structure) |
+### 2. Async feedback preference
+Replace all references to scheduled calls, "hop on a call", "15-minute walkthrough", "schedule a call", phone calls, etc. with async-first language: chat, email, in-app feedback, web-based channels.
 
-### 2. Copy not sourced from betaProgram config
-Landing.tsx, Pricing.tsx, and BetaWelcome.tsx all hardcode their own benefit/ask lists instead of importing from `betaProgram.ts`. This guarantees drift.
+**Specific changes in `src/config/betaProgram.ts`:**
+- `SCORING_RUBRIC` "Collaboration" dimension: replace "hop on a quick call" / "15-minute process walkthrough" with async equivalents (e.g. "respond to a follow-up via chat or email", "share a short async walkthrough")
+- `FREE_PRO_QUALIFIES`: replace "willingness to walk us through your process" with async phrasing
+- `DETAILED_EXPECTATIONS`: update the check-in expectation to reference async channels
+- `REWARD_CRITERIA`: "Willingness to participate in check-ins" — keep but clarify these are async
 
-### 3. Minor voice inconsistencies
-- Auth.tsx still shows a "First-pass guarantee" callout during signup mode — which is unreachable since public signup is disabled. Dead UI element.
-- BetaWelcome.tsx benefits list has a different structure/order than the centralized config.
-- Pricing.tsx SEO meta description is stale.
+**Other surfaces:**
+- `src/pages/BetaWelcome.tsx` — replace "schedule a call" / "concierge call" language with "concierge setup via chat/email", remove "preferred call times" from the notes placeholder
+- `src/pages/BetaList.tsx` — replace "concierge call" with "concierge setup"
+- Email templates in `supabase/functions/_shared/transactional-email-templates/` — update any call-scheduling language in `founding-partner-welcome.tsx`, `beta-feedback-checkin.tsx`, `beta-stalled-checkin.tsx`
+- `docs/founding-partner-beta-plan.md` — align the plan doc
 
----
-
-## Plan
-
-### A. Fix Landing.tsx beta section
-- Replace hardcoded `betaBenefits` and `betaAsks` arrays with imports from `betaProgram.ts` (`PARTNER_BENEFITS`, `PARTNER_EXPECTATIONS`).
-- This automatically picks up the correct 60-day duration and tiered reward language.
-
-### B. Fix Pricing.tsx
-- Replace hardcoded `betaOffer` array with config-driven values: `BETA_DURATION_DAYS`-day beta access, concierge setup, direct influence, and `MAX_DISCOUNT_LABEL`.
-- Update the hero copy and SEO meta description to reference 60 days and tiered rewards instead of "90 days" and "50% off."
-
-### C. Fix BetaWelcome.tsx
-- Replace hardcoded `benefits` array with config-driven values sourced from `PARTNER_BENEFITS`.
-- Remove the conflicting "60–90 days" and "50% off" strings.
-
-### D. Fix FoundingCustomerBanner.tsx
-- Import `BETA_DURATION_DAYS` and `MAX_DISCOUNT_LABEL` from config.
-- Replace hardcoded "90 days free… 50% off" string.
-
-### E. Fix FAQ
-- Update the founding-beta FAQ answer to reference 60 days and tiered rewards using config constants.
-
-### F. Fix founding-partner-welcome email template
-- Update the "What you get" card to mention tiered rewards and 60-day access instead of the vague "permanently" line.
-
-### G. Remove dead signup-mode UI in Auth.tsx
-- Remove the "First-pass guarantee" callout that only renders during `mode === "signup"`, which is currently unreachable (public signup is disabled).
-
-### H. Redeploy email edge function
-- Deploy `send-transactional-email` to activate the updated founding-partner-welcome template.
-
----
-
-## What stays unchanged
-- BetaList.tsx — already sources from `betaProgram.ts`, copy is correct.
-- All other email templates — already reviewed, voice is consistent.
-- In-app dashboard, onboarding, help, support pages — copy is correct and consistent.
-- microcopy.ts, access.ts — already correct.
-- Privacy, Terms, NotFound, ResetPassword, ForgotPassword, Unsubscribe — all consistent.
-- ComparisonTable, QuotableFacts, InteractiveHeroBriefAssembly, HowItWorksSteps — all correct.
+### Technical details
+All copy changes are in string literals and config constants. No schema, migration, or component structure changes needed.
