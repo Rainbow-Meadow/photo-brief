@@ -142,6 +142,8 @@ export default function BetaListPage() {
   function validate(): string | null {
     if (!form.email.trim()) return "We need a work email.";
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) return "That email doesn't look right.";
+    if (!form.business_name.trim()) return "Please enter your business name.";
+    if (!form.use_case.trim()) return "Tell us what you need customer photos for.";
     return null;
   }
 
