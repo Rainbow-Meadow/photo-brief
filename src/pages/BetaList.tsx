@@ -267,9 +267,6 @@ export default function BetaListPage() {
             </div>
 
             <div className="mt-8 flex flex-col items-center gap-3">
-              <Button asChild variant="pb-secondary" size="lg">
-                <NavLink to="/founding-partner-beta">Learn more about the beta</NavLink>
-              </Button>
               <p className="text-xs text-white/40">
                 Questions? <a href="mailto:hello@photobrief.ai" className="text-[hsl(var(--pb-lavender))] hover:underline">hello@photobrief.ai</a>
               </p>
