@@ -2,7 +2,14 @@ import { Zap, ArrowRight } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/analytics";
-import { BETA_DURATION_DAYS, BETA_SETUP_BUFFER_DAYS, MAX_DISCOUNT_LABEL } from "@/config/betaProgram";
+import {
+  BETA_DURATION_DAYS,
+  BETA_SETUP_BUFFER_DAYS,
+  BETA_SEATS_REMAINING,
+  BETA_TOTAL_PARTNERS,
+  BETA_IS_FULL,
+  MAX_DISCOUNT_LABEL,
+} from "@/config/betaProgram";
 
 export function FoundingCustomerBanner() {
   return (
@@ -14,7 +21,9 @@ export function FoundingCustomerBanner() {
           </span>
           <div>
             <p className="text-sm font-semibold text-foreground">
-              Founding Partner Beta — Limited spots available
+              {BETA_IS_FULL
+                ? "All seats filled — join the waitlist"
+                : `Accepting beta applications — ${BETA_SEATS_REMAINING} of ${BETA_TOTAL_PARTNERS} seats remaining`}
             </p>
              <p className="mt-0.5 text-sm text-muted-foreground">
                Accepted partners get <span className="font-semibold text-foreground">{BETA_DURATION_DAYS} days free (clock starts {BETA_SETUP_BUFFER_DAYS} days after all seats fill), concierge setup, direct input, and tiered post-launch rewards</span>. {MAX_DISCOUNT_LABEL}.
@@ -29,7 +38,7 @@ export function FoundingCustomerBanner() {
             to="/#apply?interest=founding-partner"
             onClick={() => trackEvent("cta_click", { location: "founding_banner", label: "apply_founding_partner" })}
           >
-            Apply for beta <ArrowRight className="ml-1 h-4 w-4" />
+            {BETA_IS_FULL ? "Join waitlist" : "Apply now"} <ArrowRight className="ml-1 h-4 w-4" />
           </NavLink>
         </Button>
       </div>
