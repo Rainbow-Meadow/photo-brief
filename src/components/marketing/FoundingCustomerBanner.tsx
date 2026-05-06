@@ -5,13 +5,14 @@ import { trackEvent } from "@/lib/analytics";
 import {
   BETA_DURATION_DAYS,
   BETA_SETUP_BUFFER_DAYS,
-  BETA_SEATS_REMAINING,
   BETA_TOTAL_PARTNERS,
-  BETA_IS_FULL,
   MAX_DISCOUNT_LABEL,
 } from "@/config/betaProgram";
+import { useBetaSeats } from "@/hooks/useBetaSeats";
 
 export function FoundingCustomerBanner() {
+  const { seatsRemaining, isFull } = useBetaSeats();
+
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div className="flex flex-col items-start gap-4 rounded-2xl border border-primary/30 bg-primary/10 p-5 sm:flex-row sm:items-center sm:justify-between">
@@ -21,9 +22,9 @@ export function FoundingCustomerBanner() {
           </span>
           <div>
             <p className="text-sm font-semibold text-foreground">
-              {BETA_IS_FULL
+              {isFull
                 ? "All seats filled — join the waitlist"
-                : `Accepting beta applications — ${BETA_SEATS_REMAINING} of ${BETA_TOTAL_PARTNERS} seats remaining`}
+                : `Accepting beta applications — ${seatsRemaining} of ${BETA_TOTAL_PARTNERS} seats remaining`}
             </p>
              <p className="mt-0.5 text-sm text-muted-foreground">
                Accepted partners get <span className="font-semibold text-foreground">{BETA_DURATION_DAYS} days free (clock starts {BETA_SETUP_BUFFER_DAYS} days after all seats fill), concierge setup, direct input, and tiered post-launch rewards</span>. {MAX_DISCOUNT_LABEL}.
@@ -38,7 +39,7 @@ export function FoundingCustomerBanner() {
             to="/#apply?interest=founding-partner"
             onClick={() => trackEvent("cta_click", { location: "founding_banner", label: "apply_founding_partner" })}
           >
-            {BETA_IS_FULL ? "Join waitlist" : "Apply now"} <ArrowRight className="ml-1 h-4 w-4" />
+            {isFull ? "Join waitlist" : "Apply now"} <ArrowRight className="ml-1 h-4 w-4" />
           </NavLink>
         </Button>
       </div>
