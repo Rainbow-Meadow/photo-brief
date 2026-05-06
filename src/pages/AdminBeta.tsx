@@ -548,6 +548,13 @@ export default function AdminBetaPage() {
                         onClick={() => { setSelectedWs(ws); setSelected(null); }}
                       >
                         <TableCell className="font-medium text-sm">{ws.workspace_name}</TableCell>
+                        <TableCell>
+                          {(() => { const h = computeHealthScore(ws); return (
+                            <span className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[10px] font-medium ${healthBg(h.level)}`}>
+                              <span className="tabular-nums">{h.score}/7</span> {h.level}
+                            </span>
+                          ); })()}
+                        </TableCell>
                         <TableCell className="text-xs">{ws.beta_segment ?? "—"}</TableCell>
                         <TableCell>
                           <Badge variant={statusVariant(ws.beta_status)} className="text-[10px]">
