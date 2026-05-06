@@ -150,6 +150,31 @@ Deno.serve(async (req) => {
       return json({ ok: true, notified: profiles?.length ?? 0 })
     }
 
+    if (body.event === 'founding_partner_accepted' && body.workspace_id) {
+      // Look up the workspace owner
+      const { data: ws } = await supabase
+        .from('business_workspaces')
+        .select('owner_id')
+        .eq('id', body.workspace_id)
+        .maybeSingle()
+      if (!ws?.owner_id) return json({ ok: true, skipped: 'no_owner' })
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('email, name')
+        .eq('id', ws.owner_id)
+        .maybeSingle()
+      if (!profile?.email) return json({ ok: true, skipped: 'no_email' })
+
+      await send(
+        'founding-partner-welcome',
+        profile.email,
+        `founding-partner-${body.workspace_id}`,
+        { name: profile.name ?? undefined, dashboardUrl: `${APP_BASE_URL}/dashboard` },
+      )
+      return json({ ok: true })
+    }
+
     return json({ error: 'Unknown event' }, 400)
   } catch (err) {
     console.error('notify-event error', err)
