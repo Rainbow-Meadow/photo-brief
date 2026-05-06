@@ -166,6 +166,7 @@ const App = () => (
             <Route path="/settings/integrations" element={<IntegrationsPage />} />
             <Route path="/settings/billing" element={<BillingSettingsPage />} />
             <Route path="/app/help" element={<BetaGuidePage />} />
+            <Route path="/support" element={<SupportPage />} />
             <Route
               path="/admin/invites"
               element={
@@ -182,6 +183,16 @@ const App = () => (
                 <RequireAuth requireOnboarding={false}>
                   <RequirePlatformAdmin>
                     <AdminAIRerunPage />
+                  </RequirePlatformAdmin>
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/admin/command"
+              element={
+                <RequireAuth requireOnboarding={false}>
+                  <RequirePlatformAdmin>
+                    <AdminCommandCenter />
                   </RequirePlatformAdmin>
                 </RequireAuth>
               }
