@@ -6,6 +6,7 @@ import {
   Camera,
   CheckCircle2,
   ClipboardList,
+  Crown,
   FileCheck2,
   Gift,
   ImageOff,
@@ -19,6 +20,7 @@ import {
   Smartphone,
   Sparkles,
   Stamp,
+  Trophy,
   Users,
 } from "lucide-react";
 
@@ -331,6 +333,46 @@ export default function BetaListPage() {
         </div>
       </section>
 
+      {/* ━━ FREE PRO FOR LIFE SPOTLIGHT ━━━━━━━━━━━━━━━━━━━━━ */}
+      <section className="pb-section-tight">
+        <div className="pb-container">
+          <div className="relative mx-auto max-w-2xl overflow-hidden rounded-[1.5rem] border border-[hsl(var(--pb-lavender)/0.35)] bg-gradient-to-br from-[hsl(var(--pb-violet)/0.18)] via-[hsl(var(--pb-ink))] to-[hsl(var(--pb-lavender)/0.10)] p-5 sm:p-8">
+            <div aria-hidden className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-[hsl(var(--pb-lavender)/0.15)] blur-[60px]" />
+            <div aria-hidden className="pointer-events-none absolute -bottom-8 -left-8 h-32 w-32 rounded-full bg-[hsl(var(--pb-mint)/0.10)] blur-[50px]" />
+            <div className="relative z-10 flex flex-col items-center text-center">
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-[hsl(var(--pb-lavender))] to-[hsl(var(--pb-violet))] shadow-lg shadow-[hsl(var(--pb-violet)/0.4)]">
+                <Trophy className="h-7 w-7 text-white" />
+              </div>
+              <p className="mt-4 text-xs font-extrabold uppercase tracking-[0.2em] text-[hsl(var(--pb-lavender))]">The ultimate reward</p>
+              <h2 className="mt-2 text-xl font-bold tracking-tight text-white sm:text-2xl md:text-3xl">
+                2 partners get <span className="bg-gradient-to-r from-[hsl(var(--pb-lavender))] to-[hsl(var(--pb-mint))] bg-clip-text text-transparent">Free Pro for Life</span>
+              </h2>
+              <p className="pb-copy mx-auto mt-3 max-w-lg text-sm leading-relaxed sm:text-base">
+                The two beta partners who deliver the most useful, actionable feedback
+                earn a permanent Pro plan — no invoice, no expiration, no strings.
+                Your feedback literally shapes the product and your reward reflects that.
+              </p>
+              <div className="mt-5 flex flex-wrap items-center justify-center gap-2 text-xs font-semibold text-white/70">
+                <span className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.05] px-3 py-1.5">
+                  <Crown className="h-3.5 w-3.5 text-[hsl(var(--pb-lavender))]" /> Quality over quantity
+                </span>
+                <span className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.05] px-3 py-1.5">
+                  <Gift className="h-3.5 w-3.5 text-[hsl(var(--pb-mint))]" /> All {BETA_TOTAL_PARTNERS} partners earn rewards
+                </span>
+              </div>
+              <Button
+                size="lg"
+                variant="pb-primary"
+                className="mt-6"
+                onClick={() => { trackEvent("betalist_free_pro_cta_clicked", utm); document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" }); }}
+              >
+                Apply now — limited to {BETA_TOTAL_PARTNERS} spots <ArrowRight className="ml-1 h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ━━ APPLICATION FORM ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
       <section id="apply" className="pb-section-tight scroll-mt-8">
         <div className="pb-container">
@@ -544,15 +586,31 @@ export default function BetaListPage() {
                 </p>
 
                 <div className="mt-4 grid gap-2">
-                  {REWARD_TIERS.map((tier) => (
-                    <div key={tier.label} className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.035] px-3 py-2.5 sm:px-4 sm:py-3">
-                      <div className="flex items-center gap-3">
-                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[hsl(var(--pb-lavender)/0.13)] text-[10px] font-black text-[hsl(var(--pb-lavender))] sm:h-8 sm:w-8">{tier.count}</span>
-                        <span className="text-sm font-semibold text-white">{tier.label}</span>
+                  {REWARD_TIERS.map((tier) => {
+                    const isTopTier = tier.duration === "free-pro";
+                    return (
+                      <div
+                        key={tier.label}
+                        className={`flex items-center justify-between rounded-2xl px-3 py-2.5 sm:px-4 sm:py-3 ${
+                          isTopTier
+                            ? "border-2 border-[hsl(var(--pb-lavender)/0.5)] bg-gradient-to-r from-[hsl(var(--pb-violet)/0.15)] to-[hsl(var(--pb-lavender)/0.08)] shadow-md shadow-[hsl(var(--pb-violet)/0.2)]"
+                            : "border border-white/10 bg-white/[0.035]"
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          {isTopTier ? (
+                            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[hsl(var(--pb-lavender))] to-[hsl(var(--pb-violet))] sm:h-8 sm:w-8">
+                              <Trophy className="h-3.5 w-3.5 text-white" />
+                            </span>
+                          ) : (
+                            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[hsl(var(--pb-lavender)/0.13)] text-[10px] font-black text-[hsl(var(--pb-lavender))] sm:h-8 sm:w-8">{tier.count}</span>
+                          )}
+                          <span className={`text-sm font-semibold ${isTopTier ? "text-[hsl(var(--pb-lavender))]" : "text-white"}`}>{tier.label}</span>
+                        </div>
+                        <span className={`text-xs font-bold sm:text-sm ${isTopTier ? "text-[hsl(var(--pb-mint))]" : "text-[hsl(var(--pb-mint))]"}`}>{tier.shortDescription}</span>
                       </div>
-                      <span className="text-xs font-bold text-[hsl(var(--pb-mint))] sm:text-sm">{tier.shortDescription}</span>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
 
                 <div className="mt-4 rounded-[1.2rem] border border-[hsl(var(--pb-lavender)/0.2)] bg-[hsl(var(--pb-lavender)/0.04)] p-3 sm:p-4">
