@@ -1,3 +1,5 @@
+import { BETA_DURATION_DAYS, MAX_DISCOUNT_LABEL } from "@/config/betaProgram";
+
 export type FaqItem = { id: string; q: string; a: React.ReactNode; audience: "business" | "recipient" };
 
 export const faqItems: FaqItem[] = [
@@ -7,7 +9,7 @@ export const faqItems: FaqItem[] = [
     q: "How does the Founding Partner Beta work?",
     a: (
       <>
-        PhotoBrief.ai is currently invite-only. Accepted founding partners get 90 days of free beta access, concierge setup, direct support, priority feature influence, and 50% off their first year after launch. In return, we ask that partners use PhotoBrief in real workflows and share honest feedback every two weeks.
+        PhotoBrief.ai is currently invite-only. Accepted founding partners get {BETA_DURATION_DAYS} days of free beta access, concierge setup, direct support, priority feature influence, and tiered post-launch rewards — {MAX_DISCOUNT_LABEL.toLowerCase()}. In return, we ask that partners use PhotoBrief in real workflows and share honest feedback every two weeks.
       </>
     ),
   },

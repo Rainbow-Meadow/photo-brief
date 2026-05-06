@@ -46,10 +46,10 @@ const FoundingPartnerWelcomeEmail = ({ name, dashboardUrl }: Props) => {
                   <span style={{ color: BRAND.colors.cta, fontWeight: 700 }}>→</span> Direct line to the team for support and feedback
                 </Text>
                 <Text style={{ ...s.text, fontSize: '14px', margin: '0 0 6px' }}>
-                  <span style={{ color: BRAND.colors.cta, fontWeight: 700 }}>→</span> Locked-in Founding Partner pricing — permanently
+                  <span style={{ color: BRAND.colors.cta, fontWeight: 700 }}>→</span> Early access to every new feature
                 </Text>
                 <Text style={{ ...s.text, fontSize: '14px', margin: '0' }}>
-                  <span style={{ color: BRAND.colors.cta, fontWeight: 700 }}>→</span> Early access to every new feature
+                  <span style={{ color: BRAND.colors.cta, fontWeight: 700 }}>→</span> Tiered post-launch rewards — up to 75% off or free Pro for life
                 </Text>
               </Section>
               <Section style={s.ctaWrap}>

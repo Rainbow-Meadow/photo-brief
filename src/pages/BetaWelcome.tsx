@@ -27,6 +27,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/analytics";
+import { PARTNER_BENEFITS } from "@/config/betaProgram";
 
 /* ── constants ──────────────────────────────────────────── */
 
@@ -44,14 +45,10 @@ const CHANNELS = [
   { value: "both", label: "Both" },
 ];
 
-const benefits = [
-  { icon: Headphones, text: "Concierge account setup — we build your first templates together" },
-  { icon: Zap, text: "60–90 days free beta access" },
-  { icon: Crown, text: "Founding Partner pricing locked in permanently" },
-  { icon: MessageSquare, text: "Direct line to the team for support and feedback" },
-  { icon: Star, text: "Priority access to every new feature" },
-  { icon: Gift, text: "50% off your first year after launch" },
-];
+const benefits = PARTNER_BENEFITS.map((text, i) => {
+  const icons = [Headphones, Zap, Crown, MessageSquare, Star, Gift];
+  return { icon: icons[i] ?? Gift, text };
+});
 
 const timelineSteps = [
   { icon: Send, title: "You fill out this page", body: "Tell us about your business and what you need — takes about 3 minutes." },
