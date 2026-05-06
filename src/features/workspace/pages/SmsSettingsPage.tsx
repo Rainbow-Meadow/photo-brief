@@ -217,6 +217,7 @@ export default function SmsSettingsPage() {
         title="SMS"
         description="Connect your own Twilio account to send SMS reminders to recipients. PhotoBrief never charges for SMS — Twilio bills you directly."
         bordered={false}
+        backTo={{ label: "Settings", href: "/dashboard", mobileOnly: true }}
       />
 
       {!isConnected ? (

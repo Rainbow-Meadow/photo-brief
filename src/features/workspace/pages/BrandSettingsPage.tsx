@@ -176,6 +176,7 @@ export default function BrandSettingsPage() {
         title="Brand"
         description="How your recipient pages look and sound to customers."
         bordered={false}
+        backTo={{ label: "Settings", href: "/dashboard", mobileOnly: true }}
       />
 
       {!canBrand ? <UpgradePromptCard feature="branding" className="max-w-3xl" /> : null}

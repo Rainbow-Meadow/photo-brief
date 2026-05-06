@@ -102,6 +102,7 @@ export default function TeamSettingsPage() {
         title="Team"
         description={`Invite teammates, assign work, and manage roles. Current plan: ${plan}.`}
         bordered={false}
+        backTo={{ label: "Settings", href: "/dashboard", mobileOnly: true }}
       />
 
       {!canTeam ? (
