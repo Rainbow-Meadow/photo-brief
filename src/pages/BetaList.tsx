@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { NavLink, useSearchParams } from "react-router-dom";
 import {
   ArrowRight,
@@ -129,10 +129,25 @@ export default function BetaListPage() {
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState<"new" | "already" | null>(null);
   const [comparisonMode, setComparisonMode] = useState<"messy" | "clean">("messy");
+  const [applicationStarted, setApplicationStarted] = useState(false);
+
+  /* ── UTM / attribution ──────────────────────────────────── */
+  const utmContext = useRef(() => {
+    const p = new URLSearchParams(window.location.search);
+    return {
+      source: "betalist" as const,
+      utm_source: p.get("utm_source") || undefined,
+      utm_medium: p.get("utm_medium") || undefined,
+      utm_campaign: p.get("utm_campaign") || undefined,
+      referrer: document.referrer || undefined,
+      ref: ref || undefined,
+    };
+  }).current;
+  const utm = utmContext();
 
   useEffect(() => {
-    trackEvent("betalist_page_viewed", ref ? { ref } : undefined);
-  }, [ref]);
+    trackEvent("betalist_page_view", utm);
+  }, []);
 
   const update =
     <K extends keyof FormState>(key: K) =>
@@ -146,6 +161,14 @@ export default function BetaListPage() {
     if (!form.use_case.trim()) return "Tell us what you need customer photos for.";
     return null;
   }
+
+  /* ── Track first form interaction ─────────────────────── */
+  const handleFormFocus = () => {
+    if (!applicationStarted) {
+      setApplicationStarted(true);
+      trackEvent("betalist_application_started", utm);
+    }
+  };
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -172,14 +195,15 @@ export default function BetaListPage() {
       if (error) throw error;
       const payload = data as { ok?: boolean; already?: boolean } | null;
       if (payload?.already) {
-        trackEvent("betalist_duplicate", { ref });
+        trackEvent("betalist_application_submitted", { ...utm, duplicate: true });
         setDone("already");
       } else {
-        trackEvent("betalist_submitted", { ref, business_type: form.business_type || undefined });
+        trackEvent("betalist_application_submitted", { ...utm, business_type: form.business_type || undefined });
         conversions.waitlistSubmitted({ interest: "betalist", business_type: form.business_type || undefined });
         setDone("new");
       }
     } catch {
+      trackEvent("betalist_application_error", utm);
       toast({
         title: "Something went wrong",
         description: "Please try again.",
@@ -303,10 +327,10 @@ export default function BetaListPage() {
             </p>
 
             <div className="mx-auto mt-5 flex max-w-lg flex-col gap-2.5 sm:mt-6 sm:max-w-none sm:flex-row sm:justify-center sm:gap-3">
-              <Button size="xl" variant="pb-primary" onClick={() => document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" })}>
+              <Button size="xl" variant="pb-primary" onClick={() => { trackEvent("betalist_primary_cta_clicked", { ...utm, location: "hero" }); document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" }); }}>
                 Apply for Founding Partner Beta <ArrowRight className="ml-1 h-4 w-4" />
               </Button>
-              <Button size="xl" variant="pb-secondary" onClick={() => document.getElementById("workflow")?.scrollIntoView({ behavior: "smooth" })}>
+              <Button size="xl" variant="pb-secondary" onClick={() => { trackEvent("betalist_secondary_cta_clicked", { ...utm, location: "hero" }); document.getElementById("workflow")?.scrollIntoView({ behavior: "smooth" }); }}>
                 See how it works
               </Button>
             </div>
@@ -336,7 +360,7 @@ export default function BetaListPage() {
               <h2 className="mt-4 text-xl font-semibold tracking-tight text-white sm:text-2xl">Join the Founding Partner Beta</h2>
               <p className="pb-copy mt-2 text-sm">Limited spots · We typically reply within a few days</p>
 
-              <form onSubmit={onSubmit} className="mt-6 grid gap-4">
+              <form onSubmit={onSubmit} onFocusCapture={handleFormFocus} className="mt-6 grid gap-4">
                 <Field id="bl-email" label="Work email" required>
                   <Input id="bl-email" type="email" value={form.email} onChange={update("email")} autoComplete="email" required placeholder="you@company.com" className="border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
                 </Field>
@@ -477,7 +501,7 @@ export default function BetaListPage() {
               <span className="pb-eyebrow"><Stamp className="h-3.5 w-3.5" /> Founding beta</span>
               <h2 className="mt-4 text-2xl font-semibold tracking-tight text-white sm:text-3xl">Built with real workflows, not toy testing.</h2>
               <p className="pb-copy mt-4 text-base sm:text-lg">We are inviting a small group of businesses to use PhotoBrief in real intake scenarios before public launch. You get hands-on setup and early influence; we get honest workflow feedback.</p>
-              <Button size="lg" variant="pb-primary" className="mt-6" onClick={() => document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" })}>
+              <Button size="lg" variant="pb-primary" className="mt-6" onClick={() => { trackEvent("betalist_primary_cta_clicked", { ...utm, location: "founding_beta" }); document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" }); }}>
                 Apply now <ArrowRight className="ml-1 h-4 w-4" />
               </Button>
             </div>
@@ -514,7 +538,7 @@ export default function BetaListPage() {
               <h2 className="pb-section-title mt-5 text-white">Send one link. Get a usable brief.</h2>
               <p className="pb-copy mx-auto mt-4 max-w-xl text-base sm:text-lg">Give customers a clear path, give your team a clean packet, and stop turning every quote into a photo scavenger hunt.</p>
               <div className="mt-6 flex flex-col justify-center gap-2.5 sm:flex-row sm:gap-3">
-                <Button size="xl" variant="pb-primary" onClick={() => document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" })}>
+                <Button size="xl" variant="pb-primary" onClick={() => { trackEvent("betalist_primary_cta_clicked", { ...utm, location: "final_cta" }); document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" }); }}>
                   Apply for Founding Partner Beta <ArrowRight className="ml-1 h-4 w-4" />
                 </Button>
               </div>
