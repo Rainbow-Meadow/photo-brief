@@ -68,10 +68,14 @@ export function SEOHead({
   ogImage = DEFAULT_OG_IMAGE,
   ogType = "website",
   twitterCard = "summary_large_image",
+  ogTitle,
+  ogDescription,
 }: SEOHeadProps) {
   useEffect(() => {
     const canonical = `${ORIGIN}${canonicalPath === "/" ? "" : canonicalPath}`;
     const imageUrl = ogImage.startsWith("http") ? ogImage : `${ORIGIN}${ogImage}`;
+    const socialTitle = ogTitle ?? title;
+    const socialDesc = ogDescription ?? description;
 
     document.title = title;
     setMeta("description", description);
@@ -79,23 +83,23 @@ export function SEOHead({
     setMeta("googlebot", noindex ? "noindex, nofollow, noarchive" : "index, follow, max-image-preview:large");
     setLinkCanonical(canonical);
 
-    // Open Graph + Twitter — keep titles/descs in sync with the page.
-    setMeta("og:title", title, "property");
-    setMeta("og:description", description, "property");
+    // Open Graph + Twitter
+    setMeta("og:title", socialTitle, "property");
+    setMeta("og:description", socialDesc, "property");
     setMeta("og:url", canonical, "property");
     setMeta("og:image", imageUrl, "property");
     setMeta("og:image:width", "1200", "property");
     setMeta("og:image:height", "630", "property");
     setMeta("og:type", ogType, "property");
     setMeta("og:site_name", "PhotoBrief", "property");
-    setMeta("twitter:title", title);
-    setMeta("twitter:description", description);
+    setMeta("twitter:title", socialTitle);
+    setMeta("twitter:description", socialDesc);
     setMeta("twitter:image", imageUrl);
     setMeta("twitter:card", twitterCard);
     setMeta("twitter:site", "@photobriefai");
 
     setJsonLd(canonicalPath, jsonLd);
-  }, [title, description, canonicalPath, jsonLd, noindex, ogImage, ogType, twitterCard]);
+  }, [title, description, canonicalPath, jsonLd, noindex, ogImage, ogType, twitterCard, ogTitle, ogDescription]);
 
   return null;
 }
