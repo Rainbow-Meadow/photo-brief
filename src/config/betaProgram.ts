@@ -131,6 +131,32 @@ export const REWARD_CRITERIA = [
   "Willingness to participate in check-ins and case studies",
 ] as const;
 
+// ── Free Pro for Life eligibility ─────────────────────────────────────
+
+export const FREE_PRO_QUALIFIES = [
+  "Depth and specificity of feedback — detailed workflow observations, not just thumbs-up",
+  "Consistency across the full 60 days — regular engagement, not a burst and silence",
+  "Actionable bug reports with steps to reproduce and context",
+  "Participation in check-ins and willingness to walk us through your process",
+  "Optional but valued: a testimonial or case study we can feature at launch",
+] as const;
+
+export const FREE_PRO_DOES_NOT_QUALIFY = [
+  "High usage volume alone — sending lots of requests without feedback won't move you up",
+  "One-time feedback dumps — we need sustained engagement, not a single brain-dump",
+  "Vague or generic comments like \"it's good\" or \"needs work\" without specifics",
+  "Inactive accounts — if you stop using PhotoBrief, you can't earn the top tier",
+  "Referrals or social promotion — helpful, but not a factor in tier placement",
+] as const;
+
+export const FREE_PRO_FINE_PRINT = [
+  "Free Pro for Life applies to one workspace on one Pro-tier plan, for as long as the PhotoBrief Pro plan exists.",
+  "Winners are chosen by the PhotoBrief team at the end of the 60-day beta based on overall feedback contribution.",
+  "The reward is non-transferable and cannot be exchanged for cash or credit.",
+  "PhotoBrief reserves the right to adjust plan features over time; the reward covers whatever the Pro plan includes.",
+  "If a winning partner's account becomes inactive for 12+ consecutive months, the reward may be reviewed.",
+] as const;
+
 // ── Confirmation / thank-you copy ────────────────────────────────────
 
 export const CONFIRMATION_SUMMARY = `${BETA_DURATION_DAYS} days free · concierge setup · priority support · direct roadmap input · early access to future tools · up to 75% off post-launch`;
