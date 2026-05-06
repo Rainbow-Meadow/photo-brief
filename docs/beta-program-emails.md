@@ -98,14 +98,27 @@ Already live. Covers what they get (free access, real setup, direct line, foundi
 **Trigger:** Beta period ending; sent before workspace transitions to paid plan
 **Subject:** Beta's wrapping up — here's your founding partner pricing
 
-**Variables:** `name`, `discount`, `requestsCreated`, `submissionsCompleted`, `templatesCreated`, `transitionDate`, `billingUrl`
+**Variables:** `name`, `discount`, `discountDuration` (`perpetuity` | `first-year` | `free-pro`), `requestsCreated`, `submissionsCompleted`, `templatesCreated`, `transitionDate`, `billingUrl`
 
 **Copy direction:**
 - Thank them — "your input has been a real part of shaping this product"
-- Founding partner pricing: X% off, locked in, no expiration
+- Founding partner pricing: personalized per tier based on feedback quality
+  - **Free Pro:** "You've earned free Pro for life — no strings attached"
+  - **Perpetuity discount:** "X% off — locked in permanently, for as long as you stay on a paid plan"
+  - **First-year discount:** "X% off your first year post-launch"
 - Show usage stats (requests created, submissions received, templates built)
 - Transition date and billing CTA
 - "Reply here and we'll walk through which plan makes sense"
+
+### Reward tiers (for admin reference)
+
+| Tier | Count | Reward | `discount` | `discountDuration` |
+|---|---|---|---|---|
+| Top 2 | 2 | Free Pro for life | — | `free-pro` |
+| Elite | 4 | 75% off in perpetuity | `75` | `perpetuity` |
+| Strong | 4 | 50% off in perpetuity | `50` | `perpetuity` |
+| Solid | 10 | 75% off first year | `75` | `first-year` |
+| Participating | 10 | 50% off first year | `50` | `first-year` |
 
 ---
 
