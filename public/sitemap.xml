@@ -24,5 +24,9 @@
     <loc>https://photobrief.ai/waitlist</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+  <url>
+    <loc>https://photobrief.ai/betalist</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
 </urlset>
