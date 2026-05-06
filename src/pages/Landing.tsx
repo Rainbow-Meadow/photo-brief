@@ -38,6 +38,7 @@ import { buildHowToJsonLd } from "@/hooks/seo/buildHowToJsonLd";
 import { buildFaqJsonLd } from "@/hooks/seo/buildFaqJsonLd";
 import { BrandMark } from "@/components/layout/BrandMark";
 import { FreeProEligibilityModal } from "@/components/marketing/FreeProEligibilityModal";
+import { BetaSeatTracker } from "@/components/marketing/BetaSeatTracker";
 import { howItWorksSteps } from "@/components/marketing/HowItWorksSteps";
 import { InteractiveHeroBriefAssembly } from "@/components/marketing/InteractiveHeroBriefAssembly";
 import { faqItems } from "@/features/help/content/faq";
@@ -55,6 +56,7 @@ import {
   BETA_DURATION_DAYS,
   BETA_TOTAL_PARTNERS,
   BETA_SETUP_BUFFER_DAYS,
+  BETA_IS_FULL,
   MAX_DISCOUNT_LABEL,
 } from "@/config/betaProgram";
 import wideGarage from "@/assets/junk-removal/wide-garage.jpg";
