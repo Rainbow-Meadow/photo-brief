@@ -5,7 +5,7 @@ import { Container, Hr, Img, Section, Text } from 'npm:@react-email/components@0
 // ─── PhotoBrief.ai Email Brand System ───────────────────────────────
 // Dark navy + purple/lavender palette matching the landing page.
 
-const LOGO_URL = 'https://mvlcefiygkzzewcdzsmj.supabase.co/storage/v1/object/public/email-assets/horizontal-light.png'
+const LOGO_URL = 'https://mvlcefiygkzzewcdzsmj.supabase.co/storage/v1/object/public/email-assets/mark-color.png'
 
 export const BRAND = {
   name: 'PhotoBrief.ai',
@@ -141,8 +141,9 @@ export const BrandHeader = () =>
     React.createElement(Img, {
       src: BRAND.logoUrl,
       alt: BRAND.name,
-      height: '36',
-      style: s.logo,
+      height: '40',
+      width: '40',
+      style: { height: '40px', width: '40px' },
     }),
   )
 
