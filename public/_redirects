@@ -34,6 +34,7 @@
 /unsubscribe* /404.html 404
 /signup* /404.html 404
 /onboarding* /404.html 404
+/welcome* /404.html 404
 /dashboard* /404.html 404
 /requests* /404.html 404
 /submissions* /404.html 404
