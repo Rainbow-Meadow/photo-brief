@@ -30,6 +30,11 @@ import { InteractiveHeroBriefAssembly } from "@/components/marketing/Interactive
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { conversions, trackEvent } from "@/lib/analytics";
+import {
+  PARTNER_BENEFITS,
+  PARTNER_EXPECTATIONS,
+  CONFIRMATION_SUMMARY,
+} from "@/config/betaProgram";
 
 /* ── constants ──────────────────────────────────────────── */
 
@@ -73,20 +78,6 @@ const useCases = [
   { icon: MapPinned, title: "Dispatch prep", body: "Collect site access, issue context, and handling notes before a team heads out.", stamp: "Field ready" },
   { icon: ImageOff, title: "Damage documentation", body: "Guide customers through the angles that matter so reviewers can understand the issue quickly.", stamp: "Evidence packet" },
   { icon: ShieldCheck, title: "Approvals and exceptions", body: "Turn customer media into a packet that can be reviewed, approved, or escalated without guessing.", stamp: "Decision ready" },
-];
-
-const partnerBenefits = [
-  "60-day free founding beta access",
-  "Concierge setup for first templates and workflows",
-  "Direct feedback channel and priority product input",
-  "Early access to future tools",
-  "Up to 75% off post-launch — based on feedback quality",
-];
-
-const partnerAsks = [
-  "Use PhotoBrief on 3–5 real customer workflows",
-  "Share short feedback every two weeks",
-  "Report confusing moments or missing workflow needs",
 ];
 
 const trustPoints = [
@@ -262,7 +253,7 @@ export default function BetaListPage() {
             <div className="mt-5 rounded-[1.2rem] border border-[hsl(var(--pb-lavender)/0.25)] bg-[hsl(var(--pb-lavender)/0.04)] p-4">
               <p className="text-sm font-semibold text-white/90">Founding Partner Beta includes:</p>
               <p className="pb-copy mt-1.5 text-xs">
-                60 days free · concierge setup · priority support · direct roadmap input · early access to future tools · up to 75% off post-launch
+                {CONFIRMATION_SUMMARY}
               </p>
             </div>
 
@@ -495,8 +486,8 @@ export default function BetaListPage() {
               </Button>
             </div>
             <div className="relative z-10 grid gap-4 sm:grid-cols-2">
-              <BenefitList title="Beta partners get" items={partnerBenefits} />
-              <BenefitList title="We ask for" items={partnerAsks} />
+              <BenefitList title="Beta partners get" items={[...PARTNER_BENEFITS]} />
+              <BenefitList title="We ask for" items={[...PARTNER_EXPECTATIONS]} />
             </div>
           </div>
         </div>
