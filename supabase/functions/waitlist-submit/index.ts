@@ -49,14 +49,14 @@ Deno.serve(async (req) => {
     });
   }
 
-  const name = clean(body.name, 200);
   const email = clean(body.email, 254)?.toLowerCase() ?? null;
-  if (!name || !email || !isEmail(email)) {
+  if (!email || !isEmail(email)) {
     return new Response(JSON.stringify({ error: "invalid_input" }), {
       status: 400,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
+  const name = clean(body.name, 200) ?? email.split("@")[0];
 
   const admin = createClient(
     Deno.env.get("SUPABASE_URL")!,
