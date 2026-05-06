@@ -621,6 +621,55 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
   }
 }
 
+/* ── Platform-aware overrides ──────────────────────────────────────────
+   Mobile: reduced blur, simpler shadows, faster animations.
+   Desktop hover effects are naturally hidden on touch via :hover media query.
+*/
+@media (max-width: 767px) {
+  .glass {
+    backdrop-filter: saturate(160%) blur(10px);
+    -webkit-backdrop-filter: saturate(160%) blur(10px);
+    box-shadow: var(--shadow-sm);
+  }
+  .glass-strong {
+    backdrop-filter: saturate(170%) blur(12px);
+    -webkit-backdrop-filter: saturate(170%) blur(12px);
+  }
+  .glass-nav {
+    backdrop-filter: saturate(170%) blur(14px);
+    -webkit-backdrop-filter: saturate(170%) blur(14px);
+  }
+  /* Skip hover lifts on touch devices */
+  .lift-on-hover:hover,
+  .magnetic-card:hover {
+    transform: none;
+  }
+  /* Faster entrance animations */
+  .animate-lift-in { animation-duration: 220ms; }
+  .animate-bubble-in { animation-duration: 160ms; }
+  .animate-brand-entrance { animation-duration: 400ms; }
+  /* Ensure touch targets >= 44px */
+  .pb-nav-link { min-height: 44px; min-width: 44px; }
+}
+
+/* Desktop-only hover enhancements */
+@media (hover: hover) and (pointer: fine) {
+  .surface-card-interactive:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--glass-shadow-lg);
+    border-color: hsl(var(--primary) / 0.2);
+  }
+}
+
+/* Touch-only active feedback */
+@media (hover: none) {
+  .surface-card-interactive:active {
+    transform: scale(0.98);
+    opacity: 0.9;
+    transition: transform 100ms ease, opacity 100ms ease;
+  }
+}
+
 @keyframes lift-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes bubble-in { from { opacity: 0; transform: translateY(6px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
 @keyframes brand-entrance { from { opacity: 0; transform: translateY(12px) scale(0.92); filter: blur(4px); } to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); } }

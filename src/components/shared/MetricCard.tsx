@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { usePlatformSchema } from "@/design-system";
 import type { LucideIcon } from "lucide-react";
 
 interface MetricSubStat {
@@ -8,7 +9,6 @@ interface MetricSubStat {
 
 interface MetricFootnote {
   label: string;
-  /** Native tooltip shown on hover — keep it short. */
   tooltip?: string;
   tone?: "default" | "success" | "muted" | "primary";
 }
@@ -24,6 +24,11 @@ interface MetricCardProps {
   variant?: "default" | "quiet";
 }
 
+/**
+ * MetricCard — platform-aware.
+ * Desktop: hover lift, richer spacing (p-5), larger value text.
+ * Mobile: no hover, tighter spacing (p-3.5), tap feedback.
+ */
 export function MetricCard({
   label,
   value,
@@ -35,11 +40,21 @@ export function MetricCard({
   variant = "default",
 }: MetricCardProps) {
   const quiet = variant === "quiet";
+  const { isMobile } = usePlatformSchema();
+
   return (
     <div
       className={cn(
-        "p-4 transition duration-200 hover:-translate-y-0.5 sm:p-5",
-        quiet ? "surface-card hover:shadow-elev-sm" : "surface-card hover:shadow-elev-md",
+        "transition duration-200",
+        /* Platform-aware spacing */
+        isMobile ? "p-3.5" : "p-4 sm:p-5",
+        /* Platform-aware hover/tap */
+        isMobile
+          ? "surface-card active:scale-[0.98] active:opacity-90"
+          : cn(
+              "hover:-translate-y-0.5",
+              quiet ? "surface-card hover:shadow-elev-sm" : "surface-card hover:shadow-elev-md",
+            ),
         className,
       )}
     >
@@ -48,7 +63,10 @@ export function MetricCard({
           <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
             {label}
           </p>
-          <p className="mt-2 text-3xl font-semibold tracking-tight text-foreground tabular-nums sm:text-[2rem] sm:leading-[1.1]">
+          <p className={cn(
+            "mt-2 font-semibold tracking-tight text-foreground tabular-nums",
+            isMobile ? "text-2xl" : "text-3xl sm:text-[2rem] sm:leading-[1.1]",
+          )}>
             {value}
           </p>
         </div>

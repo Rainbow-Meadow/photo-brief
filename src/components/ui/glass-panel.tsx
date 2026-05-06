@@ -1,5 +1,6 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import { usePlatformSchema } from "@/design-system";
 
 type GlassVariant = "card" | "nav" | "modal" | "widget" | "chat" | "hero";
 type GlassTone = "light" | "dark" | "auto";
@@ -9,7 +10,7 @@ interface GlassPanelProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: GlassVariant;
   tone?: GlassTone;
   elevation?: GlassElevation;
-  /** Adds hover lift + soft scale. */
+  /** Adds hover lift + soft scale on desktop only. No-op on mobile. */
   interactive?: boolean;
   asChild?: boolean;
 }
@@ -32,22 +33,32 @@ const elevationClass: Record<GlassElevation, string> = {
 
 /**
  * Apple-inspired glass surface primitive.
- * - Renders translucent + blurred + hairline border + inner sheen.
- * - Use on top of an ambient gradient/photo, never on flat white.
+ *
+ * Platform-aware:
+ * - Desktop: full blur, rich shadows, hover lift when interactive.
+ * - Mobile: reduced blur via CSS overrides, simpler shadows, tap feedback instead of hover.
  */
 export const GlassPanel = React.forwardRef<HTMLDivElement, GlassPanelProps>(
   function GlassPanel(
     { className, variant = "card", tone = "auto", elevation = "md", interactive, ...rest },
     ref,
   ) {
+    const { isMobile } = usePlatformSchema();
+
+    /* On mobile, cap elevation at "md" and skip hover lift */
+    const effectiveElevation = isMobile && elevation === "lg" ? "md" : elevation;
+
     return (
       <div
         ref={ref}
         className={cn(
           variantClass[variant],
-          elevationClass[elevation],
+          elevationClass[effectiveElevation],
           tone === "dark" && "glass-onDark",
-          interactive && "lift-on-hover hover:shadow-glass-lg",
+          /* Desktop: hover lift + shadow upgrade */
+          interactive && !isMobile && "lift-on-hover hover:shadow-glass-lg",
+          /* Mobile: tap press feedback */
+          interactive && isMobile && "active:scale-[0.98] active:opacity-90 transition-transform duration-150",
           className,
         )}
         {...rest}

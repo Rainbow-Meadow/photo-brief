@@ -1,6 +1,7 @@
 import { Outlet, NavLink, useLocation } from "react-router-dom";
 import { Plus, LifeBuoy, KeyRound, LogOut, Globe2 } from "lucide-react";
 import { FeedbackWidget } from "@/features/support/components/FeedbackWidget";
+import { usePlatformSchema } from "@/design-system";
 
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/layout/AppSidebar";
@@ -27,6 +28,7 @@ export function DashboardLayout() {
   const { resetPassword, logOut, resetting, signingOut, email } = useAccountActions();
   const initial = (email?.[0] ?? "U").toUpperCase();
   const { pathname } = useLocation();
+  const { isDesktop, isMobile } = usePlatformSchema();
   const isFullscreenWizard = pathname === "/requests/new";
 
   if (isFullscreenWizard) {
@@ -41,10 +43,19 @@ export function DashboardLayout() {
     <RequireAuth>
       <SidebarProvider>
         <div className="app-shell relative flex min-h-screen w-full overflow-hidden bg-background">
-          <div aria-hidden className="pointer-events-none fixed inset-x-0 top-0 h-96 bg-ambient-future opacity-80" />
-          <div aria-hidden className="future-grid pointer-events-none fixed inset-0 opacity-35" />
-          <div aria-hidden className="pointer-events-none fixed -right-40 top-24 h-96 w-96 rounded-full bg-primary/8 blur-3xl animate-pulse-glow" />
-          <div aria-hidden className="pointer-events-none fixed -left-32 bottom-24 h-80 w-80 rounded-full bg-primary-glow/10 blur-3xl" />
+          {/* Ambient effects — desktop only for performance */}
+          {isDesktop && (
+            <>
+              <div aria-hidden className="pointer-events-none fixed inset-x-0 top-0 h-96 bg-ambient-future opacity-80" />
+              <div aria-hidden className="future-grid pointer-events-none fixed inset-0 opacity-35" />
+              <div aria-hidden className="pointer-events-none fixed -right-40 top-24 h-96 w-96 rounded-full bg-primary/8 blur-3xl" />
+              <div aria-hidden className="pointer-events-none fixed -left-32 bottom-24 h-80 w-80 rounded-full bg-primary-glow/10 blur-3xl" />
+            </>
+          )}
+          {/* Mobile: simplified single ambient wash */}
+          {isMobile && (
+            <div aria-hidden className="pointer-events-none fixed inset-x-0 top-0 h-48 bg-ambient-future opacity-50" />
+          )}
 
           <div className="hidden lg:block">
             <AppSidebar />
