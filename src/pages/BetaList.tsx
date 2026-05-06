@@ -179,10 +179,10 @@ export default function BetaListPage() {
         conversions.waitlistSubmitted({ interest: "betalist", business_type: form.business_type || undefined });
         setDone("new");
       }
-    } catch (e) {
+    } catch {
       toast({
         title: "Something went wrong",
-        description: (e as Error).message ?? "Please try again in a moment.",
+        description: "Please try again.",
         variant: "destructive",
       });
     } finally {
