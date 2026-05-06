@@ -20,7 +20,6 @@ import UnsubscribePage from "@/pages/Unsubscribe";
 import SignupPage from "@/pages/Signup";
 import BetaInvitePage from "@/pages/BetaInvite";
 import IntakeBadgePage from "@/pages/IntakeBadge";
-import IntakeBadgePage from "@/pages/IntakeBadge";
 import PrivacyPage from "@/pages/Privacy";
 import TermsPage from "@/pages/Terms";
 import NotFound from "@/pages/NotFound";
@@ -95,8 +94,6 @@ export function AppRoutes() {
           <Route path={routes.marketing.pricing} element={<PricingPage />} />
           <Route path={routes.marketing.aiAgents} element={<ForAiAgentsPage />} />
           <Route path={routes.marketing.foundingBeta} element={<BetaPortfolioPage />} />
-          <Route path={routes.marketing.betaPortfolioLegacy} element={<Navigate to={routes.marketing.foundingBeta} replace />} />
-          <Route path={routes.marketing.betaListLegacy} element={<Navigate to={`${routes.marketing.home}?utm_source=betalist`} replace />} />
           <Route path={routes.marketing.welcome} element={<BetaWelcomePage />} />
           <Route path={routes.marketing.privacy} element={<PrivacyPage />} />
           <Route path={routes.marketing.terms} element={<TermsPage />} />
@@ -105,7 +102,7 @@ export function AppRoutes() {
           <Route path={routes.marketing.resetPassword} element={<ResetPasswordPage />} />
           <Route path={routes.marketing.unsubscribe} element={<UnsubscribePage />} />
           <Route path={routes.marketing.help} element={<BetaGuidePage />} />
-          <Route path={routes.marketing.waitlist} element={<WaitlistPage />} />
+          <Route path={routes.marketing.signup} element={<SignupPage />} />
           <Route path={routes.marketing.signup} element={<SignupPage />} />
           <Route path={routes.setup.betaInvite} element={<BetaInvitePage />} />
         </Route>
