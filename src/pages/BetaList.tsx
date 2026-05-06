@@ -253,7 +253,7 @@ export default function BetaListPage() {
             <div className="mt-5 rounded-[1.2rem] border border-[hsl(var(--pb-lavender)/0.25)] bg-[hsl(var(--pb-lavender)/0.04)] p-4">
               <p className="text-sm font-semibold text-white/90">Founding Partner Beta includes:</p>
               <p className="pb-copy mt-1.5 text-xs">
-                60 days free · concierge setup · priority support · direct roadmap input · early access to future tools · up to 75% off post-launch
+                {CONFIRMATION_SUMMARY}
               </p>
             </div>
 
@@ -486,8 +486,8 @@ export default function BetaListPage() {
               </Button>
             </div>
             <div className="relative z-10 grid gap-4 sm:grid-cols-2">
-              <BenefitList title="Beta partners get" items={partnerBenefits} />
-              <BenefitList title="We ask for" items={partnerAsks} />
+              <BenefitList title="Beta partners get" items={[...PARTNER_BENEFITS]} />
+              <BenefitList title="We ask for" items={[...PARTNER_EXPECTATIONS]} />
             </div>
           </div>
         </div>
