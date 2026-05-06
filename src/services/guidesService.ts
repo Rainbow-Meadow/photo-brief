@@ -5,7 +5,7 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { getTokenClient } from "@/integrations/supabase/tokenClient";
-import type { CuratedCategory, PhotoGuide } from "@/types/photobrief";
+import type { PhotoGuide } from "@/types/photobrief";
 import type { RequestDraft } from "@/types/requestDraft";
 
 function rowToGuide(g: any, steps: any[], questions: any[]): PhotoGuide {
