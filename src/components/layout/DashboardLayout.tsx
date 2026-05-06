@@ -28,6 +28,7 @@ export function DashboardLayout() {
   const { resetPassword, logOut, resetting, signingOut, email } = useAccountActions();
   const initial = (email?.[0] ?? "U").toUpperCase();
   const { pathname } = useLocation();
+  const { isDesktop, isMobile } = usePlatformSchema();
   const isFullscreenWizard = pathname === "/requests/new";
 
   if (isFullscreenWizard) {
