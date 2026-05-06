@@ -129,10 +129,25 @@ export default function BetaListPage() {
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState<"new" | "already" | null>(null);
   const [comparisonMode, setComparisonMode] = useState<"messy" | "clean">("messy");
+  const [applicationStarted, setApplicationStarted] = useState(false);
+
+  /* ── UTM / attribution ──────────────────────────────────── */
+  const utmContext = useRef(() => {
+    const p = new URLSearchParams(window.location.search);
+    return {
+      source: "betalist" as const,
+      utm_source: p.get("utm_source") || undefined,
+      utm_medium: p.get("utm_medium") || undefined,
+      utm_campaign: p.get("utm_campaign") || undefined,
+      referrer: document.referrer || undefined,
+      ref: ref || undefined,
+    };
+  }).current;
+  const utm = utmContext();
 
   useEffect(() => {
-    trackEvent("betalist_page_viewed", ref ? { ref } : undefined);
-  }, [ref]);
+    trackEvent("betalist_page_view", utm);
+  }, []);
 
   const update =
     <K extends keyof FormState>(key: K) =>
