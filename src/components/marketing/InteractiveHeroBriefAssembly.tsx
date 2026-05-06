@@ -160,7 +160,7 @@ function CustomerScreen({
 }) {
   const photo = photos[currentStep];
   const capturedCount = captured.size;
-  const isBlurryShot = currentStep === BLURRY_INDEX && blurryPending;
+  const isBlurryShot = currentStep === BLURRY_INDEX && blurryPending && captured.has(BLURRY_INDEX);
 
   return (
     <>
