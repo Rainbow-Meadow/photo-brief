@@ -32,6 +32,7 @@ import { InteractiveHeroBriefAssembly } from "@/components/marketing/Interactive
 import { faqItems } from "@/features/help/content/faq";
 import { trackEvent } from "@/lib/analytics";
 import { signupCtaTarget, signupCtaLabel } from "@/config/access";
+import { PARTNER_BENEFITS, PARTNER_EXPECTATIONS } from "@/config/betaProgram";
 import wideGarage from "@/assets/junk-removal/wide-garage.jpg";
 import pileCloseup from "@/assets/junk-removal/pile-closeup.jpg";
 import appliances from "@/assets/junk-removal/appliances.jpg";
@@ -154,19 +155,9 @@ const useCases = [
   },
 ];
 
-const betaBenefits = [
-  "90-day free founding beta access",
-  "Concierge setup for first templates and workflows",
-  "Direct feedback channel and priority product input",
-  "50% off the first year after launch",
-];
+const betaBenefits = [...PARTNER_BENEFITS];
 
-const betaAsks = [
-  "Use PhotoBrief on 3–5 real customer workflows",
-  "Share short feedback every two weeks",
-  "Report confusing moments or missing workflow needs",
-  "Optional testimonial or case study if it helps your team",
-];
+const betaAsks = [...PARTNER_EXPECTATIONS];
 
 const pricingPath = [
   {
