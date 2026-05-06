@@ -340,36 +340,31 @@ export default function BetaListPage() {
                 <Field id="bl-email" label="Work email" required>
                   <Input id="bl-email" type="email" value={form.email} onChange={update("email")} autoComplete="email" required placeholder="you@company.com" className="border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
                 </Field>
+                <Field id="bl-biz" label="Business name" required>
+                  <Input id="bl-biz" value={form.business_name} onChange={update("business_name")} autoComplete="organization" required className="border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
+                </Field>
+                <Field id="bl-web" label="Website">
+                  <Input id="bl-web" value={form.website} onChange={update("website")} placeholder="https://" autoComplete="url" className="border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
+                </Field>
+                <Field id="bl-usecase" label="What do you need customer photos for?" required>
+                  <Textarea id="bl-usecase" value={form.use_case} onChange={update("use_case")} rows={2} required placeholder="e.g. Getting roof damage photos before we send a quote." className="border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
+                </Field>
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <Field id="bl-name" label="Your name">
-                    <Input id="bl-name" value={form.name} onChange={update("name")} autoComplete="name" className="border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
-                  </Field>
-                  <Field id="bl-biz" label="Business name">
-                    <Input id="bl-biz" value={form.business_name} onChange={update("business_name")} autoComplete="organization" className="border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
-                  </Field>
-                </div>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <Field id="bl-type" label="Business type">
-                    <select id="bl-type" value={form.business_type} onChange={update("business_type")} className="flex h-11 w-full rounded-xl border border-white/12 bg-white/[0.05] px-3 py-2 text-sm text-white shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--pb-lavender))]">
+                  <Field id="bl-vol" label="Approx. monthly photo requests">
+                    <select id="bl-vol" value={form.estimated_monthly_requests} onChange={update("estimated_monthly_requests")} className="flex h-11 w-full rounded-xl border border-white/12 bg-white/[0.05] px-3 py-2 text-sm text-white shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--pb-lavender))]">
                       <option value="" className="bg-[hsl(var(--pb-ink))]">Select…</option>
-                      {BUSINESS_TYPES.map((t) => <option key={t} value={t} className="bg-[hsl(var(--pb-ink))]">{t}</option>)}
+                      {VOLUMES.map((v) => <option key={v} value={v} className="bg-[hsl(var(--pb-ink))]">{v}</option>)}
                     </select>
                   </Field>
-                  <Field id="bl-web" label="Website">
-                    <Input id="bl-web" value={form.website} onChange={update("website")} placeholder="https://" autoComplete="url" className="border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
+                  <Field id="bl-fit" label="Best fit">
+                    <select id="bl-fit" value={form.workflow_type} onChange={update("workflow_type")} className="flex h-11 w-full rounded-xl border border-white/12 bg-white/[0.05] px-3 py-2 text-sm text-white shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--pb-lavender))]">
+                      <option value="" className="bg-[hsl(var(--pb-ink))]">Select…</option>
+                      {WORKFLOW_TYPES.map((w) => <option key={w} value={w} className="bg-[hsl(var(--pb-ink))]">{w}</option>)}
+                    </select>
                   </Field>
                 </div>
-                <Field id="bl-usecase" label="What workflow would you use PhotoBrief for?">
-                  <Textarea id="bl-usecase" value={form.use_case} onChange={update("use_case")} rows={2} placeholder="e.g. Getting roof damage photos before we send a quote." className="border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
-                </Field>
-                <Field id="bl-vol" label="Approx. monthly photo requests">
-                  <select id="bl-vol" value={form.estimated_monthly_requests} onChange={update("estimated_monthly_requests")} className="flex h-11 w-full rounded-xl border border-white/12 bg-white/[0.05] px-3 py-2 text-sm text-white shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--pb-lavender))]">
-                    <option value="" className="bg-[hsl(var(--pb-ink))]">Select…</option>
-                    {VOLUMES.map((v) => <option key={v} value={v} className="bg-[hsl(var(--pb-ink))]">{v}</option>)}
-                  </select>
-                </Field>
                 <Button type="submit" size="lg" disabled={submitting} variant="pb-primary" className="w-full">
-                  {submitting ? "Submitting…" : "Apply for Founding Partner Beta"}
+                  {submitting ? "Submitting…" : "Apply for beta access"}
                 </Button>
               </form>
             </div>
