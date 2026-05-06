@@ -149,7 +149,15 @@ export default function SubmissionReviewPage() {
     activity: [...(live.activity ?? []), ...extraActivity],
   };
 
-  
+
+      {isBetaPartner && workspace?.id && (
+        <BetaFeedbackCard
+          workspaceId={workspace.id}
+          requestId={submission.requestId}
+          submissionId={submission.id}
+        />
+      )}
+
 
   const orderedShots = [...(submission.shots ?? [])].sort(
     (a, b) => a.orderIndex - b.orderIndex,
