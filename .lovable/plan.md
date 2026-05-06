@@ -1,42 +1,37 @@
 
-## Language changes
+# Add a Pain-Point Section Above the Fold
 
-Shift all "beta now live/open" phrasing to "accepting applications" framing, and update CTAs to emphasize the application + review process. Key copy changes across the landing page and banner:
+## What changes
 
-| Current | Updated |
-|---------|---------|
-| "Founding Partner Beta now open" | "Accepting beta applications" |
-| "Apply for beta access" (CTA) | "Apply now" or "Submit your application" |
-| "Apply now — limited to 30 spots" | "Apply now — 30 seats, reviewed for fit" |
-| "Join the Founding Partner Beta" (form heading) | "Apply for the Founding Partner Beta" |
-| "Limited spots · We typically reply within a few days" | "Every application is reviewed for workflow fit · Limited to 30 seats" |
-| "Invite-only beta" chip | "Reviewed for fit" chip |
+Add a new **"The problem"** section between the hero CTA cluster (line ~383) and the Free Pro spotlight (line ~385). This section will immediately confront visitors with the specific, recognizable frustrations they already live with — before showing them the solution.
 
-Also update `FoundingCustomerBanner.tsx` copy to match ("Accepting beta applications — limited seats").
+## Content and structure
 
-## Urgency component: `BetaSeatTracker`
+A compact, visually distinct section with:
 
-Create a new `src/components/marketing/BetaSeatTracker.tsx` component that communicates scarcity and the deliberate review process.
+1. **Eyebrow + headline** — e.g. "The gap" / "Your intake process is losing you money."
+2. **A grid of 4-5 pain-point cards**, each with an icon, a bold stat or claim, and one sentence of context. Draft content:
 
-**Visual design:**
-- A compact, visually prominent bar/pill showing remaining seats (e.g., "23 of 30 seats remaining")
-- Segmented progress bar (30 segments) — filled segments use the brand lavender, empty segments are dim
-- Below the bar: short copy reinforcing the review process ("Each applicant is reviewed for workflow fit before acceptance")
-- When all seats are filled, the component switches to a bold "All 30 seats filled" state with a waitlist CTA instead of apply, and a visual change (e.g., amber/gold accent, lock icon)
+   | Icon | Stat / claim | Context |
+   |------|-------------|---------|
+   | Clock | **62% of first quotes are delayed** | …waiting for photos the customer forgot to send. |
+   | MessageSquareWarning | **5+ back-and-forth messages** | …just to get the right angle, scale, or context. |
+   | FormInput | **Forms capture text, not proof** | Generic intake forms never ask for the visual evidence your team actually needs. |
+   | UserX | **75% of consumers prefer zero human contact** | They want to self-serve on their phone — not call, not email, not wait for a callback. |
+   | TrendingDown | **Low-quality leads look the same as good ones** | Without photos, your team triages blind and wastes site visits on jobs that don't convert. |
 
-**Data source:** Add a `BETA_SEATS_FILLED` constant to `betaProgram.ts` (default `0`). This is a manual counter you update as partners are accepted — no database query needed. The component computes `remaining = BETA_TOTAL_PARTNERS - BETA_SEATS_FILLED`.
+3. A subtle closing line: *"PhotoBrief closes the gap between first contact and actionable information."*
 
-**Placement:**
-- In the hero area, directly below the trust chips ("No app for customers", "Reviewed for fit", "Concierge setup")
-- In the application form section, above the form fields
-- Optionally in the `FoundingCustomerBanner`
-
-**Filled state behavior:** When `BETA_SEATS_FILLED >= BETA_TOTAL_PARTNERS`, all "Apply" CTAs across the page switch to "Join the waitlist" and the form submit button updates accordingly.
+The cards will use the existing `pb-card` design tokens and dark-theme palette. On mobile (440px viewport), the grid collapses to a single column. On desktop, 2-3 columns.
 
 ## Files changed
 
-1. **`src/config/betaProgram.ts`** — Add `BETA_SEATS_FILLED` constant
-2. **`src/components/marketing/BetaSeatTracker.tsx`** — New urgency component
-3. **`src/pages/Landing.tsx`** — Update copy throughout + place `BetaSeatTracker` in hero and form sections + conditional waitlist CTAs
-4. **`src/components/marketing/FoundingCustomerBanner.tsx`** — Update copy + optional seat count
-5. **`src/test/nav-links.test.ts`** — No changes expected (no new routes)
+- **`src/pages/Landing.tsx`** — Add the new `<PainPointSection />` sub-component and render it between the hero section and the Free Pro spotlight section. Add any new Lucide icon imports needed (e.g. `FormInput`, `UserX`, `TrendingDown`).
+
+No new files, no database changes, no new dependencies.
+
+## Technical notes
+
+- The stats/claims are directional industry figures commonly cited in field-service and home-service SaaS marketing. They are presented as illustrative, not as sourced research.
+- The section uses the same `pb-section-tight`, `pb-container`, `pb-eyebrow`, `pb-card`, and `pb-copy` utility classes already used throughout the landing page for visual consistency.
+- Responsive: single-column on mobile, `sm:grid-cols-2` at small breakpoint, `lg:grid-cols-3` on large screens (with the last two cards spanning a centered 2-col row).

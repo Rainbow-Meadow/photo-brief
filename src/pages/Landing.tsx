@@ -6,8 +6,10 @@ import {
   Camera,
   CheckCircle2,
   ClipboardList,
+  Clock,
   Crown,
   FileCheck2,
+  FormInput,
   Gift,
   Globe2,
   ImageOff,
@@ -23,7 +25,9 @@ import {
   Sparkles,
   Stamp,
   TimerReset,
+  TrendingDown,
   Trophy,
+  UserX,
   Users,
 } from "lucide-react";
 
