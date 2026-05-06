@@ -55,6 +55,105 @@ export type Database = {
           },
         ]
       }
+      beta_applications: {
+        Row: {
+          accepted_at: string | null
+          business_name: string | null
+          created_at: string
+          email: string
+          first_name: string | null
+          fit_score: number | null
+          id: string
+          last_contacted_at: string | null
+          last_name: string | null
+          monthly_photo_volume: string | null
+          notes: string | null
+          rejected_at: string | null
+          source: string | null
+          status: Database["public"]["Enums"]["beta_application_status"]
+          updated_at: string
+          use_case: string | null
+          website: string | null
+          workflow_type: string | null
+        }
+        Insert: {
+          accepted_at?: string | null
+          business_name?: string | null
+          created_at?: string
+          email: string
+          first_name?: string | null
+          fit_score?: number | null
+          id?: string
+          last_contacted_at?: string | null
+          last_name?: string | null
+          monthly_photo_volume?: string | null
+          notes?: string | null
+          rejected_at?: string | null
+          source?: string | null
+          status?: Database["public"]["Enums"]["beta_application_status"]
+          updated_at?: string
+          use_case?: string | null
+          website?: string | null
+          workflow_type?: string | null
+        }
+        Update: {
+          accepted_at?: string | null
+          business_name?: string | null
+          created_at?: string
+          email?: string
+          first_name?: string | null
+          fit_score?: number | null
+          id?: string
+          last_contacted_at?: string | null
+          last_name?: string | null
+          monthly_photo_volume?: string | null
+          notes?: string | null
+          rejected_at?: string | null
+          source?: string | null
+          status?: Database["public"]["Enums"]["beta_application_status"]
+          updated_at?: string
+          use_case?: string | null
+          website?: string | null
+          workflow_type?: string | null
+        }
+        Relationships: []
+      }
+      beta_feedback: {
+        Row: {
+          created_at: string
+          feedback_text: string | null
+          id: string
+          rating: number | null
+          request_id: string | null
+          source: string | null
+          submission_id: string | null
+          was_useful: boolean | null
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          feedback_text?: string | null
+          id?: string
+          rating?: number | null
+          request_id?: string | null
+          source?: string | null
+          submission_id?: string | null
+          was_useful?: boolean | null
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          feedback_text?: string | null
+          id?: string
+          rating?: number | null
+          request_id?: string | null
+          source?: string | null
+          submission_id?: string | null
+          was_useful?: boolean | null
+          workspace_id?: string
+        }
+        Relationships: []
+      }
       beta_invites: {
         Row: {
           accepted_at: string | null
@@ -168,6 +267,62 @@ export type Database = {
           website?: string | null
         }
         Relationships: []
+      }
+      beta_workspace_profiles: {
+        Row: {
+          application_id: string | null
+          beta_ends_at: string | null
+          beta_segment: string | null
+          beta_started_at: string | null
+          beta_status: Database["public"]["Enums"]["beta_workspace_status"]
+          case_study_interest: boolean
+          created_at: string
+          feedback_consent: boolean
+          founding_partner_discount: number | null
+          id: string
+          is_beta_partner: boolean
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          application_id?: string | null
+          beta_ends_at?: string | null
+          beta_segment?: string | null
+          beta_started_at?: string | null
+          beta_status?: Database["public"]["Enums"]["beta_workspace_status"]
+          case_study_interest?: boolean
+          created_at?: string
+          feedback_consent?: boolean
+          founding_partner_discount?: number | null
+          id?: string
+          is_beta_partner?: boolean
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          application_id?: string | null
+          beta_ends_at?: string | null
+          beta_segment?: string | null
+          beta_started_at?: string | null
+          beta_status?: Database["public"]["Enums"]["beta_workspace_status"]
+          case_study_interest?: boolean
+          created_at?: string
+          feedback_consent?: boolean
+          founding_partner_discount?: number | null
+          id?: string
+          is_beta_partner?: boolean
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "beta_workspace_profiles_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "beta_applications"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       brand_profiles: {
         Row: {
@@ -2437,6 +2592,22 @@ export type Database = {
         | "label_unreadable"
         | "glare"
         | "too_close_or_cropped"
+      beta_application_status:
+        | "new"
+        | "reviewing"
+        | "accepted"
+        | "invited"
+        | "activated"
+        | "active"
+        | "stalled"
+        | "graduated"
+        | "not_fit"
+      beta_workspace_status:
+        | "onboarding"
+        | "active"
+        | "stalled"
+        | "graduated"
+        | "churned"
       capture_type:
         | "photo"
         | "video"
@@ -2621,6 +2792,24 @@ export const Constants = {
         "label_unreadable",
         "glare",
         "too_close_or_cropped",
+      ],
+      beta_application_status: [
+        "new",
+        "reviewing",
+        "accepted",
+        "invited",
+        "activated",
+        "active",
+        "stalled",
+        "graduated",
+        "not_fit",
+      ],
+      beta_workspace_status: [
+        "onboarding",
+        "active",
+        "stalled",
+        "graduated",
+        "churned",
       ],
       capture_type: [
         "photo",
