@@ -6,7 +6,9 @@ import {
   Camera,
   CheckCircle2,
   ClipboardList,
+  Crown,
   FileCheck2,
+  Gift,
   Globe2,
   ImageOff,
   Link2,
@@ -18,6 +20,7 @@ import {
   Sparkles,
   Stamp,
   TimerReset,
+  Trophy,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
