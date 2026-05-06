@@ -17,10 +17,6 @@ interface BrandMarkProps {
   withGlow?: boolean;
   /** Kept for API parity with the old image-based implementation. */
   eager?: boolean;
-  /** @deprecated Use `variant="mark"` instead. */
-  markOnly?: boolean;
-  /** @deprecated Use `tone="light"` instead. */
-  invert?: boolean;
 }
 
 const ALT = "PhotoBrief.ai";
@@ -63,13 +59,12 @@ function Wordmark({ size, compact = false }: { size: number; compact?: boolean }
 
 export function BrandMark({
   className,
-  variant,
+  variant = "horizontal",
   size = 28,
   withGlow = false,
   eager,
-  markOnly,
 }: BrandMarkProps) {
-  const resolvedVariant: BrandVariant = variant ?? (markOnly ? "mark" : "horizontal");
+  const resolvedVariant: BrandVariant = variant;
 
   if (resolvedVariant === "mark" || resolvedVariant === "primary") {
     return (

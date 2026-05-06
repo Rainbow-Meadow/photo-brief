@@ -5,7 +5,7 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { getTokenClient } from "@/integrations/supabase/tokenClient";
-import type { CuratedCategory, PhotoGuide } from "@/types/photobrief";
+import type { PhotoGuide } from "@/types/photobrief";
 import type { RequestDraft } from "@/types/requestDraft";
 
 function rowToGuide(g: any, steps: any[], questions: any[]): PhotoGuide {
@@ -61,27 +61,6 @@ async function fetchWorkspaceGuides(workspaceId: string): Promise<PhotoGuide[]> 
 }
 
 export const guidesService = {
-  // Deprecated compatibility methods kept as harmless empty responses for older
-  // callers. The app should use listForWorkspace/getByIdAsync for live data.
-  list(): PhotoGuide[] {
-    return [];
-  },
-  getById(_id: string): PhotoGuide | undefined {
-    return undefined;
-  },
-  listLaunchReady(): PhotoGuide[] {
-    return [];
-  },
-  listInternalTemplates(): PhotoGuide[] {
-    return [];
-  },
-  listByCuratedCategory(_category: CuratedCategory): PhotoGuide[] {
-    return [];
-  },
-  listByIndustry(_starterIds: string[]): PhotoGuide[] {
-    return [];
-  },
-
   async listForWorkspace(workspaceId: string): Promise<PhotoGuide[]> {
     return fetchWorkspaceGuides(workspaceId);
   },

@@ -25,7 +25,7 @@ import ForAiAgentsPage from "@/pages/ForAiAgents";
 import ForgotPasswordPage from "@/pages/ForgotPassword";
 import ResetPasswordPage from "@/pages/ResetPassword";
 import UnsubscribePage from "@/pages/Unsubscribe";
-import WaitlistPage from "@/pages/Waitlist";
+
 import SignupPage from "@/pages/Signup";
 import BetaInvitePage from "@/pages/BetaInvite";
 
@@ -99,7 +99,7 @@ const App = () => (
             <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/unsubscribe" element={<UnsubscribePage />} />
             <Route path="/help" element={<BetaGuidePage />} />
-            <Route path="/waitlist" element={<WaitlistPage />} />
+            
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/beta-invite/:token" element={<BetaInvitePage />} />
             
