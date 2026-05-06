@@ -59,13 +59,12 @@ function Wordmark({ size, compact = false }: { size: number; compact?: boolean }
 
 export function BrandMark({
   className,
-  variant,
+  variant = "horizontal",
   size = 28,
   withGlow = false,
   eager,
-  markOnly,
 }: BrandMarkProps) {
-  const resolvedVariant: BrandVariant = variant ?? (markOnly ? "mark" : "horizontal");
+  const resolvedVariant: BrandVariant = variant;
 
   if (resolvedVariant === "mark" || resolvedVariant === "primary") {
     return (
