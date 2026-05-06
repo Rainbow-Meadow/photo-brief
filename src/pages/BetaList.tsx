@@ -304,40 +304,40 @@ export default function BetaListPage() {
       />
 
       {/* ━━ HERO ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-      <section className="relative isolate overflow-hidden pt-10 sm:pt-14">
+      <section className="relative isolate overflow-hidden pt-8 sm:pt-14">
         <div className="pb-lens-field" />
-        <div className="pb-container relative z-10 pb-6 sm:pb-10">
+        <div className="pb-container relative z-10 pb-4 sm:pb-10">
           <div className="mx-auto max-w-3xl text-center">
-            <div className="mb-4 sm:mb-5">
+            <div className="mb-3 sm:mb-5">
               <div className="relative inline-flex items-center justify-center">
-                <div aria-hidden className="pointer-events-none absolute h-36 w-36 rounded-full bg-[hsl(var(--pb-violet)/0.35)] blur-[60px] sm:h-48 sm:w-48 sm:blur-[80px]" />
-                <BrandMark variant="mark" size={88} withGlow eager className="relative sm:hidden" />
+                <div aria-hidden className="pointer-events-none absolute h-28 w-28 rounded-full bg-[hsl(var(--pb-violet)/0.35)] blur-[50px] sm:h-48 sm:w-48 sm:blur-[80px]" />
+                <BrandMark variant="mark" size={56} withGlow eager className="relative sm:hidden" />
                 <BrandMark variant="mark" size={120} withGlow eager className="relative hidden sm:inline-flex" />
               </div>
             </div>
 
             <span className="pb-eyebrow"><Sparkles className="h-3.5 w-3.5" /> Founding Partner Beta</span>
 
-            <h1 className="pb-hero-title mx-auto mt-3 max-w-2xl text-white sm:mt-4">
-              Stop chasing<br className="sm:hidden" /> customer photos.
+            <h1 className="pb-hero-title mx-auto mt-2 max-w-2xl text-white sm:mt-4">
+              Stop chasing customer photos.
             </h1>
 
-            <p className="pb-copy mx-auto mt-4 max-w-2xl text-base leading-7 sm:text-lg sm:leading-8">
-              Send one guided PhotoBrief link and get a clean, AI&#8209;checked brief back. For teams that need the right photos before they quote, dispatch, approve, review, document, or follow up.
+            <p className="pb-copy mx-auto mt-3 max-w-xl text-[0.938rem] leading-[1.6] sm:mt-4 sm:max-w-2xl sm:text-lg sm:leading-8">
+              Send one guided link. Get a clean, AI&#8209;checked brief back — ready to quote, dispatch, or act on.
             </p>
 
-            <div className="mx-auto mt-5 flex max-w-lg flex-col gap-2.5 sm:mt-6 sm:max-w-none sm:flex-row sm:justify-center sm:gap-3">
+            <div className="mx-auto mt-4 flex max-w-lg flex-col gap-2 sm:mt-6 sm:max-w-none sm:flex-row sm:justify-center sm:gap-3">
               <Button size="xl" variant="pb-primary" onClick={() => { trackEvent("betalist_primary_cta_clicked", { ...utm, location: "hero" }); document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" }); }}>
-                Apply for Founding Partner Beta <ArrowRight className="ml-1 h-4 w-4" />
+                Apply for beta access <ArrowRight className="ml-1 h-4 w-4" />
               </Button>
               <Button size="xl" variant="pb-secondary" onClick={() => { trackEvent("betalist_secondary_cta_clicked", { ...utm, location: "hero" }); document.getElementById("workflow")?.scrollIntoView({ behavior: "smooth" }); }}>
                 See how it works
               </Button>
             </div>
 
-            <div className="mx-auto mt-4 flex max-w-md justify-center gap-2 sm:mt-5 sm:gap-2.5">
+            <div className="mx-auto mt-3 flex max-w-md justify-center gap-2 sm:mt-5 sm:gap-2.5">
               {["No app for customers", "Invite-only beta", "Concierge setup"].map((item) => (
-                <span key={item} className="pb-route-chip whitespace-nowrap px-2.5 py-1.5 text-center text-[0.65rem] font-semibold sm:px-3 sm:py-2 sm:text-xs">{item}</span>
+                <span key={item} className="pb-route-chip whitespace-nowrap px-2 py-1 text-center text-[0.6rem] font-semibold sm:px-3 sm:py-2 sm:text-xs">{item}</span>
               ))}
             </div>
           </div>
