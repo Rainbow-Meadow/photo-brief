@@ -6,12 +6,10 @@ import type { GuideStep } from "@/types/photobrief";
 interface CaptureUploadCardProps {
   step: GuideStep;
   pending: boolean;
-  /** Called when the recipient picks a file. */
   onCapture: (previewUrl: string, file: File | null) => void;
   onSkip?: () => void;
 }
 
-/** Mobile-first capture action. No simulation path in the real recipient flow. */
 export function CaptureUploadCard({ step, pending, onCapture, onSkip }: CaptureUploadCardProps) {
   const cameraRef = useRef<HTMLInputElement>(null);
   const uploadRef = useRef<HTMLInputElement>(null);
@@ -26,7 +24,7 @@ export function CaptureUploadCard({ step, pending, onCapture, onSkip }: CaptureU
   };
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       <input
         ref={cameraRef}
         type="file"
@@ -64,14 +62,14 @@ export function CaptureUploadCard({ step, pending, onCapture, onSkip }: CaptureU
         disabled={pending}
         onClick={() => uploadRef.current?.click()}
       >
-        <ImagePlus className="mr-2 h-4 w-4" /> Choose from library
+        <ImagePlus className="mr-2 h-5 w-5" /> Choose from library
       </Button>
 
       {!step.required && onSkip ? (
         <button
           type="button"
           onClick={onSkip}
-          className="mx-auto block rounded-full px-4 py-2 text-sm font-medium text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+          className="mx-auto block min-h-[44px] rounded-full px-5 py-2.5 text-sm font-medium text-muted-foreground underline-offset-4 transition active:scale-95 hover:text-foreground hover:underline"
           disabled={pending}
         >
           Skip this photo
