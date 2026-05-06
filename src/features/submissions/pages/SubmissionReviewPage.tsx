@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
+import { useIsBetaPartner } from "@/hooks/useIsBetaPartner";
+import { BetaFeedbackCard } from "@/features/submissions/components/BetaFeedbackCard";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   ArrowLeft,
