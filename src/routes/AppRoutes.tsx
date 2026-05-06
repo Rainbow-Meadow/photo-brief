@@ -1,5 +1,5 @@
 import { lazy, Suspense, type ReactNode } from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 
 import { MarketingLayout } from "@/components/layout/MarketingLayout";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
