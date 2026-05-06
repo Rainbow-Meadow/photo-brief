@@ -198,6 +198,7 @@ export default function LandingPage() {
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState<"new" | "already" | null>(null);
   const [applicationStarted, setApplicationStarted] = useState(false);
+  const { isFull } = useBetaSeats();
 
   const utmContext = useRef(() => {
     const p = new URLSearchParams(window.location.search);
