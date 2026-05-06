@@ -8,7 +8,7 @@
  *     /llms*.txt, /openapi.json, /mcp.json, /.well-known/*) → Cloudflare
  *     Pages, edge-cached. Stable filenames, only the Pages build emits them.
  *
- *   - Marketing HTML routes (/, /pricing, /help, /for-ai-agents, /waitlist):
+ *   - Marketing HTML routes (/, /pricing, /help, /for-ai-agents, /founding-partner-beta):
  *       • Bots / crawlers / LLM fetchers → Pages (prerendered static HTML
  *         optimized for SEO and answer-engine citation).
  *       • Real users → Lovable hosting (live SPA with the latest dynamic
