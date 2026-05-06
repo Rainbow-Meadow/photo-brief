@@ -33,12 +33,6 @@ import { conversions, trackEvent } from "@/lib/analytics";
 
 /* ── constants ──────────────────────────────────────────── */
 
-const BUSINESS_TYPES = [
-  "Roofing", "HVAC", "Plumbing", "Electrical", "General contractor",
-  "Junk removal / hauling", "Pest control", "Insurance / claims",
-  "Property management", "Landscaping", "Appliance repair",
-  "Other home services", "Other",
-];
 
 const VOLUMES = [
   "Fewer than 10", "10–50", "51–200", "200+",
