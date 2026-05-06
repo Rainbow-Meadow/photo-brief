@@ -209,9 +209,9 @@ export default function BetaListPage() {
                 <div className="mx-auto mt-8 flex h-16 w-16 items-center justify-center rounded-full bg-[hsl(var(--pb-mint)/0.12)]">
                   <CheckCircle2 className="h-8 w-8 text-[hsl(var(--pb-mint))]" />
                 </div>
-                <h1 className="pb-section-title mt-6 text-white">Application received</h1>
+                <h1 className="pb-section-title mt-6 text-white">You're on the list</h1>
                 <p className="pb-copy mt-4">
-                  Thanks for applying to the Founding Partner Beta. PhotoBrief is invite-only — we review every application by hand.
+                  Thanks — you're on the Founding Partner Beta list. We'll review your fit and reach out with next steps.
                 </p>
               </>
             ) : (
