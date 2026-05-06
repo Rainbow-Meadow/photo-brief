@@ -1,4 +1,4 @@
-import { Outlet, NavLink } from "react-router-dom";
+import { Outlet, NavLink, useLocation } from "react-router-dom";
 import { Plus, LifeBuoy, KeyRound, LogOut, Globe2 } from "lucide-react";
 import { FeedbackWidget } from "@/features/support/components/FeedbackWidget";
 
@@ -26,6 +26,17 @@ export function DashboardLayout() {
   const { workspace } = useCurrentWorkspace();
   const { resetPassword, logOut, resetting, signingOut, email } = useAccountActions();
   const initial = (email?.[0] ?? "U").toUpperCase();
+  const { pathname } = useLocation();
+  const isFullscreenWizard = pathname === "/requests/new";
+
+  if (isFullscreenWizard) {
+    return (
+      <RequireAuth>
+        <Outlet />
+      </RequireAuth>
+    );
+  }
+
   return (
     <RequireAuth>
       <SidebarProvider>
@@ -66,7 +77,7 @@ export function DashboardLayout() {
                 <Button asChild size="sm" className="hidden gap-1.5 rounded-full sm:inline-flex">
                   <NavLink to="/requests/new">
                     <Plus className="h-4 w-4" />
-                    New request
+                    Request a PhotoBrief
                   </NavLink>
                 </Button>
                 <ThemeToggle compact />
