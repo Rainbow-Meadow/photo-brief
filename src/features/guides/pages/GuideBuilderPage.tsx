@@ -109,7 +109,7 @@ export default function GuideBuilderPage() {
   }
 
   return (
-    <div className="space-y-6 pb-12">
+    <div className="space-y-6 pb-28 sm:pb-12">
       <PageHeader
         title="New template"
         description="Start with one photo. Add more only if the request needs them."
