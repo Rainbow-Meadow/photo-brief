@@ -22,15 +22,15 @@ type ValidationState =
 const reasonCopy: Record<string, { title: string; body: string }> = {
   not_found: {
     title: "We couldn't find that invite",
-    body: "The link may have been mistyped. Double-check it, or join the waitlist below.",
+    body: "The link may have been mistyped. Double-check it, or apply for beta access below.",
   },
   expired: {
     title: "This invite has expired",
-    body: "Beta invites are valid for 14 days. Join the waitlist and we'll send a fresh one.",
+    body: "Beta invites are valid for 14 days. Apply again and we'll send a fresh one.",
   },
   revoked: {
     title: "This invite is no longer active",
-    body: "It looks like this invite was revoked. Please reach out or join the waitlist.",
+    body: "It looks like this invite was revoked. Please reach out or apply for beta access.",
   },
   accepted: {
     title: "This invite has already been used",
@@ -51,7 +51,7 @@ export default function SignupPage() {
   }, [token]);
 
   if (!token && INVITE_ONLY_BETA) {
-    return <Navigate to="/waitlist" replace />;
+    return <Navigate to="/betalist" replace />;
   }
 
   const [state, setState] = useState<ValidationState>({ kind: "loading" });
@@ -196,11 +196,11 @@ export default function SignupPage() {
             </h1>
             <p className="mt-2 text-sm text-muted-foreground">
               {reasonCopy[state.reason]?.body ??
-                "Please double-check the link, or join the waitlist below."}
+                "Please double-check the link, or apply for beta access below."}
             </p>
             <div className="mt-6 flex flex-col gap-2">
               <Button asChild>
-                <NavLink to="/waitlist">Join the waitlist</NavLink>
+                <NavLink to="/betalist">Apply for beta</NavLink>
               </Button>
               <Button asChild variant="ghost">
                 <NavLink to="/auth">I already have an account — sign in</NavLink>
