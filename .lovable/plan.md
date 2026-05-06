@@ -1,39 +1,41 @@
-## Beta Lifecycle Email Templates
+## Update Beta Program Details
 
-Two of the seven emails already exist:
-- **#1 Application received** → `waitlist-confirmation` template (already live)
-- **#2 Accepted into beta** → `founding-partner-welcome` template (already live)
+Apply the new beta parameters everywhere they appear: 60-day duration, 30 companies (5 per week), and tiered discount rewards based on feedback quality.
 
-### New templates to create (5 files)
+### Reward Tiers
 
-All in `supabase/functions/_shared/transactional-email-templates/`, using the existing brand system (`brand-styles.ts`, `BrandHeader`, `BrandFooter`, shared styles).
+| Tier | Count | Reward |
+|------|-------|--------|
+| Top 2 partners | 2 | Free Pro for life |
+| Elite | 4 | 75% off in perpetuity |
+| Strong | 4 | 50% off in perpetuity |
+| Solid | 10 | 75% off first year post-launch |
+| Participating | 10 | 50% off first year post-launch |
 
-1. **`beta-first-request-nudge.tsx`** — "Ready to send your first PhotoBrief?" Triggered when workspace has no requests after 3 days. Props: `name`, `dashboardUrl`. Direct, practical instructions on creating the first request.
+Rewards earned by quality of feedback, not just usage volume.
 
-2. **`beta-feedback-checkin.tsx`** — "Quick check-in — how's PhotoBrief working?" Triggered 14 days after first request sent. Props: `name`. Asks about completion rates, AI feedback usefulness, missing features. Reply-friendly.
+---
 
-3. **`beta-stalled-checkin.tsx`** — "Still there?" Triggered after 14+ days of inactivity. Props: `name`. No-pressure check — offers help, acknowledges timing, asks if it's not the right fit.
+### Files to change
 
-4. **`beta-testimonial-request.tsx`** — "Would you share a quick word?" Triggered for partners with 10+ completed submissions and positive feedback. Props: `name`. Suggests a one-liner format, offers to draft for them.
+**1. `docs/founding-partner-beta-plan.md`**
+- Duration: "8–12 weeks" → 60 days
+- Cohort size: 30 total, 5 accepted per week across 6 weekly cohorts
+- Beta Offer: replace flat "30% off" with the full tiered reward table above; note rewards are granted based on feedback quality
+- Beta Phases: refit to 60-day / ~9-week cadence (Seed weeks 1–2, Validate weeks 3–5, Optimize weeks 6–7, Graduate weeks 8–9)
+- Success Metrics / Conversion: update targets to reflect 30 partners and tiered structure
+- Exit Criteria: update partner counts accordingly
 
-5. **`beta-graduation.tsx`** — "Beta's wrapping up — here's your founding partner pricing." Triggered before paid transition. Props: `name`, `discount`, `requestsCreated`, `submissionsCompleted`, `templatesCreated`, `transitionDate`. Shows usage stats and locked-in discount.
+**2. `docs/beta-program-emails.md`**
+- Graduation email copy direction: reference personalized tiered discount instead of flat percentage; note the `discount` and `discountDuration` variables
 
-### Registry update
+**3. `src/pages/BetaList.tsx`** (public /betalist page)
+- `partnerBenefits` array (line 78–84): change "60–90 days free founding beta access" → "60-day free founding beta access"; change "50% off the first year after launch" → "Up to 75% off post-launch — based on feedback quality" (or similar concise phrasing)
+- Thank-you confirmation text (line 265): update "60–90 days free · ... · 50% off year one" to match new details: "60 days free · ... · up to 75% off post-launch"
 
-Add all 5 new templates to `registry.ts`.
+**4. `supabase/functions/_shared/transactional-email-templates/beta-graduation.tsx`**
+- Add optional `discountDuration` prop (`'perpetuity'` | `'first-year'` | `'free-pro'`)
+- Render tier-appropriate copy: "Free Pro for life", "X% off — locked in permanently", or "X% off your first year"
+- Remove default `discount = '30'`; update preview data to reflect a realistic tier
 
-### Documentation
-
-Create `docs/beta-program-emails.md` with all 7 email copy references (including the 2 existing ones), trigger descriptions, variable mappings, and tone rules ("founding beta partner" not "tester", "real workflows" not "play around").
-
-### Deploy
-
-Redeploy `send-transactional-email` so the new templates are available.
-
-### Technical details
-
-- All templates follow the existing pattern: `React.createElement`-free JSX, `TemplateEntry` type, `brand-styles.ts` imports
-- Each template has `previewData` for dashboard preview
-- Subject lines are static strings (no dynamic subjects needed)
-- Tone: direct, warm, practical — consistent with the existing `founding-partner-welcome` template
-- Templates 3–6 are designed to be triggered by admin actions from the `/admin/beta` dashboard (not automated cron — wiring those triggers is a separate step)
+**5. `src/pages/AdminBeta.tsx`** — no changes needed (discount tier is a graduation-time decision, not a dashboard column yet)

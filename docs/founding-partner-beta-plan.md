@@ -57,14 +57,35 @@ Score each applicant 1–5 on fit. Accept 4+ automatically, review 3s, decline 1
 
 ## Beta Offer
 
+**Duration:** 60 days
+**Cohort size:** 30 companies total — 5 accepted per week across 6 weekly cohorts
+
 What founding partners get:
 
-- **Free access** for the full beta period (target: 8–12 weeks)
+- **Free access** for the full 60-day beta period
 - **Hands-on onboarding** — we configure their first template with them
 - **Direct line** to the team via email and in-app feedback
-- **Founding partner pricing** locked in permanently when they convert to paid — 30% off standard pricing, no expiration
+- **Tiered founding partner rewards** based on quality of feedback (see below)
 - **Early access** to every new feature during and after beta
 - **Co-marketing opportunity** — optional case study or testimonial feature at launch
+
+### Reward Tiers
+
+Rewards are granted based on quality of feedback — depth, consistency, and actionability — not just usage volume.
+
+| Tier | Partners | Reward |
+|---|---|---|
+| **Top 2** | 2 | Free Pro for life |
+| **Elite** | 4 | 75% off in perpetuity |
+| **Strong** | 4 | 50% off in perpetuity |
+| **Solid** | 10 | 75% off first year post-launch |
+| **Participating** | 10 | 50% off first year post-launch |
+
+**What drives tier placement:**
+- Depth and quality of feedback responses
+- Consistency of engagement over the 60-day period
+- Actionability of bug reports and workflow suggestions
+- Willingness to participate in check-ins and case studies
 
 What we do NOT offer:
 - Unlimited everything forever
@@ -93,31 +114,35 @@ We do NOT expect:
 
 ## Beta Phases
 
+30 companies total, 5 accepted per week. All partners get the full 60 days regardless of cohort start date.
+
 ### Phase 1: Seed (Weeks 1–2)
-- **Goal:** 5–10 partners onboarded and sending real requests
-- Accept first cohort from application pool
+- **Goal:** First 10 partners onboarded and sending real requests (cohorts 1–2)
+- Accept 5 partners per week from application pool
 - Hands-on onboarding for each partner (configure first template, walk through first request)
 - Daily monitoring of every request and submission
 - Fix critical bugs same-day
 
-### Phase 2: Validate (Weeks 3–6)
+### Phase 2: Validate (Weeks 3–5)
 - **Goal:** Confirm core loop retention — partners who send requests keep sending them
+- Continue accepting 5 partners per week (cohorts 3–5, reaching 25 total)
 - Track request-to-submission completion rate
 - Two-week feedback check-in with every partner
 - Identify top 3 feature gaps from real usage
 - Begin nudging stalled partners or closing out poor-fit accounts
-- Accept second cohort if capacity allows (target: 15–25 total)
 
-### Phase 3: Optimize (Weeks 7–10)
+### Phase 3: Optimize (Weeks 6–7)
 - **Goal:** Improve activation rate and submission quality based on data
+- Accept final cohort (cohort 6, reaching 30 total)
 - Ship highest-impact feature improvements
 - Collect testimonials from active partners
 - Run pricing validation conversations
-- Identify partners likely to convert to paid
+- Begin preliminary tier assessments based on feedback quality
 
-### Phase 4: Graduate (Weeks 11–12)
-- **Goal:** Transition beta partners to paid plans with founding discount
-- Send graduation emails with usage stats and pricing
+### Phase 4: Graduate (Weeks 8–9)
+- **Goal:** Transition beta partners to paid plans with tiered rewards
+- Finalize reward tier placement for each partner
+- Send personalized graduation emails with usage stats and tier-specific pricing
 - Close beta applications
 - Sunset free access on a specific date
 - Publish case studies and testimonials
@@ -178,8 +203,8 @@ For each accepted partner:
 - **Target:** < 20% of submissions require follow-up for missing/unusable photos
 
 ### Conversion
-- **Target:** 40% of active beta partners convert to paid at graduation
-- **Target:** Average founding partner MRR: $50+ (after discount)
+- **Target:** 25 of 30 partners convert to paid at graduation (across all reward tiers)
+- **Target:** Average founding partner MRR: $50+ (after tier-specific discount)
 
 ### Leading indicators (watch weekly)
 - Requests created this week (total and per-partner)
@@ -193,27 +218,27 @@ For each accepted partner:
 ## Exit Criteria
 
 **Beta is successful if:**
-- At least 10 partners actively used PhotoBrief on real workflows for 4+ weeks
+- At least 20 of 30 partners actively used PhotoBrief on real workflows for 4+ weeks
 - Submission completion rate ≥ 60%
-- At least 5 partners say they'd pay for it (validated in pricing conversations)
-- At least 3 usable testimonials collected
+- At least 15 partners say they'd pay for it (validated in pricing conversations)
+- At least 5 usable testimonials collected
 - No category of critical bug unresolved
 
 **Beta should be extended if:**
 - Activation rate < 50% (onboarding needs work, not the product)
 - Completion rate < 40% (customer-facing experience needs improvement)
-- Fewer than 10 active partners after 6 weeks
+- Fewer than 15 active partners after 5 weeks
 
 **Beta should be stopped/pivoted if:**
 - Partners consistently say "this is nice but I wouldn't pay for it"
 - Submission completion rate < 30% after fixes
-- No segment shows strong retention after 6 weeks
+- No segment shows strong retention after 5 weeks
 
 ---
 
 ## Pricing Validation Questions
 
-Ask these during check-in conversations (weeks 6–10), not via survey:
+Ask these during check-in conversations (weeks 5–8), not via survey:
 
 1. **Value anchor:** "If you didn't have PhotoBrief, how would you handle this? How much time does that take per job?"
 2. **Willingness to pay:** "If this stayed exactly as it is today, would you pay for it? What feels like a fair monthly price?"

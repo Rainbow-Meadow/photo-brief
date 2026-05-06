@@ -76,11 +76,11 @@ const useCases = [
 ];
 
 const partnerBenefits = [
-  "60–90 days free founding beta access",
+  "60-day free founding beta access",
   "Concierge setup for first templates and workflows",
   "Direct feedback channel and priority product input",
   "Early access to future tools",
-  "50% off the first year after launch",
+  "Up to 75% off post-launch — based on feedback quality",
 ];
 
 const partnerAsks = [
@@ -262,7 +262,7 @@ export default function BetaListPage() {
             <div className="mt-5 rounded-[1.2rem] border border-[hsl(var(--pb-lavender)/0.25)] bg-[hsl(var(--pb-lavender)/0.04)] p-4">
               <p className="text-sm font-semibold text-white/90">Founding Partner Beta includes:</p>
               <p className="pb-copy mt-1.5 text-xs">
-                60–90 days free · concierge setup · priority support · direct roadmap input · early access to future tools · 50% off year one
+                60 days free · concierge setup · priority support · direct roadmap input · early access to future tools · up to 75% off post-launch
               </p>
             </div>
 
