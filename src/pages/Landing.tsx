@@ -386,6 +386,9 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* ━━ PAIN POINTS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+        <PainPointSection />
+
         {/* ━━ FREE PRO FOR LIFE SPOTLIGHT ━━━━━━━━━━━━━━━━━━━━ */}
         <section className="pb-section-tight">
           <div className="pb-container">
