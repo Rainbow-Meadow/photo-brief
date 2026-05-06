@@ -30,25 +30,25 @@ export function StarterRequestCard(_props: Props) {
             <BrandMark variant="mark" tone="color" size={34} />
           </div>
           <span className="inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-background/70 px-3 py-1 text-xs font-medium text-muted-foreground shadow-sm">
-            <Sparkles className="h-3 w-3 text-primary" /> Start simple
+            <Sparkles className="h-3 w-3 text-primary" /> Get started
           </span>
 
           <h2 className="mt-5 max-w-xl text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-            Create your first photo request from scratch.
+            Send your first PhotoBrief.
           </h2>
           <p className="mt-3 max-w-lg text-sm text-muted-foreground sm:text-base">
-            Start with one plain-language photo prompt. Add more photos or questions only when the job needs them.
+            Tell your customer exactly what to photograph. AI checks the quality, and you get review-ready photos in minutes.
           </p>
 
           <div className="mt-7 flex flex-col gap-3 sm:flex-row">
             <Button asChild size="lg" className="gap-1.5 rounded-full px-6">
               <NavLink to="/requests/new">
-                Start from scratch <ArrowRight className="h-4 w-4" />
+                Request a PhotoBrief <ArrowRight className="h-4 w-4" />
               </NavLink>
             </Button>
             <Button asChild size="lg" variant="outline" className="gap-1.5 rounded-full bg-background/60 px-6">
               <NavLink to="/guides/new">
-                <LayoutTemplate className="h-4 w-4" /> Create a template
+                <LayoutTemplate className="h-4 w-4" /> Build a template
               </NavLink>
             </Button>
           </div>
