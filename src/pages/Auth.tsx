@@ -143,44 +143,6 @@ export default function AuthPage() {
     }
   };
 
-  const DEMO_EMAIL = "demo@photobrief.app";
-  const DEMO_PASSWORD = "DemoPass1234!";
-
-  const handleDemoSignIn = async () => {
-    setSubmitting(true);
-    try {
-      const { error: demoErr } = await supabase.functions.invoke("ensure-demo-user");
-      onboardingDebug("auth.edge_function.done", {
-        sessionPresent: !!session,
-        requestName: "ensure-demo-user",
-        urlPath: "/functions/v1/ensure-demo-user",
-        method: "POST",
-        error: await edgeFunctionErrorDebug(demoErr),
-      });
-      if (demoErr) throw demoErr;
-      const { error } = await supabase.auth.signInWithPassword({
-        email: DEMO_EMAIL,
-        password: DEMO_PASSWORD,
-      });
-      onboardingDebug("auth.demo_signin.done", {
-        sessionPresent: !!session,
-        currentUserEmail: DEMO_EMAIL,
-        requestName: "auth.signInWithPassword",
-        urlPath: "/auth/v1/token?grant_type=password",
-        method: "POST",
-        error: supabaseErrorDebug(error),
-      });
-      if (error) throw error;
-    } catch (err: any) {
-      toast({
-        title: "Demo sign-in failed",
-        description: err?.message ?? "Something went wrong.",
-        variant: "destructive",
-      });
-      setSubmitting(false);
-    }
-  };
-
   return (
     <div className="relative isolate min-h-[100vh] overflow-hidden">
       <PageMeta
@@ -204,26 +166,6 @@ export default function AuthPage() {
             ? "Sign up to start sending photo briefs."
             : "Sign in to your PhotoBrief workspace."}
         </p>
-
-        {mode === "signin" && (
-          <div className="mt-6 rounded-lg border border-primary/30 bg-primary/5 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-primary">
-              Want to try it first?
-            </p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              Sign in to a sandbox workspace with sample data. No personal info needed.
-            </p>
-            <Button
-              type="button"
-              size="sm"
-              className="mt-3 w-full"
-              onClick={handleDemoSignIn}
-              disabled={submitting}
-            >
-              Try the demo
-            </Button>
-          </div>
-        )}
 
         <Button
           type="button"
