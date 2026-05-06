@@ -347,7 +347,7 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              <span className="pb-eyebrow"><Sparkles className="h-3.5 w-3.5" /> Founding Partner Beta now open</span>
+              <span className="pb-eyebrow"><Sparkles className="h-3.5 w-3.5" /> Accepting beta applications</span>
 
               <h1 className="pb-hero-title mx-auto mt-3 max-w-2xl text-white sm:mt-4">
                 Get quote-ready<br className="sm:hidden" />{" "}customer photos.
@@ -360,7 +360,8 @@ export default function LandingPage() {
 
               <div className="mx-auto mt-5 flex max-w-lg flex-col gap-2.5 sm:mt-6 sm:max-w-none sm:flex-row sm:justify-center sm:gap-3">
                 <Button size="xl" variant="pb-primary" onClick={() => { trackEvent("cta_click", { location: "hero", label: "primary" }); document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" }); }}>
-                  Apply for beta access <ArrowRight className="ml-1 h-4 w-4" />
+                  {BETA_IS_FULL ? "Join the waitlist" : "Apply now"} <ArrowRight className="ml-1 h-4 w-4" />
+                </Button>
                 </Button>
                 <Button asChild size="xl" variant="pb-secondary">
                   <a href="#workflow" onClick={() => trackEvent("cta_click", { location: "hero", label: "workflow" })}>See how it works</a>
@@ -371,10 +372,12 @@ export default function LandingPage() {
               </div>
 
               <div className="mx-auto mt-4 flex max-w-md justify-center gap-2 sm:mt-5 sm:gap-2.5">
-                {["No app for customers", "Invite-only beta", "Concierge setup"].map((item) => (
+                {["No app for customers", "Reviewed for fit", "Concierge setup"].map((item) => (
                   <span key={item} className="pb-route-chip whitespace-nowrap px-2.5 py-1.5 text-center text-[0.65rem] font-semibold sm:px-3 sm:py-2 sm:text-xs">{item}</span>
                 ))}
               </div>
+
+              <BetaSeatTracker className="mx-auto mt-4 max-w-sm sm:mt-5" />
             </div>
           </div>
         </section>
