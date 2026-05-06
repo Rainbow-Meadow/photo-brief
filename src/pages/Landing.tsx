@@ -716,11 +716,11 @@ function FoundingPartnerSection({ utm }: { utm: Record<string, string | undefine
         {/* Benefits & expectations */}
         <div className="pb-command-panel grid gap-6 p-5 sm:gap-8 sm:p-6 lg:grid-cols-[0.85fr_1.15fr] lg:p-8 xl:p-10">
           <div className="relative z-10">
-            <span className="pb-eyebrow"><Stamp className="h-3.5 w-3.5" /> Founding beta</span>
+            <span className="pb-eyebrow"><Stamp className="h-3.5 w-3.5" /> Accepting applications</span>
             <h2 className="mt-4 text-2xl font-semibold tracking-tight text-white sm:text-3xl lg:text-4xl">Built with real workflows, not toy testing.</h2>
-            <p className="pb-copy mt-4 text-base sm:text-lg">We are inviting a small group of businesses to use PhotoBrief in real intake scenarios before public launch. You get hands-on setup and early influence; we get honest workflow feedback.</p>
+            <p className="pb-copy mt-4 text-base sm:text-lg">We're accepting applications from businesses that collect photos as part of real intake, inspection, or documentation workflows. You get hands-on setup and early influence; we get honest workflow feedback.</p>
             <Button size="lg" variant="pb-primary" className="mt-6" onClick={() => { trackEvent("cta_click", { ...utm, location: "founding_beta" }); document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" }); }}>
-              Apply now <ArrowRight className="ml-1 h-4 w-4" />
+              {BETA_IS_FULL ? "Join the waitlist" : "Apply now"} <ArrowRight className="ml-1 h-4 w-4" />
             </Button>
           </div>
           <div className="relative z-10 grid gap-4 md:grid-cols-2">
