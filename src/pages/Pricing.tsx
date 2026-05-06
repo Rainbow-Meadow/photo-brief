@@ -5,6 +5,7 @@ import { PricingCardGrid } from "@/components/pricing/PricingCardGrid";
 import { PageMeta } from "@/hooks/seo/usePageMeta";
 import { buildFaqJsonLd } from "@/hooks/seo/buildFaqJsonLd";
 import { faqItems } from "@/features/help/content/faq";
+import { BETA_DURATION_DAYS, MAX_DISCOUNT_LABEL } from "@/config/betaProgram";
 
 import { Button } from "@/components/ui/button";
 import { signupCtaTarget, signupCtaLabel } from "@/config/access";
@@ -33,10 +34,10 @@ const intakeModes = [
 ];
 
 const betaOffer = [
-  { icon: Clock3, label: "90-day beta access", copy: "Use PhotoBrief in real customer workflows before public launch." },
+  { icon: Clock3, label: `${BETA_DURATION_DAYS}-day beta access`, copy: "Use PhotoBrief in real customer workflows before public launch." },
   { icon: HeartHandshake, label: "Concierge setup", copy: "Get help building first templates, briefs, and team process." },
   { icon: MessageSquareText, label: "Direct influence", copy: "Your feedback helps shape what gets built next." },
-  { icon: Sparkles, label: "50% off first year", copy: "Accepted partners get founding partner pricing after launch." },
+  { icon: Sparkles, label: "Tiered post-launch rewards", copy: MAX_DISCOUNT_LABEL },
 ];
 
 export default function PricingPage() {
@@ -46,8 +47,8 @@ export default function PricingPage() {
   return (
     <>
       <PageMeta
-        title="Pricing | PhotoBrief.ai Founding Partner Beta"
-        description="PhotoBrief.ai is accepting founding beta partners. Apply for 90-day beta access, concierge setup, direct support, and 50% off your first year after launch."
+        title={`Pricing | PhotoBrief.ai Founding Partner Beta`}
+        description={`PhotoBrief.ai is accepting founding beta partners. Apply for ${BETA_DURATION_DAYS}-day beta access, concierge setup, direct support, and tiered post-launch rewards — up to 75% off or free Pro for life.`}
         canonicalPath="/pricing"
         jsonLd={jsonLd}
         breadcrumbs={[{ name: "Home", path: "/" }, { name: "Pricing", path: "/pricing" }]}
@@ -60,7 +61,7 @@ export default function PricingPage() {
           <span className="pb-eyebrow"><Sparkles className="h-3.5 w-3.5" /> Founding Partner Beta Pricing</span>
           <h1 className="pb-section-title mx-auto mt-4 max-w-3xl text-white">Apply now. Lock in launch-year savings if accepted.</h1>
           <p className="pb-copy mx-auto mt-5 max-w-2xl text-base sm:text-xl">
-            PhotoBrief.ai is invite-only while we onboard founding partners. Accepted beta businesses get 90 days free, concierge setup, direct support, and 50% off their first year after launch.
+            PhotoBrief.ai is invite-only while we onboard founding partners. Accepted beta businesses get {BETA_DURATION_DAYS} days free, concierge setup, direct support, and tiered post-launch rewards — up to 75% off or free Pro for life.
           </p>
           <p className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-[hsl(var(--pb-mint)/0.4)] bg-[hsl(var(--pb-mint)/0.08)] px-3 py-1 text-sm font-medium text-[hsl(var(--pb-mint))]">
             <ShieldCheck className="h-4 w-4" /> First-pass follow-up photos do not consume credits.
