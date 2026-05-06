@@ -20,6 +20,10 @@ interface SEOHeadProps {
   ogImage?: string;
   ogType?: "website" | "article" | "product";
   twitterCard?: "summary" | "summary_large_image";
+  /** Override OG/Twitter title (defaults to title). */
+  ogTitle?: string;
+  /** Override OG/Twitter description (defaults to description). */
+  ogDescription?: string;
 }
 
 const ORIGIN = "https://photobrief.ai";
