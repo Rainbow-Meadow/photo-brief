@@ -42,6 +42,7 @@ import {
   DETAILED_EXPECTATIONS,
   REWARD_TIERS,
   REWARD_CRITERIA,
+  SCORING_RUBRIC,
   BETA_DURATION_DAYS,
   BETA_TOTAL_PARTNERS,
 } from "@/config/betaProgram";
@@ -637,6 +638,55 @@ export default function BetaListPage() {
                   </ul>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ━━ HOW WE PICK THE TOP 2 ━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+      <section className="pb-section">
+        <div className="pb-container">
+          <div className="mx-auto max-w-3xl text-center">
+            <span className="pb-eyebrow"><Trophy className="h-3.5 w-3.5" /> Scoring rubric</span>
+            <h2 className="pb-section-title mt-4 text-white">How we pick the top&nbsp;2</h2>
+            <p className="pb-copy mt-4 text-base sm:text-lg">
+              There's no secret formula — just four dimensions we weight equally-ish.
+              Here's exactly what we look at and what "great" looks like.
+            </p>
+          </div>
+
+          <div className="mx-auto mt-8 grid max-w-3xl gap-4 sm:mt-10">
+            {SCORING_RUBRIC.map((dim) => (
+              <div key={dim.label} className="pb-command-panel p-4 sm:p-5 md:p-6">
+                <div className="relative z-10">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <h3 className="text-base font-bold tracking-tight text-white sm:text-lg">{dim.label}</h3>
+                    <span className="rounded-full border border-[hsl(var(--pb-lavender)/0.3)] bg-[hsl(var(--pb-lavender)/0.08)] px-2.5 py-0.5 text-[11px] font-extrabold tracking-wider text-[hsl(var(--pb-lavender))]">
+                      {dim.weight}
+                    </span>
+                  </div>
+                  <p className="pb-copy mt-2 text-sm leading-relaxed">{dim.description}</p>
+                  <div className="mt-3 rounded-xl border border-white/8 bg-white/[0.025] p-3">
+                    <p className="mb-2 text-[11px] font-bold uppercase tracking-widest text-white/40">Examples of great feedback</p>
+                    {dim.examples.map((ex, i) => (
+                      <p key={i} className="mt-1.5 text-xs italic leading-relaxed text-white/60 sm:text-sm">
+                        {ex}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mx-auto mt-6 max-w-3xl">
+            <div className="rounded-[1.2rem] border border-[hsl(var(--pb-mint)/0.2)] bg-[hsl(var(--pb-mint)/0.04)] p-4 text-center">
+              <p className="text-sm font-semibold text-white/90">
+                Every partner earns a reward tier. The rubric above determines who lands in the top&nbsp;2.
+              </p>
+              <p className="pb-copy mt-1 text-xs">
+                Scores are assessed by the PhotoBrief team at the end of the {BETA_DURATION_DAYS}-day beta. No self-reporting required — we track engagement internally.
+              </p>
             </div>
           </div>
         </div>
