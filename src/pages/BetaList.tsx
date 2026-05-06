@@ -7,6 +7,7 @@ import {
   CheckCircle2,
   ClipboardList,
   FileCheck2,
+  Gift,
   ImageOff,
   Link2,
   Lock,
@@ -18,6 +19,7 @@ import {
   Smartphone,
   Sparkles,
   Stamp,
+  Users,
 } from "lucide-react";
 
 import { SEOHead } from "@/components/seo/SEOHead";
@@ -34,6 +36,11 @@ import {
   PARTNER_BENEFITS,
   PARTNER_EXPECTATIONS,
   CONFIRMATION_SUMMARY,
+  DETAILED_EXPECTATIONS,
+  REWARD_TIERS,
+  REWARD_CRITERIA,
+  BETA_DURATION_DAYS,
+  BETA_TOTAL_PARTNERS,
 } from "@/config/betaProgram";
 
 /* ── constants ──────────────────────────────────────────── */
