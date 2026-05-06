@@ -27,7 +27,7 @@ export default function AuthPage() {
   // If a logged-out visitor asks for ?mode=signup while signup is closed,
   // bounce them to the waitlist instead of silently flipping to sign-in.
   if (requestedSignup && !signupAllowed && !session && !authLoading) {
-    return <Navigate to="/betalist" replace />;
+    return <Navigate to="/" replace />;
   }
 
   const [email, setEmail] = useState("");
