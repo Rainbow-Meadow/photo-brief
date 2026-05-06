@@ -56,9 +56,9 @@ import {
   BETA_DURATION_DAYS,
   BETA_TOTAL_PARTNERS,
   BETA_SETUP_BUFFER_DAYS,
-  BETA_IS_FULL,
   MAX_DISCOUNT_LABEL,
 } from "@/config/betaProgram";
+import { useBetaSeats } from "@/hooks/useBetaSeats";
 import wideGarage from "@/assets/junk-removal/wide-garage.jpg";
 import pileCloseup from "@/assets/junk-removal/pile-closeup.jpg";
 import appliances from "@/assets/junk-removal/appliances.jpg";
