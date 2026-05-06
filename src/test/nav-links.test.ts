@@ -19,17 +19,26 @@ import { routePaths, routePathSet } from "@/config/routePaths";
 
 // ── Route matching ─────────────────────────────────────────────────────
 
-/** Strip hash fragment and query string, returning just the pathname. */
+/**
+ * Normalise any link format to a plain pathname.
+ * Handles: relative paths, hash fragments, query strings, fully qualified URLs.
+ *
+ * Examples:
+ *   "/pricing"                        → "/pricing"
+ *   "/#beta-program"                  → "/"
+ *   "/help?ref=nav"                   → "/help"
+ *   "https://photobrief.ai/pricing"   → "/pricing"
+ *   "https://photobrief.ai/#section"  → "/"
+ */
 function toPathname(link: string): string {
   const url = new URL(link, "http://localhost");
   return url.pathname;
 }
 
-/** Check if a pathname matches any defined route (exact or pattern). */
+/** Check if a pathname matches any defined route (exact or dynamic pattern). */
 function routeExists(pathname: string): boolean {
   if (routePathSet.has(pathname)) return true;
 
-  // Check dynamic patterns: replace :param segments with the actual value
   for (const route of routePaths) {
     if (!route.includes(":")) continue;
     const routeParts = route.split("/");
@@ -41,6 +50,15 @@ function routeExists(pathname: string): boolean {
     if (match) return true;
   }
   return false;
+}
+
+/**
+ * Wrapper that accepts the raw `to` value from a nav config entry,
+ * normalises it, and asserts the underlying route exists.
+ */
+function assertLinkResolves(link: string, source: string): void {
+  const path = toPathname(link);
+  expect(routeExists(path), `${source}: "${link}" → pathname "${path}" has no matching route`).toBe(true);
 }
 
 // ── Navigation sources (mirrored from their respective components) ─────
