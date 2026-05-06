@@ -13,7 +13,7 @@ export const INVITE_ONLY_BETA = true;
 
 /** Where the primary "create account" CTA should send public visitors. */
 export function signupCtaTarget(): string {
-  return INVITE_ONLY_BETA ? "/betalist" : "/auth?mode=signup";
+  return INVITE_ONLY_BETA ? "/#apply" : "/auth?mode=signup";
 }
 
 /** Label for the primary "create account" CTA. */
@@ -29,8 +29,7 @@ export function signupCtaShortLabel(): string {
 /** Where pricing tier CTAs should send visitors when they pick a plan. */
 export function planCtaTarget(planId: string): string {
   if (INVITE_ONLY_BETA) {
-    // Capture which tier they're interested in so the admin sees intent.
-    return `/betalist?interest=${encodeURIComponent(planId)}`;
+    return `/#apply?interest=${encodeURIComponent(planId)}`;
   }
   if (planId === "free") return "/auth?mode=signup";
   return `/auth?mode=signup&plan=${planId}`;

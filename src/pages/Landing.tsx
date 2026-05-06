@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { NavLink } from "react-router-dom";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { NavLink, useSearchParams } from "react-router-dom";
 import {
   ArrowRight,
   BadgeCheck,
@@ -12,18 +12,25 @@ import {
   Globe2,
   ImageOff,
   Link2,
+  Lock,
+  MailCheck,
   MapPinned,
   MessageSquareWarning,
   PlayCircle,
   Route,
   ShieldCheck,
+  Smartphone,
   Sparkles,
   Stamp,
   TimerReset,
   Trophy,
+  Users,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { PageMeta } from "@/hooks/seo/usePageMeta";
@@ -34,13 +41,28 @@ import { FreeProEligibilityModal } from "@/components/marketing/FreeProEligibili
 import { howItWorksSteps } from "@/components/marketing/HowItWorksSteps";
 import { InteractiveHeroBriefAssembly } from "@/components/marketing/InteractiveHeroBriefAssembly";
 import { faqItems } from "@/features/help/content/faq";
-import { trackEvent } from "@/lib/analytics";
-import { signupCtaTarget, signupCtaLabel } from "@/config/access";
-import { PARTNER_BENEFITS, PARTNER_EXPECTATIONS, BETA_TOTAL_PARTNERS } from "@/config/betaProgram";
+import { conversions, trackEvent } from "@/lib/analytics";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
+import {
+  PARTNER_BENEFITS,
+  PARTNER_EXPECTATIONS,
+  CONFIRMATION_SUMMARY,
+  DETAILED_EXPECTATIONS,
+  REWARD_TIERS,
+  REWARD_CRITERIA,
+  SCORING_RUBRIC,
+  BETA_DURATION_DAYS,
+  BETA_TOTAL_PARTNERS,
+  BETA_SETUP_BUFFER_DAYS,
+  MAX_DISCOUNT_LABEL,
+} from "@/config/betaProgram";
 import wideGarage from "@/assets/junk-removal/wide-garage.jpg";
 import pileCloseup from "@/assets/junk-removal/pile-closeup.jpg";
 import appliances from "@/assets/junk-removal/appliances.jpg";
 import drivewayAccess from "@/assets/junk-removal/driveway-access.jpg";
+
+/* ── JSON-LD ───────────────────────────────────────────────── */
 
 const SOFTWARE_APP_JSONLD: Record<string, unknown> = {
   "@context": "https://schema.org",
@@ -68,13 +90,17 @@ const SOFTWARE_APP_JSONLD: Record<string, unknown> = {
   ],
 };
 
+/* ── Section nav anchors ──────────────────────────────────── */
+
 const sectionLinks = [
   { href: "#workflow", label: "How it works" },
   { href: "#comparison", label: "Before / after" },
   { href: "#use-cases", label: "Use cases" },
-  { href: "#beta-offer", label: "Beta offer" },
-  { href: "#pricing-path", label: "Upgrade path" },
+  { href: "#beta-program", label: "Beta program" },
+  { href: "#apply", label: "Apply" },
 ];
+
+/* ── Content arrays ───────────────────────────────────────── */
 
 const loosePhotos = [
   { src: wideGarage, label: "Wide area", status: "Useful" },
@@ -84,30 +110,10 @@ const loosePhotos = [
 ];
 
 const workflowSteps = [
-  {
-    icon: Link2,
-    eyebrow: "Request",
-    title: "Send one guided link",
-    body: "Choose a template, send the link by text or email, or copy the branded request into any customer thread.",
-  },
-  {
-    icon: Camera,
-    eyebrow: "Capture",
-    title: "Customers take the right shots",
-    body: "They see one mobile prompt at a time, with plain instructions instead of a vague “send a few photos.”",
-  },
-  {
-    icon: Route,
-    eyebrow: "Check",
-    title: "Obvious problems get flagged",
-    body: "PhotoBrief calls out missing, unclear, or review-needed shots before your team has to sort through them.",
-  },
-  {
-    icon: FileCheck2,
-    eyebrow: "Brief",
-    title: "Your team gets a usable packet",
-    body: "Photos, notes, customer context, and next-step status land together for quoting, dispatch, review, or documentation.",
-  },
+  { icon: Link2, eyebrow: "Request", title: "Send one guided link", body: "Choose a template, send the link by text or email, or copy the branded request into any customer thread." },
+  { icon: Camera, eyebrow: "Capture", title: "Customers take the right shots", body: "They see one mobile prompt at a time, with plain instructions instead of a vague \u201csend a few photos.\u201d" },
+  { icon: Route, eyebrow: "Check", title: "Obvious problems get flagged", body: "PhotoBrief calls out missing, unclear, or review-needed shots before your team has to sort through them." },
+  { icon: FileCheck2, eyebrow: "Brief", title: "Your team gets a usable packet", body: "Photos, notes, customer context, and next-step status land together for quoting, dispatch, review, or documentation." },
 ];
 
 const messySignals = [
@@ -127,41 +133,18 @@ const cleanSignals = [
 ];
 
 const useCases = [
-  {
-    icon: BadgeCheck,
-    title: "Quote-ready submissions",
-    body: "Ask for the photos your estimator needs before the first call becomes a chain of follow-ups.",
-    stamp: "Quote prep",
-  },
-  {
-    icon: MapPinned,
-    title: "Dispatch prep",
-    body: "Collect site access, issue context, and handling notes before a team heads out.",
-    stamp: "Field ready",
-  },
-  {
-    icon: ImageOff,
-    title: "Damage documentation",
-    body: "Guide customers through the angles that matter so reviewers can understand the issue quickly.",
-    stamp: "Evidence packet",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Approvals and exceptions",
-    body: "Turn customer media into a packet that can be reviewed, approved, or escalated without guessing.",
-    stamp: "Decision ready",
-  },
-  {
-    icon: Globe2,
-    title: "Website lead intake",
-    body: "On Pro, replace vague forms with hosted intake, branded embeds, request routing, and integrations.",
-    stamp: "Pro route",
-  },
+  { icon: BadgeCheck, title: "Quote-ready submissions", body: "Ask for the photos your estimator needs before the first call becomes a chain of follow-ups.", stamp: "Quote prep" },
+  { icon: MapPinned, title: "Dispatch prep", body: "Collect site access, issue context, and handling notes before a team heads out.", stamp: "Field ready" },
+  { icon: ImageOff, title: "Damage documentation", body: "Guide customers through the angles that matter so reviewers can understand the issue quickly.", stamp: "Evidence packet" },
+  { icon: ShieldCheck, title: "Approvals and exceptions", body: "Turn customer media into a packet that can be reviewed, approved, or escalated without guessing.", stamp: "Decision ready" },
+  { icon: Globe2, title: "Website lead intake", body: "On Pro, replace vague forms with hosted intake, branded embeds, request routing, and integrations.", stamp: "Pro route" },
 ];
 
-const betaBenefits = [...PARTNER_BENEFITS];
-
-const betaAsks = [...PARTNER_EXPECTATIONS];
+const trustPoints = [
+  { icon: Link2, title: "Secure, expiring upload links", desc: "Customers never see your dashboard or internal data." },
+  { icon: Smartphone, title: "No app or account for customers", desc: "Clean mobile capture. No install, no signup, no friction." },
+  { icon: Lock, title: "Your data stays yours", desc: "Photos and briefs are never shared or used for training." },
+];
 
 const pricingPath = [
   {
@@ -178,32 +161,164 @@ const pricingPath = [
   },
 ];
 
-function SectionNav() {
-  return (
-    <nav aria-label="Landing page sections" className="sticky top-[4.5rem] z-30 border-y border-white/10 bg-[hsl(var(--pb-night)/0.82)] backdrop-blur-xl">
-      <div className="pb-container flex justify-start gap-1.5 overflow-x-auto py-2 sm:gap-2 sm:py-3 sm:justify-center">
-        {sectionLinks.map((item) => (
-          <a
-            key={item.href}
-            href={item.href}
-            onClick={() => trackEvent("landing_jump_nav_click", { target: item.href })}
-            className="min-w-max rounded-full border border-transparent px-3 py-1.5 text-xs font-semibold text-white/62 transition hover:border-white/14 hover:bg-white/7 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--pb-lavender))] sm:px-4 sm:py-2 sm:text-sm"
-          >
-            {item.label}
-          </a>
-        ))}
-      </div>
-    </nav>
-  );
+/* ── Form ──────────────────────────────────────────────────── */
+
+const VOLUMES = ["Fewer than 10", "10–50", "51–200", "200+"];
+const WORKFLOW_TYPES = ["Quotes / estimates", "Dispatch prep", "Approvals / reviews", "Returns / warranty", "Documentation", "Other"];
+
+interface FormState {
+  name: string;
+  business_name: string;
+  email: string;
+  business_type: string;
+  website: string;
+  use_case: string;
+  estimated_monthly_requests: string;
+  workflow_type: string;
 }
 
+const EMPTY: FormState = {
+  name: "", business_name: "", email: "", business_type: "",
+  website: "", use_case: "", estimated_monthly_requests: "",
+  workflow_type: "",
+};
+
+/* ── Main component ───────────────────────────────────────── */
+
 export default function LandingPage() {
+  const [params] = useSearchParams();
+  const ref = params.get("ref") || "";
+  const interest = params.get("interest") || "founding-partner";
+
   const [demoOpen, setDemoOpen] = useState(false);
   const [comparisonMode, setComparisonMode] = useState<"messy" | "clean">("messy");
+  const [form, setForm] = useState<FormState>(EMPTY);
+  const [submitting, setSubmitting] = useState(false);
+  const [done, setDone] = useState<"new" | "already" | null>(null);
+  const [applicationStarted, setApplicationStarted] = useState(false);
+
+  const utmContext = useRef(() => {
+    const p = new URLSearchParams(window.location.search);
+    return {
+      source: "landing" as const,
+      utm_source: p.get("utm_source") || undefined,
+      utm_medium: p.get("utm_medium") || undefined,
+      utm_campaign: p.get("utm_campaign") || undefined,
+      referrer: document.referrer || undefined,
+      ref: ref || undefined,
+    };
+  }).current;
+  const utm = utmContext();
+
+  useEffect(() => {
+    trackEvent("betalist_page_view", utm);
+  }, []);
+
   const jsonLd = useMemo(
     () => [SOFTWARE_APP_JSONLD, buildHowToJsonLd("Collect customer photos with PhotoBrief", howItWorksSteps), buildFaqJsonLd(faqItems)],
     [],
   );
+
+  const update =
+    <K extends keyof FormState>(key: K) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
+      setForm((prev) => ({ ...prev, [key]: e.target.value }));
+
+  function validate(): string | null {
+    if (!form.email.trim()) return "We need a work email.";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) return "That email doesn't look right.";
+    if (!form.business_name.trim()) return "Please enter your business name.";
+    if (!form.use_case.trim()) return "Tell us what you need customer photos for.";
+    return null;
+  }
+
+  const handleFormFocus = () => {
+    if (!applicationStarted) {
+      setApplicationStarted(true);
+      trackEvent("betalist_application_started", utm);
+    }
+  };
+
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const err = validate();
+    if (err) {
+      toast({ title: "Please check the form", description: err, variant: "destructive" });
+      return;
+    }
+    setSubmitting(true);
+    const source = ref ? `landing:${ref}` : "landing";
+    try {
+      const { data, error } = await supabase.functions.invoke("waitlist-submit", {
+        body: { ...form, name: form.name.trim() || undefined, email: form.email.trim().toLowerCase(), interest, source },
+      });
+      if (error) throw error;
+      const payload = data as { ok?: boolean; already?: boolean } | null;
+      if (payload?.already) {
+        trackEvent("betalist_application_submitted", { ...utm, duplicate: true });
+        setDone("already");
+      } else {
+        trackEvent("betalist_application_submitted", { ...utm, business_type: form.business_type || undefined });
+        conversions.waitlistSubmitted({ interest: "landing", business_type: form.business_type || undefined });
+        setDone("new");
+      }
+    } catch {
+      trackEvent("betalist_application_error", utm);
+      toast({ title: "Something went wrong", description: "Please try again.", variant: "destructive" });
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  /* ── Post-submission thank-you ─────────────────────────── */
+  if (done) {
+    return (
+      <>
+        <PageMeta title="Application received — PhotoBrief.ai" description="Your Founding Partner Beta application has been received." canonicalPath="/" jsonLd={jsonLd} breadcrumbs={[{ name: "Home", path: "/" }]} />
+        <section className="pb-section relative isolate">
+          <div className="pb-lens-field" />
+          <div className="pb-container relative z-10 mx-auto max-w-lg text-center">
+            <BrandMark variant="stacked" tone="light" size={72} eager withGlow />
+            {done === "new" ? (
+              <>
+                <div className="mx-auto mt-8 flex h-16 w-16 items-center justify-center rounded-full bg-[hsl(var(--pb-mint)/0.12)]">
+                  <CheckCircle2 className="h-8 w-8 text-[hsl(var(--pb-mint))]" />
+                </div>
+                <h1 className="pb-section-title mt-6 text-white">You're on the list</h1>
+                <p className="pb-copy mt-4">Thanks — you're on the Founding Partner Beta list. We'll review your fit and reach out with next steps.</p>
+              </>
+            ) : (
+              <>
+                <div className="mx-auto mt-8 flex h-16 w-16 items-center justify-center rounded-full bg-[hsl(var(--pb-lavender)/0.12)]">
+                  <MailCheck className="h-8 w-8 text-[hsl(var(--pb-lavender))]" />
+                </div>
+                <h1 className="pb-section-title mt-6 text-white">You're already on the list</h1>
+                <p className="pb-copy mt-4">We already have your application. No need to resubmit — we'll be in touch as soon as a spot opens.</p>
+              </>
+            )}
+            <div className="pb-card mt-8 p-5 text-left sm:p-6">
+              <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[hsl(var(--pb-lavender))]">What happens next</p>
+              <ol className="mt-4 grid gap-3">
+                {["We review your application within a few business days.", "If it's a fit, we send a personal invite with your login link.", "We set up your first templates together via chat or email.", "You start sending guided PhotoBrief links to real customers."].map((text, i) => (
+                  <li key={i} className="flex gap-3">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[hsl(var(--pb-lavender)/0.13)] text-xs font-black text-[hsl(var(--pb-lavender))]">{i + 1}</span>
+                    <span className="pb-copy text-sm">{text}</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+            <div className="mt-5 rounded-[1.2rem] border border-[hsl(var(--pb-lavender)/0.25)] bg-[hsl(var(--pb-lavender)/0.04)] p-4">
+              <p className="text-sm font-semibold text-white/90">Founding Partner Beta includes:</p>
+              <p className="pb-copy mt-1.5 text-xs">{CONFIRMATION_SUMMARY}</p>
+            </div>
+            <div className="mt-8 flex flex-col items-center gap-3">
+              <p className="text-xs text-white/40">Questions? <a href="mailto:hello@photobrief.ai" className="text-[hsl(var(--pb-lavender))] hover:underline">hello@photobrief.ai</a></p>
+            </div>
+          </div>
+        </section>
+      </>
+    );
+  }
 
   return (
     <>
@@ -216,14 +331,174 @@ export default function LandingPage() {
       />
 
       <main className="pb-landing">
-        <HeroSection onOpenDemo={() => setDemoOpen(true)} />
-        <InteractiveDemoSection />
+        {/* ━━ HERO ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+        <section className="relative isolate overflow-hidden -mt-[4.5rem] pt-[5.5rem] sm:-mt-[5rem] sm:pt-[6rem] lg:pt-[6.5rem]">
+          <div className="pb-lens-field" />
+          <div className="pb-container relative pb-8 sm:pb-10 lg:pb-12">
+            <div className="relative z-10 mx-auto max-w-3xl text-center">
+              <div className="mb-4 sm:mb-5">
+                <div className="relative inline-flex items-center justify-center">
+                  <div aria-hidden className="pointer-events-none absolute h-36 w-36 rounded-full bg-[hsl(var(--pb-violet)/0.35)] blur-[60px] sm:h-48 sm:w-48 sm:blur-[80px]" />
+                  <BrandMark variant="mark" size={88} withGlow eager className="relative sm:hidden" />
+                  <BrandMark variant="mark" size={120} withGlow eager className="relative hidden sm:inline-flex lg:hidden" />
+                  <BrandMark variant="mark" size={144} withGlow eager className="relative hidden lg:inline-flex" />
+                </div>
+              </div>
+
+              <span className="pb-eyebrow"><Sparkles className="h-3.5 w-3.5" /> Founding Partner Beta now open</span>
+
+              <h1 className="pb-hero-title mx-auto mt-3 max-w-2xl text-white sm:mt-4">
+                Get quote-ready<br className="sm:hidden" />{" "}customer photos.
+                <span className="mt-1 block text-[hsl(var(--pb-lavender))]">Send one guided link.</span>
+              </h1>
+
+              <p className="pb-copy mx-auto mt-4 max-w-2xl text-base leading-7 sm:text-lg sm:leading-8">
+                PhotoBrief is a one-link photo intake tool for service, repair, review, and documentation workflows. Customers follow mobile prompts, obvious issues get flagged, and your team receives a clean brief instead of a messy thread.
+              </p>
+
+              <div className="mx-auto mt-5 flex max-w-lg flex-col gap-2.5 sm:mt-6 sm:max-w-none sm:flex-row sm:justify-center sm:gap-3">
+                <Button size="xl" variant="pb-primary" onClick={() => { trackEvent("cta_click", { location: "hero", label: "primary" }); document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" }); }}>
+                  Apply for beta access <ArrowRight className="ml-1 h-4 w-4" />
+                </Button>
+                <Button asChild size="xl" variant="pb-secondary">
+                  <a href="#workflow" onClick={() => trackEvent("cta_click", { location: "hero", label: "workflow" })}>See how it works</a>
+                </Button>
+                <Button size="xl" variant="pb-ghost" onClick={() => setDemoOpen(true)}>
+                  <PlayCircle className="mr-1.5 h-4.5 w-4.5" /> Product spotlight
+                </Button>
+              </div>
+
+              <div className="mx-auto mt-4 flex max-w-md justify-center gap-2 sm:mt-5 sm:gap-2.5">
+                {["No app for customers", "Invite-only beta", "Concierge setup"].map((item) => (
+                  <span key={item} className="pb-route-chip whitespace-nowrap px-2.5 py-1.5 text-center text-[0.65rem] font-semibold sm:px-3 sm:py-2 sm:text-xs">{item}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ━━ FREE PRO FOR LIFE SPOTLIGHT ━━━━━━━━━━━━━━━━━━━━ */}
+        <section className="pb-section-tight">
+          <div className="pb-container">
+            <div className="relative mx-auto max-w-2xl overflow-hidden rounded-[1.5rem] border border-[hsl(var(--pb-lavender)/0.35)] bg-gradient-to-br from-[hsl(var(--pb-violet)/0.18)] via-[hsl(var(--pb-ink))] to-[hsl(var(--pb-lavender)/0.10)] p-5 sm:p-8">
+              <div aria-hidden className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-[hsl(var(--pb-lavender)/0.15)] blur-[60px]" />
+              <div aria-hidden className="pointer-events-none absolute -bottom-8 -left-8 h-32 w-32 rounded-full bg-[hsl(var(--pb-mint)/0.10)] blur-[50px]" />
+              <div className="relative z-10 flex flex-col items-center text-center">
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-[hsl(var(--pb-lavender))] to-[hsl(var(--pb-violet))] shadow-lg shadow-[hsl(var(--pb-violet)/0.4)]">
+                  <Trophy className="h-7 w-7 text-white" />
+                </div>
+                <p className="mt-4 text-xs font-extrabold uppercase tracking-[0.2em] text-[hsl(var(--pb-lavender))]">The ultimate reward</p>
+                <h2 className="mt-2 text-xl font-bold tracking-tight text-white sm:text-2xl md:text-3xl">
+                  2 partners get <span className="bg-gradient-to-r from-[hsl(var(--pb-lavender))] to-[hsl(var(--pb-mint))] bg-clip-text text-transparent">Free Pro for Life</span>
+                </h2>
+                <p className="pb-copy mx-auto mt-3 max-w-lg text-sm leading-relaxed sm:text-base">
+                  The two beta partners who deliver the most useful, actionable feedback earn a permanent Pro plan — no invoice, no expiration, no strings. Your feedback literally shapes the product and your reward reflects that.
+                </p>
+                <div className="mt-5 flex flex-wrap items-center justify-center gap-2 text-xs font-semibold text-white/70">
+                  <span className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.05] px-3 py-1.5"><Crown className="h-3.5 w-3.5 text-[hsl(var(--pb-lavender))]" /> Quality over quantity</span>
+                  <span className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.05] px-3 py-1.5"><Gift className="h-3.5 w-3.5 text-[hsl(var(--pb-mint))]" /> All {BETA_TOTAL_PARTNERS} partners earn rewards</span>
+                </div>
+                <FreeProEligibilityModal>
+                  {(open) => (
+                    <button type="button" onClick={open} className="mt-4 text-xs font-semibold text-[hsl(var(--pb-lavender))] underline decoration-[hsl(var(--pb-lavender)/0.4)] underline-offset-2 transition hover:text-white hover:decoration-white/60">
+                      Terms &amp; eligibility →
+                    </button>
+                  )}
+                </FreeProEligibilityModal>
+                <Button size="lg" variant="pb-primary" className="mt-4" onClick={() => { trackEvent("free_pro_cta_clicked", { location: "spotlight" }); document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" }); }}>
+                  Apply now — limited to {BETA_TOTAL_PARTNERS} spots <ArrowRight className="ml-1 h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ━━ INTERACTIVE DEMO ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+        <section className="pb-section-tight">
+          <div className="pb-container">
+            <InteractiveHeroBriefAssembly />
+          </div>
+        </section>
+
+        {/* ━━ SECTION NAV ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <SectionNav />
+
+        {/* ━━ HOW IT WORKS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <WorkflowSection />
+
+        {/* ━━ BEFORE / AFTER ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <ComparisonSection mode={comparisonMode} onModeChange={setComparisonMode} />
+
+        {/* ━━ USE CASES ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <UseCaseSection />
-        <FoundingPartnerSection />
+
+        {/* ━━ FOUNDING PARTNER BETA ━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+        <FoundingPartnerSection utm={utm} />
+
+        {/* ━━ PRICING PATH ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <PricingPathSection />
+
+        {/* ━━ TRUST POINTS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+        <section className="pb-section-tight">
+          <div className="pb-container">
+            <div className="mx-auto grid max-w-3xl gap-4 sm:grid-cols-3">
+              {trustPoints.map(({ icon: Icon, title, desc }) => (
+                <div key={title} className="pb-card p-4 text-center sm:p-5">
+                  <Icon className="mx-auto h-5 w-5 text-[hsl(var(--pb-muted))]" />
+                  <p className="mt-3 text-sm font-semibold text-white">{title}</p>
+                  <p className="pb-copy mt-1 text-xs">{desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ━━ APPLICATION FORM ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+        <section id="apply" className="pb-section scroll-mt-8">
+          <div className="pb-container">
+            <div className="pb-command-panel mx-auto max-w-xl p-4 sm:p-6 lg:p-8">
+              <div className="relative z-10">
+                <span className="pb-eyebrow"><Stamp className="h-3.5 w-3.5" /> Apply for beta access</span>
+                <h2 className="mt-3 text-lg font-semibold tracking-tight text-white sm:mt-4 sm:text-2xl">Join the Founding Partner Beta</h2>
+                <p className="pb-copy mt-1.5 text-sm">Limited spots · We typically reply within a few days</p>
+
+                <form onSubmit={onSubmit} onFocusCapture={handleFormFocus} className="mt-5 grid gap-3.5 sm:mt-6 sm:gap-4">
+                  <Field id="bl-email" label="Work email" required>
+                    <Input id="bl-email" type="email" value={form.email} onChange={update("email")} autoComplete="email" required placeholder="you@company.com" className="h-12 border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
+                  </Field>
+                  <Field id="bl-biz" label="Business name" required>
+                    <Input id="bl-biz" value={form.business_name} onChange={update("business_name")} autoComplete="organization" required className="h-12 border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
+                  </Field>
+                  <Field id="bl-web" label="Website">
+                    <Input id="bl-web" value={form.website} onChange={update("website")} placeholder="https://" autoComplete="url" className="h-12 border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
+                  </Field>
+                  <Field id="bl-usecase" label="What do you need customer photos for?" required>
+                    <Textarea id="bl-usecase" value={form.use_case} onChange={update("use_case")} rows={2} required placeholder="e.g. Getting roof damage photos before we send a quote." className="border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
+                  </Field>
+                  <div className="grid gap-3.5 sm:grid-cols-2 sm:gap-4">
+                    <Field id="bl-vol" label="Approx. monthly photo requests">
+                      <select id="bl-vol" value={form.estimated_monthly_requests} onChange={update("estimated_monthly_requests")} className="flex h-12 w-full rounded-xl border border-white/12 bg-white/[0.05] px-3 py-2 text-sm text-white shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--pb-lavender))]">
+                        <option value="" className="bg-[hsl(var(--pb-ink))]">Select…</option>
+                        {VOLUMES.map((v) => <option key={v} value={v} className="bg-[hsl(var(--pb-ink))]">{v}</option>)}
+                      </select>
+                    </Field>
+                    <Field id="bl-fit" label="Best fit">
+                      <select id="bl-fit" value={form.workflow_type} onChange={update("workflow_type")} className="flex h-12 w-full rounded-xl border border-white/12 bg-white/[0.05] px-3 py-2 text-sm text-white shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--pb-lavender))]">
+                        <option value="" className="bg-[hsl(var(--pb-ink))]">Select…</option>
+                        {WORKFLOW_TYPES.map((w) => <option key={w} value={w} className="bg-[hsl(var(--pb-ink))]">{w}</option>)}
+                      </select>
+                    </Field>
+                  </div>
+                  <Button type="submit" size="lg" disabled={submitting} variant="pb-primary" className="mt-1 h-12 w-full text-base">
+                    {submitting ? "Submitting…" : "Apply for beta access"}
+                  </Button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ━━ FINAL CTA ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <FinalCta />
       </main>
 
@@ -240,73 +515,21 @@ export default function LandingPage() {
   );
 }
 
-function HeroSection({ onOpenDemo }: { onOpenDemo: () => void }) {
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   Sub-components
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+function SectionNav() {
   return (
-    <section className="relative isolate overflow-hidden -mt-[4.5rem] pt-[5.5rem] sm:-mt-[5rem] sm:pt-[6rem] lg:pt-[6.5rem]">
-      <div className="pb-lens-field" />
-      <div className="pb-container relative pb-8 sm:pb-10 lg:pb-12">
-        <div className="relative z-10 mx-auto max-w-3xl text-center">
-          {/* Logo spotlight */}
-          <div className="mb-4 sm:mb-5">
-            <div className="relative inline-flex items-center justify-center">
-              <div aria-hidden className="pointer-events-none absolute h-36 w-36 rounded-full bg-[hsl(var(--pb-violet)/0.35)] blur-[60px] sm:h-48 sm:w-48 sm:blur-[80px]" />
-              <BrandMark variant="mark" size={88} withGlow eager className="relative sm:hidden" />
-              <BrandMark variant="mark" size={120} withGlow eager className="relative hidden sm:inline-flex lg:hidden" />
-              <BrandMark variant="mark" size={144} withGlow eager className="relative hidden lg:inline-flex" />
-            </div>
-          </div>
-
-          <span className="pb-eyebrow"><Sparkles className="h-3.5 w-3.5" /> Founding Partner Beta now open</span>
-
-          <h1 className="pb-hero-title mx-auto mt-3 max-w-2xl text-white sm:mt-4">
-            Get quote-ready<br className="sm:hidden" />{" "}customer photos.
-            <span className="mt-1 block text-[hsl(var(--pb-lavender))]">Send one guided link.</span>
-          </h1>
-
-          <p className="pb-copy mx-auto mt-4 max-w-2xl text-base leading-7 sm:text-lg sm:leading-8">
-            PhotoBrief is a one-link photo intake tool for service, repair, review, and documentation workflows. Customers follow mobile prompts, obvious issues get flagged, and your team receives a clean brief instead of a messy thread.
-          </p>
-
-          {/* CTA buttons — row on desktop, stack on mobile with equal width */}
-          <div className="mx-auto mt-5 flex max-w-lg flex-col gap-2.5 sm:mt-6 sm:max-w-none sm:flex-row sm:justify-center sm:gap-3">
-            <Button asChild size="xl" variant="pb-primary">
-              <NavLink to={signupCtaTarget()} onClick={() => trackEvent("cta_click", { location: "hero", label: "primary" })}>
-                {signupCtaLabel()} <ArrowRight className="ml-1 h-4 w-4" />
-              </NavLink>
-            </Button>
-            <Button asChild size="xl" variant="pb-secondary">
-              <a href="#workflow" onClick={() => trackEvent("cta_click", { location: "hero", label: "workflow" })}>
-                See how it works
-              </a>
-            </Button>
-            <Button size="xl" variant="pb-ghost" onClick={onOpenDemo}>
-              <PlayCircle className="mr-1.5 h-4.5 w-4.5" /> Product spotlight
-            </Button>
-          </div>
-
-          {/* Feature chips — always row */}
-          <div className="mx-auto mt-4 flex max-w-md justify-center gap-2 sm:mt-5 sm:gap-2.5">
-            {[
-              "No app for customers",
-              "Manual links first",
-              "Automation on Pro",
-            ].map((item) => (
-              <span key={item} className="pb-route-chip whitespace-nowrap px-2.5 py-1.5 text-center text-[0.65rem] font-semibold sm:px-3 sm:py-2 sm:text-xs">{item}</span>
-            ))}
-          </div>
-        </div>
+    <nav aria-label="Landing page sections" className="sticky top-[4.5rem] z-30 border-y border-white/10 bg-[hsl(var(--pb-night)/0.82)] backdrop-blur-xl">
+      <div className="pb-container flex justify-start gap-1.5 overflow-x-auto py-2 sm:gap-2 sm:py-3 sm:justify-center">
+        {sectionLinks.map((item) => (
+          <a key={item.href} href={item.href} onClick={() => trackEvent("landing_jump_nav_click", { target: item.href })} className="min-w-max rounded-full border border-transparent px-3 py-1.5 text-xs font-semibold text-white/62 transition hover:border-white/14 hover:bg-white/7 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--pb-lavender))] sm:px-4 sm:py-2 sm:text-sm">
+            {item.label}
+          </a>
+        ))}
       </div>
-    </section>
-  );
-}
-
-function InteractiveDemoSection() {
-  return (
-    <section className="pb-section-tight">
-      <div className="pb-container">
-        <InteractiveHeroBriefAssembly />
-      </div>
-    </section>
+    </nav>
   );
 }
 
@@ -356,20 +579,12 @@ function ComparisonSection({ mode, onModeChange }: { mode: "messy" | "clean"; on
         <div className="mx-auto max-w-3xl text-center">
           <span className="pb-eyebrow"><MessageSquareWarning className="h-3.5 w-3.5" /> Before / after</span>
           <h2 className="pb-section-title mt-4 text-white">Your team should not have to decode a camera roll.</h2>
-          <p className="pb-copy mt-4 text-lg">The value is not “more photos.” The value is getting the right photos, tied to the right job, with enough context to act.</p>
+          <p className="pb-copy mt-4 text-lg">The value is not "more photos." The value is getting the right photos, tied to the right job, with enough context to act.</p>
         </div>
 
         <div className="mx-auto mt-8 flex max-w-md rounded-full border border-white/12 bg-[hsl(var(--pb-panel)/0.72)] p-1 sm:mt-10">
-          {[
-            { id: "messy", label: "Before" },
-            { id: "clean", label: "PhotoBrief" },
-          ].map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => onModeChange(item.id as "messy" | "clean")}
-              className={`flex-1 rounded-full px-4 py-2.5 text-sm font-extrabold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--pb-lavender))] sm:py-3 ${mode === item.id ? "bg-[hsl(var(--pb-lavender))] text-[hsl(var(--pb-night))]" : "text-white/58 hover:text-white"}`}
-            >
+          {[{ id: "messy", label: "Before" }, { id: "clean", label: "PhotoBrief" }].map((item) => (
+            <button key={item.id} type="button" onClick={() => onModeChange(item.id as "messy" | "clean")} className={`flex-1 rounded-full px-4 py-2.5 text-sm font-extrabold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--pb-lavender))] sm:py-3 ${mode === item.id ? "bg-[hsl(var(--pb-lavender))] text-[hsl(var(--pb-night))]" : "text-white/58 hover:text-white"}`}>
               {item.label}
             </button>
           ))}
@@ -392,9 +607,7 @@ function ComparisonSection({ mode, onModeChange }: { mode: "messy" | "clean"; on
           </div>
 
           <div className="relative min-h-[320px] overflow-hidden rounded-[1.5rem] border border-white/12 bg-[hsl(var(--pb-panel)/0.58)] p-4 sm:min-h-[420px] sm:rounded-[2rem] sm:p-5">
-            <div className="absolute inset-0 opacity-35">
-              <div className="pb-lens-field" />
-            </div>
+            <div className="absolute inset-0 opacity-35"><div className="pb-lens-field" /></div>
             {isClean ? <CleanPacketVisual /> : <MessyThreadVisual />}
           </div>
         </div>
@@ -491,67 +704,129 @@ function UseCaseSection() {
   );
 }
 
-function FoundingPartnerSection() {
+function FoundingPartnerSection({ utm }: { utm: Record<string, string | undefined> }) {
   return (
-    <section id="beta-offer" className="pb-section-tight">
+    <section id="beta-program" className="pb-section">
       <div className="pb-container">
-        {/* Free Pro for Life spotlight */}
-        <div className="relative mx-auto mb-6 max-w-4xl overflow-hidden rounded-[1.5rem] border border-[hsl(var(--pb-lavender)/0.35)] bg-gradient-to-br from-[hsl(var(--pb-violet)/0.18)] via-[hsl(var(--pb-ink))] to-[hsl(var(--pb-lavender)/0.10)] p-5 sm:p-8">
-          <div aria-hidden className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-[hsl(var(--pb-lavender)/0.15)] blur-[60px]" />
-          <div aria-hidden className="pointer-events-none absolute -bottom-8 -left-8 h-32 w-32 rounded-full bg-[hsl(var(--pb-mint)/0.10)] blur-[50px]" />
-          <div className="relative z-10 flex flex-col items-center text-center">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-[hsl(var(--pb-lavender))] to-[hsl(var(--pb-violet))] shadow-lg shadow-[hsl(var(--pb-violet)/0.4)]">
-              <Trophy className="h-7 w-7 text-white" />
-            </div>
-            <p className="mt-4 text-xs font-extrabold uppercase tracking-[0.2em] text-[hsl(var(--pb-lavender))]">The ultimate reward</p>
-            <h2 className="mt-2 text-xl font-bold tracking-tight text-white sm:text-2xl md:text-3xl">
-              2 partners get <span className="bg-gradient-to-r from-[hsl(var(--pb-lavender))] to-[hsl(var(--pb-mint))] bg-clip-text text-transparent">Free Pro for Life</span>
-            </h2>
-            <p className="pb-copy mx-auto mt-3 max-w-lg text-sm leading-relaxed sm:text-base">
-              The two beta partners who deliver the most useful, actionable feedback
-              earn a permanent Pro plan — no invoice, no expiration, no strings.
-            </p>
-            <div className="mt-5 flex flex-wrap items-center justify-center gap-2 text-xs font-semibold text-white/70">
-              <span className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.05] px-3 py-1.5">
-                <Crown className="h-3.5 w-3.5 text-[hsl(var(--pb-lavender))]" /> Quality over quantity
-              </span>
-              <span className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.05] px-3 py-1.5">
-                <Gift className="h-3.5 w-3.5 text-[hsl(var(--pb-mint))]" /> All {BETA_TOTAL_PARTNERS} partners earn rewards
-              </span>
-            </div>
-            <FreeProEligibilityModal>
-              {(open) => (
-                <button
-                  type="button"
-                  onClick={open}
-                  className="mt-4 text-xs font-semibold text-[hsl(var(--pb-lavender))] underline decoration-[hsl(var(--pb-lavender)/0.4)] underline-offset-2 transition hover:text-white hover:decoration-white/60"
-                >
-                  Terms &amp; eligibility →
-                </button>
-              )}
-            </FreeProEligibilityModal>
-          </div>
-        </div>
-
+        {/* Benefits & expectations */}
         <div className="pb-command-panel grid gap-6 p-5 sm:gap-8 sm:p-6 lg:grid-cols-[0.85fr_1.15fr] lg:p-8 xl:p-10">
           <div className="relative z-10">
             <span className="pb-eyebrow"><Stamp className="h-3.5 w-3.5" /> Founding beta</span>
             <h2 className="mt-4 text-2xl font-semibold tracking-tight text-white sm:text-3xl lg:text-4xl">Built with real workflows, not toy testing.</h2>
             <p className="pb-copy mt-4 text-base sm:text-lg">We are inviting a small group of businesses to use PhotoBrief in real intake scenarios before public launch. You get hands-on setup and early influence; we get honest workflow feedback.</p>
-            <div className="mt-6 flex flex-col gap-2.5 sm:flex-row sm:gap-3">
-              <Button asChild size="lg" variant="pb-primary">
-                <NavLink to={signupCtaTarget()} onClick={() => trackEvent("cta_click", { location: "beta_offer", label: "primary" })}>
-                  {signupCtaLabel()} <ArrowRight className="ml-1 h-4 w-4" />
-                </NavLink>
-              </Button>
-              <Button asChild size="lg" variant="pb-secondary">
-                <NavLink to="/betalist">Read beta details</NavLink>
-              </Button>
-            </div>
+            <Button size="lg" variant="pb-primary" className="mt-6" onClick={() => { trackEvent("cta_click", { ...utm, location: "founding_beta" }); document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" }); }}>
+              Apply now <ArrowRight className="ml-1 h-4 w-4" />
+            </Button>
           </div>
           <div className="relative z-10 grid gap-4 md:grid-cols-2">
-            <BetaList title="Beta partners get" items={betaBenefits} />
-            <BetaList title="We ask for" items={betaAsks} />
+            <BenefitList title="Beta partners get" items={[...PARTNER_BENEFITS]} />
+            <BenefitList title="We ask for" items={[...PARTNER_EXPECTATIONS]} />
+          </div>
+        </div>
+
+        {/* Detailed expectations */}
+        <div className="mx-auto mt-8 max-w-3xl text-center">
+          <span className="pb-eyebrow"><Users className="h-3.5 w-3.5" /> What we expect</span>
+          <h2 className="pb-section-title mt-4 text-white">What it means to be a founding beta partner.</h2>
+          <p className="pb-copy mt-4 text-base sm:text-lg">
+            We're accepting {BETA_TOTAL_PARTNERS} businesses. The {BETA_DURATION_DAYS}-day beta clock starts {BETA_SETUP_BUFFER_DAYS} days after the final seat is filled, giving every partner time for concierge setup. In exchange for free access and significant post-launch rewards, we ask for real usage and honest feedback.
+          </p>
+        </div>
+
+        <div className="mx-auto mt-8 max-w-2xl">
+          <div className="pb-command-panel p-4 sm:p-5 md:p-6">
+            <div className="relative z-10">
+              <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[hsl(var(--pb-lavender))]">Partner expectations</p>
+              <div className="mt-4 grid gap-3 sm:gap-4">
+                {DETAILED_EXPECTATIONS.map((exp, i) => (
+                  <div key={i} className="flex gap-3">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[hsl(var(--pb-lavender)/0.13)] text-xs font-black text-[hsl(var(--pb-lavender))] sm:h-8 sm:w-8">{i + 1}</span>
+                    <div>
+                      <p className="text-sm font-semibold text-white">{exp.title}</p>
+                      <p className="pb-copy mt-0.5 text-xs leading-5 sm:text-sm">{exp.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Reward tiers */}
+        <div className="mx-auto mt-6 max-w-2xl">
+          <div className="pb-command-panel p-4 sm:p-5 md:p-6">
+            <div className="relative z-10">
+              <div className="flex items-center gap-2">
+                <Gift className="h-4 w-4 text-[hsl(var(--pb-lavender))]" />
+                <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[hsl(var(--pb-lavender))]">Reward tiers</p>
+              </div>
+              <p className="pb-copy mt-2 text-sm">Every beta partner earns a post-launch discount. Your tier is based on the quality of your feedback — not just how much you use the product.</p>
+              <div className="mt-4 grid gap-2">
+                {REWARD_TIERS.map((tier) => {
+                  const isTopTier = tier.duration === "free-pro";
+                  return (
+                    <div key={tier.label} className={`flex items-center justify-between rounded-2xl px-3 py-2.5 sm:px-4 sm:py-3 ${isTopTier ? "border-2 border-[hsl(var(--pb-lavender)/0.5)] bg-gradient-to-r from-[hsl(var(--pb-violet)/0.15)] to-[hsl(var(--pb-lavender)/0.08)] shadow-md shadow-[hsl(var(--pb-violet)/0.2)]" : "border border-white/10 bg-white/[0.035]"}`}>
+                      <div className="flex items-center gap-3">
+                        {isTopTier ? (
+                          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[hsl(var(--pb-lavender))] to-[hsl(var(--pb-violet))] sm:h-8 sm:w-8"><Trophy className="h-3.5 w-3.5 text-white" /></span>
+                        ) : (
+                          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[hsl(var(--pb-lavender)/0.13)] text-[10px] font-black text-[hsl(var(--pb-lavender))] sm:h-8 sm:w-8">{tier.count}</span>
+                        )}
+                        <span className={`text-sm font-semibold ${isTopTier ? "text-[hsl(var(--pb-lavender))]" : "text-white"}`}>{tier.label}</span>
+                      </div>
+                      <span className="text-xs font-bold text-[hsl(var(--pb-mint))] sm:text-sm">{tier.shortDescription}</span>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="mt-4 rounded-[1.2rem] border border-[hsl(var(--pb-lavender)/0.2)] bg-[hsl(var(--pb-lavender)/0.04)] p-3 sm:p-4">
+                <p className="text-xs font-semibold text-white/80 sm:text-sm">What drives your tier placement:</p>
+                <ul className="mt-2 grid gap-1.5">
+                  {REWARD_CRITERIA.map((criterion) => (
+                    <li key={criterion} className="flex items-start gap-2 text-xs text-white/60 sm:text-sm">
+                      <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[hsl(var(--pb-mint)/0.7)]" />
+                      <span>{criterion}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Scoring rubric */}
+        <div className="mx-auto mt-10 max-w-3xl text-center">
+          <span className="pb-eyebrow"><Trophy className="h-3.5 w-3.5" /> Scoring rubric</span>
+          <h2 className="pb-section-title mt-4 text-white">How we pick the top&nbsp;2</h2>
+          <p className="pb-copy mt-4 text-base sm:text-lg">
+            There's no secret formula — just four dimensions we weight equally-ish. Here's exactly what we look at and what "great" looks like.
+          </p>
+        </div>
+
+        <div className="mx-auto mt-8 grid max-w-3xl gap-4 sm:mt-10">
+          {SCORING_RUBRIC.map((dim) => (
+            <div key={dim.label} className="pb-command-panel p-4 sm:p-5 md:p-6">
+              <div className="relative z-10">
+                <div className="flex flex-wrap items-center gap-3">
+                  <h3 className="text-base font-bold tracking-tight text-white sm:text-lg">{dim.label}</h3>
+                  <span className="rounded-full border border-[hsl(var(--pb-lavender)/0.3)] bg-[hsl(var(--pb-lavender)/0.08)] px-2.5 py-0.5 text-[11px] font-extrabold tracking-wider text-[hsl(var(--pb-lavender))]">{dim.weight}</span>
+                </div>
+                <p className="pb-copy mt-2 text-sm leading-relaxed">{dim.description}</p>
+                <div className="mt-3 rounded-xl border border-white/8 bg-white/[0.025] p-3">
+                  <p className="mb-2 text-[11px] font-bold uppercase tracking-widest text-white/40">Examples of great feedback</p>
+                  {dim.examples.map((ex, i) => (
+                    <p key={i} className="mt-1.5 text-xs italic leading-relaxed text-white/60 sm:text-sm">{ex}</p>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mx-auto mt-6 max-w-3xl">
+          <div className="rounded-[1.2rem] border border-[hsl(var(--pb-mint)/0.2)] bg-[hsl(var(--pb-mint)/0.04)] p-4 text-center">
+            <p className="text-sm font-semibold text-white/90">Every partner earns a reward tier. The rubric above determines who lands in the top&nbsp;2.</p>
+            <p className="pb-copy mt-1 text-xs">Scores are assessed by the PhotoBrief team at the end of the {BETA_DURATION_DAYS}-day beta (which starts {BETA_SETUP_BUFFER_DAYS} days after the final seat is filled). No self-reporting required — we track engagement internally.</p>
           </div>
         </div>
       </div>
@@ -559,25 +834,9 @@ function FoundingPartnerSection() {
   );
 }
 
-function BetaList({ title, items }: { title: string; items: string[] }) {
-  return (
-    <div className="rounded-[1.2rem] border border-white/12 bg-white/[0.035] p-4 sm:rounded-[1.4rem] sm:p-5">
-      <h3 className="text-base font-semibold tracking-tight text-white sm:text-lg">{title}</h3>
-      <ul className="mt-3 grid gap-2.5 sm:mt-4 sm:gap-3">
-        {items.map((item) => (
-          <li key={item} className="flex gap-3 text-sm font-semibold leading-6 text-white/76">
-            <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-[hsl(var(--pb-mint))]" />
-            <span>{item}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
 function PricingPathSection() {
   return (
-    <section id="pricing-path" className="pb-section">
+    <section className="pb-section">
       <div className="pb-container">
         <div className="mx-auto max-w-3xl text-center">
           <span className="pb-eyebrow"><TimerReset className="h-3.5 w-3.5" /> Start manual. Automate later.</span>
@@ -616,10 +875,8 @@ function FinalCta() {
             <h2 className="pb-section-title mt-5 text-white">Send one link. Get a usable brief.</h2>
             <p className="pb-copy mx-auto mt-4 max-w-2xl text-base sm:text-lg">Give customers a clear path, give your team a clean packet, and stop turning every quote into a photo scavenger hunt.</p>
             <div className="mt-6 flex flex-col justify-center gap-2.5 sm:flex-row sm:gap-3">
-              <Button asChild size="xl" variant="pb-primary">
-                <NavLink to={signupCtaTarget()} onClick={() => trackEvent("cta_click", { location: "final", label: "primary" })}>
-                  {signupCtaLabel()} <ArrowRight className="ml-1 h-4 w-4" />
-                </NavLink>
+              <Button size="xl" variant="pb-primary" onClick={() => document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" })}>
+                Apply for beta access <ArrowRight className="ml-1 h-4 w-4" />
               </Button>
               <Button asChild size="xl" variant="pb-secondary">
                 <NavLink to="/pricing">See plans</NavLink>
@@ -630,5 +887,35 @@ function FinalCta() {
         </div>
       </div>
     </section>
+  );
+}
+
+/* ── Helpers ─────────────────────────────────────────────── */
+
+function BenefitList({ title, items }: { title: string; items: string[] }) {
+  return (
+    <div className="rounded-[1.2rem] border border-white/12 bg-white/[0.035] p-4 sm:rounded-[1.4rem] sm:p-5">
+      <h3 className="text-base font-semibold tracking-tight text-white sm:text-lg">{title}</h3>
+      <ul className="mt-3 grid gap-2.5 sm:mt-4 sm:gap-3">
+        {items.map((item) => (
+          <li key={item} className="flex gap-3 text-sm font-semibold leading-6 text-white/76">
+            <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-[hsl(var(--pb-mint))]" />
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function Field({ id, label, required, children }: { id: string; label: string; required?: boolean; children: React.ReactNode }) {
+  return (
+    <div>
+      <Label htmlFor={id} className="mb-1 inline-block text-[13px] text-white/75">
+        {label}
+        {required && <span className="ml-0.5 text-[hsl(var(--pb-lavender))]">*</span>}
+      </Label>
+      {children}
+    </div>
   );
 }

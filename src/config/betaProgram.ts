@@ -3,7 +3,7 @@
  *
  * Single source of truth for duration, cohort size, reward tiers, partner
  * benefits/expectations, and confirmation copy. Consumed by the public
- * /betalist page and internal admin surfaces.
+ * landing page and internal admin surfaces.
  */
 
 // ── Program parameters ───────────────────────────────────────────────

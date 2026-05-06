@@ -51,7 +51,7 @@ export default function SignupPage() {
   }, [token]);
 
   if (!token && INVITE_ONLY_BETA) {
-    return <Navigate to="/betalist" replace />;
+    return <Navigate to="/" replace />;
   }
 
   const [state, setState] = useState<ValidationState>({ kind: "loading" });
@@ -200,7 +200,7 @@ export default function SignupPage() {
             </p>
             <div className="mt-6 flex flex-col gap-2">
               <Button asChild>
-                <NavLink to="/betalist">Apply for beta</NavLink>
+                <NavLink to="/#apply">Apply for beta</NavLink>
               </Button>
               <Button asChild variant="ghost">
                 <NavLink to="/auth">I already have an account — sign in</NavLink>

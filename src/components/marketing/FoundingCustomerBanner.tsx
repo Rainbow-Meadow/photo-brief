@@ -26,7 +26,7 @@ export function FoundingCustomerBanner() {
           className="shrink-0 rounded-full"
         >
           <NavLink
-            to="/betalist?interest=founding-partner"
+            to="/#apply?interest=founding-partner"
             onClick={() => trackEvent("cta_click", { location: "founding_banner", label: "apply_founding_partner" })}
           >
             Apply for beta <ArrowRight className="ml-1 h-4 w-4" />
