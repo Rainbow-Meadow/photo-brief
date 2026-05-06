@@ -1,52 +1,29 @@
 
-## Transactional Email Audit Report
+## Goal
 
-### Templates (9 registered)
+Make `/betalist` the primary founding beta application page. All CTAs that currently point to `/waitlist` will point to `/betalist` instead. The `/waitlist` route will redirect to `/betalist` for backward compatibility.
 
-| Template | Trigger | Wired? | Voice OK? | Issue |
-|----------|---------|--------|-----------|-------|
-| `waitlist-confirmation` | waitlist-submit edge fn | Yes | Yes | -- |
-| `waitlist-admin-notification` | waitlist-submit edge fn | Yes | Yes | -- |
-| `recipient-request-link` | send-recipient-message edge fn | Yes | Fix needed | CTA says "Open PhotoBrief" -- recipients don't know what that is |
-| `recipient-reminder` | send-recipient-message edge fn | Yes | Yes | -- |
-| `submission-received` | notify-event edge fn | Partial | Yes | notify-event exists but no DB trigger fires it |
-| `customer-submission-confirmation` | notify-event edge fn | Partial | Yes | Same -- no DB trigger fires notify-event |
-| `business-request-ready` | send-recipient-message edge fn | Yes | Yes | -- |
-| `workspace-welcome` | notify-event (user_signup) | Dead | Yes | No DB trigger fires `user_signup` event |
-| `founding-partner-welcome` | None | Dead | Yes | Never invoked anywhere |
+## Changes
 
-### Auth Templates (6)
-All wired correctly via `auth-email-hook`. Brand voice is consistent. No issues.
+### 1. Update `src/config/access.ts`
+- Change `signupCtaTarget()` to return `"/betalist"` instead of `"/waitlist"`
+- Change `planCtaTarget()` to return `/betalist?interest=...` instead of `/waitlist?interest=...`
 
-### Fixes
+### 2. Update `src/components/marketing/FoundingCustomerBanner.tsx`
+- Change NavLink target from `/waitlist?interest=founding-partner` to `/betalist?interest=founding-partner`
 
-#### 1. Recipient CTA button text
-Change "Open PhotoBrief" to "Take your photos" on `recipient-request-link`. Matches the action-oriented tone used in `recipient-reminder` ("Send your photos") and the microcopy ("I'll walk you through a few quick photos").
+### 3. Update `src/pages/BetaInvite.tsx`
+- Change fallback redirect from `/waitlist` to `/betalist`
 
-#### 2. Wire `submission-received` and `customer-submission-confirmation` via DB trigger
-Create a DB trigger on `submissions` INSERT that calls `notify-event` with `{ event: 'submission_received', submission_id }` via `pg_net`. This makes both the business notification and customer confirmation emails fire automatically when a submission is created -- no client-side invocation needed.
+### 4. Update `src/pages/Auth.tsx` and `src/pages/Signup.tsx`
+- Any `/waitlist` references redirect to `/betalist` instead
 
-#### 3. Wire `workspace-welcome` via DB trigger
-Create a DB trigger on `profiles` INSERT that calls `notify-event` with `{ event: 'user_signup', user_id }` via `pg_net`. This sends the welcome email automatically when a new user signs up.
+### 5. Update `src/pages/Waitlist.tsx` to redirect
+- Replace the full waitlist page with a simple redirect to `/betalist` (preserving query params)
 
-#### 4. Wire `founding-partner-welcome`
-Add a `founding_partner_accepted` event to `notify-event`. Create a DB trigger on `workspace_subscriptions` when `is_founding_pro` is set to true, firing the founding partner welcome email. If the founding partner flow is handled manually (admin-driven), add the invocation to the admin acceptance flow instead.
+### 6. Update `src/App.tsx`
+- Keep `/waitlist` route but point it to a redirect component
+- Ensure `/betalist` route stays outside `MarketingLayout` (it already is)
 
-#### 5. Stub in `notificationService.ts`
-The TODO on line 155 (`// TODO(Phase 10): invoke send-transactional-email edge fn.`) indicates planned but unwired notification emails. This is a known gap -- not blocking, but noted for future work.
-
-### Pipeline Health Summary
-
-- **Fully wired and sending**: 5 of 9 templates (waitlist pair, recipient pair, business-request-ready)
-- **Template exists, trigger exists, but no DB hook**: 3 templates (submission-received, customer-submission-confirmation, workspace-welcome) -- the notify-event edge function handles them, but nothing calls it
-- **Dead (no trigger at all)**: 1 template (founding-partner-welcome)
-- **Auth emails**: All 6 fully wired
-- **Brand voice**: Consistent across all templates except one CTA button
-
-### Files to modify
-
-- `supabase/functions/_shared/transactional-email-templates/recipient-request-link.tsx` -- CTA text fix
-- New migration: DB triggers for `submissions` INSERT and `profiles` INSERT to call `notify-event` via `pg_net`
-- `supabase/functions/notify-event/index.ts` -- Add `founding_partner_accepted` event handler
-- New migration: DB trigger on `workspace_subscriptions` for founding partner welcome
-- Deploy: `notify-event`, `send-transactional-email`, `preview-transactional-email`
+### 7. Update `public/_redirects`
+- Change the `/waitlist` line to redirect to `/betalist` for Cloudflare Pages
