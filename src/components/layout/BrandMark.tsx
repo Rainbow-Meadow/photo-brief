@@ -17,10 +17,6 @@ interface BrandMarkProps {
   withGlow?: boolean;
   /** Kept for API parity with the old image-based implementation. */
   eager?: boolean;
-  /** @deprecated Use `variant="mark"` instead. */
-  markOnly?: boolean;
-  /** @deprecated Use `tone="light"` instead. */
-  invert?: boolean;
 }
 
 const ALT = "PhotoBrief.ai";
