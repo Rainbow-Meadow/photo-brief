@@ -1,14 +1,16 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
 import {
+  Activity,
   CheckCircle2,
   ChevronRight,
   Loader2,
+  MessageSquare,
   RefreshCw,
   Search,
   Star,
-  X,
-  XCircle,
   Send,
+  Users,
+  XCircle,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -31,6 +33,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { GlassPanel } from "@/components/ui/glass-panel";
 import { supabase } from "@/integrations/supabase/client";
@@ -41,15 +44,8 @@ import { toast } from "@/hooks/use-toast";
 // ---------------------------------------------------------------------------
 
 const STATUSES = [
-  "new",
-  "reviewing",
-  "accepted",
-  "invited",
-  "activated",
-  "active",
-  "stalled",
-  "graduated",
-  "not_fit",
+  "new", "reviewing", "accepted", "invited", "activated",
+  "active", "stalled", "graduated", "not_fit",
 ] as const;
 
 type AppStatus = (typeof STATUSES)[number];
@@ -75,18 +71,44 @@ interface BetaApplication {
   updated_at: string;
 }
 
+interface BetaWorkspaceRow {
+  id: string;
+  workspace_id: string;
+  is_beta_partner: boolean;
+  beta_started_at: string | null;
+  beta_ends_at: string | null;
+  beta_segment: string | null;
+  beta_status: string;
+  founding_partner_discount: number | null;
+  feedback_consent: boolean;
+  case_study_interest: boolean;
+  created_at: string;
+  updated_at: string;
+  // joined
+  workspace_name?: string;
+  // computed stats (loaded separately)
+  requests_created?: number;
+  requests_sent?: number;
+  submissions_completed?: number;
+  templates_created?: number;
+  last_activity_at?: string | null;
+  feedback_count?: number;
+  latest_feedback?: string | null;
+}
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
 function statusVariant(s: string): "default" | "secondary" | "destructive" | "outline" {
   if (s === "active" || s === "activated" || s === "accepted") return "default";
-  if (s === "not_fit") return "destructive";
+  if (s === "not_fit" || s === "churned") return "destructive";
   if (s === "graduated") return "outline";
   return "secondary";
 }
 
-function fmtDate(d: string) {
+function fmtDate(d: string | null | undefined) {
+  if (!d) return "—";
   return new Date(d).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "2-digit" });
 }
 
@@ -96,19 +118,24 @@ function fmtDate(d: string) {
 
 export default function AdminBetaPage() {
   const [apps, setApps] = useState<BetaApplication[]>([]);
+  const [betaWorkspaces, setBetaWorkspaces] = useState<BetaWorkspaceRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [wsLoading, setWsLoading] = useState(false);
 
-  // Filters
+  // Filters (applications)
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [sourceFilter, setSourceFilter] = useState<string>("all");
   const [workflowFilter, setWorkflowFilter] = useState<string>("all");
   const [fitFilter, setFitFilter] = useState<string>("all");
 
-  // Detail drawer
+  // Detail drawer (applications)
   const [selected, setSelected] = useState<BetaApplication | null>(null);
   const [drawerNotes, setDrawerNotes] = useState("");
   const [saving, setSaving] = useState(false);
+
+  // Detail drawer (workspaces)
+  const [selectedWs, setSelectedWs] = useState<BetaWorkspaceRow | null>(null);
 
   // ------ Data fetching ------
   const reload = useCallback(async () => {
@@ -121,9 +148,95 @@ export default function AdminBetaPage() {
     setLoading(false);
   }, []);
 
-  useEffect(() => { reload(); }, [reload]);
+  const reloadWorkspaces = useCallback(async () => {
+    setWsLoading(true);
+    try {
+      // 1. Fetch beta workspace profiles
+      const { data: profiles } = await supabase
+        .from("beta_workspace_profiles")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-  // ------ Derived filter options ------
+      if (!profiles || profiles.length === 0) {
+        setBetaWorkspaces([]);
+        return;
+      }
+
+      const wsIds = profiles.map((p: any) => p.workspace_id);
+
+      // 2. Fetch workspace names
+      const { data: workspaces } = await supabase
+        .from("business_workspaces")
+        .select("id, name")
+        .in("id", wsIds);
+      const nameMap = new Map((workspaces ?? []).map((w: any) => [w.id, w.name]));
+
+      // 3. Fetch request counts per workspace
+      const { data: requests } = await supabase
+        .from("photo_brief_requests")
+        .select("workspace_id, status, created_at")
+        .in("workspace_id", wsIds);
+
+      // 4. Fetch submission counts per workspace
+      const { data: submissions } = await supabase
+        .from("submissions" as any)
+        .select("workspace_id, submitted_at")
+        .in("workspace_id", wsIds)
+        .not("submitted_at", "is", null);
+
+      // 5. Fetch template counts per workspace
+      const { data: guides } = await supabase
+        .from("photo_guides")
+        .select("workspace_id")
+        .in("workspace_id", wsIds)
+        .eq("is_global_template", false);
+
+      // 6. Fetch feedback per workspace
+      const { data: feedback } = await supabase
+        .from("beta_feedback")
+        .select("workspace_id, feedback_text, created_at")
+        .in("workspace_id", wsIds)
+        .order("created_at", { ascending: false });
+
+      // Aggregate
+      const rows: BetaWorkspaceRow[] = profiles.map((p: any) => {
+        const wid = p.workspace_id;
+        const wsRequests = (requests ?? []).filter((r: any) => r.workspace_id === wid);
+        const wsSubs = (submissions ?? []).filter((s: any) => s.workspace_id === wid);
+        const wsGuides = (guides ?? []).filter((g: any) => g.workspace_id === wid);
+        const wsFeedback = (feedback ?? []).filter((f: any) => f.workspace_id === wid);
+
+        const sentStatuses = new Set(["sent", "opened", "in_progress", "needs_customer_action", "submitted", "ready_to_review", "reviewed", "archived"]);
+        const requestsSent = wsRequests.filter((r: any) => sentStatuses.has(r.status)).length;
+
+        // Last activity: most recent request or submission
+        const dates = [
+          ...wsRequests.map((r: any) => r.created_at),
+          ...wsSubs.map((s: any) => s.submitted_at),
+        ].filter(Boolean).sort().reverse();
+
+        return {
+          ...p,
+          workspace_name: nameMap.get(wid) ?? wid,
+          requests_created: wsRequests.length,
+          requests_sent: requestsSent,
+          submissions_completed: wsSubs.length,
+          templates_created: wsGuides.length,
+          last_activity_at: dates[0] ?? null,
+          feedback_count: wsFeedback.length,
+          latest_feedback: wsFeedback[0]?.feedback_text ?? null,
+        } as BetaWorkspaceRow;
+      });
+
+      setBetaWorkspaces(rows);
+    } finally {
+      setWsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { reload(); reloadWorkspaces(); }, [reload, reloadWorkspaces]);
+
+  // ------ Derived filter options (applications) ------
   const sources = useMemo(() => {
     const s = new Set<string>();
     apps.forEach((a) => a.source && s.add(a.source));
@@ -154,7 +267,7 @@ export default function AdminBetaPage() {
     { label: "Graduated", key: "graduated", color: "text-cyan-400" },
   ];
 
-  // ------ Filtered list ------
+  // ------ Filtered applications list ------
   const filtered = useMemo(() => {
     return apps.filter((a) => {
       if (statusFilter !== "all" && a.status !== statusFilter) return false;
@@ -176,7 +289,7 @@ export default function AdminBetaPage() {
     });
   }, [apps, statusFilter, sourceFilter, workflowFilter, fitFilter, search]);
 
-  // ------ Mutations ------
+  // ------ Mutations (applications) ------
   async function updateApp(id: string, patch: Record<string, unknown>) {
     setSaving(true);
     const { error } = await supabase
@@ -189,7 +302,6 @@ export default function AdminBetaPage() {
       return;
     }
     toast({ title: "Updated" });
-    // Optimistic update
     setApps((prev) =>
       prev.map((a) => (a.id === id ? { ...a, ...(patch as Partial<BetaApplication>) } : a))
     );
@@ -200,6 +312,7 @@ export default function AdminBetaPage() {
 
   function openDrawer(app: BetaApplication) {
     setSelected(app);
+    setSelectedWs(null);
     setDrawerNotes(app.notes ?? "");
   }
 
@@ -224,11 +337,11 @@ export default function AdminBetaPage() {
     <div className="container max-w-7xl py-8">
       <PageHeader
         eyebrow="Platform admin"
-        title="Beta applications"
-        description="Review, score, and manage Founding Partner Beta applications."
+        title="Beta program"
+        description="Manage Founding Partner Beta applications and active beta workspaces."
         actions={
-          <Button variant="outline" size="sm" onClick={reload} disabled={loading}>
-            <RefreshCw className={`mr-1.5 h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
+          <Button variant="outline" size="sm" onClick={() => { reload(); reloadWorkspaces(); }} disabled={loading || wsLoading}>
+            <RefreshCw className={`mr-1.5 h-3.5 w-3.5 ${loading || wsLoading ? "animate-spin" : ""}`} />
             Refresh
           </Button>
         }
@@ -244,95 +357,174 @@ export default function AdminBetaPage() {
         ))}
       </div>
 
-      {/* Filters */}
-      <GlassPanel variant="card" className="mt-6 p-4">
-        <div className="mb-4 flex flex-wrap items-center gap-3">
-          <div className="relative flex-1 min-w-[180px] max-w-xs">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search name, email, business…"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 h-9"
-            />
-          </div>
-          <FilterSelect label="Status" value={statusFilter} onChange={setStatusFilter} options={STATUSES as unknown as string[]} />
-          <FilterSelect label="Source" value={sourceFilter} onChange={setSourceFilter} options={sources} />
-          <FilterSelect label="Workflow" value={workflowFilter} onChange={setWorkflowFilter} options={workflowTypes} />
-          <FilterSelect label="Fit" value={fitFilter} onChange={setFitFilter} options={["1","2","3","4","5"]} />
-          <span className="text-xs text-muted-foreground">{filtered.length} of {apps.length}</span>
-        </div>
+      <Tabs defaultValue="applications" className="mt-6">
+        <TabsList>
+          <TabsTrigger value="applications">Applications ({apps.length})</TabsTrigger>
+          <TabsTrigger value="workspaces">
+            <Users className="mr-1.5 h-3.5 w-3.5" />
+            Beta Workspaces ({betaWorkspaces.length})
+          </TabsTrigger>
+        </TabsList>
 
-        {/* Table */}
-        {loading ? (
-          <div className="flex justify-center py-16 text-muted-foreground">
-            <Loader2 className="h-5 w-5 animate-spin" />
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Business</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Workflow</TableHead>
-                  <TableHead>Volume</TableHead>
-                  <TableHead>Source</TableHead>
-                  <TableHead>Fit</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="w-8" />
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filtered.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={9} className="text-center text-sm text-muted-foreground py-12">
-                      No applications match your filters.
-                    </TableCell>
-                  </TableRow>
-                )}
-                {filtered.map((a) => (
-                  <TableRow
-                    key={a.id}
-                    className="cursor-pointer hover:bg-muted/40"
-                    onClick={() => openDrawer(a)}
-                  >
-                    <TableCell className="whitespace-nowrap text-xs text-muted-foreground">
-                      {fmtDate(a.created_at)}
-                    </TableCell>
-                    <TableCell>
-                      <div className="font-medium text-sm">{a.business_name ?? "—"}</div>
-                      {(a.first_name || a.last_name) && (
-                        <div className="text-xs text-muted-foreground">
-                          {[a.first_name, a.last_name].filter(Boolean).join(" ")}
-                        </div>
-                      )}
-                    </TableCell>
-                    <TableCell className="font-mono text-xs">{a.email}</TableCell>
-                    <TableCell className="text-xs">{a.workflow_type ?? "—"}</TableCell>
-                    <TableCell className="text-xs">{a.monthly_photo_volume ?? "—"}</TableCell>
-                    <TableCell className="text-xs">{a.source ?? "—"}</TableCell>
-                    <TableCell>
-                      <FitDots score={a.fit_score} />
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={statusVariant(a.status)} className="text-[10px]">
-                        {a.status.replace("_", " ")}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        )}
-      </GlassPanel>
+        {/* ============================================================ */}
+        {/* Applications tab                                              */}
+        {/* ============================================================ */}
+        <TabsContent value="applications" className="mt-4">
+          <GlassPanel variant="card" className="p-4">
+            <div className="mb-4 flex flex-wrap items-center gap-3">
+              <div className="relative flex-1 min-w-[180px] max-w-xs">
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search name, email, business…"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="pl-9 h-9"
+                />
+              </div>
+              <FilterSelect label="Status" value={statusFilter} onChange={setStatusFilter} options={STATUSES as unknown as string[]} />
+              <FilterSelect label="Source" value={sourceFilter} onChange={setSourceFilter} options={sources} />
+              <FilterSelect label="Workflow" value={workflowFilter} onChange={setWorkflowFilter} options={workflowTypes} />
+              <FilterSelect label="Fit" value={fitFilter} onChange={setFitFilter} options={["1","2","3","4","5"]} />
+              <span className="text-xs text-muted-foreground">{filtered.length} of {apps.length}</span>
+            </div>
 
-      {/* Detail drawer */}
+            {loading ? (
+              <div className="flex justify-center py-16 text-muted-foreground">
+                <Loader2 className="h-5 w-5 animate-spin" />
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Date</TableHead>
+                      <TableHead>Business</TableHead>
+                      <TableHead>Email</TableHead>
+                      <TableHead>Workflow</TableHead>
+                      <TableHead>Volume</TableHead>
+                      <TableHead>Source</TableHead>
+                      <TableHead>Fit</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="w-8" />
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filtered.length === 0 && (
+                      <TableRow>
+                        <TableCell colSpan={9} className="text-center text-sm text-muted-foreground py-12">
+                          No applications match your filters.
+                        </TableCell>
+                      </TableRow>
+                    )}
+                    {filtered.map((a) => (
+                      <TableRow
+                        key={a.id}
+                        className="cursor-pointer hover:bg-muted/40"
+                        onClick={() => openDrawer(a)}
+                      >
+                        <TableCell className="whitespace-nowrap text-xs text-muted-foreground">
+                          {fmtDate(a.created_at)}
+                        </TableCell>
+                        <TableCell>
+                          <div className="font-medium text-sm">{a.business_name ?? "—"}</div>
+                          {(a.first_name || a.last_name) && (
+                            <div className="text-xs text-muted-foreground">
+                              {[a.first_name, a.last_name].filter(Boolean).join(" ")}
+                            </div>
+                          )}
+                        </TableCell>
+                        <TableCell className="font-mono text-xs">{a.email}</TableCell>
+                        <TableCell className="text-xs">{a.workflow_type ?? "—"}</TableCell>
+                        <TableCell className="text-xs">{a.monthly_photo_volume ?? "—"}</TableCell>
+                        <TableCell className="text-xs">{a.source ?? "—"}</TableCell>
+                        <TableCell><FitDots score={a.fit_score} /></TableCell>
+                        <TableCell>
+                          <Badge variant={statusVariant(a.status)} className="text-[10px]">
+                            {a.status.replace("_", " ")}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
+          </GlassPanel>
+        </TabsContent>
+
+        {/* ============================================================ */}
+        {/* Beta Workspaces tab                                           */}
+        {/* ============================================================ */}
+        <TabsContent value="workspaces" className="mt-4">
+          <GlassPanel variant="card" className="p-4">
+            {wsLoading ? (
+              <div className="flex justify-center py-16 text-muted-foreground">
+                <Loader2 className="h-5 w-5 animate-spin" />
+              </div>
+            ) : betaWorkspaces.length === 0 ? (
+              <p className="py-12 text-center text-sm text-muted-foreground">
+                No beta workspace profiles yet. Activate a beta partner to see tracking here.
+              </p>
+            ) : (
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Workspace</TableHead>
+                      <TableHead>Segment</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="text-right">Requests</TableHead>
+                      <TableHead className="text-right">Sent</TableHead>
+                      <TableHead className="text-right">Submissions</TableHead>
+                      <TableHead className="text-right">Templates</TableHead>
+                      <TableHead className="text-right">Feedback</TableHead>
+                      <TableHead>Last activity</TableHead>
+                      <TableHead className="w-8" />
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {betaWorkspaces.map((ws) => (
+                      <TableRow
+                        key={ws.id}
+                        className="cursor-pointer hover:bg-muted/40"
+                        onClick={() => { setSelectedWs(ws); setSelected(null); }}
+                      >
+                        <TableCell className="font-medium text-sm">{ws.workspace_name}</TableCell>
+                        <TableCell className="text-xs">{ws.beta_segment ?? "—"}</TableCell>
+                        <TableCell>
+                          <Badge variant={statusVariant(ws.beta_status)} className="text-[10px]">
+                            {ws.beta_status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-right tabular-nums text-sm">{ws.requests_created ?? 0}</TableCell>
+                        <TableCell className="text-right tabular-nums text-sm">{ws.requests_sent ?? 0}</TableCell>
+                        <TableCell className="text-right tabular-nums text-sm">{ws.submissions_completed ?? 0}</TableCell>
+                        <TableCell className="text-right tabular-nums text-sm">{ws.templates_created ?? 0}</TableCell>
+                        <TableCell className="text-right tabular-nums text-sm">
+                          {ws.feedback_count ?? 0}
+                        </TableCell>
+                        <TableCell className="whitespace-nowrap text-xs text-muted-foreground">
+                          {fmtDate(ws.last_activity_at)}
+                        </TableCell>
+                        <TableCell>
+                          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
+          </GlassPanel>
+        </TabsContent>
+      </Tabs>
+
+      {/* ============================================================ */}
+      {/* Application detail drawer                                     */}
+      {/* ============================================================ */}
       <Sheet open={!!selected} onOpenChange={(o) => !o && setSelected(null)}>
         <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
           {selected && (
@@ -358,30 +550,14 @@ export default function AdminBetaPage() {
                       <option key={s} value={s}>{s.replace("_", " ")}</option>
                     ))}
                   </select>
-
                   <div className="mt-3 flex flex-wrap gap-2">
-                    <Button
-                      size="sm"
-                      variant="default"
-                      disabled={saving || selected.status === "accepted"}
-                      onClick={() => setStatus(selected.id, "accepted")}
-                    >
+                    <Button size="sm" variant="default" disabled={saving || selected.status === "accepted"} onClick={() => setStatus(selected.id, "accepted")}>
                       <CheckCircle2 className="mr-1.5 h-3.5 w-3.5" /> Accept
                     </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      disabled={saving || selected.status === "invited"}
-                      onClick={() => setStatus(selected.id, "invited")}
-                    >
+                    <Button size="sm" variant="outline" disabled={saving || selected.status === "invited"} onClick={() => setStatus(selected.id, "invited")}>
                       <Send className="mr-1.5 h-3.5 w-3.5" /> Mark invited
                     </Button>
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      disabled={saving || selected.status === "not_fit"}
-                      onClick={() => setStatus(selected.id, "not_fit")}
-                    >
+                    <Button size="sm" variant="destructive" disabled={saving || selected.status === "not_fit"} onClick={() => setStatus(selected.id, "not_fit")}>
                       <XCircle className="mr-1.5 h-3.5 w-3.5" /> Not fit
                     </Button>
                   </div>
@@ -392,29 +568,13 @@ export default function AdminBetaPage() {
                   <Label className="text-xs text-muted-foreground mb-2 block">Fit score</Label>
                   <div className="flex gap-1">
                     {[1, 2, 3, 4, 5].map((n) => (
-                      <button
-                        key={n}
-                        disabled={saving}
-                        onClick={() => setFitScore(selected.id, n)}
-                        className="p-1 rounded hover:bg-muted/60 transition-colors"
-                      >
-                        <Star
-                          className={`h-5 w-5 ${
-                            (selected.fit_score ?? 0) >= n
-                              ? "fill-amber-400 text-amber-400"
-                              : "text-muted-foreground/40"
-                          }`}
-                        />
+                      <button key={n} disabled={saving} onClick={() => setFitScore(selected.id, n)} className="p-1 rounded hover:bg-muted/60 transition-colors">
+                        <Star className={`h-5 w-5 ${(selected.fit_score ?? 0) >= n ? "fill-amber-400 text-amber-400" : "text-muted-foreground/40"}`} />
                       </button>
                     ))}
-                    {selected.fit_score && (
-                      <button
-                        className="ml-2 text-xs text-muted-foreground hover:text-foreground"
-                        onClick={() => setFitScore(selected.id, 0)}
-                      >
-                        Clear
-                      </button>
-                    )}
+                    {selected.fit_score ? (
+                      <button className="ml-2 text-xs text-muted-foreground hover:text-foreground" onClick={() => setFitScore(selected.id, 0)}>Clear</button>
+                    ) : null}
                   </div>
                 </div>
 
@@ -441,21 +601,79 @@ export default function AdminBetaPage() {
                 {/* Notes */}
                 <div>
                   <Label className="text-xs text-muted-foreground mb-1 block">Admin notes</Label>
-                  <Textarea
-                    value={drawerNotes}
-                    onChange={(e) => setDrawerNotes(e.target.value)}
-                    rows={4}
-                    placeholder="Internal notes about this applicant…"
-                  />
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="mt-2"
-                    disabled={saving || drawerNotes === (selected.notes ?? "")}
-                    onClick={saveNotes}
-                  >
+                  <Textarea value={drawerNotes} onChange={(e) => setDrawerNotes(e.target.value)} rows={4} placeholder="Internal notes about this applicant…" />
+                  <Button size="sm" variant="outline" className="mt-2" disabled={saving || drawerNotes === (selected.notes ?? "")} onClick={saveNotes}>
                     Save notes
                   </Button>
+                </div>
+              </div>
+            </>
+          )}
+        </SheetContent>
+      </Sheet>
+
+      {/* ============================================================ */}
+      {/* Workspace detail drawer                                       */}
+      {/* ============================================================ */}
+      <Sheet open={!!selectedWs} onOpenChange={(o) => !o && setSelectedWs(null)}>
+        <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
+          {selectedWs && (
+            <>
+              <SheetHeader>
+                <SheetTitle className="text-lg">{selectedWs.workspace_name}</SheetTitle>
+                <SheetDescription>Beta workspace tracking</SheetDescription>
+              </SheetHeader>
+
+              <div className="mt-6 space-y-6">
+                {/* Status badge */}
+                <div className="flex items-center gap-3">
+                  <Badge variant={statusVariant(selectedWs.beta_status)} className="text-xs">
+                    {selectedWs.beta_status}
+                  </Badge>
+                  {selectedWs.beta_segment && (
+                    <Badge variant="outline" className="text-xs">{selectedWs.beta_segment}</Badge>
+                  )}
+                  {selectedWs.founding_partner_discount ? (
+                    <Badge variant="outline" className="text-xs">{selectedWs.founding_partner_discount}% discount</Badge>
+                  ) : null}
+                </div>
+
+                {/* Dates */}
+                <div className="grid grid-cols-2 gap-y-3 gap-x-4 text-sm">
+                  <Detail label="Beta started" value={fmtDate(selectedWs.beta_started_at)} />
+                  <Detail label="Beta ends" value={fmtDate(selectedWs.beta_ends_at)} />
+                  <Detail label="Last activity" value={fmtDate(selectedWs.last_activity_at)} />
+                  <Detail label="Feedback consent" value={selectedWs.feedback_consent ? "Yes" : "No"} />
+                  <Detail label="Case study interest" value={selectedWs.case_study_interest ? "Yes" : "No"} />
+                </div>
+
+                {/* Usage stats */}
+                <div>
+                  <Label className="text-xs text-muted-foreground mb-2 block">Usage</Label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <StatCard icon={<Activity className="h-3.5 w-3.5" />} label="Requests created" value={selectedWs.requests_created ?? 0} />
+                    <StatCard icon={<Send className="h-3.5 w-3.5" />} label="Requests sent" value={selectedWs.requests_sent ?? 0} />
+                    <StatCard icon={<CheckCircle2 className="h-3.5 w-3.5" />} label="Submissions" value={selectedWs.submissions_completed ?? 0} />
+                    <StatCard icon={<Users className="h-3.5 w-3.5" />} label="Templates" value={selectedWs.templates_created ?? 0} />
+                  </div>
+                </div>
+
+                {/* Feedback */}
+                <div>
+                  <Label className="text-xs text-muted-foreground mb-2 block">
+                    Feedback ({selectedWs.feedback_count ?? 0})
+                  </Label>
+                  {selectedWs.latest_feedback ? (
+                    <div className="rounded-md border border-border/50 bg-muted/30 px-3 py-2.5">
+                      <div className="flex items-start gap-2">
+                        <MessageSquare className="mt-0.5 h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                        <p className="text-sm text-foreground leading-relaxed">{selectedWs.latest_feedback}</p>
+                      </div>
+                      <p className="mt-1 text-[11px] text-muted-foreground">Latest feedback</p>
+                    </div>
+                  ) : (
+                    <p className="text-xs text-muted-foreground">No feedback submitted yet.</p>
+                  )}
                 </div>
               </div>
             </>
@@ -470,25 +688,11 @@ export default function AdminBetaPage() {
 // Sub-components
 // ---------------------------------------------------------------------------
 
-function FilterSelect({
-  label,
-  value,
-  onChange,
-  options,
-}: {
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-  options: string[];
-}) {
+function FilterSelect({ label, value, onChange, options }: { label: string; value: string; onChange: (v: string) => void; options: string[] }) {
   return (
     <div className="flex items-center gap-1.5">
       <Label className="text-[11px] text-muted-foreground whitespace-nowrap">{label}</Label>
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="h-9 rounded-md border border-input bg-background px-2 text-xs"
-      >
+      <select value={value} onChange={(e) => onChange(e.target.value)} className="h-9 rounded-md border border-input bg-background px-2 text-xs">
         <option value="all">All</option>
         {options.map((o) => (
           <option key={o} value={o}>{o.replace("_", " ")}</option>
@@ -503,12 +707,7 @@ function FitDots({ score }: { score: number | null }) {
   return (
     <div className="flex gap-0.5">
       {[1, 2, 3, 4, 5].map((n) => (
-        <Star
-          key={n}
-          className={`h-3 w-3 ${
-            score >= n ? "fill-amber-400 text-amber-400" : "text-muted-foreground/30"
-          }`}
-        />
+        <Star key={n} className={`h-3 w-3 ${score >= n ? "fill-amber-400 text-amber-400" : "text-muted-foreground/30"}`} />
       ))}
     </div>
   );
@@ -520,12 +719,22 @@ function Detail({ label, value, link }: { label: string; value: string | null | 
     <div>
       <span className="text-[11px] text-muted-foreground block">{label}</span>
       {link ? (
-        <a href={value.startsWith("http") ? value : `https://${value}`} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline break-all">
-          {value}
-        </a>
+        <a href={value.startsWith("http") ? value : `https://${value}`} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline break-all">{value}</a>
       ) : (
         <span className="break-all">{value}</span>
       )}
+    </div>
+  );
+}
+
+function StatCard({ icon, label, value }: { icon: React.ReactNode; label: string; value: number }) {
+  return (
+    <div className="flex items-center gap-2.5 rounded-md border border-border/40 bg-muted/20 px-3 py-2.5">
+      <span className="text-muted-foreground">{icon}</span>
+      <div>
+        <span className="text-lg font-semibold tabular-nums text-foreground">{value}</span>
+        <span className="ml-1.5 text-[11px] text-muted-foreground">{label}</span>
+      </div>
     </div>
   );
 }
