@@ -211,7 +211,7 @@ export default function BetaListPage() {
   /* ── Post-submission thank-you ─────────────────────────── */
   if (done) {
     return (
-      <div className="pb-landing min-h-screen">
+      <>
         <SEOHead
           title="Application received — PhotoBrief.ai"
           description="Your Founding Partner Beta application has been received."
