@@ -30,6 +30,7 @@ import { PageMeta } from "@/hooks/seo/usePageMeta";
 import { buildHowToJsonLd } from "@/hooks/seo/buildHowToJsonLd";
 import { buildFaqJsonLd } from "@/hooks/seo/buildFaqJsonLd";
 import { BrandMark } from "@/components/layout/BrandMark";
+import { FreeProEligibilityModal } from "@/components/marketing/FreeProEligibilityModal";
 import { howItWorksSteps } from "@/components/marketing/HowItWorksSteps";
 import { InteractiveHeroBriefAssembly } from "@/components/marketing/InteractiveHeroBriefAssembly";
 import { faqItems } from "@/features/help/content/faq";
@@ -518,6 +519,17 @@ function FoundingPartnerSection() {
                 <Gift className="h-3.5 w-3.5 text-[hsl(var(--pb-mint))]" /> All {BETA_TOTAL_PARTNERS} partners earn rewards
               </span>
             </div>
+            <FreeProEligibilityModal>
+              {(open) => (
+                <button
+                  type="button"
+                  onClick={open}
+                  className="mt-4 text-xs font-semibold text-[hsl(var(--pb-lavender))] underline decoration-[hsl(var(--pb-lavender)/0.4)] underline-offset-2 transition hover:text-white hover:decoration-white/60"
+                >
+                  Terms &amp; eligibility →
+                </button>
+              )}
+            </FreeProEligibilityModal>
           </div>
         </div>
 

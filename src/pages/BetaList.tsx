@@ -31,6 +31,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { BrandMark } from "@/components/layout/BrandMark";
 import { InteractiveHeroBriefAssembly } from "@/components/marketing/InteractiveHeroBriefAssembly";
+import { FreeProEligibilityModal } from "@/components/marketing/FreeProEligibilityModal";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { conversions, trackEvent } from "@/lib/analytics";
@@ -360,10 +361,21 @@ export default function BetaListPage() {
                   <Gift className="h-3.5 w-3.5 text-[hsl(var(--pb-mint))]" /> All {BETA_TOTAL_PARTNERS} partners earn rewards
                 </span>
               </div>
+              <FreeProEligibilityModal>
+                {(open) => (
+                  <button
+                    type="button"
+                    onClick={open}
+                    className="mt-4 text-xs font-semibold text-[hsl(var(--pb-lavender))] underline decoration-[hsl(var(--pb-lavender)/0.4)] underline-offset-2 transition hover:text-white hover:decoration-white/60"
+                  >
+                    Terms &amp; eligibility →
+                  </button>
+                )}
+              </FreeProEligibilityModal>
               <Button
                 size="lg"
                 variant="pb-primary"
-                className="mt-6"
+                className="mt-4"
                 onClick={() => { trackEvent("betalist_free_pro_cta_clicked", utm); document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" }); }}
               >
                 Apply now — limited to {BETA_TOTAL_PARTNERS} spots <ArrowRight className="ml-1 h-4 w-4" />
