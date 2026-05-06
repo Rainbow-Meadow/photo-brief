@@ -31,6 +31,7 @@ import BetaInvitePage from "@/pages/BetaInvite";
 import BetaPortfolioPage from "@/pages/BetaPortfolio";
 import IntakeBadgePage from "@/pages/IntakeBadge";
 import BetaListPage from "@/pages/BetaList";
+import BetaWelcomePage from "@/pages/BetaWelcome";
 import PrivacyPage from "@/pages/Privacy";
 import TermsPage from "@/pages/Terms";
 import NotFound from "@/pages/NotFound";
@@ -103,6 +104,7 @@ const App = () => (
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/beta-invite/:token" element={<BetaInvitePage />} />
             <Route path="/betalist" element={<BetaListPage />} />
+            <Route path="/welcome" element={<BetaWelcomePage />} />
           </Route>
 
           {/* Lightweight embeddable brand surface for customer websites. */}
