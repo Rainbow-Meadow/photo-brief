@@ -692,6 +692,7 @@ export default function BetaListPage() {
         </div>
       </section>
 
+      <section className="pb-section-tight">
         <div className="pb-container">
           <div className="mx-auto grid max-w-3xl gap-4 sm:grid-cols-3">
             {trustPoints.map(({ icon: Icon, title, desc }) => (
