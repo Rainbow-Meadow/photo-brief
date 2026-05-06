@@ -41,7 +41,7 @@ const RecipientRequestLinkEmail = ({
                 account needed.
               </Text>
               <Section style={s.ctaWrap}>
-                <Button href={cta} style={s.button}>Open PhotoBrief</Button>
+                <Button href={cta} style={s.button}>Take your photos</Button>
               </Section>
               <Text style={s.textSmall}>
                 Or open this link directly:{' '}
