@@ -155,7 +155,7 @@ export default function BetaWelcomePage() {
         <section className="pb-section relative isolate">
           <div className="pb-lens-field" />
           <div className="pb-container relative z-10 mx-auto max-w-lg text-center">
-            <BrandMark variant="stacked" tone="light" size={72} eager withGlow />
+            <BrandMark variant="stacked" tone="light" size={72} eager />
             <div className="mx-auto mt-8 flex h-16 w-16 items-center justify-center rounded-full bg-[hsl(var(--pb-mint)/0.12)]">
               <CheckCircle2 className="h-8 w-8 text-[hsl(var(--pb-mint))]" />
             </div>
@@ -207,8 +207,8 @@ export default function BetaWelcomePage() {
             <div className="mb-3 sm:mb-5">
               <div className="relative inline-flex items-center justify-center">
                 <div aria-hidden className="pointer-events-none absolute h-28 w-28 rounded-full bg-[hsl(var(--pb-violet)/0.35)] blur-[50px] sm:h-48 sm:w-48 sm:blur-[80px]" />
-                <BrandMark variant="mark" size={56} withGlow eager className="relative sm:hidden" />
-                <BrandMark variant="mark" size={120} withGlow eager className="relative hidden sm:inline-flex" />
+                <BrandMark variant="mark" size={56} eager className="relative sm:hidden" />
+                <BrandMark variant="mark" size={120} eager className="relative hidden sm:inline-flex" />
               </div>
             </div>
 

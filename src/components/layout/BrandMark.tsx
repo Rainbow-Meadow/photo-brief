@@ -13,8 +13,6 @@ interface BrandMarkProps {
   tone?: BrandTone;
   /** Visual height in px. Defaults to 28. */
   size?: number;
-  /** Drop a soft brand glow behind the mark — for dark hero placements. */
-  withGlow?: boolean;
   /** Kept for API parity with the old image-based implementation. */
   eager?: boolean;
 }
@@ -26,11 +24,8 @@ const WORDMARK = "PhotoBrief.ai";
 const WORDMARK_GRADIENT =
   "var(--pb-wordmark-gradient, linear-gradient(135deg, #f6f0ff 0%, #e7d4ff 24%, #c99aff 52%, #9f73ff 78%, #7f55ff 100%))";
 
-function MarkImage({ size, withGlow, eager }: { size: number; withGlow: boolean; eager?: boolean }) {
-  const imgClass = cn(
-    "block select-none object-contain shrink-0",
-    withGlow && "drop-shadow-[0_8px_28px_hsl(var(--primary)/0.45)]",
-  );
+function MarkImage({ size, eager }: { size: number; eager?: boolean }) {
+  const imgClass = "block select-none object-contain shrink-0";
   const imgStyle = { height: size, width: size } satisfies CSSProperties;
 
   return (
@@ -70,7 +65,6 @@ export function BrandMark({
   className,
   variant = "horizontal",
   size = 28,
-  withGlow = false,
   eager,
 }: BrandMarkProps) {
   const resolvedVariant: BrandVariant = variant;
@@ -78,7 +72,7 @@ export function BrandMark({
   if (resolvedVariant === "mark" || resolvedVariant === "primary") {
     return (
       <span role="img" aria-label={ALT} className={cn("inline-flex items-center justify-center", className)}>
-        <MarkImage size={size} withGlow={withGlow} eager={eager} />
+        <MarkImage size={size} eager={eager} />
       </span>
     );
   }
@@ -98,7 +92,7 @@ export function BrandMark({
         aria-label={ALT}
         className={cn("inline-flex flex-col items-center justify-center gap-2 min-w-0", className)}
       >
-        <MarkImage size={size} withGlow={withGlow} eager={eager} />
+        <MarkImage size={size} eager={eager} />
         <Wordmark size={Math.max(14, size * 0.26)} />
       </span>
     );
@@ -106,7 +100,7 @@ export function BrandMark({
 
   return (
     <span role="img" aria-label={ALT} className={cn("inline-flex items-center gap-2.5 min-w-0", className)}>
-      <MarkImage size={size} withGlow={withGlow} eager={eager} />
+      <MarkImage size={size} eager={eager} />
       <Wordmark size={Math.max(16, size * 0.72)} compact />
     </span>
   );
