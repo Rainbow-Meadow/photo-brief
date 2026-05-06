@@ -104,6 +104,7 @@ const App = () => (
 
           {/* Lightweight embeddable brand surface for customer websites. */}
           <Route path="/badge/intake" element={<IntakeBadgePage />} />
+          <Route path="/betalist" element={<BetaListPage />} />
 
           {/* Onboarding + invite acceptance (no sidebar, but still auth-only).
               Onboarding intentionally skips the onboarding gate to avoid loops. */}
