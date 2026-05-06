@@ -111,7 +111,7 @@ const loosePhotos = [
 
 const workflowSteps = [
   { icon: Link2, eyebrow: "Request", title: "Send one guided link", body: "Choose a template, send the link by text or email, or copy the branded request into any customer thread." },
-  { icon: Camera, eyebrow: "Capture", title: "Customers take the right shots", body: "They see one mobile prompt at a time, with plain instructions instead of a vague "send a few photos."" },
+  { icon: Camera, eyebrow: "Capture", title: "Customers take the right shots", body: "They see one mobile prompt at a time, with plain instructions instead of a vague \u201csend a few photos.\u201d" },
   { icon: Route, eyebrow: "Check", title: "Obvious problems get flagged", body: "PhotoBrief calls out missing, unclear, or review-needed shots before your team has to sort through them." },
   { icon: FileCheck2, eyebrow: "Brief", title: "Your team gets a usable packet", body: "Photos, notes, customer context, and next-step status land together for quoting, dispatch, review, or documentation." },
 ];
