@@ -2,7 +2,10 @@
  * Navigation link integrity check.
  *
  * Validates that every link in the marketing nav config, sidebar, mobile tab bar,
- * and settings sheet points to a route that exists in App.tsx.
+ * and settings sheet points to a route defined in `@/config/routePaths`.
+ *
+ * The route list is the same one App.tsx uses, so this test stays in sync
+ * with the router automatically — no manual duplication.
  *
  * Run: `npx vitest run src/test/nav-links.test.ts`
  */
@@ -12,55 +15,9 @@ import {
   legalLinks,
   footerOnlyLinks,
 } from "@/config/marketingNav";
+import { routePaths, routePathSet } from "@/config/routePaths";
 
-// ── Route table ────────────────────────────────────────────────────────
-// Keep this in sync with App.tsx. Static paths only — dynamic segments
-// (e.g. /requests/:id) are listed as patterns. Hash anchors are stripped
-// before matching.
-const definedRoutes = new Set([
-  "/",
-  "/pricing",
-  "/for-ai-agents",
-  "/privacy",
-  "/terms",
-  "/auth",
-  "/forgot-password",
-  "/reset-password",
-  "/unsubscribe",
-  "/help",
-  "/signup",
-  "/beta-invite/:token",
-  "/welcome",
-  "/badge/intake",
-  "/onboarding",
-  "/invite/:token",
-  "/dashboard",
-  "/requests",
-  "/requests/new",
-  "/requests/:id",
-  "/submissions/:id",
-  "/guides",
-  "/guides/new",
-  "/guides/:id",
-  "/customers",
-  "/customers/:id",
-  "/intake",
-  "/settings/brand",
-  "/settings/team",
-  "/settings/templates",
-  "/settings/sms",
-  "/settings/integrations",
-  "/settings/billing",
-  "/app/help",
-  "/support",
-  "/admin/invites",
-  "/admin/ai-rerun",
-  "/admin/command",
-  "/admin/beta",
-  "/i/:token",
-  "/r/:token",
-  "/r/:token/done",
-]);
+// ── Route matching ─────────────────────────────────────────────────────
 
 /** Strip hash fragment and query string, returning just the pathname. */
 function toPathname(link: string): string {
@@ -70,9 +27,10 @@ function toPathname(link: string): string {
 
 /** Check if a pathname matches any defined route (exact or pattern). */
 function routeExists(pathname: string): boolean {
-  if (definedRoutes.has(pathname)) return true;
+  if (routePathSet.has(pathname)) return true;
+
   // Check dynamic patterns: replace :param segments with the actual value
-  for (const route of definedRoutes) {
+  for (const route of routePaths) {
     if (!route.includes(":")) continue;
     const routeParts = route.split("/");
     const pathParts = pathname.split("/");
@@ -85,7 +43,11 @@ function routeExists(pathname: string): boolean {
   return false;
 }
 
-// ── Sidebar items (mirrored from AppSidebar.tsx) ───────────────────────
+// ── Navigation sources (mirrored from their respective components) ─────
+// These arrays mirror the `url`/`to` fields from sidebar, tab bar, and
+// settings sheet. If a component adds a new link, add it here too — the
+// test will catch the mismatch immediately.
+
 const sidebarLinks = [
   "/dashboard",
   "/requests",
@@ -102,7 +64,6 @@ const sidebarLinks = [
   "/app/help",
 ];
 
-// ── Mobile tab bar items (mirrored from MobileTabBar.tsx) ──────────────
 const mobileTabLinks = [
   "/dashboard",
   "/requests",
@@ -110,7 +71,6 @@ const mobileTabLinks = [
   "/requests/new",
 ];
 
-// ── Mobile settings sheet (mirrored from MobileSettingsSheet.tsx) ──────
 const mobileSettingsLinks = [
   "/settings/brand",
   "/settings/team",
@@ -167,5 +127,9 @@ describe("Navigation link integrity", () => {
     const paths = all.map((l) => l.to);
     const unique = new Set(paths);
     expect(paths.length).toBe(unique.size);
+  });
+
+  it("routePaths has no duplicates", () => {
+    expect(routePaths.length).toBe(routePathSet.size);
   });
 });
