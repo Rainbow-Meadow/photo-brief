@@ -1,50 +1,42 @@
-## Update Button, Card, and Modal for platform-aware behavior
 
-### 1. Add platform-aware CSS utilities to `src/index.css`
+## Language changes
 
-Append new utility classes inside `@layer utilities`:
+Shift all "beta now live/open" phrasing to "accepting applications" framing, and update CTAs to emphasize the application + review process. Key copy changes across the landing page and banner:
 
-- **`.pb-btn-platform`** — base class applied to all buttons:
-  - `@media (hover: hover)`: `duration-200` transition, hover lift (`-translate-y-px`), hover shadow upgrade on glass/primary variants, `hover:brightness-[1.04]` on default
-  - `@media (hover: none)`: `min-height: 44px` touch target, `active:scale-[0.97]` press feedback, `duration-150` faster transition, no hover-dependent styles
-  - `@media (max-width: 767px)`: enforces `min-h-[44px]` on all buttons
+| Current | Updated |
+|---------|---------|
+| "Founding Partner Beta now open" | "Accepting beta applications" |
+| "Apply for beta access" (CTA) | "Apply now" or "Submit your application" |
+| "Apply now — limited to 30 spots" | "Apply now — 30 seats, reviewed for fit" |
+| "Join the Founding Partner Beta" (form heading) | "Apply for the Founding Partner Beta" |
+| "Limited spots · We typically reply within a few days" | "Every application is reviewed for workflow fit · Limited to 30 seats" |
+| "Invite-only beta" chip | "Reviewed for fit" chip |
 
-- **`.surface-card-interactive`** update (already partially exists):
-  - `@media (hover: hover)`: hover lift + shadow upgrade + border highlight transition (260ms)
-  - `@media (hover: none)`: `active:scale-[0.98] active:opacity-90` with 100ms transition
+Also update `FoundingCustomerBanner.tsx` copy to match ("Accepting beta applications — limited seats").
 
-### 2. Update `src/components/ui/button.tsx`
+## Urgency component: `BetaSeatTracker`
 
-- Add `pb-btn-platform` to the base `cva()` string
-- Move hover-specific classes (`hover:brightness-[1.04]`, `hover:-translate-y-px`, `hover:shadow-glass-lg`, `hover:bg-[...]`) out of variant strings — they're now handled by the CSS media queries in `.pb-btn-platform` and variant-specific `@media (hover:hover)` rules
-- Keep `active:translate-y-0` on `pb-primary`/`pb-secondary` for desktop press reset
-- No API changes — `ButtonProps` stays identical
+Create a new `src/components/marketing/BetaSeatTracker.tsx` component that communicates scarcity and the deliberate review process.
 
-### 3. Update `src/components/ui/card.tsx`
+**Visual design:**
+- A compact, visually prominent bar/pill showing remaining seats (e.g., "23 of 30 seats remaining")
+- Segmented progress bar (30 segments) — filled segments use the brand lavender, empty segments are dim
+- Below the bar: short copy reinforcing the review process ("Each applicant is reviewed for workflow fit before acceptance")
+- When all seats are filled, the component switches to a bold "All 30 seats filled" state with a waitlist CTA instead of apply, and a visual change (e.g., amber/gold accent, lock icon)
 
-- Add an `interactive?: boolean` prop to `Card`
-- When `interactive` is true, add `surface-card-interactive cursor-pointer` class (platform behavior handled by CSS)
-- Adjust `CardHeader` padding: `p-4 sm:p-6` (tighter on mobile)
-- Adjust `CardContent` padding: `p-4 pt-0 sm:p-6 sm:pt-0`
-- Adjust `CardFooter` padding: `p-4 pt-0 sm:p-6 sm:pt-0`
-- Adjust `CardTitle` size: `text-xl sm:text-2xl`
+**Data source:** Add a `BETA_SEATS_FILLED` constant to `betaProgram.ts` (default `0`). This is a manual counter you update as partners are accepted — no database query needed. The component computes `remaining = BETA_TOTAL_PARTNERS - BETA_SEATS_FILLED`.
 
-### 4. Update `src/components/ui/dialog.tsx`
+**Placement:**
+- In the hero area, directly below the trust chips ("No app for customers", "Reviewed for fit", "Concierge setup")
+- In the application form section, above the form fields
+- Optionally in the `FoundingCustomerBanner`
 
-- Import `useIsMobile` from `@/hooks/use-mobile`
-- Import `DrawerContent`, `DrawerClose` from `@/components/ui/drawer`
-- Keep the existing desktop `DialogContent` as an internal `DesktopDialogContent`
-- Create a new `DialogContent` wrapper that:
-  - On mobile (`useIsMobile()`): renders children inside `DrawerContent` (bottom sheet) with a close button
-  - On desktop: renders the existing centered modal with backdrop blur and zoom animation
-- `DialogHeader`, `DialogFooter`, `DialogTitle`, `DialogDescription` remain unchanged
-- No changes to consumer code — the platform switch is automatic
+**Filled state behavior:** When `BETA_SEATS_FILLED >= BETA_TOTAL_PARTNERS`, all "Apply" CTAs across the page switch to "Join the waitlist" and the form submit button updates accordingly.
 
-### Files changed
+## Files changed
 
-| File | Change |
-|------|--------|
-| `src/index.css` | Add `.pb-btn-platform` with hover/touch media queries |
-| `src/components/ui/button.tsx` | Add platform base class, clean hover-only styles into CSS |
-| `src/components/ui/card.tsx` | Add `interactive` prop, responsive padding, platform card feedback |
-| `src/components/ui/dialog.tsx` | Auto bottom-sheet on mobile via Drawer, centered modal on desktop |
+1. **`src/config/betaProgram.ts`** — Add `BETA_SEATS_FILLED` constant
+2. **`src/components/marketing/BetaSeatTracker.tsx`** — New urgency component
+3. **`src/pages/Landing.tsx`** — Update copy throughout + place `BetaSeatTracker` in hero and form sections + conditional waitlist CTAs
+4. **`src/components/marketing/FoundingCustomerBanner.tsx`** — Update copy + optional seat count
+5. **`src/test/nav-links.test.ts`** — No changes expected (no new routes)

@@ -38,6 +38,7 @@ import { buildHowToJsonLd } from "@/hooks/seo/buildHowToJsonLd";
 import { buildFaqJsonLd } from "@/hooks/seo/buildFaqJsonLd";
 import { BrandMark } from "@/components/layout/BrandMark";
 import { FreeProEligibilityModal } from "@/components/marketing/FreeProEligibilityModal";
+import { BetaSeatTracker } from "@/components/marketing/BetaSeatTracker";
 import { howItWorksSteps } from "@/components/marketing/HowItWorksSteps";
 import { InteractiveHeroBriefAssembly } from "@/components/marketing/InteractiveHeroBriefAssembly";
 import { faqItems } from "@/features/help/content/faq";
@@ -55,6 +56,7 @@ import {
   BETA_DURATION_DAYS,
   BETA_TOTAL_PARTNERS,
   BETA_SETUP_BUFFER_DAYS,
+  BETA_IS_FULL,
   MAX_DISCOUNT_LABEL,
 } from "@/config/betaProgram";
 import wideGarage from "@/assets/junk-removal/wide-garage.jpg";
@@ -345,7 +347,7 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              <span className="pb-eyebrow"><Sparkles className="h-3.5 w-3.5" /> Founding Partner Beta now open</span>
+              <span className="pb-eyebrow"><Sparkles className="h-3.5 w-3.5" /> Accepting beta applications</span>
 
               <h1 className="pb-hero-title mx-auto mt-3 max-w-2xl text-white sm:mt-4">
                 Get quote-ready<br className="sm:hidden" />{" "}customer photos.
@@ -358,7 +360,7 @@ export default function LandingPage() {
 
               <div className="mx-auto mt-5 flex max-w-lg flex-col gap-2.5 sm:mt-6 sm:max-w-none sm:flex-row sm:justify-center sm:gap-3">
                 <Button size="xl" variant="pb-primary" onClick={() => { trackEvent("cta_click", { location: "hero", label: "primary" }); document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" }); }}>
-                  Apply for beta access <ArrowRight className="ml-1 h-4 w-4" />
+                  {BETA_IS_FULL ? "Join the waitlist" : "Apply now"} <ArrowRight className="ml-1 h-4 w-4" />
                 </Button>
                 <Button asChild size="xl" variant="pb-secondary">
                   <a href="#workflow" onClick={() => trackEvent("cta_click", { location: "hero", label: "workflow" })}>See how it works</a>
@@ -369,10 +371,12 @@ export default function LandingPage() {
               </div>
 
               <div className="mx-auto mt-4 flex max-w-md justify-center gap-2 sm:mt-5 sm:gap-2.5">
-                {["No app for customers", "Invite-only beta", "Concierge setup"].map((item) => (
+                {["No app for customers", "Reviewed for fit", "Concierge setup"].map((item) => (
                   <span key={item} className="pb-route-chip whitespace-nowrap px-2.5 py-1.5 text-center text-[0.65rem] font-semibold sm:px-3 sm:py-2 sm:text-xs">{item}</span>
                 ))}
               </div>
+
+              <BetaSeatTracker className="mx-auto mt-4 max-w-sm sm:mt-5" />
             </div>
           </div>
         </section>
@@ -406,7 +410,7 @@ export default function LandingPage() {
                   )}
                 </FreeProEligibilityModal>
                 <Button size="lg" variant="pb-primary" className="mt-4" onClick={() => { trackEvent("free_pro_cta_clicked", { location: "spotlight" }); document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" }); }}>
-                  Apply now — limited to {BETA_TOTAL_PARTNERS} spots <ArrowRight className="ml-1 h-4 w-4" />
+                  {BETA_IS_FULL ? "Join the waitlist" : `Apply now — ${BETA_TOTAL_PARTNERS} seats, reviewed for fit`} <ArrowRight className="ml-1 h-4 w-4" />
                 </Button>
               </div>
             </div>
@@ -458,9 +462,10 @@ export default function LandingPage() {
           <div className="pb-container">
             <div className="pb-command-panel mx-auto max-w-xl p-4 sm:p-6 lg:p-8">
               <div className="relative z-10">
-                <span className="pb-eyebrow"><Stamp className="h-3.5 w-3.5" /> Apply for beta access</span>
-                <h2 className="mt-3 text-lg font-semibold tracking-tight text-white sm:mt-4 sm:text-2xl">Join the Founding Partner Beta</h2>
-                <p className="pb-copy mt-1.5 text-sm">Limited spots · We typically reply within a few days</p>
+                <span className="pb-eyebrow"><Stamp className="h-3.5 w-3.5" /> {BETA_IS_FULL ? "Waitlist" : "Apply for beta"}</span>
+                <h2 className="mt-3 text-lg font-semibold tracking-tight text-white sm:mt-4 sm:text-2xl">{BETA_IS_FULL ? "Join the Waitlist" : "Apply for the Founding Partner Beta"}</h2>
+                <p className="pb-copy mt-1.5 text-sm">Every application is reviewed for workflow fit · Limited to {BETA_TOTAL_PARTNERS} seats</p>
+                <BetaSeatTracker variant="compact" className="mt-3" />
 
                 <form onSubmit={onSubmit} onFocusCapture={handleFormFocus} className="mt-5 grid gap-3.5 sm:mt-6 sm:gap-4">
                   <Field id="bl-email" label="Work email" required>
@@ -490,7 +495,7 @@ export default function LandingPage() {
                     </Field>
                   </div>
                   <Button type="submit" size="lg" disabled={submitting} variant="pb-primary" className="mt-1 h-12 w-full text-base">
-                    {submitting ? "Submitting…" : "Apply for beta access"}
+                    {submitting ? "Submitting…" : BETA_IS_FULL ? "Join the waitlist" : "Submit your application"}
                   </Button>
                 </form>
               </div>
@@ -711,11 +716,11 @@ function FoundingPartnerSection({ utm }: { utm: Record<string, string | undefine
         {/* Benefits & expectations */}
         <div className="pb-command-panel grid gap-6 p-5 sm:gap-8 sm:p-6 lg:grid-cols-[0.85fr_1.15fr] lg:p-8 xl:p-10">
           <div className="relative z-10">
-            <span className="pb-eyebrow"><Stamp className="h-3.5 w-3.5" /> Founding beta</span>
+            <span className="pb-eyebrow"><Stamp className="h-3.5 w-3.5" /> Accepting applications</span>
             <h2 className="mt-4 text-2xl font-semibold tracking-tight text-white sm:text-3xl lg:text-4xl">Built with real workflows, not toy testing.</h2>
-            <p className="pb-copy mt-4 text-base sm:text-lg">We are inviting a small group of businesses to use PhotoBrief in real intake scenarios before public launch. You get hands-on setup and early influence; we get honest workflow feedback.</p>
+            <p className="pb-copy mt-4 text-base sm:text-lg">We're accepting applications from businesses that collect photos as part of real intake, inspection, or documentation workflows. You get hands-on setup and early influence; we get honest workflow feedback.</p>
             <Button size="lg" variant="pb-primary" className="mt-6" onClick={() => { trackEvent("cta_click", { ...utm, location: "founding_beta" }); document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" }); }}>
-              Apply now <ArrowRight className="ml-1 h-4 w-4" />
+              {BETA_IS_FULL ? "Join the waitlist" : "Apply now"} <ArrowRight className="ml-1 h-4 w-4" />
             </Button>
           </div>
           <div className="relative z-10 grid gap-4 md:grid-cols-2">
@@ -876,7 +881,7 @@ function FinalCta() {
             <p className="pb-copy mx-auto mt-4 max-w-2xl text-base sm:text-lg">Give customers a clear path, give your team a clean packet, and stop turning every quote into a photo scavenger hunt.</p>
             <div className="mt-6 flex flex-col justify-center gap-2.5 sm:flex-row sm:gap-3">
               <Button size="xl" variant="pb-primary" onClick={() => document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" })}>
-                Apply for beta access <ArrowRight className="ml-1 h-4 w-4" />
+                {BETA_IS_FULL ? "Join the waitlist" : "Apply now"} <ArrowRight className="ml-1 h-4 w-4" />
               </Button>
               <Button asChild size="xl" variant="pb-secondary">
                 <NavLink to="/pricing">See plans</NavLink>

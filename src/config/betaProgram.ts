@@ -14,6 +14,11 @@ export const BETA_TOTAL_PARTNERS = 30;
 export const BETA_PARTNERS_PER_WEEK = 5;
 export const BETA_COHORTS = Math.ceil(BETA_TOTAL_PARTNERS / BETA_PARTNERS_PER_WEEK); // 6
 
+/** Number of seats accepted so far. Update manually as partners are approved. */
+export const BETA_SEATS_FILLED = 0;
+export const BETA_SEATS_REMAINING = BETA_TOTAL_PARTNERS - BETA_SEATS_FILLED;
+export const BETA_IS_FULL = BETA_SEATS_FILLED >= BETA_TOTAL_PARTNERS;
+
 /** Human-readable timing explanation for public copy. */
 export const BETA_TIMING_EXPLAINER = `The ${BETA_DURATION_DAYS}-day beta clock starts ${BETA_SETUP_BUFFER_DAYS} days after the final seat is filled — giving every partner time for concierge setup before the clock begins.`;
 
