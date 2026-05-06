@@ -135,6 +135,7 @@ export default function RequestDetailPage() {
   return (
     <div className="space-y-6">
       <PageHeader
+        backTo={{ label: "Requests", href: "/requests" }}
         title={request.recipientName}
         description={request.guideName}
         actions={<StatusBadge label={status.label} tone={status.tone} />}

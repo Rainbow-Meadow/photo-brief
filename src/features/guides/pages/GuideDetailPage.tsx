@@ -126,6 +126,7 @@ export default function GuideDetailPage() {
   return (
     <div className="space-y-6 pb-12">
       <PageHeader
+        backTo={{ label: "Templates", href: "/guides" }}
         title={view.name}
         description={view.description || `${view.steps.length} photo prompts · ${view.questions.length} questions`}
         actions={
