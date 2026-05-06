@@ -6,6 +6,7 @@ import {
   Camera,
   CheckCircle2,
   ClipboardList,
+  Crown,
   FileCheck2,
   Gift,
   ImageOff,
@@ -19,6 +20,7 @@ import {
   Smartphone,
   Sparkles,
   Stamp,
+  Trophy,
   Users,
 } from "lucide-react";
 
