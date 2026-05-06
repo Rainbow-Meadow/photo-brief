@@ -102,11 +102,11 @@ const App = () => (
             <Route path="/waitlist" element={<WaitlistPage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/beta-invite/:token" element={<BetaInvitePage />} />
+            <Route path="/betalist" element={<BetaListPage />} />
           </Route>
 
           {/* Lightweight embeddable brand surface for customer websites. */}
           <Route path="/badge/intake" element={<IntakeBadgePage />} />
-          <Route path="/betalist" element={<BetaListPage />} />
 
           {/* Onboarding + invite acceptance (no sidebar, but still auth-only).
               Onboarding intentionally skips the onboarding gate to avoid loops. */}
