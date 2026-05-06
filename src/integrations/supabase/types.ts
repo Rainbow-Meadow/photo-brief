@@ -853,6 +853,53 @@ export type Database = {
         }
         Relationships: []
       }
+      integration_oauth_states: {
+        Row: {
+          code_verifier: string | null
+          consumed_at: string | null
+          created_at: string
+          created_by: string | null
+          expires_at: string
+          id: string
+          provider_key: string
+          redirect_to: string | null
+          state: string
+          workspace_id: string
+        }
+        Insert: {
+          code_verifier?: string | null
+          consumed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string
+          id?: string
+          provider_key: string
+          redirect_to?: string | null
+          state: string
+          workspace_id: string
+        }
+        Update: {
+          code_verifier?: string | null
+          consumed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string
+          id?: string
+          provider_key?: string
+          redirect_to?: string | null
+          state?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "integration_oauth_states_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "business_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       internal_notes: {
         Row: {
           created_at: string
@@ -894,6 +941,154 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      marketing_live_leads: {
+        Row: {
+          company: string | null
+          consented_at: string | null
+          conversion_error: string | null
+          converted_at: string | null
+          customer_id: string | null
+          email: string
+          first_seen_at: string
+          followup_channel: string | null
+          followup_error: string | null
+          followup_sent_at: string | null
+          id: string
+          issue: string | null
+          name: string | null
+          payload: Json
+          phone: string | null
+          readiness: string
+          request_id: string | null
+          request_token: string | null
+          request_url: string | null
+          required_count: number
+          selected_count: number
+          session_id: string
+          summary: string | null
+          updated_at: string
+        }
+        Insert: {
+          company?: string | null
+          consented_at?: string | null
+          conversion_error?: string | null
+          converted_at?: string | null
+          customer_id?: string | null
+          email: string
+          first_seen_at?: string
+          followup_channel?: string | null
+          followup_error?: string | null
+          followup_sent_at?: string | null
+          id?: string
+          issue?: string | null
+          name?: string | null
+          payload?: Json
+          phone?: string | null
+          readiness?: string
+          request_id?: string | null
+          request_token?: string | null
+          request_url?: string | null
+          required_count?: number
+          selected_count?: number
+          session_id: string
+          summary?: string | null
+          updated_at?: string
+        }
+        Update: {
+          company?: string | null
+          consented_at?: string | null
+          conversion_error?: string | null
+          converted_at?: string | null
+          customer_id?: string | null
+          email?: string
+          first_seen_at?: string
+          followup_channel?: string | null
+          followup_error?: string | null
+          followup_sent_at?: string | null
+          id?: string
+          issue?: string | null
+          name?: string | null
+          payload?: Json
+          phone?: string | null
+          readiness?: string
+          request_id?: string | null
+          request_token?: string | null
+          request_url?: string | null
+          required_count?: number
+          selected_count?: number
+          session_id?: string
+          summary?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marketing_live_leads_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "marketing_live_leads_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "photo_brief_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "marketing_live_leads_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "requests_inbox_view"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      marketing_live_submissions: {
+        Row: {
+          created_at: string
+          id: string
+          issue: string | null
+          payload: Json
+          readiness: string
+          required_count: number
+          selected_count: number
+          session_id: string
+          source: string
+          summary: string | null
+          updated_at: string
+          workflow_mode: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          issue?: string | null
+          payload?: Json
+          readiness?: string
+          required_count?: number
+          selected_count?: number
+          session_id: string
+          source?: string
+          summary?: string | null
+          updated_at?: string
+          workflow_mode?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          issue?: string | null
+          payload?: Json
+          readiness?: string
+          required_count?: number
+          selected_count?: number
+          session_id?: string
+          source?: string
+          summary?: string | null
+          updated_at?: string
+          workflow_mode?: string
+        }
+        Relationships: []
       }
       message_templates: {
         Row: {
@@ -2093,6 +2288,10 @@ export type Database = {
     }
     Functions: {
       _notify_event: { Args: { _payload: Json }; Returns: undefined }
+      can_manage_workspace_integrations: {
+        Args: { p_workspace_id: string }
+        Returns: boolean
+      }
       current_period_usage: {
         Args: { _event_type: string; _workspace_id: string }
         Returns: number
@@ -2160,22 +2359,12 @@ export type Database = {
     }
     Enums: {
       ai_check_type:
-        | "blur"
-        | "low_light"
+        | "wrong_subject"
+        | "too_dark"
+        | "blurry"
+        | "label_unreadable"
         | "glare"
-        | "unreadable_text"
-        | "wrong_shot"
-        | "cropped_subject"
-        | "duplicate_image"
-        | "missing_scale"
-        | "missing_required_item"
-        | "label_detected"
-        | "serial_model_detected"
-        | "receipt_order_detected"
-        | "damage_visible"
-        | "wide_shot_detected"
-        | "close_up_detected"
-        | "unsafe_condition_flag"
+        | "too_close_or_cropped"
       capture_type:
         | "photo"
         | "video"
@@ -2354,22 +2543,12 @@ export const Constants = {
   public: {
     Enums: {
       ai_check_type: [
-        "blur",
-        "low_light",
+        "wrong_subject",
+        "too_dark",
+        "blurry",
+        "label_unreadable",
         "glare",
-        "unreadable_text",
-        "wrong_shot",
-        "cropped_subject",
-        "duplicate_image",
-        "missing_scale",
-        "missing_required_item",
-        "label_detected",
-        "serial_model_detected",
-        "receipt_order_detected",
-        "damage_visible",
-        "wide_shot_detected",
-        "close_up_detected",
-        "unsafe_condition_flag",
+        "too_close_or_cropped",
       ],
       capture_type: [
         "photo",
