@@ -119,6 +119,7 @@ const EMPTY: FormState = {
 export default function BetaListPage() {
   const [params] = useSearchParams();
   const ref = params.get("ref") || "";
+  const interest = params.get("interest") || "founding-partner";
   const [form, setForm] = useState<FormState>(EMPTY);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState<"new" | "already" | null>(null);
