@@ -69,6 +69,7 @@ const BetaGuidePage = lazy(() => import("@/features/help/pages/BetaGuidePage"));
 const AdminInvitesPage = lazy(() => import("@/pages/AdminInvites"));
 const AdminAIRerunPage = lazy(() => import("@/pages/AdminAIRerun"));
 const AdminCommandCenter = lazy(() => import("@/pages/AdminCommandCenter"));
+const AdminBetaPage = lazy(() => import("@/pages/AdminBeta"));
 const SupportPage = lazy(() => import("@/features/support/pages/SupportPage"));
 
 const queryClient = new QueryClient();
