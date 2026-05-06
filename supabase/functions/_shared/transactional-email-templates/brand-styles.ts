@@ -1,25 +1,28 @@
 /// <reference types="npm:@types/react@18.3.1" />
 import * as React from 'npm:react@18.3.1'
-import { Container, Hr, Section, Text } from 'npm:@react-email/components@0.0.22'
+import { Container, Hr, Img, Section, Text } from 'npm:@react-email/components@0.0.22'
 
 // ─── PhotoBrief.ai Email Brand System ───────────────────────────────
-// Shared palette, typography, and layout primitives for all emails.
+// Dark navy + purple/lavender palette matching the landing page.
+
+const LOGO_URL = 'https://mvlcefiygkzzewcdzsmj.supabase.co/storage/v1/object/public/email-assets/horizontal-light.png'
 
 export const BRAND = {
   name: 'PhotoBrief.ai',
   fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+  logoUrl: LOGO_URL,
   colors: {
-    bg: '#F8F7FA',
-    surface: '#FFFFFF',
-    primary: '#111014',
-    secondary: '#625F68',
-    border: '#E1DEE7',
-    cta: '#7C3AED',
-    ctaHover: '#6D28D9',
-    accent: '#A78BFA',
-    muted: '#94909C',
-    darkBg: '#060507',
-    darkSurface: '#15131A',
+    bg: '#0c0915',
+    surface: '#15121f',
+    primary: '#f8f5ff',
+    secondary: '#ffffffad',       // rgba(255,255,255,0.68)
+    border: '#cfb2ff24',          // rgba(207,178,255,0.14)
+    cta: '#8f63ff',
+    ctaHover: '#b98cff',
+    accent: '#b98cff',
+    muted: '#ffffff80',           // rgba(255,255,255,0.50)
+    darkBg: '#07050d',
+    darkSurface: '#0c0915',
   },
 } as const
 
@@ -27,7 +30,7 @@ export const BRAND = {
 
 export const s = {
   main: {
-    backgroundColor: '#ffffff',
+    backgroundColor: BRAND.colors.bg,
     fontFamily: BRAND.fontFamily,
   },
   outerPad: {
@@ -39,12 +42,13 @@ export const s = {
     margin: '0 auto',
     backgroundColor: BRAND.colors.surface,
     borderRadius: '16px',
-    border: `1px solid ${BRAND.colors.border}`,
+    border: `1px solid rgba(207,178,255,0.14)`,
     overflow: 'hidden' as const,
+    boxShadow: '0 36px 92px -70px rgba(143,99,255,0.50), 0 20px 64px -48px rgba(0,0,0,0.82)',
   },
   header: {
     padding: '28px 32px 20px',
-    borderBottom: `1px solid ${BRAND.colors.border}`,
+    borderBottom: '1px solid rgba(207,178,255,0.14)',
   },
   wordmark: {
     fontSize: '18px',
@@ -54,6 +58,10 @@ export const s = {
     margin: '0',
     lineHeight: '1',
   },
+  logo: {
+    height: '36px',
+    width: 'auto',
+  },
   body: {
     padding: '28px 32px 32px',
   },
@@ -61,7 +69,7 @@ export const s = {
     fontSize: '11px',
     fontWeight: 700,
     letterSpacing: '0.1em',
-    color: BRAND.colors.cta,
+    color: BRAND.colors.accent,
     textTransform: 'uppercase' as const,
     margin: '0 0 14px',
   },
@@ -99,24 +107,24 @@ export const s = {
     margin: '24px 0 20px',
   },
   link: {
-    color: BRAND.colors.cta,
+    color: BRAND.colors.accent,
     textDecoration: 'underline',
     wordBreak: 'break-all' as const,
   },
   card: {
-    backgroundColor: BRAND.colors.bg,
-    border: `1px solid ${BRAND.colors.border}`,
+    backgroundColor: '#1b1726',
+    border: '1px solid rgba(207,178,255,0.12)',
     borderRadius: '12px',
     padding: '20px 22px',
     margin: '8px 0 20px',
   },
   hr: {
-    borderColor: BRAND.colors.border,
+    borderColor: 'rgba(207,178,255,0.14)',
     margin: '24px 0 20px',
   },
   footer: {
     padding: '20px 32px 28px',
-    borderTop: `1px solid ${BRAND.colors.border}`,
+    borderTop: '1px solid rgba(207,178,255,0.14)',
   },
   footerText: {
     fontSize: '12px',
@@ -130,7 +138,12 @@ export const s = {
 
 export const BrandHeader = () =>
   React.createElement(Section, { style: s.header },
-    React.createElement(Text, { style: s.wordmark }, BRAND.name),
+    React.createElement(Img, {
+      src: BRAND.logoUrl,
+      alt: BRAND.name,
+      height: '36',
+      style: s.logo,
+    }),
   )
 
 export const BrandFooter = ({ extra }: { extra?: string }) =>
