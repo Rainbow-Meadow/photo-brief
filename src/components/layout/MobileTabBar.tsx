@@ -40,10 +40,10 @@ export function MobileTabBar() {
           ))}
 
           {/* Center FAB */}
-          <div className="flex items-start justify-center">
+          <div className="flex flex-col items-center justify-start">
             <NavLink
               to="/requests/new"
-              aria-label="New request"
+              aria-label="Request a PhotoBrief"
               className={cn(
                 "-mt-6 inline-flex h-14 w-14 items-center justify-center rounded-full",
                 "bg-primary text-primary-foreground shadow-elev-md",
@@ -52,6 +52,7 @@ export function MobileTabBar() {
             >
               <Plus className="h-6 w-6" />
             </NavLink>
+            <span className="mt-0.5 text-[10px] font-medium leading-none text-primary">Request</span>
           </div>
 
           {/* Last regular tab */}
