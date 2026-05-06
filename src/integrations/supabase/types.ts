@@ -1925,6 +1925,7 @@ export type Database = {
           email: string
           estimated_monthly_requests: string | null
           id: string
+          interest: string | null
           name: string
           notes: string | null
           source: string
@@ -1932,6 +1933,7 @@ export type Database = {
           updated_at: string
           use_case: string | null
           website: string | null
+          workflow_type: string | null
         }
         Insert: {
           business_name?: string | null
@@ -1940,6 +1942,7 @@ export type Database = {
           email: string
           estimated_monthly_requests?: string | null
           id?: string
+          interest?: string | null
           name: string
           notes?: string | null
           source?: string
@@ -1947,6 +1950,7 @@ export type Database = {
           updated_at?: string
           use_case?: string | null
           website?: string | null
+          workflow_type?: string | null
         }
         Update: {
           business_name?: string | null
@@ -1955,6 +1959,7 @@ export type Database = {
           email?: string
           estimated_monthly_requests?: string | null
           id?: string
+          interest?: string | null
           name?: string
           notes?: string | null
           source?: string
@@ -1962,6 +1967,7 @@ export type Database = {
           updated_at?: string
           use_case?: string | null
           website?: string | null
+          workflow_type?: string | null
         }
         Relationships: []
       }

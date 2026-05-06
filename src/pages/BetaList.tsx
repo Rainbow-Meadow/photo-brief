@@ -119,6 +119,7 @@ const EMPTY: FormState = {
 export default function BetaListPage() {
   const [params] = useSearchParams();
   const ref = params.get("ref") || "";
+  const interest = params.get("interest") || "founding-partner";
   const [form, setForm] = useState<FormState>(EMPTY);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState<"new" | "already" | null>(null);
@@ -179,10 +180,7 @@ export default function BetaListPage() {
           ...form,
           name: form.name.trim() || undefined,
           email: form.email.trim().toLowerCase(),
-          notes: [
-            `source=${source}`,
-            form.workflow_type ? `workflow_type=${form.workflow_type}` : "",
-          ].filter(Boolean).join("; "),
+          interest,
           source,
         },
       });

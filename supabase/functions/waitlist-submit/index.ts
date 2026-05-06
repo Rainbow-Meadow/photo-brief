@@ -1,5 +1,6 @@
 // Public endpoint: insert a row into waitlist_entries.
 // JWT verification is off (anon visitors submit this).
+// Accepts beta applications from /betalist with interest + workflow_type fields.
 import { createClient } from "npm:@supabase/supabase-js@2";
 
 const corsHeaders = {
@@ -15,6 +16,8 @@ interface Payload {
   website?: string;
   use_case?: string;
   estimated_monthly_requests?: string;
+  workflow_type?: string;
+  interest?: string;
   notes?: string;
   source?: string;
 }
@@ -76,6 +79,10 @@ Deno.serve(async (req) => {
     });
   }
 
+  const source = clean(body.source, 100) ?? "web";
+  const interest = clean(body.interest, 100);
+  const workflowType = clean(body.workflow_type, 100);
+
   const insertPayload = {
     name,
     email,
@@ -84,8 +91,10 @@ Deno.serve(async (req) => {
     website: clean(body.website, 300),
     use_case: clean(body.use_case, 1000),
     estimated_monthly_requests: clean(body.estimated_monthly_requests, 50),
+    workflow_type: workflowType,
+    interest,
     notes: clean(body.notes, 2000),
-    source: clean(body.source, 50) ?? "web",
+    source,
   };
 
   const { data: inserted, error } = await admin
@@ -116,10 +125,16 @@ Deno.serve(async (req) => {
     : new Date().toISOString();
   const ADMIN_EMAIL = "hello@rainbow-meadow.org";
 
+  // Pick the right confirmation template based on source
+  const isBetaApplication = source.startsWith("betalist");
+  const confirmationTemplate = isBetaApplication
+    ? "waitlist-confirmation"
+    : "waitlist-confirmation";
+
   try {
     await admin.functions.invoke("send-transactional-email", {
       body: {
-        templateName: "waitlist-confirmation",
+        templateName: confirmationTemplate,
         recipientEmail: email,
         idempotencyKey: `waitlist-confirm-${entryId ?? email}`,
         templateData: { name },
@@ -138,6 +153,12 @@ Deno.serve(async (req) => {
         templateData: {
           ...insertPayload,
           created_at: createdAt,
+          // Surface beta-specific fields for admin context
+          ...(isBetaApplication && {
+            application_type: "Beta Application",
+            interest: interest ?? "founding-partner",
+            workflow_type: workflowType ?? "not specified",
+          }),
         },
       },
     });
