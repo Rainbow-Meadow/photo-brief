@@ -462,9 +462,10 @@ export default function LandingPage() {
           <div className="pb-container">
             <div className="pb-command-panel mx-auto max-w-xl p-4 sm:p-6 lg:p-8">
               <div className="relative z-10">
-                <span className="pb-eyebrow"><Stamp className="h-3.5 w-3.5" /> Apply for beta access</span>
-                <h2 className="mt-3 text-lg font-semibold tracking-tight text-white sm:mt-4 sm:text-2xl">Join the Founding Partner Beta</h2>
-                <p className="pb-copy mt-1.5 text-sm">Limited spots · We typically reply within a few days</p>
+                <span className="pb-eyebrow"><Stamp className="h-3.5 w-3.5" /> {BETA_IS_FULL ? "Waitlist" : "Apply for beta"}</span>
+                <h2 className="mt-3 text-lg font-semibold tracking-tight text-white sm:mt-4 sm:text-2xl">{BETA_IS_FULL ? "Join the Waitlist" : "Apply for the Founding Partner Beta"}</h2>
+                <p className="pb-copy mt-1.5 text-sm">Every application is reviewed for workflow fit · Limited to {BETA_TOTAL_PARTNERS} seats</p>
+                <BetaSeatTracker variant="compact" className="mt-3" />
 
                 <form onSubmit={onSubmit} onFocusCapture={handleFormFocus} className="mt-5 grid gap-3.5 sm:mt-6 sm:gap-4">
                   <Field id="bl-email" label="Work email" required>
@@ -494,7 +495,7 @@ export default function LandingPage() {
                     </Field>
                   </div>
                   <Button type="submit" size="lg" disabled={submitting} variant="pb-primary" className="mt-1 h-12 w-full text-base">
-                    {submitting ? "Submitting…" : "Apply for beta access"}
+                    {submitting ? "Submitting…" : BETA_IS_FULL ? "Join the waitlist" : "Submit your application"}
                   </Button>
                 </form>
               </div>
