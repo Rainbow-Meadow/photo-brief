@@ -30,6 +30,11 @@ import { InteractiveHeroBriefAssembly } from "@/components/marketing/Interactive
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { conversions, trackEvent } from "@/lib/analytics";
+import {
+  PARTNER_BENEFITS,
+  PARTNER_EXPECTATIONS,
+  CONFIRMATION_SUMMARY,
+} from "@/config/betaProgram";
 
 /* ── constants ──────────────────────────────────────────── */
 
@@ -73,20 +78,6 @@ const useCases = [
   { icon: MapPinned, title: "Dispatch prep", body: "Collect site access, issue context, and handling notes before a team heads out.", stamp: "Field ready" },
   { icon: ImageOff, title: "Damage documentation", body: "Guide customers through the angles that matter so reviewers can understand the issue quickly.", stamp: "Evidence packet" },
   { icon: ShieldCheck, title: "Approvals and exceptions", body: "Turn customer media into a packet that can be reviewed, approved, or escalated without guessing.", stamp: "Decision ready" },
-];
-
-const partnerBenefits = [
-  "60-day free founding beta access",
-  "Concierge setup for first templates and workflows",
-  "Direct feedback channel and priority product input",
-  "Early access to future tools",
-  "Up to 75% off post-launch — based on feedback quality",
-];
-
-const partnerAsks = [
-  "Use PhotoBrief on 3–5 real customer workflows",
-  "Share short feedback every two weeks",
-  "Report confusing moments or missing workflow needs",
 ];
 
 const trustPoints = [
