@@ -40,7 +40,7 @@ Deno.serve(async (req) => {
     return json({ error: 'Unauthorized' }, 401)
   }
 
-  let body: { event?: string; user_id?: string; submission_id?: string }
+  let body: { event?: string; user_id?: string; submission_id?: string; workspace_id?: string }
   try {
     body = await req.json()
   } catch {
