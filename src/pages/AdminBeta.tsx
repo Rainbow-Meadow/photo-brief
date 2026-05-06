@@ -113,6 +113,60 @@ function fmtDate(d: string | null | undefined) {
 }
 
 // ---------------------------------------------------------------------------
+// Beta health score
+// ---------------------------------------------------------------------------
+
+type HealthLevel = "Not started" | "Getting started" | "Active" | "Strong signal" | "Stalled";
+
+function computeHealthScore(ws: BetaWorkspaceRow): { level: HealthLevel; score: number; checks: { label: string; passed: boolean }[] } {
+  const fourteenDaysAgo = Date.now() - 14 * 24 * 60 * 60 * 1000;
+  const recentActivity = ws.last_activity_at ? new Date(ws.last_activity_at).getTime() > fourteenDaysAgo : false;
+
+  const checks = [
+    { label: "Created first request", passed: (ws.requests_created ?? 0) >= 1 },
+    { label: "Sent/copied first request", passed: (ws.requests_sent ?? 0) >= 1 },
+    { label: "Received first submission", passed: (ws.submissions_completed ?? 0) >= 1 },
+    { label: "Created >1 request", passed: (ws.requests_created ?? 0) > 1 },
+    { label: "Created a template", passed: (ws.templates_created ?? 0) >= 1 },
+    { label: "Submitted feedback", passed: (ws.feedback_count ?? 0) >= 1 },
+    { label: "Active in last 14 days", passed: recentActivity },
+  ];
+
+  const score = checks.filter((c) => c.passed).length;
+
+  let level: HealthLevel;
+  if (score === 0) level = "Not started";
+  else if (score <= 2) level = "Getting started";
+  else if (score <= 4) level = "Active";
+  else level = "Strong signal";
+
+  // Override to Stalled if no recent activity and they had some prior engagement
+  if (score >= 1 && !recentActivity) level = "Stalled";
+
+  return { level, score, checks };
+}
+
+function healthColor(level: HealthLevel): string {
+  switch (level) {
+    case "Not started": return "text-muted-foreground";
+    case "Getting started": return "text-blue-400";
+    case "Active": return "text-emerald-400";
+    case "Strong signal": return "text-green-400";
+    case "Stalled": return "text-orange-400";
+  }
+}
+
+function healthBg(level: HealthLevel): string {
+  switch (level) {
+    case "Not started": return "bg-muted text-muted-foreground";
+    case "Getting started": return "bg-blue-500/15 text-blue-400 border border-blue-500/20";
+    case "Active": return "bg-emerald-500/15 text-emerald-400 border border-emerald-500/20";
+    case "Strong signal": return "bg-green-500/15 text-green-400 border border-green-500/20";
+    case "Stalled": return "bg-orange-500/15 text-orange-400 border border-orange-500/20";
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
 
