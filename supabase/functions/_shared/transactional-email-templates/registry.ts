@@ -18,6 +18,11 @@ import { template as waitlistAdminNotification } from './waitlist-admin-notifica
 import { template as customerSubmissionConfirmation } from './customer-submission-confirmation.tsx'
 import { template as businessRequestReady } from './business-request-ready.tsx'
 import { template as foundingPartnerWelcome } from './founding-partner-welcome.tsx'
+import { template as betaFirstRequestNudge } from './beta-first-request-nudge.tsx'
+import { template as betaFeedbackCheckin } from './beta-feedback-checkin.tsx'
+import { template as betaStalledCheckin } from './beta-stalled-checkin.tsx'
+import { template as betaTestimonialRequest } from './beta-testimonial-request.tsx'
+import { template as betaGraduation } from './beta-graduation.tsx'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'recipient-request-link': recipientRequestLink,
@@ -29,4 +34,9 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'customer-submission-confirmation': customerSubmissionConfirmation,
   'business-request-ready': businessRequestReady,
   'founding-partner-welcome': foundingPartnerWelcome,
+  'beta-first-request-nudge': betaFirstRequestNudge,
+  'beta-feedback-checkin': betaFeedbackCheckin,
+  'beta-stalled-checkin': betaStalledCheckin,
+  'beta-testimonial-request': betaTestimonialRequest,
+  'beta-graduation': betaGraduation,
 }
