@@ -6,9 +6,12 @@ import {
 import type { TemplateEntry } from './registry.ts'
 import { BRAND, s, BrandHeader, BrandFooter } from './brand-styles.ts'
 
+type DiscountDuration = 'perpetuity' | 'first-year' | 'free-pro'
+
 interface Props {
   name?: string
   discount?: string
+  discountDuration?: DiscountDuration
   requestsCreated?: string
   submissionsCompleted?: string
   templatesCreated?: string
@@ -16,9 +19,33 @@ interface Props {
   billingUrl?: string
 }
 
+function rewardCopy(discount: string, duration: DiscountDuration) {
+  if (duration === 'free-pro') {
+    return {
+      headline: 'FREE PRO FOR LIFE',
+      detail: "You've earned free Pro — permanently. No invoice, no strings.",
+      subtext: "This isn't a trial. It's yours for as long as PhotoBrief exists.",
+    }
+  }
+  if (duration === 'perpetuity') {
+    return {
+      headline: `${discount}% OFF — LOCKED IN PERMANENTLY`,
+      detail: `${discount}% off standard pricing — for as long as you stay on a paid plan`,
+      subtext: 'No expiration. No bait-and-switch.',
+    }
+  }
+  // first-year
+  return {
+    headline: `${discount}% OFF YOUR FIRST YEAR`,
+    detail: `${discount}% off standard pricing for your first 12 months after launch`,
+    subtext: 'Applies automatically when you choose a plan.',
+  }
+}
+
 const BetaGraduationEmail = ({
   name,
-  discount = '30',
+  discount = '50',
+  discountDuration = 'first-year',
   requestsCreated = '0',
   submissionsCompleted = '0',
   templatesCreated = '0',
@@ -27,13 +54,14 @@ const BetaGraduationEmail = ({
 }: Props) => {
   const greeting = name
     ? `Beta's wrapping up, ${name}.`
-    : "Beta's wrapping up — here's your founding partner pricing."
+    : "Beta's wrapping up — here's your founding partner reward."
   const cta = billingUrl || 'https://photobrief.ai/dashboard/settings/billing'
   const dateStr = transitionDate || 'soon'
+  const reward = rewardCopy(discount, discountDuration)
   return (
     <Html lang="en" dir="ltr">
       <Head />
-      <Preview>Your founding partner pricing is locked in — here's what happens next.</Preview>
+      <Preview>Your founding partner reward is ready — here's what happens next.</Preview>
       <Body style={s.main}>
         <Section style={s.outerPad}>
           <Container style={s.container}>
@@ -47,13 +75,13 @@ const BetaGraduationEmail = ({
               </Text>
               <Section style={s.card}>
                 <Text style={{ ...s.text, margin: '0 0 8px', fontWeight: 600, color: BRAND.colors.primary, fontSize: '13px' }}>
-                  YOUR FOUNDING PARTNER PRICING
+                  {reward.headline}
                 </Text>
                 <Text style={{ ...s.text, fontSize: '14px', margin: '0 0 6px' }}>
-                  <span style={{ color: BRAND.colors.cta, fontWeight: 700 }}>{discount}% off</span> standard pricing — for as long as you stay on a paid plan
+                  <span style={{ color: BRAND.colors.cta, fontWeight: 700 }}>{reward.detail}</span>
                 </Text>
                 <Text style={{ ...s.text, fontSize: '13px', margin: '0', color: BRAND.colors.muted }}>
-                  No expiration. No bait-and-switch.
+                  {reward.subtext}
                 </Text>
               </Section>
               <Section style={s.card}>
@@ -70,14 +98,24 @@ const BetaGraduationEmail = ({
                   <span style={{ color: BRAND.colors.cta, fontWeight: 700 }}>→</span> {templatesCreated} templates built
                 </Text>
               </Section>
-              <Text style={s.text}>
-                Your account will transition to a paid plan on <strong style={{ color: BRAND.colors.primary }}>{dateStr}</strong>.
-                You can pick the plan that fits your volume in Settings → Billing.
-                Your founding partner discount applies automatically.
-              </Text>
-              <Section style={s.ctaWrap}>
-                <Button href={cta} style={s.button}>Choose Your Plan</Button>
-              </Section>
+              {discountDuration !== 'free-pro' && (
+                <>
+                  <Text style={s.text}>
+                    Your account will transition to a paid plan on <strong style={{ color: BRAND.colors.primary }}>{dateStr}</strong>.
+                    You can pick the plan that fits your volume in Settings → Billing.
+                    Your founding partner discount applies automatically.
+                  </Text>
+                  <Section style={s.ctaWrap}>
+                    <Button href={cta} style={s.button}>Choose Your Plan</Button>
+                  </Section>
+                </>
+              )}
+              {discountDuration === 'free-pro' && (
+                <Text style={s.text}>
+                  Your Pro plan is already active — no action needed. If you ever want to
+                  adjust your plan, you can do that in Settings → Billing.
+                </Text>
+              )}
               <Hr style={s.hr} />
               <Text style={s.textSmall}>
                 If you have questions about which plan makes sense, just reply — we'll
@@ -94,11 +132,12 @@ const BetaGraduationEmail = ({
 
 export const template = {
   component: BetaGraduationEmail,
-  subject: "Beta's wrapping up — here's your founding partner pricing",
+  subject: "Beta's wrapping up — here's your founding partner reward",
   displayName: 'Beta graduation / launch pricing',
   previewData: {
     name: 'Alex',
-    discount: '30',
+    discount: '75',
+    discountDuration: 'perpetuity',
     requestsCreated: '24',
     submissionsCompleted: '18',
     templatesCreated: '3',
