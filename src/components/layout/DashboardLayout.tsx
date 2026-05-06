@@ -26,6 +26,17 @@ export function DashboardLayout() {
   const { workspace } = useCurrentWorkspace();
   const { resetPassword, logOut, resetting, signingOut, email } = useAccountActions();
   const initial = (email?.[0] ?? "U").toUpperCase();
+  const { pathname } = useLocation();
+  const isFullscreenWizard = pathname === "/requests/new";
+
+  if (isFullscreenWizard) {
+    return (
+      <RequireAuth>
+        <Outlet />
+      </RequireAuth>
+    );
+  }
+
   return (
     <RequireAuth>
       <SidebarProvider>
