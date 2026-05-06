@@ -55,7 +55,7 @@ export function StarterRequestCard(_props: Props) {
           <div className="mt-4 space-y-3">
             <GuidelessStep icon={Camera} title="Describe the photos you need" copy="Plain language: &ldquo;Take a wide shot of the damaged area.&rdquo;" />
             <GuidelessStep icon={Plus} title="AI checks every photo" copy="Blurry, dark, or wrong angle? Your customer gets instant feedback to reshoot." />
-            <GuidelessStep icon={LayoutTemplate} title="Save & reuse as a template" copy="Turn any PhotoBrief into a one-tap template for repeat jobs." />
+            <GuidelessStep icon={LayoutTemplate} title="Save & reuse as a template" copy="Turn any request into a one-tap template for repeat jobs." />
           </div>
         </div>
       </div>
