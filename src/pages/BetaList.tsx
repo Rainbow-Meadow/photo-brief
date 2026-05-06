@@ -278,7 +278,7 @@ export default function BetaListPage() {
             </div>
           </div>
         </section>
-      </div>
+      </>
     );
   }
 
