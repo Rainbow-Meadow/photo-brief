@@ -15,7 +15,7 @@ import {
 
 
 const marketingRoutes = [
-  { to: "/founding-partner-beta", label: "Founding Beta" },
+  { to: "/betalist", label: "Beta Program" },
   { to: "/pricing", label: "Pricing" },
   { to: "/help", label: "Help" },
 ];
