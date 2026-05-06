@@ -198,51 +198,99 @@ export type Database = {
       captured_media: {
         Row: {
           ai_feedback: Json | null
+          checksum_sha256: string | null
           confidence: number | null
           created_at: string
           extracted_text: string | null
+          file_size_bytes: number | null
           file_url: string | null
+          height: number | null
           id: string
+          mime_type: string | null
           note: string | null
+          original_mime_type: string | null
+          original_size_bytes: number | null
+          original_storage_key: string | null
+          preview_storage_key: string | null
+          processed_at: string | null
+          processed_storage_key: string | null
+          processing_error: string | null
+          processing_status: string
           review_comment: string | null
           reviewed_at: string | null
           status: string
           step_id: string | null
+          storage_provider: string
           submission_id: string
+          thumbnail_storage_key: string | null
           thumbnail_url: string | null
           updated_at: string
+          uploaded_at: string | null
+          width: number | null
         }
         Insert: {
           ai_feedback?: Json | null
+          checksum_sha256?: string | null
           confidence?: number | null
           created_at?: string
           extracted_text?: string | null
+          file_size_bytes?: number | null
           file_url?: string | null
+          height?: number | null
           id?: string
+          mime_type?: string | null
           note?: string | null
+          original_mime_type?: string | null
+          original_size_bytes?: number | null
+          original_storage_key?: string | null
+          preview_storage_key?: string | null
+          processed_at?: string | null
+          processed_storage_key?: string | null
+          processing_error?: string | null
+          processing_status?: string
           review_comment?: string | null
           reviewed_at?: string | null
           status?: string
           step_id?: string | null
+          storage_provider?: string
           submission_id: string
+          thumbnail_storage_key?: string | null
           thumbnail_url?: string | null
           updated_at?: string
+          uploaded_at?: string | null
+          width?: number | null
         }
         Update: {
           ai_feedback?: Json | null
+          checksum_sha256?: string | null
           confidence?: number | null
           created_at?: string
           extracted_text?: string | null
+          file_size_bytes?: number | null
           file_url?: string | null
+          height?: number | null
           id?: string
+          mime_type?: string | null
           note?: string | null
+          original_mime_type?: string | null
+          original_size_bytes?: number | null
+          original_storage_key?: string | null
+          preview_storage_key?: string | null
+          processed_at?: string | null
+          processed_storage_key?: string | null
+          processing_error?: string | null
+          processing_status?: string
           review_comment?: string | null
           reviewed_at?: string | null
           status?: string
           step_id?: string | null
+          storage_provider?: string
           submission_id?: string
+          thumbnail_storage_key?: string | null
           thumbnail_url?: string | null
           updated_at?: string
+          uploaded_at?: string | null
+          width?: number | null
         }
         Relationships: [
           {
