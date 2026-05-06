@@ -211,7 +211,7 @@ export default function BetaListPage() {
   /* ── Post-submission thank-you ─────────────────────────── */
   if (done) {
     return (
-      <div className="pb-landing min-h-screen">
+      <>
         <SEOHead
           title="Application received — PhotoBrief.ai"
           description="Your Founding Partner Beta application has been received."
@@ -278,7 +278,7 @@ export default function BetaListPage() {
             </div>
           </div>
         </section>
-      </div>
+      </>
     );
   }
 
@@ -287,7 +287,7 @@ export default function BetaListPage() {
   const signals = isClean ? cleanSignals : messySignals;
 
   return (
-    <div className="pb-landing min-h-screen">
+    <>
       <SEOHead
         title="PhotoBrief.ai — Guided customer photo requests"
         description="PhotoBrief.ai turns customer photo chasing into one guided mobile workflow. Send a link, collect the right shots, flag obvious photo issues, and get a clean brief ready to act on."
@@ -541,15 +541,7 @@ export default function BetaListPage() {
           </div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="border-t border-white/[0.06] px-4 py-8 sm:px-6">
-        <div className="mx-auto flex max-w-2xl flex-col items-center gap-2.5 text-center text-xs text-white/30">
-          <BrandMark variant="horizontal" tone="light" size={26} />
-          <p>© {new Date().getFullYear()} PhotoBrief.ai · <NavLink to="/privacy" className="hover:text-white/60">Privacy</NavLink> · <NavLink to="/terms" className="hover:text-white/60">Terms</NavLink></p>
-        </div>
-      </footer>
-    </div>
+    </>
   );
 }
 
