@@ -68,6 +68,26 @@ export function FreeProEligibilityModal({ children }: Props) {
             </ul>
           </div>
 
+          {/* Scoring rubric */}
+          <div className="mt-6">
+            <h3 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-[hsl(var(--pb-lavender))]">
+              <Target className="h-4 w-4" /> Scoring rubric
+            </h3>
+            <div className="mt-3 grid gap-2.5">
+              {SCORING_RUBRIC.map((dim) => (
+                <div key={dim.label} className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-semibold text-white">{dim.label}</span>
+                    <span className="rounded-full border border-[hsl(var(--pb-lavender)/0.3)] bg-[hsl(var(--pb-lavender)/0.08)] px-2 py-0.5 text-[10px] font-extrabold tracking-wider text-[hsl(var(--pb-lavender))]">
+                      {dim.weight}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-xs leading-relaxed text-white/60">{dim.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
           {/* Fine print */}
           <div className="mt-6 rounded-xl border border-white/10 bg-white/[0.03] p-4">
             <h3 className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-white/60">
