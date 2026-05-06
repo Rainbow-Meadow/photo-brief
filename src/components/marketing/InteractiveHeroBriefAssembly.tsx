@@ -5,11 +5,16 @@ import {
   CheckCircle2,
   ChevronRight,
   ClipboardList,
+  RefreshCw,
   ScanLine,
   ShieldCheck,
   Wifi,
   Battery,
   Signal,
+  Send,
+  Clock,
+  MessageSquare,
+  AlertTriangle,
 } from "lucide-react";
 import wideGarage from "@/assets/junk-removal/wide-garage.jpg";
 import pileCloseup from "@/assets/junk-removal/pile-closeup.jpg";
@@ -19,6 +24,9 @@ import drivewayAccess from "@/assets/junk-removal/driveway-access.jpg";
 const API_URL =
   "https://mvlcefiygkzzewcdzsmj.functions.supabase.co/live-preview-submission";
 const SESSION_KEY = "pb-session";
+
+/** Index of the photo that will be "blurry" on first capture */
+const BLURRY_INDEX = 1;
 
 const photos = [
   {
@@ -89,7 +97,6 @@ function PhoneMockup({
   const bg = variant === "dark" ? "bg-[#0c0e14]" : "bg-white";
   return (
     <div className="flex flex-col items-center gap-3">
-      {/* Label above phone */}
       <div className="text-center">
         <span className="text-xs font-bold uppercase tracking-[0.16em] text-white/50">
           {label}
@@ -98,16 +105,12 @@ function PhoneMockup({
           <span className="ml-2 text-xs text-white/30">{sublabel}</span>
         )}
       </div>
-      {/* Phone chassis */}
       <div className="relative w-[260px] rounded-[2.25rem] border-[3px] border-white/[0.08] bg-[#1a1a1f] p-[3px] shadow-[0_8px_40px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,255,255,0.04)] sm:w-[280px] sm:rounded-[2.5rem]">
-        {/* Dynamic Island */}
         <div className="absolute left-1/2 top-[10px] z-20 h-[22px] w-[90px] -translate-x-1/2 rounded-full bg-black" />
-        {/* Screen */}
         <div
           className={`relative overflow-hidden rounded-[2.25rem] ${bg}`}
           style={{ minHeight: 520 }}
         >
-          {/* Status bar */}
           <div
             className={`flex items-center justify-between px-6 pb-1 pt-[38px] text-[10px] font-semibold ${variant === "dark" ? "text-white/50" : "text-black/40"}`}
           >
@@ -118,7 +121,6 @@ function PhoneMockup({
               <Battery className="h-3.5 w-3.5" />
             </div>
           </div>
-          {/* Screen content */}
           <div className="px-4 pb-6">{children}</div>
         </div>
       </div>
@@ -148,14 +150,17 @@ function ConnectionLine() {
 function CustomerScreen({
   currentStep,
   captured,
+  blurryPending,
   onCapture,
 }: {
   currentStep: number;
   captured: Set<number>;
+  blurryPending: boolean;
   onCapture: () => void;
 }) {
   const photo = photos[currentStep];
   const capturedCount = captured.size;
+  const isBlurryShot = currentStep === BLURRY_INDEX && blurryPending;
 
   return (
     <>
@@ -192,7 +197,21 @@ function CustomerScreen({
 
       {/* Photo viewfinder */}
       <div className="relative overflow-hidden rounded-2xl bg-black/[0.03]">
-        {captured.has(currentStep) ? (
+        {isBlurryShot ? (
+          /* Blurry first-attempt state */
+          <div className="relative">
+            <img
+              src={photo.src}
+              alt={photo.label}
+              className="h-[200px] w-full object-cover blur-[3px]"
+            />
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-amber-900/30">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90">
+                <AlertTriangle className="h-6 w-6 text-amber-500" />
+              </div>
+            </div>
+          </div>
+        ) : captured.has(currentStep) ? (
           <div className="relative">
             <img
               src={photo.src}
@@ -207,7 +226,6 @@ function CustomerScreen({
           </div>
         ) : (
           <div className="flex h-[200px] flex-col items-center justify-center bg-gradient-to-b from-black/[0.02] to-black/[0.05]">
-            {/* Viewfinder corners */}
             <div className="relative flex h-28 w-28 items-center justify-center">
               <div className="absolute left-0 top-0 h-5 w-5 border-l-2 border-t-2 border-black/20 rounded-tl" />
               <div className="absolute right-0 top-0 h-5 w-5 border-r-2 border-t-2 border-black/20 rounded-tr" />
@@ -219,24 +237,47 @@ function CustomerScreen({
         )}
       </div>
 
-      {/* Prompt */}
-      <div className="mt-3 rounded-xl bg-black/[0.04] p-3">
-        <p className="flex items-center gap-2 text-[13px] font-semibold text-black/70">
-          <Camera className="h-3.5 w-3.5 shrink-0 text-[hsl(var(--pb-violet))]" />
-          {photo.label}
-        </p>
-        <p className="mt-1 text-[12px] leading-[1.5] text-black/45">
-          {photo.prompt}
-        </p>
-      </div>
+      {/* Blurry feedback card */}
+      {isBlurryShot && (
+        <div className="mt-3 rounded-xl bg-amber-50 border border-amber-200 p-3">
+          <p className="flex items-center gap-2 text-[13px] font-semibold text-amber-700">
+            <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
+            This looks blurry
+          </p>
+          <p className="mt-1 text-[12px] leading-[1.5] text-amber-600/80">
+            Hold the camera steady and retake so the details are clear.
+          </p>
+        </div>
+      )}
 
-      {/* Capture / Next button */}
+      {/* Normal prompt (hidden when blurry feedback is showing) */}
+      {!isBlurryShot && (
+        <div className="mt-3 rounded-xl bg-black/[0.04] p-3">
+          <p className="flex items-center gap-2 text-[13px] font-semibold text-black/70">
+            <Camera className="h-3.5 w-3.5 shrink-0 text-[hsl(var(--pb-violet))]" />
+            {photo.label}
+          </p>
+          <p className="mt-1 text-[12px] leading-[1.5] text-black/45">
+            {photo.prompt}
+          </p>
+        </div>
+      )}
+
+      {/* Capture / Next / Retake button */}
       <button
         type="button"
         onClick={onCapture}
-        className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-[hsl(var(--pb-violet))] px-4 py-3 text-[13px] font-bold text-white transition-all hover:brightness-110 active:scale-[0.98]"
+        className={`mt-3 flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-[13px] font-bold text-white transition-all hover:brightness-110 active:scale-[0.98] ${
+          isBlurryShot
+            ? "bg-amber-500"
+            : "bg-[hsl(var(--pb-violet))]"
+        }`}
       >
-        {captured.has(currentStep) ? (
+        {isBlurryShot ? (
+          <>
+            <RefreshCw className="h-4 w-4" /> Retake photo
+          </>
+        ) : captured.has(currentStep) ? (
           <>
             Next shot <ChevronRight className="h-4 w-4" />
           </>
@@ -258,7 +299,19 @@ function CustomerScreen({
                 : "ring-1 ring-black/[0.06]"
             }`}
           >
-            {captured.has(i) ? (
+            {i === BLURRY_INDEX && blurryPending && captured.has(i) ? (
+              /* Blurry thumbnail */
+              <>
+                <img
+                  src={p.src}
+                  alt={p.label}
+                  className="h-full w-full object-cover blur-[2px]"
+                />
+                <span className="absolute right-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-amber-500">
+                  <AlertTriangle className="h-2.5 w-2.5 text-white" />
+                </span>
+              </>
+            ) : captured.has(i) ? (
               <>
                 <img
                   src={p.src}
@@ -283,19 +336,158 @@ function CustomerScreen({
   );
 }
 
-/* ── Business Phone Screen ── */
-function BusinessScreen({
+/* ── Business Phone: Link Sent State ── */
+function LinkSentScreen() {
+  return (
+    <div className="flex min-h-[420px] flex-col items-center justify-center">
+      {/* Header */}
+      <div className="mb-6 text-center">
+        <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-white/35">
+          Dashboard
+        </span>
+      </div>
+
+      {/* Sent confirmation card */}
+      <div className="w-full rounded-2xl bg-white/[0.04] p-5">
+        <div className="flex flex-col items-center text-center">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500/15">
+            <Send className="h-6 w-6 text-emerald-400" />
+          </div>
+          <h3 className="mt-3 text-[15px] font-bold text-white/90">
+            Request sent
+          </h3>
+          <p className="mt-1 text-[12px] text-white/45">
+            Garage cleanout quote
+          </p>
+        </div>
+
+        <div className="mt-4 space-y-2">
+          <div className="flex items-center justify-between rounded-lg bg-white/[0.03] px-3 py-2">
+            <span className="flex items-center gap-2 text-[11px] text-white/50">
+              <MessageSquare className="h-3 w-3" /> Sent via
+            </span>
+            <span className="text-[11px] font-semibold text-white/70">SMS</span>
+          </div>
+          <div className="flex items-center justify-between rounded-lg bg-white/[0.03] px-3 py-2">
+            <span className="flex items-center gap-2 text-[11px] text-white/50">
+              <Clock className="h-3 w-3" /> Sent
+            </span>
+            <span className="text-[11px] font-semibold text-white/70">Just now</span>
+          </div>
+        </div>
+
+        {/* Waiting indicator */}
+        <div className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-white/[0.03] py-3">
+          <span className="relative flex h-2 w-2">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-amber-400" />
+          </span>
+          <span className="text-[11px] font-semibold text-amber-400/80">
+            Waiting for customer…
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── Business Phone: Brief Complete State ── */
+function BriefCompleteScreen() {
+  return (
+    <>
+      <div className="mb-3 mt-1 flex items-center justify-between">
+        <div>
+          <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-white/35">
+            Dashboard
+          </span>
+          <h3 className="mt-0.5 text-[15px] font-bold tracking-tight text-white/90">
+            Brief complete
+          </h3>
+        </div>
+        <span className="rounded-full bg-emerald-500/15 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-400">
+          Ready
+        </span>
+      </div>
+
+      {/* All photos grid with green badges */}
+      <div className="grid grid-cols-2 gap-1.5">
+        {photos.map((photo) => (
+          <div
+            key={photo.id}
+            className="relative overflow-hidden rounded-xl ring-1 ring-white/[0.08]"
+          >
+            <img
+              src={photo.src}
+              alt={photo.label}
+              className="h-[72px] w-full object-cover"
+            />
+            <div className="flex items-center justify-between bg-black/50 px-2 py-1.5">
+              <span className="text-[10px] font-semibold text-white/70">
+                {photo.label}
+              </span>
+              <span className="flex items-center gap-0.5 text-[9px] font-bold text-emerald-400">
+                <ShieldCheck className="h-2.5 w-2.5" />
+                {photo.good ? "OK" : "OK"}
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* AI check — all passed */}
+      <div className="mt-3 rounded-xl bg-white/[0.04] p-3">
+        <p className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/35">
+          <ScanLine className="h-3 w-3" /> AI check
+        </p>
+        <div className="mt-2 space-y-1.5">
+          {photos.map((p) => (
+            <div
+              key={p.id}
+              className="flex items-center justify-between rounded-lg bg-white/[0.03] px-2.5 py-1.5"
+            >
+              <span className="text-[11px] text-white/60">{p.label}</span>
+              <span className="text-[10px] font-bold text-emerald-400">
+                Verified
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Summary */}
+      <div className="mt-3 rounded-xl bg-white/[0.04] p-3">
+        <p className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/35">
+          <ClipboardList className="h-3 w-3" /> Brief summary
+        </p>
+        <p className="mt-2 text-[12px] leading-[1.6] text-white/60">
+          Garage cleanout — all shots verified. Ground-level access. Ready to quote.
+        </p>
+      </div>
+
+      {/* Decorative CTA */}
+      <button
+        type="button"
+        className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500/20 px-4 py-3 text-[13px] font-bold text-emerald-400 transition-all"
+        disabled
+      >
+        <CheckCircle2 className="h-4 w-4" /> Quote now
+      </button>
+    </>
+  );
+}
+
+/* ── Business Phone: In-Progress Screen ── */
+function BusinessInProgressScreen({
   captured,
+  blurryPending,
 }: {
   captured: Set<number>;
+  blurryPending: boolean;
 }) {
   const capturedCount = captured.size;
-  const hasFlag = [...captured].some((i) => !photos[i].good);
-  const ready = capturedCount === photos.length;
 
   return (
     <>
-      {/* Dashboard header */}
       <div className="mb-3 mt-1 flex items-center justify-between">
         <div>
           <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-white/35">
@@ -305,16 +497,8 @@ function BusinessScreen({
             Incoming brief
           </h3>
         </div>
-        <span
-          className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider ${
-            ready
-              ? hasFlag
-                ? "bg-amber-500/15 text-amber-400"
-                : "bg-emerald-500/15 text-emerald-400"
-              : "bg-white/[0.06] text-white/40"
-          }`}
-        >
-          {ready ? (hasFlag ? "Review" : "Ready") : `${capturedCount}/4`}
+        <span className="rounded-full bg-white/[0.06] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white/40">
+          {capturedCount}/4
         </span>
       </div>
 
@@ -322,6 +506,7 @@ function BusinessScreen({
       <div className="grid grid-cols-2 gap-1.5">
         {photos.map((photo, i) => {
           const isCaptured = captured.has(i);
+          const isBlurry = i === BLURRY_INDEX && blurryPending && isCaptured;
           return (
             <div
               key={photo.id}
@@ -336,21 +521,37 @@ function BusinessScreen({
                   <img
                     src={photo.src}
                     alt={photo.label}
-                    className="h-[72px] w-full object-cover"
+                    className={`h-[72px] w-full object-cover ${isBlurry ? "blur-[2px]" : ""}`}
                   />
                   <div className="flex items-center justify-between bg-black/50 px-2 py-1.5">
                     <span className="text-[10px] font-semibold text-white/70">
                       {photo.label}
                     </span>
                     <span
-                      className={`flex items-center gap-0.5 text-[9px] font-bold ${photo.good ? "text-emerald-400" : "text-amber-400"}`}
+                      className={`flex items-center gap-0.5 text-[9px] font-bold ${
+                        isBlurry
+                          ? "text-amber-400"
+                          : photo.good
+                            ? "text-emerald-400"
+                            : "text-amber-400"
+                      }`}
                     >
-                      {photo.good ? (
-                        <ShieldCheck className="h-2.5 w-2.5" />
+                      {isBlurry ? (
+                        <>
+                          <AlertTriangle className="h-2.5 w-2.5" />
+                          Blurry
+                        </>
+                      ) : photo.good ? (
+                        <>
+                          <ShieldCheck className="h-2.5 w-2.5" />
+                          OK
+                        </>
                       ) : (
-                        <ScanLine className="h-2.5 w-2.5" />
+                        <>
+                          <ScanLine className="h-2.5 w-2.5" />
+                          Flag
+                        </>
                       )}
-                      {photo.good ? "OK" : "Flag"}
                     </span>
                   </div>
                 </>
@@ -378,6 +579,7 @@ function BusinessScreen({
               .sort((a, b) => a - b)
               .map((i) => {
                 const p = photos[i];
+                const isBlurry = i === BLURRY_INDEX && blurryPending;
                 return (
                   <div
                     key={p.id}
@@ -385,9 +587,15 @@ function BusinessScreen({
                   >
                     <span className="text-[11px] text-white/60">{p.label}</span>
                     <span
-                      className={`text-[10px] font-bold ${p.good ? "text-emerald-400" : "text-amber-400"}`}
+                      className={`text-[10px] font-bold ${
+                        isBlurry
+                          ? "text-amber-400"
+                          : p.good
+                            ? "text-emerald-400"
+                            : "text-amber-400"
+                      }`}
                     >
-                      {p.status}
+                      {isBlurry ? "Blurry — retake" : p.status}
                     </span>
                   </div>
                 );
@@ -401,18 +609,10 @@ function BusinessScreen({
         <p className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/35">
           <ClipboardList className="h-3 w-3" /> Brief summary
         </p>
-        {ready ? (
-          <p className="mt-2 text-[12px] leading-[1.6] text-white/60">
-            {hasFlag
-              ? "Garage cleanout — appliance review needed before quoting. ~½ truck."
-              : "Garage cleanout — all shots verified. Ground-level access. Ready to quote."}
-          </p>
-        ) : (
-          <p className="mt-2 text-[12px] italic text-white/25">
-            Waiting for {photos.length - capturedCount} more photo
-            {photos.length - capturedCount !== 1 ? "s" : ""}…
-          </p>
-        )}
+        <p className="mt-2 text-[12px] italic text-white/25">
+          Waiting for {photos.length - capturedCount} more photo
+          {photos.length - capturedCount !== 1 ? "s" : ""}…
+        </p>
       </div>
     </>
   );
@@ -422,19 +622,36 @@ function BusinessScreen({
 export function InteractiveHeroBriefAssembly() {
   const [currentStep, setCurrentStep] = useState(0);
   const [captured, setCaptured] = useState<Set<number>>(() => new Set());
+  const [blurryPending, setBlurryPending] = useState(true);
   const [email, setEmail] = useState("");
   const [requestUrl, setRequestUrl] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const ready = captured.size === photos.length;
+  const allCaptured = captured.size === photos.length;
+  const ready = allCaptured && !blurryPending;
   const hasFlag = [...captured].some((i) => !photos[i].good);
 
   function handleCapture() {
     const next = new Set(captured);
+
+    // If blurry photo is showing and user taps retake
+    if (currentStep === BLURRY_INDEX && blurryPending && next.has(currentStep)) {
+      setBlurryPending(false);
+      // Move to next step
+      if (currentStep < photos.length - 1) {
+        setCurrentStep(currentStep + 1);
+      }
+      return;
+    }
+
     if (!next.has(currentStep)) {
       next.add(currentStep);
       setCaptured(next);
+      // For the blurry photo, don't auto-advance — stay to show retake prompt
+      if (currentStep === BLURRY_INDEX && blurryPending) {
+        return;
+      }
     } else if (currentStep < photos.length - 1) {
       setCurrentStep(currentStep + 1);
     }
@@ -502,6 +719,16 @@ export function InteractiveHeroBriefAssembly() {
     }
   }
 
+  // Determine which business screen to show
+  const businessPhoneContent =
+    captured.size === 0 ? (
+      <LinkSentScreen />
+    ) : ready ? (
+      <BriefCompleteScreen />
+    ) : (
+      <BusinessInProgressScreen captured={captured} blurryPending={blurryPending} />
+    );
+
   return (
     <div className="relative mt-2">
       {/* Section header */}
@@ -525,6 +752,7 @@ export function InteractiveHeroBriefAssembly() {
           <CustomerScreen
             currentStep={currentStep}
             captured={captured}
+            blurryPending={blurryPending}
             onCapture={handleCapture}
           />
         </PhoneMockup>
@@ -543,7 +771,7 @@ export function InteractiveHeroBriefAssembly() {
 
         {/* Business phone */}
         <PhoneMockup label="Your dashboard" sublabel="real-time" variant="dark">
-          <BusinessScreen captured={captured} />
+          {businessPhoneContent}
         </PhoneMockup>
       </div>
 
