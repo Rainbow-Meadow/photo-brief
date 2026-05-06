@@ -3,13 +3,10 @@ import { BrandMark } from "@/components/layout/BrandMark";
 import { PoweredByBadge } from "@/components/shared/PoweredByBadge";
 import { useRecipientBranding } from "@/features/capture/RecipientBrandingContext";
 
-
-
 /**
  * PublicRequestLayout
- * Mobile-first layout for the recipient chat-first capture flow.
- * Branding (business name, logo, color) is injected via RecipientBrandingProvider
- * from the page route. No auth, no sidebar.
+ * Mobile-first layout for the recipient capture flow.
+ * Slim header, no sidebar, no auth.
  */
 export function PublicRequestLayout() {
   const { businessName, logoUrl, hidePhotobriefBranding } = useRecipientBranding();
@@ -35,7 +32,7 @@ export function PublicRequestLayout() {
       </header>
 
       <main className="flex-1">
-        <div className="mx-auto w-full max-w-2xl px-4 py-6 sm:py-10">
+        <div className="mx-auto w-full max-w-2xl px-3 py-3 sm:px-4 sm:py-6">
           <Outlet />
         </div>
       </main>
