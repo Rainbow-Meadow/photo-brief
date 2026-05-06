@@ -9,13 +9,9 @@
 / /index.html 200
 /pricing /pricing/index.html 200
 /for-ai-agents /for-ai-agents/index.html 200
-/founding-partner-beta /founding-partner-beta/index.html 200
 /help /help/index.html 200
-
-# Legacy compatibility redirects.
-/waitlist /?utm_source=betalist 301
-/betalist /?utm_source=betalist 301
-/beta-portfolio /founding-partner-beta 301
+/waitlist /betalist 301
+/betalist /betalist/index.html 200
 
 # Public discovery files.
 /robots.txt /robots.txt 200
@@ -34,7 +30,6 @@
 /unsubscribe* /404.html 404
 /signup* /404.html 404
 /onboarding* /404.html 404
-/welcome* /404.html 404
 /dashboard* /404.html 404
 /requests* /404.html 404
 /submissions* /404.html 404

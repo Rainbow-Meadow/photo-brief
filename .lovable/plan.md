@@ -1,44 +1,53 @@
 
-## Goal
+# Beta Welcome Page
 
-Restructure `/founding-partner-beta` to match the detailed BetaList-optimized spec: hero with messy-to-clean transform visual, inline application form immediately after the hero (near above-the-fold), expanded form fields, reordered sections, and updated copy.
+A new page at `/welcome` for companies accepted into the Founding Partner Beta. It serves as a concierge intake — congratulatory, exclusive-feeling, and actionable. The page collects everything you need to set up their account before the concierge call.
 
-## Changes to `src/pages/BetaPortfolio.tsx` (full rewrite)
+## What the page includes
 
-### 1. Hero section (above the fold)
-- Headline: "Stop chasing customer photos."
-- Subheadline: "Send one guided PhotoBrief link and get a clean, AI-checked brief back."
-- Primary CTA: "Apply for Founding Partner Beta" (scrolls to form)
-- Secondary CTA: "See how it works" (scrolls to workflow)
-- **Hero visual** (right column on desktop, below form on mobile): a side-by-side "messy incoming photos" (scattered cards with issue chips: "Blurry," "Too dark," "Wrong angle," "Label unreadable") transforming into a structured brief with requested shot slots, status chips ("Accepted" / "Needs retake"), and issue flags. Pure CSS/React, no images needed.
+### Hero section
+- Congratulatory headline ("You're in." or "Welcome to the inner circle.")
+- Short paragraph reinforcing exclusivity (limited cohort, hand-picked, concierge setup)
+- Founding Partner badge/eyebrow
 
-### 2. Application form (immediately after hero, inside same section)
-Placed right below hero copy so it's visible at or near the fold. Short form with 5 fields:
-- Work email (required)
-- Business name (required)
-- Website (optional)
-- Monthly photo requests (dropdown: Fewer than 10, 10-50, 51-200, 200+)
-- Workflow/use case textarea (required)
+### What's included card
+- Bullet list of founding partner benefits (concierge setup, priority support, locked pricing, direct roadmap input, early features)
 
-Submits to existing `beta-welcome-submit` edge function (already accepts `website` and `monthly_volume`). Includes inline terms/privacy note and "no credit card" reassurance.
+### Concierge intake form (multi-section)
+Collects everything needed to configure their account:
 
-### 3. Sections in order (after hero+form)
-1. **Product visual / How it works** — 4-step workflow cards: Request, Capture, Check, Brief. Headline: "One link. Guided photos. Organized brief."
-2. **Use cases** — Headline: "Built for moments when photos decide the next step." Cards for: quotes, dispatch prep, approvals, returns/warranty, documentation, review workflows.
-3. **Old way vs PhotoBrief way** — Existing `ComparisonTable` component.
-4. **Founding Partner Beta offer** — Updated copy: "Free access for 60-90 days, concierge setup, priority support, direct input on the roadmap, early access to future tools, and 50% off the first year after launch." 7 benefit cards.
-5. **Repeated form** — Same form shown again for users who scrolled past the first one.
-6. **Trust notes** — Expanded from simple bullet points to 3 cards with titles: "Private & secure" (data never shared, secure expiring links), "Business-owned requests" (workspace controls access/retention/export), "No spammy customer experience" (one branded link, no app, no account, no marketing emails).
-7. **Final CTA** — "Limited spots available." with apply button.
+1. **Business basics** — Business name, industry (dropdown from existing INDUSTRIES list), website URL, phone number
+2. **Brand & identity** — Logo upload (file input), primary brand color (hex picker), tagline or short description
+3. **Photo workflow details** — What they need customer photos for (textarea), typical monthly volume (dropdown), who reviews submissions (role/name), preferred customer communication channel (email/SMS/both)
+4. **First template ideas** — What their first 1-2 PhotoBrief templates should cover (textarea), example scenarios or job types
 
-### 4. Removed
-- `InteractiveHeroBriefAssembly` import (replaced with custom `HeroTransformVisual` showing messy-to-clean transformation)
-- Old `name` field from form (replaced with `website` and `monthly_volume`)
+### What happens next timeline
+- Numbered steps: "We review your info" → "Your account is configured" → "Concierge call to walk through everything" → "You send your first real PhotoBrief"
 
-### 5. Other updates
-- Beta benefit copy updated to "60-90 days" (from "90 days")
-- `formState` interface expanded with `website` and `monthly_volume` fields
-- Form submission body includes new fields (already supported by edge function)
+### Contact/support footer
+- Direct email link, reassurance that replies go to the team
 
-## Files affected
-- `src/pages/BetaPortfolio.tsx` — Full rewrite
+## Technical details
+
+### New files
+- `src/pages/BetaWelcome.tsx` — The full welcome page component with the intake form. Submits to a new edge function. Uses existing brand design tokens (pb-section, pb-container, pb-card, pb-lens-field, pb-eyebrow, pb-copy, etc.) matching BetaList.tsx styling.
+- `supabase/functions/beta-welcome-submit/index.ts` — Edge function that stores the concierge intake data and sends an admin notification email with all the details.
+
+### Database
+- New `beta_welcome_submissions` table with columns for all form fields plus `user_email`, `submitted_at`, `status` (default 'pending'). No RLS needed beyond service-role access from the edge function (public form, no auth required — the invite link is the gate).
+
+### Routing
+- Add `/welcome` route inside the `MarketingLayout` group in `App.tsx`
+- The invite acceptance email will link to this page (future update to the email template)
+
+### Form submission
+- Calls the `beta-welcome-submit` edge function
+- Stores submission in `beta_welcome_submissions`
+- Triggers admin notification email with all collected info
+- Shows a confirmation state after submission ("We've got everything — expect to hear from us within 48 hours")
+
+### Design
+- Matches the dark navy brand aesthetic from BetaList.tsx
+- Uses existing UI components (Input, Textarea, Select, Button with pb-primary/pb-secondary variants)
+- Mobile-first responsive layout
+- Logo upload uses a simple file input (stores as base64 or description for now — actual logo handled in concierge call)
