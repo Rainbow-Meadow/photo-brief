@@ -169,9 +169,6 @@ export default function BetaListPage() {
           source,
         },
       });
-          source,
-        },
-      });
       if (error) throw error;
       const payload = data as { ok?: boolean; already?: boolean } | null;
       if (payload?.already) {
