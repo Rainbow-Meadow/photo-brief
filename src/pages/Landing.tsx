@@ -446,11 +446,11 @@ export default function LandingPage() {
         {/* ━━ USE CASES ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <UseCaseSection />
 
-        {/* ━━ FOUNDING PARTNER BETA ━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-        <FoundingPartnerSection utm={utm} isFull={isFull} />
+         {/* ━━ PRICING PATH ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+         <PricingPathSection />
 
-        {/* ━━ PRICING PATH ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-        <PricingPathSection />
+         {/* ━━ FOUNDING PARTNER BETA ━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+         <FoundingPartnerSection utm={utm} isFull={isFull} />
 
         {/* ━━ TRUST POINTS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <section className="pb-section-tight">
