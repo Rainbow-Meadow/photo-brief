@@ -116,7 +116,7 @@ const loosePhotos = [
 ];
 
 const workflowSteps = [
-  { icon: Link2, eyebrow: "Request", title: "Send one guided link", body: "Choose a template, send the link by text or email, or copy the branded request into any customer thread." },
+  { icon: Globe2, eyebrow: "Connect", title: "Add PhotoBrief to your website", body: "Use our hosted intake form, bridge your existing form with a webhook, or send manual links — however your customers reach you." },
   { icon: Camera, eyebrow: "Capture", title: "Customers take the right shots", body: "They see one mobile prompt at a time, with plain instructions instead of a vague \u201csend a few photos.\u201d" },
   { icon: Route, eyebrow: "Check", title: "Obvious problems get flagged", body: "PhotoBrief calls out missing, unclear, or review-needed shots before your team has to sort through them." },
   { icon: FileCheck2, eyebrow: "Brief", title: "Your team gets a usable packet", body: "Photos, notes, customer context, and next-step status land together for quoting, dispatch, review, or documentation." },
@@ -135,15 +135,15 @@ const cleanSignals = [
   "Customer notes stay with the photos",
   "Simple photo issues are flagged early",
   "The submission arrives as a structured brief",
-  "Manual links now, routed website intake on Pro",
+  "Hosted form replaces or extends your current one",
 ];
 
 const useCases = [
+  { icon: Globe2, title: "Website intake that collects proof", body: "Replace your generic contact form with a hosted PhotoBrief form, or bridge your existing form with a webhook. Either way, every lead arrives with the photos your team needs.", stamp: "Primary" },
   { icon: BadgeCheck, title: "Quote-ready submissions", body: "Ask for the photos your estimator needs before the first call becomes a chain of follow-ups.", stamp: "Quote prep" },
   { icon: MapPinned, title: "Dispatch prep", body: "Collect site access, issue context, and handling notes before a team heads out.", stamp: "Field ready" },
   { icon: ImageOff, title: "Damage documentation", body: "Guide customers through the angles that matter so reviewers can understand the issue quickly.", stamp: "Evidence packet" },
   { icon: ShieldCheck, title: "Approvals and exceptions", body: "Turn customer media into a packet that can be reviewed, approved, or escalated without guessing.", stamp: "Decision ready" },
-  { icon: Globe2, title: "Website lead intake", body: "On Pro, replace vague forms with hosted intake, branded embeds, request routing, and integrations.", stamp: "Pro route" },
 ];
 
 const trustPoints = [
@@ -154,16 +154,16 @@ const trustPoints = [
 
 const pricingPath = [
   {
-    label: "Manual start",
-    title: "Send PhotoBrief links yourself",
-    body: "Create a request, copy the link, and prove the workflow with real customers before changing your website.",
-    bullets: ["No website changes", "Works on every plan", "Fastest path to value"],
+    label: "Website intake",
+    title: "Replace or extend your form",
+    body: "Use a hosted PhotoBrief form on your site, or connect your existing form with a webhook. Every lead triggers a guided photo workflow automatically.",
+    bullets: ["Hosted intake form", "Webhook for existing forms", "Template routing"],
   },
   {
-    label: "Pro upgrade",
-    title: "Automate intake when it earns its keep",
-    body: "Keep manual links, then add hosted forms, branded embeds, template routing, and webhook-based handoffs.",
-    bullets: ["Website lead capture", "Request type routing", "Existing form bridge"],
+    label: "Manual links",
+    title: "Send requests on demand",
+    body: "Create a request, copy the link, and text or email it to any customer. Great for one-off jobs or when leads come in by phone.",
+    bullets: ["Works on every plan", "No website changes", "Fastest path to value"],
   },
 ];
 
@@ -355,12 +355,12 @@ export default function LandingPage() {
               <span className="pb-eyebrow"><Sparkles className="h-3.5 w-3.5" /> Accepting beta applications</span>
 
               <h1 className="pb-hero-title mx-auto mt-3 max-w-2xl text-white sm:mt-4">
-                Get quote-ready<br className="sm:hidden" />{" "}customer photos.
-                <span className="mt-1 block text-[hsl(var(--pb-lavender))]">Send one guided link.</span>
+                Replace your intake form.
+                <span className="mt-1 block text-[hsl(var(--pb-lavender))]">Get photos, not just text.</span>
               </h1>
 
               <p className="pb-copy mx-auto mt-4 max-w-2xl text-base leading-7 sm:text-lg sm:leading-8">
-                PhotoBrief is a one-link photo intake tool for service, repair, review, and documentation workflows. Customers follow mobile prompts, obvious issues get flagged, and your team receives a clean brief instead of a messy thread.
+                Drop a hosted PhotoBrief form on your website — or connect it to your existing one with a webhook. Customers land on a guided mobile workflow, capture the exact photos you need, and your team gets a structured brief instead of a vague message.
               </p>
 
               <div className="mx-auto mt-5 flex max-w-lg flex-col gap-2.5 sm:mt-6 sm:max-w-none sm:flex-row sm:justify-center sm:gap-3">
@@ -376,7 +376,7 @@ export default function LandingPage() {
               </div>
 
               <div className="mx-auto mt-4 flex max-w-md justify-center gap-2 sm:mt-5 sm:gap-2.5">
-                {["No app for customers", "Reviewed for fit", "Concierge setup"].map((item) => (
+                {["Hosted form or webhook", "No app for customers", "Concierge setup"].map((item) => (
                   <span key={item} className="pb-route-chip whitespace-nowrap px-2.5 py-1.5 text-center text-[0.65rem] font-semibold sm:px-3 sm:py-2 sm:text-xs">{item}</span>
                 ))}
               </div>
@@ -545,7 +545,7 @@ const painPoints = [
   {
     icon: FormInput,
     stat: "Forms capture text, not proof",
-    context: "Generic intake forms never ask for the visual evidence your team actually needs to act.",
+    context: "Your intake form collects a name and a message. PhotoBrief replaces or extends it to collect the photos your team actually needs.",
   },
   {
     icon: UserX,
