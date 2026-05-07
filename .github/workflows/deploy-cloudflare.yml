@@ -3,7 +3,7 @@ name: Deploy Cloudflare (Pages + Workers)
 # Builds the marketing site, prerenders /, /pricing, /help and publishes the
 # `dist/` output to Cloudflare Pages. Then deploys the routing Worker that
 # splits photobrief.ai traffic between Pages (marketing) and Lovable (app),
-# and the MCP Worker that serves the live MCP endpoint at mcp.photobrief.ai.
+# plus the agent Workers used by PhotoBrief's public and internal workflows.
 
 on:
   push:
@@ -86,4 +86,16 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: workers/assistant-agent
+          command: deploy
+
+      - name: Install Beta Onboarding Agent dependencies
+        working-directory: workers/beta-onboarding-agent
+        run: npm install --no-package-lock
+
+      - name: Deploy Beta Onboarding Agent Worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: workers/beta-onboarding-agent
           command: deploy
