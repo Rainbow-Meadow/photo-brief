@@ -194,7 +194,7 @@ export function useChatFlow({
           stepId: step.id,
           stepTitle: step.title,
           mediaId: photo.capturedMediaId,
-          checkResult: verdict === "pass" || verdict === "unavailable" ? "pass" : verdict === "warning" ? "warning" : "fail",
+          checkResult: verdict === "pass" || verdict === "unavailable" ? "pass" : verdict === "warn" ? "warning" : "fail",
         });
       }
 
