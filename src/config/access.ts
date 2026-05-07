@@ -29,7 +29,7 @@ export function signupCtaShortLabel(): string {
 /** Where pricing tier CTAs should send visitors when they pick a plan. */
 export function planCtaTarget(planId: string): string {
   if (INVITE_ONLY_BETA) {
-    return `/#apply?interest=${encodeURIComponent(planId)}`;
+    return `/?interest=${encodeURIComponent(planId)}#apply`;
   }
   if (planId === "free") return "/auth?mode=signup";
   return `/auth?mode=signup&plan=${planId}`;

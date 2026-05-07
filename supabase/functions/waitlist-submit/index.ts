@@ -20,6 +20,12 @@ interface Payload {
   interest?: string;
   notes?: string;
   source?: string;
+  fit_score?: number;
+  agent_segment?: string;
+  suggested_template?: string;
+  agent_summary?: string;
+  agent_concerns?: string[];
+  first_request_steps?: string[];
   utm_source?: string;
   utm_medium?: string;
   utm_campaign?: string;
@@ -31,6 +37,21 @@ function clean(v: unknown, max = 500): string | null {
   const t = v.trim();
   if (!t) return null;
   return t.slice(0, max);
+}
+
+function cleanStringArray(v: unknown, maxItems = 10, maxLength = 200): string[] | null {
+  if (!Array.isArray(v)) return null;
+  const cleaned = v
+    .map((item) => clean(item, maxLength))
+    .filter((item): item is string => Boolean(item))
+    .slice(0, maxItems);
+  return cleaned.length ? cleaned : null;
+}
+
+function cleanFitScore(v: unknown): number | null {
+  if (typeof v !== "number" || !Number.isFinite(v)) return null;
+  const rounded = Math.round(v);
+  return Math.max(1, Math.min(5, rounded));
 }
 
 function isEmail(v: string): boolean {
@@ -162,6 +183,12 @@ Deno.serve(async (req) => {
       monthly_photo_volume: monthlyVolume,
       source,
       status: "new",
+      fit_score: cleanFitScore(body.fit_score),
+      agent_segment: clean(body.agent_segment, 100),
+      suggested_template: clean(body.suggested_template, 200),
+      agent_summary: clean(body.agent_summary, 1000),
+      agent_concerns: cleanStringArray(body.agent_concerns),
+      first_request_steps: cleanStringArray(body.first_request_steps, 12, 200),
       notes: [
         clean(body.notes, 1500),
         clean(body.business_type, 100) ? `Business type: ${clean(body.business_type, 100)}` : null,
