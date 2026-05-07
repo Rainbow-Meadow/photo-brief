@@ -243,6 +243,15 @@ export function useChatFlow({
       if (!q) return;
       answersRef.current.push({ questionId: q.id, prompt: q.prompt, answer });
       append({ id: nextId(), kind: "user_text", text: answer });
+
+      // Push question_answered event to capture agent
+      if (requestId) {
+        pushCaptureEvent(requestId, {
+          type: "question_answered",
+          questionPrompt: q.prompt,
+          answer,
+        });
+      }
       const nextQ = questionIndex + 1;
       if (nextQ < effectiveGuide.questions.length) {
         setQuestionIndex(nextQ);
