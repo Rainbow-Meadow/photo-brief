@@ -21,7 +21,7 @@ const DISCOVERY_LINKS = [
   { href: "/openapi.json", label: "/openapi.json", desc: "OpenAPI 3.1 spec." },
   { href: "/.well-known/ai-plugin.json", label: "/.well-known/ai-plugin.json", desc: "ChatGPT plugin manifest." },
   { href: "/.well-known/agent.json", label: "/.well-known/agent.json", desc: "Agent capabilities manifest." },
-  { href: "/mcp.json", label: "/mcp.json", desc: "MCP server descriptor (planned)." },
+  { href: "/mcp.json", label: "/mcp.json", desc: "MCP server descriptor." },
   { href: "/sitemap.xml", label: "/sitemap.xml", desc: "Sitemap." },
 ];
 
@@ -151,10 +151,32 @@ export default function ForAiAgentsPage() {
           <div className="mx-auto max-w-2xl text-center">
             <span className="pb-eyebrow">MCP & Agent manifests</span>
             <h2 id="mcp-heading" className="pb-section-title mt-4 text-white">Plug PhotoBrief into your agent</h2>
-            <p className="pb-copy mt-4 text-base">Static descriptors point your agent at the right endpoints and capabilities.</p>
+            <p className="pb-copy mt-4 text-base">PhotoBrief runs a live MCP server. Connect it from Claude Code, Cursor, Windsurf, or any MCP-capable tool.</p>
           </div>
 
-          <div className="mt-10 grid gap-4 sm:grid-cols-2">
+          <div className="mt-10 overflow-hidden rounded-2xl border border-[hsl(var(--pb-line))] bg-[hsl(var(--pb-ink))]">
+            <div className="border-b border-white/10 bg-white/[0.03] px-5 py-3">
+              <p className="text-xs font-medium text-white/70">MCP endpoint — Streamable HTTP</p>
+            </div>
+            <pre className="overflow-x-auto p-5 text-xs leading-relaxed text-white/80"><code>{`# Endpoint
+https://mcp.photobrief.ai/mcp
+
+# Tools available
+create_request   — Create a photo request (requires pb_ API key)
+lookup_pricing   — Plans, prices, and credit model (no auth)
+read_faq         — Canonical FAQ answers (no auth)
+
+# Claude Code / Cursor / Windsurf config example
+{
+  "mcpServers": {
+    "photobrief": {
+      "url": "https://mcp.photobrief.ai/mcp"
+    }
+  }
+}`}</code></pre>
+          </div>
+
+          <div className="mt-6 grid gap-4 sm:grid-cols-2">
             <article className="pb-card rounded-2xl p-5">
               <h3 className="text-sm font-semibold text-white">agent.json</h3>
               <p className="mt-2 text-sm text-[hsl(var(--pb-muted))]">Capabilities, auth, and discovery URLs in one file.</p>
@@ -162,7 +184,7 @@ export default function ForAiAgentsPage() {
             </article>
             <article className="pb-card rounded-2xl p-5">
               <h3 className="text-sm font-semibold text-white">mcp.json</h3>
-              <p className="mt-2 text-sm text-[hsl(var(--pb-muted))]">MCP server descriptor with planned tools and a REST fallback today.</p>
+              <p className="mt-2 text-sm text-[hsl(var(--pb-muted))]">Live MCP server descriptor with tools, transport, and auth details.</p>
               <pre className="mt-3 overflow-x-auto rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs text-white/70">{`GET https://photobrief.ai/mcp.json`}</pre>
             </article>
           </div>
