@@ -22,6 +22,7 @@ import LandingPage from "@/pages/Landing";
 import AuthPage from "@/pages/Auth";
 import PricingPage from "@/pages/Pricing";
 import ForAiAgentsPage from "@/pages/ForAiAgents";
+import BetaOnboardingAgentPage from "@/pages/BetaOnboardingAgent";
 import ForgotPasswordPage from "@/pages/ForgotPassword";
 import ResetPasswordPage from "@/pages/ResetPassword";
 import UnsubscribePage from "@/pages/Unsubscribe";
@@ -92,6 +93,7 @@ const App = () => (
             <Route path="/" element={<LandingPage />} />
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/for-ai-agents" element={<ForAiAgentsPage />} />
+            <Route path="/beta-onboarding" element={<BetaOnboardingAgentPage />} />
             <Route path="/privacy" element={<PrivacyPage />} />
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/auth" element={<AuthPage />} />

@@ -13,6 +13,7 @@ export const routePaths = [
   "/",
   "/pricing",
   "/for-ai-agents",
+  "/beta-onboarding",
   "/privacy",
   "/terms",
   "/auth",
