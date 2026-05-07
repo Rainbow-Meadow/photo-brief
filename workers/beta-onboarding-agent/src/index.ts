@@ -41,6 +41,7 @@ interface AgentState {
   sessionId: string;
   source: string;
   answers: Answers;
+  answeredFields: Field[];
   recommendation: Recommendation | null;
   saved: boolean;
   updatedAt: string;
@@ -63,6 +64,7 @@ export class BetaOnboardingAgent extends Agent<Env, AgentState> {
     sessionId: "",
     source: "beta-onboarding-agent",
     answers: {},
+    answeredFields: [],
     recommendation: null,
     saved: false,
     updatedAt: new Date().toISOString(),
@@ -77,12 +79,14 @@ export class BetaOnboardingAgent extends Agent<Env, AgentState> {
 
       if (request.method === "POST" && url.pathname === "/start") {
         const body = await readJson(request);
-        const sessionId = clean(body.sessionId) || this.state.sessionId || crypto.randomUUID();
+        const answers = { ...this.state.answers, ...pickAnswers(body) };
+        const answeredFields = mergeFields(this.answeredFields(), Object.keys(answers).filter(isField));
         this.setState({
           ...this.state,
-          sessionId,
+          sessionId: clean(body.sessionId) || this.state.sessionId || crypto.randomUUID(),
           source: clean(body.source) || this.state.source,
-          answers: { ...this.state.answers, ...pickAnswers(body) },
+          answers,
+          answeredFields,
           updatedAt: new Date().toISOString(),
         });
         return json(this.publicState());
@@ -95,8 +99,9 @@ export class BetaOnboardingAgent extends Agent<Env, AgentState> {
         const value = clean(body.value ?? body.answer, 2000) || "";
         if (!value && questionFor(field)?.required) return json({ error: "This answer is required.", question: questionFor(field) }, 400);
         const answers = { ...this.state.answers, [field]: value };
+        const answeredFields = mergeFields(this.answeredFields(), [field]);
         const recommendation = this.complete(answers) ? recommend(answers) : null;
-        this.setState({ ...this.state, answers, recommendation, updatedAt: new Date().toISOString() });
+        this.setState({ ...this.state, answers, answeredFields, recommendation, updatedAt: new Date().toISOString() });
         return json(this.publicState());
       }
 
@@ -126,6 +131,7 @@ export class BetaOnboardingAgent extends Agent<Env, AgentState> {
       sessionId: this.state.sessionId,
       source: this.state.source,
       answers: this.state.answers,
+      answeredFields: this.answeredFields(),
       nextQuestion: this.nextQuestion(),
       complete,
       recommendation: this.state.recommendation ?? (complete ? recommend(this.state.answers) : null),
@@ -134,8 +140,13 @@ export class BetaOnboardingAgent extends Agent<Env, AgentState> {
     };
   }
 
-  private nextQuestion(answers = this.state.answers) {
-    return QUESTIONS.find((q) => q.required && !clean(answers[q.field])) ?? QUESTIONS.find((q) => !clean(answers[q.field])) ?? null;
+  private answeredFields() {
+    return mergeFields(this.state.answeredFields ?? [], Object.keys(this.state.answers).filter(isField));
+  }
+
+  private nextQuestion(answers = this.state.answers, answeredFields = this.answeredFields()) {
+    const answered = new Set(answeredFields);
+    return QUESTIONS.find((q) => q.required && !clean(answers[q.field])) ?? QUESTIONS.find((q) => !answered.has(q.field)) ?? null;
   }
 
   private complete(answers = this.state.answers) {
@@ -148,11 +159,12 @@ export default {
     if (request.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
     const url = new URL(request.url);
 
-    if (url.pathname === "/" || url.pathname === "/health") return json({ ok: true, name: "PhotoBrief Beta Onboarding Agent", version: "1.0.0" });
+    if (url.pathname === "/" || url.pathname === "/health") return json({ ok: true, name: "PhotoBrief Beta Onboarding Agent", version: "1.0.1" });
 
     if (request.method === "POST" && url.pathname === "/sessions/start") {
       const body = await readJson(request);
-      const sessionId = clean(body.sessionId) || clean(body.email)?.toLowerCase() || crypto.randomUUID();
+      const clientSessionId = clean(body.sessionId);
+      const sessionId = isSafeSessionId(clientSessionId) ? clientSessionId : crypto.randomUUID();
       const id = env.BETA_ONBOARDING_AGENT.idFromName(sessionId);
       const stub = env.BETA_ONBOARDING_AGENT.get(id);
       return stub.fetch(new Request(new URL("/start", url.origin), { method: "POST", headers: request.headers, body: JSON.stringify({ ...body, sessionId }) }));
@@ -162,7 +174,9 @@ export default {
     if (!match) return json({ error: "Use /sessions/start or /sessions/:sessionId/state|answer|plan|save." }, 404);
 
     const [, rawSessionId, action] = match;
-    const id = env.BETA_ONBOARDING_AGENT.idFromName(decodeURIComponent(rawSessionId));
+    const sessionId = decodeURIComponent(rawSessionId);
+    if (!isSafeSessionId(sessionId)) return json({ error: "Invalid session id." }, 400);
+    const id = env.BETA_ONBOARDING_AGENT.idFromName(sessionId);
     const stub = env.BETA_ONBOARDING_AGENT.get(id);
     const method = action === "state" ? "GET" : "POST";
     return stub.fetch(new Request(new URL(`/${action}`, url.origin), { method, headers: request.headers, body: method === "GET" ? undefined : request.body }));
@@ -279,6 +293,8 @@ function buildNotes(answers: Answers, recommendation: Recommendation) {
 function questionFor(field: Field) { return QUESTIONS.find((q) => q.field === field); }
 function isField(value: unknown): value is Field { return typeof value === "string" && QUESTIONS.some((q) => q.field === value); }
 function pickAnswers(input: Record<string, unknown>) { const answers: Answers = {}; for (const q of QUESTIONS) { const value = clean(input[q.field]); if (value) answers[q.field] = value; } return answers; }
+function mergeFields(...groups: Field[][]) { return [...new Set(groups.flat())]; }
+function isSafeSessionId(value: unknown): value is string { return typeof value === "string" && /^[A-Za-z0-9_-]{24,96}$/.test(value) && !value.includes("@"); }
 async function readJson(request: Request): Promise<Record<string, any>> { return request.body ? request.json().catch(() => ({})) : {}; }
 function clean(value: unknown, max = 500) { if (typeof value !== "string") return undefined; const trimmed = value.trim(); return trimmed ? trimmed.slice(0, max) : undefined; }
 const corsHeaders = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "content-type", "Access-Control-Allow-Methods": "GET, POST, OPTIONS" };
