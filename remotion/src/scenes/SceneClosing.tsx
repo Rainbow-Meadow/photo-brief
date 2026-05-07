@@ -110,15 +110,18 @@ export const SceneClosing: React.FC = () => {
         <div style={{
           marginTop: 32,
           opacity: interpolate(logoSpring, [0, 1], [0, 1]),
+          display: "flex", alignItems: "center", justifyContent: "center", gap: 12,
+          filter: "drop-shadow(0 8px 24px rgba(33, 102, 244, 0.2))",
         }}>
           <Img
-            src={staticFile("brand/photobrief-horizontal.png")}
-            style={{
-              height: 48,
-              width: "auto",
-              filter: "drop-shadow(0 8px 24px rgba(33, 102, 244, 0.2))",
-            }}
+            src={staticFile("brand/mark-color.png")}
+            style={{ height: 48, width: 48, objectFit: "contain" }}
           />
+          <span style={{
+            fontFamily: FONT.display, fontSize: 34, fontWeight: 800, letterSpacing: -2,
+            backgroundImage: "linear-gradient(135deg, #f6f0ff 0%, #e7d4ff 24%, #c99aff 52%, #9f73ff 78%, #7f55ff 100%)",
+            WebkitBackgroundClip: "text", color: "transparent", whiteSpace: "nowrap",
+          }}>PhotoBrief.ai</span>
         </div>
       </div>
     </AbsoluteFill>

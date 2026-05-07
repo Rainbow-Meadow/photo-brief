@@ -84,12 +84,33 @@ export const GlassCard: React.FC<{ children: React.ReactNode; style?: React.CSSP
   </div>
 );
 
-export const LogoLockup: React.FC<{ light?: boolean; height?: number }> = ({ light, height = 62 }) => (
-  <Img
-    src={staticFile(light ? "brand/photobrief-horizontal-light.png" : "brand/photobrief-horizontal.png")}
-    style={{ height, width: "auto", filter: light ? "drop-shadow(0 18px 50px rgba(70, 168, 255, 0.28))" : "drop-shadow(0 18px 50px rgba(11, 103, 255, 0.20))" }}
-  />
-);
+export const LogoLockup: React.FC<{ light?: boolean; height?: number }> = ({ light, height = 62 }) => {
+  const wordmarkSize = Math.max(16, height * 0.72);
+  const gradient = "linear-gradient(135deg, #f6f0ff 0%, #e7d4ff 24%, #c99aff 52%, #9f73ff 78%, #7f55ff 100%)";
+  return (
+    <div style={{ display: "inline-flex", alignItems: "center", gap: height * 0.16, filter: light ? "drop-shadow(0 18px 50px rgba(70, 168, 255, 0.28))" : "drop-shadow(0 18px 50px rgba(11, 103, 255, 0.20))" }}>
+      <Img
+        src={staticFile("brand/mark-color.png")}
+        style={{ height, width: height, objectFit: "contain" }}
+      />
+      <span
+        style={{
+          fontFamily: FONT.display,
+          fontSize: wordmarkSize,
+          fontWeight: 800,
+          letterSpacing: -0.06 * wordmarkSize,
+          lineHeight: 1,
+          backgroundImage: gradient,
+          WebkitBackgroundClip: "text",
+          color: "transparent",
+          whiteSpace: "nowrap",
+        }}
+      >
+        PhotoBrief.ai
+      </span>
+    </div>
+  );
+};
 
 export const FlowPill: React.FC<{ label: string; active?: boolean; dark?: boolean; delay?: number }> = ({ label, active, dark, delay = 0 }) => {
   const entrance = useEntrance(delay, 12);
