@@ -117,6 +117,11 @@ export const SceneClosing: React.FC = () => {
             src={staticFile("brand/mark-color.png")}
             style={{ height: 48, width: 48, objectFit: "contain" }}
           />
+          <span style={{
+            fontFamily: FONT.display, fontSize: 34, fontWeight: 800, letterSpacing: -2,
+            backgroundImage: "linear-gradient(135deg, #f6f0ff 0%, #e7d4ff 24%, #c99aff 52%, #9f73ff 78%, #7f55ff 100%)",
+            WebkitBackgroundClip: "text", color: "transparent", whiteSpace: "nowrap",
+          }}>PhotoBrief.ai</span>
         </div>
       </div>
     </AbsoluteFill>
