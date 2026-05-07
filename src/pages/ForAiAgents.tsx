@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { ArrowRight, Check, Code2, FileJson, Globe2, Route, Sparkles, Terminal } from "lucide-react";
+import { ArrowRight, Check, Code2, CreditCard, FileJson, Globe2, Route, Sparkles, Terminal, Zap } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
