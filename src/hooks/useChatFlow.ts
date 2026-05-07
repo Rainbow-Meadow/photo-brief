@@ -161,6 +161,16 @@ export function useChatFlow({
         photo.publicUrl = up.publicUrl;
         photo.storagePath = up.storagePath;
         photo.capturedMediaId = up.capturedMediaId;
+
+        // Push photo_uploaded event to capture agent
+        if (requestId) {
+          pushCaptureEvent(requestId, {
+            type: "photo_uploaded",
+            stepId: step.id,
+            stepTitle: step.title,
+            mediaId: up.capturedMediaId,
+          });
+        }
       } catch (e) {
         console.warn("upload failed before AI check", e);
         setCaptureCardPending(step.id, false);
