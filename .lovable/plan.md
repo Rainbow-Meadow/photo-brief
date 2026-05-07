@@ -1,14 +1,24 @@
 
-# Add "take or upload" language to landing page
+# Fix pb-card hover effect killing mobile scroll
 
-Small copy updates across `src/pages/Landing.tsx` to clarify that customers can upload existing photos (from any device) as well as take new ones on their phone.
+The `.pb-card:hover` rule in `src/index.css` applies `transform: translateY(-3px)` on hover. On mobile, touch events trigger `:hover` during scrolling, causing cards to shift mid-scroll and making thumb scrolling feel janky/stuck.
 
-## Changes
+The Tailwind `hoverOnlyWhenSupported` config only applies to Tailwind `hover:` utilities — this custom CSS `:hover` is unaffected.
 
-1. **Hero subtext** (line 363) — change "capture the exact photos" to "capture or upload the exact photos you need from any device"
-2. **Trust chips** (line 379) — change `"No app for customers"` to `"Take or upload photos"` and `"Concierge setup"` to `"No app needed"`
-3. **Workflow step 2** (line 120) — change title to "Customers capture the right shots" and body to mention "take photos on their phone or upload from any device"
-4. **Trust points** (line 151) — change desc to "Take photos on mobile or upload from desktop. No install, no signup, no friction."
-5. **JSON-LD featureList** (line 90) — change "Mobile-first customer photo capture" to "Guided customer photo capture — take or upload"
+## Fix
 
-All in one file, copy-only changes.
+Wrap the `.pb-card:hover` rule in `@media (hover: hover)` so it only fires on devices with a real pointer (mouse/trackpad), not touch.
+
+**File: `src/index.css` (line 471)**
+
+```css
+/* Before */
+.pb-card:hover { transform: translateY(-3px); ... }
+
+/* After */
+@media (hover: hover) {
+  .pb-card:hover { transform: translateY(-3px); ... }
+}
+```
+
+One line changed, one file.
