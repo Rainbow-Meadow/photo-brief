@@ -5,9 +5,16 @@ import { Menu } from "lucide-react";
 import { BrandMark } from "@/components/layout/BrandMark";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import { Button } from "@/components/ui/button";
-import { signupCtaTarget, signupCtaShortLabel, signupCtaLabel } from "@/config/access";
-import { marketingLinks, legalLinks, allFooterLinks } from "@/config/marketingNav";
-import { LandingBetaAgentMount } from "@/components/marketing/LandingBetaAgentMount";
+import {
+  signupCtaTarget,
+  signupCtaShortLabel,
+  signupCtaLabel,
+} from "@/config/access";
+import {
+  marketingLinks,
+  legalLinks,
+  allFooterLinks,
+} from "@/config/marketingNav";
 import {
   Sheet,
   SheetContent,
@@ -27,12 +34,27 @@ export function MarketingLayout() {
 
   return (
     <div className="pb-landing flex min-h-screen flex-col">
-      <LandingBetaAgentMount />
       <div className="sticky top-0 z-40 px-3 pt-3 sm:px-6 sm:pt-4 pt-safe">
         <header className="mx-auto flex h-14 w-full max-w-7xl items-center justify-between gap-4 rounded-full glass-nav px-3 sm:h-16 sm:px-5">
-          <NavLink to="/" aria-label="PhotoBrief.ai home" className="flex items-center pl-1">
-            <BrandMark variant="wordmark" tone="auto" size={22} eager className="sm:hidden" />
-            <BrandMark variant="wordmark" tone="auto" size={26} eager className="hidden sm:block" />
+          <NavLink
+            to="/"
+            aria-label="PhotoBrief.ai home"
+            className="flex items-center pl-1"
+          >
+            <BrandMark
+              variant="wordmark"
+              tone="auto"
+              size={22}
+              eager
+              className="sm:hidden"
+            />
+            <BrandMark
+              variant="wordmark"
+              tone="auto"
+              size={26}
+              eager
+              className="hidden sm:block"
+            />
           </NavLink>
 
           <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
@@ -55,7 +77,12 @@ export function MarketingLayout() {
 
           <div className="flex items-center gap-1.5">
             <ThemeToggle hideLabel className="hidden md:inline-flex" />
-            <Button asChild variant="ghost" size="sm" className="hidden rounded-full sm:inline-flex">
+            <Button
+              asChild
+              variant="ghost"
+              size="sm"
+              className="hidden rounded-full sm:inline-flex"
+            >
               <NavLink to="/auth">Sign in</NavLink>
             </Button>
             <Button asChild size="sm" className="rounded-full px-4">
@@ -111,7 +138,10 @@ export function MarketingLayout() {
           </ul>
           <div className="px-5 pt-6">
             <Button asChild className="w-full rounded-full">
-              <NavLink to={signupCtaTarget()} onClick={() => setMenuOpen(false)}>
+              <NavLink
+                to={signupCtaTarget()}
+                onClick={() => setMenuOpen(false)}
+              >
                 {signupCtaLabel()}
               </NavLink>
             </Button>
@@ -125,15 +155,29 @@ export function MarketingLayout() {
 
       <footer className="pb-safe">
         <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-8 text-sm text-[hsl(var(--pb-muted))] sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-          <BrandMark variant="horizontal" tone="light" size={28} className="opacity-80" />
-          <nav aria-label="Footer" className="flex flex-wrap items-center gap-4">
+          <BrandMark
+            variant="horizontal"
+            tone="light"
+            size={28}
+            className="opacity-80"
+          />
+          <nav
+            aria-label="Footer"
+            className="flex flex-wrap items-center gap-4"
+          >
             {allFooterLinks.map((l) => (
-              <NavLink key={l.to} to={l.to} className="hover:text-white transition-colors">
+              <NavLink
+                key={l.to}
+                to={l.to}
+                className="hover:text-white transition-colors"
+              >
                 {l.label}
               </NavLink>
             ))}
           </nav>
-          <p className="text-xs text-white/36">© {new Date().getFullYear()} PhotoBrief.ai</p>
+          <p className="text-xs text-white/36">
+            © {new Date().getFullYear()} PhotoBrief.ai
+          </p>
         </div>
       </footer>
     </div>
