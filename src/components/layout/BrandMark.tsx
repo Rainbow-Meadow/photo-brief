@@ -18,7 +18,7 @@ interface BrandMarkProps {
 }
 
 const ALT = "PhotoBrief.ai";
-const MARK_SRC = "/brand/mark-color.webp";
+const MARK_SRC = "/brand/mark-color-sm.webp";
 const MARK_FALLBACK = "/brand/mark-color.png";
 const WORDMARK = "PhotoBrief.ai";
 const WORDMARK_GRADIENT =
@@ -39,6 +39,7 @@ function MarkImage({ size, eager }: { size: number; eager?: boolean }) {
         style={imgStyle}
         loading={eager ? "eager" : "lazy"}
         decoding="async"
+        fetchPriority={eager ? "high" : "auto"}
         width={size}
         height={size}
       />
