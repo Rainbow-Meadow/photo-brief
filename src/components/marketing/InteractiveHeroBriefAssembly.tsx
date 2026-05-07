@@ -1233,6 +1233,29 @@ export function InteractiveHeroBriefAssembly() {
         <p className="mx-auto mt-2 max-w-lg text-sm text-white/45">
           {PHASE_HINTS[phase]}
         </p>
+        {/* Play / mute controls */}
+        <div className="mt-4 flex items-center justify-center gap-3">
+          <button
+            type="button"
+            onClick={togglePlay}
+            className="group flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.05] px-5 py-2 text-xs font-semibold text-white/70 transition hover:border-[hsl(var(--pb-violet)/0.4)] hover:bg-[hsl(var(--pb-violet)/0.1)] hover:text-white"
+          >
+            {isPlaying ? (
+              <><Pause className="h-3.5 w-3.5" /> Pause narration</>
+            ) : (
+              <><Play className="h-3.5 w-3.5" /> Watch with narration</>
+            )}
+          </button>
+          {isPlaying && (
+            <button
+              type="button"
+              onClick={toggleMute}
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/[0.05] text-white/50 transition hover:text-white"
+            >
+              {isMuted ? <VolumeX className="h-3.5 w-3.5" /> : <Volume2 className="h-3.5 w-3.5" />}
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Dual phone layout */}
