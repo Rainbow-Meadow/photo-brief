@@ -355,7 +355,7 @@ export default function LandingPage() {
               <span className="pb-eyebrow"><Sparkles className="h-3.5 w-3.5" /> Accepting beta applications</span>
 
               <h1 className="pb-hero-title mx-auto mt-3 max-w-2xl text-white sm:mt-4">
-                Replace your intake form.
+                Your intake form, but visual.
                 <span className="mt-1 block text-[hsl(var(--pb-lavender))]">Get photos, not just text.</span>
               </h1>
 
