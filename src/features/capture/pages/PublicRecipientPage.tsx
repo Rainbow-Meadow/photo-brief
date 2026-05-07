@@ -268,6 +268,12 @@ function RecipientWorkflow({ ctx, token, navigate }: { ctx: RecipientContext; to
                 onStart={() => {
                   setStarted(true);
                   trackEvent("recipient_started", { guide_id: ctx.guide.id, photos: ctx.guide.steps.length, questions: ctx.guide.questions.length });
+                  if (ctx.requestId) {
+                    pushCaptureEvent(ctx.requestId, {
+                      type: "session_started",
+                      totalSteps: ctx.guide.steps.length,
+                    });
+                  }
                 }}
               />
             ) : (
