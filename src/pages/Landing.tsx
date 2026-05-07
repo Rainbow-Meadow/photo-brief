@@ -536,27 +536,32 @@ export default function LandingPage() {
 const painPoints = [
   {
     icon: Clock,
-    stat: "62% of first quotes are delayed",
+    number: "62%",
+    label: "of first quotes are delayed",
     context: "…waiting for photos the customer forgot to send.",
   },
   {
     icon: MessageSquareWarning,
-    stat: "5+ back-and-forth messages",
+    number: "5+",
+    label: "back-and-forth messages",
     context: "…just to get the right angle, scale, or context for one job.",
   },
   {
     icon: FormInput,
-    stat: "Forms capture text, not proof",
+    number: "0",
+    label: "photos captured by typical forms",
     context: "Your intake form collects a name and a message. PhotoBrief replaces or extends it to collect the photos your team actually needs.",
   },
   {
     icon: UserX,
-    stat: "75% of consumers prefer zero human contact",
+    number: "75%",
+    label: "prefer zero human contact",
     context: "They want to self-serve on their phone — not call, not email, not wait for a callback.",
   },
   {
     icon: TrendingDown,
-    stat: "Low-quality leads look identical to good ones",
+    number: "40%",
+    label: "of site visits don't convert",
     context: "Without photos, your team triages blind and wastes site visits on jobs that don't convert.",
   },
 ];
@@ -582,20 +587,23 @@ function PainPointSection() {
             const Icon = point.icon;
             return (
               <article
-                key={point.stat}
-                className="pb-card flex gap-4 p-4 sm:p-5"
+                key={point.number + point.label}
+                className="pb-card flex flex-col p-4 sm:p-5"
               >
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-[hsl(var(--pb-line-strong))] bg-[hsl(var(--pb-ink))] text-[hsl(var(--pb-lavender))]">
-                  <Icon className="h-5 w-5" />
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-[hsl(var(--pb-line-strong))] bg-[hsl(var(--pb-ink))] text-[hsl(var(--pb-lavender))]">
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <span className="text-3xl font-extrabold tracking-tight text-[hsl(var(--pb-lavender))] sm:text-4xl">
+                    {point.number}
+                  </span>
                 </div>
-                <div>
-                  <p className="text-sm font-bold tracking-tight text-white sm:text-base">
-                    {point.stat}
-                  </p>
-                  <p className="pb-copy mt-1 text-xs leading-relaxed sm:text-sm">
-                    {point.context}
-                  </p>
-                </div>
+                <p className="mt-3 text-sm font-bold tracking-tight text-white sm:text-base">
+                  {point.label}
+                </p>
+                <p className="pb-copy mt-1 text-xs leading-relaxed sm:text-sm">
+                  {point.context}
+                </p>
               </article>
             );
           })}
