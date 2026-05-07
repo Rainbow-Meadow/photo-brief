@@ -14,6 +14,7 @@ export interface MarketingNavLink {
 
 /** Primary marketing links (Pricing, Help, etc.) */
 export const marketingLinks: MarketingNavLink[] = [
+  { to: "/beta-onboarding", label: "Beta agent" },
   { to: "/pricing", label: "Pricing" },
   { to: "/help", label: "Help" },
 ];
