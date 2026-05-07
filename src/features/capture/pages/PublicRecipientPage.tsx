@@ -17,6 +17,7 @@ import { useChatFlow } from "@/hooks/useChatFlow";
 import { r2MediaService } from "@/services/r2MediaService";
 import { submissionsService } from "@/services/submissionsService";
 import { conversions, trackEvent } from "@/lib/analytics";
+import { pushCaptureEvent } from "@/services/captureAgentService";
 import type { CapturedPhoto, ChatMessage } from "@/types/chat";
 import type { ContextQuestion, GuideStep, PhotoGuide } from "@/types/photobrief";
 
