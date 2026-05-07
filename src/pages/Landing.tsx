@@ -87,7 +87,7 @@ const SOFTWARE_APP_JSONLD: Record<string, unknown> = {
   ],
   featureList: [
     "Clickable manual PhotoBrief request links",
-    "Mobile-first customer photo capture",
+    "Guided customer photo capture — take or upload",
     "Simple AI photo quality checks",
     "Business-ready photo brief summaries",
     "Customer profiles and saved templates",
@@ -117,7 +117,7 @@ const loosePhotos = [
 
 const workflowSteps = [
   { icon: Globe2, eyebrow: "Connect", title: "Add PhotoBrief to your website", body: "Use our hosted intake form, bridge your existing form with a webhook, or send manual links — however your customers reach you." },
-  { icon: Camera, eyebrow: "Capture", title: "Customers take the right shots", body: "They see one mobile prompt at a time, with plain instructions instead of a vague \u201csend a few photos.\u201d" },
+  { icon: Camera, eyebrow: "Capture", title: "Customers capture the right shots", body: "They take photos on their phone or upload from any device — one clear prompt at a time, with plain instructions instead of a vague \u201csend a few photos.\u201d" },
   { icon: Route, eyebrow: "Check", title: "Obvious problems get flagged", body: "PhotoBrief calls out missing, unclear, or review-needed shots before your team has to sort through them." },
   { icon: FileCheck2, eyebrow: "Brief", title: "Your team gets a usable packet", body: "Photos, notes, customer context, and next-step status land together for quoting, dispatch, review, or documentation." },
 ];
@@ -148,7 +148,7 @@ const useCases = [
 
 const trustPoints = [
   { icon: Link2, title: "Secure, expiring upload links", desc: "Customers never see your dashboard or internal data." },
-  { icon: Smartphone, title: "No app or account for customers", desc: "Clean mobile capture. No install, no signup, no friction." },
+  { icon: Smartphone, title: "No app or account for customers", desc: "Take photos on mobile or upload from desktop. No install, no signup, no friction." },
   { icon: Lock, title: "Your data stays yours", desc: "Photos and briefs are never shared or used for training." },
 ];
 
@@ -360,7 +360,7 @@ export default function LandingPage() {
               </h1>
 
               <p className="pb-copy mx-auto mt-4 max-w-2xl text-base leading-7 sm:text-lg sm:leading-8">
-                Drop a hosted PhotoBrief form on your website — or connect it to your existing one with a webhook. Customers land on a guided mobile workflow, capture the exact photos you need, and your team gets a structured brief instead of a vague message.
+                Drop a hosted PhotoBrief form on your website — or connect it to your existing one with a webhook. Customers capture or upload the exact photos you need from any device, and your team gets a structured brief instead of a vague message.
               </p>
 
               <div className="mx-auto mt-5 flex max-w-lg flex-col gap-2.5 sm:mt-6 sm:max-w-none sm:flex-row sm:justify-center sm:gap-3">
@@ -376,7 +376,7 @@ export default function LandingPage() {
               </div>
 
               <div className="mx-auto mt-4 flex max-w-md justify-center gap-2 sm:mt-5 sm:gap-2.5">
-                {["Hosted form or webhook", "No app for customers", "Concierge setup"].map((item) => (
+                {["Hosted form or webhook", "Take or upload photos", "No app needed"].map((item) => (
                   <span key={item} className="pb-route-chip whitespace-nowrap px-2.5 py-1.5 text-center text-[0.65rem] font-semibold sm:px-3 sm:py-2 sm:text-xs">{item}</span>
                 ))}
               </div>
