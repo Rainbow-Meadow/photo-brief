@@ -1,4 +1,4 @@
-import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
+import { FormEvent, useState } from "react";
 import {
   ArrowRight,
   Camera,
