@@ -567,7 +567,21 @@ const painPoints = [
 ];
 
 function PainPointSection() {
-...
+  return (
+    <section className="pb-section-tight">
+      <div className="pb-container">
+        <div className="mx-auto max-w-3xl text-center">
+          <span className="pb-eyebrow">
+            <MessageSquareWarning className="h-3.5 w-3.5" /> The gap
+          </span>
+          <h2 className="pb-section-title mt-4 text-white">
+            Your intake process is losing you money.
+          </h2>
+          <p className="pb-copy mt-4 text-base sm:text-lg">
+            Between the first "can you send a few photos?" and a quote your team can act on, hours disappear into email chains, blurry snapshots, and missing context.
+          </p>
+        </div>
+
         <div className="mt-8 grid gap-3 sm:mt-10 sm:grid-cols-2 lg:grid-cols-3">
           {painPoints.map((point) => {
             const Icon = point.icon;
