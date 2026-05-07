@@ -1,48 +1,28 @@
-name: Run Apify PhotoBrief Job
+name: Run Apify PhotoBrief job
 
 on:
   workflow_dispatch:
     inputs:
       input_json:
-        description: "JSON input to pass to Apify actor YLjN3dsBlenhu5Rhn"
-        required: true
-        default: "{}"
-        type: string
+        description: "Optional Apify actor input JSON"
+        required: false
+        default: ""
       wait_for_finish_seconds:
-        description: "Initial Apify waitForFinish value, max 60 seconds"
-        required: true
+        description: "Seconds Apify should wait before returning run status"
+        required: false
         default: "60"
-        type: choice
-        options:
-          - "0"
-          - "15"
-          - "30"
-          - "60"
       max_poll_minutes:
-        description: "How long GitHub Actions should poll for completion after the initial wait"
-        required: true
+        description: "Maximum minutes to poll for completion"
+        required: false
         default: "10"
-        type: choice
-        options:
-          - "1"
-          - "5"
-          - "10"
-          - "20"
-          - "30"
       fetch_dataset_items:
-        description: "Download the default dataset items as a workflow artifact"
-        required: true
-        default: true
-        type: boolean
+        description: "Fetch dataset items after completion"
+        required: false
+        default: "true"
       dataset_item_limit:
-        description: "Maximum dataset items to fetch into the artifact"
-        required: true
+        description: "Maximum dataset items to fetch"
+        required: false
         default: "500"
-        type: string
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/run-apify-photobrief-job.yml
 
 permissions:
   contents: read
@@ -55,7 +35,7 @@ jobs:
     env:
       ACTOR_ID: YLjN3dsBlenhu5Rhn
       APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
-      INPUT_JSON: ${{ github.event_name == 'workflow_dispatch' && inputs.input_json || '{"startUrls":[{"url":"https://photobrief.ai/"},{"url":"https://photobrief.ai/signup"},{"url":"https://photobrief.ai/waitlist"},{"url":"https://photobrief.ai/pricing"},{"url":"https://photobrief.ai/badge/intake"}]}' }}
+      INPUT_JSON: ${{ github.event_name == 'workflow_dispatch' && inputs.input_json || '{"startUrls":[{"url":"https://photobrief.ai/"},{"url":"https://photobrief.ai/signup"},{"url":"https://photobrief.ai/pricing"},{"url":"https://photobrief.ai/badge/intake"}]}' }}
       WAIT_FOR_FINISH_SECONDS: ${{ github.event_name == 'workflow_dispatch' && inputs.wait_for_finish_seconds || '60' }}
       MAX_POLL_MINUTES: ${{ github.event_name == 'workflow_dispatch' && inputs.max_poll_minutes || '10' }}
       FETCH_DATASET_ITEMS: ${{ github.event_name == 'workflow_dispatch' && inputs.fetch_dataset_items || 'true' }}
@@ -63,130 +43,108 @@ jobs:
 
     steps:
       - name: Validate configuration
-        shell: bash
         run: |
-          set -euo pipefail
-          if [ -z "${APIFY_TOKEN}" ]; then
-            echo "Missing required repository secret: APIFY_TOKEN" >&2
+          if [ -z "$APIFY_TOKEN" ]; then
+            echo "APIFY_TOKEN secret is not configured."
             exit 1
           fi
 
-          mkdir -p apify-output
-          printf '%s' "${INPUT_JSON}" | jq . > apify-output/input.json
-          jq -e 'type == "object"' apify-output/input.json > /dev/null
-
-          if ! [[ "${DATASET_ITEM_LIMIT}" =~ ^[0-9]+$ ]]; then
-            echo "dataset_item_limit must be a positive integer." >&2
-            exit 1
-          fi
-
-      - name: Start actor run
+      - name: Start Apify actor run
         id: start
         shell: bash
         run: |
           set -euo pipefail
-          RUN_URL="https://api.apify.com/v2/acts/${ACTOR_ID}/runs?waitForFinish=${WAIT_FOR_FINISH_SECONDS}"
+          echo "$INPUT_JSON" > input.json
+          if ! jq empty input.json >/dev/null 2>&1; then
+            echo "input_json is not valid JSON"
+            cat input.json
+            exit 1
+          fi
 
-          curl -sS -X POST "${RUN_URL}" \
-            -H "Authorization: Bearer ${APIFY_TOKEN}" \
+          response=$(curl -sS \
+            -X POST \
+            -H "Authorization: Bearer $APIFY_TOKEN" \
             -H "Content-Type: application/json" \
-            --data-binary @apify-output/input.json \
-            -o apify-output/run-response.json
+            --data-binary @input.json \
+            "https://api.apify.com/v2/acts/$ACTOR_ID/runs?waitForFinish=$WAIT_FOR_FINISH_SECONDS")
 
-          cat apify-output/run-response.json | jq .
+          echo "$response" > run-response.json
+          cat run-response.json | jq .
 
-          if jq -e '.error' apify-output/run-response.json > /dev/null; then
-            jq -r '.error.message // .error' apify-output/run-response.json >&2
+          run_id=$(jq -r '.data.id // empty' run-response.json)
+          status=$(jq -r '.data.status // empty' run-response.json)
+          dataset_id=$(jq -r '.data.defaultDatasetId // empty' run-response.json)
+
+          if [ -z "$run_id" ]; then
+            echo "Apify did not return a run id."
             exit 1
           fi
 
-          RUN_ID=$(jq -r '.data.id // .id // empty' apify-output/run-response.json)
-          STATUS=$(jq -r '.data.status // .status // empty' apify-output/run-response.json)
-          DATASET_ID=$(jq -r '.data.defaultDatasetId // .defaultDatasetId // empty' apify-output/run-response.json)
+          echo "run_id=$run_id" >> "$GITHUB_OUTPUT"
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          echo "dataset_id=$dataset_id" >> "$GITHUB_OUTPUT"
 
-          if [ -z "${RUN_ID}" ]; then
-            echo "Apify response did not include a run id." >&2
-            exit 1
-          fi
-
-          echo "run_id=${RUN_ID}" >> "$GITHUB_OUTPUT"
-          echo "status=${STATUS}" >> "$GITHUB_OUTPUT"
-          echo "dataset_id=${DATASET_ID}" >> "$GITHUB_OUTPUT"
-          echo "console_url=https://console.apify.com/actors/runs/${RUN_ID}" >> "$GITHUB_OUTPUT"
-
-      - name: Poll actor until finished
+      - name: Poll Apify actor run
         id: poll
         shell: bash
         run: |
           set -euo pipefail
-          RUN_ID="${{ steps.start.outputs.run_id }}"
-          STATUS="${{ steps.start.outputs.status }}"
-          DATASET_ID="${{ steps.start.outputs.dataset_id }}"
-          DEADLINE=$(( $(date +%s) + (MAX_POLL_MINUTES * 60) ))
+          run_id="${{ steps.start.outputs.run_id }}"
+          deadline=$((SECONDS + MAX_POLL_MINUTES * 60))
+          status="${{ steps.start.outputs.status }}"
+          dataset_id="${{ steps.start.outputs.dataset_id }}"
 
-          while [[ ! "${STATUS}" =~ ^(SUCCEEDED|FAILED|ABORTED|TIMED-OUT)$ ]]; do
-            if [ "$(date +%s)" -ge "${DEADLINE}" ]; then
-              echo "Timed out waiting for Apify run ${RUN_ID}. Current status: ${STATUS}" >&2
-              exit 1
-            fi
+          while [ "$SECONDS" -lt "$deadline" ]; do
+            response=$(curl -sS \
+              -H "Authorization: Bearer $APIFY_TOKEN" \
+              "https://api.apify.com/v2/actor-runs/$run_id")
+            echo "$response" > poll-response.json
+            status=$(jq -r '.data.status // empty' poll-response.json)
+            dataset_id=$(jq -r '.data.defaultDatasetId // empty' poll-response.json)
+            echo "Apify run status: $status"
 
+            case "$status" in
+              SUCCEEDED|FAILED|TIMED-OUT|ABORTED)
+                break
+                ;;
+            esac
             sleep 15
-            curl -sS "https://api.apify.com/v2/actor-runs/${RUN_ID}?waitForFinish=15" \
-              -H "Authorization: Bearer ${APIFY_TOKEN}" \
-              -o apify-output/run-status.json
-            STATUS=$(jq -r '.data.status // .status // empty' apify-output/run-status.json)
-            DATASET_ID=$(jq -r '.data.defaultDatasetId // .defaultDatasetId // empty' apify-output/run-status.json)
-            echo "Apify status: ${STATUS}"
           done
 
-          cp apify-output/run-status.json apify-output/final-run.json 2>/dev/null || cp apify-output/run-response.json apify-output/final-run.json
-          echo "status=${STATUS}" >> "$GITHUB_OUTPUT"
-          echo "dataset_id=${DATASET_ID}" >> "$GITHUB_OUTPUT"
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          echo "dataset_id=$dataset_id" >> "$GITHUB_OUTPUT"
 
-          if [ "${STATUS}" != "SUCCEEDED" ]; then
-            echo "Apify run finished with non-success status: ${STATUS}" >&2
+          if [ "$status" != "SUCCEEDED" ]; then
+            echo "Apify run ended with status $status"
+            cat poll-response.json | jq .
             exit 1
           fi
 
-      - name: Download dataset items
+      - name: Fetch dataset items
         if: ${{ env.FETCH_DATASET_ITEMS == 'true' }}
         shell: bash
         run: |
           set -euo pipefail
-          DATASET_ID="${{ steps.poll.outputs.dataset_id }}"
-          if [ -z "${DATASET_ID}" ] || [ "${DATASET_ID}" = "null" ]; then
-            echo "Run has no default dataset id; skipping dataset download."
+          dataset_id="${{ steps.poll.outputs.dataset_id }}"
+          if [ -z "$dataset_id" ]; then
+            echo "No default dataset id returned."
             exit 0
           fi
 
-          curl -sS "https://api.apify.com/v2/datasets/${DATASET_ID}/items?clean=true&format=json&limit=${DATASET_ITEM_LIMIT}" \
-            -H "Authorization: Bearer ${APIFY_TOKEN}" \
-            -o apify-output/dataset-items.json
+          curl -sS \
+            -H "Authorization: Bearer $APIFY_TOKEN" \
+            "https://api.apify.com/v2/datasets/$dataset_id/items?clean=true&format=json&limit=$DATASET_ITEM_LIMIT" \
+            > dataset-items.json
 
-          jq . apify-output/dataset-items.json > apify-output/dataset-items.pretty.json
+          jq . dataset-items.json
 
-      - name: Write run summary
-        shell: bash
-        run: |
-          set -euo pipefail
-          {
-            echo "## Apify PhotoBrief Job"
-            echo
-            echo "- Actor ID: \`${ACTOR_ID}\`"
-            echo "- Run ID: \`${{ steps.start.outputs.run_id }}\`"
-            echo "- Final status: \`${{ steps.poll.outputs.status }}\`"
-            echo "- Dataset ID: \`${{ steps.poll.outputs.dataset_id }}\`"
-            echo "- Console: ${{ steps.start.outputs.console_url }}"
-            echo
-            echo "### Input"
-            echo '```json'
-            cat apify-output/input.json
-            echo '```'
-          } >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Upload Apify run artifact
+      - name: Upload Apify outputs
         uses: actions/upload-artifact@v4
         with:
-          name: apify-photobrief-job-${{ steps.start.outputs.run_id }}
-          path: apify-output/
-          if-no-files-found: error
+          name: apify-photobrief-run
+          path: |
+            input.json
+            run-response.json
+            poll-response.json
+            dataset-items.json
+          if-no-files-found: ignore
