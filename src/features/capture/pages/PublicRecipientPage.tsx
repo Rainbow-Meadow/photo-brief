@@ -17,6 +17,7 @@ import { useChatFlow } from "@/hooks/useChatFlow";
 import { r2MediaService } from "@/services/r2MediaService";
 import { submissionsService } from "@/services/submissionsService";
 import { conversions, trackEvent } from "@/lib/analytics";
+import { pushCaptureEvent } from "@/services/captureAgentService";
 import type { CapturedPhoto, ChatMessage } from "@/types/chat";
 import type { ContextQuestion, GuideStep, PhotoGuide } from "@/types/photobrief";
 
@@ -125,6 +126,7 @@ function RecipientWorkflow({ ctx, token, navigate }: { ctx: RecipientContext; to
     businessName: ctx.businessName,
     introBody: ctx.introBody,
     requestToken: token,
+    requestId: ctx.requestId,
     uploadCapture,
     promoteAcceptedCapture,
     resubmit: resubmitConfig,
@@ -267,6 +269,12 @@ function RecipientWorkflow({ ctx, token, navigate }: { ctx: RecipientContext; to
                 onStart={() => {
                   setStarted(true);
                   trackEvent("recipient_started", { guide_id: ctx.guide.id, photos: ctx.guide.steps.length, questions: ctx.guide.questions.length });
+                  if (ctx.requestId) {
+                    pushCaptureEvent(ctx.requestId, {
+                      type: "session_started",
+                      totalSteps: ctx.guide.steps.length,
+                    });
+                  }
                 }}
               />
             ) : (

@@ -6,6 +6,7 @@ import type { AnsweredQuestion, CapturedPhoto, ChatMessage, FlowPhase } from "@/
 import { aiService } from "@/services/aiService";
 import type { AICheckSeverity } from "@/types/photobrief";
 import { microcopy } from "@/config/microcopy";
+import { pushCaptureEvent } from "@/services/captureAgentService";
 
 interface ResubmitConfig {
   commentsByStepId: Record<string, string>;
@@ -17,6 +18,8 @@ interface UseChatFlowArgs {
   businessName: string;
   introBody?: string;
   requestToken?: string;
+  /** Used to push real-time capture events to the Cloudflare Agent. */
+  requestId?: string | null;
   uploadCapture?: (args: { stepId: string; blob: Blob; ext: string }) => Promise<{
     publicUrl: string;
     storagePath: string;
@@ -36,6 +39,7 @@ export function useChatFlow({
   businessName,
   introBody,
   requestToken,
+  requestId,
   uploadCapture,
   promoteAcceptedCapture,
   resubmit,
@@ -157,6 +161,16 @@ export function useChatFlow({
         photo.publicUrl = up.publicUrl;
         photo.storagePath = up.storagePath;
         photo.capturedMediaId = up.capturedMediaId;
+
+        // Push photo_uploaded event to capture agent
+        if (requestId) {
+          pushCaptureEvent(requestId, {
+            type: "photo_uploaded",
+            stepId: step.id,
+            stepTitle: step.title,
+            mediaId: up.capturedMediaId,
+          });
+        }
       } catch (e) {
         console.warn("upload failed before AI check", e);
         setCaptureCardPending(step.id, false);
@@ -172,6 +186,17 @@ export function useChatFlow({
       });
       photo.checks = checks.map((c) => ({ id: c.type, severity: c.severity, message: c.message }));
       append({ id: nextId(), kind: "ai_feedback", photo, verdict: verdict as AICheckSeverity });
+
+      // Push photo_checked event to capture agent
+      if (requestId) {
+        pushCaptureEvent(requestId, {
+          type: "photo_checked",
+          stepId: step.id,
+          stepTitle: step.title,
+          mediaId: photo.capturedMediaId,
+          checkResult: verdict === "pass" || verdict === "unavailable" ? "pass" : verdict === "warn" ? "warning" : "fail",
+        });
+      }
 
       if (verdict === "pass" || verdict === "unavailable") {
         await acceptPhoto(photo);
@@ -218,6 +243,15 @@ export function useChatFlow({
       if (!q) return;
       answersRef.current.push({ questionId: q.id, prompt: q.prompt, answer });
       append({ id: nextId(), kind: "user_text", text: answer });
+
+      // Push question_answered event to capture agent
+      if (requestId) {
+        pushCaptureEvent(requestId, {
+          type: "question_answered",
+          questionPrompt: q.prompt,
+          answer,
+        });
+      }
       const nextQ = questionIndex + 1;
       if (nextQ < effectiveGuide.questions.length) {
         setQuestionIndex(nextQ);
@@ -236,7 +270,13 @@ export function useChatFlow({
   const submitAll = useCallback(() => {
     setPhase("submitted");
     append({ id: nextId(), kind: "submit_confirmation" });
-  }, [append]);
+
+    // Push submission events to capture agent
+    if (requestId) {
+      pushCaptureEvent(requestId, { type: "submission_started" });
+      pushCaptureEvent(requestId, { type: "submission_completed" });
+    }
+  }, [append, requestId]);
 
   const photos = photosRef.current;
   const answers = answersRef.current;

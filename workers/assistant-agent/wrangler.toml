@@ -1,0 +1,20 @@
+name = "photobrief-assistant-agent"
+main = "src/index.ts"
+compatibility_date = "2025-04-01"
+
+[[routes]]
+pattern = "assistant.photobrief.ai/*"
+zone_name = "photobrief.ai"
+
+[durable_objects]
+bindings = [
+  { name = "ASSISTANT_AGENT", class_name = "AssistantAgent" }
+]
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["AssistantAgent"]
+
+[vars]
+SUPABASE_URL = "https://mvlcefiygkzzewcdzsmj.supabase.co"
+SITE_URL = "https://photobrief.ai"
