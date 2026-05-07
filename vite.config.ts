@@ -14,11 +14,9 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   build: {
-    // Emit source maps for production bundles so Lighthouse / DevTools can
-    // map minified JS back to original source. Source maps are served as
-    // separate .map files referenced via sourceMappingURL — they do not
-    // affect runtime performance or UX.
-    sourcemap: true,
+    // Keep public production bundles lean and avoid exposing full source maps.
+    // Re-enable only if an error-monitoring workflow needs uploaded maps.
+    sourcemap: false,
   },
   resolve: {
     alias: {
