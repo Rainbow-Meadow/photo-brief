@@ -6,6 +6,7 @@ import type { AnsweredQuestion, CapturedPhoto, ChatMessage, FlowPhase } from "@/
 import { aiService } from "@/services/aiService";
 import type { AICheckSeverity } from "@/types/photobrief";
 import { microcopy } from "@/config/microcopy";
+import { pushCaptureEvent } from "@/services/captureAgentService";
 
 interface ResubmitConfig {
   commentsByStepId: Record<string, string>;
