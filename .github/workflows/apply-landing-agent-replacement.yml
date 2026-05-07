@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   apply:
-    if: ${{ !contains(github.event.head_commit.message, 'Apply direct landing agent replacement') }}
+    if: ${{ github.event.head_commit.message == 'Trigger direct landing agent replacement' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -103,6 +103,13 @@ jobs:
           mount = Path('src/components/marketing/LandingBetaAgentMount.tsx')
           if mount.exists():
               mount.unlink()
+
+          trigger = Path('.github/landing-agent-replacement-trigger.txt')
+          if trigger.exists():
+              trigger.unlink()
+          workflow = Path('.github/workflows/apply-landing-agent-replacement.yml')
+          if workflow.exists():
+              workflow.unlink()
           PY
 
           npx prettier --write src/pages/Landing.tsx src/components/layout/MarketingLayout.tsx
