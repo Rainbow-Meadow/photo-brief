@@ -217,12 +217,13 @@ Common POST body:
 
 ## Discovery files
 
+- MCP server (live, Streamable HTTP): https://mcp.photobrief.ai/mcp
 - /llms.txt — short summary for LLMs and answer engines.
 - /llms-full.txt — this full reference.
 - /openapi.json — OpenAPI 3.1 spec.
 - /.well-known/ai-plugin.json — plugin-style manifest.
 - /.well-known/agent.json — agent capabilities manifest.
-- /mcp.json — MCP descriptor / planned server descriptor.
+- /mcp.json — live MCP server descriptor.
 - /sitemap.xml — public indexable pages.
 - /robots.txt — crawler rules.
 
