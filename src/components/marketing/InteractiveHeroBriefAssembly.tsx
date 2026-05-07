@@ -13,12 +13,20 @@ import {
   Signal,
   Send,
   Clock,
-  MessageSquare,
   AlertTriangle,
-  FileText,
   User,
-  Phone,
   Smartphone,
+  Truck,
+  MessageSquareText,
+  Globe,
+  Bell,
+  Loader2,
+  MapPin,
+  Package,
+  Sofa,
+  Refrigerator,
+  TreePine,
+  LayoutList,
 } from "lucide-react";
 import wideGarage from "@/assets/junk-removal/wide-garage.webp";
 import pileCloseup from "@/assets/junk-removal/pile-closeup.webp";
@@ -31,6 +39,17 @@ const SESSION_KEY = "pb-session";
 
 /** Index of the photo that will be "blurry" on first capture */
 const BLURRY_INDEX = 1;
+
+/* ── Fake brand ── */
+const BRAND = {
+  name: "ClearPath Junk Removal",
+  short: "ClearPath",
+  tagline: "We haul it all.",
+  color: "#0d9488",        // teal-600
+  colorLight: "#ccfbf1",   // teal-50
+  colorMid: "#5eead4",     // teal-300
+  colorRing: "rgba(13,148,136,0.25)",
+};
 
 const photos = [
   {
@@ -71,23 +90,28 @@ const photos = [
   },
 ];
 
+/** Customer answers (used in questions + final brief) */
+const CUSTOMER_ANSWERS = [
+  { q: "What needs removing?", a: "Furniture, Appliances, Boxes" },
+  { q: "Approximate volume?", a: "Medium (half garage)" },
+  { q: "Stairs or tight access?", a: "No" },
+];
+
 type Phase =
-  | "TEMPLATE_SELECT"
-  | "SEND_LINK"
-  | "LINK_SENT"
-  | "CUSTOMER_WELCOME"
+  | "CUSTOMER_REQUEST"
+  | "ROUTING"
+  | "QUESTIONS"
   | "CAPTURING"
   | "CUSTOMER_REVIEW"
   | "COMPLETE";
 
 const PHASE_HINTS: Record<Phase, string> = {
-  TEMPLATE_SELECT: "Tap a template on the business phone to start.",
-  SEND_LINK: "Enter customer details on the business phone and send.",
-  LINK_SENT: "The link was sent — tap Start on the customer phone.",
-  CUSTOMER_WELCOME: "The customer received the link — tap Start.",
-  CAPTURING: "Tap through the customer phone to capture photos.",
-  CUSTOMER_REVIEW: "Review the photos, then tap Send on the customer phone.",
-  COMPLETE: "The brief is complete — ready to quote.",
+  CUSTOMER_REQUEST: `The customer finds ${BRAND.short} online and submits a service request.`,
+  ROUTING: "PhotoBrief matches the request to the right template automatically.",
+  QUESTIONS: "The customer answers a few quick questions first.",
+  CAPTURING: "Now the customer captures photos, one at a time.",
+  CUSTOMER_REVIEW: "The customer reviews everything before sending.",
+  COMPLETE: "The complete brief arrives on the business phone — ready to quote.",
 };
 
 function getSessionId() {
@@ -135,7 +159,7 @@ function PhoneMockup({
         <div className="absolute left-1/2 top-[10px] z-20 h-[22px] w-[90px] -translate-x-1/2 rounded-full bg-black" />
         <div
           className={`relative overflow-hidden rounded-[2.25rem] ${bg}`}
-          style={{ height: PHONE_CONTENT_H + 52 /* status bar */ }}
+          style={{ height: PHONE_CONTENT_H + 52 }}
         >
           {/* Status bar */}
           <div
@@ -179,345 +203,174 @@ function ConnectionLine() {
   );
 }
 
+/* ── Powered by PhotoBrief mini-badge (for customer screens) ── */
+function MiniPoweredBy() {
+  return (
+    <p className="mt-3 flex items-center justify-center gap-1 text-[9px] text-black/25">
+      <Camera className="h-2.5 w-2.5" />
+      Powered by PhotoBrief
+    </p>
+  );
+}
+
+/* ── ClearPath brand header (for customer screens) ── */
+function ClearPathHeader({ compact }: { compact?: boolean }) {
+  return (
+    <div className={`flex items-center gap-2 ${compact ? "" : "mb-3"}`}>
+      <div
+        className="flex h-8 w-8 items-center justify-center rounded-lg"
+        style={{ backgroundColor: BRAND.colorLight }}
+      >
+        <Truck className="h-4 w-4" style={{ color: BRAND.color }} />
+      </div>
+      <div className="min-w-0">
+        <p className="text-[12px] font-bold text-black/80">{BRAND.short}</p>
+        {!compact && (
+          <p className="text-[9px] text-black/35">{BRAND.tagline}</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
 /* ─────────────────────────────────────────────────────── */
 /* ── BUSINESS SCREENS                                  ── */
 /* ─────────────────────────────────────────────────────── */
 
-/** Phase 0 — Business picks a saved template */
-function TemplateSelectScreen({ onSelect }: { onSelect: () => void }) {
-  const templates = [
-    { name: "Garage cleanout", steps: 4, icon: "📦" },
-    { name: "Roof inspection", steps: 6, icon: "🏠" },
-    { name: "Appliance pickup", steps: 3, icon: "🧊" },
-  ];
-  return (
-    <div className="flex min-h-[420px] flex-col">
-      <div className="mb-4 mt-1">
-        <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-white/35">
-          Dashboard
-        </span>
-        <h3 className="mt-0.5 text-[15px] font-bold tracking-tight text-white/90">
-          New request
-        </h3>
-        <p className="mt-1 text-[11px] text-white/40">
-          Pick a saved template to send
-        </p>
-      </div>
-      <div className="space-y-2">
-        {templates.map((t, i) => (
-          <button
-            key={t.name}
-            type="button"
-            onClick={i === 0 ? onSelect : undefined}
-            className={`flex w-full items-center gap-3 rounded-xl p-3 text-left transition-all ${
-              i === 0
-                ? "bg-[hsl(var(--pb-violet)/0.12)] ring-1 ring-[hsl(var(--pb-violet)/0.3)] hover:bg-[hsl(var(--pb-violet)/0.18)] active:scale-[0.98]"
-                : "bg-white/[0.03] opacity-50"
-            }`}
-          >
-            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/[0.06] text-lg">
-              {t.icon}
-            </span>
-            <div className="min-w-0 flex-1">
-              <p className="text-[13px] font-semibold text-white/80">{t.name}</p>
-              <p className="text-[10px] text-white/35">{t.steps} photo steps</p>
-            </div>
-            {i === 0 && (
-              <ChevronRight className="h-4 w-4 shrink-0 text-[hsl(var(--pb-lavender))]" />
-            )}
-          </button>
-        ))}
-      </div>
-      <div className="mt-4 rounded-xl bg-white/[0.03] p-3">
-        <p className="text-[10px] text-white/30 text-center">
-          Templates let you reuse photo steps across customers.
-        </p>
-      </div>
-    </div>
-  );
-}
-
-/** Phase 1 — Business enters customer details and sends */
-function SendLinkScreen({ onSend }: { onSend: () => void }) {
-  return (
-    <div className="flex min-h-[420px] flex-col">
-      <div className="mb-4 mt-1">
-        <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-white/35">
-          Dashboard
-        </span>
-        <h3 className="mt-0.5 text-[15px] font-bold tracking-tight text-white/90">
-          Send request
-        </h3>
-        <p className="mt-1 text-[11px] text-white/40">
-          Garage cleanout — 4 photo steps
-        </p>
-      </div>
-
-      {/* Template preview */}
-      <div className="mb-3 rounded-xl bg-white/[0.04] p-3">
-        <p className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/35">
-          <FileText className="h-3 w-3" /> Template
-        </p>
-        <div className="mt-2 flex flex-wrap gap-1.5">
-          {photos.map((p) => (
-            <span
-              key={p.id}
-              className="rounded-full bg-white/[0.06] px-2 py-0.5 text-[10px] text-white/50"
-            >
-              {p.label}
-            </span>
-          ))}
-        </div>
-      </div>
-
-      {/* Customer info fields */}
-      <div className="space-y-2">
-        <div className="flex items-center gap-2 rounded-xl bg-white/[0.06] px-3 py-2.5">
-          <User className="h-3.5 w-3.5 shrink-0 text-white/30" />
-          <span className="text-[12px] text-white/60">Sarah Johnson</span>
-        </div>
-        <div className="flex items-center gap-2 rounded-xl bg-white/[0.06] px-3 py-2.5">
-          <Phone className="h-3.5 w-3.5 shrink-0 text-white/30" />
-          <span className="text-[12px] text-white/60">(555) 012-3456</span>
-        </div>
-      </div>
-
-      {/* Delivery method */}
-      <div className="mt-3 flex items-center justify-between rounded-xl bg-white/[0.04] px-3 py-2.5">
-        <span className="flex items-center gap-2 text-[11px] text-white/40">
-          <MessageSquare className="h-3 w-3" /> Send via
-        </span>
-        <span className="rounded-full bg-[hsl(var(--pb-violet)/0.15)] px-2 py-0.5 text-[10px] font-semibold text-[hsl(var(--pb-lavender))]">
-          SMS
-        </span>
-      </div>
-
-      {/* Send button */}
-      <button
-        type="button"
-        onClick={onSend}
-        className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[hsl(var(--pb-violet))] px-4 py-3 text-[13px] font-bold text-white transition-all hover:brightness-110 active:scale-[0.98]"
-      >
-        <Send className="h-4 w-4" /> Send request
-      </button>
-    </div>
-  );
-}
-
-/** Phase 2 — Business sees "Sent, waiting…" */
-function LinkSentScreen() {
-  return (
-    <div className="flex min-h-[420px] flex-col items-center justify-center">
-      <div className="mb-6 text-center">
-        <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-white/35">
-          Dashboard
-        </span>
-      </div>
-      <div className="w-full rounded-2xl bg-white/[0.04] p-5">
-        <div className="flex flex-col items-center text-center">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500/15">
-            <Send className="h-6 w-6 text-emerald-400" />
-          </div>
-          <h3 className="mt-3 text-[15px] font-bold text-white/90">
-            Request sent
-          </h3>
-          <p className="mt-1 text-[12px] text-white/45">
-            Garage cleanout quote
-          </p>
-        </div>
-        <div className="mt-4 space-y-2">
-          <div className="flex items-center justify-between rounded-lg bg-white/[0.03] px-3 py-2">
-            <span className="flex items-center gap-2 text-[11px] text-white/50">
-              <User className="h-3 w-3" /> Customer
-            </span>
-            <span className="text-[11px] font-semibold text-white/70">Sarah J.</span>
-          </div>
-          <div className="flex items-center justify-between rounded-lg bg-white/[0.03] px-3 py-2">
-            <span className="flex items-center gap-2 text-[11px] text-white/50">
-              <MessageSquare className="h-3 w-3" /> Sent via
-            </span>
-            <span className="text-[11px] font-semibold text-white/70">SMS</span>
-          </div>
-          <div className="flex items-center justify-between rounded-lg bg-white/[0.03] px-3 py-2">
-            <span className="flex items-center gap-2 text-[11px] text-white/50">
-              <Clock className="h-3 w-3" /> Sent
-            </span>
-            <span className="text-[11px] font-semibold text-white/70">Just now</span>
-          </div>
-        </div>
-        <div className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-white/[0.03] py-3">
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-amber-400" />
-          </span>
-          <span className="text-[11px] font-semibold text-amber-400/80">
-            Waiting for customer…
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/** Phase 3-4 — Business sees live in-progress feed */
-function BusinessInProgressScreen({
-  captured,
-  blurryPending,
-  customerSubmitted,
+/** Business phone — idle dashboard (phases 1-5) */
+function BusinessIdleScreen({
+  phase,
+  capturedCount,
 }: {
-  captured: Set<number>;
-  blurryPending: boolean;
-  customerSubmitted: boolean;
+  phase: Phase;
+  capturedCount: number;
 }) {
-  const capturedCount = captured.size;
+  const showNotif = phase !== "CUSTOMER_REQUEST";
+  const showProgress = phase === "CAPTURING" || phase === "CUSTOMER_REVIEW" || phase === "QUESTIONS";
 
   return (
-    <>
-      <div className="mb-3 mt-1 flex items-center justify-between">
-        <div>
-          <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-white/35">
-            Dashboard
-          </span>
-          <h3 className="mt-0.5 text-[15px] font-bold tracking-tight text-white/90">
-            Incoming brief
-          </h3>
+    <div className="flex min-h-[420px] flex-col">
+      {/* ClearPath dashboard header */}
+      <div className="mb-4 mt-1">
+        <div className="flex items-center gap-2">
+          <div
+            className="flex h-9 w-9 items-center justify-center rounded-xl"
+            style={{ backgroundColor: "rgba(13,148,136,0.15)" }}
+          >
+            <Truck className="h-4.5 w-4.5" style={{ color: BRAND.color }} />
+          </div>
+          <div>
+            <p className="text-[13px] font-bold text-white/80">{BRAND.short}</p>
+            <p className="text-[9px] text-white/35">{BRAND.tagline}</p>
+          </div>
         </div>
-        <span className="rounded-full bg-white/[0.06] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white/40">
-          {capturedCount}/4
-        </span>
       </div>
 
-      {/* Photo grid */}
-      <div className="grid grid-cols-2 gap-1.5">
-        {photos.map((photo, i) => {
-          const isCaptured = captured.has(i);
-          const isBlurry = i === BLURRY_INDEX && blurryPending && isCaptured;
-          return (
-            <div
-              key={photo.id}
-              className={`relative overflow-hidden rounded-xl transition-all duration-500 ${
-                isCaptured
-                  ? "ring-1 ring-white/[0.08]"
-                  : "ring-1 ring-white/[0.04]"
-              }`}
-            >
-              {isCaptured ? (
-                <>
-                  <img
-                    src={photo.src}
-                    alt={photo.label}
-                    className={`h-[72px] w-full object-cover ${isBlurry ? "blur-[2px]" : ""}`}
-                    width={300} height={300} loading="lazy" sizes="150px"
-                  />
-                  <div className="flex items-center justify-between bg-black/50 px-2 py-1.5">
-                    <span className="text-[10px] font-semibold text-white/70">
-                      {photo.label}
-                    </span>
-                    <span
-                      className={`flex items-center gap-0.5 text-[9px] font-bold ${
-                        isBlurry
-                          ? "text-amber-400"
-                          : photo.good
-                            ? "text-emerald-400"
-                            : "text-amber-400"
-                      }`}
-                    >
-                      {isBlurry ? (
-                        <>
-                          <AlertTriangle className="h-2.5 w-2.5" />
-                          Blurry
-                        </>
-                      ) : photo.good ? (
-                        <>
-                          <ShieldCheck className="h-2.5 w-2.5" />
-                          OK
-                        </>
-                      ) : (
-                        <>
-                          <ScanLine className="h-2.5 w-2.5" />
-                          Flag
-                        </>
-                      )}
-                    </span>
+      {/* Requests section */}
+      <div className="rounded-xl bg-white/[0.04] p-3">
+        <p className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.14em] text-white/35">
+          <LayoutList className="h-3 w-3" /> Recent requests
+        </p>
+
+        {!showNotif ? (
+          <div className="mt-4 flex flex-col items-center py-6 text-center">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/[0.04]">
+              <ClipboardList className="h-5 w-5 text-white/15" />
+            </div>
+            <p className="mt-2 text-[11px] text-white/25">No new requests</p>
+            <p className="mt-0.5 text-[9px] text-white/15">
+              Requests from your website will appear here
+            </p>
+          </div>
+        ) : (
+          <div className="mt-2 space-y-2">
+            {/* New lead notification */}
+            <div className="rounded-xl bg-white/[0.06] p-3 ring-1 ring-white/[0.06]">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="relative">
+                    <Bell className="h-3.5 w-3.5 text-white/40" />
+                    <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-emerald-400" />
                   </div>
-                </>
-              ) : (
-                <div className="flex h-[96px] flex-col items-center justify-center bg-white/[0.02]">
-                  <div className="h-5 w-5 rounded-full border border-dashed border-white/10" />
-                  <span className="mt-1 text-[9px] text-white/20">
-                    Waiting…
+                  <span className="text-[11px] font-semibold text-white/70">
+                    New lead
+                  </span>
+                </div>
+                <span className="text-[9px] text-white/30">Just now</span>
+              </div>
+              <div className="mt-2 space-y-1">
+                <div className="flex items-center gap-1.5 text-[10px] text-white/45">
+                  <User className="h-2.5 w-2.5" /> Sarah Johnson
+                </div>
+                <div className="flex items-center gap-1.5 text-[10px] text-white/45">
+                  <Package className="h-2.5 w-2.5" /> Garage cleanout
+                </div>
+                <div className="flex items-center gap-1.5 text-[10px] text-white/45">
+                  <Globe className="h-2.5 w-2.5" /> Website intake
+                </div>
+              </div>
+
+              {/* Progress indicator */}
+              {showProgress && (
+                <div className="mt-3 flex items-center gap-2 rounded-lg bg-white/[0.04] px-2.5 py-2">
+                  <span className="relative flex h-2 w-2">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-amber-400" />
+                  </span>
+                  <span className="text-[10px] font-semibold text-amber-400/80">
+                    {phase === "QUESTIONS"
+                      ? "Answering questions…"
+                      : phase === "CUSTOMER_REVIEW"
+                        ? "Reviewing photos…"
+                        : `Capturing photos… ${capturedCount}/${photos.length}`}
+                  </span>
+                </div>
+              )}
+
+              {phase === "ROUTING" && (
+                <div className="mt-3 flex items-center gap-2 rounded-lg bg-white/[0.04] px-2.5 py-2">
+                  <Loader2 className="h-3 w-3 animate-spin text-white/30" />
+                  <span className="text-[10px] text-white/40">
+                    Routing to template…
                   </span>
                 </div>
               )}
             </div>
-          );
-        })}
-      </div>
-
-      {/* AI check results */}
-      {capturedCount > 0 && (
-        <div className="mt-3 rounded-xl bg-white/[0.04] p-3">
-          <p className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/35">
-            <ScanLine className="h-3 w-3" /> AI check
-          </p>
-          <div className="mt-2 space-y-1.5">
-            {[...captured]
-              .sort((a, b) => a - b)
-              .map((i) => {
-                const p = photos[i];
-                const isBlurry = i === BLURRY_INDEX && blurryPending;
-                return (
-                  <div
-                    key={p.id}
-                    className="flex items-center justify-between rounded-lg bg-white/[0.03] px-2.5 py-1.5"
-                  >
-                    <span className="text-[11px] text-white/60">{p.label}</span>
-                    <span
-                      className={`text-[10px] font-bold ${
-                        isBlurry
-                          ? "text-amber-400"
-                          : p.good
-                            ? "text-emerald-400"
-                            : "text-amber-400"
-                      }`}
-                    >
-                      {isBlurry ? "Blurry — retake" : p.status}
-                    </span>
-                  </div>
-                );
-              })}
           </div>
-        </div>
-      )}
-
-      {/* Brief summary */}
-      <div className="mt-3 rounded-xl bg-white/[0.04] p-3">
-        <p className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/35">
-          <ClipboardList className="h-3 w-3" /> Brief summary
-        </p>
-        {customerSubmitted ? (
-          <p className="mt-2 text-[12px] text-white/40 italic">
-            Customer submitted — processing…
-          </p>
-        ) : (
-          <p className="mt-2 text-[12px] italic text-white/25">
-            Waiting for {photos.length - capturedCount} more photo
-            {photos.length - capturedCount !== 1 ? "s" : ""}…
-          </p>
         )}
       </div>
-    </>
+
+      {/* No action needed hint */}
+      <div className="mt-3 rounded-xl bg-white/[0.03] p-3 text-center">
+        <p className="text-[10px] text-white/20">
+          {showNotif
+            ? "No action needed — the customer is completing their brief."
+            : "Your website intake is live and waiting for leads."}
+        </p>
+      </div>
+
+      {/* Website intake status */}
+      <div className="mt-3 flex items-center justify-between rounded-xl bg-white/[0.04] px-3 py-2.5">
+        <span className="flex items-center gap-2 text-[10px] text-white/35">
+          <Globe className="h-3 w-3" /> Website intake
+        </span>
+        <span className="flex items-center gap-1 rounded-full bg-emerald-500/15 px-2 py-0.5 text-[9px] font-bold text-emerald-400">
+          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+          Active
+        </span>
+      </div>
+    </div>
   );
 }
 
-/** Phase 5 — Business sees completed brief */
+/** Business phone — completed brief (phase COMPLETE) */
 function BriefCompleteScreen() {
   return (
     <>
       <div className="mb-3 mt-1 flex items-center justify-between">
         <div>
           <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-white/35">
-            Dashboard
+            {BRAND.short}
           </span>
           <h3 className="mt-0.5 text-[15px] font-bold tracking-tight text-white/90">
             Brief complete
@@ -528,6 +381,31 @@ function BriefCompleteScreen() {
         </span>
       </div>
 
+      {/* Customer info */}
+      <div className="mb-2 rounded-xl bg-white/[0.04] p-2.5">
+        <div className="flex items-center gap-2">
+          <User className="h-3 w-3 text-white/30" />
+          <span className="text-[11px] font-semibold text-white/60">Sarah Johnson</span>
+          <span className="ml-auto text-[9px] text-white/25">via website</span>
+        </div>
+      </div>
+
+      {/* Customer answers */}
+      <div className="mb-2 rounded-xl bg-white/[0.04] p-3">
+        <p className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/35">
+          <MessageSquareText className="h-3 w-3" /> Answers
+        </p>
+        <div className="mt-2 space-y-1.5">
+          {CUSTOMER_ANSWERS.map((qa) => (
+            <div key={qa.q} className="flex items-start justify-between gap-2 rounded-lg bg-white/[0.03] px-2.5 py-1.5">
+              <span className="text-[10px] text-white/40">{qa.q}</span>
+              <span className="text-[10px] font-semibold text-white/65 text-right shrink-0">{qa.a}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Photo grid */}
       <div className="grid grid-cols-2 gap-1.5">
         {photos.map((photo) => (
           <div
@@ -537,15 +415,15 @@ function BriefCompleteScreen() {
             <img
               src={photo.src}
               alt={photo.label}
-              className="h-[72px] w-full object-cover"
+              className="h-[60px] w-full object-cover"
               width={300} height={300} loading="lazy" sizes="150px"
             />
-            <div className="flex items-center justify-between bg-black/50 px-2 py-1.5">
-              <span className="text-[10px] font-semibold text-white/70">
+            <div className="flex items-center justify-between bg-black/50 px-2 py-1">
+              <span className="text-[9px] font-semibold text-white/70">
                 {photo.label}
               </span>
-              <span className="flex items-center gap-0.5 text-[9px] font-bold text-emerald-400">
-                <ShieldCheck className="h-2.5 w-2.5" />
+              <span className="flex items-center gap-0.5 text-[8px] font-bold text-emerald-400">
+                <ShieldCheck className="h-2 w-2" />
                 OK
               </span>
             </div>
@@ -553,40 +431,22 @@ function BriefCompleteScreen() {
         ))}
       </div>
 
-      <div className="mt-3 rounded-xl bg-white/[0.04] p-3">
+      {/* AI Summary */}
+      <div className="mt-2 rounded-xl bg-white/[0.04] p-3">
         <p className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/35">
-          <ScanLine className="h-3 w-3" /> AI check
+          <ScanLine className="h-3 w-3" /> AI summary
         </p>
-        <div className="mt-2 space-y-1.5">
-          {photos.map((p) => (
-            <div
-              key={p.id}
-              className="flex items-center justify-between rounded-lg bg-white/[0.03] px-2.5 py-1.5"
-            >
-              <span className="text-[11px] text-white/60">{p.label}</span>
-              <span className="text-[10px] font-bold text-emerald-400">
-                Verified
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="mt-3 rounded-xl bg-white/[0.04] p-3">
-        <p className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/35">
-          <ClipboardList className="h-3 w-3" /> Brief summary
-        </p>
-        <p className="mt-2 text-[12px] leading-[1.6] text-white/60">
-          Garage cleanout — all shots verified. Ground-level access. Ready to quote.
+        <p className="mt-2 text-[11px] leading-[1.6] text-white/55">
+          Garage cleanout — furniture, appliances, and boxes. Medium volume, ground-level access. All photos verified. Appliance may need separate handling.
         </p>
       </div>
 
       <button
         type="button"
-        className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500/20 px-4 py-3 text-[13px] font-bold text-emerald-400 transition-all"
+        className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500/20 px-4 py-2.5 text-[12px] font-bold text-emerald-400 transition-all"
         disabled
       >
-        <CheckCircle2 className="h-4 w-4" /> Quote now
+        <CheckCircle2 className="h-3.5 w-3.5" /> Quote now
       </button>
     </>
   );
@@ -596,57 +456,226 @@ function BriefCompleteScreen() {
 /* ── CUSTOMER SCREENS                                  ── */
 /* ─────────────────────────────────────────────────────── */
 
-/** Customer phone is idle — business hasn't sent link yet */
-function CustomerIdleScreen() {
-  return (
-    <div className="flex min-h-[420px] flex-col items-center justify-center text-center">
-      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-black/[0.04]">
-        <Smartphone className="h-7 w-7 text-black/15" />
-      </div>
-      <p className="mt-4 text-[13px] font-semibold text-black/30">
-        Customer's phone
-      </p>
-      <p className="mt-1 text-[11px] text-black/20">
-        Waiting for a PhotoBrief link…
-      </p>
-    </div>
-  );
-}
-
-/** Customer received the link — welcome / Start screen */
-function CustomerWelcomeScreen({ onStart }: { onStart: () => void }) {
+/** Phase 1 — Customer submits a request on ClearPath's website */
+function CustomerRequestScreen({ onSubmit }: { onSubmit: () => void }) {
   return (
     <div className="flex min-h-[420px] flex-col">
-      <div className="flex flex-1 flex-col items-center justify-center text-center">
-        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[hsl(var(--pb-violet)/0.1)]">
-          <Camera className="h-6 w-6 text-[hsl(var(--pb-violet))]" />
-        </div>
-        <h3 className="mt-4 text-[16px] font-bold tracking-tight text-black/85">
-          Garage cleanout quote
-        </h3>
-        <p className="mt-1.5 text-[12px] leading-[1.6] text-black/45 px-2">
-          We need 4 photos to prepare your quote. It takes about 2 minutes.
+      {/* Fake website header */}
+      <div className="mb-3 mt-1 flex items-center justify-between">
+        <ClearPathHeader />
+        <span className="text-[9px] text-black/25">clearpathjunk.com</span>
+      </div>
+
+      {/* Hero area */}
+      <div
+        className="mb-4 rounded-xl p-4 text-center"
+        style={{ backgroundColor: BRAND.colorLight }}
+      >
+        <Truck className="mx-auto h-7 w-7" style={{ color: BRAND.color }} />
+        <p className="mt-2 text-[14px] font-bold" style={{ color: BRAND.color }}>
+          Get a free quote
         </p>
-        <div className="mt-4 flex items-center gap-2 rounded-full bg-black/[0.04] px-3 py-1.5">
-          <Camera className="h-3 w-3 text-black/30" />
-          <span className="text-[10px] font-semibold text-black/40">4 photos · ~2 min</span>
+        <p className="mt-0.5 text-[10px] text-black/40">
+          Tell us what you need hauled — we'll get back to you fast.
+        </p>
+      </div>
+
+      {/* Form fields */}
+      <div className="space-y-2">
+        <div className="flex items-center gap-2 rounded-xl bg-black/[0.04] px-3 py-2.5">
+          <User className="h-3.5 w-3.5 shrink-0 text-black/25" />
+          <span className="text-[12px] text-black/55">Sarah Johnson</span>
+        </div>
+        <div className="flex items-center gap-2 rounded-xl bg-black/[0.04] px-3 py-2.5">
+          <MapPin className="h-3.5 w-3.5 shrink-0 text-black/25" />
+          <span className="text-[12px] text-black/55">742 Evergreen Terrace</span>
+        </div>
+        <div className="flex items-center justify-between rounded-xl bg-black/[0.04] px-3 py-2.5">
+          <span className="flex items-center gap-2 text-[12px] text-black/55">
+            <Package className="h-3.5 w-3.5 shrink-0 text-black/25" />
+            Garage cleanout
+          </span>
+          <ChevronRight className="h-3.5 w-3.5 text-black/20" />
+        </div>
+        <div className="rounded-xl bg-black/[0.04] px-3 py-2.5">
+          <p className="text-[12px] text-black/40 leading-[1.5]">
+            Need the garage cleared before we move. Lots of old furniture and a broken fridge…
+          </p>
         </div>
       </div>
+
+      {/* Submit */}
       <button
         type="button"
-        onClick={onStart}
-        className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[hsl(var(--pb-violet))] px-4 py-3 text-[13px] font-bold text-white transition-all hover:brightness-110 active:scale-[0.98]"
+        onClick={onSubmit}
+        className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-[13px] font-bold text-white transition-all hover:brightness-110 active:scale-[0.98]"
+        style={{ backgroundColor: BRAND.color }}
       >
-        Start <ArrowRight className="h-4 w-4" />
+        <Send className="h-4 w-4" /> Request service
       </button>
-      <p className="mt-3 text-center text-[10px] text-black/25">
-        No app download needed
-      </p>
+      <MiniPoweredBy />
     </div>
   );
 }
 
-/** Customer capture screen — existing flow */
+/** Phase 2 — Routing transition */
+function CustomerRoutingScreen({ onDone }: { onDone: () => void }) {
+  // Auto-advance after a short "pause"
+  return (
+    <div className="flex min-h-[420px] flex-col items-center justify-center text-center">
+      <ClearPathHeader />
+      <div className="mt-6 flex flex-col items-center">
+        <div
+          className="flex h-14 w-14 items-center justify-center rounded-full"
+          style={{ backgroundColor: BRAND.colorLight }}
+        >
+          <Loader2 className="h-6 w-6 animate-spin" style={{ color: BRAND.color }} />
+        </div>
+        <h3 className="mt-4 text-[15px] font-bold tracking-tight text-black/80">
+          Setting up your photo brief
+        </h3>
+        <p className="mt-1.5 px-4 text-[12px] leading-[1.6] text-black/40">
+          {BRAND.short} uses PhotoBrief to collect the right photos upfront — so they can quote faster.
+        </p>
+        <div className="mt-5 flex items-center gap-2 rounded-full bg-black/[0.04] px-3 py-1.5">
+          <Camera className="h-3 w-3 text-black/30" />
+          <span className="text-[10px] font-semibold text-black/40">4 photos · 3 questions · ~3 min</span>
+        </div>
+        <button
+          type="button"
+          onClick={onDone}
+          className="mt-6 flex items-center gap-2 rounded-xl px-6 py-3 text-[13px] font-bold text-white transition-all hover:brightness-110 active:scale-[0.98]"
+          style={{ backgroundColor: BRAND.color }}
+        >
+          Continue <ArrowRight className="h-4 w-4" />
+        </button>
+      </div>
+      <MiniPoweredBy />
+    </div>
+  );
+}
+
+/** Phase 3 — Customer answers context questions */
+function CustomerQuestionsScreen({ onContinue }: { onContinue: () => void }) {
+  const [selected, setSelected] = useState({
+    items: new Set(["furniture", "appliances", "boxes"]),
+    volume: "medium",
+    stairs: "no",
+  });
+
+  const itemChips = [
+    { id: "furniture", label: "Furniture", icon: Sofa },
+    { id: "appliances", label: "Appliances", icon: Refrigerator },
+    { id: "boxes", label: "Boxes", icon: Package },
+    { id: "yard", label: "Yard waste", icon: TreePine },
+  ];
+
+  return (
+    <div className="flex min-h-[420px] flex-col">
+      {/* Header */}
+      <div className="mb-3 mt-1 flex items-center justify-between">
+        <ClearPathHeader compact />
+        <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ backgroundColor: BRAND.colorLight, color: BRAND.color }}>
+          Step 1 of 2
+        </span>
+      </div>
+
+      <h3 className="text-[15px] font-bold tracking-tight text-black/85">
+        A few quick questions
+      </h3>
+      <p className="mt-0.5 mb-4 text-[11px] text-black/40">
+        This helps {BRAND.short} prepare an accurate quote.
+      </p>
+
+      {/* Q1 — What needs removing */}
+      <div className="mb-3">
+        <p className="mb-1.5 text-[11px] font-semibold text-black/60">What needs removing?</p>
+        <div className="flex flex-wrap gap-1.5">
+          {itemChips.map((chip) => {
+            const active = selected.items.has(chip.id);
+            const Icon = chip.icon;
+            return (
+              <button
+                key={chip.id}
+                type="button"
+                onClick={() => {
+                  const next = new Set(selected.items);
+                  active ? next.delete(chip.id) : next.add(chip.id);
+                  setSelected({ ...selected, items: next });
+                }}
+                className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-medium transition-all ${
+                  active
+                    ? "text-white"
+                    : "bg-black/[0.04] text-black/50"
+                }`}
+                style={active ? { backgroundColor: BRAND.color } : undefined}
+              >
+                <Icon className="h-3 w-3" /> {chip.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Q2 — Volume */}
+      <div className="mb-3">
+        <p className="mb-1.5 text-[11px] font-semibold text-black/60">Approximate volume?</p>
+        <div className="flex gap-1.5">
+          {["small", "medium", "large"].map((v) => (
+            <button
+              key={v}
+              type="button"
+              onClick={() => setSelected({ ...selected, volume: v })}
+              className={`flex-1 rounded-xl py-2 text-[11px] font-medium capitalize transition-all ${
+                selected.volume === v
+                  ? "text-white"
+                  : "bg-black/[0.04] text-black/50"
+              }`}
+              style={selected.volume === v ? { backgroundColor: BRAND.color } : undefined}
+            >
+              {v}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Q3 — Stairs */}
+      <div className="mb-4">
+        <p className="mb-1.5 text-[11px] font-semibold text-black/60">Any stairs or tight access?</p>
+        <div className="flex gap-1.5">
+          {["yes", "no"].map((v) => (
+            <button
+              key={v}
+              type="button"
+              onClick={() => setSelected({ ...selected, stairs: v })}
+              className={`flex-1 rounded-xl py-2 text-[11px] font-medium capitalize transition-all ${
+                selected.stairs === v
+                  ? "text-white"
+                  : "bg-black/[0.04] text-black/50"
+              }`}
+              style={selected.stairs === v ? { backgroundColor: BRAND.color } : undefined}
+            >
+              {v}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Continue */}
+      <button
+        type="button"
+        onClick={onContinue}
+        className="flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-[13px] font-bold text-white transition-all hover:brightness-110 active:scale-[0.98]"
+        style={{ backgroundColor: BRAND.color }}
+      >
+        Continue to photos <Camera className="h-4 w-4" />
+      </button>
+      <MiniPoweredBy />
+    </div>
+  );
+}
+
+/** Customer capture screen */
 function CustomerCaptureScreen({
   currentStep,
   captured,
@@ -667,15 +696,13 @@ function CustomerCaptureScreen({
       {/* App header */}
       <div className="mb-3 mt-1">
         <div className="flex items-center justify-between">
-          <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-black/35">
-            PhotoBrief
-          </span>
-          <span className="rounded-full bg-[hsl(var(--pb-violet)/0.12)] px-2 py-0.5 text-[10px] font-bold text-[hsl(var(--pb-violet))]">
-            {capturedCount}/{photos.length}
+          <ClearPathHeader compact />
+          <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ backgroundColor: BRAND.colorLight, color: BRAND.color }}>
+            Step 2 · {capturedCount}/{photos.length}
           </span>
         </div>
         <h3 className="mt-1 text-[15px] font-bold tracking-tight text-black/85">
-          Garage cleanout quote
+          Capture photos
         </h3>
       </div>
 
@@ -684,13 +711,14 @@ function CustomerCaptureScreen({
         {photos.map((_, i) => (
           <div
             key={i}
-            className={`h-1 flex-1 rounded-full transition-all duration-300 ${
-              captured.has(i)
-                ? "bg-[hsl(var(--pb-violet))]"
+            className={`h-1 flex-1 rounded-full transition-all duration-300`}
+            style={{
+              backgroundColor: captured.has(i)
+                ? BRAND.color
                 : i === currentStep
-                  ? "bg-[hsl(var(--pb-violet)/0.35)]"
-                  : "bg-black/[0.06]"
-            }`}
+                  ? BRAND.colorRing
+                  : "rgba(0,0,0,0.06)",
+            }}
           />
         ))}
       </div>
@@ -755,7 +783,7 @@ function CustomerCaptureScreen({
       {!isBlurryShot && (
         <div className="mt-3 rounded-xl bg-black/[0.04] p-3">
           <p className="flex items-center gap-2 text-[13px] font-semibold text-black/70">
-            <Camera className="h-3.5 w-3.5 shrink-0 text-[hsl(var(--pb-violet))]" />
+            <Camera className="h-3.5 w-3.5 shrink-0" style={{ color: BRAND.color }} />
             {photo.label}
           </p>
           <p className="mt-1 text-[12px] leading-[1.5] text-black/45">
@@ -769,10 +797,9 @@ function CustomerCaptureScreen({
         type="button"
         onClick={onCapture}
         className={`mt-3 flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-[13px] font-bold text-white transition-all hover:brightness-110 active:scale-[0.98] ${
-          isBlurryShot
-            ? "bg-amber-500"
-            : "bg-[hsl(var(--pb-violet))]"
+          isBlurryShot ? "bg-amber-500" : ""
         }`}
+        style={!isBlurryShot ? { backgroundColor: BRAND.color } : undefined}
       >
         {isBlurryShot ? (
           <>
@@ -796,9 +823,10 @@ function CustomerCaptureScreen({
             key={p.id}
             className={`relative aspect-square overflow-hidden rounded-lg ${
               i === currentStep
-                ? "ring-2 ring-[hsl(var(--pb-violet))]"
+                ? "ring-2"
                 : "ring-1 ring-black/[0.06]"
             }`}
+            style={i === currentStep ? { boxShadow: `0 0 0 2px ${BRAND.color}` } : undefined}
           >
             {i === BLURRY_INDEX && blurryPending && captured.has(i) ? (
               <>
@@ -838,15 +866,13 @@ function CustomerCaptureScreen({
   );
 }
 
-/** Customer review screen — sees all photos, taps submit */
+/** Customer review screen */
 function CustomerReviewScreen({ onSubmit }: { onSubmit: () => void }) {
   return (
     <>
       <div className="mb-3 mt-1">
         <div className="flex items-center justify-between">
-          <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-black/35">
-            PhotoBrief
-          </span>
+          <ClearPathHeader compact />
           <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold text-emerald-600">
             {photos.length}/{photos.length}
           </span>
@@ -855,8 +881,19 @@ function CustomerReviewScreen({ onSubmit }: { onSubmit: () => void }) {
           Review &amp; send
         </h3>
         <p className="mt-1 text-[11px] text-black/40">
-          Check your photos, then send them over.
+          Check everything looks right, then send it over.
         </p>
+      </div>
+
+      {/* Answers summary */}
+      <div className="mb-2 rounded-xl bg-black/[0.03] p-2.5">
+        <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-black/30 mb-1.5">Your answers</p>
+        {CUSTOMER_ANSWERS.map((qa) => (
+          <div key={qa.q} className="flex items-center justify-between py-0.5">
+            <span className="text-[10px] text-black/35">{qa.q}</span>
+            <span className="text-[10px] font-semibold text-black/55">{qa.a}</span>
+          </div>
+        ))}
       </div>
 
       {/* All captured thumbnails */}
@@ -866,7 +903,7 @@ function CustomerReviewScreen({ onSubmit }: { onSubmit: () => void }) {
             <img
               src={p.src}
               alt={p.label}
-              className="h-[80px] w-full object-cover"
+              className="h-[72px] w-full object-cover"
               width={300} height={300} loading="lazy" sizes="150px"
             />
             <div className="flex items-center justify-between px-2 py-1.5 bg-black/[0.02]">
@@ -883,13 +920,12 @@ function CustomerReviewScreen({ onSubmit }: { onSubmit: () => void }) {
       <button
         type="button"
         onClick={onSubmit}
-        className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[hsl(var(--pb-violet))] px-4 py-3.5 text-[13px] font-bold text-white transition-all hover:brightness-110 active:scale-[0.98]"
+        className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3.5 text-[13px] font-bold text-white transition-all hover:brightness-110 active:scale-[0.98]"
+        style={{ backgroundColor: BRAND.color }}
       >
-        <Send className="h-4 w-4" /> Send to business
+        <Send className="h-4 w-4" /> Send to {BRAND.short}
       </button>
-      <p className="mt-2 text-center text-[10px] text-black/25">
-        The business will receive your photos instantly.
-      </p>
+      <MiniPoweredBy />
     </>
   );
 }
@@ -905,13 +941,14 @@ function CustomerConfirmationScreen() {
         Photos sent!
       </h3>
       <p className="mt-2 text-[12px] leading-[1.6] text-black/45 px-4">
-        The business has your photos and will follow up with a quote.
+        {BRAND.name} has your photos and will follow up with a quote.
       </p>
       <div className="mt-5 rounded-xl bg-black/[0.03] px-4 py-3">
         <p className="text-[10px] text-black/30">
           You can close this page now.
         </p>
       </div>
+      <MiniPoweredBy />
     </div>
   );
 }
@@ -920,7 +957,7 @@ function CustomerConfirmationScreen() {
 /* ── Main component                                    ── */
 /* ─────────────────────────────────────────────────────── */
 export function InteractiveHeroBriefAssembly() {
-  const [phase, setPhase] = useState<Phase>("TEMPLATE_SELECT");
+  const [phase, setPhase] = useState<Phase>("CUSTOMER_REQUEST");
   const [currentStep, setCurrentStep] = useState(0);
   const [captured, setCaptured] = useState<Set<number>>(() => new Set());
   const [blurryPending, setBlurryPending] = useState(true);
@@ -929,8 +966,6 @@ export function InteractiveHeroBriefAssembly() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const allCaptured = captured.size === photos.length;
-  const ready = allCaptured && !blurryPending;
   const hasFlag = [...captured].some((i) => !photos[i].good);
 
   function handleCapture() {
@@ -948,23 +983,18 @@ export function InteractiveHeroBriefAssembly() {
     if (!next.has(currentStep)) {
       next.add(currentStep);
       setCaptured(next);
-      // For the blurry photo, don't auto-advance — stay to show retake prompt
       if (currentStep === BLURRY_INDEX && blurryPending) {
         return;
       }
     } else if (currentStep < photos.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      // Last photo captured and confirmed — move to review
       setPhase("CUSTOMER_REVIEW");
       return;
     }
     setRequestUrl(null);
     setError(null);
   }
-
-  // Check if all photos are done after a state update — move to review if on last step
-  // This is handled in handleCapture above when the last "Next shot" is tapped
 
   async function submitLead(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -1027,26 +1057,20 @@ export function InteractiveHeroBriefAssembly() {
   let customerContent: React.ReactNode;
 
   switch (phase) {
-    case "TEMPLATE_SELECT":
-      businessContent = <TemplateSelectScreen onSelect={() => setPhase("SEND_LINK")} />;
-      customerContent = <CustomerIdleScreen />;
+    case "CUSTOMER_REQUEST":
+      businessContent = <BusinessIdleScreen phase={phase} capturedCount={0} />;
+      customerContent = <CustomerRequestScreen onSubmit={() => setPhase("ROUTING")} />;
       break;
-    case "SEND_LINK":
-      businessContent = <SendLinkScreen onSend={() => setPhase("LINK_SENT")} />;
-      customerContent = <CustomerIdleScreen />;
+    case "ROUTING":
+      businessContent = <BusinessIdleScreen phase={phase} capturedCount={0} />;
+      customerContent = <CustomerRoutingScreen onDone={() => setPhase("QUESTIONS")} />;
       break;
-    case "LINK_SENT":
-      businessContent = <LinkSentScreen />;
-      customerContent = <CustomerWelcomeScreen onStart={() => setPhase("CAPTURING")} />;
-      break;
-    case "CUSTOMER_WELCOME":
-      businessContent = <LinkSentScreen />;
-      customerContent = <CustomerWelcomeScreen onStart={() => setPhase("CAPTURING")} />;
+    case "QUESTIONS":
+      businessContent = <BusinessIdleScreen phase={phase} capturedCount={0} />;
+      customerContent = <CustomerQuestionsScreen onContinue={() => setPhase("CAPTURING")} />;
       break;
     case "CAPTURING":
-      businessContent = (
-        <BusinessInProgressScreen captured={captured} blurryPending={blurryPending} customerSubmitted={false} />
-      );
+      businessContent = <BusinessIdleScreen phase={phase} capturedCount={captured.size} />;
       customerContent = (
         <CustomerCaptureScreen
           currentStep={currentStep}
@@ -1057,9 +1081,7 @@ export function InteractiveHeroBriefAssembly() {
       );
       break;
     case "CUSTOMER_REVIEW":
-      businessContent = (
-        <BusinessInProgressScreen captured={captured} blurryPending={blurryPending} customerSubmitted={false} />
-      );
+      businessContent = <BusinessIdleScreen phase={phase} capturedCount={captured.size} />;
       customerContent = <CustomerReviewScreen onSubmit={() => setPhase("COMPLETE")} />;
       break;
     case "COMPLETE":
@@ -1086,7 +1108,7 @@ export function InteractiveHeroBriefAssembly() {
       {/* Dual phone layout */}
       <div className="flex flex-col items-center justify-center gap-6 lg:flex-row lg:items-start lg:gap-4">
         {/* Business phone */}
-        <PhoneMockup label="Your dashboard" sublabel="business side" variant="dark">
+        <PhoneMockup label="Your phone" sublabel="business side" variant="dark">
           {businessContent}
         </PhoneMockup>
 
