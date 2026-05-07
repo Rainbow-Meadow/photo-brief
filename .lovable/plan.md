@@ -1,69 +1,43 @@
 
-## Restructure interactive demo to website intake flow + fake brand
+## Generate scene-aware voiceover for the feature video
 
-### Concept
+### Voiceover Script
 
-Replace the "business manually sends a link" story with the automated website intake story. A fake junk removal brand — **ClearPath Junk Removal** — provides the industry context and shows how PhotoBrief branding appears alongside the customer's own brand.
+Scene-timed narration matched to the 9-scene video (~90 seconds at 30fps). Voice: Daniel (`onwK4e9ZLuTAKqWW03F9`) — cinematic, warm, authoritative. Settings: stability 0.4 (expressive), style 0.6 (dramatic), speed 0.92 (deliberate pacing).
 
-### Fake brand
+| Scene | Duration | Start (s) | Script |
+|-------|----------|-----------|--------|
+| 1 Hook | 3.3s | 0.0 | "Your customers have the photos you need. They just don't know which ones." |
+| 2 Value Prop | 3.0s | 3.3 | "PhotoBrief tells them exactly what to send." |
+| 3 Create Request | 12.0s | 6.3 | "Pick a template. Add their name. Hit send. In seconds, your customer gets a guided photo link — no app, no account, no friction." |
+| 4 Customer Capture | 14.0s | 18.3 | "They open the link on their phone. One photo at a time. Clear guidance at every step. Real-time AI feedback catches blurry shots before they hit your inbox." |
+| 5 Brief Arrives | 14.0s | 32.3 | "Everything lands in one place. Photos. AI quality checks. A summary you can actually act on — ready to quote, ready to dispatch, without a single phone call." |
+| 6 Beta Transition | 3.7s | 46.3 | "We're building this with you." |
+| 7 Partner Benefits | 12.0s | 50.0 | "Sixty days of full access. Concierge setup. A direct line to shape the product. And permanent rewards tied to how deeply you engage." |
+| 8 Reward Tiers | 12.0s | 62.0 | "The top two partners get Pro free — for life. Everyone who participates walks away with a discount that never expires." |
+| 9 Closing | 16.0s | 74.0 | "Thirty seats. Sixty days. Your feedback shapes the product. PhotoBrief dot AI." |
 
-- **Name**: ClearPath Junk Removal
-- **Tagline**: "We haul it all."
-- **Brand color**: Teal/green (#0d9488 or similar)
-- **Logo**: Text-based with a truck or recycle icon from Lucide
-- Used on: the customer-facing welcome screen, question screens, and the business phone idle state
+### Background Music
 
-### New phase flow
+Generate a ~90 second background music track via ElevenLabs Music API. Prompt: "Cinematic ambient electronic, building tension to resolve, minimal bass pulse, ethereal pads, subtle percussion, modern tech documentary feel — not corporate, not generic." Mix under voiceover at ~15% volume.
 
-1. **CUSTOMER_REQUEST** — Customer phone shows a simple branded intake form on ClearPath's "website": name, service type dropdown (Garage cleanout selected), short message. Business phone shows an idle state — ClearPath dashboard with "no new requests." Customer taps "Request service."
+### Implementation
 
-2. **ROUTING** — Brief transition. Customer phone shows "Setting up your photo brief..." with the ClearPath + PhotoBrief branding. Business phone shows a subtle "New lead" toast/notification.
+1. **Create `supabase/functions/generate-tts/index.ts`** — Edge function that accepts text, voice settings, and request-stitching context (`previousText`/`nextText`). Returns base64 MP3 audio. Uses Daniel voice with expressive settings.
 
-3. **QUESTIONS** — Customer phone shows 2-3 context questions branded with ClearPath's color: "What needs removing?" (chips: Furniture, Appliances, Boxes, Yard waste), "Approximate volume?" (Small / Medium / Large), "Any stairs or tight access?" (Yes / No). Business phone stays idle. Customer taps "Continue to photos."
+2. **Deploy and call for each segment** — Call the edge function 9 times (one per scene), using request stitching for natural prosody between segments. Save each segment to `/tmp/`.
 
-4. **CAPTURING** — Same photo capture flow as today (blurry retake mechanic preserved). Business phone shows a passive "In progress" indicator.
+3. **Generate background music** — Create `supabase/functions/generate-music/index.ts` edge function. Call ElevenLabs Music API with the cinematic prompt. Save to `/tmp/`.
 
-5. **CUSTOMER_REVIEW** — Customer reviews photos + answers, taps Submit. Business phone still idle.
+4. **Assemble with ffmpeg** — Use ffmpeg to:
+   - Pad each voiceover segment with silence to match scene start times
+   - Concatenate all padded segments into one voiceover track
+   - Mix voiceover (100%) + music (15% volume) into final stereo MP3
+   - Output to `/mnt/documents/photobrief-voiceover.mp3`
 
-6. **COMPLETE** — Customer sees branded confirmation ("ClearPath has your photos"). Business phone lights up with the full brief: customer answers, photos, AI checks, summary, "Ready to quote" button. The payoff: the business didn't do anything.
-
-### Phase hints
-
-- CUSTOMER_REQUEST: "The customer finds ClearPath online and submits a service request."
-- ROUTING: "PhotoBrief matches the request to the right template automatically."
-- QUESTIONS: "The customer answers a few quick questions first."
-- CAPTURING: "Now the customer captures photos, one at a time."
-- CUSTOMER_REVIEW: "The customer reviews everything before sending."
-- COMPLETE: "The complete brief arrives on the business phone — ready to quote."
-
-### Screen changes
-
-**New screens:**
-- `CustomerRequestScreen` — Branded ClearPath intake form (name, service, message, submit button)
-- `CustomerQuestionsScreen` — 2-3 questions with chip/toggle inputs, ClearPath header
-- `BusinessIdleScreen` — ClearPath dashboard showing "No new requests" initially, then "New lead" notification after routing, then "Customer in progress" during capture
-- `CustomerConfirmationScreen` — Updated to show ClearPath brand in the confirmation
-
-**Removed screens:**
-- `TemplateSelectScreen` — No longer needed (automated)
-- `SendLinkScreen` — No longer needed (automated)
-- `LinkSentScreen` — No longer needed (automated)
-- `CustomerIdleScreen` — No longer needed (customer initiates)
-- `CustomerWelcomeScreen` — Merged into the routing/questions transition
-
-**Kept mostly as-is:**
-- `CustomerCaptureScreen` — Same photo flow, add ClearPath header branding
-- `CustomerReviewScreen` — Same, add customer answers summary
-- `BriefCompleteScreen` — Enhanced with customer answers section
-
-### Branding details
-
-The customer-facing screens show ClearPath's teal brand color in headers and buttons, with a small "Powered by PhotoBrief" badge at the bottom. This demonstrates how PhotoBrief white-labels for the business while keeping its attribution.
+5. **Clean up** — Delete the temporary edge functions after generation is complete.
 
 ### Files changed
-
-- `src/components/marketing/InteractiveHeroBriefAssembly.tsx` — Full rewrite of phases, screen components, and phase machine. Same file, same exports.
-
-### What stays the same
-
-- `PhoneMockup` component, `ConnectionLine`, photo data array, blurry retake mechanic, lead capture form at the end, all phone bezel styling, API integration for lead capture.
+- `supabase/functions/generate-tts/index.ts` (temporary — deleted after)
+- `supabase/functions/generate-music/index.ts` (temporary — deleted after)
+- Output: `/mnt/documents/photobrief-voiceover.mp3`
