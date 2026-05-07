@@ -130,7 +130,7 @@ function PhoneMockup({
           <span className="ml-2 text-xs text-white/30">{sublabel}</span>
         )}
       </div>
-      <div className="relative w-[260px] rounded-[2.25rem] border-[3px] border-white/[0.08] bg-[#1a1a1f] p-[3px] shadow-[0_8px_40px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,255,255,0.04)] sm:w-[280px] sm:rounded-[2.5rem]">
+      <div aria-hidden="true" className="relative w-[260px] rounded-[2.25rem] border-[3px] border-white/[0.08] bg-[#1a1a1f] p-[3px] shadow-[0_8px_40px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,255,255,0.04)] sm:w-[280px] sm:rounded-[2.5rem]">
         {/* Notch */}
         <div className="absolute left-1/2 top-[10px] z-20 h-[22px] w-[90px] -translate-x-1/2 rounded-full bg-black" />
         <div
