@@ -722,6 +722,8 @@ export const MainVideo: React.FC = () => {
 
   return (
     <AbsoluteFill style={{ backgroundColor: COLORS.bgDark }}>
+      {/* Voiceover + background music track */}
+      <Audio src={staticFile("audio/voiceover.mp3")} volume={1} />
       <Sequence from={seq(D_HOOK)} durationInFrames={D_HOOK}>
         <SceneHook duration={D_HOOK} />
       </Sequence>
