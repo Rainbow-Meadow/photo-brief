@@ -70,6 +70,7 @@ jobs:
           - workers/mcp-agent
           - workers/capture-agent
           - workers/assistant-agent
+          - workers/beta-onboarding-agent
 
     steps:
       - name: Checkout repository
