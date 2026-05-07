@@ -8,7 +8,7 @@
  *     /llms*.txt, /openapi.json, /mcp.json, /.well-known/*) → Cloudflare
  *     Pages, edge-cached. Stable filenames, only the Pages build emits them.
  *
- *   - Marketing HTML routes (/, /pricing, /help, /for-ai-agents, /waitlist):
+ *   - Marketing HTML routes (/, /pricing, /help, /for-ai-agents):
  *       • Bots / crawlers / LLM fetchers → Pages (prerendered static HTML
  *         optimized for SEO and answer-engine citation).
  *       • Real users → Lovable hosting (live SPA with the latest dynamic
@@ -112,6 +112,16 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
     const path = url.pathname;
+
+    // Legacy beta onboarding links now consolidate back to the landing page
+    // application anchor. Do this at the edge so old links never render a
+    // separate application surface.
+    if (path === "/beta-onboarding" || path === "/beta-onboarding/") {
+      const target = new URL(request.url);
+      target.pathname = "/";
+      target.hash = "apply";
+      return Response.redirect(target.toString(), 308);
+    }
 
     // Pages-only static files (sitemap, robots, llms.txt, .well-known, og-image…).
     // These have stable filenames and only the Pages build emits them.
@@ -218,18 +228,16 @@ async function proxyTo(host: string, request: Request): Promise<Response> {
           });
         }
         // Redirect points elsewhere on the upstream — rewrite it to be
-        // relative so the browser stays on the user-facing host.
+        // user-facing if it targets the upstream hostname.
         if (locHost === host.toLowerCase()) {
-          const rewritten = new Headers(upstream.headers);
-          rewritten.set("location", loc.pathname + loc.search + loc.hash);
-          return new Response(upstream.body, {
-            status: upstream.status,
-            statusText: upstream.statusText,
-            headers: rewritten,
-          });
+          loc.hostname = incoming.hostname;
+          loc.protocol = incoming.protocol;
+          const rewritten = new Response(upstream.body, upstream);
+          rewritten.headers.set("location", loc.toString());
+          return rewritten;
         }
       } catch {
-        // Malformed Location — pass through unchanged.
+        // Malformed Location; fall through and return upstream as-is.
       }
     }
   }
