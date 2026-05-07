@@ -51,5 +51,8 @@ jobs:
       - name: Validate hybrid hosting contract
         run: npm run hosting:validate
 
-      - name: Build
-        run: npm run build
+      - name: Install Puppeteer browser for prerender
+        run: npx puppeteer browsers install chrome
+
+      - name: Build Cloudflare Pages artifact
+        run: npm run build:cloudflare-pages
