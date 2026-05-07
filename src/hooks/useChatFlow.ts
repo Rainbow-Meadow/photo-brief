@@ -18,6 +18,8 @@ interface UseChatFlowArgs {
   businessName: string;
   introBody?: string;
   requestToken?: string;
+  /** Used to push real-time capture events to the Cloudflare Agent. */
+  requestId?: string | null;
   uploadCapture?: (args: { stepId: string; blob: Blob; ext: string }) => Promise<{
     publicUrl: string;
     storagePath: string;
