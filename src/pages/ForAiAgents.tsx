@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { ArrowRight, Check, Code2, FileJson, Globe2, Route, Sparkles, Terminal } from "lucide-react";
+import { ArrowRight, Check, Code2, CreditCard, FileJson, Globe2, Route, Sparkles, Terminal, Zap } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -21,7 +21,8 @@ const DISCOVERY_LINKS = [
   { href: "/openapi.json", label: "/openapi.json", desc: "OpenAPI 3.1 spec." },
   { href: "/.well-known/ai-plugin.json", label: "/.well-known/ai-plugin.json", desc: "ChatGPT plugin manifest." },
   { href: "/.well-known/agent.json", label: "/.well-known/agent.json", desc: "Agent capabilities manifest." },
-  { href: "/mcp.json", label: "/mcp.json", desc: "MCP server descriptor." },
+  { href: "/mcp.json", label: "/mcp.json", desc: "MCP server descriptor (includes x402 config)." },
+  { href: "https://mcp.photobrief.ai/x402/requirements", label: "/x402/requirements", desc: "x402 payment requirements endpoint." },
   { href: "/sitemap.xml", label: "/sitemap.xml", desc: "Sitemap." },
 ];
 
@@ -191,7 +192,62 @@ read_faq         — Canonical FAQ answers (no auth)
         </div>
       </section>
 
-      {/* Discovery */}
+      {/* x402 Agentic Payments */}
+      <section id="x402" aria-labelledby="x402-heading">
+        <div className="pb-container pb-section">
+          <div className="mx-auto max-w-2xl text-center">
+            <span className="pb-eyebrow"><CreditCard className="h-3.5 w-3.5" /> Agentic payments</span>
+            <h2 id="x402-heading" className="pb-section-title mt-4 text-white">Pay per call with x402</h2>
+            <p className="pb-copy mt-4 text-base">
+              AI agents without a <code className="rounded border border-white/10 bg-white/[0.05] px-1.5 py-0.5 text-xs text-[hsl(var(--pb-lavender))]">pb_</code> API key can pay per-call using the x402 protocol. No billing setup, no subscription — just machine-to-machine payments.
+            </p>
+          </div>
+
+          <div className="mt-10 grid gap-4 sm:grid-cols-3">
+            <article className="pb-card rounded-2xl p-5">
+              <Zap className="h-5 w-5 text-[hsl(var(--pb-lavender))]" />
+              <h3 className="mt-3 text-sm font-semibold text-white">Per-call pricing</h3>
+              <p className="mt-2 text-sm text-[hsl(var(--pb-muted))]"><code className="text-[hsl(var(--pb-lavender))]">create_request</code> = $0.10 USD (1 credit)</p>
+              <p className="mt-1 text-sm text-[hsl(var(--pb-muted))]"><code className="text-[hsl(var(--pb-lavender))]">lookup_pricing</code> and <code className="text-[hsl(var(--pb-lavender))]">read_faq</code> = free</p>
+            </article>
+            <article className="pb-card rounded-2xl p-5">
+              <Globe2 className="h-5 w-5 text-[hsl(var(--pb-lavender))]" />
+              <h3 className="mt-3 text-sm font-semibold text-white">Network</h3>
+              <p className="mt-2 text-sm text-[hsl(var(--pb-muted))]">Base Sepolia (testnet). Mainnet support coming soon.</p>
+            </article>
+            <article className="pb-card rounded-2xl p-5">
+              <Route className="h-5 w-5 text-[hsl(var(--pb-lavender))]" />
+              <h3 className="mt-3 text-sm font-semibold text-white">How it works</h3>
+              <p className="mt-2 text-sm text-[hsl(var(--pb-muted))]">Call without auth → get 402 + requirements → send <code className="text-[hsl(var(--pb-lavender))]">X-Payment</code> header → done.</p>
+            </article>
+          </div>
+
+          <div className="mt-6 overflow-hidden rounded-2xl border border-[hsl(var(--pb-line))] bg-[hsl(var(--pb-ink))]">
+            <div className="border-b border-white/10 bg-white/[0.03] px-5 py-3">
+              <p className="text-xs font-medium text-white/70">x402 payment flow</p>
+            </div>
+            <pre className="overflow-x-auto p-5 text-xs leading-relaxed text-white/80"><code>{`# 1. Get payment requirements
+GET https://mcp.photobrief.ai/x402/requirements?tool=create_request
+
+# 2. Pay and execute in one call
+curl -X POST https://mcp.photobrief.ai/x402/pay \\
+  -H "Content-Type: application/json" \\
+  -H "X-Payment: eyJ0cmFuc2FjdGlvbiI6IjB4Li4uIiwicGF5ZXIiOiIweC4uLiJ9" \\
+  -d '{"recipient_name":"Jane","recipient_email":"jane@example.com"}'
+
+# Or via MCP: pass x_payment parameter instead of api_key
+{
+  "mcpServers": {
+    "photobrief": {
+      "url": "https://mcp.photobrief.ai/mcp"
+    }
+  }
+}`}</code></pre>
+          </div>
+        </div>
+      </section>
+
+
       <section id="discovery" aria-labelledby="discovery-heading">
         <div className="pb-container pb-section">
           <div className="mx-auto max-w-2xl text-center">

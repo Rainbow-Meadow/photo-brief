@@ -2,7 +2,7 @@
   "schema_version": "0.1",
   "name": "photobrief",
   "display_name": "PhotoBrief",
-  "description": "Create AI-guided photo requests and look up pricing, plan limits, and FAQ content via MCP. PhotoBrief Credits are per-photo: 1 submitted/analyzed photo = 1 credit.",
+  "description": "Create AI-guided photo requests and look up pricing, plan limits, and FAQ content via MCP. Supports x402 agentic payments for machine-to-machine billing. PhotoBrief Credits are per-photo: 1 submitted/analyzed photo = 1 credit.",
   "status": "active",
   "homepage": "https://photobrief.ai/for-ai-agents",
   "contact_email": "hello@photobrief.ai",
@@ -12,25 +12,38 @@
     "auth": {
       "type": "bearer_token",
       "header": "Authorization",
-      "description": "Workspace API key (prefix pb_) issued on the Business plan. Required only for the create_request tool; lookup_pricing and read_faq are unauthenticated."
+      "description": "Workspace API key (prefix pb_) issued on the Business plan. Required only for the create_request tool; lookup_pricing and read_faq are unauthenticated. Alternative: x402 per-call payment (no API key needed)."
     }
   },
   "tools": [
     {
       "name": "create_request",
-      "description": "Create a guided photo request and return a recipient URL the business can forward.",
+      "description": "Create a guided photo request and return a recipient URL the business can forward. Requires pb_ API key OR x402 payment ($0.10/call).",
       "input_schema": "https://photobrief.ai/openapi.json#/components/schemas/CreateRequestBody",
-      "output_schema": "https://photobrief.ai/openapi.json#/components/schemas/CreateRequestResponse"
+      "output_schema": "https://photobrief.ai/openapi.json#/components/schemas/CreateRequestResponse",
+      "x402": {
+        "price_usd": "0.10",
+        "unit": "1 PhotoBrief Credit"
+      }
     },
     {
       "name": "lookup_pricing",
-      "description": "Return current PhotoBrief plans, monthly and annual prices, included PhotoBrief Credits, and the per-photo credit model."
+      "description": "Return current PhotoBrief plans, monthly and annual prices, included PhotoBrief Credits, and the per-photo credit model.",
+      "x402": { "price_usd": "0.00" }
     },
     {
       "name": "read_faq",
-      "description": "Return canonical FAQ answers for businesses and recipients."
+      "description": "Return canonical FAQ answers for businesses and recipients.",
+      "x402": { "price_usd": "0.00" }
     }
   ],
+  "x402": {
+    "enabled": true,
+    "network": "base-sepolia",
+    "pay_to": "photobrief.eth",
+    "requirements_endpoint": "https://mcp.photobrief.ai/x402/requirements",
+    "pay_endpoint": "https://mcp.photobrief.ai/x402/pay"
+  },
   "pricing_summary": {
     "unit": "PhotoBrief Credit",
     "rule": "1 submitted/analyzed photo = 1 PhotoBrief Credit",

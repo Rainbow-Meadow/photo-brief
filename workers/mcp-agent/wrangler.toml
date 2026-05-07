@@ -12,3 +12,6 @@ zone_name = "photobrief.ai"
 API_BASE_URL = "https://app.photobrief.ai/functions/v1"
 # Public site for recipient URLs
 SITE_URL = "https://photobrief.ai"
+# x402 agentic payments config
+X402_PAY_TO = "photobrief.eth"
+X402_NETWORK = "base-sepolia"

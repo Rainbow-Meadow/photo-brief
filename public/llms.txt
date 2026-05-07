@@ -76,9 +76,19 @@ A: PhotoBrief uses photo credits. One submitted/analyzed customer photo uses one
 **Q: What does the AI check?**
 A: PhotoBrief keeps photo feedback simple: wrong subject, too dark, blurry, unreadable label, glare, or cropped subject.
 
+## Agentic payments (x402)
+
+AI agents without a pb_ API key can pay per-call using the x402 protocol.
+Pricing: create_request = $0.10 USD (1 PhotoBrief Credit). lookup_pricing and read_faq are free.
+Payment requirements: GET https://mcp.photobrief.ai/x402/requirements?tool=create_request
+Pay endpoint: POST https://mcp.photobrief.ai/x402/pay (with X-Payment header)
+Network: Base Sepolia (testnet).
+
 ## Discovery endpoints
 
 - MCP server (live): https://mcp.photobrief.ai/mcp
+- x402 requirements: https://mcp.photobrief.ai/x402/requirements
+- x402 pay: https://mcp.photobrief.ai/x402/pay
 - Full reference: https://photobrief.ai/llms-full.txt
 - For-AI-agents page: https://photobrief.ai/for-ai-agents
 - OpenAPI 3.1 spec: https://photobrief.ai/openapi.json
