@@ -826,7 +826,7 @@ function CustomerCaptureScreen({
                 ? "ring-2"
                 : "ring-1 ring-black/[0.06]"
             }`}
-            style={i === currentStep ? { ringColor: BRAND.color, boxShadow: `0 0 0 2px ${BRAND.color}` } : undefined}
+            style={i === currentStep ? { boxShadow: `0 0 0 2px ${BRAND.color}` } : undefined}
           >
             {i === BLURRY_INDEX && blurryPending && captured.has(i) ? (
               <>
