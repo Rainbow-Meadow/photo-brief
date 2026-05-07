@@ -5,6 +5,7 @@ import { toast } from "sonner";
 
 import { PageHeader } from "@/components/layout/PageHeader";
 import { StatusBadge } from "@/components/shared/StatusBadge";
+import { LiveCaptureStatus } from "@/features/requests/components/LiveCaptureStatus";
 import { Button } from "@/components/ui/button";
 import { useRequest, useRequests } from "@/hooks/useRequests";
 import { requestStatusOptions } from "@/config/statusOptions";
@@ -140,6 +141,9 @@ export default function RequestDetailPage() {
         description={request.guideName}
         actions={<StatusBadge label={status.label} tone={status.tone} />}
       />
+
+      {/* Live capture progress (real-time via Cloudflare Agent) */}
+      <LiveCaptureStatus requestId={request.id} />
 
       <ManualSmsShareCard
         request={request}
