@@ -21,15 +21,22 @@ export const SceneLogo: React.FC = () => {
   return (
     <AbsoluteFill style={{ alignItems: "center", justifyContent: "center" }}>
       <div style={{ textAlign: "center", fontFamily: FONT.display }}>
-        <Img
-          src={staticFile("brand/photobrief-horizontal.png")}
-          style={{
-            height: 160,
-            width: "auto",
-            opacity,
-            transform: `scale(${scale})`,
-            filter: "drop-shadow(0 24px 60px rgba(33, 102, 244, 0.25))",
-          }}
+        <div style={{
+          display: "inline-flex", alignItems: "center", gap: 24,
+          opacity,
+          transform: `scale(${scale})`,
+          filter: "drop-shadow(0 24px 60px rgba(33, 102, 244, 0.25))",
+        }}>
+          <Img
+            src={staticFile("brand/mark-color.png")}
+            style={{ height: 160, width: 160, objectFit: "contain" }}
+          />
+          <span style={{
+            fontSize: 115, fontWeight: 800, letterSpacing: -7,
+            backgroundImage: "linear-gradient(135deg, #f6f0ff 0%, #e7d4ff 24%, #c99aff 52%, #9f73ff 78%, #7f55ff 100%)",
+            WebkitBackgroundClip: "text", color: "transparent", whiteSpace: "nowrap",
+          }}>PhotoBrief.ai</span>
+        </div>
         />
         <div
           style={{
