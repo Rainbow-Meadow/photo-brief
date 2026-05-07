@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { NavLink, useSearchParams } from "react-router-dom";
 import {
   ArrowRight,
@@ -44,7 +44,7 @@ import { BrandMark } from "@/components/layout/BrandMark";
 import { FreeProEligibilityModal } from "@/components/marketing/FreeProEligibilityModal";
 import { BetaSeatTracker } from "@/components/marketing/BetaSeatTracker";
 import { howItWorksSteps } from "@/components/marketing/HowItWorksSteps";
-import { InteractiveHeroBriefAssembly } from "@/components/marketing/InteractiveHeroBriefAssembly";
+const InteractiveHeroBriefAssembly = lazy(() => import("@/components/marketing/InteractiveHeroBriefAssembly").then(m => ({ default: m.InteractiveHeroBriefAssembly })));
 import { faqItems } from "@/features/help/content/faq";
 import { conversions, trackEvent } from "@/lib/analytics";
 import { supabase } from "@/integrations/supabase/client";
@@ -428,7 +428,9 @@ export default function LandingPage() {
         {/* ━━ INTERACTIVE DEMO ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <section className="pb-section-tight">
           <div className="pb-container">
-            <InteractiveHeroBriefAssembly />
+            <Suspense fallback={<div className="min-h-[400px]" />}>
+              <InteractiveHeroBriefAssembly />
+            </Suspense>
           </div>
         </section>
 
