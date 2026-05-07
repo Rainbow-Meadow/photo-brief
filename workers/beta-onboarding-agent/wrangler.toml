@@ -3,6 +3,10 @@ main = "src/index.ts"
 compatibility_date = "2025-04-01"
 compatibility_flags = ["nodejs_compat"]
 
+[[routes]]
+pattern = "beta-agent.photobrief.ai/*"
+zone_name = "photobrief.ai"
+
 [durable_objects]
 bindings = [
   { name = "BETA_ONBOARDING_AGENT", class_name = "BetaOnboardingAgent" }
