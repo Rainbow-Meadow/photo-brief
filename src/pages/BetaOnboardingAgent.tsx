@@ -250,7 +250,7 @@ export default function BetaOnboardingAgentPage() {
                       </div>
                       <div className="grid gap-3 sm:grid-cols-2">
                         <Metric label="Workflow" value={recommendation.workflowType} />
-                        <Metric label="Segment" value={recommendation.segment.replaceAll("_", " ")} />
+                        <Metric label="Segment" value={recommendation.segment.replace(/_/g, " ")} />
                         <Metric label="Starter template" value={recommendation.suggestedTemplate} />
                         <Metric label="Status" value={state?.saved ? "Submitted" : "Ready to submit"} />
                       </div>
