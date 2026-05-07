@@ -27,6 +27,10 @@ import {
   Refrigerator,
   TreePine,
   LayoutList,
+  Play,
+  Pause,
+  Volume2,
+  VolumeX,
 } from "lucide-react";
 import wideGarage from "@/assets/junk-removal/wide-garage.webp";
 import pileCloseup from "@/assets/junk-removal/pile-closeup.webp";
