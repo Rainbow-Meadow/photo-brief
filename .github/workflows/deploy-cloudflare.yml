@@ -60,3 +60,15 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: workers/mcp-agent
           command: deploy
+
+      - name: Install Capture Agent dependencies
+        working-directory: workers/capture-agent
+        run: npm install --no-package-lock
+
+      - name: Deploy Capture Agent Worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: workers/capture-agent
+          command: deploy
