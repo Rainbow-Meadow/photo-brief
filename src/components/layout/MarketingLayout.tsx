@@ -7,6 +7,7 @@ import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { signupCtaTarget, signupCtaShortLabel, signupCtaLabel } from "@/config/access";
 import { marketingLinks, legalLinks, allFooterLinks } from "@/config/marketingNav";
+import { LandingBetaAgentMount } from "@/components/marketing/LandingBetaAgentMount";
 import {
   Sheet,
   SheetContent,
@@ -26,6 +27,7 @@ export function MarketingLayout() {
 
   return (
     <div className="pb-landing flex min-h-screen flex-col">
+      <LandingBetaAgentMount />
       <div className="sticky top-0 z-40 px-3 pt-3 sm:px-6 sm:pt-4 pt-safe">
         <header className="mx-auto flex h-14 w-full max-w-7xl items-center justify-between gap-4 rounded-full glass-nav px-3 sm:h-16 sm:px-5">
           <NavLink to="/" aria-label="PhotoBrief.ai home" className="flex items-center pl-1">
