@@ -126,6 +126,7 @@ function RecipientWorkflow({ ctx, token, navigate }: { ctx: RecipientContext; to
     businessName: ctx.businessName,
     introBody: ctx.introBody,
     requestToken: token,
+    requestId: ctx.requestId,
     uploadCapture,
     promoteAcceptedCapture,
     resubmit: resubmitConfig,
