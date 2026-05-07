@@ -22,7 +22,7 @@ import { join } from "node:path";
 const ROOT = process.cwd();
 const PUBLIC_DIR = join(ROOT, "public");
 
-const REQUIRED_PUBLIC_PAGES = ["/", "/pricing", "/for-ai-agents", "/help", "/waitlist"];
+const REQUIRED_PUBLIC_PAGES = ["/", "/pricing", "/for-ai-agents", "/help"];
 const FORBIDDEN_PAGES_ROUTES = [
   "/auth",
   "/forgot-password",

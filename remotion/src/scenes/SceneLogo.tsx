@@ -37,7 +37,6 @@ export const SceneLogo: React.FC = () => {
             WebkitBackgroundClip: "text", color: "transparent", whiteSpace: "nowrap",
           }}>PhotoBrief.ai</span>
         </div>
-        />
         <div
           style={{
             marginTop: 28,

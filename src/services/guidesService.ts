@@ -44,21 +44,22 @@ function rowToGuide(g: any, steps: any[], questions: any[]): PhotoGuide {
 }
 
 async function fetchWorkspaceGuides(workspaceId: string): Promise<PhotoGuide[]> {
-  const { data: guides, error } = await supabase
+  const client = supabase as any;
+  const { data: guides, error } = await client
     .from("photo_guides")
     .select("*")
     .eq("workspace_id", workspaceId)
     .eq("is_active", true)
-    .eq("is_request_scoped" as any, false)
+    .eq("is_request_scoped", false)
     .order("created_at", { ascending: false });
   if (error) throw error;
   if (!guides || guides.length === 0) return [];
-  const ids = guides.map((g) => g.id);
+  const ids = guides.map((g: any) => g.id);
   const [{ data: steps }, { data: questions }] = await Promise.all([
     supabase.from("guide_steps").select("*").in("guide_id", ids),
     supabase.from("context_questions").select("*").in("guide_id", ids),
   ]);
-  return guides.map((g) => rowToGuide(g, steps ?? [], questions ?? []));
+  return guides.map((g: any) => rowToGuide(g, steps ?? [], questions ?? []));
 }
 
 async function insertDraftGuide(args: {

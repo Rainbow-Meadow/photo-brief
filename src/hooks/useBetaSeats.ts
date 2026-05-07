@@ -20,7 +20,7 @@ const fallback = derive(BETA_SEATS_FILLED);
 
 /** Shared cache so every component on the page uses the same value without re-fetching. */
 let cached: BetaSeats | null = null;
-let listeners: Set<(s: BetaSeats) => void> = new Set();
+const listeners: Set<(s: BetaSeats) => void> = new Set();
 let subscribed = false;
 
 function broadcast(seats: BetaSeats) {
