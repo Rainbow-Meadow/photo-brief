@@ -37,9 +37,19 @@ interface Recommendation {
   concerns: string[];
 }
 
+interface CampaignContext {
+  interest: string;
+  utm_source?: string;
+  utm_medium?: string;
+  utm_campaign?: string;
+  referrer?: string;
+  ref?: string;
+}
+
 interface AgentState {
   sessionId: string;
   source: string;
+  context: CampaignContext;
   answers: Answers;
   answeredFields: Field[];
   recommendation: Recommendation | null;
@@ -63,6 +73,7 @@ export class BetaOnboardingAgent extends Agent<Env, AgentState> {
   initialState: AgentState = {
     sessionId: "",
     source: "beta-onboarding-agent",
+    context: { interest: "founding-partner" },
     answers: {},
     answeredFields: [],
     recommendation: null,
@@ -71,57 +82,66 @@ export class BetaOnboardingAgent extends Agent<Env, AgentState> {
   };
 
   async fetch(request: Request): Promise<Response> {
-    if (request.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+    if (request.method === "OPTIONS") return new Response(null, { headers: corsHeaders(request) });
+    const originError = rejectUntrustedOrigin(request);
+    if (originError) return originError;
+
     const url = new URL(request.url);
 
     try {
-      if (request.method === "GET" && url.pathname === "/state") return json(this.publicState());
+      if (request.method === "GET" && url.pathname === "/state") return json(this.publicState(), 200, request);
 
       if (request.method === "POST" && url.pathname === "/start") {
         const body = await readJson(request);
+        if (clean(body.company_website)) return json({ error: "invalid_input" }, 400, request);
+
         const answers = { ...this.state.answers, ...pickAnswers(body) };
         const answeredFields = mergeFields(this.answeredFields(), Object.keys(answers).filter(isField));
         this.setState({
           ...this.state,
           sessionId: clean(body.sessionId) || this.state.sessionId || crypto.randomUUID(),
           source: clean(body.source) || this.state.source,
+          context: { ...this.state.context, ...pickContext(body) },
           answers,
           answeredFields,
+          saved: false,
           updatedAt: new Date().toISOString(),
         });
-        return json(this.publicState());
+        return json(this.publicState(), 200, request);
       }
 
       if (request.method === "POST" && url.pathname === "/answer") {
         const body = await readJson(request);
         const field = isField(body.field) ? body.field : this.nextQuestion()?.field;
-        if (!field) return json({ error: "No remaining questions." }, 400);
+        if (!field) return json({ error: "No remaining questions." }, 400, request);
         const value = clean(body.value ?? body.answer, 2000) || "";
-        if (!value && questionFor(field)?.required) return json({ error: "This answer is required.", question: questionFor(field) }, 400);
+        if (!value && questionFor(field)?.required) return json({ error: "This answer is required.", question: questionFor(field) }, 400, request);
         const answers = { ...this.state.answers, [field]: value };
         const answeredFields = mergeFields(this.answeredFields(), [field]);
         const recommendation = this.complete(answers) ? recommend(answers) : null;
-        this.setState({ ...this.state, answers, answeredFields, recommendation, updatedAt: new Date().toISOString() });
-        return json(this.publicState());
+        this.setState({ ...this.state, answers, answeredFields, recommendation, saved: false, updatedAt: new Date().toISOString() });
+        return json(this.publicState(), 200, request);
       }
 
       if (request.method === "POST" && url.pathname === "/plan") {
         const recommendation = recommend(this.state.answers);
         this.setState({ ...this.state, recommendation, updatedAt: new Date().toISOString() });
-        return json({ recommendation, state: this.publicState() });
+        return json({ recommendation, state: this.publicState() }, 200, request);
       }
 
       if (request.method === "POST" && url.pathname === "/save") {
+        const body = await readJson(request);
+        if (clean(body.company_website)) return json({ error: "invalid_input" }, 400, request);
         const recommendation = this.state.recommendation ?? recommend(this.state.answers);
-        await submitApplication(this.env, this.state.answers, recommendation, this.state.source);
+        await submitApplication(this.env, this.state.answers, recommendation, this.state.source, this.state.context);
         this.setState({ ...this.state, recommendation, saved: true, updatedAt: new Date().toISOString() });
-        return json({ ok: true, state: this.publicState() });
+        return json({ ok: true, state: this.publicState() }, 200, request);
       }
 
-      return json({ error: "Use /start, /state, /answer, /plan, or /save." }, 404);
+      return json({ error: "Use /start, /state, /answer, /plan, or /save." }, 404, request);
     } catch (error) {
       console.error("beta onboarding agent error", error);
-      return json({ error: error instanceof Error ? error.message : "Unknown error" }, 500);
+      return json({ error: error instanceof Error ? error.message : "Unknown error" }, 500, request);
     }
   }
 
@@ -156,13 +176,17 @@ export class BetaOnboardingAgent extends Agent<Env, AgentState> {
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
-    if (request.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+    if (request.method === "OPTIONS") return new Response(null, { headers: corsHeaders(request) });
+    const originError = rejectUntrustedOrigin(request);
+    if (originError) return originError;
+
     const url = new URL(request.url);
 
-    if (url.pathname === "/" || url.pathname === "/health") return json({ ok: true, name: "PhotoBrief Beta Onboarding Agent", version: "1.0.1" });
+    if (url.pathname === "/" || url.pathname === "/health") return json({ ok: true, name: "PhotoBrief Beta Onboarding Agent", version: "1.1.0" }, 200, request);
 
     if (request.method === "POST" && url.pathname === "/sessions/start") {
       const body = await readJson(request);
+      if (clean(body.company_website)) return json({ error: "invalid_input" }, 400, request);
       const clientSessionId = clean(body.sessionId);
       const sessionId = isSafeSessionId(clientSessionId) ? clientSessionId : crypto.randomUUID();
       const id = env.BETA_ONBOARDING_AGENT.idFromName(sessionId);
@@ -171,11 +195,11 @@ export default {
     }
 
     const match = url.pathname.match(/^\/sessions\/([^/]+)\/(state|answer|plan|save)$/);
-    if (!match) return json({ error: "Use /sessions/start or /sessions/:sessionId/state|answer|plan|save." }, 404);
+    if (!match) return json({ error: "Use /sessions/start or /sessions/:sessionId/state|answer|plan|save." }, 404, request);
 
     const [, rawSessionId, action] = match;
     const sessionId = decodeURIComponent(rawSessionId);
-    if (!isSafeSessionId(sessionId)) return json({ error: "Invalid session id." }, 400);
+    if (!isSafeSessionId(sessionId)) return json({ error: "Invalid session id." }, 400, request);
     const id = env.BETA_ONBOARDING_AGENT.idFromName(sessionId);
     const stub = env.BETA_ONBOARDING_AGENT.get(id);
     const method = action === "state" ? "GET" : "POST";
@@ -183,7 +207,7 @@ export default {
   },
 };
 
-async function submitApplication(env: Env, answers: Answers, recommendation: Recommendation, source: string) {
+async function submitApplication(env: Env, answers: Answers, recommendation: Recommendation, source: string, context: CampaignContext) {
   const email = clean(answers.email, 254)?.toLowerCase();
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error("A valid work email is required before saving.");
 
@@ -198,8 +222,18 @@ async function submitApplication(env: Env, answers: Answers, recommendation: Rec
       use_case: answers.use_case,
       workflow_type: recommendation.workflowType,
       estimated_monthly_requests: answers.monthly_photo_volume,
-      interest: "founding-partner",
+      interest: context.interest || "founding-partner",
       source,
+      fit_score: recommendation.fitScore,
+      agent_segment: recommendation.segment,
+      suggested_template: recommendation.suggestedTemplate,
+      agent_summary: recommendation.summary,
+      agent_concerns: recommendation.concerns,
+      first_request_steps: recommendation.firstRequestSteps,
+      utm_source: context.utm_source,
+      utm_medium: context.utm_medium,
+      utm_campaign: context.utm_campaign,
+      referrer: context.referrer,
       notes: buildNotes(answers, recommendation),
     }),
   });
@@ -293,9 +327,35 @@ function buildNotes(answers: Answers, recommendation: Recommendation) {
 function questionFor(field: Field) { return QUESTIONS.find((q) => q.field === field); }
 function isField(value: unknown): value is Field { return typeof value === "string" && QUESTIONS.some((q) => q.field === value); }
 function pickAnswers(input: Record<string, unknown>) { const answers: Answers = {}; for (const q of QUESTIONS) { const value = clean(input[q.field]); if (value) answers[q.field] = value; } return answers; }
+function pickContext(input: Record<string, unknown>): CampaignContext { return { interest: clean(input.interest, 100) || "founding-partner", utm_source: clean(input.utm_source, 100), utm_medium: clean(input.utm_medium, 100), utm_campaign: clean(input.utm_campaign, 100), referrer: clean(input.referrer, 300), ref: clean(input.ref, 100) }; }
 function mergeFields(...groups: Field[][]) { return [...new Set(groups.flat())]; }
 function isSafeSessionId(value: unknown): value is string { return typeof value === "string" && /^[A-Za-z0-9_-]{24,96}$/.test(value) && !value.includes("@"); }
 async function readJson(request: Request): Promise<Record<string, any>> { return request.body ? request.json().catch(() => ({})) : {}; }
 function clean(value: unknown, max = 500) { if (typeof value !== "string") return undefined; const trimmed = value.trim(); return trimmed ? trimmed.slice(0, max) : undefined; }
-const corsHeaders = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "content-type", "Access-Control-Allow-Methods": "GET, POST, OPTIONS" };
-function json(body: unknown, status = 200) { return new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, "Content-Type": "application/json" } }); }
+
+const ALLOWED_ORIGINS = new Set([
+  "https://photobrief.ai",
+  "https://www.photobrief.ai",
+  "http://localhost:5173",
+  "http://localhost:8080",
+]);
+
+function corsHeaders(request: Request) {
+  const origin = request.headers.get("Origin");
+  const allowedOrigin = origin && ALLOWED_ORIGINS.has(origin) ? origin : "https://photobrief.ai";
+  return {
+    "Access-Control-Allow-Origin": allowedOrigin,
+    "Access-Control-Allow-Headers": "content-type",
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Vary": "Origin",
+  };
+}
+
+function rejectUntrustedOrigin(request: Request) {
+  if (request.method === "GET" || request.method === "HEAD") return null;
+  const origin = request.headers.get("Origin");
+  if (!origin || ALLOWED_ORIGINS.has(origin)) return null;
+  return json({ error: "origin_not_allowed" }, 403, request);
+}
+
+function json(body: unknown, status = 200, request?: Request) { return new Response(JSON.stringify(body), { status, headers: { ...(request ? corsHeaders(request) : {}), "Content-Type": "application/json" } }); }
