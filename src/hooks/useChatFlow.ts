@@ -187,6 +187,17 @@ export function useChatFlow({
       photo.checks = checks.map((c) => ({ id: c.type, severity: c.severity, message: c.message }));
       append({ id: nextId(), kind: "ai_feedback", photo, verdict: verdict as AICheckSeverity });
 
+      // Push photo_checked event to capture agent
+      if (requestId) {
+        pushCaptureEvent(requestId, {
+          type: "photo_checked",
+          stepId: step.id,
+          stepTitle: step.title,
+          mediaId: photo.capturedMediaId,
+          checkResult: verdict === "pass" || verdict === "unavailable" ? "pass" : verdict === "warning" ? "warning" : "fail",
+        });
+      }
+
       if (verdict === "pass" || verdict === "unavailable") {
         await acceptPhoto(photo);
         setTimeout(() => advanceAfterStep(), 350);
