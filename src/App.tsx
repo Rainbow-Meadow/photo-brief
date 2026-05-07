@@ -90,7 +90,6 @@ const App = () => (
           {/* Marketing + auth */}
           <Route element={<MarketingLayout />}>
             <Route path="/" element={<LandingPage />} />
-            <Route path="/betalist" element={<LandingPage />} />
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/for-ai-agents" element={<ForAiAgentsPage />} />
             <Route path="/privacy" element={<PrivacyPage />} />
