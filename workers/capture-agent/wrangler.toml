@@ -1,0 +1,20 @@
+name = "photobrief-capture-agent"
+main = "src/index.ts"
+compatibility_date = "2025-04-01"
+
+[[routes]]
+pattern = "capture-agent.photobrief.ai/*"
+zone_name = "photobrief.ai"
+
+[durable_objects]
+bindings = [
+  { name = "CAPTURE_AGENT", class_name = "CaptureAgent" }
+]
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["CaptureAgent"]
+
+[vars]
+SUPABASE_URL = "https://mvlcefiygkzzewcdzsmj.supabase.co"
+SITE_URL = "https://photobrief.ai"
