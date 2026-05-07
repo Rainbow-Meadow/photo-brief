@@ -521,9 +521,9 @@ export default function LandingPage() {
         <DialogContent className="max-w-5xl overflow-hidden border-0 bg-black p-0 sm:rounded-2xl">
           <VisuallyHidden>
             <DialogTitle>PhotoBrief product spotlight</DialogTitle>
-            <DialogDescription>A product spotlight showing manual links, website intake, template routing, customer capture, photo checks, and the finished business brief.</DialogDescription>
+            <DialogDescription>A product demo and founding partner beta overview showing the request workflow, customer capture, AI-checked briefs, partner benefits, and reward tiers.</DialogDescription>
           </VisuallyHidden>
-          <video key={demoOpen ? "open" : "closed"} src="/marketing/photobrief-demo.mp4" controls autoPlay playsInline className="h-auto w-full" />
+          <video key={demoOpen ? "open" : "closed"} src="/marketing/photobrief-spotlight.mp4" controls autoPlay playsInline className="h-auto w-full" />
         </DialogContent>
       </Dialog>
     </>
