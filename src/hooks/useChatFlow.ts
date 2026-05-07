@@ -270,7 +270,13 @@ export function useChatFlow({
   const submitAll = useCallback(() => {
     setPhase("submitted");
     append({ id: nextId(), kind: "submit_confirmation" });
-  }, [append]);
+
+    // Push submission events to capture agent
+    if (requestId) {
+      pushCaptureEvent(requestId, { type: "submission_started" });
+      pushCaptureEvent(requestId, { type: "submission_completed" });
+    }
+  }, [append, requestId]);
 
   const photos = photosRef.current;
   const answers = answersRef.current;
