@@ -1,6 +1,5 @@
-// Public endpoint: insert a row into waitlist_entries.
+// Public endpoint: capture waitlist entries and Founding Partner Beta applications.
 // JWT verification is off (anon visitors submit this).
-// Accepts beta applications from /betalist with interest + workflow_type fields.
 import { createClient } from "npm:@supabase/supabase-js@2";
 
 const corsHeaders = {
@@ -16,10 +15,15 @@ interface Payload {
   website?: string;
   use_case?: string;
   estimated_monthly_requests?: string;
+  monthly_photo_volume?: string;
   workflow_type?: string;
   interest?: string;
   notes?: string;
   source?: string;
+  utm_source?: string;
+  utm_medium?: string;
+  utm_campaign?: string;
+  referrer?: string;
 }
 
 function clean(v: unknown, max = 500): string | null {
@@ -31,6 +35,26 @@ function clean(v: unknown, max = 500): string | null {
 
 function isEmail(v: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) && v.length <= 254;
+}
+
+function splitName(name: string): { first_name: string | null; last_name: string | null } {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return { first_name: null, last_name: null };
+  return {
+    first_name: parts[0] ?? null,
+    last_name: parts.length > 1 ? parts.slice(1).join(" ") : null,
+  };
+}
+
+function isBetaSource(source: string, interest: string | null): boolean {
+  const normalized = source.toLowerCase();
+  return (
+    normalized === "betalist" ||
+    normalized.startsWith("betalist") ||
+    normalized.includes("beta") ||
+    normalized.startsWith("landing") ||
+    interest === "founding-partner"
+  );
 }
 
 Deno.serve(async (req) => {
@@ -59,84 +83,130 @@ Deno.serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
+
   const name = clean(body.name, 200) ?? email.split("@")[0];
+  const source = clean(body.source, 100) ?? "web";
+  const interest = clean(body.interest, 100);
+  const workflowType = clean(body.workflow_type, 100);
+  const monthlyVolume =
+    clean(body.monthly_photo_volume, 50) ?? clean(body.estimated_monthly_requests, 50);
+  const betaApplication = isBetaSource(source, interest);
 
   const admin = createClient(
     Deno.env.get("SUPABASE_URL")!,
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
   );
 
-  // Dedupe: friendly response if already on the list.
-  const { data: existing } = await admin
-    .from("waitlist_entries")
-    .select("id")
-    .eq("email", email)
-    .maybeSingle();
-
-  if (existing) {
-    return new Response(JSON.stringify({ ok: true, already: true }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
-  }
-
-  const source = clean(body.source, 100) ?? "web";
-  const interest = clean(body.interest, 100);
-  const workflowType = clean(body.workflow_type, 100);
-
-  const insertPayload = {
+  const waitlistPayload = {
     name,
     email,
     business_name: clean(body.business_name, 200),
     business_type: clean(body.business_type, 100),
     website: clean(body.website, 300),
     use_case: clean(body.use_case, 1000),
-    estimated_monthly_requests: clean(body.estimated_monthly_requests, 50),
+    estimated_monthly_requests: monthlyVolume,
     workflow_type: workflowType,
     interest,
     notes: clean(body.notes, 2000),
     source,
   };
 
-  const { data: inserted, error } = await admin
+  const { data: existingWaitlist } = await admin
     .from("waitlist_entries")
-    .insert(insertPayload)
-    .select("id, created_at")
-    .single();
+    .select("id")
+    .eq("email", email)
+    .maybeSingle();
 
-  if (error) {
-    // Unique violation race
-    if ((error as { code?: string }).code === "23505") {
-      return new Response(JSON.stringify({ ok: true, already: true }), {
+  let entryId = existingWaitlist?.id ?? null;
+  let createdAt = new Date().toISOString();
+  let waitlistAlready = Boolean(existingWaitlist);
+
+  if (!existingWaitlist) {
+    const { data: inserted, error } = await admin
+      .from("waitlist_entries")
+      .insert(waitlistPayload)
+      .select("id, created_at")
+      .single();
+
+    if (error && (error as { code?: string }).code !== "23505") {
+      console.error("waitlist-submit insert failed", error);
+      return new Response(JSON.stringify({ error: "insert_failed" }), {
+        status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-    console.error("waitlist-submit insert failed", error);
-    return new Response(JSON.stringify({ error: "insert_failed" }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+
+    if (error && (error as { code?: string }).code === "23505") {
+      waitlistAlready = true;
+    } else {
+      entryId = inserted?.id ?? null;
+      createdAt = inserted?.created_at
+        ? new Date(inserted.created_at).toISOString()
+        : createdAt;
+    }
   }
 
-  // Fire-and-forget transactional emails. Email failures must NOT fail the
-  // waitlist submission — the user is already on the list at this point.
-  const entryId = inserted?.id;
-  const createdAt = inserted?.created_at
-    ? new Date(inserted.created_at).toISOString()
-    : new Date().toISOString();
-  const ADMIN_EMAIL = "hello@rainbow-meadow.org";
+  let betaAlready = false;
+  let betaApplicationId: string | null = null;
 
-  // Pick the right confirmation template based on source
-  const isBetaApplication = source.startsWith("betalist");
-  const confirmationTemplate = isBetaApplication
-    ? "waitlist-confirmation"
-    : "waitlist-confirmation";
+  if (betaApplication) {
+    const { first_name, last_name } = splitName(name);
+    const betaPayload = {
+      email,
+      first_name,
+      last_name,
+      business_name: clean(body.business_name, 200),
+      website: clean(body.website, 300),
+      use_case: clean(body.use_case, 1000),
+      workflow_type: workflowType,
+      monthly_photo_volume: monthlyVolume,
+      source,
+      status: "new",
+      notes: [
+        clean(body.notes, 1500),
+        clean(body.business_type, 100) ? `Business type: ${clean(body.business_type, 100)}` : null,
+        clean(body.utm_source, 100) ? `utm_source: ${clean(body.utm_source, 100)}` : null,
+        clean(body.utm_medium, 100) ? `utm_medium: ${clean(body.utm_medium, 100)}` : null,
+        clean(body.utm_campaign, 100) ? `utm_campaign: ${clean(body.utm_campaign, 100)}` : null,
+        clean(body.referrer, 300) ? `referrer: ${clean(body.referrer, 300)}` : null,
+      ].filter(Boolean).join("\n") || null,
+    };
+
+    const { data: betaInserted, error: betaError } = await admin
+      .from("beta_applications")
+      .upsert(betaPayload, { onConflict: "email", ignoreDuplicates: true })
+      .select("id")
+      .maybeSingle();
+
+    if (betaError) {
+      console.error("waitlist-submit beta application insert failed", betaError);
+      return new Response(JSON.stringify({ error: "beta_insert_failed" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    if (betaInserted?.id) {
+      betaApplicationId = betaInserted.id;
+    } else {
+      betaAlready = true;
+      const { data: existingBeta } = await admin
+        .from("beta_applications")
+        .select("id")
+        .eq("email", email)
+        .maybeSingle();
+      betaApplicationId = existingBeta?.id ?? null;
+    }
+  }
+
+  const ADMIN_EMAIL = "hello@rainbow-meadow.org";
 
   try {
     await admin.functions.invoke("send-transactional-email", {
       body: {
-        templateName: confirmationTemplate,
+        templateName: "waitlist-confirmation",
         recipientEmail: email,
-        idempotencyKey: `waitlist-confirm-${entryId ?? email}`,
+        idempotencyKey: `waitlist-confirm-${entryId ?? betaApplicationId ?? email}`,
         templateData: { name },
       },
     });
@@ -149,12 +219,12 @@ Deno.serve(async (req) => {
       body: {
         templateName: "waitlist-admin-notification",
         recipientEmail: ADMIN_EMAIL,
-        idempotencyKey: `waitlist-admin-${entryId ?? email}`,
+        idempotencyKey: `waitlist-admin-${entryId ?? betaApplicationId ?? email}`,
         templateData: {
-          ...insertPayload,
+          ...waitlistPayload,
+          beta_application_id: betaApplicationId,
           created_at: createdAt,
-          // Surface beta-specific fields for admin context
-          ...(isBetaApplication && {
+          ...(betaApplication && {
             application_type: "Beta Application",
             interest: interest ?? "founding-partner",
             workflow_type: workflowType ?? "not specified",
@@ -166,7 +236,12 @@ Deno.serve(async (req) => {
     console.error("waitlist-submit: admin email failed", e);
   }
 
-  return new Response(JSON.stringify({ ok: true, already: false }), {
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
-  });
+  return new Response(
+    JSON.stringify({
+      ok: true,
+      already: betaApplication ? betaAlready : waitlistAlready,
+      beta_application_id: betaApplicationId,
+    }),
+    { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+  );
 });

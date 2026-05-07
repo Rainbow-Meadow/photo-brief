@@ -113,9 +113,20 @@ export default function CreateRequestPage() {
     try {
       const contact = draft.recipientContact?.trim() ?? "";
       const isEmail = contact.includes("@");
+      let guideId = draft.baseGuideId ?? null;
+
+      if (!guideId) {
+        const { guidesService } = await import("@/services/guidesService");
+        const requestGuide = await guidesService.saveDraftAsRequestGuide({
+          workspaceId: workspace.id,
+          draft,
+        });
+        guideId = requestGuide.id;
+      }
+
       const created = await requestsService.create({
         workspaceId: workspace.id,
-        guideId: draft.baseGuideId ?? null,
+        guideId,
         recipientName: draft.recipientName || "Recipient",
         recipientEmail: isEmail ? contact : undefined,
         recipientPhone: !isEmail && contact ? contact : undefined,
@@ -158,7 +169,7 @@ export default function CreateRequestPage() {
       }
       trackEvent("request_created", {
         request_id: created.id,
-        guide_id: draft?.baseGuideId ?? null,
+        guide_id: guideId,
         delivery,
         contact_type: isEmail ? "email" : "link",
       });

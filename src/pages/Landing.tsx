@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { NavLink, useSearchParams } from "react-router-dom";
 import {
   ArrowRight,
@@ -204,22 +204,31 @@ export default function LandingPage() {
   const [applicationStarted, setApplicationStarted] = useState(false);
   const { isFull } = useBetaSeats();
 
-  const utmContext = useRef(() => {
+  const utm = useMemo(() => {
+    if (typeof window === "undefined") {
+      return {
+        source: "landing",
+        ref: ref || undefined,
+      };
+    }
+
     const p = new URLSearchParams(window.location.search);
+    const campaignRef = p.get("ref") || ref || "";
+
     return {
-      source: "landing" as const,
+      source: "landing",
       utm_source: p.get("utm_source") || undefined,
       utm_medium: p.get("utm_medium") || undefined,
       utm_campaign: p.get("utm_campaign") || undefined,
-      referrer: document.referrer || undefined,
-      ref: ref || undefined,
+      referrer: typeof document !== "undefined" ? document.referrer || undefined : undefined,
+      ref: campaignRef || undefined,
     };
-  }).current;
-  const utm = utmContext();
+  }, [ref]);
+  const applicationSource = ref ? `landing:${ref}` : "landing";
 
   useEffect(() => {
-    trackEvent("landing_page_view", utm);
-  }, []);
+    trackEvent("landing_page_view", { ...utm, source: applicationSource });
+  }, [applicationSource, utm]);
 
   const jsonLd = useMemo(
     () => [SOFTWARE_APP_JSONLD, buildHowToJsonLd("Collect customer photos with PhotoBrief", howItWorksSteps), buildFaqJsonLd(faqItems)],
@@ -242,7 +251,7 @@ export default function LandingPage() {
   const handleFormFocus = () => {
     if (!applicationStarted) {
       setApplicationStarted(true);
-      trackEvent("application_started", utm);
+      trackEvent("application_started", { ...utm, source: applicationSource });
     }
   };
 
@@ -254,23 +263,29 @@ export default function LandingPage() {
       return;
     }
     setSubmitting(true);
-    const source = ref ? `landing:${ref}` : "landing";
     try {
       const { data, error } = await supabase.functions.invoke("waitlist-submit", {
-        body: { ...form, name: form.name.trim() || undefined, email: form.email.trim().toLowerCase(), interest, source },
+        body: {
+          ...form,
+          ...utm,
+          source: applicationSource,
+          name: form.name.trim() || undefined,
+          email: form.email.trim().toLowerCase(),
+          interest,
+        },
       });
       if (error) throw error;
       const payload = data as { ok?: boolean; already?: boolean } | null;
       if (payload?.already) {
-        trackEvent("application_submitted", { ...utm, duplicate: true });
+        trackEvent("application_submitted", { ...utm, source: applicationSource, duplicate: true });
         setDone("already");
       } else {
-        trackEvent("application_submitted", { ...utm, business_type: form.business_type || undefined });
-        conversions.waitlistSubmitted({ interest: "landing", business_type: form.business_type || undefined });
+        trackEvent("application_submitted", { ...utm, source: applicationSource, business_type: form.business_type || undefined });
+        conversions.waitlistSubmitted({ interest, business_type: form.business_type || undefined });
         setDone("new");
       }
     } catch {
-      trackEvent("application_error", utm);
+      trackEvent("application_error", { ...utm, source: applicationSource });
       toast({ title: "Something went wrong", description: "Please try again.", variant: "destructive" });
     } finally {
       setSubmitting(false);
@@ -330,8 +345,8 @@ export default function LandingPage() {
   return (
     <>
       <PageMeta
-        title="PhotoBrief.ai | One-link customer photo intake"
-        description="Collect quote-ready customer photos with one guided link. PhotoBrief helps customers capture the right shots and gives your team a structured brief ready for quotes, dispatch, review, or documentation."
+        title="PhotoBrief.ai | Visual customer intake for quotes, dispatch, and reviews"
+        description="Turn customer intake into guided photo capture. PhotoBrief helps businesses collect the right photos, notes, and context through a hosted form, webhook, or manual link."
         canonicalPath="/"
         jsonLd={jsonLd}
         breadcrumbs={[{ name: "Home", path: "/" }]}
@@ -478,27 +493,27 @@ export default function LandingPage() {
                 <BetaSeatTracker variant="compact" className="mt-3" />
 
                 <form onSubmit={onSubmit} onFocusCapture={handleFormFocus} className="mt-5 grid gap-3.5 sm:mt-6 sm:gap-4">
-                  <Field id="bl-email" label="Work email" required>
-                    <Input id="bl-email" type="email" value={form.email} onChange={update("email")} autoComplete="email" required placeholder="you@company.com" className="h-12 border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
+                  <Field id="application-email" label="Work email" required>
+                    <Input id="application-email" type="email" value={form.email} onChange={update("email")} autoComplete="email" required placeholder="you@company.com" className="h-12 border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
                   </Field>
-                  <Field id="bl-biz" label="Business name" required>
-                    <Input id="bl-biz" value={form.business_name} onChange={update("business_name")} autoComplete="organization" required className="h-12 border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
+                  <Field id="application-business" label="Business name" required>
+                    <Input id="application-business" value={form.business_name} onChange={update("business_name")} autoComplete="organization" required className="h-12 border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
                   </Field>
-                  <Field id="bl-web" label="Website">
-                    <Input id="bl-web" value={form.website} onChange={update("website")} placeholder="https://" autoComplete="url" className="h-12 border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
+                  <Field id="application-website" label="Website">
+                    <Input id="application-website" value={form.website} onChange={update("website")} placeholder="https://" autoComplete="url" className="h-12 border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
                   </Field>
-                  <Field id="bl-usecase" label="What do you need customer photos for?" required>
-                    <Textarea id="bl-usecase" value={form.use_case} onChange={update("use_case")} rows={2} required placeholder="e.g. Getting roof damage photos before we send a quote." className="border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
+                  <Field id="application-usecase" label="What do you need customer photos for?" required>
+                    <Textarea id="application-usecase" value={form.use_case} onChange={update("use_case")} rows={2} required placeholder="e.g. Getting roof damage photos before we send a quote." className="border-white/12 bg-white/[0.05] text-white placeholder:text-white/30" />
                   </Field>
                   <div className="grid gap-3.5 sm:grid-cols-2 sm:gap-4">
-                    <Field id="bl-vol" label="Approx. monthly photo requests">
-                      <select id="bl-vol" value={form.estimated_monthly_requests} onChange={update("estimated_monthly_requests")} className="flex h-12 w-full rounded-xl border border-white/12 bg-white/[0.05] px-3 py-2 text-sm text-white shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--pb-lavender))]">
+                    <Field id="application-volume" label="Approx. monthly photo requests">
+                      <select id="application-volume" value={form.estimated_monthly_requests} onChange={update("estimated_monthly_requests")} className="flex h-12 w-full rounded-xl border border-white/12 bg-white/[0.05] px-3 py-2 text-sm text-white shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--pb-lavender))]">
                         <option value="" className="bg-[hsl(var(--pb-ink))]">Select…</option>
                         {VOLUMES.map((v) => <option key={v} value={v} className="bg-[hsl(var(--pb-ink))]">{v}</option>)}
                       </select>
                     </Field>
-                    <Field id="bl-fit" label="Best fit">
-                      <select id="bl-fit" value={form.workflow_type} onChange={update("workflow_type")} className="flex h-12 w-full rounded-xl border border-white/12 bg-white/[0.05] px-3 py-2 text-sm text-white shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--pb-lavender))]">
+                    <Field id="application-workflow" label="Best fit">
+                      <select id="application-workflow" value={form.workflow_type} onChange={update("workflow_type")} className="flex h-12 w-full rounded-xl border border-white/12 bg-white/[0.05] px-3 py-2 text-sm text-white shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--pb-lavender))]">
                         <option value="" className="bg-[hsl(var(--pb-ink))]">Select…</option>
                         {WORKFLOW_TYPES.map((w) => <option key={w} value={w} className="bg-[hsl(var(--pb-ink))]">{w}</option>)}
                       </select>
@@ -536,33 +551,33 @@ export default function LandingPage() {
 const painPoints = [
   {
     icon: Clock,
-    number: "62%",
-    label: "of first quotes are delayed",
-    context: "…waiting for photos the customer forgot to send.",
+    number: "Hours",
+    label: "lost before quotes move",
+    context: "Teams wait while customers hunt for the right photos, angles, and details.",
   },
   {
     icon: MessageSquareWarning,
-    number: "5+",
-    label: "back-and-forth messages",
-    context: "…just to get the right angle, scale, or context for one job.",
+    number: "Back & forth",
+    label: "just to get the right angle",
+    context: "One unclear photo turns into another message, another wait, and another context switch.",
   },
   {
     icon: FormInput,
-    number: "0",
-    label: "photos captured by typical forms",
-    context: "Your intake form collects a name and a message. PhotoBrief replaces or extends it to collect the photos your team actually needs.",
+    number: "Text only",
+    label: "is what basic forms capture",
+    context: "A name and message are not enough when your team needs visual proof before acting.",
   },
   {
     icon: UserX,
-    number: "75%",
-    label: "prefer zero human contact",
-    context: "They want to self-serve on their phone — not call, not email, not wait for a callback.",
+    number: "Self-serve",
+    label: "is what customers expect",
+    context: "They want to complete the request on their phone without downloading an app or waiting for a callback.",
   },
   {
     icon: TrendingDown,
-    number: "40%",
-    label: "of site visits don't convert",
-    context: "Without photos, your team triages blind and wastes site visits on jobs that don't convert.",
+    number: "Blind",
+    label: "is how teams triage without photos",
+    context: "PhotoBrief gives the team visual context before they quote, schedule, approve, or review.",
   },
 ];
 
