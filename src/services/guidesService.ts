@@ -49,6 +49,7 @@ async function fetchWorkspaceGuides(workspaceId: string): Promise<PhotoGuide[]> 
     .select("*")
     .eq("workspace_id", workspaceId)
     .eq("is_active", true)
+    .eq("is_request_scoped" as any, false)
     .order("created_at", { ascending: false });
   if (error) throw error;
   if (!guides || guides.length === 0) return [];
@@ -58,6 +59,63 @@ async function fetchWorkspaceGuides(workspaceId: string): Promise<PhotoGuide[]> 
     supabase.from("context_questions").select("*").in("guide_id", ids),
   ]);
   return guides.map((g) => rowToGuide(g, steps ?? [], questions ?? []));
+}
+
+async function insertDraftGuide(args: {
+  workspaceId: string;
+  draft: RequestDraft;
+  isRequestScoped: boolean;
+}): Promise<PhotoGuide> {
+  const { workspaceId, draft, isRequestScoped } = args;
+  const { data: user } = await supabase.auth.getUser();
+  const { data: guide, error: guideErr } = await supabase
+    .from("photo_guides")
+    .insert({
+      workspace_id: workspaceId,
+      name: draft.title,
+      description: draft.prompt ?? null,
+      is_global_template: false,
+      is_active: true,
+      is_request_scoped: isRequestScoped,
+      created_by: user.user?.id ?? null,
+    } as any)
+    .select()
+    .single();
+  if (guideErr) throw guideErr;
+
+  if (draft.steps.length > 0) {
+    const stepRows = draft.steps.map((s, idx) => ({
+      guide_id: guide.id,
+      order_index: idx,
+      title: s.title,
+      instruction: s.instructions ?? null,
+      capture_type: (s.shotType ?? "photo") as any,
+      overlay_type: (s.overlayType ?? null) as any,
+      ai_checks: (s.aiChecks ?? []) as any,
+      required: s.required ?? true,
+    }));
+    const { error: stepsErr } = await supabase.from("guide_steps").insert(stepRows);
+    if (stepsErr) throw stepsErr;
+  }
+
+  if (draft.questions.length > 0) {
+    const qRows = draft.questions.map((q, idx) => ({
+      guide_id: guide.id,
+      order_index: idx,
+      label: q.prompt,
+      input_type: q.inputType ?? "short_text",
+      options: (q.options ?? null) as any,
+      required: q.required ?? false,
+    }));
+    const { error: qErr } = await supabase.from("context_questions").insert(qRows);
+    if (qErr) throw qErr;
+  }
+
+  const [{ data: steps }, { data: questions }] = await Promise.all([
+    supabase.from("guide_steps").select("*").eq("guide_id", guide.id),
+    supabase.from("context_questions").select("*").eq("guide_id", guide.id),
+  ]);
+  return rowToGuide(guide, steps ?? [], questions ?? []);
 }
 
 export const guidesService = {
@@ -97,60 +155,33 @@ export const guidesService = {
     return rowToGuide(g, steps ?? [], questions ?? []);
   },
 
+  /** Persist a draft as a private, request-scoped guide.
+   *
+   * Request-scoped guides power one-off manual links from blank or AI drafts.
+   * They are intentionally hidden from the reusable template library and should
+   * not count against saved-template plan limits.
+   */
+  async saveDraftAsRequestGuide(args: {
+    workspaceId: string;
+    draft: RequestDraft;
+  }): Promise<PhotoGuide> {
+    return insertDraftGuide({
+      workspaceId: args.workspaceId,
+      draft: args.draft,
+      isRequestScoped: true,
+    });
+  },
+
   /** Persist a draft as a reusable workspace template. */
   async saveDraftAsGuide(args: {
     workspaceId: string;
     draft: RequestDraft;
   }): Promise<PhotoGuide> {
-    const { workspaceId, draft } = args;
-    const { data: user } = await supabase.auth.getUser();
-    const { data: guide, error: guideErr } = await supabase
-      .from("photo_guides")
-      .insert({
-        workspace_id: workspaceId,
-        name: draft.title,
-        description: draft.prompt ?? null,
-        is_global_template: false,
-        is_active: true,
-        created_by: user.user?.id ?? null,
-      })
-      .select()
-      .single();
-    if (guideErr) throw guideErr;
-
-    if (draft.steps.length > 0) {
-      const stepRows = draft.steps.map((s, idx) => ({
-        guide_id: guide.id,
-        order_index: idx,
-        title: s.title,
-        instruction: s.instructions ?? null,
-        capture_type: (s.shotType ?? "photo") as any,
-        overlay_type: (s.overlayType ?? null) as any,
-        ai_checks: (s.aiChecks ?? []) as any,
-        required: s.required ?? true,
-      }));
-      const { error: stepsErr } = await supabase.from("guide_steps").insert(stepRows);
-      if (stepsErr) throw stepsErr;
-    }
-
-    if (draft.questions.length > 0) {
-      const qRows = draft.questions.map((q, idx) => ({
-        guide_id: guide.id,
-        order_index: idx,
-        label: q.prompt,
-        input_type: q.inputType ?? "short_text",
-        options: (q.options ?? null) as any,
-        required: q.required ?? false,
-      }));
-      const { error: qErr } = await supabase.from("context_questions").insert(qRows);
-      if (qErr) throw qErr;
-    }
-
-    const [{ data: steps }, { data: questions }] = await Promise.all([
-      supabase.from("guide_steps").select("*").eq("guide_id", guide.id),
-      supabase.from("context_questions").select("*").eq("guide_id", guide.id),
-    ]);
-    return rowToGuide(guide, steps ?? [], questions ?? []);
+    return insertDraftGuide({
+      workspaceId: args.workspaceId,
+      draft: args.draft,
+      isRequestScoped: false,
+    });
   },
 
   /** Update an existing workspace template. */
