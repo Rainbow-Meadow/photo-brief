@@ -39,6 +39,7 @@ export function useChatFlow({
   businessName,
   introBody,
   requestToken,
+  requestId,
   uploadCapture,
   promoteAcceptedCapture,
   resubmit,
