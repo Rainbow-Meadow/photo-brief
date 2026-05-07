@@ -3,16 +3,16 @@
   "name": "photobrief",
   "display_name": "PhotoBrief",
   "description": "Create AI-guided photo requests and look up pricing, plan limits, and FAQ content via MCP. PhotoBrief Credits are per-photo: 1 submitted/analyzed photo = 1 credit.",
-  "status": "planned",
+  "status": "active",
   "homepage": "https://photobrief.ai/for-ai-agents",
   "contact_email": "hello@photobrief.ai",
   "transport": {
     "type": "streamable_http",
-    "url": "https://app.photobrief.ai/functions/v1/mcp",
+    "url": "https://mcp.photobrief.ai/mcp",
     "auth": {
       "type": "bearer_token",
       "header": "Authorization",
-      "description": "Workspace API key (prefix pb_) issued on the Business plan."
+      "description": "Workspace API key (prefix pb_) issued on the Business plan. Required only for the create_request tool; lookup_pricing and read_faq are unauthenticated."
     }
   },
   "tools": [
@@ -40,9 +40,5 @@
     { "uri": "https://photobrief.ai/llms.txt", "name": "Short LLM brief" },
     { "uri": "https://photobrief.ai/llms-full.txt", "name": "Full LLM reference" },
     { "uri": "https://photobrief.ai/openapi.json", "name": "OpenAPI 3.1 spec" }
-  ],
-  "fallback": {
-    "note": "Until the live MCP endpoint ships, agents should call the REST endpoint documented in /openapi.json.",
-    "rest_endpoint": "https://app.photobrief.ai/functions/v1/api-create-request"
-  }
+  ]
 }
