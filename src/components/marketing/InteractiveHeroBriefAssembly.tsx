@@ -960,6 +960,20 @@ function CustomerConfirmationScreen() {
 /* ─────────────────────────────────────────────────────── */
 /* ── Main component                                    ── */
 /* ─────────────────────────────────────────────────────── */
+/* ── Auto-play scene timing (seconds) — matches voiceover ── */
+const SCENE_TIMINGS: { phase: Phase; time: number; captureStep?: number }[] = [
+  { phase: "CUSTOMER_REQUEST", time: 0 },
+  { phase: "ROUTING", time: 3.3 },
+  { phase: "QUESTIONS", time: 6.3 },
+  { phase: "CAPTURING", time: 18.3, captureStep: 0 },
+  { phase: "CAPTURING", time: 21.5, captureStep: 1 },  // blurry capture
+  { phase: "CAPTURING", time: 24.0, captureStep: 1 },  // retake
+  { phase: "CAPTURING", time: 26.5, captureStep: 2 },
+  { phase: "CAPTURING", time: 29.0, captureStep: 3 },
+  { phase: "CUSTOMER_REVIEW", time: 32.3 },
+  { phase: "COMPLETE", time: 46.3 },
+];
+
 export function InteractiveHeroBriefAssembly() {
   const [phase, setPhase] = useState<Phase>("CUSTOMER_REQUEST");
   const [currentStep, setCurrentStep] = useState(0);
@@ -969,6 +983,118 @@ export function InteractiveHeroBriefAssembly() {
   const [requestUrl, setRequestUrl] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  /* ── Auto-play / audio state ── */
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const rafRef = useRef<number | null>(null);
+  const lastSceneIdx = useRef(-1);
+
+  // Lazy-init audio element
+  const getAudio = useCallback(() => {
+    if (!audioRef.current) {
+      const a = new Audio("/audio/photobrief-voiceover.mp3");
+      a.preload = "auto";
+      audioRef.current = a;
+    }
+    return audioRef.current;
+  }, []);
+
+  // Sync scene to audio currentTime
+  const syncScene = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio || audio.paused) return;
+    const t = audio.currentTime;
+
+    // Find the latest scene whose time has passed
+    let idx = 0;
+    for (let i = SCENE_TIMINGS.length - 1; i >= 0; i--) {
+      if (t >= SCENE_TIMINGS[i].time) { idx = i; break; }
+    }
+
+    if (idx !== lastSceneIdx.current) {
+      lastSceneIdx.current = idx;
+      const scene = SCENE_TIMINGS[idx];
+      setPhase(scene.phase);
+
+      // Handle capture-phase sub-steps
+      if (scene.phase === "CAPTURING" && scene.captureStep !== undefined) {
+        const step = scene.captureStep;
+        setCaptured(prev => {
+          const next = new Set(prev);
+          // Add all photos up to this step
+          for (let s = 0; s < step; s++) next.add(s);
+          // Special: idx=4 is blurry capture (don't mark good yet), idx=5 is retake
+          if (idx === 4) { next.add(step); } // blurry first attempt
+          if (idx >= 5) { next.add(step); }  // retake done
+          if (idx >= 6) { next.add(2); }
+          if (idx >= 7) { next.add(3); }
+          return next;
+        });
+        setCurrentStep(step);
+        // blurryPending is true only before retake
+        setBlurryPending(idx <= 4);
+      }
+      if (scene.phase === "CUSTOMER_REVIEW" || scene.phase === "COMPLETE") {
+        setCaptured(new Set([0, 1, 2, 3]));
+        setBlurryPending(false);
+      }
+    }
+
+    rafRef.current = requestAnimationFrame(syncScene);
+  }, []);
+
+  // Play / pause toggle
+  const togglePlay = useCallback(() => {
+    const audio = getAudio();
+    if (isPlaying) {
+      audio.pause();
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      setIsPlaying(false);
+    } else {
+      // Reset if ended or near end
+      if (audio.ended || audio.currentTime > 80) {
+        audio.currentTime = 0;
+        lastSceneIdx.current = -1;
+        setPhase("CUSTOMER_REQUEST");
+        setCaptured(new Set());
+        setCurrentStep(0);
+        setBlurryPending(true);
+      }
+      audio.muted = isMuted;
+      audio.play().then(() => {
+        setIsPlaying(true);
+        rafRef.current = requestAnimationFrame(syncScene);
+      }).catch(() => {});
+    }
+  }, [isPlaying, isMuted, getAudio, syncScene]);
+
+  // Mute toggle
+  const toggleMute = useCallback(() => {
+    const audio = audioRef.current;
+    if (audio) audio.muted = !isMuted;
+    setIsMuted(m => !m);
+  }, [isMuted]);
+
+  // Cleanup
+  useEffect(() => {
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      audioRef.current?.pause();
+    };
+  }, []);
+
+  // Listen for audio end
+  useEffect(() => {
+    const audio = getAudio();
+    const onEnd = () => {
+      setIsPlaying(false);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+    audio.addEventListener("ended", onEnd);
+    return () => audio.removeEventListener("ended", onEnd);
+  }, [getAudio]);
 
   const hasFlag = [...captured].some((i) => !photos[i].good);
 
