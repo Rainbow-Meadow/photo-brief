@@ -164,6 +164,27 @@ Bearer token in the `Authorization` header. API keys are issued on supported pla
 Authorization: Bearer pb_live_xxxxxxxxxxxxxxxxxxxx
 ```
 
+### x402 Agentic Payments (alternative to API keys)
+
+AI agents without a `pb_` API key can pay per-call using the x402 protocol:
+
+1. Agent calls a paid tool without auth → receives HTTP 402 with payment requirements
+2. Agent constructs a payment payload: `{ "transaction": "tx_hash", "payer": "wallet_address" }`
+3. Agent base64-encodes the payload and sends it as the `X-Payment` header (or `x_payment` MCP parameter)
+4. PhotoBrief verifies payment and processes the request
+
+**Per-call pricing:**
+- `create_request` — $0.10 USD (1 PhotoBrief Credit)
+- `lookup_pricing` — free
+- `read_faq` — free
+
+**Endpoints:**
+- Payment requirements: `GET https://mcp.photobrief.ai/x402/requirements?tool=create_request`
+- Direct pay + execute: `POST https://mcp.photobrief.ai/x402/pay` (with `X-Payment` header)
+- MCP transport: `POST https://mcp.photobrief.ai/mcp` (with `x_payment` parameter in tool args)
+
+Network: Base Sepolia (testnet). Mainnet support coming soon.
+
 ### POST /api-create-request
 
 Create a new photo request and return a recipient URL.
@@ -218,12 +239,14 @@ Common POST body:
 ## Discovery files
 
 - MCP server (live, Streamable HTTP): https://mcp.photobrief.ai/mcp
+- x402 payment requirements: https://mcp.photobrief.ai/x402/requirements
+- x402 pay endpoint: https://mcp.photobrief.ai/x402/pay
 - /llms.txt — short summary for LLMs and answer engines.
 - /llms-full.txt — this full reference.
 - /openapi.json — OpenAPI 3.1 spec.
 - /.well-known/ai-plugin.json — plugin-style manifest.
 - /.well-known/agent.json — agent capabilities manifest.
-- /mcp.json — live MCP server descriptor.
+- /mcp.json — live MCP server descriptor (includes x402 config).
 - /sitemap.xml — public indexable pages.
 - /robots.txt — crawler rules.
 
