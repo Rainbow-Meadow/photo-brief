@@ -1,0 +1,14 @@
+name = "photobrief-mcp"
+main = "src/index.ts"
+compatibility_date = "2025-04-01"
+
+# Route: mcp.photobrief.ai → this worker
+[[routes]]
+pattern = "mcp.photobrief.ai/*"
+zone_name = "photobrief.ai"
+
+[vars]
+# The Supabase edge-function base URL for proxying API calls
+API_BASE_URL = "https://app.photobrief.ai/functions/v1"
+# Public site for recipient URLs
+SITE_URL = "https://photobrief.ai"

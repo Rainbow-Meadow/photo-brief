@@ -78,6 +78,7 @@ A: PhotoBrief keeps photo feedback simple: wrong subject, too dark, blurry, unre
 
 ## Discovery endpoints
 
+- MCP server (live): https://mcp.photobrief.ai/mcp
 - Full reference: https://photobrief.ai/llms-full.txt
 - For-AI-agents page: https://photobrief.ai/for-ai-agents
 - OpenAPI 3.1 spec: https://photobrief.ai/openapi.json
