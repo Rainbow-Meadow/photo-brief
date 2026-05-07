@@ -98,7 +98,7 @@ export class AssistantAgent extends Agent<Env, AssistantState> {
    * the daily digest.
    */
   @callable()
-  async initialize(args: { workspaceId: string; serviceKey?: string }) {
+  async initialize(args: { workspaceId: string }) {
     this.setState({
       ...this.state,
       workspaceId: args.workspaceId,
@@ -106,7 +106,7 @@ export class AssistantAgent extends Agent<Env, AssistantState> {
     });
 
     // Index guides into local SQL storage for RAG
-    await this.indexGuides(args.serviceKey);
+    await this.indexGuides();
 
     // Schedule daily digest at 8 AM UTC
     if (!this.state.digestScheduled) {
@@ -115,7 +115,7 @@ export class AssistantAgent extends Agent<Env, AssistantState> {
     }
 
     // Run initial stats fetch
-    await this.refreshStats(args.serviceKey);
+    await this.refreshStats();
 
     return { ok: true, guidesIndexed: this.state.guides.length };
   }
@@ -154,8 +154,8 @@ export class AssistantAgent extends Agent<Env, AssistantState> {
    * Force a stats refresh.
    */
   @callable()
-  async refreshNow(args: { serviceKey?: string }) {
-    await this.refreshStats(args.serviceKey);
+  async refreshNow() {
+    await this.refreshStats();
     return this.state.stats;
   }
 
@@ -209,12 +209,12 @@ export class AssistantAgent extends Agent<Env, AssistantState> {
 
   /* ── Internal methods ────────────────────────────────────────────── */
 
-  private async indexGuides(serviceKey?: string) {
+  private async indexGuides() {
     if (!this.state.workspaceId) return;
 
     try {
-      const url = `${this.env.SUPABASE_URL}/rest/v1/photo_guides?workspace_id=eq.${this.state.workspaceId}&select=id,name,category,guide_steps(id),guide_questions(id)`;
-      const key = serviceKey ?? this.env.SUPABASE_SERVICE_ROLE_KEY;
+      const url = `${this.env.SUPABASE_URL}/rest/v1/photo_guides?workspace_id=eq.${this.state.workspaceId}&select=id,name,category,guide_steps(id),context_questions(id)`;
+      const key = this.env.SUPABASE_SERVICE_ROLE_KEY;
       if (!key) return;
 
       const res = await fetch(url, {
@@ -232,7 +232,7 @@ export class AssistantAgent extends Agent<Env, AssistantState> {
         name: g.name ?? "Untitled",
         category: g.category ?? "Custom",
         stepCount: Array.isArray(g.guide_steps) ? g.guide_steps.length : 0,
-        questionCount: Array.isArray(g.guide_questions) ? g.guide_questions.length : 0,
+        questionCount: Array.isArray(g.context_questions) ? g.context_questions.length : 0,
         indexedAt: new Date().toISOString(),
       }));
 
@@ -261,10 +261,10 @@ export class AssistantAgent extends Agent<Env, AssistantState> {
     }
   }
 
-  private async refreshStats(serviceKey?: string) {
+  private async refreshStats() {
     if (!this.state.workspaceId) return;
 
-    const key = serviceKey ?? this.env.SUPABASE_SERVICE_ROLE_KEY;
+    const key = this.env.SUPABASE_SERVICE_ROLE_KEY;
     if (!key) return;
 
     try {
