@@ -21,7 +21,8 @@ const DISCOVERY_LINKS = [
   { href: "/openapi.json", label: "/openapi.json", desc: "OpenAPI 3.1 spec." },
   { href: "/.well-known/ai-plugin.json", label: "/.well-known/ai-plugin.json", desc: "ChatGPT plugin manifest." },
   { href: "/.well-known/agent.json", label: "/.well-known/agent.json", desc: "Agent capabilities manifest." },
-  { href: "/mcp.json", label: "/mcp.json", desc: "MCP server descriptor." },
+  { href: "/mcp.json", label: "/mcp.json", desc: "MCP server descriptor (includes x402 config)." },
+  { href: "https://mcp.photobrief.ai/x402/requirements", label: "/x402/requirements", desc: "x402 payment requirements endpoint." },
   { href: "/sitemap.xml", label: "/sitemap.xml", desc: "Sitemap." },
 ];
 
