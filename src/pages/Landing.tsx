@@ -900,7 +900,7 @@ function PainPointSection() {
               />
             </div>
             <RoiCalculatorSection />
-            <p className="pb-copy mt-4 text-center text-sm italic sm:text-base lg:text-left lg:whitespace-nowrap">
+            <p className="pb-copy mt-4 text-center text-sm italic sm:text-base lg:whitespace-nowrap">
               PhotoBrief closes the gap between first contact and quote-ready information.
             </p>
           </div>
