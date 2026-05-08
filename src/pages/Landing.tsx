@@ -612,8 +612,8 @@ function RoiCalculatorSection() {
   }
 
   return (
-    <section className="pb-section-tight my-0" ref={calcRef}>
-      <div className="pb-container">
+    <section className="w-full" ref={calcRef}>
+      <div className="mx-auto w-full max-w-sm">
         <button
           type="button"
           onClick={() => {
@@ -890,17 +890,15 @@ function PainPointSection() {
           </div>
 
           {/* Right column — 81% stat + ROI calculator */}
-          <div className="mt-6 flex flex-col items-center gap-3 lg:mt-0 lg:items-stretch lg:justify-center">
-            <div className="flex justify-center lg:justify-end">
-              <StatAccent
-                icon={TrendingDown}
-                value="81%"
-                label="of website forms are abandoned before submit."
-                tone="amber"
-              />
-            </div>
+          <div className="mt-6 flex flex-col items-center gap-4 lg:mt-0 lg:items-center lg:justify-center">
+            <StatAccent
+              icon={TrendingDown}
+              value="81%"
+              label="of website forms are abandoned before submit."
+              tone="amber"
+            />
             <RoiCalculatorSection />
-            <p className="pb-copy mt-4 text-center text-sm italic sm:text-base lg:whitespace-nowrap">
+            <p className="pb-copy mt-2 max-w-sm text-center text-sm italic sm:text-base">
               PhotoBrief closes the gap between first contact and quote-ready information.
             </p>
           </div>
