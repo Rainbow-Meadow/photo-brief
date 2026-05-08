@@ -789,6 +789,7 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
       transform: translateY(-1px);
     }
   }
+  .pb-container-narrow { width: min(100% - 2rem, 860px); margin-inline: auto; }
   @media (min-width: 640px) { .pb-container-narrow { width: min(100% - 3rem, 860px); } }
   .pb-eyebrow {
     display: inline-flex; align-items: center; gap: 0.45rem; border: 1px solid hsl(var(--pb-line));
