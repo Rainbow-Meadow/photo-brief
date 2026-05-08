@@ -385,40 +385,55 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
-          {/* Soft fade where paper meets the dark sections below */}
-          <div className="pb-paper-fade-bottom pointer-events-none absolute inset-x-0 bottom-0 h-24" aria-hidden />
         </section>
 
-        {/* ━━ TICKER 1 — Industry signals ━━━━━━━━━━━━━━━━━━━━━ */}
-        <TickerBar items={["81% of forms abandoned before submit", "78% buy from whoever responds first", "4.2 hr avg lead response time", "60% of estimates never followed up", "5+ follow-ups to close — most stop at 1"]} />
+        {/* ━━ PAPER BLOCK — Problem → Solution (editorial) ━━━━━ */}
+        <div className="pb-paper-surface pb-on-paper relative isolate overflow-hidden">
+          {/* ━━ TICKER 1 — Industry signals ━━━━━━━━━━━━━━━━━━━ */}
+          <TickerBar
+            tone="paper"
+            items={[
+              "81% of forms abandoned before submit",
+              "78% buy from whoever responds first",
+              "4.2 hr avg lead response time",
+              "60% of estimates never followed up",
+              "5+ follow-ups to close — most stop at 1",
+            ]}
+          />
 
-        {/* ━━ 2. PAIN POINTS (carousel + ROI) ━━━━━━━━━━━━━━━━━━ */}
-        <PainPointSection />
+          {/* ━━ 2. PAIN POINTS (carousel + ROI) ━━━━━━━━━━━━━━━ */}
+          <PainPointSection />
 
-        {/* ── Chapter break: Problem → Solution ── */}
-        <ChapterDivider />
-
-        <section className="pb-section">
-          <div className="pb-container">
-            <SectionIntro
-              className="mb-6 sm:mb-8"
-              eyebrow={<><Sparkles className="h-3.5 w-3.5" /> See the difference</>}
-              title="Vague website form becomes an actionable lead packet."
-              description={`Watch how a generic "tell us about your project" message turns into a structured packet with the right photos, notes, and context — ready for your team to act on.`}
-              accent={
-                <StatAccent
-                  icon={Sparkles}
-                  value="12 min"
-                  label="Saved per lead — fewer follow-up calls, less back-and-forth."
-                  tone="lavender"
-                />
-              }
-            />
-            <Suspense fallback={<div className="min-h-[400px]" />}>
-              <InteractiveHeroBriefAssembly />
-            </Suspense>
+          {/* ── Chapter break: Problem → Solution ── */}
+          <div className="pb-container" aria-hidden>
+            <div className="mx-auto h-px max-w-lg bg-gradient-to-r from-transparent via-[hsl(var(--pb-ink-soft)/0.18)] to-transparent" />
           </div>
-        </section>
+
+          <section className="pb-section">
+            <div className="pb-container">
+              <SectionIntro
+                className="mb-6 sm:mb-8"
+                eyebrow={<><Sparkles className="h-3.5 w-3.5" /> See the difference</>}
+                title="Vague website form becomes an actionable lead packet."
+                description={`Watch how a generic "tell us about your project" message turns into a structured packet with the right photos, notes, and context — ready for your team to act on.`}
+                accent={
+                  <StatAccent
+                    icon={Sparkles}
+                    value="12 min"
+                    label="Saved per lead — fewer follow-up calls, less back-and-forth."
+                    tone="lavender"
+                  />
+                }
+              />
+              <Suspense fallback={<div className="min-h-[400px]" />}>
+                <InteractiveHeroBriefAssembly />
+              </Suspense>
+            </div>
+          </section>
+
+          {/* Soft fade where paper meets the dark sections below */}
+          <div className="pb-paper-fade-bottom pointer-events-none h-24 w-full" aria-hidden />
+        </div>
 
         {/* ━━ 4. STICKY SECTION NAV ━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <SectionNav />
@@ -843,13 +858,29 @@ function PainPointSection() {
 
 /* ── Ticker bar ─────────────────────────────────────────── */
 
-function TickerBar({ items, direction = "left" }: { items: string[]; direction?: "left" | "right" }) {
+function TickerBar({
+  items,
+  direction = "left",
+  tone = "dark",
+}: {
+  items: string[];
+  direction?: "left" | "right";
+  tone?: "dark" | "paper";
+}) {
   const content = items.map((t) => t.toUpperCase()).join("  ·  ");
   const doubled = `${content}  ·  ${content}  ·  `;
+  const wrapClass =
+    tone === "paper"
+      ? "pb-ticker-paper overflow-hidden py-2.5"
+      : "overflow-hidden border-y border-white/[0.06] bg-white/[0.015] py-2.5";
+  const textClass =
+    tone === "paper"
+      ? "pb-ticker-text whitespace-nowrap text-[0.6rem] font-bold tracking-[0.2em] sm:text-xs"
+      : "whitespace-nowrap text-[0.6rem] font-bold tracking-[0.2em] text-white/25 sm:text-xs";
   return (
-    <div className="overflow-hidden border-y border-white/[0.06] bg-white/[0.015] py-2.5" aria-hidden>
+    <div className={wrapClass} aria-hidden>
       <div
-        className="whitespace-nowrap text-[0.6rem] font-bold tracking-[0.2em] text-white/25 sm:text-xs"
+        className={textClass}
         style={{
           animation: `marquee ${items.length * 5}s linear infinite`,
           animationDirection: direction === "right" ? "reverse" : "normal",
