@@ -955,6 +955,91 @@ function ChapterDivider() {
   );
 }
 
+/**
+ * Two-column section intro.
+ * Mobile/tablet: stacked centered. Desktop (lg+): copy left, accent right.
+ */
+function SectionIntro({
+  eyebrow,
+  title,
+  description,
+  accent,
+  className,
+}: {
+  eyebrow: ReactNode;
+  title: ReactNode;
+  description?: ReactNode;
+  accent?: ReactNode;
+  className?: string;
+}) {
+  if (!accent) {
+    return (
+      <div className={`mx-auto max-w-3xl text-center lg:max-w-5xl ${className ?? ""}`}>
+        <span className="pb-eyebrow">{eyebrow}</span>
+        <h2 className="pb-section-title mt-4 text-white">{title}</h2>
+        {description ? (
+          <p className="pb-copy mx-auto mt-4 max-w-2xl text-base sm:text-lg">{description}</p>
+        ) : null}
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className={`mx-auto max-w-3xl text-center lg:mx-0 lg:grid lg:max-w-none lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:gap-12 lg:text-left ${className ?? ""}`}
+    >
+      <div className="lg:min-w-0">
+        <span className="pb-eyebrow">{eyebrow}</span>
+        <h2 className="pb-section-title mt-4 text-white">{title}</h2>
+        {description ? (
+          <p className="pb-copy mx-auto mt-4 max-w-2xl text-base sm:text-lg lg:mx-0 lg:max-w-xl">
+            {description}
+          </p>
+        ) : null}
+      </div>
+      <div className="mt-8 flex justify-center lg:mt-0 lg:justify-end">{accent}</div>
+    </div>
+  );
+}
+
+/** Compact stat tile used as a SectionIntro accent. */
+function StatAccent({
+  value,
+  label,
+  icon: Icon,
+  tone = "lavender",
+}: {
+  value: ReactNode;
+  label: ReactNode;
+  icon?: LucideIcon;
+  tone?: "lavender" | "mint" | "amber";
+}) {
+  const toneClass =
+    tone === "mint"
+      ? "text-[hsl(var(--pb-mint))]"
+      : tone === "amber"
+        ? "text-amber-300"
+        : "text-[hsl(var(--pb-lavender))]";
+  return (
+    <div className="pb-card relative w-full max-w-sm overflow-hidden p-6 text-center sm:p-7">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-[hsl(var(--pb-violet)/0.2)] blur-3xl"
+      />
+      {Icon ? (
+        <div className={`relative mx-auto flex h-11 w-11 items-center justify-center rounded-2xl border border-[hsl(var(--pb-line-strong))] bg-[hsl(var(--pb-ink))] ${toneClass}`}>
+          <Icon className="h-5 w-5" />
+        </div>
+      ) : null}
+      <div className={`relative mt-4 text-5xl font-extrabold tracking-tight ${toneClass}`}>
+        {value}
+      </div>
+      <p className="relative mt-2 text-sm text-white/70">{label}</p>
+    </div>
+  );
+}
+
+
 function SectionNav() {
   return (
     <nav
