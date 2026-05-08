@@ -542,6 +542,7 @@ const FORM_RECOVERY_FACTOR = 0.25; // 25% of abandoned forms recovered with guid
 
 function RoiCalculatorSection() {
   const [open, setOpen] = useState(false);
+  const calcRef = useRef<HTMLDivElement>(null);
   const [monthlyVisitors, setMonthlyVisitors] = useState(500);
   const [avgJobValue, setAvgJobValue] = useState(2000);
   const [currentConversion, setCurrentConversion] = useState(3);
