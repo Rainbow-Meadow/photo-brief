@@ -1113,7 +1113,8 @@ function ComparisonSection({
           }
         />
 
-        <div className="mx-auto mt-8 flex max-w-md rounded-full border border-white/12 bg-[hsl(var(--pb-panel)/0.72)] p-1 sm:mt-10">
+        {/* Editorial toggle — minimal underline tabs */}
+        <div className="mx-auto mt-8 flex max-w-sm items-center justify-center gap-8 border-b border-white/10 sm:mt-10">
           {[
             { id: "messy", label: "Before" },
             { id: "clean", label: "PhotoBrief" },
@@ -1122,46 +1123,62 @@ function ComparisonSection({
               key={item.id}
               type="button"
               onClick={() => onModeChange(item.id as "messy" | "clean")}
-              className={`flex-1 rounded-full px-4 py-2.5 text-sm font-extrabold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--pb-lavender))] sm:py-3 ${mode === item.id ? "bg-[hsl(var(--pb-lavender))] text-[hsl(var(--pb-night))]" : "text-white/58 hover:text-white"}`}
+              className={`relative -mb-px px-1 pb-3 text-xs font-black uppercase tracking-[0.22em] transition focus-visible:outline-none ${
+                mode === item.id
+                  ? "text-white"
+                  : "text-white/40 hover:text-white/70"
+              }`}
             >
               {item.label}
+              {mode === item.id && (
+                <span className="absolute inset-x-0 -bottom-px h-px bg-[hsl(var(--pb-lavender))]" />
+              )}
             </button>
           ))}
         </div>
 
-        <div className="mt-6 grid gap-4 sm:mt-8 sm:gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
-          <div className="pb-command-panel p-4 sm:p-5 md:p-6">
-            <div className="relative z-10 flex items-center justify-between gap-3 border-b border-white/10 pb-4">
-              <p className="text-sm font-extrabold uppercase tracking-[0.18em] text-white/48">
+        {/* Editorial spread — two columns separated by a hairline rule */}
+        <div className="mt-8 grid gap-6 sm:mt-10 sm:gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-stretch lg:gap-0 lg:divide-x lg:divide-white/10">
+          <div className="lg:pr-8 xl:pr-12">
+            <div className="flex items-baseline justify-between gap-3 border-b border-white/10 pb-3">
+              <p className="font-serif text-lg italic text-white/80 sm:text-xl">
                 {isClean ? "Guided visual intake" : "Generic website form"}
               </p>
               <span
-                className={`rounded-full px-3 py-1 text-xs font-black ${isClean ? "bg-[hsl(var(--pb-mint)/0.12)] text-[hsl(var(--pb-mint))]" : "bg-[hsl(var(--pb-lavender)/0.12)] text-[hsl(var(--pb-lavender))]"}`}
+                className={`text-[10px] font-black uppercase tracking-[0.22em] ${
+                  isClean
+                    ? "text-[hsl(var(--pb-mint))]"
+                    : "text-[hsl(var(--pb-lavender))]"
+                }`}
               >
                 {isClean ? "Actionable" : "Vague"}
               </span>
             </div>
-            <div className="relative z-10 mt-4 grid gap-2 sm:mt-5 sm:gap-3">
+            <ol className="mt-5 space-y-4">
               {signals.map((signal, index) => (
-                <div
+                <li
                   key={signal}
-                  className={`flex items-center gap-3 rounded-2xl border p-3 sm:p-4 ${isClean ? "border-[hsl(var(--pb-mint)/0.24)] bg-[hsl(var(--pb-mint)/0.055)]" : "border-white/10 bg-white/[0.035]"}`}
+                  className="flex items-start gap-4 border-b border-white/5 pb-4 last:border-0"
                 >
                   <span
-                    className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-black sm:h-8 sm:w-8 ${isClean ? "bg-[hsl(var(--pb-mint)/0.14)] text-[hsl(var(--pb-mint))]" : "bg-[hsl(var(--pb-lavender)/0.13)] text-[hsl(var(--pb-lavender))]"}`}
+                    className={`mt-0.5 font-serif text-2xl leading-none ${
+                      isClean
+                        ? "text-[hsl(var(--pb-mint))]"
+                        : "text-[hsl(var(--pb-lavender))]"
+                    }`}
                   >
-                    {index + 1}
+                    {String(index + 1).padStart(2, "0")}
                   </span>
-                  <p className="text-sm font-semibold text-white/82 sm:text-base">
+                  <p className="text-sm text-white/82 sm:text-base">
                     {signal}
                   </p>
-                </div>
+                </li>
               ))}
-            </div>
+            </ol>
           </div>
 
-          <div className="relative min-h-[320px] overflow-hidden rounded-[1.5rem] border border-white/12 bg-[hsl(var(--pb-panel)/0.58)] p-4 sm:min-h-[420px] sm:rounded-[2rem] sm:p-5">
-            <div className="absolute inset-0 opacity-35">
+          <div className="relative min-h-[320px] overflow-hidden sm:min-h-[420px] lg:pl-8 xl:pl-12">
+            <div className="absolute inset-0 opacity-25">
               <div className="pb-lens-field" />
             </div>
             {isClean ? <CleanPacketVisual /> : <MessyThreadVisual />}
