@@ -45,18 +45,18 @@ export function MobileSettingsSheet({ open, onOpenChange }: Props) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="bottom" className="h-[85vh] rounded-t-2xl p-0">
-        <SheetHeader className="border-b px-5 py-4 text-left">
+        <SheetHeader className="hairline-apple-b px-5 py-4 text-left">
           <SheetTitle>Settings</SheetTitle>
           <SheetDescription>Configure your workspace.</SheetDescription>
         </SheetHeader>
         <div className="flex h-full flex-col overflow-y-auto pb-safe">
-          <ul className="divide-y divide-[hsl(var(--glass-border))]">
+          <ul className="divide-y divide-separator">
             {items.map((it) => (
               <li key={it.to}>
                 <NavLink
                   to={it.to}
                   onClick={() => onOpenChange(false)}
-                  className="pb-settings-row flex items-center gap-3 px-5 py-4"
+                  className="tap-apple focus-apple flex items-center gap-3 px-5 py-4"
                 >
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
                     <it.icon className="h-5 w-5" />
@@ -71,7 +71,7 @@ export function MobileSettingsSheet({ open, onOpenChange }: Props) {
             ))}
           </ul>
 
-          <div className="mt-2 border-t">
+          <div className="mt-2 hairline-apple-t">
             <p className="px-5 pb-2 pt-4 text-xs font-medium uppercase tracking-wide text-muted-foreground">
               Account
             </p>
@@ -80,7 +80,7 @@ export function MobileSettingsSheet({ open, onOpenChange }: Props) {
                 Signed in as <span className="font-medium text-foreground">{email}</span>
               </p>
             ) : null}
-            <ul className="divide-y divide-[hsl(var(--glass-border))]">
+            <ul className="divide-y divide-separator">
               <li>
                 <button
                   type="button"
@@ -88,7 +88,7 @@ export function MobileSettingsSheet({ open, onOpenChange }: Props) {
                   onClick={() => {
                     resetPassword();
                   }}
-                  className="pb-settings-row flex w-full items-center gap-3 px-5 py-4 text-left disabled:opacity-60"
+                  className="tap-apple focus-apple flex w-full items-center gap-3 px-5 py-4 text-left disabled:opacity-60"
                 >
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
                     <KeyRound className="h-5 w-5" />
@@ -111,7 +111,7 @@ export function MobileSettingsSheet({ open, onOpenChange }: Props) {
                     onOpenChange(false);
                     logOut();
                   }}
-                  className="pb-settings-row flex w-full items-center gap-3 px-5 py-4 text-left disabled:opacity-60"
+                  className="tap-apple focus-apple flex w-full items-center gap-3 px-5 py-4 text-left disabled:opacity-60"
                 >
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-destructive/10 text-destructive">
                     <LogOut className="h-5 w-5" />
