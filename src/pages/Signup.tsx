@@ -263,6 +263,13 @@ export default function SignupPage() {
                 />
                 <p className="mt-1 text-xs text-muted-foreground">At least 8 characters.</p>
               </div>
+              <TurnstileWidget
+                onVerify={(t) => setTurnstileToken(t)}
+                onExpire={() => setTurnstileToken(null)}
+                onError={() => setTurnstileToken(null)}
+                action="invite-signup"
+                className="flex justify-center"
+              />
               <Button type="submit" disabled={submitting} size="lg">
                 {submitting ? "Creating account…" : "Create account"}
               </Button>
