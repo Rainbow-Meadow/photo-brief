@@ -558,10 +558,8 @@ export default function LandingPage() {
           <BetaDetailsAccordion value={betaDetailsOpen} onValueChange={setBetaDetailsOpen} />
         </div>
 
-        {/* ━━ FINAL CTA — the one dark zone ━━━━━━━━━━━━━━━━━ */}
-        <div className="pb-final-dark pb-dark-island">
-          <FinalCta isFull={isFull} />
-        </div>
+        {/* ━━ FINAL CTA — schema-driven dark section ━━━━━━━━━ */}
+        <FinalCta isFull={isFull} />
       </main>
 
       <Dialog open={demoOpen} onOpenChange={setDemoOpen}>
