@@ -1,6 +1,7 @@
 // Workspace API key management (Phase 4: public API).
 // Plaintext key is shown ONCE on creation; only the hash is stored.
 import { supabase } from "@/integrations/supabase/client";
+import { withSupabaseRetry as withRetry } from "@/lib/supabaseRetry";
 
 export interface ApiKey {
   id: string;
@@ -29,11 +30,13 @@ function generateApiKey(): string {
 
 export const apiKeysService = {
   async list(workspaceId: string): Promise<ApiKey[]> {
-    const { data, error } = await supabase
-      .from("workspace_api_keys")
-      .select("id, name, key_prefix, created_at, last_used_at, revoked_at")
-      .eq("workspace_id", workspaceId)
-      .order("created_at", { ascending: false });
+    const { data, error } = await withRetry(async () =>
+      await supabase
+        .from("workspace_api_keys")
+        .select("id, name, key_prefix, created_at, last_used_at, revoked_at")
+        .eq("workspace_id", workspaceId)
+        .order("created_at", { ascending: false }),
+    );
     if (error) throw error;
     return data ?? [];
   },

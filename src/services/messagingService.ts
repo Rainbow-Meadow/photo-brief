@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { withSupabaseRetry as withRetry } from "@/lib/supabaseRetry";
 
 export type RequestMessageKind = "initial" | "reminder" | "followup" | "custom";
 export type RequestMessageChannel = "email" | "sms" | "both";
@@ -21,11 +22,13 @@ export interface RequestMessage {
 
 export const messagingService = {
   async list(requestId: string): Promise<RequestMessage[]> {
-    const { data, error } = await supabase
-      .from("request_messages")
-      .select("*")
-      .eq("request_id", requestId)
-      .order("sent_at", { ascending: false });
+    const { data, error } = await withRetry(async () =>
+      await supabase
+        .from("request_messages")
+        .select("*")
+        .eq("request_id", requestId)
+        .order("sent_at", { ascending: false }),
+    );
     if (error) throw error;
     return (data ?? []).map((r) => ({
       id: r.id,

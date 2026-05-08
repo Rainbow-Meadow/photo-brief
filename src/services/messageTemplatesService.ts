@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { withSupabaseRetry as withRetry } from "@/lib/supabaseRetry";
 
 export interface MessageTemplate {
   id: string;
@@ -13,11 +14,13 @@ export interface MessageTemplate {
 
 export const messageTemplatesService = {
   async list(workspaceId: string): Promise<MessageTemplate[]> {
-    const { data, error } = await supabase
-      .from("message_templates")
-      .select("*")
-      .eq("workspace_id", workspaceId)
-      .order("name");
+    const { data, error } = await withRetry(async () =>
+      await supabase
+        .from("message_templates")
+        .select("*")
+        .eq("workspace_id", workspaceId)
+        .order("name"),
+    );
     if (error) throw error;
     return (data ?? []).map((r) => ({
       id: r.id,
