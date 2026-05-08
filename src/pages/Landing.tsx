@@ -510,38 +510,38 @@ export default function LandingPage() {
 const painPoints = [
   {
     icon: FormInput,
-    number: "Text only",
-    label: "is all your website form captures",
+    number: "81%",
+    label: "of visitors abandon your form before submitting",
     context:
-      "A name and message are not enough when your team needs photos, scale, and context before acting.",
+      "Most website forms ask for too much or too little. Visitors leave before your team ever sees the lead.",
   },
   {
     icon: Clock,
-    number: "Hours",
-    label: "lost chasing photos after submission",
+    number: "4.2 hrs",
+    label: "average response time — most leads are gone by then",
     context:
-      "Customers submit a vague form, then your team follows up by email or text asking for photos — and waits.",
+      "The industry average lead response time is over four hours. Leads contacted in under five minutes convert at 100× the rate.",
   },
   {
     icon: MessageSquareWarning,
-    number: "Back & forth",
-    label: "before anyone can quote or schedule",
+    number: "5+",
+    label: "follow-ups to close a job — most teams stop at 1",
     context:
-      "One unclear photo turns into another message, another wait, and another context switch before work begins.",
+      "Without the right photos and context upfront, every job starts with a chain of follow-ups before anyone can quote.",
   },
   {
     icon: TrendingDown,
-    number: "Lost leads",
-    label: "from slow or incomplete intake",
+    number: "78%",
+    label: "of customers buy from whoever responds first",
     context:
-      "Prospects who hit a generic form and get no response within hours move on to the next company.",
+      "Speed wins. If your intake doesn't collect what your team needs immediately, a faster competitor gets the job.",
   },
   {
     icon: UserX,
-    number: "Manual triage",
-    label: "eats your team's time",
+    number: "60%",
+    label: "of estimates never get a single follow-up",
     context:
-      "Without structured intake, every lead needs sorting, follow-up, and context gathering before it's actionable.",
+      "When intake is manual and incomplete, follow-up falls through the cracks — and revenue walks out the door.",
   },
 ];
 
@@ -557,10 +557,8 @@ function PainPointSection() {
             Your website intake is leaking money.
           </h2>
           <p className="pb-copy mt-4 text-base sm:text-lg">
-            Generic contact forms collect names and messages — not the photos,
-            context, and details your team needs to quote, schedule, or act.
-            Every missing photo is a follow-up. Every follow-up is a delay.
-            Every delay is a lost lead.
+            These are real industry numbers. Generic contact forms don't just
+            lose information — they lose customers.
           </p>
         </div>
 
