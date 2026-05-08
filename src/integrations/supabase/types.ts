@@ -395,6 +395,92 @@ export type Database = {
           },
         ]
       }
+      business_intake_profiles: {
+        Row: {
+          approved_blueprint_id: string | null
+          beta_application_id: string | null
+          created_at: string
+          current_intake_method: string | null
+          id: string
+          install_mode: string
+          latest_scan_job_id: string | null
+          lead_destination_config: Json
+          lead_destination_type: string | null
+          metadata: Json
+          primary_goal: string
+          routing_question: string | null
+          status: string
+          updated_at: string
+          website_url: string
+          workspace_id: string | null
+        }
+        Insert: {
+          approved_blueprint_id?: string | null
+          beta_application_id?: string | null
+          created_at?: string
+          current_intake_method?: string | null
+          id?: string
+          install_mode?: string
+          latest_scan_job_id?: string | null
+          lead_destination_config?: Json
+          lead_destination_type?: string | null
+          metadata?: Json
+          primary_goal?: string
+          routing_question?: string | null
+          status?: string
+          updated_at?: string
+          website_url: string
+          workspace_id?: string | null
+        }
+        Update: {
+          approved_blueprint_id?: string | null
+          beta_application_id?: string | null
+          created_at?: string
+          current_intake_method?: string | null
+          id?: string
+          install_mode?: string
+          latest_scan_job_id?: string | null
+          lead_destination_config?: Json
+          lead_destination_type?: string | null
+          metadata?: Json
+          primary_goal?: string
+          routing_question?: string | null
+          status?: string
+          updated_at?: string
+          website_url?: string
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_intake_profiles_approved_blueprint_fk"
+            columns: ["approved_blueprint_id"]
+            isOneToOne: false
+            referencedRelation: "intake_blueprints"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "business_intake_profiles_beta_application_id_fkey"
+            columns: ["beta_application_id"]
+            isOneToOne: false
+            referencedRelation: "beta_applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "business_intake_profiles_latest_scan_fk"
+            columns: ["latest_scan_job_id"]
+            isOneToOne: false
+            referencedRelation: "website_scan_jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "business_intake_profiles_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "business_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       business_workspaces: {
         Row: {
           created_at: string
@@ -885,6 +971,83 @@ export type Database = {
           },
         ]
       }
+      intake_blueprints: {
+        Row: {
+          approved_at: string | null
+          beta_application_id: string | null
+          created_at: string
+          customer_experience: Json
+          id: string
+          install_recommendation: string | null
+          lead_packet_plan: Json
+          profile_id: string | null
+          routing_question: string
+          source_scan_job_id: string | null
+          status: string
+          summary: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          approved_at?: string | null
+          beta_application_id?: string | null
+          created_at?: string
+          customer_experience?: Json
+          id?: string
+          install_recommendation?: string | null
+          lead_packet_plan?: Json
+          profile_id?: string | null
+          routing_question?: string
+          source_scan_job_id?: string | null
+          status?: string
+          summary?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          approved_at?: string | null
+          beta_application_id?: string | null
+          created_at?: string
+          customer_experience?: Json
+          id?: string
+          install_recommendation?: string | null
+          lead_packet_plan?: Json
+          profile_id?: string | null
+          routing_question?: string
+          source_scan_job_id?: string | null
+          status?: string
+          summary?: string | null
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "intake_blueprints_beta_application_id_fkey"
+            columns: ["beta_application_id"]
+            isOneToOne: false
+            referencedRelation: "beta_applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "intake_blueprints_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "business_intake_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "intake_blueprints_source_scan_job_id_fkey"
+            columns: ["source_scan_job_id"]
+            isOneToOne: false
+            referencedRelation: "website_scan_jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "intake_blueprints_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "business_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       intake_events: {
         Row: {
           created_at: string
@@ -960,6 +1123,73 @@ export type Database = {
             columns: ["intake_source_id"]
             isOneToOne: false
             referencedRelation: "intake_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      intake_routing_rules: {
+        Row: {
+          beta_application_id: string | null
+          blueprint_id: string
+          created_at: string
+          customer_description: string | null
+          id: string
+          is_fallback: boolean
+          label: string
+          match_keywords: string[]
+          service_catalog_item_ids: string[]
+          sort_order: number
+          template_type: string
+          workspace_id: string | null
+        }
+        Insert: {
+          beta_application_id?: string | null
+          blueprint_id: string
+          created_at?: string
+          customer_description?: string | null
+          id?: string
+          is_fallback?: boolean
+          label: string
+          match_keywords?: string[]
+          service_catalog_item_ids?: string[]
+          sort_order?: number
+          template_type: string
+          workspace_id?: string | null
+        }
+        Update: {
+          beta_application_id?: string | null
+          blueprint_id?: string
+          created_at?: string
+          customer_description?: string | null
+          id?: string
+          is_fallback?: boolean
+          label?: string
+          match_keywords?: string[]
+          service_catalog_item_ids?: string[]
+          sort_order?: number
+          template_type?: string
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "intake_routing_rules_beta_application_id_fkey"
+            columns: ["beta_application_id"]
+            isOneToOne: false
+            referencedRelation: "beta_applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "intake_routing_rules_blueprint_id_fkey"
+            columns: ["blueprint_id"]
+            isOneToOne: false
+            referencedRelation: "intake_blueprints"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "intake_routing_rules_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "business_workspaces"
             referencedColumns: ["id"]
           },
         ]
@@ -1705,6 +1935,98 @@ export type Database = {
         }
         Relationships: []
       }
+      service_catalog_items: {
+        Row: {
+          beta_application_id: string | null
+          category: string
+          confidence_score: number
+          created_at: string
+          customer_intent: string
+          description: string | null
+          first_seen_at: string
+          id: string
+          keywords: string[]
+          last_seen_at: string
+          name: string
+          profile_id: string | null
+          recommended_template_type: string
+          scan_job_id: string | null
+          source_url: string | null
+          status: string
+          updated_at: string
+          workspace_id: string | null
+        }
+        Insert: {
+          beta_application_id?: string | null
+          category?: string
+          confidence_score?: number
+          created_at?: string
+          customer_intent?: string
+          description?: string | null
+          first_seen_at?: string
+          id?: string
+          keywords?: string[]
+          last_seen_at?: string
+          name: string
+          profile_id?: string | null
+          recommended_template_type?: string
+          scan_job_id?: string | null
+          source_url?: string | null
+          status?: string
+          updated_at?: string
+          workspace_id?: string | null
+        }
+        Update: {
+          beta_application_id?: string | null
+          category?: string
+          confidence_score?: number
+          created_at?: string
+          customer_intent?: string
+          description?: string | null
+          first_seen_at?: string
+          id?: string
+          keywords?: string[]
+          last_seen_at?: string
+          name?: string
+          profile_id?: string | null
+          recommended_template_type?: string
+          scan_job_id?: string | null
+          source_url?: string | null
+          status?: string
+          updated_at?: string
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_catalog_items_beta_application_id_fkey"
+            columns: ["beta_application_id"]
+            isOneToOne: false
+            referencedRelation: "beta_applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_catalog_items_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "business_intake_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_catalog_items_scan_job_id_fkey"
+            columns: ["scan_job_id"]
+            isOneToOne: false
+            referencedRelation: "website_scan_jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_catalog_items_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "business_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sms_send_log: {
         Row: {
           body: string
@@ -2298,6 +2620,304 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "webhook_subscriptions_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "business_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      website_change_events: {
+        Row: {
+          after: Json | null
+          before: Json | null
+          beta_application_id: string | null
+          change_type: string
+          created_at: string
+          id: string
+          recommendation: string | null
+          scan_job_id: string | null
+          status: string
+          subject_url: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          after?: Json | null
+          before?: Json | null
+          beta_application_id?: string | null
+          change_type: string
+          created_at?: string
+          id?: string
+          recommendation?: string | null
+          scan_job_id?: string | null
+          status?: string
+          subject_url?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          after?: Json | null
+          before?: Json | null
+          beta_application_id?: string | null
+          change_type?: string
+          created_at?: string
+          id?: string
+          recommendation?: string | null
+          scan_job_id?: string | null
+          status?: string
+          subject_url?: string | null
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "website_change_events_beta_application_id_fkey"
+            columns: ["beta_application_id"]
+            isOneToOne: false
+            referencedRelation: "beta_applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "website_change_events_scan_job_id_fkey"
+            columns: ["scan_job_id"]
+            isOneToOne: false
+            referencedRelation: "website_scan_jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "website_change_events_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "business_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      website_forms: {
+        Row: {
+          beta_application_id: string | null
+          button_text: string | null
+          created_at: string
+          field_labels: string[]
+          field_names: string[]
+          form_action: string | null
+          id: string
+          inferred_purpose: string
+          method: string | null
+          nearby_copy: string | null
+          nearby_heading: string | null
+          page_url: string
+          quality_score: number
+          required_fields: string[]
+          scan_job_id: string
+          workspace_id: string | null
+        }
+        Insert: {
+          beta_application_id?: string | null
+          button_text?: string | null
+          created_at?: string
+          field_labels?: string[]
+          field_names?: string[]
+          form_action?: string | null
+          id?: string
+          inferred_purpose?: string
+          method?: string | null
+          nearby_copy?: string | null
+          nearby_heading?: string | null
+          page_url: string
+          quality_score?: number
+          required_fields?: string[]
+          scan_job_id: string
+          workspace_id?: string | null
+        }
+        Update: {
+          beta_application_id?: string | null
+          button_text?: string | null
+          created_at?: string
+          field_labels?: string[]
+          field_names?: string[]
+          form_action?: string | null
+          id?: string
+          inferred_purpose?: string
+          method?: string | null
+          nearby_copy?: string | null
+          nearby_heading?: string | null
+          page_url?: string
+          quality_score?: number
+          required_fields?: string[]
+          scan_job_id?: string
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "website_forms_beta_application_id_fkey"
+            columns: ["beta_application_id"]
+            isOneToOne: false
+            referencedRelation: "beta_applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "website_forms_scan_job_id_fkey"
+            columns: ["scan_job_id"]
+            isOneToOne: false
+            referencedRelation: "website_scan_jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "website_forms_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "business_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      website_pages: {
+        Row: {
+          beta_application_id: string | null
+          content_hash: string
+          created_at: string
+          ctas: Json
+          first_seen_at: string
+          h1: string | null
+          headings: Json
+          id: string
+          last_seen_at: string
+          meta_description: string | null
+          page_type: string
+          scan_job_id: string
+          text_excerpt: string | null
+          title: string | null
+          url: string
+          workspace_id: string | null
+        }
+        Insert: {
+          beta_application_id?: string | null
+          content_hash: string
+          created_at?: string
+          ctas?: Json
+          first_seen_at?: string
+          h1?: string | null
+          headings?: Json
+          id?: string
+          last_seen_at?: string
+          meta_description?: string | null
+          page_type?: string
+          scan_job_id: string
+          text_excerpt?: string | null
+          title?: string | null
+          url: string
+          workspace_id?: string | null
+        }
+        Update: {
+          beta_application_id?: string | null
+          content_hash?: string
+          created_at?: string
+          ctas?: Json
+          first_seen_at?: string
+          h1?: string | null
+          headings?: Json
+          id?: string
+          last_seen_at?: string
+          meta_description?: string | null
+          page_type?: string
+          scan_job_id?: string
+          text_excerpt?: string | null
+          title?: string | null
+          url?: string
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "website_pages_beta_application_id_fkey"
+            columns: ["beta_application_id"]
+            isOneToOne: false
+            referencedRelation: "beta_applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "website_pages_scan_job_id_fkey"
+            columns: ["scan_job_id"]
+            isOneToOne: false
+            referencedRelation: "website_scan_jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "website_pages_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "business_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      website_scan_jobs: {
+        Row: {
+          beta_application_id: string | null
+          completed_at: string | null
+          created_at: string
+          created_by: string | null
+          error: string | null
+          forms_detected_count: number
+          id: string
+          pages_scanned_count: number
+          profile_id: string | null
+          root_url: string
+          scan_type: string
+          services_detected_count: number
+          started_at: string | null
+          status: string
+          workspace_id: string | null
+        }
+        Insert: {
+          beta_application_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          error?: string | null
+          forms_detected_count?: number
+          id?: string
+          pages_scanned_count?: number
+          profile_id?: string | null
+          root_url: string
+          scan_type?: string
+          services_detected_count?: number
+          started_at?: string | null
+          status?: string
+          workspace_id?: string | null
+        }
+        Update: {
+          beta_application_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          error?: string | null
+          forms_detected_count?: number
+          id?: string
+          pages_scanned_count?: number
+          profile_id?: string | null
+          root_url?: string
+          scan_type?: string
+          services_detected_count?: number
+          started_at?: string | null
+          status?: string
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "website_scan_jobs_beta_application_id_fkey"
+            columns: ["beta_application_id"]
+            isOneToOne: false
+            referencedRelation: "beta_applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "website_scan_jobs_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "business_intake_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "website_scan_jobs_workspace_id_fkey"
             columns: ["workspace_id"]
             isOneToOne: false
             referencedRelation: "business_workspaces"
