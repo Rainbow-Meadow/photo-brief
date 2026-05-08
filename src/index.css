@@ -99,12 +99,12 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
       radial-gradient(42% 32% at 82% 16%, hsl(185 95% 66% / 0.13), transparent 76%),
       radial-gradient(58% 48% at 50% 92%, hsl(252 90% 70% / 0.10), transparent 72%);
 
-    --pb-night: 260 52% 4%;
-    --pb-ink: 258 45% 7%;
-    --pb-panel: 258 36% 10%;
-    --pb-panel-2: 257 32% 14%;
-    --pb-line: 255 18% 28%;
-    --pb-line-strong: 255 24% 42%;
+    --pb-night: 258 22% 7%;
+    --pb-ink: 256 18% 10%;
+    --pb-panel: 256 16% 14%;
+    --pb-panel-2: 255 14% 18%;
+    --pb-line: 255 12% 28%;
+    --pb-line-strong: 255 16% 40%;
     --pb-violet: 257 96% 67%;
     --pb-lavender: 264 100% 78%;
     --pb-electric: 246 100% 72%;
@@ -419,9 +419,9 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
 
   .pb-landing {
     background:
-      radial-gradient(70% 45% at 50% 0%, hsl(var(--pb-violet) / 0.17), transparent 72%),
-      radial-gradient(40% 30% at 15% 26%, hsl(var(--pb-electric) / 0.10), transparent 72%),
-      linear-gradient(180deg, hsl(var(--pb-night)) 0%, hsl(var(--pb-ink)) 46%, hsl(258 38% 5%) 100%);
+      radial-gradient(70% 45% at 50% 0%, hsl(var(--pb-violet) / 0.10), transparent 72%),
+      radial-gradient(40% 30% at 15% 26%, hsl(var(--pb-electric) / 0.06), transparent 72%),
+      linear-gradient(180deg, hsl(var(--pb-night)) 0%, hsl(var(--pb-ink)) 46%, hsl(256 16% 8%) 100%);
   }
 
   /* ── Editorial / Surveva-style warm paper surface ───────────── */
@@ -569,7 +569,7 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
   .pb-paper-link[data-active="true"] { color: hsl(var(--pb-violet)); }
   /* Soft fade where paper meets the dark sections below */
   .pb-paper-fade-bottom {
-    background: linear-gradient(180deg, transparent 0%, hsl(var(--pb-night)) 100%);
+    background: linear-gradient(180deg, transparent 0%, hsl(var(--pb-night) / 0.5) 55%, hsl(var(--pb-night)) 100%);
   }
 
   .pb-copy { color: hsl(var(--pb-muted)); font-size: clamp(0.938rem, 0.4vw + 0.875rem, 1.125rem); line-height: 1.65; }
