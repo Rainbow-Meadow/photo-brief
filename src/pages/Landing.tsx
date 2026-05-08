@@ -366,7 +366,7 @@ export default function LandingPage() {
                   ))}
                 </div>
 
-                <BetaSeatTracker className="mt-8 max-w-sm sm:mt-10" />
+                <BetaSeatTracker className="pb-on-paper mt-8 max-w-sm sm:mt-10" />
               </div>
 
               {/* Right — hand-drawn illustration */}
