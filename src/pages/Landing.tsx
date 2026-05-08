@@ -811,7 +811,7 @@ function PainPointSection() {
       <div className="pb-container">
         <div className="mx-auto max-w-3xl text-center lg:mx-0 lg:grid lg:max-w-none lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:gap-8 lg:text-left">
           {/* Left column — intro copy + carousel */}
-          <div className="lg:min-w-0 text-center">
+          <div className="lg:min-w-0 lg:text-left">
             <span className="pb-eyebrow">
               <MessageSquareWarning className="h-3.5 w-3.5" /> The problem
             </span>
