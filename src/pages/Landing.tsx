@@ -252,6 +252,8 @@ export default function LandingPage() {
   const [comparisonMode, setComparisonMode] = useState<"messy" | "clean">(
     "messy",
   );
+  const [activeUseCaseStamp, setActiveUseCaseStamp] = useState<string | null>(null);
+  const [betaDetailsOpen, setBetaDetailsOpen] = useState<string[]>([]);
   const { isFull } = useBetaSeats();
 
   const utm = useMemo(() => {
