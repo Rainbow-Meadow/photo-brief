@@ -1677,32 +1677,24 @@ function FinalCta({ isFull }: { isFull: boolean }) {
   return (
     <section className="pb-section">
       <div className="pb-container">
-        <div className="border-t border-white/12 pt-12 md:pt-16">
-          <div className="grid gap-10 md:gap-14 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[hsl(var(--pb-lavender))]">
-                The last word
-              </p>
-              <h2 className="mt-5 font-serif text-4xl italic leading-[1.02] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-[4.25rem]">
-                Get quote-ready leads,{" "}
-                <span className="not-italic font-semibold">
-                  not vague messages.
-                </span>
-              </h2>
-              <BrandMark
-                variant="horizontal"
-                tone="light"
-                size={36}
-                className="mt-8 opacity-80"
-              />
-            </div>
-            <div className="lg:pl-10 lg:border-l lg:border-white/12">
-              <p className="pb-copy max-w-xl text-base leading-relaxed sm:text-lg">
+        <div className="border-t border-white/12 pt-10 md:pt-14">
+          <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[hsl(var(--pb-lavender))]">
+            The last word
+          </p>
+          <div className="mt-6 grid gap-10 md:gap-14 lg:grid-cols-[1.15fr_1fr] lg:items-start">
+            <h2 className="font-serif text-4xl italic leading-[1.04] tracking-tight text-white sm:text-5xl md:text-[3.5rem] lg:text-[4rem]">
+              Get quote-ready leads,{" "}
+              <span className="not-italic font-semibold">
+                not vague messages.
+              </span>
+            </h2>
+            <div className="lg:pt-3">
+              <p className="pb-copy max-w-md text-base leading-relaxed sm:text-lg">
                 Stop chasing customers for missing photos and context. Every
                 inquiry arrives as a complete, actionable lead packet — so your
                 team can quote, schedule, or approve without a single follow-up.
               </p>
-              <div className="mt-8 flex flex-col items-start gap-2.5 sm:flex-row sm:gap-3">
+              <div className="mt-7 flex flex-col items-start gap-2.5 sm:flex-row sm:gap-3">
                 <Button
                   size="xl"
                   variant="pb-primary"
@@ -1719,7 +1711,7 @@ function FinalCta({ isFull }: { isFull: boolean }) {
                   <NavLink to="/pricing">See plans</NavLink>
                 </Button>
               </div>
-              <p className="mt-5 text-xs font-medium text-white/46 sm:text-sm">
+              <p className="mt-4 text-xs font-medium text-white/46">
                 Customers do not need an account or app to complete a
                 PhotoBrief intake.
               </p>
