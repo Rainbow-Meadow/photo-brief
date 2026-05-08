@@ -252,6 +252,8 @@ export default function LandingPage() {
   const [comparisonMode, setComparisonMode] = useState<"messy" | "clean">(
     "messy",
   );
+  const [activeUseCaseStamp, setActiveUseCaseStamp] = useState<string | null>(null);
+  const [betaDetailsOpen, setBetaDetailsOpen] = useState<string[]>([]);
   const { isFull } = useBetaSeats();
 
   const utm = useMemo(() => {
@@ -404,8 +406,15 @@ export default function LandingPage() {
           <PainPointSection />
         </div>
 
-        {/* ── Chapter break: Problem → Solution ── */}
-        <ChapterDivider tone="paper" />
+        {/* ━━ SEAM A — Chapter marker (Problem → Solution) ━━━━ */}
+        <ChapterMarker
+          stamp="Chapter II · The fix"
+          words={[
+            ["messy form", "clean packet"],
+            ["vague intake", "actionable lead"],
+            ["back-and-forth", "one round trip"],
+          ]}
+        />
 
         <section className="pb-section">
           <div className="pb-container">
@@ -435,30 +444,39 @@ export default function LandingPage() {
         {/* ━━ 5. HOW IT WORKS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <WorkflowSection />
 
+        {/* ━━ SEAM B — Comparison toggle promoted to seam ━━━━━ */}
+        <ComparisonSeam mode={comparisonMode} onModeChange={setComparisonMode} />
+
         {/* ━━ 6. BEFORE / AFTER — ivory alt ━━━━━━━━━━━━━━━━━━ */}
         <div className="pb-section-alt">
-          <ComparisonSection
-            mode={comparisonMode}
-            onModeChange={setComparisonMode}
-          />
+          <ComparisonSection mode={comparisonMode} />
         </div>
 
         {/* ━━ TICKER 2 — Product signals ━━━━━━━━━━━━━━━━━━━━━━ */}
         <TickerBar tone="paper" items={["Website scan included", "Hosted link or embed", "No app required for customers", "AI photo quality checks", "Lead packets — not form spam"]} direction="right" />
 
-        {/* ── Chapter break: Solution → Fit ── */}
-        <ChapterDivider tone="paper" />
+        {/* ━━ SEAM C — Use case chip filter ━━━━━━━━━━━━━━━━━━ */}
+        <UseCaseChipRow active={activeUseCaseStamp} onChange={setActiveUseCaseStamp} />
 
         {/* ━━ 7. USE CASES ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-        <UseCaseSection />
+        <UseCaseSection activeStamp={activeUseCaseStamp} />
 
         {/* ━━ 8. WEBSITE INTELLIGENCE — ivory alt ━━━━━━━━━━━━━ */}
         <div className="pb-section-alt">
           <WebsiteIntelligenceSection />
         </div>
 
-        {/* ── Chapter break: Product → Beta ── */}
-        <ChapterDivider tone="paper" />
+        {/* ━━ SEAM D — Beta crossover ticker ━━━━━━━━━━━━━━━━━ */}
+        <TickerBar
+          tone="paper"
+          items={[
+            `${BETA_TOTAL_PARTNERS} founding partner seats`,
+            "Free Pro for Life reward",
+            `${BETA_DURATION_DAYS}-day beta`,
+            "Concierge setup included",
+            "Every partner earns a reward",
+          ]}
+        />
 
         {/* ━━ BETA ZONE — distinct lavender-tinted chapter ━━━━━━ */}
         <div className="pb-beta-zone">
@@ -470,8 +488,8 @@ export default function LandingPage() {
             <RewardTiersSection />
           </div>
 
-          {/* Details — collapsed disclosure */}
-          <BetaDetailsAccordion />
+          {/* Details — collapsed disclosure with master toggle seam */}
+          <BetaDetailsAccordion value={betaDetailsOpen} onValueChange={setBetaDetailsOpen} />
         </div>
 
         {/* ━━ FINAL CTA — the one dark zone ━━━━━━━━━━━━━━━━━ */}
@@ -952,11 +970,116 @@ function FoundingPartnerBetaSection({ isFull }: { isFull: boolean }) {
   );
 }
 
-function ChapterDivider({ tone = "dark" }: { tone?: "dark" | "paper" }) {
-  const via = tone === "paper" ? "via-[hsl(var(--pb-ink-soft)/0.18)]" : "via-white/12";
+/**
+ * ChapterMarker — animated seam with a chapter stamp + rotating word pair.
+ * Replaces the old passive ChapterDivider hairline.
+ */
+function ChapterMarker({
+  stamp,
+  words,
+}: {
+  stamp: string;
+  words: ReadonlyArray<readonly [string, string]>;
+}) {
+  const [idx, setIdx] = useState(0);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce || words.length <= 1) return;
+    const t = window.setInterval(() => setIdx((i) => (i + 1) % words.length), 2400);
+    return () => window.clearInterval(t);
+  }, [words.length]);
+  const [a, b] = words[idx];
   return (
-    <div className="pb-container" aria-hidden>
-      <div className={`mx-auto h-px max-w-lg bg-gradient-to-r from-transparent ${via} to-transparent`} />
+    <div className="pb-container">
+      <div className="pb-chapter-marker">
+        <span className="pb-chapter-marker-stamp">{stamp}</span>
+        <span className="pb-chapter-marker-rule" aria-hidden />
+        <span className="pb-chapter-marker-words" aria-live="polite">
+          <span key={`a-${idx}`} className="pb-chapter-marker-word">{a}</span>
+          <span className="pb-chapter-marker-arrow">→</span>
+          <span key={`b-${idx}`} className="pb-chapter-marker-word pb-chapter-marker-word-b">{b}</span>
+        </span>
+      </div>
+    </div>
+  );
+}
+
+/** ComparisonSeam — promotes the Before / PhotoBrief toggle into the seam between Workflow and Comparison. */
+function ComparisonSeam({
+  mode,
+  onModeChange,
+}: {
+  mode: "messy" | "clean";
+  onModeChange: (mode: "messy" | "clean") => void;
+}) {
+  return (
+    <div className="pb-seam-bar">
+      <div className="pb-container">
+        <div className="flex flex-col items-center justify-between gap-3 py-4 sm:flex-row sm:py-5">
+          <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[hsl(var(--pb-violet))]">
+            See the difference
+          </p>
+          <div className="pb-seam-toggle" role="tablist" aria-label="Comparison mode">
+            {[
+              { id: "messy", label: "Before" },
+              { id: "clean", label: "PhotoBrief" },
+            ].map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                role="tab"
+                aria-selected={mode === item.id}
+                data-active={mode === item.id}
+                onClick={() => onModeChange(item.id as "messy" | "clean")}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+          <p className="hidden text-[10px] font-black uppercase tracking-[0.28em] text-[hsl(var(--pb-ink-muted))] sm:block">
+            Toggle to compare
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** UseCaseChipRow — quick-filter pills that highlight a matching use case card. */
+function UseCaseChipRow({
+  active,
+  onChange,
+}: {
+  active: string | null;
+  onChange: (stamp: string | null) => void;
+}) {
+  const stamps = useCases.map((u) => u.stamp);
+  return (
+    <div className="border-b border-[hsl(var(--pb-ink-soft)/0.14)]">
+      <div className="pb-container">
+        <div className="pb-chip-row" role="tablist" aria-label="Filter use cases">
+          <button
+            type="button"
+            data-active={active === null}
+            onClick={() => onChange(null)}
+            className="pb-chip"
+          >
+            All
+          </button>
+          {stamps.map((stamp) => (
+            <button
+              key={stamp}
+              type="button"
+              data-active={active === stamp}
+              onClick={() => onChange(active === stamp ? null : stamp)}
+              className="pb-chip"
+            >
+              {stamp}
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
@@ -1125,13 +1248,7 @@ function WorkflowSection() {
   );
 }
 
-function ComparisonSection({
-  mode,
-  onModeChange,
-}: {
-  mode: "messy" | "clean";
-  onModeChange: (mode: "messy" | "clean") => void;
-}) {
+function ComparisonSection({ mode }: { mode: "messy" | "clean" }) {
   const isClean = mode === "clean";
   const signals = isClean ? cleanSignals : messySignals;
 
@@ -1151,30 +1268,6 @@ function ComparisonSection({
             />
           }
         />
-
-        {/* Editorial toggle — minimal underline tabs */}
-        <div className="mx-auto mt-8 flex max-w-sm items-center justify-center gap-8 border-b border-[hsl(var(--pb-ink-soft)/0.18)] sm:mt-10">
-          {[
-            { id: "messy", label: "Before" },
-            { id: "clean", label: "PhotoBrief" },
-          ].map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => onModeChange(item.id as "messy" | "clean")}
-              className={`relative -mb-px px-1 pb-3 text-xs font-black uppercase tracking-[0.22em] transition focus-visible:outline-none ${
-                mode === item.id
-                  ? "text-[hsl(var(--pb-ink))]"
-                  : "text-[hsl(var(--pb-ink-muted))] hover:text-[hsl(var(--pb-ink))]"
-              }`}
-            >
-              {item.label}
-              {mode === item.id && (
-                <span className="absolute inset-x-0 -bottom-px h-px bg-[hsl(var(--pb-violet))]" />
-              )}
-            </button>
-          ))}
-        </div>
 
         {/* Editorial spread — two columns separated by a hairline rule */}
         <div className="mt-8 grid gap-6 sm:mt-10 sm:gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-stretch lg:gap-0 lg:divide-x lg:divide-[hsl(var(--pb-ink-soft)/0.18)]">
@@ -1331,7 +1424,7 @@ function CleanPacketVisual() {
   );
 }
 
-function UseCaseSection() {
+function UseCaseSection({ activeStamp }: { activeStamp?: string | null }) {
   return (
     <section id="use-cases" className="pb-section">
       <div className="pb-container">
@@ -1352,9 +1445,14 @@ function UseCaseSection() {
         <div className="mt-8 flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory sm:mt-12 md:grid md:grid-cols-2 md:gap-x-10 md:gap-y-0 md:overflow-visible md:pb-0 lg:grid-cols-3 xl:grid-cols-5">
           {useCases.map((item, index) => {
             const Icon = item.icon;
+            const isActive = activeStamp === item.stamp;
+            const isDim = activeStamp != null && !isActive;
             return (
               <article
                 key={item.title}
+                data-usecase-card
+                data-active={isActive || undefined}
+                data-dim={isDim || undefined}
                 className="w-[78vw] max-w-[300px] shrink-0 snap-start border-t border-[hsl(var(--pb-ink-soft)/0.18)] pt-5 md:w-auto md:max-w-none md:min-w-0 md:pt-6"
               >
                 <div className="flex items-baseline justify-between gap-3">
@@ -1497,12 +1595,33 @@ function RewardTiersSection() {
   );
 }
 
-function BetaDetailsAccordion() {
+function BetaDetailsAccordion({
+  value,
+  onValueChange,
+}: {
+  value: string[];
+  onValueChange: (value: string[]) => void;
+}) {
+  const ALL_ITEMS = ["expectations", "scoring"];
+  const allOpen = ALL_ITEMS.every((id) => value.includes(id));
   return (
     <section className="pb-section-tight">
       <div className="pb-container">
-        <div className="mx-auto max-w-3xl border-t border-[hsl(var(--pb-ink-soft)/0.18)]">
-          <Accordion type="multiple" className="grid">
+        <div className="mx-auto max-w-3xl">
+          <div className="flex items-center justify-between gap-4 border-y border-[hsl(var(--pb-ink-soft)/0.18)] py-4">
+            <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[hsl(var(--pb-violet))]">
+              The fine print
+            </p>
+            <button
+              type="button"
+              className="pb-master-toggle"
+              onClick={() => onValueChange(allOpen ? [] : ALL_ITEMS)}
+              aria-expanded={allOpen}
+            >
+              {allOpen ? "Hide details ↑" : "Show all details ↓"}
+            </button>
+          </div>
+          <Accordion type="multiple" value={value} onValueChange={onValueChange} className="grid">
             <AccordionItem value="expectations" className="border-b border-[hsl(var(--pb-ink-soft)/0.18)]">
               <AccordionTrigger className="py-5 text-left text-sm font-bold text-white hover:no-underline sm:text-base [&>svg]:text-[hsl(var(--pb-lavender))]">
                 <span className="flex items-center gap-3">
