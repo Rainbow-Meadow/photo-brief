@@ -31,9 +31,14 @@ import {
   TimerReset,
   TrendingDown,
   Trophy,
+  Truck,
   UserCheck,
   UserX,
   Users,
+  Wind,
+  Wrench,
+  Leaf,
+  Package,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -82,6 +87,11 @@ import pileCloseup from "@/assets/junk-removal/pile-closeup.webp";
 import appliances from "@/assets/junk-removal/appliances.webp";
 import drivewayAccess from "@/assets/junk-removal/driveway-access.webp";
 import heroIllustration from "@/assets/landing-hero-illustration.png";
+import landscaperIllo from "@/assets/trades/landscaper-illustration.png";
+import junkHaulerIllo from "@/assets/trades/junk-hauler-illustration.png";
+import hvacTechIllo from "@/assets/trades/hvac-tech-illustration.png";
+import plumberIllo from "@/assets/trades/plumber-illustration.png";
+import estimatorIllo from "@/assets/trades/estimator-illustration.png";
 
 /* ── JSON-LD ───────────────────────────────────────────────── */
 
@@ -176,35 +186,49 @@ const cleanSignals = [
 
 const useCases = [
   {
-    icon: BadgeCheck,
-    title: "Quote and estimate requests",
-    body: "Ask for the photos your estimator needs before the first call becomes a chain of follow-ups.",
-    stamp: "Quote-ready",
+    icon: Leaf,
+    image: landscaperIllo,
+    title: "Landscapers — quote yards without a site visit",
+    body: "Ask homeowners for the wide yard shot, problem beds, fence line, and access path so you can scope mowing, cleanups, or installs from your truck.",
+    stamp: "Landscaping",
   },
   {
-    icon: MapPinned,
-    title: "Service and dispatch prep",
-    body: "Collect site access, issue context, and handling notes before a team heads out.",
-    stamp: "Field-ready",
+    icon: Truck,
+    image: junkHaulerIllo,
+    title: "Junk haulers — price the pile from the driveway",
+    body: "Guided pile, appliance, and access photos turn a vague \"come haul this\" into a quotable load with the right truck and crew.",
+    stamp: "Junk removal",
   },
   {
-    icon: ImageOff,
-    title: "Damage, warranty, and claims",
-    body: "Guide customers through the angles that matter so reviewers can understand the issue quickly.",
-    stamp: "Evidence packet",
+    icon: Wind,
+    image: hvacTechIllo,
+    title: "Repair & HVAC techs — show up with the right part",
+    body: "Capture nameplate, filter, breaker, and surrounding access shots so techs roll with the right model number, refrigerant, and gear.",
+    stamp: "HVAC & repair",
   },
   {
-    icon: ShieldCheck,
-    title: "Approvals and exceptions",
-    body: "Turn customer media into a packet that can be reviewed, approved, or escalated without guessing.",
-    stamp: "Decision-ready",
+    icon: Wrench,
+    image: plumberIllo,
+    title: "Plumbers — diagnose the leak before the truck rolls",
+    body: "Walk customers through shutoff, leak source, and supply lines so dispatch knows whether it's a 30-minute fix or a half-day repipe.",
+    stamp: "Plumbing",
   },
   {
-    icon: Eye,
-    title: "Product and service questions where visuals matter",
-    body: "When a customer's question only makes sense with a photo, give them a simple path to show what they mean.",
-    stamp: "Visual context",
+    icon: Package,
+    image: estimatorIllo,
+    title: "Damage & return estimators — turn customer photos into evidence",
+    body: "Insurance, warranty, and e-commerce returns: collect angles, scale, and serial shots in a structured packet reviewers can act on first pass.",
+    stamp: "Estimating",
   },
+];
+
+/** Trades targeted by PhotoBrief — used in the hero strip and SEO copy. */
+const TRADES = [
+  { name: "Landscapers", icon: Leaf, stamp: "Landscaping" },
+  { name: "Junk haulers", icon: Truck, stamp: "Junk removal" },
+  { name: "HVAC & repair", icon: Wind, stamp: "HVAC & repair" },
+  { name: "Plumbers", icon: Wrench, stamp: "Plumbing" },
+  { name: "Estimators", icon: Package, stamp: "Estimating" },
 ];
 
 const trustPoints = [
@@ -300,8 +324,8 @@ export default function LandingPage() {
   return (
     <>
       <PageMeta
-        title="PhotoBrief.ai | Replace weak website forms with guided visual intake"
-        description="PhotoBrief scans your website, maps your services, and gives customers a simple photo-guided path so your team gets actionable lead packets instead of vague messages."
+        title="PhotoBrief.ai | Visual intake for landscapers, junk haulers, HVAC, plumbers & estimators"
+        description="PhotoBrief replaces weak website forms with guided visual intake — built for landscapers, junk haulers, HVAC and repair techs, plumbers, and damage / return estimators. Scan your site, map your services, and get actionable lead packets instead of vague messages."
         canonicalPath="/"
         jsonLd={jsonLd}
         breadcrumbs={[{ name: "Home", path: "/" }]}
@@ -329,7 +353,9 @@ export default function LandingPage() {
                 <p className="mt-6 max-w-xl text-base leading-[1.65] text-[hsl(var(--pb-ink-muted))] sm:text-lg sm:mt-8">
                   PhotoBrief scans your website, maps your services, and gives
                   customers a simple photo-guided path — so your team gets
-                  actionable lead packets instead of vague messages.
+                  actionable lead packets instead of vague messages. Built for
+                  landscapers, junk haulers, HVAC and repair techs, plumbers,
+                  and damage estimators.
                 </p>
 
                 <div className="mt-8 flex flex-col gap-3 sm:mt-10 sm:flex-row sm:items-center">
@@ -366,6 +392,25 @@ export default function LandingPage() {
                       {item}
                     </span>
                   ))}
+                </div>
+
+                {/* Built-for trade strip — links to matching use case */}
+                <div className="mt-8 sm:mt-10">
+                  <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[hsl(var(--pb-ink-muted))]">
+                    Built for
+                  </p>
+                  <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
+                    {TRADES.map(({ name, icon: TIcon }) => (
+                      <a
+                        key={name}
+                        href="#use-cases"
+                        className="inline-flex items-center gap-1.5 rounded-full border border-[hsl(var(--pb-ink-soft)/0.18)] bg-[hsl(var(--pb-ink-soft)/0.04)] px-3 py-1.5 text-xs font-bold text-[hsl(var(--pb-ink))] transition hover:border-[hsl(var(--pb-violet)/0.55)] hover:text-[hsl(var(--pb-violet))] sm:text-sm"
+                      >
+                        <TIcon className="h-3.5 w-3.5 text-[hsl(var(--pb-violet))]" />
+                        {name}
+                      </a>
+                    ))}
+                  </div>
                 </div>
 
                 <BetaSeatTracker className="pb-on-paper mt-8 max-w-sm sm:mt-10" />
@@ -1212,6 +1257,16 @@ function WorkflowSection() {
               machine — from first visit to a quote-ready packet your team
               can act on without follow-ups.
             </p>
+            <div className="mt-8 hidden lg:block">
+              <img
+                src={estimatorIllo}
+                alt="Hand-drawn illustration of an estimator assembling an evidence packet from customer photos"
+                width={1024}
+                height={1024}
+                loading="lazy"
+                className="w-full max-w-sm drop-shadow-[0_24px_40px_hsl(var(--pb-ink-soft)/0.22)]"
+              />
+            </div>
           </div>
           <div className="relative">
             <div className="absolute left-6 top-8 hidden h-[calc(100%-4rem)] w-px bg-gradient-to-b from-[hsl(var(--pb-lavender))] via-[hsl(var(--pb-violet))] to-transparent md:block" />
@@ -1430,13 +1485,13 @@ function UseCaseSection({ activeStamp }: { activeStamp?: string | null }) {
       <div className="pb-container">
         <SectionIntro
           eyebrow={<><ClipboardList className="h-3.5 w-3.5" /> Use cases</>}
-          title="Built for businesses that need to see before they act."
-          description="Anywhere a missing photo slows the next step — quoting, scheduling, approving, or documenting — PhotoBrief structures the intake so your team has everything on the first pass."
+          title="Built for the trades that need to see before they act."
+          description="Landscapers, junk haulers, HVAC and repair techs, plumbers, and damage / return estimators — anywhere a missing photo slows the next step, PhotoBrief structures the intake so your team has everything on the first pass."
           accent={
             <StatAccent
               icon={ClipboardList}
-              value="5+"
-              label="Industries shipping with PhotoBrief in beta."
+              value="5"
+              label="Trades shipping with PhotoBrief in beta."
               tone="lavender"
             />
           }
@@ -1455,6 +1510,18 @@ function UseCaseSection({ activeStamp }: { activeStamp?: string | null }) {
                 data-dim={isDim || undefined}
                 className="w-[78vw] max-w-[300px] shrink-0 snap-start border-t border-[hsl(var(--pb-ink-soft)/0.18)] pt-5 md:w-auto md:max-w-none md:min-w-0 md:pt-6"
               >
+                {item.image ? (
+                  <div className="mb-4 flex h-40 items-end justify-center overflow-hidden sm:h-44">
+                    <img
+                      src={item.image}
+                      alt={`Hand-drawn illustration — ${item.stamp}`}
+                      width={1024}
+                      height={1024}
+                      loading="lazy"
+                      className="h-full w-auto object-contain object-bottom drop-shadow-[0_12px_22px_hsl(var(--pb-ink-soft)/0.18)]"
+                    />
+                  </div>
+                ) : null}
                 <div className="flex items-baseline justify-between gap-3">
                   <span className="font-serif text-2xl leading-none text-[hsl(var(--pb-violet))] sm:text-3xl">
                     {String(index + 1).padStart(2, "0")}
