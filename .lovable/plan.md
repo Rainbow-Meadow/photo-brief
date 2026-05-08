@@ -1,56 +1,100 @@
 
-# Intentional Product → Beta Transition
+# Diagnostic Sweep: Fragility Sources
 
-## The Problem
+After inspecting hooks, services, App.tsx, auth flow, query config, retry logic, and the DB linter, here are the concrete issues making the app fragile, ranked by impact.
 
-Right now the page goes: Use Cases → Website Intelligence → chapter divider → FreeProSpotlight → FoundingPartnerSection → Trust Points → Agent Application → Final CTA. The jump from "here's what the product does" to "apply for a beta seat" feels abrupt because:
+---
 
-1. **Website Intelligence already bleeds into beta** — its heading says "For beta partners, we build the first intake" but it's positioned as a product section. There's no moment where the page explicitly shifts from "what this product solves" to "why we're looking for partners right now."
-2. **The chapter divider after Website Intelligence is the same thin gradient line** used everywhere — it doesn't signal that a major tonal shift is happening.
-3. **FreeProSpotlight fires immediately** — the reader goes from product feature cards directly into "2 partners get Free Pro for Life" with no emotional bridge.
-4. **Trust Points are orphaned** between the beta details and the application form, breaking the momentum toward applying.
+## 1. No global React Query defaults (HIGH)
 
-## The Fix: A "Bridge" Section + Reordering
+`new QueryClient()` at line 76 of App.tsx has **zero configuration** -- no `staleTime`, no `retry`, no `refetchOnWindowFocus` control. This means:
+- Every query refetches on window focus (tab switch = waterfall of Supabase calls)
+- Default retry is 3, which stacks on top of `withSupabaseRetry` (2 attempts) = up to **6 requests** per failure
+- No `gcTime`/`staleTime` so cache is invalidated aggressively
 
-### 1. Add a dedicated "Why a beta?" bridge section
+**Fix:** Add sensible defaults:
+```ts
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 30_000,        // 30s before refetch
+      gcTime: 5 * 60_000,       // 5 min cache
+      retry: 1,                 // 1 retry (supabaseRetry handles transients)
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+```
 
-Between the chapter divider and FreeProSpotlight, insert a short, cinematic section that explicitly shifts the tone. This is not a new feature pitch — it's the "here's why we're doing this and why it matters for you" moment.
+---
 
-**Content:**
-- Eyebrow: `Early access`
-- Headline: "We're building this with you, not just for you."
-- Body: 1–2 sentences explaining that PhotoBrief is in a hands-on beta because visual intake is workflow-specific — the product gets better when real businesses shape it. This makes the beta feel like a privilege and a collaboration, not just an early-bird discount program.
+## 2. 37+ Supabase calls with NO retry wrapper (HIGH)
 
-**Visual treatment:** No card, no panel — just centered text with generous breathing room, similar to Apple's "chapter opening" moments. A subtle lavender → mint gradient text on the headline to signal something new.
+`withSupabaseRetry` exists but is only used in `useCurrentWorkspace`. Every service call in `guidesService`, `submissionsService`, `requestsService`, `messagingService`, etc. calls Supabase raw. During a 503 window (instance restart), **every service call fails silently or throws an uncaught error**.
 
-### 2. Move Trust Points above FreeProSpotlight
+**Fix:** Wrap critical service calls in `withSupabaseRetry`, or add a global PostgREST retry interceptor.
 
-Trust points (secure links, no app required, your data stays yours) currently sit between the beta details and the application form. Move them to just after the bridge section, before the rewards. This answers the natural objection ("can I trust this?") before asking them to commit.
+---
 
-### 3. Upgrade the chapter divider before the beta block
+## 3. 13 `.single()` calls that throw on empty results (MEDIUM-HIGH)
 
-Replace the thin gradient line between Website Intelligence and the bridge section with a stronger visual break — a wider gradient bar or a short spacing bump — to make the tonal shift unmistakable.
+`.single()` returns an error (406) if zero rows match. If a guide/request/customer was deleted or hasn't been created yet, the call errors out instead of returning `null`. This is different from `.maybeSingle()` which returns null gracefully.
 
-### 4. Reorder the beta block
+Affected services: `messagingService`, `requestsService`, `websiteIntakeService`, `messageTemplatesService`, `guidesService`, `customersService`, `apiKeysService`, `submissionsService`.
 
-New order after the chapter break:
-1. **Bridge section** (new) — "We're building this with you"
-2. **Trust Points** (moved up) — security, no app, data ownership
-3. **FreeProSpotlight** — reward headline
-4. **FoundingPartnerSection** — benefits, expectations, accordion details
-5. **Ticker 3** (beta social proof)
-6. **Agent Application** — the form
-7. **Final CTA**
+**Fix:** Audit each `.single()` -- use `.maybeSingle()` where the row may not exist (lookups by ID from URL params, optional records).
 
-### 5. Refine Website Intelligence headline
+---
 
-Change "For beta partners, we build the first intake from your website" to something product-forward: "Your website becomes your intake engine." Move the beta-specific note into the body text so the section reads as product capability, not beta perk.
+## 4. Auth race condition between getSession and onAuthStateChange (MEDIUM)
 
-## Technical details
+In `useAuth.tsx`, both `getSession()` and `onAuthStateChange` call `setSession` independently. On a slow network, `getSession` can resolve with a stale/null session *after* `onAuthStateChange` has already fired with the correct session, overwriting good state with bad state.
 
-**File changed:** `src/pages/Landing.tsx`
+**Fix:** Use a ref flag: once `onAuthStateChange` fires, skip the `getSession` result.
 
-- New `BetaBridgeSection` component (~25 lines) — pure text, no new imports needed
-- Reorder JSX blocks in the main `LandingPage` return
-- Update `WebsiteIntelligenceSection` headline/body copy
-- Replace one `<ChapterDivider />` with a stronger visual break (wider gradient + more spacing)
+---
+
+## 5. No Error Boundary (MEDIUM)
+
+The app has `<Suspense fallback={null}>` but **no ErrorBoundary**. Any uncaught render error (bad data shape from Supabase, null ref, etc.) crashes the entire app with a white screen. This is the single most common cause of "the app just went blank."
+
+**Fix:** Add a top-level `<ErrorBoundary>` around routes with a fallback UI and a "reload" button.
+
+---
+
+## 6. Landing page is 1,622 lines with 23 imports, not lazy-loaded (MEDIUM)
+
+Landing.tsx is eagerly imported (not behind `lazy()`), so it's in the initial bundle. With 30 component imports, it pulls a lot of code into the critical path. This affects initial load time and increases the chance of a single component error crashing the whole page.
+
+**Fix:** Lazy-load Landing like the other pages, and consider splitting the 30 sub-components into a barrel import or dynamic sections.
+
+---
+
+## 7. Suspense fallback is `null` (LOW-MEDIUM)
+
+`<Suspense fallback={null}>` means lazy-loaded pages show nothing while loading. Combined with no error boundary, a slow chunk load = blank screen with no feedback.
+
+**Fix:** Replace `null` with a simple loading spinner or skeleton.
+
+---
+
+## 8. DB security warnings (LOW -- not fragility but noted)
+
+The linter found 16 warnings:
+- 2 functions without `search_path` set
+- 3 public buckets allowing file listing
+- Multiple `SECURITY DEFINER` functions callable by anon/authenticated without explicit revoke
+
+These don't cause runtime fragility but could cause unexpected behavior under adversarial conditions.
+
+---
+
+## Recommended implementation order
+
+1. QueryClient defaults (instant win, ~5 min)
+2. Error Boundary (prevents white-screen crashes, ~10 min)
+3. `.single()` --> `.maybeSingle()` audit (~15 min)
+4. Auth race condition fix (~10 min)
+5. Lazy-load Landing + Suspense fallback (~10 min)
+6. Retry wrapper on critical services (larger effort, ~30 min)
+7. DB security fixes (migration, separate effort)
