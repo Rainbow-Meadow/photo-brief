@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_migration_log: {
+        Row: {
+          created_at: string
+          error_msg: string | null
+          executed_by: string
+          id: string
+          name: string | null
+          sql_hash: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          error_msg?: string | null
+          executed_by: string
+          id?: string
+          name?: string | null
+          sql_hash: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          error_msg?: string | null
+          executed_by?: string
+          id?: string
+          name?: string | null
+          sql_hash?: string
+          status?: string
+        }
+        Relationships: []
+      }
       ai_check_results: {
         Row: {
           captured_media_id: string

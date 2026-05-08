@@ -1,100 +1,66 @@
 
-# Cloudflare Agents for PhotoBrief
+## Goal
 
-## What Cloudflare Agents Are
+Create an admin-protected edge function `run-migration` that accepts SQL and executes it against the database using the service role key (already available as `SUPABASE_SERVICE_ROLE_KEY` in the edge function environment). This lets you apply migrations from your repo without needing direct Supabase CLI credentials.
 
-Cloudflare Agents SDK lets you build **stateful, long-running AI agents** that run on Durable Objects. Each agent instance gets:
+## What gets built
 
-- **Built-in SQLite database** — persistent state that survives restarts, deploys, and hibernation
-- **WebSocket connections** — real-time bidirectional communication with clients
-- **Scheduled tasks** — cron, delay, date-based scheduling that wakes agents autonomously
-- **Tool calling** — server-side tools, client-side tools, and human-in-the-loop approval
-- **MCP server/client** — expose tools via Model Context Protocol or consume external MCP servers
-- **Browser automation** — Chrome DevTools Protocol access for scraping/screenshots
-- **Voice** — real-time speech-to-text/text-to-speech over WebSocket
-- **Email** — send and receive email natively
-- **Sub-agents** — spawn child agents with isolated storage and typed RPC
-- **Durable execution** — work that survives eviction with crash recovery
-- **Agentic payments** — accept/make machine-to-machine payments (x402, MPP)
+### 1. Edge function: `supabase/functions/run-migration/index.ts`
 
-You already have `CLOUDFLARE_API_TOKEN` configured, and the existing Cloudflare Worker (`photobrief-router`) provides infrastructure to deploy alongside.
+- **Auth**: Requires a valid JWT from a platform admin (same pattern as `admin-ai-rerun`)
+- **Input**: `{ sql: string, name?: string }` — the migration SQL and an optional label
+- **Execution**: Uses the service role Supabase client to call `rpc` or direct postgres via `SUPABASE_DB_URL`
+- **Safety guardrails**:
+  - Platform admin only (checked against `platform_admins` table)
+  - Max SQL size limit (e.g. 500KB)
+  - Logs each execution with timestamp, admin user ID, migration name, and success/failure to a `migration_log` table
+- **Output**: `{ ok: true, name, rows_affected }` or `{ ok: false, error }`
 
----
+Since `SUPABASE_DB_URL` is already configured as a secret, the function will use a direct Postgres connection (via `deno-postgres`) for full DDL support (CREATE TABLE, ALTER, etc.) — the Supabase JS client's `rpc` can't run arbitrary DDL.
 
-## High-Value Use Cases for PhotoBrief
+### 2. Migration log table
 
-### 1. Live MCP Server (replace the "planned" stub)
+A new `admin_migration_log` table to track what was applied:
 
-`public/mcp.json` currently says `"status": "planned"` with a fallback to the REST endpoint. A Cloudflare Agent running `McpAgent` would make PhotoBrief's MCP endpoint real — any AI coding tool (Claude Code, Cursor, Windsurf, OpenCode) could `create_request`, `lookup_pricing`, and `read_faq` natively.
+```
+admin_migration_log
+  id          uuid PK
+  name        text
+  sql_hash    text        -- SHA-256 of the SQL to detect re-runs
+  executed_by uuid        -- refs auth.users
+  status      text        -- 'success' | 'error'
+  error_msg   text
+  created_at  timestamptz
+```
 
-**Why Cloudflare Agents vs. a Supabase edge function:** MCP uses Streamable HTTP with SSE, which maps naturally to the Agent's built-in transport. The Agent handles session state, auth, and tool registration out of the box.
+RLS: only platform admins can read; inserts via service role only.
 
-### 2. Per-Customer Photo Request Agent
+### 3. Local runner script
 
-Each photo request could be backed by an agent instance (keyed by request token). The agent would:
-- Track the recipient's capture session state in real time
-- Run AI quality checks as photos arrive (calling the existing `ai-analyze-media` edge function)
-- Send follow-up nudges on a schedule if photos haven't been submitted
-- Provide a WebSocket connection so the business dashboard shows live capture progress
+A small Node.js script (`scripts/run-migration.mjs`) that:
+1. Reads a `.sql` file from `supabase/migrations/`
+2. Authenticates as your admin account to get a JWT
+3. POSTs the SQL to the `run-migration` edge function
+4. Prints the result
 
-### 3. Proactive Business Assistant Agent
+Usage: `node scripts/run-migration.mjs supabase/migrations/20260508_my_change.sql`
 
-A per-workspace agent that:
-- Monitors submission quality trends and sends digest notifications
-- Auto-generates guide suggestions based on customer photo patterns
-- Handles scheduled reminders (request due dates, follow-ups)
-- Answers workspace-specific questions using RAG over their guides/templates
+The script reads credentials from environment variables (`ADMIN_EMAIL`, `ADMIN_PASSWORD`) or prompts for them.
 
-### 4. Website Intake Orchestrator
+### 4. GitHub Actions workflow update
 
-Replace the current stateless `website-intake` edge function with an agent that:
-- Maintains a conversation with the lead (multi-turn intake via chat or SMS)
-- Uses AI to classify the request type and match templates with persistent context
-- Queues and retries delivery (SMS/email) with built-in retry logic
-- Tracks conversion funnels with per-lead state
+Update `.github/workflows/deploy-supabase.yml` to use the edge function instead of `supabase db push`:
+- Authenticate as admin via the Supabase auth API
+- Loop through unapplied migrations (checking `admin_migration_log` by `sql_hash`)
+- POST each to the edge function
+- Secrets needed: `ADMIN_EMAIL` and `ADMIN_PASSWORD` (your platform admin account)
 
-### 5. Agentic Payments for API Credits
+### 5. Config
 
-When the API goes live on Business plans, Cloudflare's x402 protocol could let AI agents pay per-API-call without traditional billing setup — a machine calls `create_request`, pays per credit automatically.
+Add `[functions.run-migration]` with `verify_jwt = true` to `supabase/config.toml`.
 
----
+## Technical details
 
-## Recommended Phased Approach
-
-### Phase 1: Live MCP Server (highest impact, lowest effort)
-
-Deploy a Cloudflare Agent as a remote MCP server at `mcp.photobrief.ai` that exposes the three tools already defined in `public/mcp.json`. It proxies to the existing Supabase edge functions, so no backend changes needed.
-
-**Technical work:**
-- New `workers/mcp-agent/` directory with a `McpAgent` class
-- Three tool definitions: `create_request`, `lookup_pricing`, `read_faq`
-- OAuth/bearer auth using existing `pb_` API keys
-- Update `public/mcp.json` status to `"active"` with the real endpoint
-- Add wrangler config and GitHub Actions deploy step
-- Update the `/for-ai-agents` page to show the live MCP endpoint
-
-### Phase 2: Real-Time Capture Agent
-
-Per-request Durable Object agent that provides WebSocket-based live status to the business dashboard during photo capture.
-
-### Phase 3: Business Assistant Agent
-
-Per-workspace agent with scheduling, RAG, and proactive notifications.
-
-### Phase 4: Agentic Payments
-
-x402 payment support on the MCP tools for machine-to-machine billing.
-
----
-
-## What I'd Build Now
-
-If you approve, I'll start with **Phase 1: the live MCP server**. This involves:
-
-1. Creating `workers/mcp-agent/` with wrangler config and the McpAgent class
-2. Implementing the three MCP tools that proxy to existing edge functions
-3. Adding bearer token auth validation
-4. Adding a deploy step to the existing Cloudflare GitHub Actions workflow
-5. Updating `public/mcp.json` and the `/for-ai-agents` marketing page
-
-This makes PhotoBrief one of the first field-service tools with a real, production MCP endpoint — a strong differentiator for the AI agent discovery story you've already built with `agent.json`, `ai-plugin.json`, `llms.txt`, and `openapi.json`.
+- The edge function uses `deno-postgres` (`https://deno.land/x/postgres/mod.ts`) for direct DB access, which supports full DDL statements
+- SQL is hashed (SHA-256) before execution; if the same hash exists in `admin_migration_log` with status `success`, the function returns a "already applied" response (idempotent)
+- The function runs each migration in a single transaction with automatic rollback on error
