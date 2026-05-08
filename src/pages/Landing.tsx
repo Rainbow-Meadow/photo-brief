@@ -92,6 +92,11 @@ import junkHaulerIllo from "@/assets/trades/junk-hauler-illustration.png";
 import hvacTechIllo from "@/assets/trades/hvac-tech-illustration.png";
 import plumberIllo from "@/assets/trades/plumber-illustration.png";
 import estimatorIllo from "@/assets/trades/estimator-illustration.png";
+import transformationIllo from "@/assets/scenes/transformation-illustration.png";
+import foundingBadgeIllo from "@/assets/scenes/founding-badge-illustration.png";
+import rewardRibbonsIllo from "@/assets/scenes/reward-ribbons-illustration.png";
+import betaNotebookIllo from "@/assets/scenes/beta-notebook-illustration.png";
+import mailboxFlagIllo from "@/assets/scenes/mailbox-flag-illustration.png";
 
 /* ── JSON-LD ───────────────────────────────────────────────── */
 
@@ -464,11 +469,9 @@ export default function LandingPage() {
               title="Vague website form becomes an actionable lead packet."
               description={`Watch how a generic "tell us about your project" message turns into a structured packet with the right photos, notes, and context — ready for your team to act on.`}
               accent={
-                <StatAccent
-                  icon={Sparkles}
-                  value="12 min"
-                  label="Saved per lead — fewer follow-up calls, less back-and-forth."
-                  tone="lavender"
+                <TradeAccent
+                  src={transformationIllo}
+                  alt="Hand-drawn illustration of a crumpled note transforming into a tidy clipped photo packet"
                 />
               }
             />
@@ -940,6 +943,15 @@ function FoundingPartnerBetaSection({ isFull }: { isFull: boolean }) {
         <div className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:gap-14">
           {/* LEFT — narrative */}
           <div className="lg:pr-2">
+            <img
+              src={foundingBadgeIllo}
+              alt="Hand-drawn illustration of three numbered ribbon badges pinned to a corkboard"
+              width={1024}
+              height={1024}
+              loading="lazy"
+              decoding="async"
+              className="mb-6 w-full max-w-[260px] drop-shadow-[0_22px_36px_hsl(var(--pb-ink-soft)/0.28)]"
+            />
             <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[hsl(var(--pb-lavender))]">
               <Stamp className="-mt-0.5 mr-1 inline h-3 w-3" /> Accepting applications
             </p>
@@ -1598,6 +1610,15 @@ function RewardTiersSection() {
       <div className="pb-container">
         <div className="mx-auto max-w-3xl">
           <div className="text-center">
+            <img
+              src={rewardRibbonsIllo}
+              alt="Hand-drawn illustration of layered award rosette ribbons"
+              width={1024}
+              height={1024}
+              loading="lazy"
+              decoding="async"
+              className="mx-auto mb-5 w-full max-w-[220px] drop-shadow-[0_22px_36px_hsl(var(--pb-ink-soft)/0.28)]"
+            />
             <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[hsl(var(--pb-lavender))]">
               <Gift className="-mt-0.5 mr-1 inline h-3 w-3" /> Reward tiers
             </p>
@@ -1677,6 +1698,17 @@ function BetaDetailsAccordion({ value, onValueChange }: BetaDetailsAccordionProp
     <section className="pb-section-tight">
       <div className="pb-container">
         <div className="mx-auto max-w-3xl">
+          <div className="mb-2 flex justify-center">
+            <img
+              src={betaNotebookIllo}
+              alt="Hand-drawn illustration of an open notebook with a magnifying glass — the fine print"
+              width={1024}
+              height={1024}
+              loading="lazy"
+              decoding="async"
+              className="w-full max-w-[200px] drop-shadow-[0_18px_30px_hsl(var(--pb-ink-soft)/0.28)]"
+            />
+          </div>
           <div className="flex items-center justify-between gap-4 border-y border-[hsl(var(--pb-ink-soft)/0.18)] py-4">
             <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[hsl(var(--pb-violet))]">
               The fine print
@@ -1799,6 +1831,15 @@ function FinalCta({ isFull }: { isFull: boolean }) {
               </span>
             </h2>
             <div className="lg:pt-3">
+              <img
+                src={mailboxFlagIllo}
+                alt="Hand-drawn illustration of a mailbox with the flag raised — invitation to apply"
+                width={1024}
+                height={1024}
+                loading="lazy"
+                decoding="async"
+                className="mb-6 w-full max-w-[220px] drop-shadow-[0_22px_36px_hsl(var(--pb-ink-soft)/0.28)]"
+              />
               <p className="pb-copy max-w-md text-base leading-relaxed sm:text-lg">
                 Stop chasing customers for missing photos and context. Every
                 inquiry arrives as a complete, actionable lead packet — so your
