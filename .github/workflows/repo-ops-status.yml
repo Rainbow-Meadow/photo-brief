@@ -1,0 +1,149 @@
+name: Repository Operations Status
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 13 * * *"
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build operations status report
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          mkdir -p ops-status
+          report="ops-status/repo-ops-status.md"
+
+          {
+            echo "# Repository Operations Status"
+            echo
+            echo "Generated: $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+            echo
+            echo "## Current refs"
+            echo
+            echo "- Repository: $REPO"
+            echo "- Checked-out commit: $(git rev-parse HEAD)"
+            echo "- Default branch: main"
+            echo "- Working branch: sandbox"
+            echo
+            echo "## Branch alignment"
+            echo
+          } > "$report"
+
+          git fetch origin main sandbox --quiet
+          main_sha="$(git rev-parse origin/main)"
+          sandbox_sha="$(git rev-parse origin/sandbox)"
+          {
+            echo "- main: \`$main_sha\`"
+            echo "- sandbox: \`$sandbox_sha\`"
+            if [ "$main_sha" = "$sandbox_sha" ]; then
+              echo "- status: aligned"
+            else
+              echo "- status: not aligned"
+            fi
+            echo
+          } >> "$report"
+
+          {
+            echo "## Workflow files"
+            echo
+            find .github/workflows -maxdepth 1 -type f -name '*.yml' -print | sort | sed 's#^#- #' || true
+            echo
+            echo "## Required files"
+            echo
+          } >> "$report"
+
+          for path in \
+            package.json \
+            package-lock.json \
+            public/sitemap.xml \
+            public/robots.txt \
+            public/_headers \
+            scripts/validate-hybrid-hosting.mjs \
+            scripts/check-supabase-functions.mjs \
+            scripts/smoke-public-endpoints.mjs \
+            supabase/config.toml; do
+            if [ -e "$path" ]; then
+              echo "- ✅ $path" >> "$report"
+            else
+              echo "- ❌ $path" >> "$report"
+            fi
+          done
+
+          {
+            echo
+            echo "## Local configuration artifacts"
+            echo
+          } >> "$report"
+
+          found_local_config=false
+          for path in .env .env.development .env.production; do
+            if [ -e "$path" ]; then
+              found_local_config=true
+              echo "- ⚠️ $path is still tracked/present" >> "$report"
+            fi
+          done
+          if [ "$found_local_config" = false ]; then
+            echo "- ✅ no checked-in local env artifacts found" >> "$report"
+          fi
+
+          {
+            echo
+            echo "## Static checks"
+            echo
+          } >> "$report"
+
+          if npm run hosting:validate > ops-status/hosting-validate.log 2>&1; then
+            echo "- ✅ hosting contract validation passed" >> "$report"
+          else
+            echo "- ❌ hosting contract validation failed; see hosting-validate.log" >> "$report"
+          fi
+
+          if npm run functions:check > ops-status/functions-check.log 2>&1; then
+            echo "- ✅ Supabase function structure check passed" >> "$report"
+          else
+            echo "- ❌ Supabase function structure check failed; see functions-check.log" >> "$report"
+          fi
+
+          {
+            echo
+            echo "## Public endpoint smoke snapshot"
+            echo
+          } >> "$report"
+
+          if node scripts/smoke-public-endpoints.mjs > ops-status/public-smoke.log 2>&1; then
+            echo "- ✅ public endpoint smoke check passed" >> "$report"
+          else
+            echo "- ❌ public endpoint smoke check failed; see public-smoke.log" >> "$report"
+          fi
+
+          {
+            echo
+            echo "## Recent workflow runs"
+            echo
+          } >> "$report"
+
+          gh run list --repo "$REPO" --limit 10 --json name,status,conclusion,headBranch,headSha,createdAt,url \
+            --template '{{range .}}{{printf "- %s | %s/%s | %s | %s | %s\n" .name .status .conclusion .headBranch .headSha .url}}{{end}}' \
+            >> "$report" || echo "- Could not read workflow runs" >> "$report"
+
+          cat "$report"
+
+      - name: Upload operations status artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: repo-ops-status
+          path: ops-status/
+          if-no-files-found: error
