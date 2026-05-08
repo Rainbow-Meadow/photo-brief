@@ -445,11 +445,13 @@ export function BetaOnboardingAgentExperience({
 
 function Metric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-[1rem] border border-white/10 bg-white/[0.04] p-3">
-      <p className="text-[0.65rem] font-bold uppercase tracking-[0.16em] text-white/45">
+    <div>
+      <dt className="text-[10px] font-black uppercase tracking-[0.22em] text-white/45">
         {label}
-      </p>
-      <p className="mt-1 text-sm font-semibold capitalize text-white">{value}</p>
+      </dt>
+      <dd className="mt-1.5 font-serif text-base italic capitalize text-white sm:text-lg">
+        {value}
+      </dd>
     </div>
   );
 }
