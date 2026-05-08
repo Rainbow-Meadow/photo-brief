@@ -3,11 +3,13 @@ import { NavLink, useSearchParams } from "react-router-dom";
 import {
   ArrowRight,
   BadgeCheck,
+  Calculator,
   Camera,
   CheckCircle2,
   ClipboardList,
   Clock,
   Crown,
+  DollarSign,
   Eye,
   FileCheck2,
   FormInput,
@@ -28,6 +30,7 @@ import {
   TimerReset,
   TrendingDown,
   Trophy,
+  UserCheck,
   UserX,
   Users,
 } from "lucide-react";
