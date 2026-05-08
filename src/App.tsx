@@ -18,7 +18,7 @@ import { FeatureGate } from "@/components/shared/FeatureGate";
 // Eager: marketing + auth + recipient capture. These are the entry points
 // for unauthenticated visitors and the public recipient flow, so they stay
 // in the main bundle to avoid a Suspense flash on first paint.
-import LandingPage from "@/pages/Landing";
+import LandingPage from "@/pages/LandingV2";
 import AuthPage from "@/pages/Auth";
 import PricingPage from "@/pages/Pricing";
 import ForAiAgentsPage from "@/pages/ForAiAgents";
