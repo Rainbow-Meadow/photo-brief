@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       deploy_database:
-        description: "Apply pending migrations via run-migration edge function"
+        description: "Apply selected migrations via run-migration edge function"
         required: true
         default: "true"
         type: choice
@@ -12,14 +12,14 @@ on:
           - "true"
           - "false"
       migration_glob:
-        description: "Migration file glob (default: all pending in supabase/migrations/*.sql)"
+        description: "Specific migration glob to apply manually; leave blank to skip database migrations"
         required: false
-        default: "supabase/migrations/*.sql"
+        default: ""
         type: string
       deploy_functions:
-        description: "Deploy Supabase Edge Functions"
+        description: "Deploy Supabase Edge Functions with Supabase CLI"
         required: true
-        default: "true"
+        default: "false"
         type: choice
         options:
           - "true"
@@ -90,13 +90,18 @@ jobs:
             echo "VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY secrets are required for database migrations."
             exit 1
           fi
-          shopt -s nullglob
-          files=(${{ inputs.migration_glob }})
-          if [ ${#files[@]} -eq 0 ]; then
-            echo "No migration files found matching glob."
+          glob='${{ inputs.migration_glob }}'
+          if [ -z "$glob" ]; then
+            echo "No migration_glob provided. Skipping manual database migration step."
             exit 0
           fi
-          echo "Found ${#files[@]} migration file(s)."
+          shopt -s nullglob
+          files=($glob)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "No migration files found matching glob: $glob"
+            exit 0
+          fi
+          echo "Selected ${#files[@]} migration file(s): ${files[*]}"
           node scripts/run-migration.mjs "${files[@]}"
 
       - name: Install Supabase CLI (for function deploy)
