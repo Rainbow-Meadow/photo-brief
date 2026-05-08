@@ -11,6 +11,17 @@
 
 export { BRAND } from "./shared/brand.tokens";
 export { SEMANTIC_COLORS } from "./shared/color.tokens";
+export {
+  APPLE_SYSTEM_COLORS,
+  APPLE_LABEL_OPACITY,
+  APPLE_MATERIALS,
+  APPLE_TYPE,
+  APPLE_MOTION,
+  APPLE_FONT_STACK,
+  APPLE_FONT_ROUNDED,
+  APPLE_FONT_MONO,
+  APPLE_MIN_TOUCH,
+} from "./shared/apple.tokens";
 export { DESKTOP } from "./desktop/desktop.tokens";
 export { MOBILE } from "./mobile/mobile.tokens";
 export { usePlatformSchema, getPlatformSchema } from "./usePlatformSchema";
