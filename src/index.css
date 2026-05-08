@@ -577,6 +577,13 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
   @media (min-width: 640px) { .pb-container { width: min(100% - 3rem, 1280px); } }
   .pb-section { padding-block: clamp(2rem, 3.5vw, 3.5rem); position: relative; }
   .pb-section-tight { padding-block: clamp(1.25rem, 2.25vw, 2.25rem); position: relative; }
+  /* Subtle alt surface for alternating dark sections — keeps editorial feel */
+  .pb-section-alt {
+    background:
+      linear-gradient(180deg, hsl(var(--pb-paper) / 0.025) 0%, hsl(var(--pb-paper) / 0) 60%),
+      hsl(var(--pb-ink) / 0.55);
+    border-block: 1px solid hsl(var(--pb-paper) / 0.06);
+  }
   .pb-container-narrow { width: min(100% - 2rem, 860px); margin-inline: auto; }
   @media (min-width: 640px) { .pb-container-narrow { width: min(100% - 3rem, 860px); } }
   .pb-eyebrow {
