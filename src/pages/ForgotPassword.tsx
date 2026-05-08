@@ -71,6 +71,13 @@ export default function ForgotPasswordPage() {
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
+            <TurnstileWidget
+              onVerify={(t) => setTurnstileToken(t)}
+              onExpire={() => setTurnstileToken(null)}
+              onError={() => setTurnstileToken(null)}
+              action="password-reset"
+              className="flex justify-center"
+            />
             <Button type="submit" className="w-full" disabled={submitting}>
               {submitting ? "Sending..." : "Send reset link"}
             </Button>
