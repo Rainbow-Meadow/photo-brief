@@ -1117,28 +1117,12 @@ function UseCaseSection() {
             actionable lead packets.
           </p>
         </div>
-        <div className="mt-8 grid gap-4 sm:mt-10 md:grid-cols-2 lg:grid-cols-3">
-          {useCases.slice(0, 3).map((item) => {
+        {/* Horizontal scroll on mobile, grid on desktop */}
+        <div className="mt-8 flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory sm:mt-10 md:grid md:grid-cols-2 md:overflow-visible md:pb-0 lg:grid-cols-3">
+          {useCases.map((item) => {
             const Icon = item.icon;
             return (
-              <article key={item.title} className="pb-card p-4 sm:p-5 md:p-6">
-                <Icon className="h-6 w-6 text-[hsl(var(--pb-lavender))] sm:h-7 sm:w-7" />
-                <span className="pb-stamp mt-4 inline-flex rounded-full px-3 py-1 sm:mt-5">
-                  {item.stamp}
-                </span>
-                <h3 className="mt-3 text-lg font-semibold tracking-tight text-white sm:mt-4 sm:text-xl">
-                  {item.title}
-                </h3>
-                <p className="pb-copy mt-2 text-sm leading-6">{item.body}</p>
-              </article>
-            );
-          })}
-        </div>
-        <div className="mx-auto mt-4 grid max-w-4xl gap-4 md:grid-cols-2">
-          {useCases.slice(3).map((item) => {
-            const Icon = item.icon;
-            return (
-              <article key={item.title} className="pb-card p-4 sm:p-5 md:p-6">
+              <article key={item.title} className="min-w-[280px] shrink-0 snap-start pb-card p-4 sm:p-5 md:min-w-0 md:p-6">
                 <Icon className="h-6 w-6 text-[hsl(var(--pb-lavender))] sm:h-7 sm:w-7" />
                 <span className="pb-stamp mt-4 inline-flex rounded-full px-3 py-1 sm:mt-5">
                   {item.stamp}
