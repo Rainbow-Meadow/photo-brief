@@ -1,4 +1,5 @@
-import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import type { LucideIcon } from "lucide-react";
 import { NavLink, useSearchParams } from "react-router-dom";
 import {
   ArrowRight,
