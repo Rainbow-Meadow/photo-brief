@@ -12,6 +12,11 @@ import {
   LifeBuoy,
   Globe2,
   Plug,
+  Shield,
+  ScanSearch,
+  Terminal,
+  UserPlus,
+  Bot,
 } from "lucide-react";
 
 import {
