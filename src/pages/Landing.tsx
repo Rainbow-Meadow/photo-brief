@@ -450,21 +450,6 @@ export default function LandingPage() {
                     </Button>
                   </div>
                 </div>
-
-                <div className="flex max-w-md flex-wrap justify-center gap-2">
-                  {[
-                    "Website scan included",
-                    "Hosted link or embed",
-                    "Lead packets, not form spam",
-                  ].map((item) => (
-                    <span
-                      key={item}
-                      className="pb-route-chip px-3 py-2 text-center text-xs font-semibold"
-                    >
-                      {item}
-                    </span>
-                  ))}
-                </div>
               </div>
             </div>
           </div>
