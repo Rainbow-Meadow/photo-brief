@@ -1,0 +1,176 @@
+/**
+ * Landing schema — single immutable presentation layer.
+ * Only Landing.tsx and its inline section helpers consume these classes
+ * via the React primitives in `./schema.tsx`. Do not author `ls-*`
+ * classes by hand in components.
+ */
+
+/* ── Sections ───────────────────────────────────────────── */
+  .ls-section {
+    position: relative;
+    padding-block: clamp(3rem, 6vw, 5.5rem);
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+  .ls-section--tight { padding-block: clamp(1.75rem, 3vw, 3rem); }
+  .ls-section--alt {
+    background: hsl(var(--muted));
+  }
+  .ls-section--dark {
+    background: hsl(var(--pb-night, var(--foreground)));
+    color: hsl(var(--background));
+  }
+
+  /* ── Containers ─────────────────────────────────────────── */
+  .ls-container {
+    width: min(100% - 2rem, 1240px);
+    margin-inline: auto;
+  }
+  .ls-container--narrow { width: min(100% - 2rem, 820px); margin-inline: auto; }
+  @media (min-width: 640px) {
+    .ls-container { width: min(100% - 3rem, 1240px); }
+    .ls-container--narrow { width: min(100% - 3rem, 820px); }
+  }
+
+  /* ── Eyebrow ────────────────────────────────────────────── */
+  .ls-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.45rem 0.8rem;
+    border-radius: 9999px;
+    background: hsl(var(--primary) / 0.12);
+    color: hsl(var(--primary));
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+  .ls-section--dark .ls-eyebrow {
+    background: hsl(var(--background) / 0.08);
+    color: hsl(var(--background));
+  }
+
+  /* ── Headings (single sans family) ──────────────────────── */
+  .ls-h1, .ls-h2, .ls-h3 {
+    font-family: inherit;
+    font-style: normal;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: hsl(var(--foreground));
+    margin: 0;
+  }
+  .ls-section--dark .ls-h1,
+  .ls-section--dark .ls-h2,
+  .ls-section--dark .ls-h3 { color: hsl(var(--background)); }
+
+  .ls-h1 { font-size: clamp(2.25rem, 5.4vw, 4.25rem); line-height: 1.05; letter-spacing: -0.03em; }
+  .ls-h2 { font-size: clamp(1.75rem, 3.8vw, 3rem);    line-height: 1.08; }
+  .ls-h3 { font-size: clamp(1.25rem, 2vw, 1.625rem);  line-height: 1.2; font-weight: 600; }
+
+  .ls-subtitle {
+    font-size: clamp(1rem, 1.1vw + 0.85rem, 1.2rem);
+    line-height: 1.55;
+    color: hsl(var(--muted-foreground));
+    margin: 0;
+  }
+  .ls-section--dark .ls-subtitle { color: hsl(var(--background) / 0.78); }
+
+  /* ── Body copy ──────────────────────────────────────────── */
+  .ls-body, .ls-body-md { font-size: 0.95rem; line-height: 1.6; color: hsl(var(--muted-foreground)); margin: 0; }
+  .ls-body-lg { font-size: 1.05rem; line-height: 1.6; color: hsl(var(--muted-foreground)); margin: 0; }
+  .ls-body-sm { font-size: 0.825rem; line-height: 1.55; color: hsl(var(--muted-foreground)); margin: 0; }
+  .ls-section--dark .ls-body,
+  .ls-section--dark .ls-body-md,
+  .ls-section--dark .ls-body-lg,
+  .ls-section--dark .ls-body-sm { color: hsl(var(--background) / 0.74); }
+
+  /* ── Cards ──────────────────────────────────────────────── */
+  .ls-card {
+    border-radius: 1rem;
+    background: hsl(var(--card));
+    color: hsl(var(--card-foreground));
+    border: 1px solid hsl(var(--border));
+    padding: clamp(1rem, 2vw, 1.5rem);
+  }
+  .ls-card--elevated { box-shadow: 0 12px 32px -18px hsl(var(--foreground) / 0.25); }
+  .ls-card--dark {
+    background: hsl(var(--foreground) / 0.04);
+    border-color: hsl(var(--foreground) / 0.1);
+    color: hsl(var(--foreground));
+  }
+  .ls-section--dark .ls-card {
+    background: hsl(var(--background) / 0.05);
+    border-color: hsl(var(--background) / 0.12);
+    color: hsl(var(--background));
+  }
+
+  /* ── Grid ───────────────────────────────────────────────── */
+  .ls-grid { display: grid; gap: 1rem; }
+  .ls-grid--md { gap: 1.25rem; }
+  .ls-grid--lg { gap: 1.75rem; }
+  .ls-grid-1 { grid-template-columns: 1fr; }
+  .ls-grid-2 { grid-template-columns: 1fr; }
+  .ls-grid-3 { grid-template-columns: 1fr; }
+  .ls-grid-4 { grid-template-columns: 1fr; }
+  @media (min-width: 640px) {
+    .ls-grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .ls-grid-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .ls-grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (min-width: 960px) {
+    .ls-grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .ls-grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  }
+
+  /* ── CTA buttons (only marketing button surface) ────────── */
+  .ls-cta-group { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; }
+
+  .ls-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    border-radius: 9999px;
+    font-weight: 600;
+    line-height: 1;
+    transition: transform 200ms ease, background 200ms ease, color 200ms ease, box-shadow 200ms ease;
+    text-decoration: none;
+    cursor: pointer;
+    border: 1px solid transparent;
+    white-space: nowrap;
+  }
+  .ls-cta:focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: 2px; }
+
+  .ls-cta--md { padding: 0.7rem 1.15rem; font-size: 0.9rem; min-height: 44px; }
+  .ls-cta--lg { padding: 0.95rem 1.55rem; font-size: 1rem;  min-height: 52px; }
+
+  .ls-cta-primary {
+    background: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    box-shadow: 0 8px 22px -10px hsl(var(--primary) / 0.55);
+  }
+  .ls-cta-secondary {
+    background: transparent;
+    color: hsl(var(--foreground));
+    border-color: hsl(var(--foreground) / 0.25);
+  }
+  .ls-section--dark .ls-cta-secondary { color: hsl(var(--background)); border-color: hsl(var(--background) / 0.3); }
+
+  .ls-cta-quiet {
+    background: transparent;
+    color: hsl(var(--foreground));
+    padding-inline: 0.4rem;
+    min-height: 44px;
+  }
+  .ls-section--dark .ls-cta-quiet { color: hsl(var(--background)); }
+
+  @media (hover: hover) {
+    .ls-cta-primary:hover   { transform: translateY(-1px); filter: brightness(1.03); }
+    .ls-cta-secondary:hover { background: hsl(var(--foreground) / 0.06); }
+    .ls-cta-quiet:hover     { color: hsl(var(--primary)); }
+  }
+  @media (hover: none) {
+    .ls-cta:active { transform: scale(0.98); }
+  }

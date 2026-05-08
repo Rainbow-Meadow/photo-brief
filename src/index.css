@@ -657,17 +657,13 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
   .pb-paper-link[data-active="true"] { color: hsl(var(--pb-violet)); }
   /* (pb-paper-fade-bottom removed — entire landing is paper now) */
 
-  .pb-copy { color: hsl(var(--pb-muted)); font-size: clamp(0.938rem, 0.4vw + 0.875rem, 1.125rem); line-height: 1.65; }
-  .pb-container { width: min(100% - 2rem, 1280px); margin-inline: auto; }
-  @media (min-width: 640px) { .pb-container { width: min(100% - 3rem, 1280px); } }
-  .pb-section { padding-block: clamp(2rem, 3.5vw, 3.5rem); position: relative; }
-  .pb-section-tight { padding-block: clamp(1.25rem, 2.25vw, 2.25rem); position: relative; }
-  /* Quiet ivory alt band on the paper surface — provides section rhythm */
-  .pb-section-alt {
-    background:
-      linear-gradient(180deg, hsl(32 38% 90%) 0%, hsl(34 36% 92%) 100%);
-    border-block: 1px solid hsl(var(--pb-ink-soft) / 0.10);
-  }
+  /* ── Legacy class delegators — render through the immutable landing schema (see src/pages/landing/schema.css) ── */
+  .pb-copy { font-size: 0.95rem; line-height: 1.6; color: hsl(var(--muted-foreground)); }
+  .pb-container { width: min(100% - 2rem, 1240px); margin-inline: auto; }
+  @media (min-width: 640px) { .pb-container { width: min(100% - 3rem, 1240px); } }
+  .pb-section { padding-block: clamp(3rem, 6vw, 5.5rem); position: relative; background: hsl(var(--background)); color: hsl(var(--foreground)); }
+  .pb-section-tight { padding-block: clamp(1.75rem, 3vw, 3rem); position: relative; background: hsl(var(--background)); color: hsl(var(--foreground)); }
+  .pb-section-alt { background: hsl(var(--muted)); color: hsl(var(--foreground)); }
 
   /* ── Beta zone — cooler lavender-tinted paper for a distinct chapter ── */
   .pb-beta-zone {
@@ -877,15 +873,13 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
       transform: translateY(-1px);
     }
   }
-  .pb-container-narrow { width: min(100% - 2rem, 860px); margin-inline: auto; }
-  @media (min-width: 640px) { .pb-container-narrow { width: min(100% - 3rem, 860px); } }
+  .pb-container-narrow { width: min(100% - 2rem, 820px); margin-inline: auto; }
+  @media (min-width: 640px) { .pb-container-narrow { width: min(100% - 3rem, 820px); } }
   .pb-eyebrow {
-    display: inline-flex; align-items: center; gap: 0.45rem; border: 1px solid hsl(var(--pb-line));
-    border-radius: 999px; padding: 0.4rem 0.7rem; color: hsl(var(--pb-lavender));
-    background: hsl(var(--pb-panel) / 0.78); font-size: 0.62rem; font-weight: 760; letter-spacing: 0.14em; text-transform: uppercase;
-  }
-  @media (min-width: 640px) {
-    .pb-eyebrow { font-size: 0.68rem; padding: 0.45rem 0.75rem; letter-spacing: 0.16em; }
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    border-radius: 9999px; padding: 0.45rem 0.8rem;
+    background: hsl(var(--primary) / 0.12); color: hsl(var(--primary));
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; line-height: 1; border: 0;
   }
   .pb-gradient-text {
     background: linear-gradient(100deg, hsl(var(--pb-paper)) 0%, hsl(var(--pb-lavender)) 48%, hsl(var(--pb-violet)) 100%);
@@ -917,12 +911,16 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
   .pb-focus-corners::before { left: 1rem; top: 1rem; border-left: 2px solid hsl(var(--pb-lavender)); border-top: 2px solid hsl(var(--pb-lavender)); border-radius: 0.75rem 0 0 0; }
   .pb-focus-corners::after { right: 1rem; bottom: 1rem; border-right: 2px solid hsl(var(--pb-lavender)); border-bottom: 2px solid hsl(var(--pb-lavender)); border-radius: 0 0 0.75rem 0; }
   .pb-card {
-    border: 1px solid hsl(var(--pb-line)); border-radius: 1.4rem; background: hsl(var(--pb-panel) / 0.88);
-    box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.065), 0 24px 55px -38px hsl(var(--pb-shadow) / 0.9);
-    transition: transform 260ms var(--ease-apple), border-color 260ms var(--ease-apple), background 260ms var(--ease-apple);
+    border-radius: 1rem;
+    background: hsl(var(--card));
+    color: hsl(var(--card-foreground));
+    border: 1px solid hsl(var(--border));
+    padding: clamp(1rem, 2vw, 1.5rem);
+    box-shadow: 0 12px 32px -18px hsl(var(--foreground) / 0.18);
+    transition: transform 200ms ease, border-color 200ms ease;
   }
   @media (hover: hover) {
-    .pb-card:hover { transform: translateY(-3px); border-color: hsl(var(--pb-lavender) / 0.55); background: hsl(var(--pb-panel-2) / 0.92); }
+    .pb-card:hover { transform: translateY(-2px); border-color: hsl(var(--primary) / 0.45); }
   }
   .pb-lens-field {
     position: absolute; inset: -30%; pointer-events: none; opacity: 0.32;
@@ -956,14 +954,16 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
   .pb-photo-frame[data-status="ok"] { border-color: hsl(var(--pb-mint) / 0.75); }
   .pb-photo-frame[data-status="warn"] { border-color: hsl(var(--pb-lavender) / 0.7); }
   .pb-route-chip { border: 1px solid hsl(var(--pb-line)); border-radius: 999px; background: hsl(var(--pb-ink) / 0.7); color: hsl(var(--pb-muted)); }
- .pb-hero-title { font-size: clamp(2.25rem, 6vw, 5.5rem); line-height: 1.12; letter-spacing: -0.04em; font-weight: 740; }
- .pb-section-title { font-family: ui-serif, Georgia, "Times New Roman", serif; font-style: italic; font-size: clamp(1.85rem, 4.4vw, 3.75rem); line-height: 1.04; letter-spacing: -0.025em; font-weight: 400; }
-  .pb-heading { font-size: clamp(1.5rem, 3vw, 2.5rem); line-height: 1.1; letter-spacing: -0.035em; font-weight: 650; color: white; }
-  .pb-subheading { font-size: clamp(1.125rem, 2vw, 1.5rem); line-height: 1.2; letter-spacing: -0.02em; font-weight: 600; color: white; }
-  .pb-label { font-size: 0.875rem; font-weight: 600; color: white; }
-  .pb-helper { font-size: 0.75rem; color: hsl(var(--pb-muted)); line-height: 1.5; }
-  .pb-body { font-size: 0.875rem; line-height: 1.65; color: hsl(var(--pb-muted)); }
-  .pb-body-lg { font-size: clamp(0.938rem, 0.4vw + 0.875rem, 1.125rem); line-height: 1.65; color: hsl(var(--pb-muted)); }
+  /* ── Typography delegators (single sans family, schema-driven) ── */
+  .pb-hero-title, .pb-display { font-family: inherit; font-style: normal; font-weight: 700; font-size: clamp(2.25rem, 5.4vw, 4.25rem); line-height: 1.05; letter-spacing: -0.03em; color: hsl(var(--foreground)); }
+  .pb-section-title { font-family: inherit; font-style: normal; font-weight: 700; font-size: clamp(1.75rem, 3.8vw, 3rem); line-height: 1.08; letter-spacing: -0.025em; color: hsl(var(--foreground)); }
+  .pb-heading { font-family: inherit; font-style: normal; font-size: clamp(1.25rem, 2vw, 1.625rem); line-height: 1.2; letter-spacing: -0.02em; font-weight: 600; color: hsl(var(--foreground)); }
+  .pb-subheading { font-family: inherit; font-style: normal; font-size: clamp(1.05rem, 1.4vw, 1.25rem); line-height: 1.3; letter-spacing: -0.015em; font-weight: 600; color: hsl(var(--foreground)); }
+  .pb-label { font-size: 0.875rem; font-weight: 600; color: hsl(var(--foreground)); }
+  .pb-helper { font-size: 0.78rem; color: hsl(var(--muted-foreground)); line-height: 1.5; }
+  .pb-body { font-size: 0.9rem; line-height: 1.6; color: hsl(var(--muted-foreground)); }
+  .pb-body-lg { font-size: 1.05rem; line-height: 1.6; color: hsl(var(--muted-foreground)); }
+  .pb-display-ink { color: inherit; }
 
   /* Marketing input on dark surfaces */
   .pb-input {
