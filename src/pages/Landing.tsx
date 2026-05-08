@@ -824,7 +824,7 @@ function PainPointSection() {
             </p>
 
             {/* Carousel card */}
-            <div className="relative mx-auto mt-8 max-w-2xl sm:mt-10 lg:mx-0">
+            <div className="relative mx-auto mt-5 max-w-2xl sm:mt-6 lg:mx-0">
               <div className="pb-card relative overflow-hidden p-6 sm:p-8" style={{ minHeight: 260 }}>
                 {painPoints.map((p, i) => {
                   const PIcon = p.icon;
