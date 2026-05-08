@@ -29,7 +29,7 @@ export function MobileTabBar() {
         aria-label="Primary"
         className={cn(
           "fixed inset-x-0 bottom-0 z-40 lg:hidden",
-          "pb-nav-bar border-t",
+          "material-chrome rounded-none border-0 hairline-apple-t",
           "pb-safe",
         )}
       >
@@ -46,13 +46,13 @@ export function MobileTabBar() {
               aria-label="New photo request"
               className={cn(
                 "-mt-6 inline-flex h-14 w-14 items-center justify-center rounded-full",
-                "bg-primary text-primary-foreground shadow-elev-md",
-                "ring-4 ring-background transition active:scale-95",
+                "bg-system-blue text-white shadow-elev-md",
+                "ring-4 ring-systemBackground tap-apple focus-apple",
               )}
             >
               <Plus className="h-6 w-6" />
             </NavLink>
-            <span className="mt-0.5 text-[10px] font-medium leading-none text-primary">Request</span>
+            <span className="mt-0.5 text-caption-2 font-semibold leading-none text-system-blue">Request</span>
           </div>
 
           {/* Last regular tab */}
@@ -67,12 +67,12 @@ export function MobileTabBar() {
             onClick={() => setSettingsOpen(true)}
             aria-label="Settings"
             className={cn(
-              "pb-nav-link flex flex-col items-center justify-center gap-0.5 rounded-xl px-1 py-1 text-xs font-medium transition active:scale-95",
-              isSettingsActive ? "active text-primary" : "text-muted-foreground",
+              "tap-apple focus-apple flex flex-col items-center justify-center gap-0.5 rounded-xl px-1 py-1 touch-target-apple",
+              isSettingsActive ? "text-system-blue" : "text-label-secondary",
             )}
           >
             <Settings className="h-6 w-6" />
-            <span className="text-[10px] leading-none">Settings</span>
+            <span className="text-caption-2 font-semibold leading-none">Settings</span>
           </button>
         </div>
       </nav>
@@ -97,12 +97,12 @@ function TabLink({
     <NavLink
       to={to}
       className={cn(
-        "pb-nav-link flex flex-col items-center justify-center gap-0.5 rounded-xl px-1 py-1 text-xs font-medium transition active:scale-95",
-        active ? "active text-primary" : "text-muted-foreground",
+        "tap-apple focus-apple flex flex-col items-center justify-center gap-0.5 rounded-xl px-1 py-1 touch-target-apple",
+        active ? "text-system-blue" : "text-label-secondary",
       )}
     >
       <Icon className="h-6 w-6" />
-      <span className="text-[10px] leading-none">{label}</span>
+      <span className="text-caption-2 font-semibold leading-none">{label}</span>
     </NavLink>
   );
 }

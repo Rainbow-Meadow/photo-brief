@@ -19,7 +19,7 @@ export function PageHeader({ title, description, eyebrow, actions, bordered = tr
     <div
       className={cn(
         "flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between",
-        bordered ? "hairline-b pb-5" : "pb-1",
+        bordered ? "hairline-apple-b pb-5" : "pb-1",
         className,
       )}
     >
@@ -36,10 +36,10 @@ export function PageHeader({ title, description, eyebrow, actions, bordered = tr
             {backTo.label}
           </NavLink>
         ) : null}
-        {eyebrow ? <p className="text-eyebrow mb-1.5">{eyebrow}</p> : null}
-        <h1 className="text-2xl font-semibold tracking-tight text-foreground">{title}</h1>
+        {eyebrow ? <p className="text-footnote uppercase tracking-wider text-label-secondary mb-1.5">{eyebrow}</p> : null}
+        <h1 className="text-title-1 text-label">{title}</h1>
         {description ? (
-          <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+          <p className="mt-1 text-subhead text-label-secondary">{description}</p>
         ) : null}
       </div>
       {actions ? <div className="flex flex-wrap items-center gap-2">{actions}</div> : null}
