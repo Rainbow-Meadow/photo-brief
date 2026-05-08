@@ -92,6 +92,11 @@ import junkHaulerIllo from "@/assets/trades/junk-hauler-illustration.png";
 import hvacTechIllo from "@/assets/trades/hvac-tech-illustration.png";
 import plumberIllo from "@/assets/trades/plumber-illustration.png";
 import estimatorIllo from "@/assets/trades/estimator-illustration.png";
+import transformationIllo from "@/assets/scenes/transformation-illustration.png";
+import foundingBadgeIllo from "@/assets/scenes/founding-badge-illustration.png";
+import rewardRibbonsIllo from "@/assets/scenes/reward-ribbons-illustration.png";
+import betaNotebookIllo from "@/assets/scenes/beta-notebook-illustration.png";
+import mailboxFlagIllo from "@/assets/scenes/mailbox-flag-illustration.png";
 
 /* ── JSON-LD ───────────────────────────────────────────────── */
 
