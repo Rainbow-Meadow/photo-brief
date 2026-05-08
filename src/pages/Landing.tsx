@@ -459,11 +459,8 @@ export default function LandingPage() {
         {/* ━━ TICKER 1 — Industry signals ━━━━━━━━━━━━━━━━━━━━━ */}
         <TickerBar items={["81% of forms abandoned before submit", "78% buy from whoever responds first", "4.2 hr avg lead response time", "60% of estimates never followed up", "5+ follow-ups to close — most stop at 1"]} />
 
-        {/* ━━ 2. PAIN POINTS (carousel) ━━━━━━━━━━━━━━━━━━━━━━━━ */}
+        {/* ━━ 2. PAIN POINTS (carousel + ROI) ━━━━━━━━━━━━━━━━━━ */}
         <PainPointSection />
-
-        {/* ━━ ROI CALCULATOR ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-        <RoiCalculatorSection />
 
         {/* ── Chapter break: Problem → Solution ── */}
         <ChapterDivider />
