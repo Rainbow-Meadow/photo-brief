@@ -1030,8 +1030,8 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
   .pb-btn-platform.btn-primary-glass:hover { brightness: 1.04; transform: translateY(-1px); }
   .pb-btn-platform.glass:hover { box-shadow: var(--glass-shadow-lg); transform: translateY(-1px); }
   .pb-btn-platform[class*="pb-primary"]:hover {
-    background-color: hsl(var(--pb-lavender));
-    box-shadow: 0 14px 28px -10px hsl(var(--pb-violet) / 0.6);
+    background-color: hsl(var(--brand-amber-light));
+    box-shadow: 0 14px 28px -10px hsl(var(--brand-amber) / 0.6);
     transform: translateY(-1px);
   }
   .pb-btn-platform[class*="pb-secondary"]:hover {
