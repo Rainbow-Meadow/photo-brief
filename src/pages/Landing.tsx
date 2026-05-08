@@ -324,8 +324,8 @@ export default function LandingPage() {
   return (
     <>
       <PageMeta
-        title="PhotoBrief.ai | Replace weak website forms with guided visual intake"
-        description="PhotoBrief scans your website, maps your services, and gives customers a simple photo-guided path so your team gets actionable lead packets instead of vague messages."
+        title="PhotoBrief.ai | Visual intake for landscapers, junk haulers, HVAC, plumbers & estimators"
+        description="PhotoBrief replaces weak website forms with guided visual intake — built for landscapers, junk haulers, HVAC and repair techs, plumbers, and damage / return estimators. Scan your site, map your services, and get actionable lead packets instead of vague messages."
         canonicalPath="/"
         jsonLd={jsonLd}
         breadcrumbs={[{ name: "Home", path: "/" }]}
