@@ -843,13 +843,29 @@ function PainPointSection() {
 
 /* ── Ticker bar ─────────────────────────────────────────── */
 
-function TickerBar({ items, direction = "left" }: { items: string[]; direction?: "left" | "right" }) {
+function TickerBar({
+  items,
+  direction = "left",
+  tone = "dark",
+}: {
+  items: string[];
+  direction?: "left" | "right";
+  tone?: "dark" | "paper";
+}) {
   const content = items.map((t) => t.toUpperCase()).join("  ·  ");
   const doubled = `${content}  ·  ${content}  ·  `;
+  const wrapClass =
+    tone === "paper"
+      ? "pb-ticker-paper overflow-hidden py-2.5"
+      : "overflow-hidden border-y border-white/[0.06] bg-white/[0.015] py-2.5";
+  const textClass =
+    tone === "paper"
+      ? "pb-ticker-text whitespace-nowrap text-[0.6rem] font-bold tracking-[0.2em] sm:text-xs"
+      : "whitespace-nowrap text-[0.6rem] font-bold tracking-[0.2em] text-white/25 sm:text-xs";
   return (
-    <div className="overflow-hidden border-y border-white/[0.06] bg-white/[0.015] py-2.5" aria-hidden>
+    <div className={wrapClass} aria-hidden>
       <div
-        className="whitespace-nowrap text-[0.6rem] font-bold tracking-[0.2em] text-white/25 sm:text-xs"
+        className={textClass}
         style={{
           animation: `marquee ${items.length * 5}s linear infinite`,
           animationDirection: direction === "right" ? "reverse" : "normal",
