@@ -809,7 +809,7 @@ function PainPointSection() {
       onTouchEnd={() => { setTimeout(() => setPaused(false), 6000); }}
     >
       <div className="pb-container">
-        <div className="mx-auto max-w-3xl text-center lg:mx-0 lg:grid lg:max-w-none lg:grid-cols-[1.15fr_0.85fr] lg:items-start lg:gap-12 lg:text-left">
+        <div className="mx-auto max-w-3xl text-center lg:mx-0 lg:grid lg:max-w-none lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:gap-8 lg:text-left">
           {/* Left column — intro copy + carousel */}
           <div className="lg:min-w-0 text-center">
             <span className="pb-eyebrow">
