@@ -1390,63 +1390,41 @@ function FreeProSpotlight({ isFull }: { isFull: boolean }) {
   return (
     <section className="pb-section-tight">
       <div className="pb-container">
-        <div className="relative mx-auto max-w-2xl overflow-hidden rounded-[1.5rem] border border-[hsl(var(--pb-lavender)/0.35)] bg-gradient-to-br from-[hsl(var(--pb-violet)/0.18)] via-[hsl(var(--pb-ink))] to-[hsl(var(--pb-lavender)/0.10)] p-5 sm:p-8">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-[hsl(var(--pb-lavender)/0.15)] blur-[60px]"
-          />
-          <div
-            aria-hidden
-            className="pointer-events-none absolute -bottom-8 -left-8 h-32 w-32 rounded-full bg-[hsl(var(--pb-mint)/0.10)] blur-[50px]"
-          />
-          <div className="relative z-10 flex flex-col items-center text-center">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-[hsl(var(--pb-lavender))] to-[hsl(var(--pb-violet))] shadow-lg shadow-[hsl(var(--pb-violet)/0.4)]">
-              <Trophy className="h-7 w-7 text-white" />
-            </div>
-            <p className="mt-4 text-xs font-extrabold uppercase tracking-[0.2em] text-[hsl(var(--pb-lavender))]">
-              Beta reward
-            </p>
-            <h2 className="mt-2 text-xl font-bold tracking-tight text-white sm:text-2xl md:text-3xl">
-              2 partners get{" "}
-              <span className="bg-gradient-to-r from-[hsl(var(--pb-lavender))] to-[hsl(var(--pb-mint))] bg-clip-text text-transparent">
-                Free Pro for Life
-              </span>
-            </h2>
-            <p className="pb-copy mx-auto mt-3 max-w-lg text-sm leading-relaxed sm:text-base">
-              The two beta partners who deliver the most useful, actionable
-              feedback earn a permanent Pro plan — no invoice, no
-              expiration, no strings. Your feedback literally shapes the
-              product and your reward reflects that.
-            </p>
-            <div className="mt-5 flex flex-wrap items-center justify-center gap-2 text-xs font-semibold text-white/70">
-              <span className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.05] px-3 py-1.5">
-                <Crown className="h-3.5 w-3.5 text-[hsl(var(--pb-lavender))]" />{" "}
-                Quality over quantity
-              </span>
-              <span className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.05] px-3 py-1.5">
-                <Gift className="h-3.5 w-3.5 text-[hsl(var(--pb-mint))]" />{" "}
-                All {BETA_TOTAL_PARTNERS} partners earn rewards
-              </span>
-            </div>
-            <FreeProEligibilityModal>
-              {(open) => (
-                <button
-                  type="button"
-                  onClick={open}
-                  className="mt-4 text-xs font-semibold text-[hsl(var(--pb-lavender))] underline decoration-[hsl(var(--pb-lavender)/0.4)] underline-offset-2 transition hover:text-white hover:decoration-white/60"
-                >
-                  Terms &amp; eligibility →
-                </button>
-              )}
-            </FreeProEligibilityModal>
+        <div className="mx-auto max-w-2xl text-center">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-[hsl(var(--pb-lavender)/0.4)] bg-[hsl(var(--pb-lavender)/0.08)]">
+            <Trophy className="h-5 w-5 text-[hsl(var(--pb-lavender))]" />
+          </div>
+          <p className="mt-5 text-[10px] font-black uppercase tracking-[0.28em] text-[hsl(var(--pb-lavender))]">
+            Beta reward
+          </p>
+          <h2 className="mt-3 font-serif text-2xl italic leading-[1.1] tracking-tight text-white sm:text-3xl md:text-4xl">
+            2 partners get{" "}
+            <span className="not-italic font-semibold bg-gradient-to-r from-[hsl(var(--pb-lavender))] to-[hsl(var(--pb-mint))] bg-clip-text text-transparent">
+              Free Pro for Life
+            </span>
+          </h2>
+          <p className="pb-copy mx-auto mt-4 max-w-lg text-sm leading-relaxed sm:text-base">
+            The two beta partners who deliver the most useful, actionable
+            feedback earn a permanent Pro plan — no invoice, no expiration, no
+            strings. Your feedback literally shapes the product and your
+            reward reflects that.
+          </p>
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-semibold text-white/70">
+            <span className="flex items-center gap-1.5">
+              <Crown className="h-3.5 w-3.5 text-[hsl(var(--pb-lavender))]" />
+              Quality over quantity
+            </span>
+            <span className="flex items-center gap-1.5">
+              <Gift className="h-3.5 w-3.5 text-[hsl(var(--pb-mint))]" />
+              All {BETA_TOTAL_PARTNERS} partners earn rewards
+            </span>
+          </div>
+          <div className="mt-6 flex flex-col items-center gap-3">
             <Button
               size="lg"
               variant="pb-primary"
-              className="mt-4"
               onClick={() => {
-                trackEvent("free_pro_cta_clicked", {
-                  location: "spotlight",
-                });
+                trackEvent("free_pro_cta_clicked", { location: "spotlight" });
                 document
                   .getElementById("apply")
                   ?.scrollIntoView({ behavior: "smooth" });
@@ -1457,6 +1435,17 @@ function FreeProSpotlight({ isFull }: { isFull: boolean }) {
                 : `Apply now — ${BETA_TOTAL_PARTNERS} seats, reviewed for fit`}{" "}
               <ArrowRight className="ml-1 h-4 w-4" />
             </Button>
+            <FreeProEligibilityModal>
+              {(open) => (
+                <button
+                  type="button"
+                  onClick={open}
+                  className="text-xs font-semibold text-[hsl(var(--pb-lavender))] underline decoration-[hsl(var(--pb-lavender)/0.4)] underline-offset-2 transition hover:text-white hover:decoration-white/60"
+                >
+                  Terms &amp; eligibility →
+                </button>
+              )}
+            </FreeProEligibilityModal>
           </div>
         </div>
       </div>
@@ -1474,16 +1463,18 @@ function FoundingPartnerSection({
   return (
     <section id="beta-program" className="pb-section">
       <div className="pb-container">
-        {/* Benefits & expectations — always visible */}
-        <div className="pb-command-panel grid gap-6 p-5 sm:gap-8 sm:p-6 lg:grid-cols-[0.85fr_1.15fr] lg:p-8 xl:p-10">
-          <div className="relative z-10">
-            <span className="pb-eyebrow">
-              <Stamp className="h-3.5 w-3.5" /> Accepting applications
-            </span>
-            <h2 className="mt-4 text-2xl font-semibold tracking-tight text-white sm:text-3xl lg:text-4xl">
-              Built with real workflows, not toy testing.
+        {/* Benefits & expectations — editorial header + columns */}
+        <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[hsl(var(--pb-lavender))]">
+              <Stamp className="-mt-0.5 mr-1 inline h-3 w-3" /> Accepting applications
+            </p>
+            <h2 className="mt-4 font-serif text-3xl italic leading-[1.05] tracking-tight text-white sm:text-4xl lg:text-5xl">
+              Built with real workflows,
+              <br className="hidden sm:block" />{" "}
+              <span className="not-italic font-semibold">not toy testing.</span>
             </h2>
-            <p className="pb-copy mt-4 text-base sm:text-lg">
+            <p className="pb-copy mt-5 text-base leading-relaxed sm:text-lg">
               We're accepting applications from businesses that collect photos
               as part of real intake, inspection, or documentation workflows.
               You get hands-on setup and early influence; we get honest workflow
@@ -1504,7 +1495,7 @@ function FoundingPartnerSection({
               <ArrowRight className="ml-1 h-4 w-4" />
             </Button>
           </div>
-          <div className="relative z-10 grid gap-4 md:grid-cols-2">
+          <div className="grid gap-8 sm:gap-10 md:grid-cols-2">
             <BenefitList
               title="Beta partners get"
               items={[...PARTNER_BENEFITS]}
@@ -1513,78 +1504,78 @@ function FoundingPartnerSection({
           </div>
         </div>
 
-        {/* Collapsible details — accordion for progressive disclosure */}
-        <div className="mx-auto mt-8 max-w-3xl">
-          <Accordion type="multiple" className="grid gap-3">
+        {/* Collapsible details — editorial hairline rows */}
+        <div className="mx-auto mt-12 max-w-3xl border-t border-white/12">
+          <Accordion type="multiple" className="grid">
             {/* Partner expectations */}
-            <AccordionItem value="expectations" className="rounded-[1.2rem] border border-white/12 bg-white/[0.025] px-4 sm:px-5">
-              <AccordionTrigger className="py-4 text-sm font-bold text-white hover:no-underline sm:text-base [&>svg]:text-[hsl(var(--pb-lavender))]">
-                <span className="flex items-center gap-2">
+            <AccordionItem value="expectations" className="border-b border-white/12">
+              <AccordionTrigger className="py-5 text-left text-sm font-bold text-white hover:no-underline sm:text-base [&>svg]:text-[hsl(var(--pb-lavender))]">
+                <span className="flex items-center gap-3">
                   <Users className="h-4 w-4 text-[hsl(var(--pb-lavender))]" />
                   What it means to be a founding beta partner
                 </span>
               </AccordionTrigger>
-              <AccordionContent>
-                <p className="pb-copy mb-4 text-sm">
+              <AccordionContent className="pb-6">
+                <p className="pb-copy mb-5 text-sm">
                   We're accepting {BETA_TOTAL_PARTNERS} businesses. The{" "}
                   {BETA_DURATION_DAYS}-day beta clock starts {BETA_SETUP_BUFFER_DAYS}{" "}
                   days after the final seat is filled, giving every partner time for
                   concierge setup.
                 </p>
-                <div className="grid gap-3 sm:gap-4">
+                <ol className="grid gap-5">
                   {DETAILED_EXPECTATIONS.map((exp, i) => (
-                    <div key={i} className="flex gap-3">
-                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[hsl(var(--pb-lavender)/0.13)] text-xs font-black text-[hsl(var(--pb-lavender))] sm:h-8 sm:w-8">
-                        {i + 1}
+                    <li key={i} className="flex gap-4 border-t border-white/8 pt-4 first:border-0 first:pt-0">
+                      <span className="font-serif text-xl leading-none text-[hsl(var(--pb-lavender))] sm:text-2xl">
+                        {String(i + 1).padStart(2, "0")}
                       </span>
                       <div>
-                        <p className="text-sm font-semibold text-white">
+                        <p className="font-serif text-base italic text-white sm:text-lg">
                           {exp.title}
                         </p>
-                        <p className="pb-copy mt-0.5 text-xs leading-5 sm:text-sm">
+                        <p className="pb-copy mt-1 text-xs leading-5 sm:text-sm">
                           {exp.description}
                         </p>
                       </div>
-                    </div>
+                    </li>
                   ))}
-                </div>
+                </ol>
               </AccordionContent>
             </AccordionItem>
 
             {/* Reward tiers */}
-            <AccordionItem value="rewards" className="rounded-[1.2rem] border border-white/12 bg-white/[0.025] px-4 sm:px-5">
-              <AccordionTrigger className="py-4 text-sm font-bold text-white hover:no-underline sm:text-base [&>svg]:text-[hsl(var(--pb-lavender))]">
-                <span className="flex items-center gap-2">
+            <AccordionItem value="rewards" className="border-b border-white/12">
+              <AccordionTrigger className="py-5 text-left text-sm font-bold text-white hover:no-underline sm:text-base [&>svg]:text-[hsl(var(--pb-lavender))]">
+                <span className="flex items-center gap-3">
                   <Gift className="h-4 w-4 text-[hsl(var(--pb-lavender))]" />
                   Reward tiers — every partner earns something
                 </span>
               </AccordionTrigger>
-              <AccordionContent>
-                <p className="pb-copy mb-4 text-sm">
+              <AccordionContent className="pb-6">
+                <p className="pb-copy mb-5 text-sm">
                   Every beta partner earns a post-launch discount. Your tier is
                   based on the quality of your feedback — not just how much you
                   use the product.
                 </p>
-                <div className="grid gap-2">
-                  {REWARD_TIERS.map((tier) => {
+                <div className="grid">
+                  {REWARD_TIERS.map((tier, idx) => {
                     const isTopTier = tier.duration === "free-pro";
                     return (
                       <div
                         key={tier.label}
-                        className={`flex items-center justify-between rounded-2xl px-3 py-2.5 sm:px-4 sm:py-3 ${isTopTier ? "border-2 border-[hsl(var(--pb-lavender)/0.5)] bg-gradient-to-r from-[hsl(var(--pb-violet)/0.15)] to-[hsl(var(--pb-lavender)/0.08)] shadow-md shadow-[hsl(var(--pb-violet)/0.2)]" : "border border-white/10 bg-white/[0.035]"}`}
+                        className={`flex items-center justify-between gap-3 py-3 ${idx > 0 ? "border-t border-white/8" : ""}`}
                       >
                         <div className="flex items-center gap-3">
                           {isTopTier ? (
-                            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[hsl(var(--pb-lavender))] to-[hsl(var(--pb-violet))] sm:h-8 sm:w-8">
+                            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[hsl(var(--pb-lavender))] to-[hsl(var(--pb-violet))]">
                               <Trophy className="h-3.5 w-3.5 text-white" />
                             </span>
                           ) : (
-                            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[hsl(var(--pb-lavender)/0.13)] text-[10px] font-black text-[hsl(var(--pb-lavender))] sm:h-8 sm:w-8">
-                              {tier.count}
+                            <span className="font-serif text-lg leading-none text-[hsl(var(--pb-lavender))] sm:text-xl">
+                              {String(tier.count).padStart(2, "0")}
                             </span>
                           )}
                           <span
-                            className={`text-sm font-semibold ${isTopTier ? "text-[hsl(var(--pb-lavender))]" : "text-white"}`}
+                            className={`text-sm font-semibold sm:text-base ${isTopTier ? "text-[hsl(var(--pb-lavender))]" : "text-white"}`}
                           >
                             {tier.label}
                           </span>
@@ -1596,15 +1587,15 @@ function FoundingPartnerSection({
                     );
                   })}
                 </div>
-                <div className="mt-4 rounded-[1.2rem] border border-[hsl(var(--pb-lavender)/0.2)] bg-[hsl(var(--pb-lavender)/0.04)] p-3 sm:p-4">
-                  <p className="text-xs font-semibold text-white/80 sm:text-sm">
-                    What drives your tier placement:
+                <div className="mt-6 border-l-2 border-[hsl(var(--pb-lavender)/0.4)] pl-4">
+                  <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[hsl(var(--pb-lavender))]">
+                    What drives your tier placement
                   </p>
                   <ul className="mt-2 grid gap-1.5">
                     {REWARD_CRITERIA.map((criterion) => (
                       <li
                         key={criterion}
-                        className="flex items-start gap-2 text-xs text-white/60 sm:text-sm"
+                        className="flex items-start gap-2 text-xs text-white/70 sm:text-sm"
                       >
                         <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[hsl(var(--pb-mint)/0.7)]" />
                         <span>{criterion}</span>
@@ -1616,34 +1607,37 @@ function FoundingPartnerSection({
             </AccordionItem>
 
             {/* Scoring rubric */}
-            <AccordionItem value="scoring" className="rounded-[1.2rem] border border-white/12 bg-white/[0.025] px-4 sm:px-5">
-              <AccordionTrigger className="py-4 text-sm font-bold text-white hover:no-underline sm:text-base [&>svg]:text-[hsl(var(--pb-lavender))]">
-                <span className="flex items-center gap-2">
+            <AccordionItem value="scoring" className="border-b border-white/12">
+              <AccordionTrigger className="py-5 text-left text-sm font-bold text-white hover:no-underline sm:text-base [&>svg]:text-[hsl(var(--pb-lavender))]">
+                <span className="flex items-center gap-3">
                   <Trophy className="h-4 w-4 text-[hsl(var(--pb-lavender))]" />
                   Scoring rubric — how we pick the top 2
                 </span>
               </AccordionTrigger>
-              <AccordionContent>
-                <p className="pb-copy mb-4 text-sm">
+              <AccordionContent className="pb-6">
+                <p className="pb-copy mb-5 text-sm">
                   There's no secret formula — just four dimensions we weight
                   equally-ish. Here's exactly what we look at.
                 </p>
-                <div className="grid gap-4">
-                  {SCORING_RUBRIC.map((dim) => (
-                    <div key={dim.label} className="rounded-xl border border-white/8 bg-white/[0.025] p-3 sm:p-4">
-                      <div className="flex flex-wrap items-center gap-3">
-                        <h3 className="text-sm font-bold tracking-tight text-white sm:text-base">
+                <div className="grid">
+                  {SCORING_RUBRIC.map((dim, idx) => (
+                    <div
+                      key={dim.label}
+                      className={`py-5 ${idx > 0 ? "border-t border-white/8" : ""}`}
+                    >
+                      <div className="flex flex-wrap items-baseline justify-between gap-3">
+                        <h3 className="font-serif text-lg italic text-white sm:text-xl">
                           {dim.label}
                         </h3>
-                        <span className="rounded-full border border-[hsl(var(--pb-lavender)/0.3)] bg-[hsl(var(--pb-lavender)/0.08)] px-2.5 py-0.5 text-[11px] font-extrabold tracking-wider text-[hsl(var(--pb-lavender))]">
+                        <span className="text-[10px] font-black uppercase tracking-[0.22em] text-[hsl(var(--pb-lavender))]">
                           {dim.weight}
                         </span>
                       </div>
                       <p className="pb-copy mt-2 text-xs leading-relaxed sm:text-sm">
                         {dim.description}
                       </p>
-                      <div className="mt-2 rounded-lg border border-white/6 bg-white/[0.02] p-2.5">
-                        <p className="mb-1.5 text-[10px] font-bold uppercase tracking-widest text-white/40">
+                      <div className="mt-3 border-l-2 border-white/12 pl-3">
+                        <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/40">
                           Examples of great feedback
                         </p>
                         {dim.examples.map((ex, i) => (
@@ -1658,8 +1652,8 @@ function FoundingPartnerSection({
                     </div>
                   ))}
                 </div>
-                <div className="mt-4 rounded-[1.2rem] border border-[hsl(var(--pb-mint)/0.2)] bg-[hsl(var(--pb-mint)/0.04)] p-4 text-center">
-                  <p className="text-sm font-semibold text-white/90">
+                <div className="mt-6 border-l-2 border-[hsl(var(--pb-mint)/0.4)] pl-4">
+                  <p className="font-serif text-base italic text-white/90 sm:text-lg">
                     Every partner earns a reward tier. The rubric above determines who
                     lands in the top&nbsp;2.
                   </p>
@@ -1734,15 +1728,15 @@ function FinalCta({ isFull }: { isFull: boolean }) {
 
 function BenefitList({ title, items }: { title: string; items: string[] }) {
   return (
-    <div className="rounded-[1.2rem] border border-white/12 bg-white/[0.035] p-4 sm:rounded-[1.4rem] sm:p-5">
-      <h3 className="text-base font-semibold tracking-tight text-white sm:text-lg">
+    <div className="border-t border-white/12 pt-5">
+      <h3 className="font-serif text-lg italic text-white sm:text-xl">
         {title}
       </h3>
-      <ul className="mt-3 grid gap-2.5 sm:mt-4 sm:gap-3">
+      <ul className="mt-4 grid gap-3">
         {items.map((item) => (
           <li
             key={item}
-            className="flex gap-3 text-sm font-semibold leading-6 text-white/76"
+            className="flex gap-3 text-sm leading-6 text-white/76"
           >
             <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-[hsl(var(--pb-mint))]" />
             <span>{item}</span>
