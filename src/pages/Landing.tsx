@@ -1230,7 +1230,7 @@ function WebsiteIntelligenceSection() {
   return (
     <section id="website-intelligence" className="pb-section">
       <div className="pb-container">
-        <div className="mx-auto max-w-3xl text-center">
+        <div className="mx-auto max-w-3xl text-center lg:max-w-5xl">
           <span className="pb-eyebrow">
             <Globe2 className="h-3.5 w-3.5" /> Website Intelligence
           </span>
