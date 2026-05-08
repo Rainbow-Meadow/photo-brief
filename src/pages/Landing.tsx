@@ -387,7 +387,7 @@ export default function LandingPage() {
                   </Button>
                 </div>
 
-                <div className="mx-auto mt-4 flex max-w-md flex-wrap justify-center gap-2 sm:mt-5 sm:gap-2.5 lg:hidden">
+                <div className="mx-auto mt-4 flex max-w-md flex-wrap justify-center gap-2 sm:mt-5 sm:gap-2.5">
                   {[
                     "Website scan included",
                     "Hosted link or embed",
@@ -449,21 +449,6 @@ export default function LandingPage() {
                       <PlayCircle className="mr-1.5 h-4.5 w-4.5" /> Spotlight
                     </Button>
                   </div>
-                </div>
-
-                <div className="flex max-w-md flex-wrap justify-center gap-2">
-                  {[
-                    "Website scan included",
-                    "Hosted link or embed",
-                    "Lead packets, not form spam",
-                  ].map((item) => (
-                    <span
-                      key={item}
-                      className="pb-route-chip px-3 py-2 text-center text-xs font-semibold"
-                    >
-                      {item}
-                    </span>
-                  ))}
                 </div>
               </div>
             </div>
