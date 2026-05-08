@@ -99,12 +99,12 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
       radial-gradient(42% 32% at 82% 16%, hsl(185 95% 66% / 0.13), transparent 76%),
       radial-gradient(58% 48% at 50% 92%, hsl(252 90% 70% / 0.10), transparent 72%);
 
-    --pb-night: 260 52% 4%;
-    --pb-ink: 258 45% 7%;
-    --pb-panel: 258 36% 10%;
-    --pb-panel-2: 257 32% 14%;
-    --pb-line: 255 18% 28%;
-    --pb-line-strong: 255 24% 42%;
+    --pb-night: 258 22% 7%;
+    --pb-ink: 256 18% 10%;
+    --pb-panel: 256 16% 14%;
+    --pb-panel-2: 255 14% 18%;
+    --pb-line: 255 12% 28%;
+    --pb-line-strong: 255 16% 40%;
     --pb-violet: 257 96% 67%;
     --pb-lavender: 264 100% 78%;
     --pb-electric: 246 100% 72%;
