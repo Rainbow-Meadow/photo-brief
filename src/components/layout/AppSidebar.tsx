@@ -41,9 +41,9 @@ import { cn } from "@/lib/utils";
 
 const mainItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
-  { title: "Requests", url: "/requests", icon: Inbox },
+  { title: "Lead Packets", url: "/requests", icon: Inbox },
   { title: "Customers", url: "/customers", icon: Users },
-  { title: "Guides", url: "/guides", icon: BookOpen },
+  { title: "Intake Workflows", url: "/guides", icon: BookOpen },
   { title: "Website Intake", url: "/intake", icon: Globe2, feature: "website_intake" as const },
 ];
 
@@ -52,12 +52,12 @@ const adminItems = [
   { title: "Beta Program", url: "/admin/beta", icon: Shield },
   { title: "Invites", url: "/admin/invites", icon: UserPlus },
   { title: "AI Rerun", url: "/admin/ai-rerun", icon: Bot },
-  { title: "Website Intel", url: "/admin/website-intelligence", icon: ScanSearch },
+  { title: "Website Intelligence", url: "/admin/website-intelligence", icon: ScanSearch },
 ];
 const settingsItems = [
   { title: "Brand", url: "/settings/brand", icon: Sparkles },
   { title: "Team", url: "/settings/team", icon: Settings },
-  { title: "Templates", url: "/settings/templates", icon: FileText },
+  { title: "Workflow Templates", url: "/settings/templates", icon: FileText },
   { title: "SMS", url: "/settings/sms", icon: MessageSquare },
   { title: "Integrations", url: "/settings/integrations", icon: Plug },
   { title: "Billing", url: "/settings/billing", icon: CreditCard },
