@@ -4,14 +4,15 @@
   "type": "module",
   "scripts": {
     "dev": "wrangler dev",
-    "deploy": "wrangler deploy"
+    "deploy": "wrangler deploy",
+    "bundle:check": "wrangler deploy --dry-run --outdir ../../dist-worker-check/workers/assistant-agent"
   },
   "dependencies": {
-    "agents": "^0.2.19",
+    "agents": "0.2.19",
     "ai": "5.0.179"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20250410.0",
-    "wrangler": "^4.14.0"
+    "@cloudflare/workers-types": "4.20260507.1",
+    "wrangler": "4.14.0"
   }
 }
