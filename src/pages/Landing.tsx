@@ -612,7 +612,7 @@ function RoiCalculatorSection() {
   }
 
   return (
-    <section className="pb-section-tight my-[70px] mb-0 mt-0" ref={calcRef}>
+    <section className="pb-section-tight my-0" ref={calcRef}>
       <div className="pb-container">
         <button
           type="button"
