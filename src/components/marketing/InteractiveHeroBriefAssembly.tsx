@@ -314,7 +314,7 @@ function BusinessIdleScreen({
               {showProgress && (
                 <div className="mt-3 flex items-center gap-2 rounded-lg bg-white/[0.04] px-2.5 py-2">
                   <span className="relative flex h-2 w-2">
-                    <span className="absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75 [@media(hover:hover)]:animate-ping" />
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75" />
                     <span className="relative inline-flex h-2 w-2 rounded-full bg-amber-400" />
                   </span>
                   <span className="text-[10px] font-semibold text-amber-400/80">

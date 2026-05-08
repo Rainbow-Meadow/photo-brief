@@ -702,38 +702,6 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
     opacity: 0.9;
     transition: transform 100ms ease, opacity 100ms ease;
   }
-
-  /* ── Touch-only: suppress expensive decorative effects ──── */
-
-  /* Kill lens-field radial-gradient overlays (compositing overhead during scroll) */
-  .pb-lens-field { display: none !important; }
-
-  /* Suppress decorative blur blobs */
-  .touch-hide { display: none !important; }
-
-  /* Neutralize card hover transitions */
-  .pb-card { transition: none; }
-
-  /* Kill infinite sheen animation */
-  .animate-sheen { animation: none !important; display: none !important; }
-
-  /* Reduce sticky nav backdrop-blur for scroll perf */
-  .touch-blur-reduce {
-    backdrop-filter: saturate(150%) blur(8px) !important;
-    -webkit-backdrop-filter: saturate(150%) blur(8px) !important;
-  }
-
-  /* Paint containment on cards for scroll isolation */
-  .pb-card,
-  .surface-card {
-    contain: layout style paint;
-  }
-
-  /* Suppress active:scale on non-button touch containers (scroll jank) */
-  .touch-no-active:active {
-    transform: none !important;
-    opacity: 1 !important;
-  }
 }
 
 @media (max-width: 767px) {

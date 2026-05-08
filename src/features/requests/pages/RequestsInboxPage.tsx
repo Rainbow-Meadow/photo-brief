@@ -132,7 +132,7 @@ export default function RequestsInboxPage() {
     const ids = Array.from(selected);
     try {
       await requestsService.bulkUpdateStatus(ids, "archived");
-      toast.success(`Archived ${ids.length} packet${ids.length === 1 ? "" : "s"}`);
+      toast.success(`Archived ${ids.length} request${ids.length === 1 ? "" : "s"}`);
       clearSelection();
       await refetchInbox();
     } catch (err: any) {
@@ -144,12 +144,12 @@ export default function RequestsInboxPage() {
 
   const handleBulkDelete = async () => {
     if (!ensureBulkAllowed()) return;
-    if (!window.confirm(`Delete ${selected.size} packet(s)? This cannot be undone.`)) return;
+    if (!window.confirm(`Delete ${selected.size} request(s)? This cannot be undone.`)) return;
     setBulkBusy(true);
     const ids = Array.from(selected);
     try {
       await requestsService.bulkDelete(ids);
-      toast.success(`Deleted ${ids.length} packet${ids.length === 1 ? "" : "s"}`);
+      toast.success(`Deleted ${ids.length} request${ids.length === 1 ? "" : "s"}`);
       clearSelection();
       await refetchInbox();
     } catch (err: any) {
@@ -183,12 +183,12 @@ export default function RequestsInboxPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Lead packets"
-        description="Website intake submissions and manual links, organized by customer, workflow, readiness, and next action."
+        title="Requests"
+        description="Every link you've sent and every brief you've received."
         actions={
           <Button asChild className="hidden gap-1.5 sm:inline-flex">
             <NavLink to="/requests/new">
-              <Plus className="h-4 w-4" /> New manual link
+              <Plus className="h-4 w-4" /> New request
             </NavLink>
           </Button>
         }
@@ -261,7 +261,7 @@ export default function RequestsInboxPage() {
         ) : (
           <div className="flex items-center justify-between border-b px-5 py-3 text-xs text-muted-foreground">
             <span>
-              {filtered.length} {filtered.length === 1 ? "packet" : "packets"}
+              {filtered.length} {filtered.length === 1 ? "request" : "requests"}
             </span>
           </div>
         )}
@@ -269,7 +269,7 @@ export default function RequestsInboxPage() {
         <ul className="divide-y md:hidden">
           {filtered.length === 0 ? (
             <li className="px-5 py-10 text-center text-sm text-muted-foreground">
-              No lead packets match these filters.
+              No requests match these filters.
             </li>
           ) : (
             filtered.map((r) => {
@@ -282,7 +282,7 @@ export default function RequestsInboxPage() {
                 >
                   <div className="flex items-start gap-3.5">
                     <Checkbox
-                      aria-label={`Select lead packet for ${r.recipientName}`}
+                      aria-label={`Select request for ${r.recipientName}`}
                       checked={isSel}
                       onCheckedChange={() => toggleOne(r.id)}
                       className="mt-1.5 h-5 w-5"
@@ -335,7 +335,7 @@ export default function RequestsInboxPage() {
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem asChild>
                           <NavLink to={`/requests/${r.id}`}>
-                            <Eye className="mr-2 h-3.5 w-3.5" /> Open packet
+                            <Eye className="mr-2 h-3.5 w-3.5" /> Open
                           </NavLink>
                         </DropdownMenuItem>
                         <DropdownMenuItem
@@ -367,7 +367,7 @@ export default function RequestsInboxPage() {
                             toast.success("Link copied");
                           }}
                         >
-                          <Send className="mr-2 h-3.5 w-3.5" /> Copy intake link
+                          <Send className="mr-2 h-3.5 w-3.5" /> Copy link
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -390,8 +390,8 @@ export default function RequestsInboxPage() {
                     onCheckedChange={toggleAll}
                   />
                 </th>
-                <th className="px-5 py-3 font-medium">Customer</th>
-                <th className="px-5 py-3 font-medium">Workflow</th>
+                <th className="px-5 py-3 font-medium">Recipient</th>
+                <th className="px-5 py-3 font-medium">Guide</th>
                 <th className="px-5 py-3 font-medium">Status</th>
                 <th className="px-5 py-3 font-medium">Readiness</th>
                 <th className="px-5 py-3 font-medium">Missing</th>
@@ -404,7 +404,7 @@ export default function RequestsInboxPage() {
               {filtered.length === 0 ? (
                 <tr>
                   <td colSpan={9} className="px-5 py-10 text-center text-sm text-muted-foreground">
-                    No lead packets match these filters.
+                    No requests match these filters.
                   </td>
                 </tr>
               ) : (
@@ -415,7 +415,7 @@ export default function RequestsInboxPage() {
                     <tr key={r.id} className={isSel ? "bg-primary/5" : "hover:bg-muted/30"}>
                       <td className="px-3 py-3 align-middle">
                         <Checkbox
-                          aria-label={`Select lead packet for ${r.recipientName}`}
+                          aria-label={`Select request for ${r.recipientName}`}
                           checked={isSel}
                           onCheckedChange={() => toggleOne(r.id)}
                         />
@@ -468,7 +468,7 @@ export default function RequestsInboxPage() {
                         <div className="flex justify-end gap-1">
                           <Button asChild variant="ghost" size="sm" className="gap-1">
                             <NavLink to={`/requests/${r.id}`}>
-                              <Eye className="h-3.5 w-3.5" /> Open packet
+                              <Eye className="h-3.5 w-3.5" /> Open
                             </NavLink>
                           </Button>
                           <DropdownMenu>
@@ -518,7 +518,7 @@ export default function RequestsInboxPage() {
                                   toast.success("Link copied");
                                 }}
                               >
-                                <Send className="mr-2 h-3.5 w-3.5" /> Copy intake link
+                                <Send className="mr-2 h-3.5 w-3.5" /> Copy link
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
