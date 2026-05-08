@@ -241,7 +241,8 @@ const App = () => (
           <Route path="*" element={<NotFound />} />
           </Routes>
           </Suspense>
-          </InviteAcceptanceGuard>
+          </ErrorBoundary>
+          <InviteAcceptanceGuard />
         </CurrentWorkspaceProvider>
         </AuthProvider>
       </BrowserRouter>
