@@ -406,8 +406,15 @@ export default function LandingPage() {
           <PainPointSection />
         </div>
 
-        {/* ── Chapter break: Problem → Solution ── */}
-        <ChapterDivider tone="paper" />
+        {/* ━━ SEAM A — Chapter marker (Problem → Solution) ━━━━ */}
+        <ChapterMarker
+          stamp="Chapter II · The fix"
+          words={[
+            ["messy form", "clean packet"],
+            ["vague intake", "actionable lead"],
+            ["back-and-forth", "one round trip"],
+          ]}
+        />
 
         <section className="pb-section">
           <div className="pb-container">
@@ -437,30 +444,39 @@ export default function LandingPage() {
         {/* ━━ 5. HOW IT WORKS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <WorkflowSection />
 
+        {/* ━━ SEAM B — Comparison toggle promoted to seam ━━━━━ */}
+        <ComparisonSeam mode={comparisonMode} onModeChange={setComparisonMode} />
+
         {/* ━━ 6. BEFORE / AFTER — ivory alt ━━━━━━━━━━━━━━━━━━ */}
         <div className="pb-section-alt">
-          <ComparisonSection
-            mode={comparisonMode}
-            onModeChange={setComparisonMode}
-          />
+          <ComparisonSection mode={comparisonMode} />
         </div>
 
         {/* ━━ TICKER 2 — Product signals ━━━━━━━━━━━━━━━━━━━━━━ */}
         <TickerBar tone="paper" items={["Website scan included", "Hosted link or embed", "No app required for customers", "AI photo quality checks", "Lead packets — not form spam"]} direction="right" />
 
-        {/* ── Chapter break: Solution → Fit ── */}
-        <ChapterDivider tone="paper" />
+        {/* ━━ SEAM C — Use case chip filter ━━━━━━━━━━━━━━━━━━ */}
+        <UseCaseChipRow active={activeUseCaseStamp} onChange={setActiveUseCaseStamp} />
 
         {/* ━━ 7. USE CASES ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-        <UseCaseSection />
+        <UseCaseSection activeStamp={activeUseCaseStamp} />
 
         {/* ━━ 8. WEBSITE INTELLIGENCE — ivory alt ━━━━━━━━━━━━━ */}
         <div className="pb-section-alt">
           <WebsiteIntelligenceSection />
         </div>
 
-        {/* ── Chapter break: Product → Beta ── */}
-        <ChapterDivider tone="paper" />
+        {/* ━━ SEAM D — Beta crossover ticker ━━━━━━━━━━━━━━━━━ */}
+        <TickerBar
+          tone="paper"
+          items={[
+            `${BETA_TOTAL_PARTNERS} founding partner seats`,
+            "Free Pro for Life reward",
+            `${BETA_DURATION_DAYS}-day beta`,
+            "Concierge setup included",
+            "Every partner earns a reward",
+          ]}
+        />
 
         {/* ━━ BETA ZONE — distinct lavender-tinted chapter ━━━━━━ */}
         <div className="pb-beta-zone">
@@ -472,8 +488,8 @@ export default function LandingPage() {
             <RewardTiersSection />
           </div>
 
-          {/* Details — collapsed disclosure */}
-          <BetaDetailsAccordion />
+          {/* Details — collapsed disclosure with master toggle seam */}
+          <BetaDetailsAccordion value={betaDetailsOpen} onValueChange={setBetaDetailsOpen} />
         </div>
 
         {/* ━━ FINAL CTA — the one dark zone ━━━━━━━━━━━━━━━━━ */}
