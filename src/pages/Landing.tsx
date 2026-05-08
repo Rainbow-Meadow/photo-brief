@@ -13,6 +13,7 @@ import {
   DollarSign,
   Eye,
   FileCheck2,
+  FileText,
   FormInput,
   Gift,
   Globe2,
@@ -1679,22 +1680,19 @@ function BetaDetailsAccordion({ value, onValueChange }: BetaDetailsAccordionProp
   return (
     <section className="pb-section-tight">
       <div className="pb-container">
-        <div className="mx-auto max-w-3xl">
-          <div className="mb-2 flex justify-center">
-            <img
+        <SectionIntro
+          eyebrow={<><FileText className="h-3.5 w-3.5" /> The fine print</>}
+          title="Everything in writing."
+          description="How the program runs, what we ask of partners, and exactly how rewards are decided."
+          accent={
+            <TradeAccent
               src={betaNotebookIllo}
               alt="Hand-drawn illustration of an open notebook with a magnifying glass — the fine print"
-              width={1024}
-              height={1024}
-              loading="lazy"
-              decoding="async"
-              className="w-full max-w-[200px] drop-shadow-[0_18px_30px_hsl(var(--pb-ink-soft)/0.28)]"
             />
-          </div>
-          <div className="flex items-center justify-between gap-4 border-y border-[hsl(var(--pb-ink-soft)/0.18)] py-4">
-            <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[hsl(var(--pb-violet))]">
-              The fine print
-            </p>
+          }
+        />
+        <div className="mx-auto mt-10 max-w-3xl sm:mt-14">
+          <div className="flex items-center justify-end border-b border-[hsl(var(--pb-ink-soft)/0.18)] py-3">
             <button
               type="button"
               className="pb-master-toggle"
