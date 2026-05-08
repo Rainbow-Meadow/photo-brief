@@ -498,6 +498,28 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
   .pb-on-paper .bg-white\/\[0\.035\],
   .pb-on-paper .bg-white\/\[0\.015\] { background: hsl(0 0% 100% / 0.6); }
 
+  /* Re-tone arbitrary dark inline tokens used inside cards/icon badges */
+  .pb-on-paper .bg-\[hsl\(var\(--pb-ink\)\)\] {
+    background: hsl(0 0% 100% / 0.85);
+  }
+  .pb-on-paper .border-\[hsl\(var\(--pb-line-strong\)\)\] {
+    border-color: hsl(var(--pb-ink-soft) / 0.12);
+  }
+  /* ROI calculator collapsed pill — light variant on paper */
+  .pb-on-paper .bg-gradient-to-r.from-\[hsl\(var\(--pb-violet\)\/0\.10\)\] {
+    background: linear-gradient(135deg,
+      hsl(var(--pb-violet) / 0.06) 0%,
+      hsl(0 0% 100% / 0.85) 50%,
+      hsl(var(--pb-lavender) / 0.10) 100%);
+  }
+  .pb-on-paper .border-\[hsl\(var\(--pb-lavender\)\/0\.25\)\] {
+    border-color: hsl(var(--pb-violet) / 0.22);
+  }
+  /* Lavender-tinted icon containers stay readable on paper */
+  .pb-on-paper .bg-\[hsl\(var\(--pb-lavender\)\/0\.12\)\] {
+    background: hsl(var(--pb-violet) / 0.10);
+  }
+
   /* Paper ticker — quiet marquee on the cream surface */
   .pb-ticker-paper {
     border-block: 1px solid hsl(var(--pb-ink-soft) / 0.08);
