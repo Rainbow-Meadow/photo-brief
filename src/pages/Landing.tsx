@@ -1257,6 +1257,16 @@ function WorkflowSection() {
               machine — from first visit to a quote-ready packet your team
               can act on without follow-ups.
             </p>
+            <div className="mt-8 hidden lg:block">
+              <img
+                src={estimatorIllo}
+                alt="Hand-drawn illustration of an estimator assembling an evidence packet from customer photos"
+                width={1024}
+                height={1024}
+                loading="lazy"
+                className="w-full max-w-sm drop-shadow-[0_24px_40px_hsl(var(--pb-ink-soft)/0.22)]"
+              />
+            </div>
           </div>
           <div className="relative">
             <div className="absolute left-6 top-8 hidden h-[calc(100%-4rem)] w-px bg-gradient-to-b from-[hsl(var(--pb-lavender))] via-[hsl(var(--pb-violet))] to-transparent md:block" />
