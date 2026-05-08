@@ -1463,16 +1463,18 @@ function FoundingPartnerSection({
   return (
     <section id="beta-program" className="pb-section">
       <div className="pb-container">
-        {/* Benefits & expectations — always visible */}
-        <div className="pb-command-panel grid gap-6 p-5 sm:gap-8 sm:p-6 lg:grid-cols-[0.85fr_1.15fr] lg:p-8 xl:p-10">
-          <div className="relative z-10">
-            <span className="pb-eyebrow">
-              <Stamp className="h-3.5 w-3.5" /> Accepting applications
-            </span>
-            <h2 className="mt-4 text-2xl font-semibold tracking-tight text-white sm:text-3xl lg:text-4xl">
-              Built with real workflows, not toy testing.
+        {/* Benefits & expectations — editorial header + columns */}
+        <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[hsl(var(--pb-lavender))]">
+              <Stamp className="-mt-0.5 mr-1 inline h-3 w-3" /> Accepting applications
+            </p>
+            <h2 className="mt-4 font-serif text-3xl italic leading-[1.05] tracking-tight text-white sm:text-4xl lg:text-5xl">
+              Built with real workflows,
+              <br className="hidden sm:block" />{" "}
+              <span className="not-italic font-semibold">not toy testing.</span>
             </h2>
-            <p className="pb-copy mt-4 text-base sm:text-lg">
+            <p className="pb-copy mt-5 text-base leading-relaxed sm:text-lg">
               We're accepting applications from businesses that collect photos
               as part of real intake, inspection, or documentation workflows.
               You get hands-on setup and early influence; we get honest workflow
@@ -1493,7 +1495,7 @@ function FoundingPartnerSection({
               <ArrowRight className="ml-1 h-4 w-4" />
             </Button>
           </div>
-          <div className="relative z-10 grid gap-4 md:grid-cols-2">
+          <div className="grid gap-8 sm:gap-10 md:grid-cols-2">
             <BenefitList
               title="Beta partners get"
               items={[...PARTNER_BENEFITS]}
