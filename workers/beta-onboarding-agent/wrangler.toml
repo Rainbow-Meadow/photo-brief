@@ -3,6 +3,9 @@ main = "src/index.ts"
 compatibility_date = "2025-04-01"
 compatibility_flags = ["nodejs_compat"]
 
+[placement]
+mode = "smart"
+
 [[routes]]
 pattern = "beta-agent.photobrief.ai/*"
 zone_name = "photobrief.ai"
