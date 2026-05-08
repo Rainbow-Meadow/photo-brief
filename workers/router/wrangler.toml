@@ -15,4 +15,4 @@ zone_name = "photobrief.ai"
 
 [vars]
 PAGES_HOST = "photobrief-marketing.pages.dev"
-LOVABLE_HOST = "photobrief.lovable.app"
+LOVABLE_HOST = "photo-brief.lovable.app"
