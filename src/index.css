@@ -419,7 +419,7 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
 
   .pb-landing {
     background:
-      radial-gradient(60% 40% at 50% 0%, hsl(var(--pb-lavender) / 0.10), transparent 72%),
+      radial-gradient(60% 40% at 50% 0%, hsl(var(--brand-amber-light) / 0.14), transparent 72%),
       linear-gradient(180deg, hsl(var(--pb-cream)) 0%, hsl(var(--pb-cream-warm)) 100%);
     color: hsl(var(--pb-ink-soft));
   }
@@ -427,21 +427,21 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
   /* ── Editorial / Surveva-style warm paper surface ───────────── */
   .pb-paper-surface {
     background:
-      radial-gradient(60% 50% at 80% 0%, hsl(var(--pb-violet) / 0.08), transparent 70%),
-      radial-gradient(40% 35% at 8% 18%, hsl(var(--pb-lavender) / 0.10), transparent 72%),
+      radial-gradient(60% 50% at 80% 0%, hsl(var(--brand-amber) / 0.10), transparent 70%),
+      radial-gradient(40% 35% at 8% 18%, hsl(var(--brand-navy) / 0.06), transparent 72%),
       linear-gradient(180deg, hsl(var(--pb-cream)) 0%, hsl(var(--pb-cream-warm)) 100%);
     color: hsl(var(--pb-ink-soft));
   }
   .pb-paper-surface .pb-eyebrow {
     background: hsl(0 0% 100% / 0.6);
     border-color: hsl(var(--pb-ink-soft) / 0.12);
-    color: hsl(var(--pb-violet));
+    color: hsl(var(--brand-navy));
   }
   .pb-display {
     font-weight: 700;
     letter-spacing: -0.035em;
     line-height: 0.98;
-    color: hsl(var(--pb-violet));
+    color: hsl(var(--brand-amber));
     font-size: clamp(2.5rem, 7.2vw, 6rem);
   }
   .pb-display-ink { color: hsl(var(--pb-ink-soft)); }
