@@ -1595,13 +1595,12 @@ function RewardTiersSection() {
   );
 }
 
-function BetaDetailsAccordion({
-  value,
-  onValueChange,
-}: {
+type BetaDetailsAccordionProps = {
   value: string[];
   onValueChange: (value: string[]) => void;
-}) {
+};
+
+function BetaDetailsAccordion({ value, onValueChange }: BetaDetailsAccordionProps) {
   const ALL_ITEMS = ["expectations", "scoring"];
   const allOpen = ALL_ITEMS.every((id) => value.includes(id));
   return (
