@@ -353,7 +353,9 @@ export default function LandingPage() {
                 <p className="mt-6 max-w-xl text-base leading-[1.65] text-[hsl(var(--pb-ink-muted))] sm:text-lg sm:mt-8">
                   PhotoBrief scans your website, maps your services, and gives
                   customers a simple photo-guided path — so your team gets
-                  actionable lead packets instead of vague messages.
+                  actionable lead packets instead of vague messages. Built for
+                  landscapers, junk haulers, HVAC and repair techs, plumbers,
+                  and damage estimators.
                 </p>
 
                 <div className="mt-8 flex flex-col gap-3 sm:mt-10 sm:flex-row sm:items-center">
