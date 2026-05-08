@@ -410,7 +410,10 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ━━ 2. PAIN POINTS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+        {/* ━━ TICKER 1 — Industry signals ━━━━━━━━━━━━━━━━━━━━━ */}
+        <TickerBar items={["81% of forms abandoned before submit", "78% buy from whoever responds first", "4.2 hr avg lead response time", "60% of estimates never followed up", "5+ follow-ups to close — most stop at 1"]} />
+
+        {/* ━━ 2. PAIN POINTS (carousel) ━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <PainPointSection />
 
         {/* ━━ ROI CALCULATOR ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
@@ -451,6 +454,9 @@ export default function LandingPage() {
           mode={comparisonMode}
           onModeChange={setComparisonMode}
         />
+
+        {/* ━━ TICKER 2 — Product signals ━━━━━━━━━━━━━━━━━━━━━━ */}
+        <TickerBar items={["Website scan included", "Hosted link or embed", "No app required for customers", "AI photo quality checks", "Lead packets — not form spam"]} direction="right" />
 
         {/* ── Chapter break: Solution → Fit ── */}
         <ChapterDivider />
