@@ -31,9 +31,14 @@ import {
   TimerReset,
   TrendingDown,
   Trophy,
+  Truck,
   UserCheck,
   UserX,
   Users,
+  Wind,
+  Wrench,
+  Leaf,
+  Package,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
