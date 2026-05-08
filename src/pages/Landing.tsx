@@ -416,6 +416,55 @@ export default function LandingPage() {
                   <BrandMark variant="mark" size={200} eager className="relative" />
                 </div>
                 <BetaSeatTracker className="w-full max-w-sm" />
+
+                <div className="flex w-full max-w-md flex-col items-stretch gap-3">
+                  <Button
+                    size="xl"
+                    variant="pb-primary"
+                    onClick={() => {
+                      trackEvent("cta_click", { location: "hero", label: "primary" });
+                      document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" });
+                    }}
+                  >
+                    {isFull ? "Join the waitlist" : "Apply for the beta"}{" "}
+                    <ArrowRight className="ml-1 h-4 w-4" />
+                  </Button>
+                  <div className="flex gap-3">
+                    <Button asChild size="xl" variant="pb-secondary" className="flex-1">
+                      <a
+                        href="#workflow"
+                        onClick={() =>
+                          trackEvent("cta_click", { location: "hero", label: "workflow" })
+                        }
+                      >
+                        See the intake flow
+                      </a>
+                    </Button>
+                    <Button
+                      size="xl"
+                      variant="pb-ghost"
+                      className="flex-1"
+                      onClick={() => setDemoOpen(true)}
+                    >
+                      <PlayCircle className="mr-1.5 h-4.5 w-4.5" /> Spotlight
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="flex max-w-md flex-wrap justify-center gap-2">
+                  {[
+                    "Website scan included",
+                    "Hosted link or embed",
+                    "Lead packets, not form spam",
+                  ].map((item) => (
+                    <span
+                      key={item}
+                      className="pb-route-chip px-3 py-2 text-center text-xs font-semibold"
+                    >
+                      {item}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
