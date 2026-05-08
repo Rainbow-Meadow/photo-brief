@@ -464,25 +464,26 @@ export default function LandingPage() {
           <div className="mx-auto h-px max-w-2xl bg-gradient-to-r from-transparent via-[hsl(var(--pb-lavender)/0.3)] to-transparent" />
         </div>
 
-        {/* ━━ BRIDGE: Why a beta? ━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-        <BetaBridgeSection />
+        {/* ━━ BRIDGE + TRUST POINTS — alt panel ━━━━━━━━━━━━━━━ */}
+        <div className="pb-section-alt">
+          <BetaBridgeSection />
 
-        {/* ━━ TRUST POINTS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-        <section className="pb-section-tight">
-          <div className="pb-container">
-            <div className="mx-auto grid max-w-3xl gap-6 sm:grid-cols-3 sm:gap-x-10 sm:gap-y-0">
-              {trustPoints.map(({ icon: Icon, title, desc }) => (
-                <div key={title} className="border-t border-white/12 pt-4 text-left sm:pt-5">
-                  <Icon className="h-5 w-5 text-[hsl(var(--pb-lavender))]" />
-                  <p className="mt-3 font-serif text-base italic text-white sm:text-lg">
-                    {title}
-                  </p>
-                  <p className="pb-copy mt-1 text-xs leading-5">{desc}</p>
-                </div>
-              ))}
+          <section className="pb-section-tight">
+            <div className="pb-container">
+              <div className="mx-auto grid max-w-3xl gap-6 sm:grid-cols-3 sm:gap-x-10 sm:gap-y-0">
+                {trustPoints.map(({ icon: Icon, title, desc }) => (
+                  <div key={title} className="border-t border-white/12 pt-4 text-left sm:pt-5">
+                    <Icon className="h-5 w-5 text-[hsl(var(--pb-lavender))]" />
+                    <p className="mt-3 font-serif text-base italic text-white sm:text-lg">
+                      {title}
+                    </p>
+                    <p className="pb-copy mt-1 text-xs leading-5">{desc}</p>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </div>
 
         {/* ━━ FOUNDING BETA REWARDS ━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <FreeProSpotlight isFull={isFull} />
@@ -491,8 +492,8 @@ export default function LandingPage() {
         {/* ━━ TICKER 3 — Beta social proof ━━━━━━━━━━━━━━━━━━━ */}
         <TickerBar items={[`${BETA_TOTAL_PARTNERS} founding partner seats`, "Free Pro for Life reward", `${BETA_DURATION_DAYS}-day beta`, "Concierge setup included", "Every partner earns a reward"]} />
 
-        {/* ━━ AGENT-POWERED APPLICATION ━━━━━━━━━━━━━━━━━━━━━━ */}
-        <section id="apply" className="pb-section scroll-mt-8">
+        {/* ━━ AGENT-POWERED APPLICATION — alt panel ━━━━━━━━━━ */}
+        <section id="apply" className="pb-section pb-section-alt scroll-mt-8">
           <div className="pb-container">
             <BetaOnboardingAgentExperience
               source="landing"
@@ -763,7 +764,7 @@ function PainPointSection() {
             <span className="pb-eyebrow">
               <MessageSquareWarning className="h-3.5 w-3.5" /> The problem
             </span>
-            <h2 className="pb-section-title mt-4 text-white text-4xl">
+            <h2 className="pb-section-title mt-4 text-white">
               Your website intake is leaking money.
             </h2>
             <p className="pb-copy mx-auto mt-4 max-w-2xl text-base sm:text-lg lg:mx-0 lg:max-w-xl">
@@ -937,7 +938,7 @@ function SectionIntro({
     return (
       <div className={`mx-auto max-w-3xl text-center lg:max-w-5xl ${className ?? ""}`}>
         <span className="pb-eyebrow">{eyebrow}</span>
-        <h2 className="pb-section-title mt-4 text-white text-4xl">{title}</h2>
+        <h2 className="pb-section-title mt-4 text-white">{title}</h2>
         {description ? (
           <p className="pb-copy mx-auto mt-4 max-w-2xl text-base sm:text-lg">{description}</p>
         ) : null}
@@ -951,7 +952,7 @@ function SectionIntro({
     >
       <div className="lg:min-w-0">
         <span className="pb-eyebrow">{eyebrow}</span>
-        <h2 className="pb-section-title mt-4 text-white text-4xl">{title}</h2>
+        <h2 className="pb-section-title mt-4 text-white">{title}</h2>
         {description ? (
           <p className="pb-copy mx-auto mt-4 max-w-2xl text-base sm:text-lg lg:mx-0 lg:max-w-xl">
             {description}
@@ -1043,7 +1044,7 @@ function WorkflowSection() {
             <span className="pb-eyebrow">
               <Route className="h-3.5 w-3.5" /> How it works
             </span>
-            <h2 className="pb-section-title mt-4 max-w-xl text-white text-4xl">
+            <h2 className="pb-section-title mt-4 max-w-xl text-white">
               From website visit to actionable lead packet.
             </h2>
             <p className="pb-copy mt-4 max-w-lg text-base sm:text-lg">
