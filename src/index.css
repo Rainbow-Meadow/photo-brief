@@ -422,8 +422,8 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
   .pb-copy { color: hsl(var(--pb-muted)); font-size: clamp(0.938rem, 0.4vw + 0.875rem, 1.125rem); line-height: 1.65; }
   .pb-container { width: min(100% - 2rem, 1280px); margin-inline: auto; }
   @media (min-width: 640px) { .pb-container { width: min(100% - 3rem, 1280px); } }
-  .pb-section { padding-block: clamp(3.5rem, 7vw, 7rem); position: relative; }
-  .pb-section-tight { padding-block: clamp(2.5rem, 4.5vw, 4rem); position: relative; }
+  .pb-section { padding-block: clamp(2rem, 3.5vw, 3.5rem); position: relative; }
+  .pb-section-tight { padding-block: clamp(1.25rem, 2.25vw, 2.25rem); position: relative; }
   .pb-container-narrow { width: min(100% - 2rem, 860px); margin-inline: auto; }
   @media (min-width: 640px) { .pb-container-narrow { width: min(100% - 3rem, 860px); } }
   .pb-eyebrow {
