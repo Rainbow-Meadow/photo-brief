@@ -1,80 +1,77 @@
-# Make every section seam active
+## Goal
 
-Right now the page has 4 active seams (3 TickerBars + SectionNav) and 5 passive ones (3 `ChapterDivider` hairlines + 2 implicit alt-bg edges). Plan: turn each remaining seam into an interactive moment, keeping plain dividers only for the smallest sections.
+Make the landing page visually feel custom-illustrated end-to-end (matching the existing hand-drawn `landing-hero-illustration.png`), and make the product copy speak directly to:
 
-## Seam map
+1. Landscapers
+2. Junk haulers
+3. Repair & HVAC technicians
+4. Plumbers
+5. Damage / return estimators (insurance, warranty, e-commerce returns)
+
+## 1. Generate five new hand-drawn illustrations
+
+Style brief locked to the existing hero so the page reads as one set:
+- Loose ink line + soft watercolor wash
+- Off-white paper background, lavender (#8f63ff / #b98cff) and warm ochre accents
+- Phone-in-hand framing showing a guided photo intake — same compositional DNA as the hero
+- Transparent or paper-tone background so they sit on `pb-section` (ivory) and `pb-section-alt` zones
+
+Files (PNG, ~1024×1024, `transparent_background: true`):
+
+| File | Subject |
+|---|---|
+| `src/assets/trades/landscaper-illustration.png` | Landscaper standing on a lawn, phone framing a yard with overgrown beds and a fence line |
+| `src/assets/trades/junk-hauler-illustration.png` | Hauler beside a cluttered garage, phone capturing pile + driveway access |
+| `src/assets/trades/hvac-tech-illustration.png` | HVAC tech kneeling at a condenser unit, phone showing make/model + nameplate prompt |
+| `src/assets/trades/plumber-illustration.png` | Plumber under a sink, phone capturing leak + shutoff valve |
+| `src/assets/trades/estimator-illustration.png` | Estimator at a damaged room / dented package, phone assembling an evidence packet |
+
+All use the `imagegen` premium tier with the same prompt scaffold as the hero so line weight matches.
+
+## 2. Deploy illustrations across the page
 
 ```text
-HERO
-  ▼ [Ticker 1]                          keep
-PAIN POINTS (ivory)
-  ▼ hairline                            → A. ChapterMarker
-BRIEF ASSEMBLY
-  ▼ [Section Nav]                       keep
-WORKFLOW
-  ▼ implicit                            → B. Promote Comparison toggle to seam
-COMPARISON (ivory)
-  ▼ [Ticker 2]                          keep
-  ▼ hairline                            → C. Industry chip filter
-USE CASES
-  ▼ implicit (ivory)                    keep — Website Intel intro acts as marker
-WEBSITE INTEL (ivory)
-  ▼ hairline                            → D. Re-add Ticker 3 (beta crossover)
-BETA ZONE
-  FOUNDING PARTNER
-  ▼ implicit                            keep — small section, plain ok
-  REWARD TIERS (ivory)
-  ▼ implicit                            → E. "Show all details" toggle
-  DETAILS ACCORDION
-  ▼ hairline                            keep — dark transition is its own moment
-FINAL CTA (dark)
+Hero ........................ keep current heroIllustration
+PainPointSection ............ add small inline illustration per pain point (rotates with active pain)
+WorkflowSection ............. add a single supporting illustration (estimator) beside the steps
+UseCaseSection .............. retitle 5 cards to the 5 trades; each card gets its illustration
+WebsiteIntelligenceSection .. add landscaper illustration as a soft right-side accent
 ```
 
-## Five new active seams
+Specifically:
 
-**A. `ChapterMarker`** — replaces the 3 paper `ChapterDivider` calls. Editorial marker with:
-- Eyebrow stamp (`CHAPTER II · The fix`)
-- Hairline that animates in on scroll (CSS only)
-- A 2-word swap rotating every 2.4s (`messy form → clean packet`, etc.)
-Different stamp + word pair per chapter break.
+- **`useCases` array (line 177)** — replace the 5 generic entries with one per trade:
+  1. Landscapers — "Quote yards without a site visit"
+  2. Junk haulers — "Price the pile from the driveway"
+  3. Repair & HVAC techs — "Show up with the right part"
+  4. Plumbers — "Diagnose the leak before the truck rolls"
+  5. Damage / return estimators — "Turn customer photos into an evidence packet"
+  Each card gains an `image` field rendered above the number/stamp, ~120px tall, mix-blend or transparent to sit on ivory.
 
-**B. Promote the Before/PhotoBrief toggle into the seam above Comparison.** Today it lives mid-card. Lift it into a slim header strip between Workflow and Comparison:
-- Eyebrow `SEE THE DIFFERENCE`
-- Toggle `[ Before ] [ PhotoBrief ]` centered, big, hairlines above/below
-The original in-card toggle is removed.
+- **`PainPointSection`** — add an illustration slot to each pain point that swaps with the active index (uses the trade illustration that matches the pain).
 
-**C. Industry chip row** between Ticker 2 and Use Cases. Horizontal scroll-snap pills: `Roofing · Junk removal · HVAC · Restoration · Cleaning · All`. Active pill highlights matching `UseCaseCard`s (others dim to 40%). State-change button row as seam + filter.
+- **`WorkflowSection`** — add the estimator illustration as a right-column accent so the steps no longer feel text-only.
 
-**D. Re-add Ticker 3** between Website Intelligence and the Beta Zone (replaces the `ChapterDivider`):
-`{N} founding partner seats · Free Pro for Life reward · {N}-day beta · Concierge setup included · Every partner earns a reward`
-`tone="paper"` with a faint lavender top-border to bridge into the lavender beta zone.
+- **`HeroSection`** — add a small "Built for…" trade strip under the hero CTA: 5 inline trade icons + names, linking via anchor to their use-case card.
 
-**E. "Show all details" master toggle** between Reward Tiers and Beta Details. Single pill: `Show all details ⌄ / Hide details ⌃`. Opens/closes both accordion items at once. Individual accordions still toggle. State-change button as seam.
+## 3. Copy retargeting
 
-## What stays passive (intentional)
+Tight edits, no structural rewrite:
 
-- Hero→Ticker1, Comparison→Ticker2, SectionNav→Workflow: tickers/nav already active.
-- Use Cases → Website Intel: ivory alt + section intro is enough; adding more crowds C and D.
-- Founding Partner → Reward Tiers: small section per user's exception.
-- Beta Details → Final CTA: the dark transition is its own active moment.
+- Hero subhead: append "Built for landscapers, junk haulers, HVAC and repair techs, plumbers, and damage estimators."
+- `painPoints` array — make at least one example per trade so the rotating carousel rotates through the five trades.
+- `<PageMeta>` title/description — include the trade list for SEO.
+- `useCaseSection` `description` — name the trades explicitly.
+- ROI calculator default labels left as-is (numeric, trade-agnostic).
 
-## Files touched
+## 4. Files touched
 
-- `src/pages/Landing.tsx`
-  - New helpers: `ChapterMarker`, `ComparisonSeam`, `IndustryChipRow`.
-  - Delete `ChapterDivider`.
-  - Lift `activeIndustry` state into `Landing`; pass into `UseCaseSection`.
-  - Update `UseCaseSection` to dim non-matching cards.
-  - Move Comparison toggle out of `ComparisonSection` into the new seam.
-  - Re-add `TickerBar` before the beta zone.
-  - Add controlled `accordionValue` state for the master toggle in `BetaDetailsAccordion`.
-- `src/index.css`
-  - Keyframes `pb-rule-draw` (hairline) and `pb-word-swap` (rotating words).
-  - `.pb-chapter-marker`, `.pb-comparison-seam`, `.pb-industry-chip` styles in the paper system.
-  - Respect `prefers-reduced-motion` and existing `.touch-blur-reduce` rules.
+- New: 5 PNGs in `src/assets/trades/`
+- Edited: `src/pages/Landing.tsx` (imports, `useCases`, `painPoints`, hero subhead, use-case + workflow + pain-point JSX, PageMeta)
+- Possibly: small CSS additions in `src/index.css` for `.pb-trade-illustration` sizing
 
 ## Out of scope
 
-- No copy rewrites inside sections.
-- No new images.
-- No changes to the dark FinalCta or footer.
+- No backend / data changes
+- No changes to Comparison junk-removal photos (those are real photos, intentional)
+- No new routes or sections — only enriching existing ones
