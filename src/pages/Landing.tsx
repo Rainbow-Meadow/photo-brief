@@ -514,6 +514,7 @@ const painPoints = [
     label: "of visitors abandon your form before submitting",
     context:
       "Most website forms ask for too much or too little. Visitors leave before your team ever sees the lead.",
+    citation: { text: "Numen Technology — Form Optimization Study", url: "https://www.numentechnology.co.uk/blog/contact-form-optimization-conversion-rates" },
   },
   {
     icon: Clock,
@@ -521,6 +522,7 @@ const painPoints = [
     label: "average response time — most leads are gone by then",
     context:
       "The industry average lead response time is over four hours. Leads contacted in under five minutes convert at 100× the rate.",
+    citation: { text: "MIT Lead Response Management Study", url: "https://www.drivenresults.co/learn/b/lead-response-time-statistics-2025" },
   },
   {
     icon: MessageSquareWarning,
@@ -528,6 +530,7 @@ const painPoints = [
     label: "follow-ups to close a job — most teams stop at 1",
     context:
       "Without the right photos and context upfront, every job starts with a chain of follow-ups before anyone can quote.",
+    citation: { text: "MarketingSherpa / RivetOps", url: "https://www.rivetops.io/how-many-follow-ups-to-close-a-job" },
   },
   {
     icon: TrendingDown,
@@ -535,6 +538,7 @@ const painPoints = [
     label: "of customers buy from whoever responds first",
     context:
       "Speed wins. If your intake doesn't collect what your team needs immediately, a faster competitor gets the job.",
+    citation: { text: "InsideSales.com / MIT Study", url: "https://www.rapportagent.com/benchmarks/" },
   },
   {
     icon: UserX,
@@ -542,6 +546,7 @@ const painPoints = [
     label: "of estimates never get a single follow-up",
     context:
       "When intake is manual and incomplete, follow-up falls through the cracks — and revenue walks out the door.",
+    citation: { text: "HomeAdvisor / US Tech Automations", url: "https://ustechautomations.com/resources/blog/home-service-estimate-follow-up-automation-case-study" },
   },
 ];
 
@@ -584,6 +589,14 @@ function PainPointSection() {
                 <p className="pb-copy mt-1 text-xs leading-relaxed sm:text-sm">
                   {point.context}
                 </p>
+                <a
+                  href={point.citation.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-2 inline-flex items-center gap-1 text-[0.65rem] font-medium text-white/40 transition hover:text-[hsl(var(--pb-lavender))] sm:text-xs"
+                >
+                  Source: {point.citation.text} ↗
+                </a>
               </article>
             );
           })}
