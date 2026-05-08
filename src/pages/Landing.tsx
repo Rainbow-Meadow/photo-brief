@@ -974,8 +974,8 @@ function ComparisonSection({
             Generic form vs. guided visual intake.
           </h2>
           <p className="pb-copy mt-4 text-lg">
-            The difference is not more photos — it's the right photos, tied to
-            the right service, with enough context to act.
+            The difference is not more photos — it's structured context
+            that lets your team skip the back-and-forth entirely.
           </p>
         </div>
 
