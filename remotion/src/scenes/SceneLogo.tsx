@@ -14,10 +14,6 @@ export const SceneLogo: React.FC = () => {
   const subOpacity = interpolate(sub, [0, 1], [0, 1]);
   const subY = interpolate(sub, [0, 1], [10, 0]);
 
-  const tag = spring({ frame: frame - 30, fps, config: SPRING.smooth });
-  const tagOpacity = interpolate(tag, [0, 1], [0, 1]);
-  const tagY = interpolate(tag, [0, 1], [12, 0]);
-
   return (
     <AbsoluteFill style={{ alignItems: "center", justifyContent: "center" }}>
       <div style={{ textAlign: "center", fontFamily: FONT.display }}>
@@ -25,42 +21,33 @@ export const SceneLogo: React.FC = () => {
           display: "inline-flex", alignItems: "center", gap: 24,
           opacity,
           transform: `scale(${scale})`,
-          filter: "drop-shadow(0 24px 60px rgba(33, 102, 244, 0.25))",
+          filter: `drop-shadow(0 24px 60px rgba(242, 163, 58, 0.22))`,
         }}>
           <Img
             src={staticFile("brand/mark-color.png")}
-            style={{ height: 160, width: 160, objectFit: "contain" }}
+            style={{ height: 180, width: 180, objectFit: "contain" }}
           />
           <span style={{
-            fontSize: 115, fontWeight: 800, letterSpacing: -7,
-            backgroundImage: "linear-gradient(135deg, #f6f0ff 0%, #e7d4ff 24%, #c99aff 52%, #9f73ff 78%, #7f55ff 100%)",
-            WebkitBackgroundClip: "text", color: "transparent", whiteSpace: "nowrap",
-          }}>PhotoBrief.ai</span>
+            fontSize: 120, fontWeight: 900, letterSpacing: -6, whiteSpace: "nowrap", lineHeight: 1,
+          }}>
+            <span style={{ color: COLORS.navy }}>Photo</span>
+            <span style={{ color: COLORS.amber }}>Brief</span>
+            <span style={{ color: COLORS.navy, opacity: 0.55, fontWeight: 700, fontSize: 74, marginLeft: 4 }}>.ai</span>
+          </span>
         </div>
         <div
           style={{
-            marginTop: 28,
+            marginTop: 32,
             opacity: subOpacity,
             transform: `translateY(${subY}px)`,
-            fontSize: 26,
-            fontWeight: 500,
-            color: COLORS.muted,
-            letterSpacing: 0.5,
+            fontSize: 30,
+            fontWeight: 700,
+            color: COLORS.navy,
+            letterSpacing: 8,
+            textTransform: "uppercase",
           }}
         >
-          Visual intake for small businesses
-        </div>
-        <div
-          style={{
-            marginTop: 16,
-            opacity: tagOpacity,
-            transform: `translateY(${tagY}px)`,
-            fontSize: 18,
-            fontWeight: 400,
-            color: COLORS.mutedLight,
-          }}
-        >
-          Turn website leads into photo-ready briefs
+          Guide · Capture · Close
         </div>
       </div>
     </AbsoluteFill>
