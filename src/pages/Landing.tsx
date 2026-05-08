@@ -612,7 +612,7 @@ function RoiCalculatorSection() {
   }
 
   return (
-    <section className="pb-section-tight my-[70px] mb-0 mt-0" ref={calcRef}>
+    <section className="pb-section-tight my-0" ref={calcRef}>
       <div className="pb-container">
         <button
           type="button"
@@ -620,7 +620,7 @@ function RoiCalculatorSection() {
             setOpen((p) => !p);
             if (!open) setTimeout(() => calcRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
           }}
-          className="group mx-auto flex w-full max-w-2xl items-center justify-between gap-4 rounded-[1.5rem] border border-[hsl(var(--pb-lavender)/0.25)] bg-gradient-to-r from-[hsl(var(--pb-violet)/0.10)] via-[hsl(var(--pb-ink))] to-[hsl(var(--pb-lavender)/0.06)] p-5 text-left transition hover:border-[hsl(var(--pb-lavender)/0.4)] sm:p-6 py-[68px]"
+          className="group mx-auto flex w-full max-w-2xl items-center justify-between gap-4 rounded-[1.5rem] border border-[hsl(var(--pb-lavender)/0.25)] bg-gradient-to-r from-[hsl(var(--pb-violet)/0.10)] via-[hsl(var(--pb-ink))] to-[hsl(var(--pb-lavender)/0.06)] p-5 text-left transition hover:border-[hsl(var(--pb-lavender)/0.4)] sm:p-6"
         >
           <div className="flex items-center gap-4">
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[hsl(var(--pb-lavender)/0.12)]">
@@ -809,7 +809,7 @@ function PainPointSection() {
       onTouchEnd={() => { setTimeout(() => setPaused(false), 6000); }}
     >
       <div className="pb-container">
-        <div className="mx-auto max-w-3xl text-center lg:mx-0 lg:grid lg:max-w-none lg:grid-cols-[1.15fr_0.85fr] lg:items-start lg:gap-12 lg:text-left">
+        <div className="mx-auto max-w-3xl text-center lg:mx-0 lg:grid lg:max-w-none lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:gap-8 lg:text-left">
           {/* Left column — intro copy + carousel */}
           <div className="lg:min-w-0 text-center">
             <span className="pb-eyebrow">
@@ -824,7 +824,7 @@ function PainPointSection() {
             </p>
 
             {/* Carousel card */}
-            <div className="relative mx-auto mt-8 max-w-2xl sm:mt-10 lg:mx-0">
+            <div className="relative mx-auto mt-5 max-w-2xl sm:mt-6 lg:mx-0">
               <div className="pb-card relative overflow-hidden p-6 sm:p-8" style={{ minHeight: 260 }}>
                 {painPoints.map((p, i) => {
                   const PIcon = p.icon;
@@ -890,7 +890,7 @@ function PainPointSection() {
           </div>
 
           {/* Right column — 81% stat + ROI calculator */}
-          <div className="mt-8 flex-col items-center gap-6 lg:mt-0 flex lg:items-center justify-center">
+          <div className="mt-6 flex flex-col items-center gap-3 lg:mt-0 lg:items-stretch lg:justify-center">
             <div className="flex justify-center lg:justify-end">
               <StatAccent
                 icon={TrendingDown}
