@@ -1683,46 +1683,47 @@ function FinalCta({ isFull }: { isFull: boolean }) {
   return (
     <section className="pb-section">
       <div className="pb-container">
-        <div className="relative overflow-hidden rounded-[2.4rem] border border-[hsl(var(--pb-lavender)/0.35)] bg-[hsl(var(--pb-panel)/0.84)] p-6 text-center shadow-[0_36px_100px_-64px_hsl(var(--pb-violet))] sm:p-8 lg:p-12">
-          <div className="pb-lens-field" />
-          <div className="relative z-10 mx-auto max-w-4xl">
-            <BrandMark
-              variant="horizontal"
-              tone="light"
-              size={48}
-              className="justify-center"
-            />
-            <h2 className="pb-section-title mt-5 text-white text-4xl">
-              Get quote-ready leads, not vague messages.
-            </h2>
-            <p className="pb-copy mx-auto mt-4 max-w-2xl text-base sm:text-lg">
-              Stop chasing customers for missing photos and context.
-              With PhotoBrief, every inquiry arrives as a complete, actionable
-              lead packet — so your team can quote, schedule, or approve
-              without a single follow-up.
-            </p>
-            <div className="mt-6 flex flex-col justify-center gap-2.5 sm:flex-row sm:gap-3">
-              <Button
-                size="xl"
-                variant="pb-primary"
-                onClick={() =>
-                  document
-                    .getElementById("apply")
-                    ?.scrollIntoView({ behavior: "smooth" })
-                }
-              >
-                {isFull ? "Join the waitlist" : "Apply for the beta"}{" "}
-                <ArrowRight className="ml-1 h-4 w-4" />
-              </Button>
-              <Button asChild size="xl" variant="pb-secondary">
-                <NavLink to="/pricing">See plans</NavLink>
-              </Button>
-            </div>
-            <p className="mt-4 text-xs font-medium text-white/46 sm:text-sm">
-              Customers do not need an account or app to complete a PhotoBrief
-              intake.
-            </p>
+        <div className="mx-auto max-w-3xl text-center">
+          <BrandMark
+            variant="horizontal"
+            tone="light"
+            size={44}
+            className="justify-center opacity-90"
+          />
+          <p className="mt-6 text-[10px] font-black uppercase tracking-[0.28em] text-[hsl(var(--pb-lavender))]">
+            The last word
+          </p>
+          <h2 className="mt-3 font-serif text-3xl italic leading-[1.05] tracking-tight text-white sm:text-4xl md:text-5xl">
+            Get quote-ready leads,
+            <br className="hidden sm:block" />{" "}
+            <span className="not-italic font-semibold">not vague messages.</span>
+          </h2>
+          <p className="pb-copy mx-auto mt-5 max-w-2xl text-base leading-relaxed sm:text-lg">
+            Stop chasing customers for missing photos and context. Every inquiry
+            arrives as a complete, actionable lead packet — so your team can quote,
+            schedule, or approve without a single follow-up.
+          </p>
+          <div className="mt-8 flex flex-col items-center justify-center gap-2.5 sm:flex-row sm:gap-3">
+            <Button
+              size="xl"
+              variant="pb-primary"
+              onClick={() =>
+                document
+                  .getElementById("apply")
+                  ?.scrollIntoView({ behavior: "smooth" })
+              }
+            >
+              {isFull ? "Join the waitlist" : "Apply for the beta"}{" "}
+              <ArrowRight className="ml-1 h-4 w-4" />
+            </Button>
+            <Button asChild size="xl" variant="pb-secondary">
+              <NavLink to="/pricing">See plans</NavLink>
+            </Button>
           </div>
+          <p className="mt-5 text-xs font-medium text-white/46 sm:text-sm">
+            Customers do not need an account or app to complete a PhotoBrief intake.
+          </p>
+          <div className="mx-auto mt-10 h-px max-w-xs bg-gradient-to-r from-transparent via-white/15 to-transparent" />
         </div>
       </div>
     </section>
