@@ -394,6 +394,25 @@ export default function LandingPage() {
                   ))}
                 </div>
 
+                {/* Built-for trade strip — links to matching use case */}
+                <div className="mt-8 sm:mt-10">
+                  <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[hsl(var(--pb-ink-muted))]">
+                    Built for
+                  </p>
+                  <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
+                    {TRADES.map(({ name, icon: TIcon }) => (
+                      <a
+                        key={name}
+                        href="#use-cases"
+                        className="inline-flex items-center gap-1.5 rounded-full border border-[hsl(var(--pb-ink-soft)/0.18)] bg-[hsl(var(--pb-ink-soft)/0.04)] px-3 py-1.5 text-xs font-bold text-[hsl(var(--pb-ink))] transition hover:border-[hsl(var(--pb-violet)/0.55)] hover:text-[hsl(var(--pb-violet))] sm:text-sm"
+                      >
+                        <TIcon className="h-3.5 w-3.5 text-[hsl(var(--pb-violet))]" />
+                        {name}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+
                 <BetaSeatTracker className="pb-on-paper mt-8 max-w-sm sm:mt-10" />
               </div>
 
