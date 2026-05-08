@@ -217,26 +217,29 @@ export function BetaOnboardingAgentExperience({
   return (
     <div className={`mx-auto max-w-6xl ${className}`}>
       <div className="mx-auto max-w-3xl text-center">
-        <span className="pb-eyebrow">
-          <Sparkles className="h-3.5 w-3.5" /> {eyebrow}
-        </span>
-        <h2 className="pb-section-title mt-4 text-white">{title}</h2>
-        <p className="pb-copy mx-auto mt-3 max-w-2xl text-sm leading-6 sm:text-base sm:leading-7">
+        <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[hsl(var(--pb-lavender))]">
+          <Sparkles className="-mt-0.5 mr-1 inline h-3 w-3" /> {eyebrow}
+        </p>
+        <h2 className="mt-4 font-serif text-3xl italic leading-[1.05] tracking-tight text-white sm:text-4xl md:text-5xl">
+          {title}
+        </h2>
+        <p className="pb-copy mx-auto mt-4 max-w-2xl text-sm leading-6 sm:text-base sm:leading-7">
           {description}
         </p>
         {showSeatTracker ? (
-          <BetaSeatTracker variant="compact" className="mx-auto mt-4 max-w-sm" />
+          <BetaSeatTracker variant="compact" className="mx-auto mt-5 max-w-sm" />
         ) : null}
       </div>
 
-      <div className="mt-7 grid gap-5 lg:grid-cols-[0.95fr_1.05fr] lg:items-stretch">
-        <div className="pb-command-panel p-4 sm:p-6 lg:p-7">
+      <div className="mt-12 grid gap-10 border-t border-white/12 pt-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-start lg:gap-12">
+        <div className="lg:border-r lg:border-white/12 lg:pr-10">
           <div className="relative z-10">
             <div className="flex items-center justify-between gap-3">
-              <span className="pb-eyebrow">
-                <Bot className="h-3.5 w-3.5" /> Guided beta intake
-              </span>
-              <span className="rounded-full border border-[hsl(var(--pb-mint)/0.25)] bg-[hsl(var(--pb-mint)/0.08)] px-2.5 py-1 text-[0.65rem] font-bold uppercase tracking-[0.16em] text-[hsl(var(--pb-mint))]">
+              <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[hsl(var(--pb-lavender))]">
+                <Bot className="-mt-0.5 mr-1 inline h-3 w-3" /> Guided beta intake
+              </p>
+              <span className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.22em] text-[hsl(var(--pb-mint))]">
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[hsl(var(--pb-mint))]" />
                 Live
               </span>
             </div>
