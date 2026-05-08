@@ -1,100 +1,60 @@
+## Root cause
 
-# Diagnostic Sweep: Fragility Sources
+The blank screen on **photobrief.ai** and **photo-brief.lovable.app** is the same crash. Console (real browser):
 
-After inspecting hooks, services, App.tsx, auth flow, query config, retry logic, and the DB linter, here are the concrete issues making the app fragile, ranked by impact.
-
----
-
-## 1. No global React Query defaults (HIGH)
-
-`new QueryClient()` at line 76 of App.tsx has **zero configuration** -- no `staleTime`, no `retry`, no `refetchOnWindowFocus` control. This means:
-- Every query refetches on window focus (tab switch = waterfall of Supabase calls)
-- Default retry is 3, which stacks on top of `withSupabaseRetry` (2 attempts) = up to **6 requests** per failure
-- No `gcTime`/`staleTime` so cache is invalidated aggressively
-
-**Fix:** Add sensible defaults:
-```ts
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 30_000,        // 30s before refetch
-      gcTime: 5 * 60_000,       // 5 min cache
-      retry: 1,                 // 1 retry (supabaseRetry handles transients)
-      refetchOnWindowFocus: false,
-    },
-  },
-});
+```
+Uncaught Error: supabaseUrl is required.
+   at new SupabaseClient (...)
+   at createClient (...)
+   at /assets/index-iIBWJHvB.js
 ```
 
----
+`src/integrations/supabase/client.ts` calls `createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY)` at module top-level. When `import.meta.env.VITE_SUPABASE_URL` is empty at build time, the call throws synchronously while React is still mounting — nothing renders, ErrorBoundary never mounts, blank page.
 
-## 2. 37+ Supabase calls with NO retry wrapper (HIGH)
+Verified:
+- The bundle served from photobrief.ai (`index-iIBWJHvB.js`) contains the literal string `supabaseUrl is required` and does **not** contain the project ref `mvlcefiygkzzewcdzsmj` → env vars were not inlined into this Lovable build.
+- The Vite live preview iframe works because the sandbox `.env` is populated and read at dev-server start.
+- photo-brief.lovable.app 302‑redirects `/` to photobrief.ai, so the same broken bundle is loaded there too — that's why "both" surfaces fail.
 
-`withSupabaseRetry` exists but is only used in `useCurrentWorkspace`. Every service call in `guidesService`, `submissionsService`, `requestsService`, `messagingService`, etc. calls Supabase raw. During a 503 window (instance restart), **every service call fails silently or throws an uncaught error**.
+`.env` in the sandbox today contains all three `VITE_SUPABASE_*` values, so the next published build will be healthy. The Lovable production bundle currently in front of users was published from a state where those values were not injected.
 
-**Fix:** Wrap critical service calls in `withSupabaseRetry`, or add a global PostgREST retry interceptor.
+## What to change in code (defensive hardening)
 
----
+The proximate fix is to re-publish, but the codebase should also stop turning a missing env var into a white screen. Two small, surgical changes:
 
-## 3. 13 `.single()` calls that throw on empty results (MEDIUM-HIGH)
+### 1. `src/integrations/supabase/client.ts` — fail loud, not blank
 
-`.single()` returns an error (406) if zero rows match. If a guide/request/customer was deleted or hasn't been created yet, the call errors out instead of returning `null`. This is different from `.maybeSingle()` which returns null gracefully.
+Wrap the `createClient` call so that if the env vars are missing we:
+- log a single, clear error to the console (`[supabase] VITE_SUPABASE_URL / VITE_SUPABASE_PUBLISHABLE_KEY missing at build time — re-publish the project`)
+- export a stub client whose methods reject with a descriptive error
 
-Affected services: `messagingService`, `requestsService`, `websiteIntakeService`, `messageTemplatesService`, `guidesService`, `customersService`, `apiKeysService`, `submissionsService`.
+This keeps React mounting, lets the existing `ErrorBoundary` paint a real fallback UI instead of a blank page, and gives any future regression an obvious diagnosis instead of a silent crash.
 
-**Fix:** Audit each `.single()` -- use `.maybeSingle()` where the row may not exist (lookups by ID from URL params, optional records).
+### 2. `src/integrations/supabase/tokenClient.ts` — same guard
 
----
+Same defensive guard pattern for the recipient token client (it's lazy, so the impact is smaller, but the contract should match).
 
-## 4. Auth race condition between getSession and onAuthStateChange (MEDIUM)
+No other files change. We are not editing the Supabase types file, the auto-managed client signature, the env file, the router worker, or the Cloudflare Pages workflow.
 
-In `useAuth.tsx`, both `getSession()` and `onAuthStateChange` call `setSession` independently. On a slow network, `getSession` can resolve with a stale/null session *after* `onAuthStateChange` has already fired with the correct session, overwriting good state with bad state.
+## What you need to do (one click, outside code)
 
-**Fix:** Use a ref flag: once `onAuthStateChange` fires, skip the `getSession` result.
+After the above patch lands, re-publish the project from the Lovable Publish menu. That triggers a fresh Lovable build with the current `.env` baked in, replacing `index-iIBWJHvB.js` with a bundle that contains the real Supabase URL. The landing page will render again on both photo-brief.lovable.app and photobrief.ai (which proxies to it for human visitors).
 
----
+```text
+Live preview iframe       OK today (Vite dev reads .env at runtime)
+Lovable published build   needs re-publish (env not in current bundle)
+photobrief.ai (apex)      router proxies humans → Lovable, so it inherits the fix
+```
 
-## 5. No Error Boundary (MEDIUM)
+## Verification after publish
 
-The app has `<Suspense fallback={null}>` but **no ErrorBoundary**. Any uncaught render error (bad data shape from Supabase, null ref, etc.) crashes the entire app with a white screen. This is the single most common cause of "the app just went blank."
+1. Hard reload photobrief.ai and photo-brief.lovable.app.
+2. Confirm the landing hero renders.
+3. DevTools console should be clean (no "supabaseUrl is required").
+4. Network tab: a request to `mvlcefiygkzzewcdzsmj.supabase.co/rest/v1/beta_program_config` returns 200 (this is the seat-tracker call we already see succeeding from the preview).
 
-**Fix:** Add a top-level `<ErrorBoundary>` around routes with a fallback UI and a "reload" button.
+## Out of scope
 
----
-
-## 6. Landing page is 1,622 lines with 23 imports, not lazy-loaded (MEDIUM)
-
-Landing.tsx is eagerly imported (not behind `lazy()`), so it's in the initial bundle. With 30 component imports, it pulls a lot of code into the critical path. This affects initial load time and increases the chance of a single component error crashing the whole page.
-
-**Fix:** Lazy-load Landing like the other pages, and consider splitting the 30 sub-components into a barrel import or dynamic sections.
-
----
-
-## 7. Suspense fallback is `null` (LOW-MEDIUM)
-
-`<Suspense fallback={null}>` means lazy-loaded pages show nothing while loading. Combined with no error boundary, a slow chunk load = blank screen with no feedback.
-
-**Fix:** Replace `null` with a simple loading spinner or skeleton.
-
----
-
-## 8. DB security warnings (LOW -- not fragility but noted)
-
-The linter found 16 warnings:
-- 2 functions without `search_path` set
-- 3 public buckets allowing file listing
-- Multiple `SECURITY DEFINER` functions callable by anon/authenticated without explicit revoke
-
-These don't cause runtime fragility but could cause unexpected behavior under adversarial conditions.
-
----
-
-## Recommended implementation order
-
-1. QueryClient defaults (instant win, ~5 min)
-2. Error Boundary (prevents white-screen crashes, ~10 min)
-3. `.single()` --> `.maybeSingle()` audit (~15 min)
-4. Auth race condition fix (~10 min)
-5. Lazy-load Landing + Suspense fallback (~10 min)
-6. Retry wrapper on critical services (larger effort, ~30 min)
-7. DB security fixes (migration, separate effort)
+- Cloudflare Pages workflow (`.github/workflows/deploy-cloudflare.yml`) already validates `VITE_SUPABASE_URL` / `VITE_SUPABASE_PUBLISHABLE_KEY` exist before building, so the Pages-built bundle (`index-BXflG6OL.js`) is fine — bots already get a working prerendered page. No change needed there.
+- Router worker `LOVABLE_HOST` is correct (`photo-brief.lovable.app`).
+- Service-layer `withRetry` hardening from the prior pass stays as is.
