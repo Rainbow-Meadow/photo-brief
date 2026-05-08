@@ -1548,11 +1548,9 @@ function WebsiteIntelligenceSection() {
           title="Your website becomes your intake engine."
           description="PhotoBrief scans your services, current forms, and calls-to-action, then maps them into 2–3 simple intake paths you can launch with a hosted link or embed. Beta partners get this built for them during concierge setup."
           accent={
-            <StatAccent
-              icon={Scan}
-              value="< 5 min"
-              label="From a website URL to a working intake path."
-              tone="lavender"
+            <TradeAccent
+              src={plumberIllo}
+              alt="Hand-drawn illustration of a plumber capturing a guided diagnostic photo"
             />
           }
         />
