@@ -443,18 +443,18 @@ export default function LandingPage() {
             onModeChange={setComparisonMode}
           />
 
+          {/* ━━ TICKER 2 — Product signals ━━━━━━━━━━━━━━━━━━━━━━ */}
+          <TickerBar tone="paper" items={["Website scan included", "Hosted link or embed", "No app required for customers", "AI photo quality checks", "Lead packets — not form spam"]} direction="right" />
+
+          {/* ── Chapter break: Solution → Fit ── */}
+          <ChapterDivider tone="paper" />
+
+          {/* ━━ 7. USE CASES ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+          <UseCaseSection />
+
           {/* Soft fade where paper meets the dark sections below */}
           <div className="pb-paper-fade-bottom pointer-events-none h-24 w-full" aria-hidden />
         </div>
-
-        {/* ━━ TICKER 2 — Product signals ━━━━━━━━━━━━━━━━━━━━━━ */}
-        <TickerBar items={["Website scan included", "Hosted link or embed", "No app required for customers", "AI photo quality checks", "Lead packets — not form spam"]} direction="right" />
-
-        {/* ── Chapter break: Solution → Fit ── */}
-        <ChapterDivider />
-
-        {/* ━━ 7. USE CASES ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-        <UseCaseSection />
 
         {/* ━━ 8. WEBSITE INTELLIGENCE ━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <WebsiteIntelligenceSection />
