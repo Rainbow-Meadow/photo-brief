@@ -612,7 +612,7 @@ function RoiCalculatorSection() {
   }
 
   return (
-    <section className="pb-section-tight" ref={calcRef}>
+    <section className="pb-section-tight my-[70px] mb-0 mt-[80px]" ref={calcRef}>
       <div className="pb-container">
         <button
           type="button"
@@ -1021,7 +1021,7 @@ function StatAccent({
         ? "text-amber-300"
         : "text-[hsl(var(--pb-lavender))]";
   return (
-    <div className="pb-card relative w-full max-w-sm overflow-hidden p-6 text-center sm:p-7">
+    <div className="pb-card relative w-full max-w-sm overflow-hidden p-6 text-center sm:p-7 mt-[20px]">
       <div
         aria-hidden
         className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-[hsl(var(--pb-violet)/0.2)] blur-3xl"
