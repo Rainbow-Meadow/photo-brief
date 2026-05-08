@@ -332,8 +332,8 @@ export default function LandingPage() {
               </div>
 
               {/* Left column — copy + CTAs */}
-              <div className="lg:min-w-0">
-                <span className="pb-eyebrow">
+              <div className="lg:min-w-0 text-center">
+                <span className="pb-eyebrow text-center">
                   <Sparkles className="h-3.5 w-3.5" /> Accepting beta applications
                 </span>
 
