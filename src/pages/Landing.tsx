@@ -430,16 +430,19 @@ export default function LandingPage() {
               </Suspense>
             </div>
           </section>
+        </div>
+
+        {/* ━━ PAPER BLOCK 2 — Sticky nav + How it works ━━━━━━━ */}
+        <div className="pb-paper-surface pb-on-paper relative isolate overflow-hidden">
+          {/* ━━ 4. STICKY SECTION NAV ━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+          <SectionNav tone="paper" />
+
+          {/* ━━ 5. HOW IT WORKS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+          <WorkflowSection />
 
           {/* Soft fade where paper meets the dark sections below */}
           <div className="pb-paper-fade-bottom pointer-events-none h-24 w-full" aria-hidden />
         </div>
-
-        {/* ━━ 4. STICKY SECTION NAV ━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-        <SectionNav />
-
-        {/* ━━ 5. HOW IT WORKS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-        <WorkflowSection />
 
         {/* ━━ 6. BEFORE / AFTER ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <ComparisonSection
