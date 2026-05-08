@@ -308,8 +308,9 @@ export default function LandingPage() {
         <section className="relative isolate overflow-hidden -mt-[4.5rem] pt-[5.5rem] sm:-mt-[5rem] sm:pt-[6rem] lg:pt-[6.5rem]">
           <div className="pb-lens-field" />
           <div className="pb-container relative pb-8 sm:pb-10 lg:pb-12">
-            <div className="relative z-10 mx-auto max-w-3xl text-center">
-              <div className="mb-4 sm:mb-5">
+            <div className="relative z-10 mx-auto max-w-3xl text-center lg:mx-0 lg:grid lg:max-w-none lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:gap-16 lg:text-left">
+              {/* Mark — mobile/tablet only (lives above title) */}
+              <div className="mb-4 sm:mb-5 lg:hidden">
                 <div className="relative inline-flex items-center justify-center">
                   <div
                     aria-hidden
@@ -325,87 +326,97 @@ export default function LandingPage() {
                     variant="mark"
                     size={120}
                     eager
-                    className="relative hidden sm:inline-flex lg:hidden"
-                  />
-                  <BrandMark
-                    variant="mark"
-                    size={144}
-                    eager
-                    className="relative hidden lg:inline-flex"
+                    className="relative hidden sm:inline-flex"
                   />
                 </div>
               </div>
 
-              <span className="pb-eyebrow">
-                <Sparkles className="h-3.5 w-3.5" /> Accepting beta applications
-              </span>
+              {/* Left column — copy + CTAs */}
+              <div className="lg:min-w-0">
+                <span className="pb-eyebrow">
+                  <Sparkles className="h-3.5 w-3.5" /> Accepting beta applications
+                </span>
 
-              <h1 className="pb-hero-title mx-auto mt-3 max-w-2xl text-white sm:mt-4">
-                Replace weak website forms with guided visual intake.
-              </h1>
+                <h1 className="pb-hero-title mx-auto mt-3 max-w-2xl text-white sm:mt-4 lg:mx-0 lg:max-w-none">
+                  Replace weak website forms with guided visual intake.
+                </h1>
 
-              <p className="pb-copy mx-auto mt-4 max-w-2xl text-base leading-7 sm:text-lg sm:leading-8">
-                PhotoBrief scans your website, maps your services, and gives
-                customers a simple photo-guided path so your team gets
-                actionable lead packets instead of vague messages.
-              </p>
+                <p className="pb-copy mx-auto mt-4 max-w-2xl text-base leading-7 sm:text-lg sm:leading-8 lg:mx-0 lg:max-w-xl">
+                  PhotoBrief scans your website, maps your services, and gives
+                  customers a simple photo-guided path so your team gets
+                  actionable lead packets instead of vague messages.
+                </p>
 
-              <div className="mx-auto mt-5 flex max-w-lg flex-col gap-2.5 sm:mt-6 sm:max-w-none sm:flex-row sm:justify-center sm:gap-3">
-                <Button
-                  size="xl"
-                  variant="pb-primary"
-                  onClick={() => {
-                    trackEvent("cta_click", {
-                      location: "hero",
-                      label: "primary",
-                    });
-                    document
-                      .getElementById("apply")
-                      ?.scrollIntoView({ behavior: "smooth" });
-                  }}
-                >
-                  {isFull ? "Join the waitlist" : "Apply for the beta"}{" "}
-                  <ArrowRight className="ml-1 h-4 w-4" />
-                </Button>
-                <Button asChild size="xl" variant="pb-secondary">
-                  <a
-                    href="#workflow"
-                    onClick={() =>
+                <div className="mx-auto mt-5 flex max-w-lg flex-col gap-2.5 sm:mt-6 sm:max-w-none sm:flex-row sm:justify-center sm:gap-3 lg:mx-0 lg:justify-start">
+                  <Button
+                    size="xl"
+                    variant="pb-primary"
+                    onClick={() => {
                       trackEvent("cta_click", {
                         location: "hero",
-                        label: "workflow",
-                      })
-                    }
+                        label: "primary",
+                      });
+                      document
+                        .getElementById("apply")
+                        ?.scrollIntoView({ behavior: "smooth" });
+                    }}
                   >
-                    See the intake flow
-                  </a>
-                </Button>
-                <Button
-                  size="xl"
-                  variant="pb-ghost"
-                  onClick={() => setDemoOpen(true)}
-                >
-                  <PlayCircle className="mr-1.5 h-4.5 w-4.5" /> Product
-                  spotlight
-                </Button>
+                    {isFull ? "Join the waitlist" : "Apply for the beta"}{" "}
+                    <ArrowRight className="ml-1 h-4 w-4" />
+                  </Button>
+                  <Button asChild size="xl" variant="pb-secondary">
+                    <a
+                      href="#workflow"
+                      onClick={() =>
+                        trackEvent("cta_click", {
+                          location: "hero",
+                          label: "workflow",
+                        })
+                      }
+                    >
+                      See the intake flow
+                    </a>
+                  </Button>
+                  <Button
+                    size="xl"
+                    variant="pb-ghost"
+                    onClick={() => setDemoOpen(true)}
+                  >
+                    <PlayCircle className="mr-1.5 h-4.5 w-4.5" /> Product
+                    spotlight
+                  </Button>
+                </div>
+
+                <div className="mx-auto mt-4 flex max-w-md flex-wrap justify-center gap-2 sm:mt-5 sm:gap-2.5 lg:mx-0 lg:justify-start">
+                  {[
+                    "Website scan included",
+                    "Hosted link or embed",
+                    "Lead packets, not form spam",
+                  ].map((item) => (
+                    <span
+                      key={item}
+                      className="pb-route-chip px-2.5 py-1.5 text-center text-[0.65rem] font-semibold sm:px-3 sm:py-2 sm:text-xs"
+                    >
+                      {item}
+                    </span>
+                  ))}
+                </div>
+
+                {/* Seat tracker — mobile/tablet placement */}
+                <BetaSeatTracker className="mx-auto mt-4 max-w-sm sm:mt-5 lg:hidden" />
               </div>
 
-              <div className="mx-auto mt-4 flex max-w-md flex-wrap justify-center gap-2 sm:mt-5 sm:gap-2.5">
-                {[
-                  "Website scan included",
-                  "Hosted link or embed",
-                  "Lead packets, not form spam",
-                ].map((item) => (
-                  <span
-                    key={item}
-                    className="pb-route-chip px-2.5 py-1.5 text-center text-[0.65rem] font-semibold sm:px-3 sm:py-2 sm:text-xs"
-                  >
-                    {item}
-                  </span>
-                ))}
+              {/* Right column — large mark + seat tracker (desktop only) */}
+              <div className="hidden lg:flex lg:flex-col lg:items-center lg:gap-6">
+                <div className="relative inline-flex items-center justify-center">
+                  <div
+                    aria-hidden
+                    className="pointer-events-none absolute h-64 w-64 rounded-full bg-[hsl(var(--pb-violet)/0.35)] blur-[100px]"
+                  />
+                  <BrandMark variant="mark" size={200} eager className="relative" />
+                </div>
+                <BetaSeatTracker className="w-full max-w-sm" />
               </div>
-
-              <BetaSeatTracker className="mx-auto mt-4 max-w-sm sm:mt-5" />
             </div>
           </div>
         </section>
