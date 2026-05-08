@@ -425,15 +425,12 @@ export default function LandingPage() {
                   />
                 }
               />
-              <Suspense fallback={<div className="min-h-[400px]" />}>
+          <Suspense fallback={<div className="min-h-[400px]" />}>
                 <InteractiveHeroBriefAssembly />
               </Suspense>
             </div>
           </section>
-        </div>
 
-        {/* ━━ PAPER BLOCK 2 — Sticky nav + How it works ━━━━━━━ */}
-        <div className="pb-paper-surface pb-on-paper relative isolate overflow-hidden">
           {/* ━━ 4. STICKY SECTION NAV ━━━━━━━━━━━━━━━━━━━━━━━━━ */}
           <SectionNav tone="paper" />
 
