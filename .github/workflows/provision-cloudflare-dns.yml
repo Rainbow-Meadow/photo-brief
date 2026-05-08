@@ -1,0 +1,60 @@
+name: Provision Cloudflare DNS
+
+on:
+  workflow_dispatch:
+    inputs:
+      record_name:
+        description: "DNS record name, relative to photobrief.ai unless fully qualified"
+        required: true
+        default: "beta-agent"
+        type: string
+      record_type:
+        description: "DNS record type"
+        required: true
+        default: "CNAME"
+        type: choice
+        options:
+          - CNAME
+          - A
+          - AAAA
+          - TXT
+      record_content:
+        description: "DNS record target/content"
+        required: true
+        default: "photobrief.ai"
+        type: string
+      proxied:
+        description: "Use Cloudflare proxy/orange cloud"
+        required: true
+        default: "true"
+        type: choice
+        options:
+          - "true"
+          - "false"
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  provision:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[provision-dns]')
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      ZONE_NAME: photobrief.ai
+      RECORD_NAME: ${{ github.event_name == 'workflow_dispatch' && inputs.record_name || 'beta-agent' }}
+      RECORD_TYPE: ${{ github.event_name == 'workflow_dispatch' && inputs.record_type || 'CNAME' }}
+      RECORD_CONTENT: ${{ github.event_name == 'workflow_dispatch' && inputs.record_content || 'photobrief.ai' }}
+      RECORD_PROXIED: ${{ github.event_name == 'workflow_dispatch' && inputs.proxied || 'true' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Provision DNS record
+        run: node scripts/provision-cloudflare-dns.mjs
