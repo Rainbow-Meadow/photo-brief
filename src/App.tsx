@@ -16,29 +16,25 @@ import { RequireAuth } from "@/components/auth/RequireAuth";
 import { RouteTracker } from "@/components/analytics/RouteTracker";
 import { FeatureGate } from "@/components/shared/FeatureGate";
 
-// Eager: auth + recipient capture. These are the entry points
-// for unauthenticated visitors and the public recipient flow, so they stay
-// in the main bundle to avoid a Suspense flash on first paint.
+// All route components are lazy-loaded so each page (especially the marketing
+// landing at "/") only ships its own JS. Suspense fallback covers transitions.
 const LandingPage = lazy(() => import("@/pages/Landing"));
-import AuthPage from "@/pages/Auth";
-import PricingPage from "@/pages/Pricing";
-import ForAiAgentsPage from "@/pages/ForAiAgents";
-import ForgotPasswordPage from "@/pages/ForgotPassword";
-import ResetPasswordPage from "@/pages/ResetPassword";
-import UnsubscribePage from "@/pages/Unsubscribe";
-
-import SignupPage from "@/pages/Signup";
-import BetaInvitePage from "@/pages/BetaInvite";
-
-import IntakeBadgePage from "@/pages/IntakeBadge";
-
-import BetaWelcomePage from "@/pages/BetaWelcome";
-import PrivacyPage from "@/pages/Privacy";
-import TermsPage from "@/pages/Terms";
-import NotFound from "@/pages/NotFound";
-import PublicRecipientPage from "@/features/capture/pages/PublicRecipientPage";
-import RecipientConfirmationPage from "@/features/capture/pages/RecipientConfirmationPage";
-import PublicIntakePage from "@/features/intake/pages/PublicIntakePage";
+const AuthPage = lazy(() => import("@/pages/Auth"));
+const PricingPage = lazy(() => import("@/pages/Pricing"));
+const ForAiAgentsPage = lazy(() => import("@/pages/ForAiAgents"));
+const ForgotPasswordPage = lazy(() => import("@/pages/ForgotPassword"));
+const ResetPasswordPage = lazy(() => import("@/pages/ResetPassword"));
+const UnsubscribePage = lazy(() => import("@/pages/Unsubscribe"));
+const SignupPage = lazy(() => import("@/pages/Signup"));
+const BetaInvitePage = lazy(() => import("@/pages/BetaInvite"));
+const IntakeBadgePage = lazy(() => import("@/pages/IntakeBadge"));
+const BetaWelcomePage = lazy(() => import("@/pages/BetaWelcome"));
+const PrivacyPage = lazy(() => import("@/pages/Privacy"));
+const TermsPage = lazy(() => import("@/pages/Terms"));
+const NotFound = lazy(() => import("@/pages/NotFound"));
+const PublicRecipientPage = lazy(() => import("@/features/capture/pages/PublicRecipientPage"));
+const RecipientConfirmationPage = lazy(() => import("@/features/capture/pages/RecipientConfirmationPage"));
+const PublicIntakePage = lazy(() => import("@/features/intake/pages/PublicIntakePage"));
 
 import { RequirePlatformAdmin } from "@/components/auth/RequirePlatformAdmin";
 import { InviteAcceptanceGuard } from "@/components/auth/InviteAcceptanceGuard";
