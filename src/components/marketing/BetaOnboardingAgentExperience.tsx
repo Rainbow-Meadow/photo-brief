@@ -61,16 +61,6 @@ const examples = [
     value:
       "We review warranty claims for damaged products. Customers usually send blurry close-ups with no label or order context.",
   },
-  {
-    label: "Dispatch prep",
-    value:
-      "We need customers to show the site, access point, issue, and model number before we send a technician.",
-  },
-  {
-    label: "Quote workflow",
-    value:
-      "We quote repair jobs from photos. The usual problem is missing wide shots, unclear scale, and no notes about what they want fixed.",
-  },
 ];
 
 function campaignContext(baseSource: string) {
