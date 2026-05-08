@@ -967,7 +967,7 @@ function SectionIntro({
     return (
       <div className={`mx-auto max-w-3xl text-center lg:max-w-5xl ${className ?? ""}`}>
         <span className="pb-eyebrow">{eyebrow}</span>
-        <h2 className="pb-section-title mt-4 text-white">{title}</h2>
+        <h2 className="pb-section-title mt-4 text-white text-4xl">{title}</h2>
         {description ? (
           <p className="pb-copy mx-auto mt-4 max-w-2xl text-base sm:text-lg">{description}</p>
         ) : null}
@@ -981,14 +981,14 @@ function SectionIntro({
     >
       <div className="lg:min-w-0">
         <span className="pb-eyebrow">{eyebrow}</span>
-        <h2 className="pb-section-title mt-4 text-white">{title}</h2>
+        <h2 className="pb-section-title mt-4 text-white text-4xl">{title}</h2>
         {description ? (
           <p className="pb-copy mx-auto mt-4 max-w-2xl text-base sm:text-lg lg:mx-0 lg:max-w-xl">
             {description}
           </p>
         ) : null}
       </div>
-      <div className="mt-8 flex justify-center lg:mt-0 lg:justify-end">{accent}</div>
+      <div className="mt-8 flex justify-center lg:mt-0 lg:justify-end text-center">{accent}</div>
     </div>
   );
 }
@@ -1064,7 +1064,7 @@ function WorkflowSection() {
             <span className="pb-eyebrow">
               <Route className="h-3.5 w-3.5" /> How it works
             </span>
-            <h2 className="pb-section-title mt-4 max-w-xl text-white">
+            <h2 className="pb-section-title mt-4 max-w-xl text-white text-4xl">
               From website visit to actionable lead packet.
             </h2>
             <p className="pb-copy mt-4 max-w-lg text-base sm:text-lg">
@@ -1682,7 +1682,7 @@ function FinalCta({ isFull }: { isFull: boolean }) {
               size={48}
               className="justify-center"
             />
-            <h2 className="pb-section-title mt-5 text-white">
+            <h2 className="pb-section-title mt-5 text-white text-4xl">
               Get quote-ready leads, not vague messages.
             </h2>
             <p className="pb-copy mx-auto mt-4 max-w-2xl text-base sm:text-lg">
