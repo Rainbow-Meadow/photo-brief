@@ -5,8 +5,7 @@
  * classes by hand in components.
  */
 
-@layer components {
-  /* ── Sections ───────────────────────────────────────────── */
+/* ── Sections ───────────────────────────────────────────── */
   .ls-section {
     position: relative;
     padding-block: clamp(3rem, 6vw, 5.5rem);
