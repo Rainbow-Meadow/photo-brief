@@ -982,21 +982,26 @@ function StatAccent({
       : tone === "amber"
         ? "text-amber-300"
         : "text-[hsl(var(--pb-lavender))]";
+  const borderClass =
+    tone === "mint"
+      ? "border-[hsl(var(--pb-mint)/0.5)]"
+      : tone === "amber"
+        ? "border-amber-300/50"
+        : "border-[hsl(var(--pb-lavender)/0.5)]";
   return (
-    <div className="pb-card relative w-full max-w-sm overflow-hidden p-6 text-center sm:p-7 mt-0">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-[hsl(var(--pb-violet)/0.2)] blur-3xl"
-      />
-      {Icon ? (
-        <div className={`relative mx-auto flex h-11 w-11 items-center justify-center rounded-2xl border border-[hsl(var(--pb-line-strong))] bg-[hsl(var(--pb-ink))] ${toneClass}`}>
-          <Icon className="h-5 w-5" />
-        </div>
-      ) : null}
-      <div className={`relative mt-4 text-5xl font-extrabold tracking-tight ${toneClass}`}>
-        {value}
+    <div className="w-full max-w-sm text-left">
+      <div className={`flex items-center gap-2 ${toneClass}`}>
+        {Icon ? <Icon className="h-4 w-4" /> : null}
+        <span className="text-[10px] font-black uppercase tracking-[0.28em]">
+          By the numbers
+        </span>
       </div>
-      <p className="relative mt-2 text-sm text-white/70">{label}</p>
+      <div className={`mt-3 border-t-2 pt-4 ${borderClass}`}>
+        <div className={`font-serif text-5xl italic leading-none tracking-tight sm:text-6xl ${toneClass}`}>
+          {value}
+        </div>
+        <p className="pb-copy mt-3 max-w-xs text-sm leading-snug">{label}</p>
+      </div>
     </div>
   );
 }
