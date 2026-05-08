@@ -913,9 +913,9 @@ function WorkflowSection() {
               From website visit to actionable lead packet.
             </h2>
             <p className="pb-copy mt-4 max-w-lg text-base sm:text-lg">
-              PhotoBrief scans your website, maps your services into guided
-              intake paths, and delivers structured lead packets your team can
-              act on immediately.
+              PhotoBrief turns your website into a structured intake
+              machine — from first visit to a quote-ready packet your team
+              can act on without follow-ups.
             </p>
           </div>
           <div className="relative">
