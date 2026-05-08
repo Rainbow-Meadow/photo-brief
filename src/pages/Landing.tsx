@@ -82,6 +82,11 @@ import pileCloseup from "@/assets/junk-removal/pile-closeup.webp";
 import appliances from "@/assets/junk-removal/appliances.webp";
 import drivewayAccess from "@/assets/junk-removal/driveway-access.webp";
 import heroIllustration from "@/assets/landing-hero-illustration.png";
+import landscaperIllo from "@/assets/trades/landscaper-illustration.png";
+import junkHaulerIllo from "@/assets/trades/junk-hauler-illustration.png";
+import hvacTechIllo from "@/assets/trades/hvac-tech-illustration.png";
+import plumberIllo from "@/assets/trades/plumber-illustration.png";
+import estimatorIllo from "@/assets/trades/estimator-illustration.png";
 
 /* ── JSON-LD ───────────────────────────────────────────────── */
 
