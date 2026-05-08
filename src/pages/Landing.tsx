@@ -1325,11 +1325,9 @@ function ComparisonSection({ mode }: { mode: "messy" | "clean" }) {
           title="Generic form vs. guided visual intake."
           description="The difference is not more photos — it's structured context that lets your team skip the back-and-forth entirely."
           accent={
-            <StatAccent
-              icon={CheckCircle2}
-              value="0"
-              label="Follow-up calls needed when intake arrives structured."
-              tone="lavender"
+            <TradeAccent
+              src={estimatorIllo}
+              alt="Hand-drawn illustration of a damage estimator reviewing a structured photo packet"
             />
           }
         />
