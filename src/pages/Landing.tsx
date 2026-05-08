@@ -1197,12 +1197,13 @@ function WebsiteIntelligenceSection() {
             <Globe2 className="h-3.5 w-3.5" /> Website Intelligence
           </span>
           <h2 className="pb-section-title mt-4 text-white">
-            For beta partners, we build the first intake from your website.
+            Your website becomes your intake engine.
           </h2>
           <p className="pb-copy mx-auto mt-4 max-w-2xl text-base sm:text-lg">
-            Apply with your website. If accepted, PhotoBrief scans your
-            services, current forms, and calls-to-action, then maps them into
-            2–3 simple intake paths you can launch with a hosted link or embed.
+            PhotoBrief scans your services, current forms, and
+            calls-to-action, then maps them into 2–3 simple intake paths
+            you can launch with a hosted link or embed. Beta partners get
+            this built for them during concierge setup.
           </p>
         </div>
 
