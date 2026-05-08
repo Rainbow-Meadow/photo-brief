@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Outlet, NavLink } from "react-router-dom";
+import { Outlet, NavLink, useLocation } from "react-router-dom";
 import { Menu } from "lucide-react";
 
 import { BrandMark } from "@/components/layout/BrandMark";
@@ -31,6 +31,8 @@ import {
  */
 export function MarketingLayout() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { pathname } = useLocation();
+  const isLanding = pathname === "/";
 
   return (
     <div className="pb-landing flex min-h-screen flex-col">
@@ -158,7 +160,7 @@ export function MarketingLayout() {
         <Outlet />
       </main>
 
-      <footer className="pb-safe">
+      <footer className={`pb-safe ${isLanding ? "pb-footer-dark pb-dark-island" : ""}`}>
         <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-8 text-sm text-[hsl(var(--pb-muted))] sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
           <BrandMark
             variant="horizontal"

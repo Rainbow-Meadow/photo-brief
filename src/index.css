@@ -598,11 +598,27 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
 
   /* ── Final CTA dark island — the one dark zone, brand navy + violet glow ── */
   .pb-final-dark {
+    position: relative;
     background:
       radial-gradient(60% 50% at 80% 0%, hsl(var(--pb-violet) / 0.28), transparent 70%),
       radial-gradient(45% 40% at 8% 100%, hsl(var(--pb-lavender) / 0.18), transparent 72%),
       linear-gradient(180deg, hsl(258 38% 8%) 0%, hsl(258 42% 5%) 100%);
-    border-top: 1px solid hsl(var(--pb-violet) / 0.32);
+    color: white;
+  }
+  /* Soft fade-in at the top so the lavender beta zone bleeds into dark over ~80px */
+  .pb-final-dark::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 80px;
+    pointer-events: none;
+    background: linear-gradient(180deg, hsl(258 36% 14% / 0) 0%, hsl(258 38% 8%) 100%);
+    transform: translateY(-72px);
+  }
+  /* Footer dark variant — continues the dark surface so the page ends in one piece */
+  .pb-footer-dark {
+    background: linear-gradient(180deg, hsl(258 42% 5%) 0%, hsl(258 46% 4%) 100%);
+    border-top: 1px solid hsl(var(--pb-violet) / 0.18);
     color: white;
   }
   .pb-container-narrow { width: min(100% - 2rem, 860px); margin-inline: auto; }
