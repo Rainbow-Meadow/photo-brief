@@ -792,6 +792,15 @@ function PainPointSection() {
         <div className="mx-auto max-w-3xl text-center lg:mx-0 lg:grid lg:max-w-none lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:gap-8 lg:text-left">
           {/* Left column — intro copy + carousel */}
           <div className="lg:min-w-0 lg:text-left">
+            <img
+              src={junkHaulerIllo}
+              alt="Hand-drawn illustration of a junk hauler standing beside an unsorted pile"
+              width={1024}
+              height={1024}
+              loading="lazy"
+              decoding="async"
+              className="mx-auto mb-6 w-full max-w-[280px] drop-shadow-[0_22px_36px_hsl(var(--pb-ink-soft)/0.28)] lg:mx-0 lg:max-w-[320px]"
+            />
             <span className="pb-eyebrow">
               <MessageSquareWarning className="h-3.5 w-3.5" /> The problem
             </span>
