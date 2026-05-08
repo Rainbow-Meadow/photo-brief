@@ -4,23 +4,21 @@
  *
  * Splits incoming requests between two origins:
  *
- *   - Pages-only static files (/og-image, /robots.txt, /sitemap.xml,
- *     /llms*.txt, /openapi.json, /mcp.json, /.well-known/*) → Cloudflare
- *     Pages, edge-cached. Stable filenames, only the Pages build emits them.
+ *   - Public marketing pages (/, /pricing, /help, /for-ai-agents) →
+ *     Cloudflare Pages. These routes should be stable, fast, prerendered, and
+ *     driven by the repo deploy — not by Lovable's publish state.
  *
- *   - Marketing HTML routes (/, /pricing, /help, /for-ai-agents):
- *       • Bots / crawlers / LLM fetchers → Pages (prerendered static HTML
- *         optimized for SEO and answer-engine citation).
- *       • Real users → Lovable hosting (live SPA with the latest dynamic
- *         behavior, no prerender hydration delay).
+ *   - Pages-owned static files (/assets/*, /og-image, /robots.txt,
+ *     /sitemap.xml, /llms*.txt, /openapi.json, /mcp.json, /.well-known/*,
+ *     /marketing/*) → Cloudflare Pages first, with transparent fallback to
+ *     Lovable for hashed app assets that only exist in Lovable's build.
  *
- *   - Hashed JS/CSS bundles (/assets/*) and everything else (/auth, /dashboard,
- *     /requests, /r/*, /onboarding, /settings/*, …) → Lovable hosting.
- *     /assets/* MUST come from the same origin that served the HTML, because
- *     Vite hash filenames differ between the Lovable build and the Pages build.
+ *   - App/auth/customer paths (/auth, /dashboard, /requests, /r/*,
+ *     /onboarding, /settings/*, …) → Lovable hosting.
  *
- * The marketing allow-list MUST stay in sync with scripts/prerender.mjs,
- * which reads its routes from public/sitemap.xml.
+ * This keeps the landing page reliable while still allowing Lovable to host the
+ * authenticated app and any routes that are not part of the public marketing
+ * surface.
  */
 
 interface Env {
@@ -28,8 +26,6 @@ interface Env {
   LOVABLE_HOST: string; // e.g. "photobrief.lovable.app"
 }
 
-// Exact paths served from Pages (everything else, including /auth, falls
-// through to Lovable).
 const MARKETING_PATHS = new Set<string>([
   "/",
   "/pricing",
@@ -37,18 +33,12 @@ const MARKETING_PATHS = new Set<string>([
   "/for-ai-agents",
 ]);
 
-// Path prefixes for files that ONLY exist on the Pages build (AI/answer-engine
-// discovery files, prerender artifacts, marketing OG image). These have stable
-// filenames so it's safe to serve them from Pages regardless of which origin
-// rendered the HTML.
-//
-// IMPORTANT: /assets/* is intentionally NOT in this list. Vite emits hashed
-// filenames (index-XYZ.js) and the Lovable build and the Pages build produce
-// DIFFERENT hashes for the same source. Routing /assets/* to Pages while the
-// HTML came from Lovable causes 404s/MIME-type mismatches and a blank page.
-// Assets must come from the same origin as the HTML — which is Lovable for
-// real users — so we let /assets/* fall through to Lovable.
+// Public static assets that should prefer the Pages deployment. /assets/* is
+// included with fallback: marketing HTML served from Pages needs Pages' hashed
+// assets, while Lovable app HTML may request different hashes that Pages does
+// not have. In that case we fall back to Lovable below.
 const PAGES_STATIC_PREFIXES = [
+  "/assets/",
   "/og-image",
   "/favicon",
   "/apple-touch-icon",
@@ -64,7 +54,6 @@ const PAGES_STATIC_PREFIXES = [
 
 function isMarketingPath(pathname: string): boolean {
   if (MARKETING_PATHS.has(pathname)) return true;
-  // Allow trailing slash variants (Pages serves /pricing and /pricing/).
   if (pathname.endsWith("/") && MARKETING_PATHS.has(pathname.slice(0, -1))) return true;
   return false;
 }
@@ -73,78 +62,30 @@ function isPagesStatic(pathname: string): boolean {
   return PAGES_STATIC_PREFIXES.some((p) => pathname.startsWith(p));
 }
 
-// Known bot / crawler / answer-engine user agents. Matched case-insensitively
-// as substrings against the UA string. Covers traditional search crawlers,
-// social previewers, SEO tools, and LLM/answer-engine fetchers.
-const BOT_UA_PATTERNS = [
-  // Search engines
-  "googlebot", "google-inspectiontool", "bingbot", "slurp", "duckduckbot",
-  "baiduspider", "yandex", "sogou", "exabot", "facebot", "ia_archiver",
-  "applebot",
-  // Social / link unfurlers
-  "facebookexternalhit", "twitterbot", "linkedinbot", "slackbot",
-  "discordbot", "telegrambot", "whatsapp", "skypeuripreview", "pinterest",
-  "redditbot", "embedly", "quora link preview",
-  // SEO / monitoring
-  "ahrefsbot", "semrushbot", "mj12bot", "dotbot", "rogerbot", "screaming frog",
-  "lighthouse", "pagespeed", "gtmetrix", "pingdom", "uptimerobot",
-  // LLMs / answer engines
-  "gptbot", "oai-searchbot", "chatgpt-user", "chatgpt", "openai",
-  "claudebot", "claude-web", "anthropic-ai", "anthropic",
-  "perplexitybot", "perplexity-user", "perplexity",
-  "google-extended", "googleother",
-  "ccbot", "cohere-ai", "cohere",
-  "youbot", "phindbot", "amazonbot", "bytespider", "diffbot",
-  "meta-externalagent", "meta-externalfetcher",
-  "mistralai-user", "mistral",
-  "duckassistbot", "kagibot",
-  // Generic crawler hints
-  "bot/", " bot ", "spider", "crawler", "crawl", "headlesschrome",
-];
-
-function isBot(request: Request): boolean {
-  const ua = (request.headers.get("user-agent") || "").toLowerCase();
-  if (!ua) return true; // No UA → treat as bot, safer for SEO.
-  return BOT_UA_PATTERNS.some((p) => ua.includes(p));
-}
-
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
     const path = url.pathname;
 
-    // Pages-only static files (sitemap, robots, llms.txt, .well-known, og-image…).
-    // These have stable filenames and only the Pages build emits them.
-    // /assets/* is deliberately NOT included here — see PAGES_STATIC_PREFIXES.
-    if (isPagesStatic(path)) {
+    // Public marketing routes should come from the repo-built Pages artifact
+    // for every visitor. This avoids a broken/stale Lovable publish taking down
+    // the landing page.
+    if (isMarketingPath(path)) {
       const res = await proxyTo(env.PAGES_HOST, request);
-      // Transparent fallback if Pages doesn't have it for any reason.
-      if (res.status === 404) {
-        return proxyTo(env.LOVABLE_HOST, request);
-      }
+      if (res.status === 404) return proxyTo(env.LOVABLE_HOST, request);
       return res;
     }
 
-    // HTML navigations: split by client.
-    //   - Bots/crawlers/LLMs → Pages (prerendered static HTML for SEO/citation).
-    //   - Real users → Lovable (live SPA with the latest dynamic behavior).
-    //
-    // Marketing paths are guaranteed to have a prerendered file on Pages;
-    // other paths will fall through to Lovable since Pages only knows the
-    // marketing allow-list.
-    if (isMarketingPath(path)) {
-      if (isBot(request)) {
-        const res = await proxyTo(env.PAGES_HOST, request);
-        // Belt-and-suspenders: if Pages somehow 404s, serve the live SPA so
-        // the bot still gets a usable response instead of an error.
-        if (res.status === 404) return proxyTo(env.LOVABLE_HOST, request);
-        return res;
-      }
-      return proxyTo(env.LOVABLE_HOST, request);
+    // Pages-owned static files and Pages/Lovable hashed assets. Try Pages first
+    // and fall back to Lovable so authenticated app assets still work even when
+    // their hashes only exist in Lovable's build.
+    if (isPagesStatic(path)) {
+      const res = await proxyTo(env.PAGES_HOST, request);
+      if (res.status === 404) return proxyTo(env.LOVABLE_HOST, request);
+      return res;
     }
 
-    // Non-marketing paths (auth, app, recipient links, etc.) always go to
-    // the live SPA on Lovable.
+    // Non-marketing paths (auth, app, recipient links, etc.) go to Lovable.
     return proxyTo(env.LOVABLE_HOST, request);
   },
 };
@@ -152,17 +93,17 @@ export default {
 /**
  * Proxy the incoming request to the given origin host, preserving the path,
  * query string, method, headers, and body. The Host header is rewritten so
- * the upstream sees its own hostname (required by both Pages and Lovable).
+ * the upstream sees its own hostname.
  */
 async function proxyTo(host: string, request: Request): Promise<Response> {
   if (!host) {
     return new Response("Router misconfigured: missing origin host", { status: 500 });
   }
+
   const incoming = new URL(request.url);
   const target = new URL(incoming.pathname + incoming.search, `https://${host}`);
 
   const headers = new Headers(request.headers);
-  // fetch() in Workers derives Host from the URL, but set it explicitly too.
   headers.set("host", host);
   const cfIp = request.headers.get("cf-connecting-ip");
   if (cfIp) headers.set("x-forwarded-for", cfIp);
@@ -174,16 +115,14 @@ async function proxyTo(host: string, request: Request): Promise<Response> {
     headers,
     redirect: "manual",
   };
+
   if (request.method !== "GET" && request.method !== "HEAD") {
     init.body = request.body;
   }
 
   const upstream = await fetch(target.toString(), init);
 
-  // Break redirect loops: if the origin is trying to send the browser back to
-  // the user-facing host (e.g. Lovable redirecting custom-domain traffic to
-  // its canonical hostname or vice-versa), rewrite or strip that redirect so
-  // the browser doesn't bounce back into this worker indefinitely.
+  // Break redirect loops between the public host and upstream origins.
   if (upstream.status >= 300 && upstream.status < 400) {
     const location = upstream.headers.get("location");
     if (location) {
@@ -191,24 +130,18 @@ async function proxyTo(host: string, request: Request): Promise<Response> {
         const loc = new URL(location, target);
         const userHost = incoming.hostname.toLowerCase();
         const locHost = loc.hostname.toLowerCase();
-        // If the redirect targets the user-facing host OR the upstream host
-        // with the same path we just requested, treat it as a loop and
-        // serve the body of a fresh request to the same upstream URL with
-        // redirects followed internally.
         const sameUserHost =
           locHost === userHost ||
           locHost === `www.${userHost}` ||
           `www.${locHost}` === userHost;
         const sameUpstreamPath =
           locHost === host.toLowerCase() && loc.pathname === incoming.pathname;
+
         if (sameUserHost || sameUpstreamPath) {
-          // Re-fetch from upstream following redirects internally; this
-          // bypasses the loop without exposing the origin host to the client.
           const followed = await fetch(target.toString(), {
             ...init,
             redirect: "follow",
           });
-          // Strip any lingering Location header just in case.
           const cleaned = new Headers(followed.headers);
           cleaned.delete("location");
           return new Response(followed.body, {
@@ -217,8 +150,7 @@ async function proxyTo(host: string, request: Request): Promise<Response> {
             headers: cleaned,
           });
         }
-        // Redirect points elsewhere on the upstream — rewrite it to be
-        // user-facing if it targets the upstream hostname.
+
         if (locHost === host.toLowerCase()) {
           loc.hostname = incoming.hostname;
           loc.protocol = incoming.protocol;
@@ -227,7 +159,7 @@ async function proxyTo(host: string, request: Request): Promise<Response> {
           return rewritten;
         }
       } catch {
-        // Malformed Location; fall through and return upstream as-is.
+        // Malformed Location; return upstream as-is.
       }
     }
   }
