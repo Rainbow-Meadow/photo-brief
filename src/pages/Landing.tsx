@@ -518,6 +518,7 @@ const RESPONSE_IMPROVEMENT_FACTOR = 0.30; // 30% more leads recovered with faste
 const FORM_RECOVERY_FACTOR = 0.25; // 25% of abandoned forms recovered with guided intake
 
 function RoiCalculatorSection() {
+  const [open, setOpen] = useState(false);
   const [monthlyVisitors, setMonthlyVisitors] = useState(500);
   const [avgJobValue, setAvgJobValue] = useState(2000);
   const [currentConversion, setCurrentConversion] = useState(3);
@@ -539,94 +540,121 @@ function RoiCalculatorSection() {
   return (
     <section className="pb-section-tight">
       <div className="pb-container">
-        <div className="mx-auto max-w-3xl text-center">
-          <span className="pb-eyebrow">
-            <Calculator className="h-3.5 w-3.5" /> ROI calculator
-          </span>
-          <h2 className="pb-section-title mt-4 text-white">
-            How much is weak intake costing you?
-          </h2>
-          <p className="pb-copy mt-4 text-base sm:text-lg">
-            Plug in your numbers. The math uses the same industry benchmarks
-            from the studies above.
-          </p>
-        </div>
-
-        <div className="mx-auto mt-8 max-w-4xl sm:mt-10">
-          <div className="pb-command-panel grid gap-6 p-5 sm:p-6 lg:grid-cols-[1fr_1fr] lg:gap-8 lg:p-8">
-            {/* Inputs */}
-            <div className="relative z-10 grid gap-5">
-              <RoiSlider
-                label="Monthly website visitors"
-                value={monthlyVisitors}
-                onChange={setMonthlyVisitors}
-                min={100}
-                max={10000}
-                step={100}
-                format={(v) => v.toLocaleString()}
-              />
-              <RoiSlider
-                label="Average job value"
-                value={avgJobValue}
-                onChange={setAvgJobValue}
-                min={100}
-                max={25000}
-                step={100}
-                format={(v) => `$${v.toLocaleString()}`}
-              />
-              <RoiSlider
-                label="Current form conversion rate"
-                value={currentConversion}
-                onChange={setCurrentConversion}
-                min={1}
-                max={15}
-                step={0.5}
-                format={(v) => `${v}%`}
-              />
-            </div>
-
-            {/* Results */}
-            <div className="relative z-10 grid gap-3 sm:gap-4">
-              <div className="rounded-[1.25rem] border border-white/10 bg-white/[0.04] p-4">
-                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-white/45">
-                  <UserCheck className="h-3.5 w-3.5" /> Current monthly leads
-                </div>
-                <p className="mt-2 text-3xl font-black tracking-tight text-white sm:text-4xl">
-                  {currentLeads}
-                </p>
+        {!open ? (
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            className="group mx-auto flex w-full max-w-2xl items-center justify-between gap-4 rounded-[1.5rem] border border-[hsl(var(--pb-lavender)/0.25)] bg-gradient-to-r from-[hsl(var(--pb-violet)/0.10)] via-[hsl(var(--pb-ink))] to-[hsl(var(--pb-lavender)/0.06)] p-5 text-left transition hover:border-[hsl(var(--pb-lavender)/0.4)] sm:p-6"
+          >
+            <div className="flex items-center gap-4">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[hsl(var(--pb-lavender)/0.12)]">
+                <Calculator className="h-6 w-6 text-[hsl(var(--pb-lavender))]" />
               </div>
-
-              <div className="rounded-[1.25rem] border border-[hsl(var(--pb-lavender)/0.3)] bg-[hsl(var(--pb-lavender)/0.06)] p-4">
-                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-[hsl(var(--pb-lavender))]">
-                  <ArrowRight className="h-3.5 w-3.5" /> Leads recovered with PhotoBrief
-                </div>
-                <p className="mt-2 text-3xl font-black tracking-tight text-[hsl(var(--pb-lavender))] sm:text-4xl">
-                  +{totalRecovered}<span className="text-lg font-bold text-white/50"> /mo</span>
+              <div>
+                <p className="text-base font-bold tracking-tight text-white sm:text-lg">
+                  How much is weak intake costing you?
                 </p>
-                <p className="pb-copy mt-1 text-xs">
-                  {recoveredFromForm} from better intake · {recoveredFromSpeed} from faster response
-                </p>
-              </div>
-
-              <div className="rounded-[1.25rem] border border-[hsl(var(--pb-mint)/0.3)] bg-[hsl(var(--pb-mint)/0.06)] p-4">
-                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-[hsl(var(--pb-mint))]">
-                  <DollarSign className="h-3.5 w-3.5" /> Estimated annual revenue recovered
-                </div>
-                <p className="mt-2 text-3xl font-black tracking-tight text-[hsl(var(--pb-mint))] sm:text-4xl">
-                  {formatDollars(annualRevenue)}
-                </p>
-                <p className="pb-copy mt-1 text-xs">
-                  {formatDollars(monthlyRevenue)}/mo × 12 · based on {totalRecovered} recovered leads at {`$${avgJobValue.toLocaleString()}`} avg job
+                <p className="pb-copy mt-0.5 text-xs sm:text-sm">
+                  Plug in your numbers — see leads and revenue you could recover.
                 </p>
               </div>
             </div>
-          </div>
+            <span className="hidden shrink-0 rounded-full border border-[hsl(var(--pb-lavender)/0.3)] px-4 py-2 text-xs font-bold text-[hsl(var(--pb-lavender))] transition group-hover:bg-[hsl(var(--pb-lavender)/0.1)] sm:inline-flex">
+              Calculate →
+            </span>
+          </button>
+        ) : (
+          <>
+            <div className="mx-auto max-w-3xl text-center">
+              <span className="pb-eyebrow">
+                <Calculator className="h-3.5 w-3.5" /> ROI calculator
+              </span>
+              <h2 className="pb-section-title mt-4 text-white">
+                How much is weak intake costing you?
+              </h2>
+              <p className="pb-copy mt-4 text-base sm:text-lg">
+                Plug in your numbers. The math uses the same industry benchmarks
+                from the studies above.
+              </p>
+            </div>
 
-          <p className="pb-copy mx-auto mt-4 max-w-xl text-center text-[0.65rem] italic sm:text-xs">
-            Estimates use 81% form abandonment (Numen Technology), 25% intake recovery rate,
-            and 30% speed-to-lead improvement (MIT Lead Response Study). Your results will vary.
-          </p>
-        </div>
+            <div className="mx-auto mt-8 max-w-4xl sm:mt-10">
+              <div className="pb-command-panel grid gap-6 p-5 sm:p-6 lg:grid-cols-[1fr_1fr] lg:gap-8 lg:p-8">
+                {/* Inputs */}
+                <div className="relative z-10 grid gap-5">
+                  <RoiSlider
+                    label="Monthly website visitors"
+                    value={monthlyVisitors}
+                    onChange={setMonthlyVisitors}
+                    min={100}
+                    max={10000}
+                    step={100}
+                    format={(v) => v.toLocaleString()}
+                  />
+                  <RoiSlider
+                    label="Average job value"
+                    value={avgJobValue}
+                    onChange={setAvgJobValue}
+                    min={100}
+                    max={25000}
+                    step={100}
+                    format={(v) => `$${v.toLocaleString()}`}
+                  />
+                  <RoiSlider
+                    label="Current form conversion rate"
+                    value={currentConversion}
+                    onChange={setCurrentConversion}
+                    min={1}
+                    max={15}
+                    step={0.5}
+                    format={(v) => `${v}%`}
+                  />
+                </div>
+
+                {/* Results */}
+                <div className="relative z-10 grid gap-3 sm:gap-4">
+                  <div className="rounded-[1.25rem] border border-white/10 bg-white/[0.04] p-4">
+                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-white/45">
+                      <UserCheck className="h-3.5 w-3.5" /> Current monthly leads
+                    </div>
+                    <p className="mt-2 text-3xl font-black tracking-tight text-white sm:text-4xl">
+                      {currentLeads}
+                    </p>
+                  </div>
+
+                  <div className="rounded-[1.25rem] border border-[hsl(var(--pb-lavender)/0.3)] bg-[hsl(var(--pb-lavender)/0.06)] p-4">
+                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-[hsl(var(--pb-lavender))]">
+                      <ArrowRight className="h-3.5 w-3.5" /> Leads recovered with PhotoBrief
+                    </div>
+                    <p className="mt-2 text-3xl font-black tracking-tight text-[hsl(var(--pb-lavender))] sm:text-4xl">
+                      +{totalRecovered}<span className="text-lg font-bold text-white/50"> /mo</span>
+                    </p>
+                    <p className="pb-copy mt-1 text-xs">
+                      {recoveredFromForm} from better intake · {recoveredFromSpeed} from faster response
+                    </p>
+                  </div>
+
+                  <div className="rounded-[1.25rem] border border-[hsl(var(--pb-mint)/0.3)] bg-[hsl(var(--pb-mint)/0.06)] p-4">
+                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-[hsl(var(--pb-mint))]">
+                      <DollarSign className="h-3.5 w-3.5" /> Estimated annual revenue recovered
+                    </div>
+                    <p className="mt-2 text-3xl font-black tracking-tight text-[hsl(var(--pb-mint))] sm:text-4xl">
+                      {formatDollars(annualRevenue)}
+                    </p>
+                    <p className="pb-copy mt-1 text-xs">
+                      {formatDollars(monthlyRevenue)}/mo × 12 · based on {totalRecovered} recovered leads at {`$${avgJobValue.toLocaleString()}`} avg job
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <p className="pb-copy mx-auto mt-4 max-w-xl text-center text-[0.65rem] italic sm:text-xs">
+                Estimates use 81% form abandonment (Numen Technology), 25% intake recovery rate,
+                and 30% speed-to-lead improvement (MIT Lead Response Study). Your results will vary.
+              </p>
+            </div>
+          </>
+        )}
       </div>
     </section>
   );
