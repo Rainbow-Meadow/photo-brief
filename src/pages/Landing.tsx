@@ -965,35 +965,23 @@ function StatAccent({
   value,
   label,
   icon: Icon,
-  tone = "lavender",
 }: {
   value: ReactNode;
   label: ReactNode;
   icon?: LucideIcon;
+  /** Kept for backward-compat; ignored — single violet accent system. */
   tone?: "lavender" | "mint" | "amber";
 }) {
-  const toneClass =
-    tone === "mint"
-      ? "text-[hsl(var(--pb-violet))]"
-      : tone === "amber"
-        ? "text-amber-300"
-        : "text-[hsl(var(--pb-lavender))]";
-  const borderClass =
-    tone === "mint"
-      ? "border-[hsl(var(--pb-violet)/0.5)]"
-      : tone === "amber"
-        ? "border-amber-300/50"
-        : "border-[hsl(var(--pb-lavender)/0.5)]";
   return (
     <div className="w-full max-w-sm text-left">
-      <div className={`flex items-center gap-2 ${toneClass}`}>
+      <div className="flex items-center gap-2 text-[hsl(var(--pb-violet))]">
         {Icon ? <Icon className="h-4 w-4" /> : null}
         <span className="text-[10px] font-black uppercase tracking-[0.28em]">
           By the numbers
         </span>
       </div>
-      <div className={`mt-3 border-t-2 pt-4 ${borderClass}`}>
-        <div className={`font-serif text-5xl italic leading-none tracking-tight sm:text-6xl ${toneClass}`}>
+      <div className="mt-3 border-t-2 border-[hsl(var(--pb-violet)/0.45)] pt-4">
+        <div className="font-serif text-5xl italic leading-none tracking-tight text-[hsl(var(--pb-violet))] sm:text-6xl">
           {value}
         </div>
         <p className="pb-copy mt-3 max-w-xs text-sm leading-snug">{label}</p>
