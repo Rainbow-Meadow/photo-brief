@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Outlet, NavLink } from "react-router-dom";
+import { Outlet, NavLink, useLocation } from "react-router-dom";
 import { Menu } from "lucide-react";
 
 import { BrandMark } from "@/components/layout/BrandMark";
