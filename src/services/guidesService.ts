@@ -56,13 +56,14 @@ async function fetchWorkspaceGuides(workspaceId: string): Promise<PhotoGuide[]> 
       .order("created_at", { ascending: false }),
   );
   if (error) throw error;
-  if (!guides || guides.length === 0) return [];
-  const ids = guides.map((g: any) => g.id);
+  const rows = (guides ?? []) as any[];
+  if (rows.length === 0) return [];
+  const ids = rows.map((g: any) => g.id);
   const [{ data: steps }, { data: questions }] = await Promise.all([
     supabase.from("guide_steps").select("*").in("guide_id", ids),
     supabase.from("context_questions").select("*").in("guide_id", ids),
   ]);
-  return guides.map((g: any) => rowToGuide(g, steps ?? [], questions ?? []));
+  return rows.map((g: any) => rowToGuide(g, steps ?? [], questions ?? []));
 }
 
 async function insertDraftGuide(args: {
