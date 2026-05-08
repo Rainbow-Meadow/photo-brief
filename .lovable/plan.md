@@ -1,112 +1,59 @@
-## Brand overhaul: navy + amber, tradesperson identity
+## Goal
+One CSS file owns the entire color system. Two palettes only — `:root` (light) and `.dark` (dark). No more layered overrides, no more JS color mirrors, no more legacy `--pb-*` violet/lavender/electric/mint aliases.
 
-The new logo is a navy + amber tool-belt camera with the wordmark "Photo" (navy) + "Brief" (amber) and tagline "Guide · Capture · Close". This replaces the old purple/lavender SaaS look. Confirmed direction:
+## The two palettes (immutable)
 
-- **Theme:** light surfaces (cream/white), navy text, amber accents
-- **Wordmark:** rendered as two-tone CSS text (navy + amber) — no image
-- **Tagline:** "Guide · Capture · Close" becomes the official tagline everywhere
+**Light** — anchored to the brand mark
+- Surface: cream `#FAF7F2` (39 33% 97%)
+- Ink: navy `#1B2A4A` (219 47% 20%)
+- Primary/CTA: amber `#F2A33A` (33 88% 55%)
+- Primary hover: `#D88A20` (35 74% 49%)
+- Accent wash: amber-tint (33 92% 92%)
+- Border/input: warm cream (32 18% 86%)
 
----
+**Dark** — inverted, same brand
+- Surface: deep navy `#0B1426` (219 50% 7%)
+- Ink: cream (39 33% 97%)
+- Primary/CTA: amber-light (33 89% 62%)
+- Accent: navy-tint (219 40% 22%)
+- Border: navy-line (219 26% 20%)
 
-### 1. Replace brand assets
+Each palette defines exactly one value per semantic token. Components only consume semantic tokens (`--background`, `--foreground`, `--primary`, `--card`, `--border`, etc.) and brand tokens (`--brand-navy`, `--brand-amber`, `--brand-cream`).
 
-Copy the uploaded SVGs into the project and regenerate raster sizes for favicons, social previews, email logos, and the Remotion video.
+## Files deleted
 
-- `public/brand/mark.svg` — new mark (from `Brand_Mark.svg`)
-- `public/brand/full-logo.svg` — full lockup (from `Full_Logo.svg`)
-- Re-rasterize from the mark SVG: `mark-color.png`, `mark-color.webp`, `mark-color-sm.webp`, `icon-192.png`, `icon-512.png`, `apple-touch-icon.png`, `favicon.png`, `favicon.ico`, `favicon-16x16.png`, `photobrief-mark.png`
-- Re-rasterize full lockup: `photobrief-logo.png`, regenerated `og-image.png` and `og-betalist.png` (navy mark on cream with new tagline)
-- Upload `mark-color.png` to the `email-assets` Supabase storage bucket (used by transactional email header)
+- `src/theme.css` — gone (cyan/teal palette, conflicting tokens)
+- `src/brand-overrides.css` — gone (was the patch-over-patch layer)
+- `src/design-system/shared/brand.tokens.ts` — gone
+- `src/design-system/shared/color.tokens.ts` — gone
+- Their entries in `src/design-system/index.ts`
+- Their imports in `src/main.tsx`
 
-### 2. New color tokens (light theme aligned to logo)
+## Files rewritten
 
-Define the palette once and propagate. Approximate HSL values pulled from the artwork; will be tuned for AA contrast during implementation.
+**`src/index.css`** — single source of truth. The `@layer base { :root { ... } .dark { ... } }` block is fully replaced with the two palettes above. All legacy variables removed: `--pb-night`, `--pb-ink`, `--pb-panel`, `--pb-line`, `--pb-violet`, `--pb-lavender`, `--pb-electric`, `--pb-mint`, `--pb-shadow`, `--pb-paper`, `--pb-muted`, `--app-pill-*`, `--brand-lens`, `--brand-flash`, `--brand-graphite`, `--gradient-radial-glow`, `--ambient-future`, `--glass-bg-onDark`, etc. Anything not in the canonical token list is removed. Sidebar tokens consolidate to `--sidebar-*` reading from the brand palette.
 
-| Token | Old (purple-on-dark) | New (navy + amber) |
-|---|---|---|
-| Brand navy | `260 52% 4%` | `218 55% 17%` (#1B2A4A) |
-| Brand amber | `262 83% 58%` | `35 88% 55%` (#F2A33A) |
-| Background | `260 24% 96%` mixed w/ navy | `40 33% 97%` cream (#FAF7F2) |
-| Surface | `#15121f` dark cards | `0 0% 100%` white cards |
-| Foreground | white-on-dark | navy-on-cream |
-| Primary CTA | `#8f63ff` | amber `#F2A33A` |
-| Primary glow | lavender `#b98cff` | amber-light `#F6BC6A` |
-| Accent / link | lavender | navy |
-| Border | lavender alpha | warm gray `30 15% 88%` |
+**`tailwind.config.ts`** — the `extend.colors` map is pruned to only the semantic tokens that exist in the new palette. Any `pb-*` color extensions are removed.
 
-Files updated:
+**3 components using `BRAND` JS object** — switch to CSS vars:
+- `src/components/ui/glass-panel.tsx`
+- `src/components/layout/DashboardLayout.tsx`
+- `src/components/shared/MetricCard.tsx`
 
-- `src/index.css` — `:root` semantic tokens, gradients (`--gradient-primary`, `--gradient-brand`, `--gradient-radial-glow`), shadows (drop the violet glow, replace with amber glow + soft navy shadow), `--brand-navy`, `--brand-lens` retuned. Dark-mode block kept but recolored navy/amber instead of purple.
-- `src/brand-overrides.css` — replaces the dark navy + purple marketing override layer with cream/navy/amber. Removes `#0c0915`, `#8f63ff`, `#b98cff`, `#cfb2ff` references. Marketing pages become light by default.
-- `src/theme.css` — recolor any premium-dark utility classes to the new palette.
-- `src/design-system/shared/brand.tokens.ts` — `BRAND.colors` updated: `violet→amber`, `lavender→amberLight`, `electric→navy`, `paper→cream`, `night/ink→deep navy`. `tone: "premium-light"`.
-- `tailwind.config.ts` — extend `colors.brand.{navy,amber,amberLight,cream}`; update `backgroundImage.gradient-*` and `boxShadow.glow/brand` references if hard-coded.
+## Dark mode behavior
 
-### 3. Wordmark + BrandMark component
+Follow OS preference by default; the existing toggle (sun/moon switch) remains and overrides via the `.dark` class on `<html>`. No other changes to the toggle wiring.
 
-`src/components/layout/BrandMark.tsx`:
+## Cleanup pass
 
-- Drop the purple gradient text. Replace `Wordmark` with two `<span>`s: "Photo" in `text-brand-navy`, "Brief" in `text-brand-amber` (and ".ai" in muted navy at 60% weight where the `.ai` is shown). Same Inter Black weight, same `-0.06em` tracking.
-- `MarkImage` swaps to the new `mark.svg` (vector first, with PNG fallback). Update `MARK_SRC` / `MARK_FALLBACK` paths.
-- Add an optional `showTagline?: boolean` prop that renders `GUIDE · CAPTURE · CLOSE` underneath in small navy uppercase tracked-out type — used by the stacked variant, footer, OG image, and video.
+A grep removes any remaining hardcoded color references in components that name dead tokens (`--pb-violet`, `--pb-electric`, `--brand-flash`, `--brand-graphite`, etc.). Each gets remapped to the closest semantic token (usually `--primary`, `--brand-amber`, or `--brand-navy`). Estimated <30 occurrences across the codebase.
 
-### 4. Tagline rollout
+## Out of scope
 
-Replace the existing taglines wherever they appear:
+- No component redesigns — only token swaps.
+- No copy/layout changes.
+- The BrandMark wordmark inline-style override on Landing is removed once `--pb-wordmark-navy` lives in one place and isn't fighting an override.
 
-- Hero subhead (`src/pages/Landing.tsx`): "Turn website leads into photo-ready briefs" → keep as longer secondary line under H1, but the **3-word tagline appears in the lockup directly under the wordmark**.
-- Marketing footer / `MarketingLayout` — show stacked BrandMark with tagline.
-- `PoweredByBadge.tsx` — "Sent securely with PhotoBrief.ai · Guide · Capture · Close".
-- Remotion `SceneLogo.tsx` — replace "Visual intake for small businesses" / "Turn website leads into photo-ready briefs" with the new lockup.
-- `index.html` `<meta name="description">`, OG description, `public/site.webmanifest` description, `llms.txt`, `llms-full.txt`, `public/.well-known/agent.json` — update tagline string.
+## Risk note
 
-### 5. Email + dark surfaces
-
-`supabase/functions/_shared/transactional-email-templates/brand-styles.ts` and the six auth email templates (`signup`, `recovery`, `magic-link`, `invite`, `email-change`, `reauthentication`):
-
-- Background `#0c0915` → cream `#FAF7F2`
-- Surface `#15121f` → white `#FFFFFF` with subtle navy border `rgba(27,42,74,0.08)`
-- Primary text → navy `#1B2A4A`
-- CTA `#8f63ff` → amber `#F2A33A`, hover `#F6BC6A`, white CTA text
-- Accent / link → navy
-- Logo URL stays the same (file is replaced in storage)
-
-Re-deploy the auth-email-hook edge function after edits.
-
-### 6. Remotion video theme
-
-`remotion/src/theme.ts`:
-
-- `bgDark` → cream / off-white (`#FAF7F2`)
-- `primary` violet → amber, `primaryGlow` → amber-light, `cyan/violet` aliases retired or recolored navy
-- Shadows lose the violet glow, gain a soft amber glow + navy depth shadow
-- `SceneLogo.tsx` switches gradient text to two-tone navy + amber
-
-### 7. Manifest + meta
-
-- `public/site.webmanifest`: `theme_color` `#8f63ff` → `#F2A33A`, `background_color` `#060507` → `#FAF7F2`
-- `index.html` `<meta name="theme-color">` updated
-- `public/_headers` — no change unless CSP references images we removed
-
-### 8. Memory
-
-Update `mem://index.md` Core line and `mem://design/brand-system`:
-
-- Old: "dark navy bg (#0c0915), purple/lavender accents (#8f63ff, #b98cff, #7C3AED)"
-- New: "cream bg (#FAF7F2), brand navy (#1B2A4A) + amber (#F2A33A). Tagline 'Guide · Capture · Close'. BrandMark renders Photo (navy) + Brief (amber) two-tone."
-
-### 9. QA after implementation
-
-- Walk every top-level marketing route at desktop + mobile viewport: `/`, `/pricing`, `/for-ai-agents`, `/auth`, `/signup`, `/beta-invite`, `/beta-welcome`, `/intake/badge`
-- Verify the dashboard + capture + recipient pages still read well on the new light palette (no hard-coded white/dark text trapping)
-- Verify favicon + OG image + apple-touch render correctly
-- Render one frame of the Remotion logo scene to confirm new colors
-
----
-
-### Out of scope
-
-- No backend, plan-gating, or business-logic changes
-- No copy rewrites beyond the tagline swap
-- The marketing illustrations (notebook, ribbons, mailbox, badge) generated previously stay; they read fine on cream as well as navy
-
+Some marketing pages used `--pb-violet` literally for big hero text. After the rewrite those will read amber (the new accent). That's the intended outcome of the brand overhaul — but it means hero text on Landing/About/etc. shifts from purple to navy/amber instantly when this lands.
