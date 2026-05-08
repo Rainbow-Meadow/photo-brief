@@ -144,17 +144,18 @@ function PhoneMockup({
   variant?: "light" | "dark";
 }) {
   const bg = variant === "dark" ? "bg-[#0c0e14]" : "bg-white";
+  const islandClass = variant === "dark" ? "pb-dark-island" : "";
   return (
     <div className="flex flex-col items-center gap-3">
       <div className="text-center">
-        <span className="text-xs font-bold uppercase tracking-[0.16em] text-white/50">
+        <span className="text-xs font-bold uppercase tracking-[0.16em] text-[hsl(var(--pb-ink-muted))]">
           {label}
         </span>
         {sublabel && (
-          <span className="ml-2 text-xs text-white/30">{sublabel}</span>
+          <span className="ml-2 text-xs text-[hsl(var(--pb-ink-muted)/0.7)]">{sublabel}</span>
         )}
       </div>
-      <div aria-hidden="true" className="relative w-[260px] rounded-[2.25rem] border-[3px] border-white/[0.08] bg-[#1a1a1f] p-[3px] shadow-[0_8px_40px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,255,255,0.04)] sm:w-[280px] sm:rounded-[2.5rem]">
+      <div aria-hidden="true" className={`relative w-[260px] rounded-[2.25rem] border-[3px] border-white/[0.08] bg-[#1a1a1f] p-[3px] shadow-[0_8px_40px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,255,255,0.04)] sm:w-[280px] sm:rounded-[2.5rem] ${islandClass}`}>
         {/* Notch */}
         <div className="absolute left-1/2 top-[10px] z-20 h-[22px] w-[90px] -translate-x-1/2 rounded-full bg-black" />
         <div
