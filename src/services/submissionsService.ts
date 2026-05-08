@@ -135,7 +135,7 @@ export const submissionsService = {
         .from("submission_answers")
         .select("*")
         .eq("submission_id", id)
-        .order("order_index", { ascending: true })),
+        .order("order_index", { ascending: true })) as Promise<{ data: any[] | null; error: any }>,
     ]);
 
     return hydrate(
@@ -143,18 +143,16 @@ export const submissionsService = {
       shotsRes.data ?? [],
       detailsRes.data ?? [],
       notesRes.data ?? [],
-      answersRes.data ?? [],
+      (answersRes.data ?? []) as any[],
     );
   },
 
   async countByStatus(workspaceId: string, status: SubmissionStatus): Promise<number> {
-    const { count, error } = await withRetry(async () =>
-      await supabase
-        .from("submissions")
-        .select("id", { count: "exact", head: true })
-        .eq("workspace_id", workspaceId)
-        .eq("status", status),
-    );
+    const { count, error } = await supabase
+      .from("submissions")
+      .select("id", { count: "exact", head: true })
+      .eq("workspace_id", workspaceId)
+      .eq("status", status);
     if (error) throw error;
     return count ?? 0;
   },
