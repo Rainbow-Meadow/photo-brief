@@ -7,24 +7,34 @@
 //   node scripts/run-migration.mjs supabase/migrations/20260508_my_change.sql
 //   node scripts/run-migration.mjs supabase/migrations/*.sql   # apply several
 //
-// Required env vars (or set in .env.local):
-//   ADMIN_EMAIL          — platform admin email
-//   ADMIN_PASSWORD       — platform admin password
-//   SUPABASE_URL         — e.g. https://mvlcefiygkzzewcdzsmj.supabase.co
-//   SUPABASE_ANON_KEY    — publishable anon key
+// Required env vars:
+//   ADMIN_EMAIL                              — platform admin email
+//   ADMIN_PASSWORD                           — platform admin password
+//   SUPABASE_URL or VITE_SUPABASE_URL       — e.g. https://xyz.supabase.co
+//   SUPABASE_ANON_KEY or VITE_SUPABASE_PUBLISHABLE_KEY — publishable anon key
 // ─────────────────────────────────────────────────────────────
 import { readFileSync } from "node:fs";
 import { basename } from "node:path";
 
 const SUPABASE_URL =
-  process.env.SUPABASE_URL ??
-  process.env.VITE_SUPABASE_URL ??
-  "https://mvlcefiygkzzewcdzsmj.supabase.co";
+  process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL;
 
 const ANON_KEY =
-  process.env.SUPABASE_ANON_KEY ??
-  process.env.VITE_SUPABASE_PUBLISHABLE_KEY ??
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im12bGNlZml5Z2t6emV3Y2R6c21qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2MDk2MTQsImV4cCI6MjA5MzE4NTYxNH0.ydcCiiUvi_tx5mhHy35hNURoUmi_QNifYkoJA-HZRnU";
+  process.env.SUPABASE_ANON_KEY ?? process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+
+if (!SUPABASE_URL) {
+  console.error(
+    "Error: SUPABASE_URL or VITE_SUPABASE_URL environment variable is required."
+  );
+  process.exit(1);
+}
+
+if (!ANON_KEY) {
+  console.error(
+    "Error: SUPABASE_ANON_KEY or VITE_SUPABASE_PUBLISHABLE_KEY environment variable is required."
+  );
+  process.exit(1);
+}
 
 const EMAIL = process.env.ADMIN_EMAIL;
 const PASSWORD = process.env.ADMIN_PASSWORD;

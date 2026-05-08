@@ -88,10 +88,14 @@ export type Database = {
       beta_applications: {
         Row: {
           accepted_at: string | null
+          agent_concerns: string[] | null
+          agent_segment: string | null
+          agent_summary: string | null
           business_name: string | null
           created_at: string
           email: string
           first_name: string | null
+          first_request_steps: string[] | null
           fit_score: number | null
           id: string
           last_contacted_at: string | null
@@ -101,6 +105,7 @@ export type Database = {
           rejected_at: string | null
           source: string | null
           status: Database["public"]["Enums"]["beta_application_status"]
+          suggested_template: string | null
           updated_at: string
           use_case: string | null
           website: string | null
@@ -108,10 +113,14 @@ export type Database = {
         }
         Insert: {
           accepted_at?: string | null
+          agent_concerns?: string[] | null
+          agent_segment?: string | null
+          agent_summary?: string | null
           business_name?: string | null
           created_at?: string
           email: string
           first_name?: string | null
+          first_request_steps?: string[] | null
           fit_score?: number | null
           id?: string
           last_contacted_at?: string | null
@@ -121,6 +130,7 @@ export type Database = {
           rejected_at?: string | null
           source?: string | null
           status?: Database["public"]["Enums"]["beta_application_status"]
+          suggested_template?: string | null
           updated_at?: string
           use_case?: string | null
           website?: string | null
@@ -128,10 +138,14 @@ export type Database = {
         }
         Update: {
           accepted_at?: string | null
+          agent_concerns?: string[] | null
+          agent_segment?: string | null
+          agent_summary?: string | null
           business_name?: string | null
           created_at?: string
           email?: string
           first_name?: string | null
+          first_request_steps?: string[] | null
           fit_score?: number | null
           id?: string
           last_contacted_at?: string | null
@@ -141,6 +155,7 @@ export type Database = {
           rejected_at?: string | null
           source?: string | null
           status?: Database["public"]["Enums"]["beta_application_status"]
+          suggested_template?: string | null
           updated_at?: string
           use_case?: string | null
           website?: string | null
@@ -717,6 +732,50 @@ export type Database = {
           },
         ]
       }
+      credit_ledger: {
+        Row: {
+          created_at: string
+          credits_delta: number
+          event_type: string
+          id: string
+          metadata: Json
+          related_id: string | null
+          related_type: string | null
+          source: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          credits_delta: number
+          event_type: string
+          id?: string
+          metadata?: Json
+          related_id?: string | null
+          related_type?: string | null
+          source: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          credits_delta?: number
+          event_type?: string
+          id?: string
+          metadata?: Json
+          related_id?: string | null
+          related_type?: string | null
+          source?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "credit_ledger_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "business_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customers: {
         Row: {
           archived_at: string | null
@@ -943,7 +1002,15 @@ export type Database = {
           claimed_by?: string
           workspace_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "founding_pro_claims_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: true
+            referencedRelation: "business_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       guide_steps: {
         Row: {
@@ -1307,6 +1374,109 @@ export type Database = {
           },
         ]
       }
+      integration_action_runs: {
+        Row: {
+          action_type: string
+          completed_at: string | null
+          connection_id: string | null
+          created_at: string
+          customer_id: string | null
+          error: string | null
+          id: string
+          idempotency_key: string | null
+          input: Json
+          output: Json
+          provider_key: string
+          request_id: string | null
+          run_after: string | null
+          started_at: string | null
+          status: string
+          submission_id: string | null
+          workspace_id: string
+        }
+        Insert: {
+          action_type: string
+          completed_at?: string | null
+          connection_id?: string | null
+          created_at?: string
+          customer_id?: string | null
+          error?: string | null
+          id?: string
+          idempotency_key?: string | null
+          input?: Json
+          output?: Json
+          provider_key: string
+          request_id?: string | null
+          run_after?: string | null
+          started_at?: string | null
+          status?: string
+          submission_id?: string | null
+          workspace_id: string
+        }
+        Update: {
+          action_type?: string
+          completed_at?: string | null
+          connection_id?: string | null
+          created_at?: string
+          customer_id?: string | null
+          error?: string | null
+          id?: string
+          idempotency_key?: string | null
+          input?: Json
+          output?: Json
+          provider_key?: string
+          request_id?: string | null
+          run_after?: string | null
+          started_at?: string | null
+          status?: string
+          submission_id?: string | null
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "integration_action_runs_connection_id_fkey"
+            columns: ["connection_id"]
+            isOneToOne: false
+            referencedRelation: "integration_connections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "integration_action_runs_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "integration_action_runs_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "photo_brief_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "integration_action_runs_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "requests_inbox_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "integration_action_runs_submission_id_fkey"
+            columns: ["submission_id"]
+            isOneToOne: false
+            referencedRelation: "submissions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "integration_action_runs_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "business_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       integration_connections: {
         Row: {
           config: Json
@@ -1351,6 +1521,117 @@ export type Database = {
           workspace_id?: string
         }
         Relationships: []
+      }
+      integration_events: {
+        Row: {
+          connection_id: string | null
+          created_at: string
+          error: string | null
+          event_type: string
+          external_id: string | null
+          id: string
+          normalized_payload: Json
+          occurred_at: string
+          payload: Json
+          processed_at: string | null
+          provider_key: string
+          status: string
+          workspace_id: string
+        }
+        Insert: {
+          connection_id?: string | null
+          created_at?: string
+          error?: string | null
+          event_type: string
+          external_id?: string | null
+          id?: string
+          normalized_payload?: Json
+          occurred_at?: string
+          payload?: Json
+          processed_at?: string | null
+          provider_key: string
+          status?: string
+          workspace_id: string
+        }
+        Update: {
+          connection_id?: string | null
+          created_at?: string
+          error?: string | null
+          event_type?: string
+          external_id?: string | null
+          id?: string
+          normalized_payload?: Json
+          occurred_at?: string
+          payload?: Json
+          processed_at?: string | null
+          provider_key?: string
+          status?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "integration_events_connection_id_fkey"
+            columns: ["connection_id"]
+            isOneToOne: false
+            referencedRelation: "integration_connections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "integration_events_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "business_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      integration_logs: {
+        Row: {
+          connection_id: string | null
+          context: Json
+          created_at: string
+          id: string
+          level: string
+          message: string
+          provider_key: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          connection_id?: string | null
+          context?: Json
+          created_at?: string
+          id?: string
+          level?: string
+          message: string
+          provider_key?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          connection_id?: string | null
+          context?: Json
+          created_at?: string
+          id?: string
+          level?: string
+          message?: string
+          provider_key?: string | null
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "integration_logs_connection_id_fkey"
+            columns: ["connection_id"]
+            isOneToOne: false
+            referencedRelation: "integration_connections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "integration_logs_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "business_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       integration_oauth_states: {
         Row: {
@@ -1398,6 +1679,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      integration_providers: {
+        Row: {
+          capabilities: Json
+          category: string
+          created_at: string
+          description: string | null
+          key: string
+          minimum_plan: Database["public"]["Enums"]["plan_tier"]
+          name: string
+          required_scopes: string[]
+          stage: string
+          updated_at: string
+        }
+        Insert: {
+          capabilities?: Json
+          category: string
+          created_at?: string
+          description?: string | null
+          key: string
+          minimum_plan?: Database["public"]["Enums"]["plan_tier"]
+          name: string
+          required_scopes?: string[]
+          stage?: string
+          updated_at?: string
+        }
+        Update: {
+          capabilities?: Json
+          category?: string
+          created_at?: string
+          description?: string | null
+          key?: string
+          minimum_plan?: Database["public"]["Enums"]["plan_tier"]
+          name?: string
+          required_scopes?: string[]
+          stage?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       internal_notes: {
         Row: {
@@ -1623,7 +1943,15 @@ export type Database = {
           updated_at?: string
           workspace_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "message_templates_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "business_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       notifications: {
         Row: {
@@ -1755,6 +2083,7 @@ export type Database = {
           id: string
           is_active: boolean
           is_global_template: boolean
+          is_request_scoped: boolean
           name: string
           nested_category: string | null
           output_type: Database["public"]["Enums"]["output_type"] | null
@@ -1772,6 +2101,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           is_global_template?: boolean
+          is_request_scoped?: boolean
           name: string
           nested_category?: string | null
           output_type?: Database["public"]["Enums"]["output_type"] | null
@@ -1789,6 +2119,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           is_global_template?: boolean
+          is_request_scoped?: boolean
           name?: string
           nested_category?: string | null
           output_type?: Database["public"]["Enums"]["output_type"] | null
@@ -1915,7 +2246,15 @@ export type Database = {
           stripe_payment_intent_id?: string | null
           workspace_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "request_credit_packs_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "business_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       request_messages: {
         Row: {
@@ -1963,7 +2302,29 @@ export type Database = {
           to_address?: string | null
           workspace_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "request_messages_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "photo_brief_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "request_messages_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "requests_inbox_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "request_messages_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "business_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       service_catalog_items: {
         Row: {
@@ -2110,6 +2471,20 @@ export type Database = {
           workspace_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "sms_send_log_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "photo_brief_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sms_send_log_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "requests_inbox_view"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "sms_send_log_workspace_id_fkey"
             columns: ["workspace_id"]
@@ -2476,6 +2851,7 @@ export type Database = {
       usage_events: {
         Row: {
           created_at: string
+          credit_cost: number
           event_type: string
           id: string
           metadata: Json
@@ -2484,6 +2860,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          credit_cost?: number
           event_type: string
           id?: string
           metadata?: Json
@@ -2492,6 +2869,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          credit_cost?: number
           event_type?: string
           id?: string
           metadata?: Json
@@ -3183,15 +3561,64 @@ export type Database = {
     }
     Functions: {
       _notify_event: { Args: { _payload: Json }; Returns: undefined }
+      assert_request_workspace_match: {
+        Args: {
+          p_context?: string
+          p_request_id: string
+          p_workspace_id: string
+        }
+        Returns: undefined
+      }
+      assert_submission_request_match: {
+        Args: {
+          p_context?: string
+          p_request_id: string
+          p_submission_id: string
+        }
+        Returns: undefined
+      }
+      assert_submission_workspace_match: {
+        Args: {
+          p_context?: string
+          p_submission_id: string
+          p_workspace_id: string
+        }
+        Returns: undefined
+      }
       can_manage_workspace_integrations: {
         Args: { p_workspace_id: string }
         Returns: boolean
+      }
+      credit_cost_for_event: { Args: { _event_type: string }; Returns: number }
+      current_credit_balance: {
+        Args: { _workspace_id: string }
+        Returns: {
+          included: number
+          period_start: string
+          remaining: number
+          topup_expires_at: string
+          topup_remaining: number
+          used: number
+        }[]
+      }
+      current_credit_usage: { Args: { _workspace_id: string }; Returns: number }
+      current_period_start_for_workspace: {
+        Args: { _workspace_id: string }
+        Returns: string
       }
       current_period_usage: {
         Args: { _event_type: string; _workspace_id: string }
         Returns: number
       }
+      current_plan_credits: { Args: { _workspace_id: string }; Returns: number }
       current_topup_balance: {
+        Args: { _workspace_id: string }
+        Returns: {
+          expires_at: string
+          remaining: number
+        }[]
+      }
+      current_topup_credits: {
         Args: { _workspace_id: string }
         Returns: {
           expires_at: string
@@ -3217,6 +3644,18 @@ export type Database = {
       }
       is_platform_admin: { Args: never; Returns: boolean }
       is_workspace_member: { Args: { _workspace_id: string }; Returns: boolean }
+      log_credit_usage: {
+        Args: {
+          _credits?: number
+          _event_type: string
+          _metadata?: Json
+          _related_id?: string
+          _related_type?: string
+          _source?: string
+          _workspace_id: string
+        }
+        Returns: string
+      }
       move_to_dlq: {
         Args: {
           dlq_name: string
@@ -3224,6 +3663,10 @@ export type Database = {
           payload: Json
           source_queue: string
         }
+        Returns: number
+      }
+      plan_credit_allowance: {
+        Args: { _plan: Database["public"]["Enums"]["plan_tier"] }
         Returns: number
       }
       plan_from_price_id: {
@@ -3251,6 +3694,10 @@ export type Database = {
       }
       request_id_for_token: { Args: never; Returns: string }
       run_data_retention: { Args: never; Returns: undefined }
+      workspace_has_credits: {
+        Args: { _credits?: number; _workspace_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       ai_check_type:
@@ -3270,12 +3717,14 @@ export type Database = {
         | "stalled"
         | "graduated"
         | "not_fit"
+      beta_invite_status: "pending" | "accepted" | "expired" | "revoked"
       beta_workspace_status:
         | "onboarding"
         | "active"
         | "stalled"
         | "graduated"
         | "churned"
+      billing_interval: "monthly" | "annual"
       capture_type:
         | "photo"
         | "video"
@@ -3283,8 +3732,41 @@ export type Database = {
         | "label"
         | "note"
         | "measurement"
+      captured_media_status:
+        | "captured"
+        | "analyzing"
+        | "approved"
+        | "needs_retake"
+        | "rejected"
+        | "resubmitted"
       contact_method: "email" | "sms" | "both" | "unknown"
+      context_question_input_type:
+        | "short_text"
+        | "long_text"
+        | "number"
+        | "single_select"
+        | "multi_select"
+        | "yes_no"
+        | "date"
+        | "phone"
+        | "email"
+      email_delivery_status:
+        | "queued"
+        | "pending"
+        | "sent"
+        | "delivered"
+        | "failed"
+        | "suppressed"
+        | "skipped"
       member_role: "owner" | "admin" | "member"
+      message_channel: "email" | "sms" | "both" | "system"
+      message_direction: "outbound" | "inbound" | "system"
+      message_template_kind:
+        | "initial"
+        | "reminder"
+        | "followup"
+        | "resubmit"
+        | "custom"
       output_type:
         | "service_intake_brief"
         | "proof_packet"
@@ -3307,6 +3789,22 @@ export type Database = {
         | "video_motion"
         | "custom"
       plan_tier: "free" | "starter" | "pro" | "team" | "business"
+      request_credit_pack_status:
+        | "pending"
+        | "active"
+        | "exhausted"
+        | "expired"
+        | "refunded"
+        | "void"
+      request_message_kind:
+        | "initial"
+        | "reminder"
+        | "followup"
+        | "custom"
+        | "resubmit"
+        | "status"
+        | "note"
+        | "system"
       request_status:
         | "draft"
         | "sent"
@@ -3318,7 +3816,30 @@ export type Database = {
         | "reviewed"
         | "archived"
         | "expired"
+      review_action: "approved" | "rejected" | "needs_more" | "commented"
+      review_pass_status:
+        | "pending"
+        | "passed"
+        | "failed"
+        | "needs_more"
+        | "not_applicable"
+      sms_delivery_status:
+        | "queued"
+        | "sent"
+        | "delivered"
+        | "failed"
+        | "undelivered"
+      stripe_environment: "sandbox" | "live"
       submission_status: "new" | "reviewed" | "needs_more" | "archived"
+      subscription_status:
+        | "trialing"
+        | "active"
+        | "past_due"
+        | "canceled"
+        | "unpaid"
+        | "incomplete"
+        | "incomplete_expired"
+        | "paused"
       topline_category:
         | "field_service_quote_intake"
         | "property_realestate_claims"
@@ -3326,6 +3847,7 @@ export type Database = {
         | "marketing_content_capture"
         | "custom_business_intake"
         | "care_health_living_systems"
+      workspace_status: "active" | "suspended" | "archived"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -3472,6 +3994,7 @@ export const Constants = {
         "graduated",
         "not_fit",
       ],
+      beta_invite_status: ["pending", "accepted", "expired", "revoked"],
       beta_workspace_status: [
         "onboarding",
         "active",
@@ -3479,6 +4002,7 @@ export const Constants = {
         "graduated",
         "churned",
       ],
+      billing_interval: ["monthly", "annual"],
       capture_type: [
         "photo",
         "video",
@@ -3487,8 +4011,45 @@ export const Constants = {
         "note",
         "measurement",
       ],
+      captured_media_status: [
+        "captured",
+        "analyzing",
+        "approved",
+        "needs_retake",
+        "rejected",
+        "resubmitted",
+      ],
       contact_method: ["email", "sms", "both", "unknown"],
+      context_question_input_type: [
+        "short_text",
+        "long_text",
+        "number",
+        "single_select",
+        "multi_select",
+        "yes_no",
+        "date",
+        "phone",
+        "email",
+      ],
+      email_delivery_status: [
+        "queued",
+        "pending",
+        "sent",
+        "delivered",
+        "failed",
+        "suppressed",
+        "skipped",
+      ],
       member_role: ["owner", "admin", "member"],
+      message_channel: ["email", "sms", "both", "system"],
+      message_direction: ["outbound", "inbound", "system"],
+      message_template_kind: [
+        "initial",
+        "reminder",
+        "followup",
+        "resubmit",
+        "custom",
+      ],
       output_type: [
         "service_intake_brief",
         "proof_packet",
@@ -3513,6 +4074,24 @@ export const Constants = {
         "custom",
       ],
       plan_tier: ["free", "starter", "pro", "team", "business"],
+      request_credit_pack_status: [
+        "pending",
+        "active",
+        "exhausted",
+        "expired",
+        "refunded",
+        "void",
+      ],
+      request_message_kind: [
+        "initial",
+        "reminder",
+        "followup",
+        "custom",
+        "resubmit",
+        "status",
+        "note",
+        "system",
+      ],
       request_status: [
         "draft",
         "sent",
@@ -3525,7 +4104,33 @@ export const Constants = {
         "archived",
         "expired",
       ],
+      review_action: ["approved", "rejected", "needs_more", "commented"],
+      review_pass_status: [
+        "pending",
+        "passed",
+        "failed",
+        "needs_more",
+        "not_applicable",
+      ],
+      sms_delivery_status: [
+        "queued",
+        "sent",
+        "delivered",
+        "failed",
+        "undelivered",
+      ],
+      stripe_environment: ["sandbox", "live"],
       submission_status: ["new", "reviewed", "needs_more", "archived"],
+      subscription_status: [
+        "trialing",
+        "active",
+        "past_due",
+        "canceled",
+        "unpaid",
+        "incomplete",
+        "incomplete_expired",
+        "paused",
+      ],
       topline_category: [
         "field_service_quote_intake",
         "property_realestate_claims",
@@ -3534,6 +4139,7 @@ export const Constants = {
         "custom_business_intake",
         "care_health_living_systems",
       ],
+      workspace_status: ["active", "suspended", "archived"],
     },
   },
 } as const
