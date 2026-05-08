@@ -1475,13 +1475,13 @@ function UseCaseSection({ activeStamp }: { activeStamp?: string | null }) {
       <div className="pb-container">
         <SectionIntro
           eyebrow={<><ClipboardList className="h-3.5 w-3.5" /> Use cases</>}
-          title="Built for businesses that need to see before they act."
-          description="Anywhere a missing photo slows the next step — quoting, scheduling, approving, or documenting — PhotoBrief structures the intake so your team has everything on the first pass."
+          title="Built for the trades that need to see before they act."
+          description="Landscapers, junk haulers, HVAC and repair techs, plumbers, and damage / return estimators — anywhere a missing photo slows the next step, PhotoBrief structures the intake so your team has everything on the first pass."
           accent={
             <StatAccent
               icon={ClipboardList}
-              value="5+"
-              label="Industries shipping with PhotoBrief in beta."
+              value="5"
+              label="Trades shipping with PhotoBrief in beta."
               tone="lavender"
             />
           }
@@ -1500,6 +1500,18 @@ function UseCaseSection({ activeStamp }: { activeStamp?: string | null }) {
                 data-dim={isDim || undefined}
                 className="w-[78vw] max-w-[300px] shrink-0 snap-start border-t border-[hsl(var(--pb-ink-soft)/0.18)] pt-5 md:w-auto md:max-w-none md:min-w-0 md:pt-6"
               >
+                {item.image ? (
+                  <div className="mb-4 flex h-40 items-end justify-center overflow-hidden sm:h-44">
+                    <img
+                      src={item.image}
+                      alt={`Hand-drawn illustration — ${item.stamp}`}
+                      width={1024}
+                      height={1024}
+                      loading="lazy"
+                      className="h-full w-auto object-contain object-bottom drop-shadow-[0_12px_22px_hsl(var(--pb-ink-soft)/0.18)]"
+                    />
+                  </div>
+                ) : null}
                 <div className="flex items-baseline justify-between gap-3">
                   <span className="font-serif text-2xl leading-none text-[hsl(var(--pb-violet))] sm:text-3xl">
                     {String(index + 1).padStart(2, "0")}
