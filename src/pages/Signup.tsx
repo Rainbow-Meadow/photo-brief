@@ -13,6 +13,8 @@ import { lovable } from "@/integrations/lovable";
 import { toast } from "@/hooks/use-toast";
 import { trackEvent } from "@/lib/analytics";
 import { INVITE_ONLY_BETA } from "@/config/access";
+import { TurnstileWidget } from "@/components/security/TurnstileWidget";
+import { verifyTurnstileToken } from "@/config/turnstile";
 
 type ValidationState =
   | { kind: "loading" }
@@ -58,6 +60,7 @@ export default function SignupPage() {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -112,6 +115,10 @@ export default function SignupPage() {
     if (state.kind !== "valid") return;
     setSubmitting(true);
     try {
+      if (turnstileToken) {
+        const ok = await verifyTurnstileToken(turnstileToken);
+        if (!ok) throw new Error("Verification failed. Please try again.");
+      }
       trackEvent("signup_started", { method: "email" });
       const { error } = await supabase.auth.signUp({
         email: state.email,
@@ -256,6 +263,13 @@ export default function SignupPage() {
                 />
                 <p className="mt-1 text-xs text-muted-foreground">At least 8 characters.</p>
               </div>
+              <TurnstileWidget
+                onVerify={(t) => setTurnstileToken(t)}
+                onExpire={() => setTurnstileToken(null)}
+                onError={() => setTurnstileToken(null)}
+                action="invite-signup"
+                className="flex justify-center"
+              />
               <Button type="submit" disabled={submitting} size="lg">
                 {submitting ? "Creating account…" : "Create account"}
               </Button>

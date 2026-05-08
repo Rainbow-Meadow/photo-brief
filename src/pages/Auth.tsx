@@ -12,6 +12,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
 import { trackEvent } from "@/lib/analytics";
 import { onboardingDebug, edgeFunctionErrorDebug, supabaseErrorDebug } from "@/lib/onboardingDebug";
+import { TurnstileWidget } from "@/components/security/TurnstileWidget";
+import { verifyTurnstileToken } from "@/config/turnstile";
 
 export default function AuthPage() {
   const [params] = useSearchParams();
@@ -34,6 +36,7 @@ export default function AuthPage() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
   // Redirect once authenticated — honor ?next= so RequireAuth round-trips work.
   useEffect(() => {
@@ -55,6 +58,12 @@ export default function AuthPage() {
     e.preventDefault();
     setSubmitting(true);
     try {
+      // Verify Turnstile before any auth call. If no token, the widget hasn't
+      // loaded — proceed (open) so preview/dev flows aren't blocked.
+      if (turnstileToken) {
+        const ok = await verifyTurnstileToken(turnstileToken);
+        if (!ok) throw new Error("Verification failed. Please try again.");
+      }
       if (mode === "signup") {
         trackEvent("signup_started", { method: "email" });
         const { error } = await supabase.auth.signUp({
@@ -208,6 +217,13 @@ export default function AuthPage() {
             <Label htmlFor="password">Password</Label>
             <Input id="password" type="password" placeholder="••••••••" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} />
           </div>
+          <TurnstileWidget
+            onVerify={(t) => setTurnstileToken(t)}
+            onExpire={() => setTurnstileToken(null)}
+            onError={() => setTurnstileToken(null)}
+            action={mode === "signup" ? "signup" : "signin"}
+            className="flex justify-center"
+          />
           <Button type="submit" className="w-full" disabled={submitting}>
             {submitting ? "Please wait..." : mode === "signup" ? "Create account" : "Sign in"}
           </Button>

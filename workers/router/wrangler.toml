@@ -16,3 +16,12 @@ zone_name = "photobrief.ai"
 [vars]
 PAGES_HOST = "photobrief-marketing.pages.dev"
 LOVABLE_HOST = "photo-brief.lovable.app"
+
+# KV namespace for live router config (kill-switches, route overrides).
+# Keys read by the worker:
+#   force_origin           -> "pages" | "lovable"  (overrides UA-based routing for marketing paths)
+#   maintenance_mode       -> "1" to short-circuit all traffic to a 503 page
+#   bot_extra_paths        -> JSON array of extra paths to send bots to Pages
+[[kv_namespaces]]
+binding = "ROUTER_CONFIG"
+id = "07d039dcbb2e477d8c14cdfaaad3ddb3"

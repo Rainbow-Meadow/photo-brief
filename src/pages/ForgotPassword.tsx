@@ -6,16 +6,23 @@ import { Label } from "@/components/ui/label";
 import { BrandMark } from "@/components/layout/BrandMark";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { TurnstileWidget } from "@/components/security/TurnstileWidget";
+import { verifyTurnstileToken } from "@/config/turnstile";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [sent, setSent] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
     try {
+      if (turnstileToken) {
+        const ok = await verifyTurnstileToken(turnstileToken);
+        if (!ok) throw new Error("Verification failed. Please try again.");
+      }
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/reset-password`,
       });
@@ -64,6 +71,13 @@ export default function ForgotPasswordPage() {
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
+            <TurnstileWidget
+              onVerify={(t) => setTurnstileToken(t)}
+              onExpire={() => setTurnstileToken(null)}
+              onError={() => setTurnstileToken(null)}
+              action="password-reset"
+              className="flex justify-center"
+            />
             <Button type="submit" className="w-full" disabled={submitting}>
               {submitting ? "Sending..." : "Send reset link"}
             </Button>
