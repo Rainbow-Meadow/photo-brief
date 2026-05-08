@@ -340,22 +340,28 @@ export default function LandingPage() {
             <div className="grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
               {/* Left — copy */}
               <div className="text-left">
-                <BrandMark
-                  variant="horizontal"
-                  tone="dark"
-                  size={56}
-                  showTagline
-                  eager
-                  className="mb-6 sm:hidden"
-                />
-                <BrandMark
-                  variant="horizontal"
-                  tone="dark"
-                  size={76}
-                  showTagline
-                  eager
-                  className="mb-8 hidden sm:inline-flex"
-                />
+                <div
+                  className="mb-6 sm:mb-8"
+                  style={{
+                    ["--pb-wordmark-navy" as string]: "219 47% 20%",
+                    ["--pb-wordmark-amber" as string]: "33 88% 55%",
+                  }}
+                >
+                  <BrandMark
+                    variant="horizontal"
+                    size={56}
+                    showTagline
+                    eager
+                    className="sm:hidden"
+                  />
+                  <BrandMark
+                    variant="horizontal"
+                    size={76}
+                    showTagline
+                    eager
+                    className="hidden sm:inline-flex"
+                  />
+                </div>
                 <span className="pb-eyebrow">
                   <Sparkles className="h-3.5 w-3.5" /> Accepting beta applications
                 </span>
@@ -392,9 +398,9 @@ export default function LandingPage() {
                   <button
                     type="button"
                     onClick={() => setDemoOpen(true)}
-                    className="group inline-flex items-center gap-2 self-start rounded-full px-3 py-2 text-sm font-medium text-[hsl(var(--pb-ink-soft))] transition hover:text-[hsl(var(--brand-amber))]"
+                    className="group inline-flex items-center gap-2 self-start rounded-full px-3 py-2 text-sm font-medium text-[hsl(var(--pb-ink-soft))] transition hover:text-[hsl(var(--pb-violet))]"
                   >
-                    <PlayCircle className="h-5 w-5 text-[hsl(var(--brand-amber))]" />
+                    <PlayCircle className="h-5 w-5 text-[hsl(var(--pb-violet))]" />
                     Watch the product spotlight
                   </button>
                 </div>
@@ -406,7 +412,7 @@ export default function LandingPage() {
                     "Lead packets, not form spam",
                   ].map((item) => (
                     <span key={item} className="inline-flex items-center gap-1.5">
-                      <span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--brand-amber)/0.75)]" />
+                      <span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--pb-violet)/0.55)]" />
                       {item}
                     </span>
                   ))}
@@ -422,9 +428,9 @@ export default function LandingPage() {
                       <a
                         key={name}
                         href="#use-cases"
-                        className="inline-flex items-center gap-1.5 rounded-full border border-[hsl(var(--pb-ink-soft)/0.18)] bg-[hsl(var(--pb-ink-soft)/0.04)] px-3 py-1.5 text-xs font-bold text-[hsl(var(--pb-ink))] transition hover:border-[hsl(var(--brand-amber)/0.65)] hover:text-[hsl(var(--brand-amber-hover))] sm:text-sm"
+                        className="inline-flex items-center gap-1.5 rounded-full border border-[hsl(var(--pb-ink-soft)/0.18)] bg-[hsl(var(--pb-ink-soft)/0.04)] px-3 py-1.5 text-xs font-bold text-[hsl(var(--pb-ink))] transition hover:border-[hsl(var(--pb-violet)/0.55)] hover:text-[hsl(var(--pb-violet))] sm:text-sm"
                       >
-                        <TIcon className="h-3.5 w-3.5 text-[hsl(var(--brand-amber))]" />
+                        <TIcon className="h-3.5 w-3.5 text-[hsl(var(--pb-violet))]" />
                         {name}
                       </a>
                     ))}
@@ -438,7 +444,7 @@ export default function LandingPage() {
               <div className="relative flex justify-center lg:justify-end">
                 <div
                   aria-hidden
-                  className="pointer-events-none absolute inset-0 -z-10 mx-auto max-w-md rounded-full bg-[hsl(var(--brand-amber-light)/0.18)] blur-[80px]"
+                  className="pointer-events-none absolute inset-0 -z-10 mx-auto max-w-md rounded-full bg-[hsl(var(--pb-lavender)/0.18)] blur-[80px]"
                 />
                 <img
                   src={heroIllustration}

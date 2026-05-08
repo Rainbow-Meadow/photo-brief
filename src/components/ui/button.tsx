@@ -41,13 +41,13 @@ const buttonVariants = cva(
         /* ── Marketing / pb-landing CTAs ────────────────────────── */
         /** Primary CTA — hover lift handled by .pb-btn-platform CSS */
         "pb-primary":
-          "rounded-full bg-[hsl(var(--brand-amber))] text-[hsl(var(--brand-graphite))] shadow-[0_8px_20px_-10px_hsl(var(--brand-amber)/0.55)] active:translate-y-0 focus-visible:ring-[hsl(var(--brand-amber-light))]",
+          "rounded-full bg-[hsl(var(--pb-violet))] text-[hsl(var(--pb-night))] shadow-[0_8px_20px_-10px_hsl(var(--pb-violet)/0.55)] active:translate-y-0 focus-visible:ring-[hsl(var(--pb-lavender))]",
         /** Secondary CTA — hover lift handled by .pb-btn-platform CSS */
         "pb-secondary":
-          "rounded-full border border-white/16 bg-white/[0.03] text-white active:translate-y-0 focus-visible:ring-[hsl(var(--brand-amber-light))]",
+          "rounded-full border border-white/16 bg-white/[0.03] text-white active:translate-y-0 focus-visible:ring-[hsl(var(--pb-lavender))]",
         /** Tertiary / text link CTA on dark marketing surfaces */
         "pb-ghost":
-          "rounded-full text-white/70 hover:bg-white/8 hover:text-white focus-visible:ring-[hsl(var(--brand-amber-light))]",
+          "rounded-full text-white/70 hover:bg-white/8 hover:text-white focus-visible:ring-[hsl(var(--pb-lavender))]",
       },
       size: {
         default: "h-10 px-4 py-2",

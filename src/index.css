@@ -419,7 +419,7 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
 
   .pb-landing {
     background:
-      radial-gradient(60% 40% at 50% 0%, hsl(var(--brand-amber-light) / 0.14), transparent 72%),
+      radial-gradient(60% 40% at 50% 0%, hsl(var(--pb-lavender) / 0.10), transparent 72%),
       linear-gradient(180deg, hsl(var(--pb-cream)) 0%, hsl(var(--pb-cream-warm)) 100%);
     color: hsl(var(--pb-ink-soft));
   }
@@ -427,21 +427,21 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
   /* ── Editorial / Surveva-style warm paper surface ───────────── */
   .pb-paper-surface {
     background:
-      radial-gradient(60% 50% at 80% 0%, hsl(var(--brand-amber) / 0.10), transparent 70%),
-      radial-gradient(40% 35% at 8% 18%, hsl(var(--brand-navy) / 0.06), transparent 72%),
+      radial-gradient(60% 50% at 80% 0%, hsl(var(--pb-violet) / 0.08), transparent 70%),
+      radial-gradient(40% 35% at 8% 18%, hsl(var(--pb-lavender) / 0.10), transparent 72%),
       linear-gradient(180deg, hsl(var(--pb-cream)) 0%, hsl(var(--pb-cream-warm)) 100%);
     color: hsl(var(--pb-ink-soft));
   }
   .pb-paper-surface .pb-eyebrow {
     background: hsl(0 0% 100% / 0.6);
     border-color: hsl(var(--pb-ink-soft) / 0.12);
-    color: hsl(var(--brand-navy));
+    color: hsl(var(--pb-violet));
   }
   .pb-display {
     font-weight: 700;
     letter-spacing: -0.035em;
     line-height: 0.98;
-    color: hsl(var(--brand-amber));
+    color: hsl(var(--pb-violet));
     font-size: clamp(2.5rem, 7.2vw, 6rem);
   }
   .pb-display-ink { color: hsl(var(--pb-ink-soft)); }
@@ -581,34 +581,34 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
     border-block: 1px solid hsl(var(--pb-ink-soft) / 0.10);
   }
 
-  /* ── Beta zone — warm amber-tinted paper for a distinct chapter ── */
+  /* ── Beta zone — cooler lavender-tinted paper for a distinct chapter ── */
   .pb-beta-zone {
     background:
-      radial-gradient(55% 40% at 12% 0%, hsl(var(--brand-amber) / 0.12), transparent 70%),
-      radial-gradient(45% 35% at 92% 18%, hsl(var(--brand-amber-light) / 0.16), transparent 72%),
-      linear-gradient(180deg, hsl(39 33% 97%) 0%, hsl(36 34% 94%) 100%);
-    border-block: 1px solid hsl(var(--brand-amber) / 0.18);
+      radial-gradient(55% 40% at 12% 0%, hsl(var(--pb-violet) / 0.10), transparent 70%),
+      radial-gradient(45% 35% at 92% 18%, hsl(var(--pb-lavender) / 0.14), transparent 72%),
+      linear-gradient(180deg, hsl(258 32% 95%) 0%, hsl(262 28% 93%) 100%);
+    border-block: 1px solid hsl(var(--pb-violet) / 0.14);
   }
-  /* Override the generic ivory alt band when nested inside the beta zone — keep contrast in the warm brand family */
+  /* Override the generic ivory alt band when nested inside the beta zone — keep contrast but stay in the violet family */
   .pb-beta-zone .pb-section-alt {
     background:
-      linear-gradient(180deg, hsl(36 34% 94%) 0%, hsl(33 40% 91%) 100%);
-    border-block: 1px solid hsl(var(--brand-amber) / 0.20);
+      linear-gradient(180deg, hsl(258 36% 91%) 0%, hsl(262 32% 89%) 100%);
+    border-block: 1px solid hsl(var(--pb-violet) / 0.18);
   }
 
-  /* ── Final CTA dark island — the one dark zone, brand navy + amber glow ── */
+  /* ── Final CTA dark island — the one dark zone, brand navy + violet glow ── */
   .pb-final-dark {
     background:
-      radial-gradient(60% 50% at 80% 0%, hsl(var(--brand-amber) / 0.26), transparent 70%),
-      radial-gradient(45% 40% at 8% 100%, hsl(var(--brand-amber-light) / 0.14), transparent 72%),
-      linear-gradient(180deg, hsl(219 47% 14%) 0%, hsl(219 50% 7%) 100%);
-    border-top: 1px solid hsl(var(--brand-amber) / 0.24);
+      radial-gradient(60% 50% at 80% 0%, hsl(var(--pb-violet) / 0.28), transparent 70%),
+      radial-gradient(45% 40% at 8% 100%, hsl(var(--pb-lavender) / 0.18), transparent 72%),
+      linear-gradient(180deg, hsl(258 38% 8%) 0%, hsl(258 42% 5%) 100%);
+    border-top: 1px solid hsl(var(--pb-violet) / 0.22);
     color: white;
   }
   /* Footer dark variant — continues the dark surface so the page ends in one piece */
   .pb-footer-dark {
-    background: linear-gradient(180deg, hsl(219 50% 7%) 0%, hsl(219 54% 5%) 100%);
-    border-top: 1px solid hsl(var(--brand-amber) / 0.18);
+    background: linear-gradient(180deg, hsl(258 42% 5%) 0%, hsl(258 46% 4%) 100%);
+    border-top: 1px solid hsl(var(--pb-violet) / 0.18);
     color: white;
   }
 
@@ -1030,8 +1030,8 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
   .pb-btn-platform.btn-primary-glass:hover { brightness: 1.04; transform: translateY(-1px); }
   .pb-btn-platform.glass:hover { box-shadow: var(--glass-shadow-lg); transform: translateY(-1px); }
   .pb-btn-platform[class*="pb-primary"]:hover {
-    background-color: hsl(var(--brand-amber-light));
-    box-shadow: 0 14px 28px -10px hsl(var(--brand-amber) / 0.6);
+    background-color: hsl(var(--pb-lavender));
+    box-shadow: 0 14px 28px -10px hsl(var(--pb-violet) / 0.6);
     transform: translateY(-1px);
   }
   .pb-btn-platform[class*="pb-secondary"]:hover {
