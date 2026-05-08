@@ -1197,7 +1197,7 @@ function UseCaseSection() {
           {useCases.map((item) => {
             const Icon = item.icon;
             return (
-              <article key={item.title} className="min-w-[280px] shrink-0 snap-start pb-card p-4 sm:p-5 md:min-w-0 md:p-6">
+              <article key={item.title} className="w-[78vw] max-w-[300px] shrink-0 snap-start pb-card p-4 sm:p-5 md:w-auto md:max-w-none md:min-w-0 md:p-6">
                 <Icon className="h-6 w-6 text-[hsl(var(--pb-lavender))] sm:h-7 sm:w-7" />
                 <span className="pb-stamp mt-4 inline-flex rounded-full px-3 py-1 sm:mt-5">
                   {item.stamp}
