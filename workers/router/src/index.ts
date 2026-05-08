@@ -148,6 +148,18 @@ export default {
     const url = new URL(request.url);
     const path = url.pathname;
 
+    // Live config from KV (kill-switches, manual origin override).
+    const config = await loadConfig(env);
+
+    if (config.maintenance_mode) {
+      return new Response(
+        "<!doctype html><meta charset=utf-8><title>Maintenance</title>" +
+          "<style>body{font-family:system-ui;background:#0c0915;color:#e9e2ff;display:grid;place-items:center;height:100vh;margin:0}main{text-align:center;max-width:32rem;padding:2rem}</style>" +
+          "<main><h1>Be right back</h1><p>PhotoBrief is undergoing brief maintenance. Please retry in a few minutes.</p></main>",
+        { status: 503, headers: { "content-type": "text/html; charset=utf-8", "retry-after": "120" } },
+      );
+    }
+
     // Pages-only static files (sitemap, robots, llms.txt, .well-known, og-image…).
     // These have stable filenames and only the Pages build emits them.
     // /assets/* is deliberately NOT included here — see PAGES_STATIC_PREFIXES.
@@ -163,19 +175,15 @@ export default {
     // HTML navigations: split by client.
     //   - Bots/crawlers/LLMs → Pages (prerendered static HTML for SEO/citation).
     //   - Real users → Lovable (live SPA with the latest dynamic behavior).
-    //
-    // Marketing paths are guaranteed to have a prerendered file on Pages;
-    // other paths will fall through to Lovable since Pages only knows the
-    // marketing allow-list.
+    //   - KV `force_origin` overrides the UA-based decision when set.
     if (isMarketingPath(path)) {
-      if (isBot(request)) {
-        const res = await proxyTo(env.PAGES_HOST, request);
-        // Belt-and-suspenders: if Pages somehow 404s, serve the live SPA so
-        // the bot still gets a usable response instead of an error.
-        if (res.status === 404) return proxyTo(env.LOVABLE_HOST, request);
-        return res;
-      }
-      return proxyTo(env.LOVABLE_HOST, request);
+      const useLovable =
+        config.force_origin === "lovable" ||
+        (config.force_origin !== "pages" && !isBot(request));
+      if (useLovable) return proxyTo(env.LOVABLE_HOST, request);
+      const res = await proxyTo(env.PAGES_HOST, request);
+      if (res.status === 404) return proxyTo(env.LOVABLE_HOST, request);
+      return res;
     }
 
     // Non-marketing paths (auth, app, recipient links, etc.) always go to
