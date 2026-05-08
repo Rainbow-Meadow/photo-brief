@@ -1,51 +1,56 @@
 
-# Landing Page Polish: Copy, Carousel, Tickers, and Interaction Refinement
+# Intentional Product → Beta Transition
 
-## 1. De-duplicate repetitive copy
+## The Problem
 
-The following phrases repeat 4-6 times across sections and need variation:
+Right now the page goes: Use Cases → Website Intelligence → chapter divider → FreeProSpotlight → FoundingPartnerSection → Trust Points → Agent Application → Final CTA. The jump from "here's what the product does" to "apply for a beta seat" feels abrupt because:
 
-| Phrase (overused) | Sections where it appears |
-|---|---|
-| "actionable lead packet(s)" | Hero, Interactive Demo, Workflow, Comparison, Use Cases, Final CTA |
-| "guided visual intake" | Hero, Comparison, Pain Points closing, Final CTA |
-| "right photos, notes, and context" | Hero, Interactive Demo, Final CTA |
-| "vague messages" | Hero, Final CTA |
+1. **Website Intelligence already bleeds into beta** — its heading says "For beta partners, we build the first intake" but it's positioned as a product section. There's no moment where the page explicitly shifts from "what this product solves" to "why we're looking for partners right now."
+2. **The chapter divider after Website Intelligence is the same thin gradient line** used everywhere — it doesn't signal that a major tonal shift is happening.
+3. **FreeProSpotlight fires immediately** — the reader goes from product feature cards directly into "2 partners get Free Pro for Life" with no emotional bridge.
+4. **Trust Points are orphaned** between the beta details and the application form, breaking the momentum toward applying.
 
-**Fix:** Rewrite each occurrence so the core idea lands but with different phrasing per section. The hero and final CTA can share a phrase (bookend effect), but everything in between should use distinct language.
+## The Fix: A "Bridge" Section + Reordering
 
-## 2. Pain Points → Auto-rotating carousel
+### 1. Add a dedicated "Why a beta?" bridge section
 
-Replace the static 3-card grid + "See 2 more" button with a single-card auto-advancing carousel:
+Between the chapter divider and FreeProSpotlight, insert a short, cinematic section that explicitly shifts the tone. This is not a new feature pitch — it's the "here's why we're doing this and why it matters for you" moment.
 
-- One stat visible at a time, large and cinematic (number, label, context, citation)
-- Auto-advances every 5 seconds; pauses on hover/touch
-- Dot indicators + left/right tap zones
-- Smooth crossfade or slide transition (CSS `transition` + `opacity`, no heavy libs)
-- All 5 pain points rotate — no "show more" gate
+**Content:**
+- Eyebrow: `Early access`
+- Headline: "We're building this with you, not just for you."
+- Body: 1–2 sentences explaining that PhotoBrief is in a hands-on beta because visual intake is workflow-specific — the product gets better when real businesses shape it. This makes the beta feel like a privilege and a collaboration, not just an early-bird discount program.
 
-## 3. News headline ticker bars
+**Visual treatment:** No card, no panel — just centered text with generous breathing room, similar to Apple's "chapter opening" moments. A subtle lavender → mint gradient text on the headline to signal something new.
 
-Add 2-3 horizontal scrolling ticker strips at chapter break points (between major sections). Content:
+### 2. Move Trust Points above FreeProSpotlight
 
-- **Ticker 1** (after Hero): Industry signals — e.g. "81% of forms abandoned before submit · 78% buy from whoever responds first · 4.2 hr avg response time · 60% of estimates never followed up"
-- **Ticker 2** (after Comparison, before Use Cases): Product signals — e.g. "Website scan included · Hosted link or embed · No app required for customers · Lead packets, not form spam · AI photo quality checks"
-- **Ticker 3** (before Final CTA): Social proof / beta — e.g. "10 founding partner seats · Free Pro for Life reward · 60-day beta · Concierge setup included"
+Trust points (secure links, no app required, your data stays yours) currently sit between the beta details and the application form. Move them to just after the bridge section, before the rewards. This answers the natural objection ("can I trust this?") before asking them to commit.
 
-Each ticker: single-line, infinite CSS scroll animation (`@keyframes marquee`), duplicated content for seamless loop, subtle text styling (uppercase, small, muted).
+### 3. Upgrade the chapter divider before the beta block
 
-## 4. Interaction polish
+Replace the thin gradient line between Website Intelligence and the bridge section with a stronger visual break — a wider gradient bar or a short spacing bump — to make the tonal shift unmistakable.
 
-- **Collapse/expand transitions**: Add `transition-all duration-300` and `overflow-hidden` to ROI calculator expand. Use `max-height` or `grid-template-rows: 0fr → 1fr` for smooth open/close instead of hard mount/unmount.
-- **Section scroll memory**: When ROI calculator or pain point carousel state changes, use `scrollIntoView({ behavior: 'smooth', block: 'nearest' })` to keep the active content in view without jarring jumps.
-- **Smooth carousel transitions**: Use `transition-opacity duration-500` for crossfade between pain point cards.
+### 4. Reorder the beta block
+
+New order after the chapter break:
+1. **Bridge section** (new) — "We're building this with you"
+2. **Trust Points** (moved up) — security, no app, data ownership
+3. **FreeProSpotlight** — reward headline
+4. **FoundingPartnerSection** — benefits, expectations, accordion details
+5. **Ticker 3** (beta social proof)
+6. **Agent Application** — the form
+7. **Final CTA**
+
+### 5. Refine Website Intelligence headline
+
+Change "For beta partners, we build the first intake from your website" to something product-forward: "Your website becomes your intake engine." Move the beta-specific note into the body text so the section reads as product capability, not beta perk.
 
 ## Technical details
 
-**Files changed:** `src/pages/Landing.tsx` only (all sections are inline components).
+**File changed:** `src/pages/Landing.tsx`
 
-**No new dependencies.** Carousel uses `useState` + `useEffect` interval. Tickers use pure CSS `@keyframes`. Collapse animation uses Tailwind transitions.
-
-**New CSS** (in `src/index.css` or inline): `@keyframes marquee` for ticker infinite scroll.
-
-Copy edits are text-only changes to existing JSX strings.
+- New `BetaBridgeSection` component (~25 lines) — pure text, no new imports needed
+- Reorder JSX blocks in the main `LandingPage` return
+- Update `WebsiteIntelligenceSection` headline/body copy
+- Replace one `<ChapterDivider />` with a stronger visual break (wider gradient + more spacing)

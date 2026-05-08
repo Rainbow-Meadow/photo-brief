@@ -467,14 +467,15 @@ export default function LandingPage() {
         {/* ━━ 8. WEBSITE INTELLIGENCE ━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <WebsiteIntelligenceSection />
 
-        {/* ── Chapter break: Fit → Action ── */}
-        <ChapterDivider />
+        {/* ── Major chapter break: Product → Beta ── */}
+        <div className="pb-container py-6 sm:py-10" aria-hidden>
+          <div className="mx-auto h-px max-w-2xl bg-gradient-to-r from-transparent via-[hsl(var(--pb-lavender)/0.3)] to-transparent" />
+        </div>
 
-        {/* ━━ 9. FOUNDING BETA REWARDS ━━━━━━━━━━━━━━━━━━━━━━━━ */}
-        <FreeProSpotlight isFull={isFull} />
-        <FoundingPartnerSection utm={utm} isFull={isFull} />
+        {/* ━━ BRIDGE: Why a beta? ━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+        <BetaBridgeSection />
 
-        {/* ━━ 10. TRUST POINTS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+        {/* ━━ TRUST POINTS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <section className="pb-section-tight">
           <div className="pb-container">
             <div className="mx-auto grid max-w-3xl gap-4 sm:grid-cols-3">
@@ -491,7 +492,14 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ━━ 11. AGENT-POWERED APPLICATION ━━━━━━━━━━━━━━━━━━━ */}
+        {/* ━━ FOUNDING BETA REWARDS ━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+        <FreeProSpotlight isFull={isFull} />
+        <FoundingPartnerSection utm={utm} isFull={isFull} />
+
+        {/* ━━ TICKER 3 — Beta social proof ━━━━━━━━━━━━━━━━━━━ */}
+        <TickerBar items={[`${BETA_TOTAL_PARTNERS} founding partner seats`, "Free Pro for Life reward", `${BETA_DURATION_DAYS}-day beta`, "Concierge setup included", "Every partner earns a reward"]} />
+
+        {/* ━━ AGENT-POWERED APPLICATION ━━━━━━━━━━━━━━━━━━━━━━ */}
         <section id="apply" className="pb-section scroll-mt-8">
           <div className="pb-container">
             <BetaOnboardingAgentExperience
@@ -501,10 +509,8 @@ export default function LandingPage() {
             />
           </div>
         </section>
-        {/* ━━ TICKER 3 — Beta social proof ━━━━━━━━━━━━━━━━━━━ */}
-        <TickerBar items={[`${BETA_TOTAL_PARTNERS} founding partner seats`, "Free Pro for Life reward", `${BETA_DURATION_DAYS}-day beta`, "Concierge setup included", "Every partner earns a reward"]} />
 
-        {/* ━━ 12. FINAL CTA ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+        {/* ━━ FINAL CTA ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <FinalCta isFull={isFull} />
       </main>
 
@@ -869,6 +875,33 @@ function TickerBar({ items, direction = "left" }: { items: string[]; direction?:
   );
 }
 
+function BetaBridgeSection() {
+  return (
+    <section className="pb-section">
+      <div className="pb-container">
+        <div className="mx-auto max-w-2xl text-center">
+          <span className="pb-eyebrow">
+            <Users className="h-3.5 w-3.5" /> Early access
+          </span>
+          <h2 className="pb-section-title mt-5 text-white">
+            We're building this{" "}
+            <span className="bg-gradient-to-r from-[hsl(var(--pb-lavender))] to-[hsl(var(--pb-mint))] bg-clip-text text-transparent">
+              with you
+            </span>
+            , not just for you.
+          </h2>
+          <p className="pb-copy mx-auto mt-5 max-w-lg text-base leading-relaxed sm:text-lg sm:leading-8">
+            Visual intake is workflow-specific — every trade, every service
+            type needs something slightly different. The only way to get it
+            right is to build alongside real businesses running real jobs.
+            That's why this is a hands-on beta, not a waitlist.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function ChapterDivider() {
   return (
     <div className="pb-container" aria-hidden>
@@ -1191,12 +1224,13 @@ function WebsiteIntelligenceSection() {
             <Globe2 className="h-3.5 w-3.5" /> Website Intelligence
           </span>
           <h2 className="pb-section-title mt-4 text-white">
-            For beta partners, we build the first intake from your website.
+            Your website becomes your intake engine.
           </h2>
           <p className="pb-copy mx-auto mt-4 max-w-2xl text-base sm:text-lg">
-            Apply with your website. If accepted, PhotoBrief scans your
-            services, current forms, and calls-to-action, then maps them into
-            2–3 simple intake paths you can launch with a hosted link or embed.
+            PhotoBrief scans your services, current forms, and
+            calls-to-action, then maps them into 2–3 simple intake paths
+            you can launch with a hosted link or embed. Beta partners get
+            this built for them during concierge setup.
           </p>
         </div>
 
