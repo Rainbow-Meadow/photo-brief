@@ -91,18 +91,38 @@ function Tagline({ size }: { size: number }) {
   );
 }
 
+function toneStyle(tone: BrandTone): CSSProperties | undefined {
+  if (tone === "dark") {
+    return {
+      "--pb-wordmark-navy": "var(--brand-navy)",
+      "--pb-wordmark-amber": "var(--brand-amber)",
+    } as CSSProperties;
+  }
+
+  if (tone === "light") {
+    return {
+      "--pb-wordmark-navy": "var(--brand-cream)",
+      "--pb-wordmark-amber": "var(--brand-amber-light)",
+    } as CSSProperties;
+  }
+
+  return undefined;
+}
+
 export function BrandMark({
   className,
   variant = "horizontal",
+  tone = "auto",
   size = 28,
   eager,
   showTagline = false,
 }: BrandMarkProps) {
   const resolvedVariant: BrandVariant = variant;
+  const style = toneStyle(tone);
 
   if (resolvedVariant === "mark" || resolvedVariant === "primary") {
     return (
-      <span role="img" aria-label={ALT} className={cn("inline-flex items-center justify-center", className)}>
+      <span role="img" aria-label={ALT} className={cn("inline-flex items-center justify-center", className)} style={style}>
         <MarkImage size={size} eager={eager} />
       </span>
     );
@@ -114,6 +134,7 @@ export function BrandMark({
         role="img"
         aria-label={ALT}
         className={cn("inline-flex flex-col items-start min-w-0", className)}
+        style={style}
       >
         <Wordmark size={size} />
         {showTagline ? <Tagline size={size} /> : null}
@@ -127,6 +148,7 @@ export function BrandMark({
         role="img"
         aria-label={ALT}
         className={cn("inline-flex flex-col items-center justify-center gap-2 min-w-0", className)}
+        style={style}
       >
         <MarkImage size={size} eager={eager} />
         <Wordmark size={Math.max(14, size * 0.26)} />
@@ -138,7 +160,7 @@ export function BrandMark({
   // horizontal
   const wordSize = Math.max(16, size * 0.72);
   return (
-    <span role="img" aria-label={ALT} className={cn("inline-flex items-center gap-2.5 min-w-0", className)}>
+    <span role="img" aria-label={ALT} className={cn("inline-flex items-center gap-2.5 min-w-0", className)} style={style}>
       <MarkImage size={size} eager={eager} />
       <span className="inline-flex flex-col items-start min-w-0">
         <Wordmark size={wordSize} compact />
