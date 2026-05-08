@@ -1038,7 +1038,7 @@ function SectionNav({ tone = "dark" }: { tone?: "dark" | "paper" }) {
 
 function WorkflowSection() {
   return (
-    <section id="workflow" className="pb-section">
+    <section id="workflow" className="pb-section scroll-mt-32 pt-12 sm:pt-16 lg:pt-20">
       <div className="pb-container">
         <div className="grid gap-8 lg:grid-cols-[0.7fr_1.3fr] lg:items-center lg:gap-10">
           <div>
