@@ -55,6 +55,7 @@ export const routePaths = [
   "/admin/ai-rerun",
   "/admin/command",
   "/admin/beta",
+  "/admin/website-intelligence",
 
   // Public intake + recipient capture
   "/i/:token",
