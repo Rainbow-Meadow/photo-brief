@@ -416,7 +416,10 @@ export default function LandingPage() {
         {/* ━━ ROI CALCULATOR ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <RoiCalculatorSection />
 
-        <section className="pb-section-tight">
+        {/* ── Chapter break: Problem → Solution ── */}
+        <ChapterDivider />
+
+        <section className="pb-section">
           <div className="pb-container">
             <div className="mx-auto max-w-3xl text-center mb-6 sm:mb-8">
               <span className="pb-eyebrow">
@@ -449,11 +452,17 @@ export default function LandingPage() {
           onModeChange={setComparisonMode}
         />
 
+        {/* ── Chapter break: Solution → Fit ── */}
+        <ChapterDivider />
+
         {/* ━━ 7. USE CASES ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <UseCaseSection />
 
         {/* ━━ 8. WEBSITE INTELLIGENCE ━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <WebsiteIntelligenceSection />
+
+        {/* ── Chapter break: Fit → Action ── */}
+        <ChapterDivider />
 
         {/* ━━ 9. FOUNDING BETA REWARDS ━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <FreeProSpotlight isFull={isFull} />
