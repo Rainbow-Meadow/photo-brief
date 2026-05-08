@@ -13,6 +13,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "hosting:validate": "node scripts/validate-hybrid-hosting.mjs",
+    "functions:check": "node scripts/check-supabase-functions.mjs",
     "build:prerender": "vite build && node scripts/prerender.mjs",
     "build:cloudflare-pages": "npm run hosting:validate && npm run build:prerender"
   },

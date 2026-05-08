@@ -18,7 +18,7 @@ concurrency:
 
 jobs:
   validate:
-    name: Install, lint, typecheck, test, validate hosting, and build
+    name: Install, lint, typecheck, test, validate hosting, check functions, and build
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -49,6 +49,9 @@ jobs:
 
       - name: Validate hybrid hosting contract
         run: npm run hosting:validate
+
+      - name: Check Supabase functions
+        run: npm run functions:check
 
       - name: Install Puppeteer browser for prerender
         run: npx puppeteer browsers install chrome
