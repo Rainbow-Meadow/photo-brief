@@ -1010,7 +1010,7 @@ function SectionNav({ tone = "dark" }: { tone?: "dark" | "paper" }) {
       aria-label="Landing page sections"
       className={
         isPaper
-          ? "sticky top-[4.5rem] z-30 border-y border-[hsl(var(--pb-ink-soft)/0.10)] bg-[hsl(var(--pb-cream))] shadow-[0_8px_24px_-18px_hsl(var(--pb-ink-soft)/0.4)]"
+          ? "sticky top-[4.5rem] z-30 border-b border-[hsl(var(--pb-ink-soft)/0.12)] bg-[hsl(var(--pb-cream))]"
           : "sticky top-[4.5rem] z-30 border-y border-white/10 bg-[hsl(var(--pb-night)/0.82)] backdrop-blur-xl"
       }
     >
@@ -1038,7 +1038,7 @@ function SectionNav({ tone = "dark" }: { tone?: "dark" | "paper" }) {
 
 function WorkflowSection() {
   return (
-    <section id="workflow" className="pb-section">
+    <section id="workflow" className="pb-section scroll-mt-32 pt-12 sm:pt-16 lg:pt-20">
       <div className="pb-container">
         <div className="grid gap-8 lg:grid-cols-[0.7fr_1.3fr] lg:items-center lg:gap-10">
           <div>
