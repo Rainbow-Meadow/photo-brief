@@ -42,6 +42,12 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { PageMeta } from "@/hooks/seo/usePageMeta";
 import { buildHowToJsonLd } from "@/hooks/seo/buildHowToJsonLd";
@@ -410,7 +416,10 @@ export default function LandingPage() {
         {/* ━━ ROI CALCULATOR ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <RoiCalculatorSection />
 
-        <section className="pb-section-tight">
+        {/* ── Chapter break: Problem → Solution ── */}
+        <ChapterDivider />
+
+        <section className="pb-section">
           <div className="pb-container">
             <div className="mx-auto max-w-3xl text-center mb-6 sm:mb-8">
               <span className="pb-eyebrow">
@@ -443,11 +452,17 @@ export default function LandingPage() {
           onModeChange={setComparisonMode}
         />
 
+        {/* ── Chapter break: Solution → Fit ── */}
+        <ChapterDivider />
+
         {/* ━━ 7. USE CASES ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <UseCaseSection />
 
         {/* ━━ 8. WEBSITE INTELLIGENCE ━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <WebsiteIntelligenceSection />
+
+        {/* ── Chapter break: Fit → Action ── */}
+        <ChapterDivider />
 
         {/* ━━ 9. FOUNDING BETA REWARDS ━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <FreeProSpotlight isFull={isFull} />
@@ -518,6 +533,7 @@ const RESPONSE_IMPROVEMENT_FACTOR = 0.30; // 30% more leads recovered with faste
 const FORM_RECOVERY_FACTOR = 0.25; // 25% of abandoned forms recovered with guided intake
 
 function RoiCalculatorSection() {
+  const [open, setOpen] = useState(false);
   const [monthlyVisitors, setMonthlyVisitors] = useState(500);
   const [avgJobValue, setAvgJobValue] = useState(2000);
   const [currentConversion, setCurrentConversion] = useState(3);
@@ -539,94 +555,121 @@ function RoiCalculatorSection() {
   return (
     <section className="pb-section-tight">
       <div className="pb-container">
-        <div className="mx-auto max-w-3xl text-center">
-          <span className="pb-eyebrow">
-            <Calculator className="h-3.5 w-3.5" /> ROI calculator
-          </span>
-          <h2 className="pb-section-title mt-4 text-white">
-            How much is weak intake costing you?
-          </h2>
-          <p className="pb-copy mt-4 text-base sm:text-lg">
-            Plug in your numbers. The math uses the same industry benchmarks
-            from the studies above.
-          </p>
-        </div>
-
-        <div className="mx-auto mt-8 max-w-4xl sm:mt-10">
-          <div className="pb-command-panel grid gap-6 p-5 sm:p-6 lg:grid-cols-[1fr_1fr] lg:gap-8 lg:p-8">
-            {/* Inputs */}
-            <div className="relative z-10 grid gap-5">
-              <RoiSlider
-                label="Monthly website visitors"
-                value={monthlyVisitors}
-                onChange={setMonthlyVisitors}
-                min={100}
-                max={10000}
-                step={100}
-                format={(v) => v.toLocaleString()}
-              />
-              <RoiSlider
-                label="Average job value"
-                value={avgJobValue}
-                onChange={setAvgJobValue}
-                min={100}
-                max={25000}
-                step={100}
-                format={(v) => `$${v.toLocaleString()}`}
-              />
-              <RoiSlider
-                label="Current form conversion rate"
-                value={currentConversion}
-                onChange={setCurrentConversion}
-                min={1}
-                max={15}
-                step={0.5}
-                format={(v) => `${v}%`}
-              />
-            </div>
-
-            {/* Results */}
-            <div className="relative z-10 grid gap-3 sm:gap-4">
-              <div className="rounded-[1.25rem] border border-white/10 bg-white/[0.04] p-4">
-                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-white/45">
-                  <UserCheck className="h-3.5 w-3.5" /> Current monthly leads
-                </div>
-                <p className="mt-2 text-3xl font-black tracking-tight text-white sm:text-4xl">
-                  {currentLeads}
-                </p>
+        {!open ? (
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            className="group mx-auto flex w-full max-w-2xl items-center justify-between gap-4 rounded-[1.5rem] border border-[hsl(var(--pb-lavender)/0.25)] bg-gradient-to-r from-[hsl(var(--pb-violet)/0.10)] via-[hsl(var(--pb-ink))] to-[hsl(var(--pb-lavender)/0.06)] p-5 text-left transition hover:border-[hsl(var(--pb-lavender)/0.4)] sm:p-6"
+          >
+            <div className="flex items-center gap-4">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[hsl(var(--pb-lavender)/0.12)]">
+                <Calculator className="h-6 w-6 text-[hsl(var(--pb-lavender))]" />
               </div>
-
-              <div className="rounded-[1.25rem] border border-[hsl(var(--pb-lavender)/0.3)] bg-[hsl(var(--pb-lavender)/0.06)] p-4">
-                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-[hsl(var(--pb-lavender))]">
-                  <ArrowRight className="h-3.5 w-3.5" /> Leads recovered with PhotoBrief
-                </div>
-                <p className="mt-2 text-3xl font-black tracking-tight text-[hsl(var(--pb-lavender))] sm:text-4xl">
-                  +{totalRecovered}<span className="text-lg font-bold text-white/50"> /mo</span>
+              <div>
+                <p className="text-base font-bold tracking-tight text-white sm:text-lg">
+                  How much is weak intake costing you?
                 </p>
-                <p className="pb-copy mt-1 text-xs">
-                  {recoveredFromForm} from better intake · {recoveredFromSpeed} from faster response
-                </p>
-              </div>
-
-              <div className="rounded-[1.25rem] border border-[hsl(var(--pb-mint)/0.3)] bg-[hsl(var(--pb-mint)/0.06)] p-4">
-                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-[hsl(var(--pb-mint))]">
-                  <DollarSign className="h-3.5 w-3.5" /> Estimated annual revenue recovered
-                </div>
-                <p className="mt-2 text-3xl font-black tracking-tight text-[hsl(var(--pb-mint))] sm:text-4xl">
-                  {formatDollars(annualRevenue)}
-                </p>
-                <p className="pb-copy mt-1 text-xs">
-                  {formatDollars(monthlyRevenue)}/mo × 12 · based on {totalRecovered} recovered leads at {`$${avgJobValue.toLocaleString()}`} avg job
+                <p className="pb-copy mt-0.5 text-xs sm:text-sm">
+                  Plug in your numbers — see leads and revenue you could recover.
                 </p>
               </div>
             </div>
-          </div>
+            <span className="hidden shrink-0 rounded-full border border-[hsl(var(--pb-lavender)/0.3)] px-4 py-2 text-xs font-bold text-[hsl(var(--pb-lavender))] transition group-hover:bg-[hsl(var(--pb-lavender)/0.1)] sm:inline-flex">
+              Calculate →
+            </span>
+          </button>
+        ) : (
+          <>
+            <div className="mx-auto max-w-3xl text-center">
+              <span className="pb-eyebrow">
+                <Calculator className="h-3.5 w-3.5" /> ROI calculator
+              </span>
+              <h2 className="pb-section-title mt-4 text-white">
+                How much is weak intake costing you?
+              </h2>
+              <p className="pb-copy mt-4 text-base sm:text-lg">
+                Plug in your numbers. The math uses the same industry benchmarks
+                from the studies above.
+              </p>
+            </div>
 
-          <p className="pb-copy mx-auto mt-4 max-w-xl text-center text-[0.65rem] italic sm:text-xs">
-            Estimates use 81% form abandonment (Numen Technology), 25% intake recovery rate,
-            and 30% speed-to-lead improvement (MIT Lead Response Study). Your results will vary.
-          </p>
-        </div>
+            <div className="mx-auto mt-8 max-w-4xl sm:mt-10">
+              <div className="pb-command-panel grid gap-6 p-5 sm:p-6 lg:grid-cols-[1fr_1fr] lg:gap-8 lg:p-8">
+                {/* Inputs */}
+                <div className="relative z-10 grid gap-5">
+                  <RoiSlider
+                    label="Monthly website visitors"
+                    value={monthlyVisitors}
+                    onChange={setMonthlyVisitors}
+                    min={100}
+                    max={10000}
+                    step={100}
+                    format={(v) => v.toLocaleString()}
+                  />
+                  <RoiSlider
+                    label="Average job value"
+                    value={avgJobValue}
+                    onChange={setAvgJobValue}
+                    min={100}
+                    max={25000}
+                    step={100}
+                    format={(v) => `$${v.toLocaleString()}`}
+                  />
+                  <RoiSlider
+                    label="Current form conversion rate"
+                    value={currentConversion}
+                    onChange={setCurrentConversion}
+                    min={1}
+                    max={15}
+                    step={0.5}
+                    format={(v) => `${v}%`}
+                  />
+                </div>
+
+                {/* Results */}
+                <div className="relative z-10 grid gap-3 sm:gap-4">
+                  <div className="rounded-[1.25rem] border border-white/10 bg-white/[0.04] p-4">
+                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-white/45">
+                      <UserCheck className="h-3.5 w-3.5" /> Current monthly leads
+                    </div>
+                    <p className="mt-2 text-3xl font-black tracking-tight text-white sm:text-4xl">
+                      {currentLeads}
+                    </p>
+                  </div>
+
+                  <div className="rounded-[1.25rem] border border-[hsl(var(--pb-lavender)/0.3)] bg-[hsl(var(--pb-lavender)/0.06)] p-4">
+                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-[hsl(var(--pb-lavender))]">
+                      <ArrowRight className="h-3.5 w-3.5" /> Leads recovered with PhotoBrief
+                    </div>
+                    <p className="mt-2 text-3xl font-black tracking-tight text-[hsl(var(--pb-lavender))] sm:text-4xl">
+                      +{totalRecovered}<span className="text-lg font-bold text-white/50"> /mo</span>
+                    </p>
+                    <p className="pb-copy mt-1 text-xs">
+                      {recoveredFromForm} from better intake · {recoveredFromSpeed} from faster response
+                    </p>
+                  </div>
+
+                  <div className="rounded-[1.25rem] border border-[hsl(var(--pb-mint)/0.3)] bg-[hsl(var(--pb-mint)/0.06)] p-4">
+                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-[hsl(var(--pb-mint))]">
+                      <DollarSign className="h-3.5 w-3.5" /> Estimated annual revenue recovered
+                    </div>
+                    <p className="mt-2 text-3xl font-black tracking-tight text-[hsl(var(--pb-mint))] sm:text-4xl">
+                      {formatDollars(annualRevenue)}
+                    </p>
+                    <p className="pb-copy mt-1 text-xs">
+                      {formatDollars(monthlyRevenue)}/mo × 12 · based on {totalRecovered} recovered leads at {`$${avgJobValue.toLocaleString()}`} avg job
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <p className="pb-copy mx-auto mt-4 max-w-xl text-center text-[0.65rem] italic sm:text-xs">
+                Estimates use 81% form abandonment (Numen Technology), 25% intake recovery rate,
+                and 30% speed-to-lead improvement (MIT Lead Response Study). Your results will vary.
+              </p>
+            </div>
+          </>
+        )}
       </div>
     </section>
   );
@@ -717,8 +760,11 @@ const painPoints = [
 ];
 
 function PainPointSection() {
+  const [expanded, setExpanded] = useState(false);
+  const visible = expanded ? painPoints : painPoints.slice(0, 3);
+
   return (
-    <section className="pb-section-tight">
+    <section className="pb-section">
       <div className="pb-container">
         <div className="mx-auto max-w-3xl text-center">
           <span className="pb-eyebrow">
@@ -734,7 +780,7 @@ function PainPointSection() {
         </div>
 
         <div className="mt-8 grid gap-3 sm:mt-10 sm:grid-cols-2 lg:grid-cols-3">
-          {painPoints.map((point) => {
+          {visible.map((point) => {
             const Icon = point.icon;
             return (
               <article
@@ -768,12 +814,32 @@ function PainPointSection() {
           })}
         </div>
 
+        {!expanded && (
+          <div className="mt-4 text-center sm:mt-6">
+            <button
+              type="button"
+              onClick={() => setExpanded(true)}
+              className="inline-flex items-center gap-1.5 rounded-full border border-white/12 bg-white/[0.04] px-5 py-2.5 text-xs font-semibold text-white/60 transition hover:border-white/20 hover:bg-white/[0.07] hover:text-white sm:text-sm"
+            >
+              See 2 more stats <ArrowRight className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        )}
+
         <p className="pb-copy mx-auto mt-6 max-w-xl text-center text-sm italic sm:mt-8 sm:text-base">
           PhotoBrief replaces the gap between first contact and actionable
           information with guided visual intake.
         </p>
       </div>
     </section>
+  );
+}
+
+function ChapterDivider() {
+  return (
+    <div className="pb-container" aria-hidden>
+      <div className="mx-auto h-px max-w-lg bg-gradient-to-r from-transparent via-white/12 to-transparent" />
+    </div>
   );
 }
 
@@ -1059,28 +1125,12 @@ function UseCaseSection() {
             actionable lead packets.
           </p>
         </div>
-        <div className="mt-8 grid gap-4 sm:mt-10 md:grid-cols-2 lg:grid-cols-3">
-          {useCases.slice(0, 3).map((item) => {
+        {/* Horizontal scroll on mobile, grid on desktop */}
+        <div className="mt-8 flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory sm:mt-10 md:grid md:grid-cols-2 md:overflow-visible md:pb-0 lg:grid-cols-3">
+          {useCases.map((item) => {
             const Icon = item.icon;
             return (
-              <article key={item.title} className="pb-card p-4 sm:p-5 md:p-6">
-                <Icon className="h-6 w-6 text-[hsl(var(--pb-lavender))] sm:h-7 sm:w-7" />
-                <span className="pb-stamp mt-4 inline-flex rounded-full px-3 py-1 sm:mt-5">
-                  {item.stamp}
-                </span>
-                <h3 className="mt-3 text-lg font-semibold tracking-tight text-white sm:mt-4 sm:text-xl">
-                  {item.title}
-                </h3>
-                <p className="pb-copy mt-2 text-sm leading-6">{item.body}</p>
-              </article>
-            );
-          })}
-        </div>
-        <div className="mx-auto mt-4 grid max-w-4xl gap-4 md:grid-cols-2">
-          {useCases.slice(3).map((item) => {
-            const Icon = item.icon;
-            return (
-              <article key={item.title} className="pb-card p-4 sm:p-5 md:p-6">
+              <article key={item.title} className="min-w-[280px] shrink-0 snap-start pb-card p-4 sm:p-5 md:min-w-0 md:p-6">
                 <Icon className="h-6 w-6 text-[hsl(var(--pb-lavender))] sm:h-7 sm:w-7" />
                 <span className="pb-stamp mt-4 inline-flex rounded-full px-3 py-1 sm:mt-5">
                   {item.stamp}
@@ -1225,7 +1275,7 @@ function FoundingPartnerSection({
   return (
     <section id="beta-program" className="pb-section">
       <div className="pb-container">
-        {/* Benefits & expectations */}
+        {/* Benefits & expectations — always visible */}
         <div className="pb-command-panel grid gap-6 p-5 sm:gap-8 sm:p-6 lg:grid-cols-[0.85fr_1.15fr] lg:p-8 xl:p-10">
           <div className="relative z-10">
             <span className="pb-eyebrow">
@@ -1264,177 +1314,166 @@ function FoundingPartnerSection({
           </div>
         </div>
 
-        {/* Detailed expectations */}
-        <div className="mx-auto mt-8 max-w-3xl text-center">
-          <span className="pb-eyebrow">
-            <Users className="h-3.5 w-3.5" /> What we expect
-          </span>
-          <h2 className="pb-section-title mt-4 text-white">
-            What it means to be a founding beta partner.
-          </h2>
-          <p className="pb-copy mt-4 text-base sm:text-lg">
-            We're accepting {BETA_TOTAL_PARTNERS} businesses. The{" "}
-            {BETA_DURATION_DAYS}-day beta clock starts {BETA_SETUP_BUFFER_DAYS}{" "}
-            days after the final seat is filled, giving every partner time for
-            concierge setup. In exchange for free access and significant
-            post-launch rewards, we ask for real usage and honest feedback.
-          </p>
-        </div>
-
-        <div className="mx-auto mt-8 max-w-2xl">
-          <div className="pb-command-panel p-4 sm:p-5 md:p-6">
-            <div className="relative z-10">
-              <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[hsl(var(--pb-lavender))]">
-                Partner expectations
-              </p>
-              <div className="mt-4 grid gap-3 sm:gap-4">
-                {DETAILED_EXPECTATIONS.map((exp, i) => (
-                  <div key={i} className="flex gap-3">
-                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[hsl(var(--pb-lavender)/0.13)] text-xs font-black text-[hsl(var(--pb-lavender))] sm:h-8 sm:w-8">
-                      {i + 1}
-                    </span>
-                    <div>
-                      <p className="text-sm font-semibold text-white">
-                        {exp.title}
-                      </p>
-                      <p className="pb-copy mt-0.5 text-xs leading-5 sm:text-sm">
-                        {exp.description}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Reward tiers */}
-        <div className="mx-auto mt-6 max-w-2xl">
-          <div className="pb-command-panel p-4 sm:p-5 md:p-6">
-            <div className="relative z-10">
-              <div className="flex items-center gap-2">
-                <Gift className="h-4 w-4 text-[hsl(var(--pb-lavender))]" />
-                <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[hsl(var(--pb-lavender))]">
-                  Reward tiers
+        {/* Collapsible details — accordion for progressive disclosure */}
+        <div className="mx-auto mt-8 max-w-3xl">
+          <Accordion type="multiple" className="grid gap-3">
+            {/* Partner expectations */}
+            <AccordionItem value="expectations" className="rounded-[1.2rem] border border-white/12 bg-white/[0.025] px-4 sm:px-5">
+              <AccordionTrigger className="py-4 text-sm font-bold text-white hover:no-underline sm:text-base [&>svg]:text-[hsl(var(--pb-lavender))]">
+                <span className="flex items-center gap-2">
+                  <Users className="h-4 w-4 text-[hsl(var(--pb-lavender))]" />
+                  What it means to be a founding beta partner
+                </span>
+              </AccordionTrigger>
+              <AccordionContent>
+                <p className="pb-copy mb-4 text-sm">
+                  We're accepting {BETA_TOTAL_PARTNERS} businesses. The{" "}
+                  {BETA_DURATION_DAYS}-day beta clock starts {BETA_SETUP_BUFFER_DAYS}{" "}
+                  days after the final seat is filled, giving every partner time for
+                  concierge setup.
                 </p>
-              </div>
-              <p className="pb-copy mt-2 text-sm">
-                Every beta partner earns a post-launch discount. Your tier is
-                based on the quality of your feedback — not just how much you
-                use the product.
-              </p>
-              <div className="mt-4 grid gap-2">
-                {REWARD_TIERS.map((tier) => {
-                  const isTopTier = tier.duration === "free-pro";
-                  return (
-                    <div
-                      key={tier.label}
-                      className={`flex items-center justify-between rounded-2xl px-3 py-2.5 sm:px-4 sm:py-3 ${isTopTier ? "border-2 border-[hsl(var(--pb-lavender)/0.5)] bg-gradient-to-r from-[hsl(var(--pb-violet)/0.15)] to-[hsl(var(--pb-lavender)/0.08)] shadow-md shadow-[hsl(var(--pb-violet)/0.2)]" : "border border-white/10 bg-white/[0.035]"}`}
-                    >
-                      <div className="flex items-center gap-3">
-                        {isTopTier ? (
-                          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[hsl(var(--pb-lavender))] to-[hsl(var(--pb-violet))] sm:h-8 sm:w-8">
-                            <Trophy className="h-3.5 w-3.5 text-white" />
+                <div className="grid gap-3 sm:gap-4">
+                  {DETAILED_EXPECTATIONS.map((exp, i) => (
+                    <div key={i} className="flex gap-3">
+                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[hsl(var(--pb-lavender)/0.13)] text-xs font-black text-[hsl(var(--pb-lavender))] sm:h-8 sm:w-8">
+                        {i + 1}
+                      </span>
+                      <div>
+                        <p className="text-sm font-semibold text-white">
+                          {exp.title}
+                        </p>
+                        <p className="pb-copy mt-0.5 text-xs leading-5 sm:text-sm">
+                          {exp.description}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+
+            {/* Reward tiers */}
+            <AccordionItem value="rewards" className="rounded-[1.2rem] border border-white/12 bg-white/[0.025] px-4 sm:px-5">
+              <AccordionTrigger className="py-4 text-sm font-bold text-white hover:no-underline sm:text-base [&>svg]:text-[hsl(var(--pb-lavender))]">
+                <span className="flex items-center gap-2">
+                  <Gift className="h-4 w-4 text-[hsl(var(--pb-lavender))]" />
+                  Reward tiers — every partner earns something
+                </span>
+              </AccordionTrigger>
+              <AccordionContent>
+                <p className="pb-copy mb-4 text-sm">
+                  Every beta partner earns a post-launch discount. Your tier is
+                  based on the quality of your feedback — not just how much you
+                  use the product.
+                </p>
+                <div className="grid gap-2">
+                  {REWARD_TIERS.map((tier) => {
+                    const isTopTier = tier.duration === "free-pro";
+                    return (
+                      <div
+                        key={tier.label}
+                        className={`flex items-center justify-between rounded-2xl px-3 py-2.5 sm:px-4 sm:py-3 ${isTopTier ? "border-2 border-[hsl(var(--pb-lavender)/0.5)] bg-gradient-to-r from-[hsl(var(--pb-violet)/0.15)] to-[hsl(var(--pb-lavender)/0.08)] shadow-md shadow-[hsl(var(--pb-violet)/0.2)]" : "border border-white/10 bg-white/[0.035]"}`}
+                      >
+                        <div className="flex items-center gap-3">
+                          {isTopTier ? (
+                            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[hsl(var(--pb-lavender))] to-[hsl(var(--pb-violet))] sm:h-8 sm:w-8">
+                              <Trophy className="h-3.5 w-3.5 text-white" />
+                            </span>
+                          ) : (
+                            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[hsl(var(--pb-lavender)/0.13)] text-[10px] font-black text-[hsl(var(--pb-lavender))] sm:h-8 sm:w-8">
+                              {tier.count}
+                            </span>
+                          )}
+                          <span
+                            className={`text-sm font-semibold ${isTopTier ? "text-[hsl(var(--pb-lavender))]" : "text-white"}`}
+                          >
+                            {tier.label}
                           </span>
-                        ) : (
-                          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[hsl(var(--pb-lavender)/0.13)] text-[10px] font-black text-[hsl(var(--pb-lavender))] sm:h-8 sm:w-8">
-                            {tier.count}
-                          </span>
-                        )}
-                        <span
-                          className={`text-sm font-semibold ${isTopTier ? "text-[hsl(var(--pb-lavender))]" : "text-white"}`}
-                        >
-                          {tier.label}
+                        </div>
+                        <span className="text-xs font-bold text-[hsl(var(--pb-mint))] sm:text-sm">
+                          {tier.shortDescription}
                         </span>
                       </div>
-                      <span className="text-xs font-bold text-[hsl(var(--pb-mint))] sm:text-sm">
-                        {tier.shortDescription}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-              <div className="mt-4 rounded-[1.2rem] border border-[hsl(var(--pb-lavender)/0.2)] bg-[hsl(var(--pb-lavender)/0.04)] p-3 sm:p-4">
-                <p className="text-xs font-semibold text-white/80 sm:text-sm">
-                  What drives your tier placement:
-                </p>
-                <ul className="mt-2 grid gap-1.5">
-                  {REWARD_CRITERIA.map((criterion) => (
-                    <li
-                      key={criterion}
-                      className="flex items-start gap-2 text-xs text-white/60 sm:text-sm"
-                    >
-                      <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[hsl(var(--pb-mint)/0.7)]" />
-                      <span>{criterion}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Scoring rubric */}
-        <div className="mx-auto mt-10 max-w-3xl text-center">
-          <span className="pb-eyebrow">
-            <Trophy className="h-3.5 w-3.5" /> Scoring rubric
-          </span>
-          <h2 className="pb-section-title mt-4 text-white">
-            How we pick the top&nbsp;2
-          </h2>
-          <p className="pb-copy mt-4 text-base sm:text-lg">
-            There's no secret formula — just four dimensions we weight
-            equally-ish. Here's exactly what we look at and what "great" looks
-            like.
-          </p>
-        </div>
-
-        <div className="mx-auto mt-8 grid max-w-3xl gap-4 sm:mt-10">
-          {SCORING_RUBRIC.map((dim) => (
-            <div key={dim.label} className="pb-command-panel p-4 sm:p-5 md:p-6">
-              <div className="relative z-10">
-                <div className="flex flex-wrap items-center gap-3">
-                  <h3 className="text-base font-bold tracking-tight text-white sm:text-lg">
-                    {dim.label}
-                  </h3>
-                  <span className="rounded-full border border-[hsl(var(--pb-lavender)/0.3)] bg-[hsl(var(--pb-lavender)/0.08)] px-2.5 py-0.5 text-[11px] font-extrabold tracking-wider text-[hsl(var(--pb-lavender))]">
-                    {dim.weight}
-                  </span>
+                    );
+                  })}
                 </div>
-                <p className="pb-copy mt-2 text-sm leading-relaxed">
-                  {dim.description}
-                </p>
-                <div className="mt-3 rounded-xl border border-white/8 bg-white/[0.025] p-3">
-                  <p className="mb-2 text-[11px] font-bold uppercase tracking-widest text-white/40">
-                    Examples of great feedback
+                <div className="mt-4 rounded-[1.2rem] border border-[hsl(var(--pb-lavender)/0.2)] bg-[hsl(var(--pb-lavender)/0.04)] p-3 sm:p-4">
+                  <p className="text-xs font-semibold text-white/80 sm:text-sm">
+                    What drives your tier placement:
                   </p>
-                  {dim.examples.map((ex, i) => (
-                    <p
-                      key={i}
-                      className="mt-1.5 text-xs italic leading-relaxed text-white/60 sm:text-sm"
-                    >
-                      {ex}
-                    </p>
+                  <ul className="mt-2 grid gap-1.5">
+                    {REWARD_CRITERIA.map((criterion) => (
+                      <li
+                        key={criterion}
+                        className="flex items-start gap-2 text-xs text-white/60 sm:text-sm"
+                      >
+                        <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[hsl(var(--pb-mint)/0.7)]" />
+                        <span>{criterion}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+
+            {/* Scoring rubric */}
+            <AccordionItem value="scoring" className="rounded-[1.2rem] border border-white/12 bg-white/[0.025] px-4 sm:px-5">
+              <AccordionTrigger className="py-4 text-sm font-bold text-white hover:no-underline sm:text-base [&>svg]:text-[hsl(var(--pb-lavender))]">
+                <span className="flex items-center gap-2">
+                  <Trophy className="h-4 w-4 text-[hsl(var(--pb-lavender))]" />
+                  Scoring rubric — how we pick the top 2
+                </span>
+              </AccordionTrigger>
+              <AccordionContent>
+                <p className="pb-copy mb-4 text-sm">
+                  There's no secret formula — just four dimensions we weight
+                  equally-ish. Here's exactly what we look at.
+                </p>
+                <div className="grid gap-4">
+                  {SCORING_RUBRIC.map((dim) => (
+                    <div key={dim.label} className="rounded-xl border border-white/8 bg-white/[0.025] p-3 sm:p-4">
+                      <div className="flex flex-wrap items-center gap-3">
+                        <h3 className="text-sm font-bold tracking-tight text-white sm:text-base">
+                          {dim.label}
+                        </h3>
+                        <span className="rounded-full border border-[hsl(var(--pb-lavender)/0.3)] bg-[hsl(var(--pb-lavender)/0.08)] px-2.5 py-0.5 text-[11px] font-extrabold tracking-wider text-[hsl(var(--pb-lavender))]">
+                          {dim.weight}
+                        </span>
+                      </div>
+                      <p className="pb-copy mt-2 text-xs leading-relaxed sm:text-sm">
+                        {dim.description}
+                      </p>
+                      <div className="mt-2 rounded-lg border border-white/6 bg-white/[0.02] p-2.5">
+                        <p className="mb-1.5 text-[10px] font-bold uppercase tracking-widest text-white/40">
+                          Examples of great feedback
+                        </p>
+                        {dim.examples.map((ex, i) => (
+                          <p
+                            key={i}
+                            className="mt-1 text-xs italic leading-relaxed text-white/60"
+                          >
+                            {ex}
+                          </p>
+                        ))}
+                      </div>
+                    </div>
                   ))}
                 </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="mx-auto mt-6 max-w-3xl">
-          <div className="rounded-[1.2rem] border border-[hsl(var(--pb-mint)/0.2)] bg-[hsl(var(--pb-mint)/0.04)] p-4 text-center">
-            <p className="text-sm font-semibold text-white/90">
-              Every partner earns a reward tier. The rubric above determines who
-              lands in the top&nbsp;2.
-            </p>
-            <p className="pb-copy mt-1 text-xs">
-              Scores are assessed by the PhotoBrief team at the end of the{" "}
-              {BETA_DURATION_DAYS}-day beta (which starts{" "}
-              {BETA_SETUP_BUFFER_DAYS} days after the final seat is filled). No
-              self-reporting required — we track engagement internally.
-            </p>
-          </div>
+                <div className="mt-4 rounded-[1.2rem] border border-[hsl(var(--pb-mint)/0.2)] bg-[hsl(var(--pb-mint)/0.04)] p-4 text-center">
+                  <p className="text-sm font-semibold text-white/90">
+                    Every partner earns a reward tier. The rubric above determines who
+                    lands in the top&nbsp;2.
+                  </p>
+                  <p className="pb-copy mt-1 text-xs">
+                    Scores are assessed by the PhotoBrief team at the end of the{" "}
+                    {BETA_DURATION_DAYS}-day beta (which starts{" "}
+                    {BETA_SETUP_BUFFER_DAYS} days after the final seat is filled). No
+                    self-reporting required — we track engagement internally.
+                  </p>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         </div>
       </div>
     </section>
