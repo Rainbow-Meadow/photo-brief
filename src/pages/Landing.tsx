@@ -460,44 +460,16 @@ export default function LandingPage() {
         {/* ── Chapter break: Product → Beta ── */}
         <ChapterDivider tone="paper" />
 
-        {/* ━━ BRIDGE + TRUST POINTS ━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-        <BetaBridgeSection />
+        {/* ━━ FOUNDING PARTNER BETA — narrative + apply agent ━━ */}
+        <FoundingPartnerBetaSection isFull={isFull} />
 
-        <section className="pb-section-tight">
-          <div className="pb-container">
-            <div className="mx-auto grid max-w-3xl gap-6 sm:grid-cols-3 sm:gap-x-10 sm:gap-y-0">
-              {trustPoints.map(({ icon: Icon, title, desc }) => (
-                <div key={title} className="border-t border-[hsl(var(--pb-ink-soft)/0.18)] pt-4 text-left sm:pt-5">
-                  <Icon className="h-5 w-5 text-[hsl(var(--pb-violet))]" />
-                  <p className="mt-3 font-serif text-base italic text-[hsl(var(--pb-ink))] sm:text-lg">
-                    {title}
-                  </p>
-                  <p className="pb-copy mt-1 text-xs leading-5">{desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ━━ FOUNDING BETA REWARDS — ivory alt emphasis ━━━━━ */}
+        {/* ━━ REWARD TIERS — ivory alt emphasis ━━━━━━━━━━━━━━━ */}
         <div className="pb-section-alt">
-          <FreeProSpotlight isFull={isFull} />
+          <RewardTiersSection />
         </div>
-        <FoundingPartnerSection utm={utm} isFull={isFull} />
 
-        {/* ━━ TICKER 3 — Beta social proof ━━━━━━━━━━━━━━━━━━━ */}
-        <TickerBar tone="paper" items={[`${BETA_TOTAL_PARTNERS} founding partner seats`, "Free Pro for Life reward", `${BETA_DURATION_DAYS}-day beta`, "Concierge setup included", "Every partner earns a reward"]} />
-
-        {/* ━━ AGENT-POWERED APPLICATION — ivory alt ━━━━━━━━━━ */}
-        <section id="apply" className="pb-section pb-section-alt scroll-mt-8">
-          <div className="pb-container">
-            <BetaOnboardingAgentExperience
-              source="landing"
-              title="Apply for the Founding Partner Beta"
-              description={`Share your website and intake context. The onboarding agent qualifies your workflow, recommends your first intake paths, and submits your application for one of ${BETA_TOTAL_PARTNERS} founding partner seats.`}
-            />
-          </div>
-        </section>
+        {/* ━━ DETAILS — collapsed disclosure ━━━━━━━━━━━━━━━━━━ */}
+        <BetaDetailsAccordion />
 
         {/* ━━ FINAL CTA ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <FinalCta isFull={isFull} />
