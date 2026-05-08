@@ -1,0 +1,96 @@
+/**
+ * Cloudflare Image Resizing URL helper.
+ *
+ * Wraps any URL with `/cdn-cgi/image/{options}/{url}` so Cloudflare can
+ * resize, re-encode (AVIF/WebP/auto), and edge-cache the result. Works for
+ * any image served through the photobrief.ai zone — including R2 signed
+ * URLs proxied via a worker route.
+ *
+ * Docs: https://developers.cloudflare.com/images/transform-images/
+ *
+ * Usage:
+ *   <img src={cfImage(submission.publicUrl, { width: 480, quality: 80 })} />
+ *
+ * Falls back to the original URL when the input is empty, a data: URI,
+ * or already a /cdn-cgi/image/ URL.
+ */
+
+export type CfImageFit = "scale-down" | "contain" | "cover" | "crop" | "pad";
+export type CfImageFormat = "auto" | "avif" | "webp" | "json" | "jpeg" | "png";
+
+export interface CfImageOptions {
+  width?: number;
+  height?: number;
+  /** 1-100. Defaults to Cloudflare's auto. */
+  quality?: number;
+  fit?: CfImageFit;
+  format?: CfImageFormat;
+  /** Device pixel ratio (1, 2, 3). */
+  dpr?: number;
+  /** When true, request a blurred low-res placeholder. */
+  blur?: number;
+  /** Strip EXIF metadata. Defaults to true. */
+  metadata?: "keep" | "copyright" | "none";
+  /** Background color when fit=pad. */
+  background?: string;
+  /** Sharpen output (0-10). */
+  sharpen?: number;
+}
+
+const DEFAULT_HOST = "photobrief.ai";
+
+function buildOptions(opts: CfImageOptions): string {
+  const parts: string[] = [];
+  if (opts.width) parts.push(`width=${Math.round(opts.width)}`);
+  if (opts.height) parts.push(`height=${Math.round(opts.height)}`);
+  if (opts.quality) parts.push(`quality=${opts.quality}`);
+  if (opts.fit) parts.push(`fit=${opts.fit}`);
+  parts.push(`format=${opts.format ?? "auto"}`);
+  if (opts.dpr && opts.dpr !== 1) parts.push(`dpr=${opts.dpr}`);
+  if (opts.blur) parts.push(`blur=${opts.blur}`);
+  if (opts.sharpen) parts.push(`sharpen=${opts.sharpen}`);
+  if (opts.background) parts.push(`background=${opts.background}`);
+  parts.push(`metadata=${opts.metadata ?? "none"}`);
+  return parts.join(",");
+}
+
+/**
+ * Returns a Cloudflare-resized version of the given URL. If the URL is
+ * absolute and on a different host, the transform is still applied via the
+ * photobrief.ai zone (Cloudflare fetches the source). If the URL is empty
+ * or already wrapped, it is returned unchanged.
+ */
+export function cfImage(url: string | null | undefined, options: CfImageOptions): string {
+  if (!url) return "";
+  if (url.startsWith("data:")) return url;
+  if (url.includes("/cdn-cgi/image/")) return url;
+  const opts = buildOptions(options);
+  // Cloudflare expects: https://<zone>/cdn-cgi/image/<options>/<source-url>
+  // For absolute URLs, the source is appended verbatim (Cloudflare fetches it).
+  return `https://${DEFAULT_HOST}/cdn-cgi/image/${opts}/${url}`;
+}
+
+/**
+ * Build a responsive `srcset` attribute at common widths.
+ *
+ *   <img
+ *     src={cfImage(url, { width: 640 })}
+ *     srcSet={cfImageSrcSet(url, [320, 640, 960, 1280])}
+ *     sizes="(max-width: 768px) 100vw, 640px"
+ *   />
+ */
+export function cfImageSrcSet(
+  url: string | null | undefined,
+  widths: number[],
+  options: Omit<CfImageOptions, "width"> = {},
+): string {
+  if (!url) return "";
+  return widths
+    .map((w) => `${cfImage(url, { ...options, width: w })} ${w}w`)
+    .join(", ");
+}
+
+/** Tiny blurred placeholder for progressive loading. */
+export function cfImageBlur(url: string | null | undefined, width = 32): string {
+  return cfImage(url, { width, quality: 30, blur: 30, format: "webp" });
+}
