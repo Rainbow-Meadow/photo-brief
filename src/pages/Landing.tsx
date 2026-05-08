@@ -1359,18 +1359,24 @@ function WebsiteIntelligenceSection() {
           }
         />
 
-        <div className="mt-8 grid gap-4 sm:mt-10 md:grid-cols-3">
-          {websiteIntelCards.map((card) => {
+        <div className="mt-8 grid gap-6 sm:mt-12 md:grid-cols-3 md:gap-x-10 md:gap-y-0">
+          {websiteIntelCards.map((card, index) => {
             const Icon = card.icon;
             return (
-              <article key={card.title} className="pb-card p-5 sm:p-6">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-[hsl(var(--pb-line-strong))] bg-[hsl(var(--pb-ink))] text-[hsl(var(--pb-lavender))]">
-                  <Icon className="h-5 w-5" />
+              <article
+                key={card.title}
+                className="border-t border-white/12 pt-5 md:pt-6"
+              >
+                <div className="flex items-baseline justify-between gap-3">
+                  <span className="font-serif text-2xl leading-none text-[hsl(var(--pb-lavender))] sm:text-3xl">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <Icon className="h-5 w-5 text-white/40" />
                 </div>
-                <h3 className="mt-4 text-lg font-semibold tracking-tight text-white">
+                <h3 className="mt-3 font-serif text-xl italic leading-tight text-white sm:text-2xl">
                   {card.title}
                 </h3>
-                <p className="pb-copy mt-2 text-sm leading-6">{card.body}</p>
+                <p className="pb-copy mt-3 text-sm leading-6">{card.body}</p>
               </article>
             );
           })}
