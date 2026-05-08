@@ -115,6 +115,10 @@ export default function SignupPage() {
     if (state.kind !== "valid") return;
     setSubmitting(true);
     try {
+      if (turnstileToken) {
+        const ok = await verifyTurnstileToken(turnstileToken);
+        if (!ok) throw new Error("Verification failed. Please try again.");
+      }
       trackEvent("signup_started", { method: "email" });
       const { error } = await supabase.auth.signUp({
         email: state.email,
