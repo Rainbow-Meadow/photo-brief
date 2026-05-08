@@ -612,7 +612,7 @@ function RoiCalculatorSection() {
   }
 
   return (
-    <section className="pb-section-tight my-[70px] mb-0 mt-[80px]" ref={calcRef}>
+    <section className="pb-section-tight my-[70px] mb-0 mt-0" ref={calcRef}>
       <div className="pb-container">
         <button
           type="button"
@@ -620,7 +620,7 @@ function RoiCalculatorSection() {
             setOpen((p) => !p);
             if (!open) setTimeout(() => calcRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
           }}
-          className="group mx-auto flex w-full max-w-2xl items-center justify-between gap-4 rounded-[1.5rem] border border-[hsl(var(--pb-lavender)/0.25)] bg-gradient-to-r from-[hsl(var(--pb-violet)/0.10)] via-[hsl(var(--pb-ink))] to-[hsl(var(--pb-lavender)/0.06)] p-5 text-left transition hover:border-[hsl(var(--pb-lavender)/0.4)] sm:p-6"
+          className="group mx-auto flex w-full max-w-2xl items-center justify-between gap-4 rounded-[1.5rem] border border-[hsl(var(--pb-lavender)/0.25)] bg-gradient-to-r from-[hsl(var(--pb-violet)/0.10)] via-[hsl(var(--pb-ink))] to-[hsl(var(--pb-lavender)/0.06)] p-5 text-left transition hover:border-[hsl(var(--pb-lavender)/0.4)] sm:p-6 py-[68px]"
         >
           <div className="flex items-center gap-4">
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[hsl(var(--pb-lavender)/0.12)]">
@@ -811,7 +811,7 @@ function PainPointSection() {
       <div className="pb-container">
         <div className="mx-auto max-w-3xl text-center lg:mx-0 lg:grid lg:max-w-none lg:grid-cols-[1.15fr_0.85fr] lg:items-start lg:gap-12 lg:text-left">
           {/* Left column — intro copy + carousel */}
-          <div className="lg:min-w-0">
+          <div className="lg:min-w-0 text-center">
             <span className="pb-eyebrow">
               <MessageSquareWarning className="h-3.5 w-3.5" /> The problem
             </span>
@@ -890,7 +890,7 @@ function PainPointSection() {
           </div>
 
           {/* Right column — 81% stat + ROI calculator */}
-          <div className="mt-8 flex flex-col items-center gap-6 lg:mt-0 lg:items-stretch">
+          <div className="mt-8 flex-col items-center gap-6 lg:mt-0 flex lg:items-center justify-center">
             <div className="flex justify-center lg:justify-end">
               <StatAccent
                 icon={TrendingDown}
@@ -1021,7 +1021,7 @@ function StatAccent({
         ? "text-amber-300"
         : "text-[hsl(var(--pb-lavender))]";
   return (
-    <div className="pb-card relative w-full max-w-sm overflow-hidden p-6 text-center sm:p-7 mt-[20px]">
+    <div className="pb-card relative w-full max-w-sm overflow-hidden p-6 text-center sm:p-7 mt-0">
       <div
         aria-hidden
         className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-[hsl(var(--pb-violet)/0.2)] blur-3xl"
