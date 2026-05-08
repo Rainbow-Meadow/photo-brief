@@ -460,16 +460,19 @@ export default function LandingPage() {
         {/* ── Chapter break: Product → Beta ── */}
         <ChapterDivider tone="paper" />
 
-        {/* ━━ FOUNDING PARTNER BETA — narrative + apply agent ━━ */}
-        <FoundingPartnerBetaSection isFull={isFull} />
+        {/* ━━ BETA ZONE — distinct lavender-tinted chapter ━━━━━━ */}
+        <div className="pb-beta-zone">
+          {/* Founding partner narrative + apply agent */}
+          <FoundingPartnerBetaSection isFull={isFull} />
 
-        {/* ━━ REWARD TIERS — ivory alt emphasis ━━━━━━━━━━━━━━━ */}
-        <div className="pb-section-alt">
-          <RewardTiersSection />
+          {/* Reward tiers — ivory alt emphasis (within beta zone) */}
+          <div className="pb-section-alt">
+            <RewardTiersSection />
+          </div>
+
+          {/* Details — collapsed disclosure */}
+          <BetaDetailsAccordion />
         </div>
-
-        {/* ━━ DETAILS — collapsed disclosure ━━━━━━━━━━━━━━━━━━ */}
-        <BetaDetailsAccordion />
 
         {/* ━━ FINAL CTA ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <FinalCta isFull={isFull} />
