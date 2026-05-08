@@ -33,25 +33,25 @@ export default function GuideLibraryPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Your templates"
-        description="Save the photo requests your business actually uses. Start with one photo, add more only when needed."
+        title="Intake workflows"
+        description="The 2–3 reusable customer paths your business actually needs. PhotoBrief uses them to turn website leads into actionable visual packets."
         actions={
           canCustomGuides ? (
             <Button asChild className="gap-1.5">
               <NavLink to="/guides/new">
-                <Plus className="h-4 w-4" /> New template
+                <Plus className="h-4 w-4" /> New workflow
               </NavLink>
             </Button>
           ) : (
             <Button
               className="gap-1.5"
               onClick={() =>
-                toast.error("Custom templates are on Pro", {
-                  description: "Upgrade to build and reuse your own photo guides.",
+                toast.error("Custom workflows are on Pro", {
+                  description: "Upgrade to build and reuse your own intake workflows.",
                 })
               }
             >
-              <Plus className="h-4 w-4" /> New template
+              <Plus className="h-4 w-4" /> New workflow
               <PlanTag plan="pro" className="ml-1 bg-white/15 text-primary-foreground" />
             </Button>
           )
@@ -66,31 +66,30 @@ export default function GuideLibraryPage() {
             <Sparkles className="h-3.5 w-3.5" /> Simple by design
           </span>
           <h2 className="mt-4 text-lg font-semibold tracking-tight text-foreground sm:text-xl">
-            No giant template catalog. No guessing.
+            No giant form catalog. No customer guesswork.
           </h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            Build the exact request you want customers to receive. Start with one required photo,
-            add more if they help, then save it as your own reusable template.
+            Keep each business to a few clear paths — quote, service, warranty, damage, return, or review. Each workflow asks for the photos and details needed to make the lead useful.
           </p>
           <div className="mt-4 flex flex-wrap gap-2 text-xs text-muted-foreground">
-            <span className="rounded-full bg-muted px-3 py-1">1. Name it</span>
-            <span className="rounded-full bg-muted px-3 py-1">2. Add photo prompts</span>
-            <span className="rounded-full bg-muted px-3 py-1">3. Save and reuse</span>
+            <span className="rounded-full bg-muted px-3 py-1">1. Match the service</span>
+            <span className="rounded-full bg-muted px-3 py-1">2. Ask the right photo steps</span>
+            <span className="rounded-full bg-muted px-3 py-1">3. Deliver a lead packet</span>
           </div>
           {/* Detail cards hidden on mobile for brevity */}
           <div className="mt-5 hidden gap-3 sm:grid sm:grid-cols-2">
             <div className="rounded-2xl border bg-background p-4">
               <Camera className="h-5 w-5 text-primary" />
-              <p className="mt-3 text-sm font-medium text-foreground">Additive photo steps</p>
+              <p className="mt-3 text-sm font-medium text-foreground">Service-specific photo steps</p>
               <p className="mt-1 text-xs text-muted-foreground">
-                One plain-language prompt at a time. Advanced options stay hidden until needed.
+                One plain-language prompt at a time, tuned to the service or issue the customer selected.
               </p>
             </div>
             <div className="rounded-2xl border bg-background p-4">
               <MessageCircleQuestion className="h-5 w-5 text-primary" />
-              <p className="mt-3 text-sm font-medium text-foreground">Optional questions</p>
+              <p className="mt-3 text-sm font-medium text-foreground">Context only when it helps</p>
               <p className="mt-1 text-xs text-muted-foreground">
-                Ask for context only when photos alone are not enough.
+                Ask for notes, IDs, model numbers, or access details only when they make the packet more actionable.
               </p>
             </div>
           </div>
@@ -99,14 +98,14 @@ export default function GuideLibraryPage() {
 
       {isLoading ? (
         <div className="rounded-xl border bg-card p-8 text-center text-sm text-muted-foreground">
-          Loading templates…
+          Loading workflows…
         </div>
       ) : workspaceGuides.length > 0 ? (
         <section className="space-y-4">
           <div>
-            <h2 className="text-sm font-semibold text-foreground">Saved templates</h2>
+            <h2 className="text-sm font-semibold text-foreground">Saved intake workflows</h2>
             <p className="text-xs text-muted-foreground">
-              These are built by your team and ready to use for new requests.
+              These are the reusable paths PhotoBrief can dispatch from website intake or manual links.
             </p>
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -126,13 +125,13 @@ export default function GuideLibraryPage() {
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
             <Plus className="h-6 w-6" />
           </div>
-          <h2 className="mt-4 text-lg font-semibold text-foreground">Create your first template</h2>
+          <h2 className="mt-4 text-lg font-semibold text-foreground">Create your first intake workflow</h2>
           <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
-            Start with one photo prompt like “Take a wide photo of the issue.” Add only what you need from there.
+            Start with a common business path like quote, service, warranty, or damage review. Add only the photo steps needed to make the lead actionable.
           </p>
           <Button asChild className="mt-5 gap-1.5">
             <NavLink to="/guides/new">
-              <Plus className="h-4 w-4" /> Build a template
+              <Plus className="h-4 w-4" /> Build a workflow
             </NavLink>
           </Button>
         </section>
