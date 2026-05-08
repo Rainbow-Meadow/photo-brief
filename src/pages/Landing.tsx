@@ -717,8 +717,11 @@ const painPoints = [
 ];
 
 function PainPointSection() {
+  const [expanded, setExpanded] = useState(false);
+  const visible = expanded ? painPoints : painPoints.slice(0, 3);
+
   return (
-    <section className="pb-section-tight">
+    <section className="pb-section">
       <div className="pb-container">
         <div className="mx-auto max-w-3xl text-center">
           <span className="pb-eyebrow">
@@ -734,7 +737,7 @@ function PainPointSection() {
         </div>
 
         <div className="mt-8 grid gap-3 sm:mt-10 sm:grid-cols-2 lg:grid-cols-3">
-          {painPoints.map((point) => {
+          {visible.map((point) => {
             const Icon = point.icon;
             return (
               <article
@@ -767,6 +770,18 @@ function PainPointSection() {
             );
           })}
         </div>
+
+        {!expanded && (
+          <div className="mt-4 text-center sm:mt-6">
+            <button
+              type="button"
+              onClick={() => setExpanded(true)}
+              className="inline-flex items-center gap-1.5 rounded-full border border-white/12 bg-white/[0.04] px-5 py-2.5 text-xs font-semibold text-white/60 transition hover:border-white/20 hover:bg-white/[0.07] hover:text-white sm:text-sm"
+            >
+              See 2 more stats <ArrowRight className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        )}
 
         <p className="pb-copy mx-auto mt-6 max-w-xl text-center text-sm italic sm:mt-8 sm:text-base">
           PhotoBrief replaces the gap between first contact and actionable
