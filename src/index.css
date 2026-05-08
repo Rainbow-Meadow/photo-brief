@@ -11,7 +11,6 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
    All colors MUST be HSL. Components should use semantic tokens, never raw colors.
 */
 
-@layer base {
 /* ──────────────────────────────────────────────────────────────────────
    PhotoBrief color system — single source of truth.
    Two immutable palettes, both derived from the brand mark:
