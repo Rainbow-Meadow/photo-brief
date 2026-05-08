@@ -67,6 +67,7 @@ export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const { plan, loading: planLoading, can } = usePlan();
+  const { isAdmin } = usePlatformAdmin();
   // Hide the upgrade card for users already on Pro or higher.
   // Plans below Pro: free, starter. Don't render until plan is resolved
   // to avoid flashing the wrong CTA during the brief auth/workspace load.
