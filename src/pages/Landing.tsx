@@ -812,87 +812,105 @@ function PainPointSection() {
       onTouchEnd={() => { setTimeout(() => setPaused(false), 6000); }}
     >
       <div className="pb-container">
-        <SectionIntro
-          eyebrow={<><MessageSquareWarning className="h-3.5 w-3.5" /> The problem</>}
-          title="Your website intake is leaking money."
-          description="These are real industry numbers. Generic contact forms don't just lose information — they lose customers."
-          accent={
-            <StatAccent
-              icon={TrendingDown}
-              value="81%"
-              label="of website forms are abandoned before submit."
-              tone="amber"
-            />
-          }
-        />
+        <div className="mx-auto max-w-3xl text-center lg:mx-0 lg:grid lg:max-w-none lg:grid-cols-[1.15fr_0.85fr] lg:items-start lg:gap-12 lg:text-left">
+          {/* Left column — intro copy + carousel */}
+          <div className="lg:min-w-0">
+            <span className="pb-eyebrow">
+              <MessageSquareWarning className="h-3.5 w-3.5" /> The problem
+            </span>
+            <h2 className="pb-section-title mt-4 text-white text-4xl">
+              Your website intake is leaking money.
+            </h2>
+            <p className="pb-copy mx-auto mt-4 max-w-2xl text-base sm:text-lg lg:mx-0 lg:max-w-xl">
+              These are real industry numbers. Generic contact forms don't
+              just lose information — they lose customers.
+            </p>
 
-        {/* Carousel card */}
-        <div className="relative mx-auto mt-8 max-w-2xl sm:mt-10">
-          <div className="pb-card relative overflow-hidden p-6 sm:p-8" style={{ minHeight: 260 }}>
-            {/* Crossfade — all cards absolutely positioned, container sized by tallest */}
-            {painPoints.map((p, i) => {
-              const PIcon = p.icon;
-              const isActive = i === active;
-              return (
-                <div
-                  key={p.number}
-                  className={`absolute inset-0 p-6 sm:p-8 transition-opacity duration-500 ${isActive ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"}`}
-                  aria-hidden={!isActive}
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-[hsl(var(--pb-line-strong))] bg-[hsl(var(--pb-ink))] text-[hsl(var(--pb-lavender))]">
-                      <PIcon className="h-6 w-6" />
+            {/* Carousel card */}
+            <div className="relative mx-auto mt-8 max-w-2xl sm:mt-10 lg:mx-0">
+              <div className="pb-card relative overflow-hidden p-6 sm:p-8" style={{ minHeight: 260 }}>
+                {painPoints.map((p, i) => {
+                  const PIcon = p.icon;
+                  const isActive = i === active;
+                  return (
+                    <div
+                      key={p.number}
+                      className={`absolute inset-0 p-6 sm:p-8 transition-opacity duration-500 ${isActive ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"}`}
+                      aria-hidden={!isActive}
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-[hsl(var(--pb-line-strong))] bg-[hsl(var(--pb-ink))] text-[hsl(var(--pb-lavender))]">
+                          <PIcon className="h-6 w-6" />
+                        </div>
+                        <span className="text-5xl font-extrabold tracking-tight text-[hsl(var(--pb-lavender))] sm:text-6xl">
+                          {p.number}
+                        </span>
+                      </div>
+                      <p className="mt-4 text-lg font-bold tracking-tight text-white sm:text-xl">
+                        {p.label}
+                      </p>
+                      <p className="pb-copy mt-2 text-sm leading-relaxed sm:text-base">
+                        {p.context}
+                      </p>
+                      <a
+                        href={p.citation.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-white/40 transition hover:text-[hsl(var(--pb-lavender))] sm:text-sm"
+                      >
+                        Source: {p.citation.text} ↗
+                      </a>
                     </div>
-                    <span className="text-5xl font-extrabold tracking-tight text-[hsl(var(--pb-lavender))] sm:text-6xl">
-                      {p.number}
-                    </span>
-                  </div>
-                  <p className="mt-4 text-lg font-bold tracking-tight text-white sm:text-xl">
-                    {p.label}
-                  </p>
-                  <p className="pb-copy mt-2 text-sm leading-relaxed sm:text-base">
-                    {p.context}
-                  </p>
-                  <a
-                    href={p.citation.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-white/40 transition hover:text-[hsl(var(--pb-lavender))] sm:text-sm"
-                  >
-                    Source: {p.citation.text} ↗
-                  </a>
-                </div>
-              );
-            })}
+                  );
+                })}
+              </div>
+
+              <button
+                type="button"
+                aria-label="Previous stat"
+                onClick={() => go((active - 1 + painPoints.length) % painPoints.length)}
+                className="absolute left-0 top-0 h-full w-1/4 cursor-w-resize opacity-0"
+              />
+              <button
+                type="button"
+                aria-label="Next stat"
+                onClick={() => go((active + 1) % painPoints.length)}
+                className="absolute right-0 top-0 h-full w-1/4 cursor-e-resize opacity-0"
+              />
+
+              <div className="mt-4 flex items-center justify-center gap-2">
+                {painPoints.map((_, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    aria-label={`Stat ${i + 1}`}
+                    onClick={() => go(i)}
+                    className={`h-2 rounded-full transition-all duration-300 ${i === active ? "w-6 bg-[hsl(var(--pb-lavender))]" : "w-2 bg-white/20 hover:bg-white/40"}`}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
 
-          {/* Left/right tap zones */}
-          <button
-            type="button"
-            aria-label="Previous stat"
-            onClick={() => go((active - 1 + painPoints.length) % painPoints.length)}
-            className="absolute left-0 top-0 h-full w-1/4 cursor-w-resize opacity-0"
-          />
-          <button
-            type="button"
-            aria-label="Next stat"
-            onClick={() => go((active + 1) % painPoints.length)}
-            className="absolute right-0 top-0 h-full w-1/4 cursor-e-resize opacity-0"
-          />
-
-          {/* Dot indicators */}
-          <div className="mt-4 flex items-center justify-center gap-2">
-            {painPoints.map((_, i) => (
-              <button
-                key={i}
-                type="button"
-                aria-label={`Stat ${i + 1}`}
-                onClick={() => go(i)}
-                className={`h-2 rounded-full transition-all duration-300 ${i === active ? "w-6 bg-[hsl(var(--pb-lavender))]" : "w-2 bg-white/20 hover:bg-white/40"}`}
+          {/* Right column — 81% stat + ROI calculator */}
+          <div className="mt-8 flex flex-col items-center gap-6 lg:mt-0 lg:items-stretch">
+            <div className="flex justify-center lg:justify-end">
+              <StatAccent
+                icon={TrendingDown}
+                value="81%"
+                label="of website forms are abandoned before submit."
+                tone="amber"
               />
-            ))}
+            </div>
+            <RoiCalculatorSection />
           </div>
         </div>
+
+        <p className="pb-copy mx-auto mt-6 max-w-xl text-center text-sm italic sm:mt-8 sm:text-base">
+          PhotoBrief closes the gap between first contact and quote-ready
+          information.
+        </p>
+      </div>
 
         <p className="pb-copy mx-auto mt-6 max-w-xl text-center text-sm italic sm:mt-8 sm:text-base">
           PhotoBrief closes the gap between first contact and quote-ready
