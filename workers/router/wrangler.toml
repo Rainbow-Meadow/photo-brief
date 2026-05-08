@@ -25,3 +25,10 @@ LOVABLE_HOST = "photo-brief.lovable.app"
 [[kv_namespaces]]
 binding = "ROUTER_CONFIG"
 id = "07d039dcbb2e477d8c14cdfaaad3ddb3"
+
+# Per-workspace brand cache (logo URL, primary color, display name) for the
+# HTMLRewriter that injects branding into recipient capture pages /r/* on
+# first paint. Populated by a Supabase trigger on workspace updates.
+[[kv_namespaces]]
+binding = "WORKSPACE_BRAND"
+id = "7f8a41196e004fe8b46701998f77fae5"

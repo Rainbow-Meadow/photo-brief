@@ -3,6 +3,10 @@ main = "src/index.ts"
 compatibility_date = "2025-04-01"
 compatibility_flags = ["nodejs_compat"]
 
+# Smart Placement: co-locate with Supabase for lower latency on AI calls.
+[placement]
+mode = "smart"
+
 [[routes]]
 pattern = "assistant.photobrief.ai/*"
 zone_name = "photobrief.ai"
