@@ -407,7 +407,9 @@ export default function LandingPage() {
         {/* ━━ 2. PAIN POINTS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <PainPointSection />
 
-        {/* ━━ 3. INTERACTIVE DEMO ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+        {/* ━━ ROI CALCULATOR ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+        <RoiCalculatorSection />
+
         <section className="pb-section-tight">
           <div className="pb-container">
             <div className="mx-auto max-w-3xl text-center mb-6 sm:mb-8">
