@@ -1128,6 +1128,21 @@ function UseCaseChipRow({
  * Two-column section intro.
  * Mobile/tablet: stacked centered. Desktop (lg+): copy left, accent right.
  */
+/** Trade illustration accent — drops into a SectionIntro `accent` slot. */
+function TradeAccent({ src, alt }: { src: string; alt: string }) {
+  return (
+    <img
+      src={src}
+      alt={alt}
+      width={1024}
+      height={1024}
+      loading="lazy"
+      decoding="async"
+      className="w-full max-w-[420px] drop-shadow-[0_22px_36px_hsl(var(--pb-ink-soft)/0.28)]"
+    />
+  );
+}
+
 function SectionIntro({
   eyebrow,
   title,
