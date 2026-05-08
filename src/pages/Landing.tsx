@@ -1309,20 +1309,28 @@ function UseCaseSection() {
             />
           }
         />
-        {/* Horizontal scroll on mobile, grid on desktop */}
-        <div className="mt-8 flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory sm:mt-10 md:grid md:grid-cols-2 md:overflow-visible md:pb-0 lg:grid-cols-3 xl:grid-cols-5">
-          {useCases.map((item) => {
+        {/* Editorial index — numbered entries divided by hairlines */}
+        <div className="mt-8 flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory sm:mt-12 md:grid md:grid-cols-2 md:gap-x-10 md:gap-y-0 md:overflow-visible md:pb-0 lg:grid-cols-3 xl:grid-cols-5">
+          {useCases.map((item, index) => {
             const Icon = item.icon;
             return (
-              <article key={item.title} className="w-[78vw] max-w-[300px] shrink-0 snap-start pb-card p-4 sm:p-5 md:w-auto md:max-w-none md:min-w-0 md:p-6">
-                <Icon className="h-6 w-6 text-[hsl(var(--pb-lavender))] sm:h-7 sm:w-7" />
-                <span className="pb-stamp mt-4 inline-flex rounded-full px-3 py-1 sm:mt-5">
+              <article
+                key={item.title}
+                className="w-[78vw] max-w-[300px] shrink-0 snap-start border-t border-white/12 pt-5 md:w-auto md:max-w-none md:min-w-0 md:pt-6"
+              >
+                <div className="flex items-baseline justify-between gap-3">
+                  <span className="font-serif text-2xl leading-none text-[hsl(var(--pb-lavender))] sm:text-3xl">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <Icon className="h-5 w-5 text-white/40" />
+                </div>
+                <p className="mt-4 text-[10px] font-black uppercase tracking-[0.22em] text-white/50">
                   {item.stamp}
-                </span>
-                <h3 className="mt-3 text-lg font-semibold tracking-tight text-white sm:mt-4 sm:text-xl">
+                </p>
+                <h3 className="mt-2 font-serif text-xl italic leading-tight text-white sm:text-2xl">
                   {item.title}
                 </h3>
-                <p className="pb-copy mt-2 text-sm leading-6">{item.body}</p>
+                <p className="pb-copy mt-3 text-sm leading-6">{item.body}</p>
               </article>
             );
           })}
