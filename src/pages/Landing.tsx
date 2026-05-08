@@ -1677,47 +1677,54 @@ function FinalCta({ isFull }: { isFull: boolean }) {
   return (
     <section className="pb-section">
       <div className="pb-container">
-        <div className="mx-auto max-w-3xl text-center">
-          <BrandMark
-            variant="horizontal"
-            tone="light"
-            size={44}
-            className="justify-center opacity-90"
-          />
-          <p className="mt-6 text-[10px] font-black uppercase tracking-[0.28em] text-[hsl(var(--pb-lavender))]">
-            The last word
-          </p>
-          <h2 className="mt-3 font-serif text-3xl italic leading-[1.05] tracking-tight text-white sm:text-4xl md:text-5xl">
-            Get quote-ready leads,
-            <br className="hidden sm:block" />{" "}
-            <span className="not-italic font-semibold">not vague messages.</span>
-          </h2>
-          <p className="pb-copy mx-auto mt-5 max-w-2xl text-base leading-relaxed sm:text-lg">
-            Stop chasing customers for missing photos and context. Every inquiry
-            arrives as a complete, actionable lead packet — so your team can quote,
-            schedule, or approve without a single follow-up.
-          </p>
-          <div className="mt-8 flex flex-col items-center justify-center gap-2.5 sm:flex-row sm:gap-3">
-            <Button
-              size="xl"
-              variant="pb-primary"
-              onClick={() =>
-                document
-                  .getElementById("apply")
-                  ?.scrollIntoView({ behavior: "smooth" })
-              }
-            >
-              {isFull ? "Join the waitlist" : "Apply for the beta"}{" "}
-              <ArrowRight className="ml-1 h-4 w-4" />
-            </Button>
-            <Button asChild size="xl" variant="pb-secondary">
-              <NavLink to="/pricing">See plans</NavLink>
-            </Button>
+        <div className="border-t border-white/12 pt-12 md:pt-16">
+          <div className="grid gap-10 md:gap-14 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[hsl(var(--pb-lavender))]">
+                The last word
+              </p>
+              <h2 className="mt-5 font-serif text-4xl italic leading-[1.02] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-[4.25rem]">
+                Get quote-ready leads,{" "}
+                <span className="not-italic font-semibold">
+                  not vague messages.
+                </span>
+              </h2>
+              <BrandMark
+                variant="horizontal"
+                tone="light"
+                size={36}
+                className="mt-8 opacity-80"
+              />
+            </div>
+            <div className="lg:pl-10 lg:border-l lg:border-white/12">
+              <p className="pb-copy max-w-xl text-base leading-relaxed sm:text-lg">
+                Stop chasing customers for missing photos and context. Every
+                inquiry arrives as a complete, actionable lead packet — so your
+                team can quote, schedule, or approve without a single follow-up.
+              </p>
+              <div className="mt-8 flex flex-col items-start gap-2.5 sm:flex-row sm:gap-3">
+                <Button
+                  size="xl"
+                  variant="pb-primary"
+                  onClick={() =>
+                    document
+                      .getElementById("apply")
+                      ?.scrollIntoView({ behavior: "smooth" })
+                  }
+                >
+                  {isFull ? "Join the waitlist" : "Apply for the beta"}{" "}
+                  <ArrowRight className="ml-1 h-4 w-4" />
+                </Button>
+                <Button asChild size="xl" variant="pb-secondary">
+                  <NavLink to="/pricing">See plans</NavLink>
+                </Button>
+              </div>
+              <p className="mt-5 text-xs font-medium text-white/46 sm:text-sm">
+                Customers do not need an account or app to complete a
+                PhotoBrief intake.
+              </p>
+            </div>
           </div>
-          <p className="mt-5 text-xs font-medium text-white/46 sm:text-sm">
-            Customers do not need an account or app to complete a PhotoBrief intake.
-          </p>
-          <div className="mx-auto mt-10 h-px max-w-xs bg-gradient-to-r from-transparent via-white/15 to-transparent" />
         </div>
       </div>
     </section>
