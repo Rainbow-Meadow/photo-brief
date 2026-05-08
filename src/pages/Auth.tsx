@@ -12,6 +12,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
 import { trackEvent } from "@/lib/analytics";
 import { onboardingDebug, edgeFunctionErrorDebug, supabaseErrorDebug } from "@/lib/onboardingDebug";
+import { TurnstileWidget } from "@/components/security/TurnstileWidget";
+import { verifyTurnstileToken } from "@/config/turnstile";
 
 export default function AuthPage() {
   const [params] = useSearchParams();
