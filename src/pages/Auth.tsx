@@ -58,6 +58,12 @@ export default function AuthPage() {
     e.preventDefault();
     setSubmitting(true);
     try {
+      // Verify Turnstile before any auth call. If no token, the widget hasn't
+      // loaded — proceed (open) so preview/dev flows aren't blocked.
+      if (turnstileToken) {
+        const ok = await verifyTurnstileToken(turnstileToken);
+        if (!ok) throw new Error("Verification failed. Please try again.");
+      }
       if (mode === "signup") {
         trackEvent("signup_started", { method: "email" });
         const { error } = await supabase.auth.signUp({
