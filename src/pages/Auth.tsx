@@ -36,6 +36,7 @@ export default function AuthPage() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
   // Redirect once authenticated — honor ?next= so RequireAuth round-trips work.
   useEffect(() => {
