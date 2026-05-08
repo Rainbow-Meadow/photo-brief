@@ -340,6 +340,22 @@ export default function LandingPage() {
             <div className="grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
               {/* Left — copy */}
               <div className="text-left">
+                <BrandMark
+                  variant="horizontal"
+                  tone="dark"
+                  size={56}
+                  showTagline
+                  eager
+                  className="mb-6 sm:hidden"
+                />
+                <BrandMark
+                  variant="horizontal"
+                  tone="dark"
+                  size={76}
+                  showTagline
+                  eager
+                  className="mb-8 hidden sm:inline-flex"
+                />
                 <span className="pb-eyebrow">
                   <Sparkles className="h-3.5 w-3.5" /> Accepting beta applications
                 </span>
