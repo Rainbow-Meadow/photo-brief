@@ -342,7 +342,7 @@ export default function LandingPage() {
                   Replace weak website forms with guided visual intake.
                 </h1>
 
-                <p className="mx-auto mt-4 max-w-2xl text-muted-foreground lg:max-w-xl text-center text-[clamp(0.95rem,1.55vw,1.5rem)] leading-[1.5]">
+                <p className="mx-auto mt-4 max-w-2xl text-muted-foreground lg:max-w-xl text-center leading-[1.5] text-lg">
                   PhotoBrief scans your website, maps your services, and gives
                   customers a simple photo-guided path so your team gets
                   actionable lead packets instead of vague messages.
