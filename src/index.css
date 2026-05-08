@@ -664,7 +664,7 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
   .pb-photo-frame[data-status="warn"] { border-color: hsl(var(--pb-lavender) / 0.7); }
   .pb-route-chip { border: 1px solid hsl(var(--pb-line)); border-radius: 999px; background: hsl(var(--pb-ink) / 0.7); color: hsl(var(--pb-muted)); }
  .pb-hero-title { font-size: clamp(2.25rem, 6vw, 5.5rem); line-height: 1.12; letter-spacing: -0.04em; font-weight: 740; }
- .pb-section-title { font-size: clamp(1.65rem, 4vw, 3.5rem); line-height: 1.14; letter-spacing: -0.045em; font-weight: 700; }
+ .pb-section-title { font-family: ui-serif, Georgia, "Times New Roman", serif; font-style: italic; font-size: clamp(1.85rem, 4.4vw, 3.75rem); line-height: 1.04; letter-spacing: -0.025em; font-weight: 400; }
   .pb-heading { font-size: clamp(1.5rem, 3vw, 2.5rem); line-height: 1.1; letter-spacing: -0.035em; font-weight: 650; color: white; }
   .pb-subheading { font-size: clamp(1.125rem, 2vw, 1.5rem); line-height: 1.2; letter-spacing: -0.02em; font-weight: 600; color: white; }
   .pb-label { font-size: 0.875rem; font-weight: 600; color: white; }
