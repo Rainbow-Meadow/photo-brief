@@ -617,11 +617,11 @@ function RoiCalculatorSection() {
                     </p>
                     <p className="pb-copy mt-1 text-xs">{recoveredFromForm} from better intake · {recoveredFromSpeed} from faster response</p>
                   </div>
-                  <div className="rounded-[1.25rem] border border-[hsl(var(--pb-mint)/0.3)] bg-[hsl(var(--pb-mint)/0.06)] p-4">
-                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-[hsl(var(--pb-mint))]">
+                  <div className="rounded-[1.25rem] border border-[hsl(var(--pb-violet)/0.3)] bg-[hsl(var(--pb-violet)/0.06)] p-4">
+                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-[hsl(var(--pb-violet))]">
                       <DollarSign className="h-3.5 w-3.5" /> Estimated annual revenue recovered
                     </div>
-                    <p className="mt-2 text-3xl font-black tracking-tight text-[hsl(var(--pb-mint))] sm:text-4xl">{formatDollars(annualRevenue)}</p>
+                    <p className="mt-2 text-3xl font-black tracking-tight text-[hsl(var(--pb-violet))] sm:text-4xl">{formatDollars(annualRevenue)}</p>
                     <p className="pb-copy mt-1 text-xs">{formatDollars(monthlyRevenue)}/mo × 12 · based on {totalRecovered} recovered leads at {`$${avgJobValue.toLocaleString()}`} avg job</p>
                   </div>
                 </div>
@@ -781,7 +781,7 @@ function PainPointSection() {
                       aria-hidden={!isActive}
                     >
                       <div className="flex items-center gap-4">
-                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-[hsl(var(--pb-line-strong))] bg-[hsl(var(--pb-ink))] text-[hsl(var(--pb-lavender))]">
+                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-[hsl(var(--pb-ink-soft)/0.18)] bg-[hsl(var(--pb-ink-soft)/0.06)] text-[hsl(var(--pb-lavender))]">
                           <PIcon className="h-6 w-6" />
                         </div>
                         <span className="text-5xl font-extrabold tracking-tight text-[hsl(var(--pb-lavender))] sm:text-6xl">
@@ -895,7 +895,7 @@ function BetaBridgeSection() {
       <div className="pb-container">
         <SectionIntro
           eyebrow={<><Users className="h-3.5 w-3.5" /> Early access</>}
-          title={<>We're building this <span className="bg-gradient-to-r from-[hsl(var(--pb-lavender))] to-[hsl(var(--pb-mint))] bg-clip-text text-transparent">with you</span>, not just for you.</>}
+          title={<>We're building this <span className="bg-gradient-to-r from-[hsl(var(--pb-lavender))] to-[hsl(var(--pb-violet))] bg-clip-text text-transparent">with you</span>, not just for you.</>}
           description="Visual intake is workflow-specific — every trade, every service type needs something slightly different. The only way to get it right is to build alongside real businesses running real jobs. That's why this is a hands-on beta, not a waitlist."
           accent={<BetaSeatTracker className="w-full max-w-sm" />}
         />
@@ -974,13 +974,13 @@ function StatAccent({
 }) {
   const toneClass =
     tone === "mint"
-      ? "text-[hsl(var(--pb-mint))]"
+      ? "text-[hsl(var(--pb-violet))]"
       : tone === "amber"
         ? "text-amber-300"
         : "text-[hsl(var(--pb-lavender))]";
   const borderClass =
     tone === "mint"
-      ? "border-[hsl(var(--pb-mint)/0.5)]"
+      ? "border-[hsl(var(--pb-violet)/0.5)]"
       : tone === "amber"
         ? "border-amber-300/50"
         : "border-[hsl(var(--pb-lavender)/0.5)]";
@@ -1011,7 +1011,7 @@ function SectionNav({ tone = "dark" }: { tone?: "dark" | "paper" }) {
       className={
         isPaper
           ? "sticky top-[4.5rem] z-30 border-y border-[hsl(var(--pb-ink-soft)/0.10)] bg-[hsl(var(--pb-cream)/0.85)] backdrop-blur-xl"
-          : "sticky top-[4.5rem] z-30 border-y border-white/10 bg-[hsl(var(--pb-night)/0.82)] backdrop-blur-xl"
+          : "sticky top-[4.5rem] z-30 border-y border-white/10 bg-[hsl(var(--pb-cream)/0.86)] backdrop-blur-xl"
       }
     >
       <div className="pb-container flex justify-start gap-1.5 overflow-x-auto py-2 sm:gap-2 sm:py-3 sm:justify-center">
@@ -1055,7 +1055,7 @@ function WorkflowSection() {
             </p>
           </div>
           <div className="relative">
-            <div className="absolute left-6 top-8 hidden h-[calc(100%-4rem)] w-px bg-gradient-to-b from-[hsl(var(--pb-lavender))] via-[hsl(var(--pb-mint))] to-transparent md:block" />
+            <div className="absolute left-6 top-8 hidden h-[calc(100%-4rem)] w-px bg-gradient-to-b from-[hsl(var(--pb-lavender))] via-[hsl(var(--pb-violet))] to-transparent md:block" />
             <div className="grid gap-3 sm:gap-4">
               {workflowSteps.map((step, index) => {
                 const Icon = step.icon;
@@ -1064,7 +1064,7 @@ function WorkflowSection() {
                     key={step.title}
                     className="pb-card relative grid gap-3 p-4 sm:gap-4 sm:p-5 md:grid-cols-[4rem_1fr] md:p-6"
                   >
-                    <div className="relative z-10 flex h-12 w-12 items-center justify-center rounded-2xl border border-[hsl(var(--pb-line-strong))] bg-[hsl(var(--pb-ink))] text-[hsl(var(--pb-lavender))] sm:h-14 sm:w-14">
+                    <div className="relative z-10 flex h-12 w-12 items-center justify-center rounded-2xl border border-[hsl(var(--pb-ink-soft)/0.18)] bg-[hsl(var(--pb-ink-soft)/0.06)] text-[hsl(var(--pb-lavender))] sm:h-14 sm:w-14">
                       <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
                     </div>
                     <div>
@@ -1150,7 +1150,7 @@ function ComparisonSection({
               <span
                 className={`text-[10px] font-black uppercase tracking-[0.22em] ${
                   isClean
-                    ? "text-[hsl(var(--pb-mint-deep,var(--pb-mint)))]"
+                    ? "text-[hsl(var(--pb-violet))]"
                     : "text-[hsl(var(--pb-violet))]"
                 }`}
               >
@@ -1166,7 +1166,7 @@ function ComparisonSection({
                   <span
                     className={`mt-0.5 font-serif text-2xl leading-none ${
                       isClean
-                        ? "text-[hsl(var(--pb-mint-deep,var(--pb-mint)))]"
+                        ? "text-[hsl(var(--pb-violet))]"
                         : "text-[hsl(var(--pb-violet))]"
                     }`}
                   >
@@ -1401,7 +1401,7 @@ function FreeProSpotlight({ isFull }: { isFull: boolean }) {
           </p>
           <h2 className="mt-3 font-serif text-2xl italic leading-[1.1] tracking-tight text-white sm:text-3xl md:text-4xl">
             2 partners get{" "}
-            <span className="not-italic font-semibold bg-gradient-to-r from-[hsl(var(--pb-lavender))] to-[hsl(var(--pb-mint))] bg-clip-text text-transparent">
+            <span className="not-italic font-semibold bg-gradient-to-r from-[hsl(var(--pb-lavender))] to-[hsl(var(--pb-violet))] bg-clip-text text-transparent">
               Free Pro for Life
             </span>
           </h2>
@@ -1417,7 +1417,7 @@ function FreeProSpotlight({ isFull }: { isFull: boolean }) {
               Quality over quantity
             </span>
             <span className="flex items-center gap-1.5">
-              <Gift className="h-3.5 w-3.5 text-[hsl(var(--pb-mint))]" />
+              <Gift className="h-3.5 w-3.5 text-[hsl(var(--pb-violet))]" />
               All {BETA_TOTAL_PARTNERS} partners earn rewards
             </span>
           </div>
@@ -1582,7 +1582,7 @@ function FoundingPartnerSection({
                             {tier.label}
                           </span>
                         </div>
-                        <span className="text-xs font-bold text-[hsl(var(--pb-mint))] sm:text-sm">
+                        <span className="text-xs font-bold text-[hsl(var(--pb-violet))] sm:text-sm">
                           {tier.shortDescription}
                         </span>
                       </div>
@@ -1599,7 +1599,7 @@ function FoundingPartnerSection({
                         key={criterion}
                         className="flex items-start gap-2 text-xs text-white/70 sm:text-sm"
                       >
-                        <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[hsl(var(--pb-mint)/0.7)]" />
+                        <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[hsl(var(--pb-violet)/0.7)]" />
                         <span>{criterion}</span>
                       </li>
                     ))}
@@ -1654,7 +1654,7 @@ function FoundingPartnerSection({
                     </div>
                   ))}
                 </div>
-                <div className="mt-6 border-l-2 border-[hsl(var(--pb-mint)/0.4)] pl-4">
+                <div className="mt-6 border-l-2 border-[hsl(var(--pb-violet)/0.4)] pl-4">
                   <p className="font-serif text-base italic text-white/90 sm:text-lg">
                     Every partner earns a reward tier. The rubric above determines who
                     lands in the top&nbsp;2.
@@ -1739,7 +1739,7 @@ function BenefitList({ title, items }: { title: string; items: string[] }) {
             key={item}
             className="flex gap-3 text-sm leading-6 text-white/76"
           >
-            <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-[hsl(var(--pb-mint))]" />
+            <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-[hsl(var(--pb-violet))]" />
             <span>{item}</span>
           </li>
         ))}
