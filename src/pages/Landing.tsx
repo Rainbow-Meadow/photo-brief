@@ -1424,7 +1424,7 @@ function CleanPacketVisual() {
   );
 }
 
-function UseCaseSection() {
+function UseCaseSection({ activeStamp }: { activeStamp?: string | null }) {
   return (
     <section id="use-cases" className="pb-section">
       <div className="pb-container">
@@ -1445,9 +1445,14 @@ function UseCaseSection() {
         <div className="mt-8 flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory sm:mt-12 md:grid md:grid-cols-2 md:gap-x-10 md:gap-y-0 md:overflow-visible md:pb-0 lg:grid-cols-3 xl:grid-cols-5">
           {useCases.map((item, index) => {
             const Icon = item.icon;
+            const isActive = activeStamp === item.stamp;
+            const isDim = activeStamp != null && !isActive;
             return (
               <article
                 key={item.title}
+                data-usecase-card
+                data-active={isActive || undefined}
+                data-dim={isDim || undefined}
                 className="w-[78vw] max-w-[300px] shrink-0 snap-start border-t border-[hsl(var(--pb-ink-soft)/0.18)] pt-5 md:w-auto md:max-w-none md:min-w-0 md:pt-6"
               >
                 <div className="flex items-baseline justify-between gap-3">
