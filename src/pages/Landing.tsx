@@ -1064,7 +1064,7 @@ function WorkflowSection() {
             <span className="pb-eyebrow">
               <Route className="h-3.5 w-3.5" /> How it works
             </span>
-            <h2 className="pb-section-title mt-4 max-w-xl text-white">
+            <h2 className="pb-section-title mt-4 max-w-xl text-white text-4xl">
               From website visit to actionable lead packet.
             </h2>
             <p className="pb-copy mt-4 max-w-lg text-base sm:text-lg">
