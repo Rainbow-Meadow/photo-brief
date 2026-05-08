@@ -1,4 +1,5 @@
 import { lazy, Suspense } from "react";
+import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -15,10 +16,10 @@ import { RequireAuth } from "@/components/auth/RequireAuth";
 import { RouteTracker } from "@/components/analytics/RouteTracker";
 import { FeatureGate } from "@/components/shared/FeatureGate";
 
-// Eager: marketing + auth + recipient capture. These are the entry points
+// Eager: auth + recipient capture. These are the entry points
 // for unauthenticated visitors and the public recipient flow, so they stay
 // in the main bundle to avoid a Suspense flash on first paint.
-import LandingPage from "@/pages/Landing";
+const LandingPage = lazy(() => import("@/pages/Landing"));
 import AuthPage from "@/pages/Auth";
 import PricingPage from "@/pages/Pricing";
 import ForAiAgentsPage from "@/pages/ForAiAgents";
@@ -73,7 +74,16 @@ const AdminBetaPage = lazy(() => import("@/pages/AdminBeta"));
 const AdminWebsiteIntelligencePage = lazy(() => import("@/pages/AdminWebsiteIntelligence"));
 const SupportPage = lazy(() => import("@/features/support/pages/SupportPage"));
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 30_000,
+      gcTime: 5 * 60_000,
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -86,7 +96,8 @@ const App = () => (
         <CurrentWorkspaceProvider>
           <RouteTracker />
           <InviteAcceptanceGuard>
-          <Suspense fallback={null}>
+          <ErrorBoundary>
+          <Suspense fallback={<div className="flex min-h-screen items-center justify-center"><div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" /></div>}>
           <Routes>
           {/* Marketing + auth */}
           <Route element={<MarketingLayout />}>
@@ -231,6 +242,7 @@ const App = () => (
           <Route path="*" element={<NotFound />} />
           </Routes>
           </Suspense>
+          </ErrorBoundary>
           </InviteAcceptanceGuard>
         </CurrentWorkspaceProvider>
         </AuthProvider>
