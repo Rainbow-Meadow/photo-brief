@@ -387,112 +387,108 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ━━ PAPER BLOCK — Problem → Solution (editorial) ━━━━━ */}
-        <div className="pb-paper-surface pb-on-paper relative isolate overflow-hidden">
-          {/* ━━ TICKER 1 — Industry signals ━━━━━━━━━━━━━━━━━━━ */}
-          <TickerBar
-            tone="paper"
-            items={[
-              "81% of forms abandoned before submit",
-              "78% buy from whoever responds first",
-              "4.2 hr avg lead response time",
-              "60% of estimates never followed up",
-              "5+ follow-ups to close — most stop at 1",
-            ]}
-          />
+        {/* ━━ TICKER 1 — Industry signals ━━━━━━━━━━━━━━━━━━━ */}
+        <TickerBar
+          tone="paper"
+          items={[
+            "81% of forms abandoned before submit",
+            "78% buy from whoever responds first",
+            "4.2 hr avg lead response time",
+            "60% of estimates never followed up",
+            "5+ follow-ups to close — most stop at 1",
+          ]}
+        />
 
-          {/* ━━ 2. PAIN POINTS (carousel + ROI) ━━━━━━━━━━━━━━━ */}
+        {/* ━━ 2. PAIN POINTS + ROI — ivory alt ━━━━━━━━━━━━━━ */}
+        <div className="pb-section-alt">
           <PainPointSection />
+        </div>
 
-          {/* ── Chapter break: Problem → Solution ── */}
-          <div className="pb-container" aria-hidden>
-            <div className="mx-auto h-px max-w-lg bg-gradient-to-r from-transparent via-[hsl(var(--pb-ink-soft)/0.18)] to-transparent" />
+        {/* ── Chapter break: Problem → Solution ── */}
+        <ChapterDivider tone="paper" />
+
+        <section className="pb-section">
+          <div className="pb-container">
+            <SectionIntro
+              className="mb-6 sm:mb-8"
+              eyebrow={<><Sparkles className="h-3.5 w-3.5" /> See the difference</>}
+              title="Vague website form becomes an actionable lead packet."
+              description={`Watch how a generic "tell us about your project" message turns into a structured packet with the right photos, notes, and context — ready for your team to act on.`}
+              accent={
+                <StatAccent
+                  icon={Sparkles}
+                  value="12 min"
+                  label="Saved per lead — fewer follow-up calls, less back-and-forth."
+                  tone="lavender"
+                />
+              }
+            />
+            <Suspense fallback={<div className="min-h-[400px]" />}>
+              <InteractiveHeroBriefAssembly />
+            </Suspense>
           </div>
+        </section>
 
-          <section className="pb-section">
-            <div className="pb-container">
-              <SectionIntro
-                className="mb-6 sm:mb-8"
-                eyebrow={<><Sparkles className="h-3.5 w-3.5" /> See the difference</>}
-                title="Vague website form becomes an actionable lead packet."
-                description={`Watch how a generic "tell us about your project" message turns into a structured packet with the right photos, notes, and context — ready for your team to act on.`}
-                accent={
-                  <StatAccent
-                    icon={Sparkles}
-                    value="12 min"
-                    label="Saved per lead — fewer follow-up calls, less back-and-forth."
-                    tone="lavender"
-                  />
-                }
-              />
-          <Suspense fallback={<div className="min-h-[400px]" />}>
-                <InteractiveHeroBriefAssembly />
-              </Suspense>
-            </div>
-          </section>
+        {/* ━━ 4. STICKY SECTION NAV ━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+        <SectionNav tone="paper" />
 
-          {/* ━━ 4. STICKY SECTION NAV ━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-          <SectionNav tone="paper" />
+        {/* ━━ 5. HOW IT WORKS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+        <WorkflowSection />
 
-          {/* ━━ 5. HOW IT WORKS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-          <WorkflowSection />
-
-          {/* ━━ 6. BEFORE / AFTER ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+        {/* ━━ 6. BEFORE / AFTER — ivory alt ━━━━━━━━━━━━━━━━━━ */}
+        <div className="pb-section-alt">
           <ComparisonSection
             mode={comparisonMode}
             onModeChange={setComparisonMode}
           />
-
-          {/* ━━ TICKER 2 — Product signals ━━━━━━━━━━━━━━━━━━━━━━ */}
-          <TickerBar tone="paper" items={["Website scan included", "Hosted link or embed", "No app required for customers", "AI photo quality checks", "Lead packets — not form spam"]} direction="right" />
-
-          {/* ── Chapter break: Solution → Fit ── */}
-          <ChapterDivider tone="paper" />
-
-          {/* ━━ 7. USE CASES ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-          <UseCaseSection />
-
-          {/* Soft fade where paper meets the dark sections below */}
-          <div className="pb-paper-fade-bottom pointer-events-none h-24 w-full" aria-hidden />
         </div>
 
-        {/* ━━ 8. WEBSITE INTELLIGENCE ━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-        <WebsiteIntelligenceSection />
+        {/* ━━ TICKER 2 — Product signals ━━━━━━━━━━━━━━━━━━━━━━ */}
+        <TickerBar tone="paper" items={["Website scan included", "Hosted link or embed", "No app required for customers", "AI photo quality checks", "Lead packets — not form spam"]} direction="right" />
 
-        {/* ── Major chapter break: Product → Beta ── */}
-        <div className="pb-container py-6 sm:py-10" aria-hidden>
-          <div className="mx-auto h-px max-w-2xl bg-gradient-to-r from-transparent via-[hsl(var(--pb-lavender)/0.3)] to-transparent" />
-        </div>
+        {/* ── Chapter break: Solution → Fit ── */}
+        <ChapterDivider tone="paper" />
 
-        {/* ━━ BRIDGE + TRUST POINTS — alt panel ━━━━━━━━━━━━━━━ */}
+        {/* ━━ 7. USE CASES ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+        <UseCaseSection />
+
+        {/* ━━ 8. WEBSITE INTELLIGENCE — ivory alt ━━━━━━━━━━━━━ */}
         <div className="pb-section-alt">
-          <BetaBridgeSection />
-
-          <section className="pb-section-tight">
-            <div className="pb-container">
-              <div className="mx-auto grid max-w-3xl gap-6 sm:grid-cols-3 sm:gap-x-10 sm:gap-y-0">
-                {trustPoints.map(({ icon: Icon, title, desc }) => (
-                  <div key={title} className="border-t border-white/12 pt-4 text-left sm:pt-5">
-                    <Icon className="h-5 w-5 text-[hsl(var(--pb-lavender))]" />
-                    <p className="mt-3 font-serif text-base italic text-white sm:text-lg">
-                      {title}
-                    </p>
-                    <p className="pb-copy mt-1 text-xs leading-5">{desc}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
+          <WebsiteIntelligenceSection />
         </div>
 
-        {/* ━━ FOUNDING BETA REWARDS ━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-        <FreeProSpotlight isFull={isFull} />
+        {/* ── Chapter break: Product → Beta ── */}
+        <ChapterDivider tone="paper" />
+
+        {/* ━━ BRIDGE + TRUST POINTS ━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+        <BetaBridgeSection />
+
+        <section className="pb-section-tight">
+          <div className="pb-container">
+            <div className="mx-auto grid max-w-3xl gap-6 sm:grid-cols-3 sm:gap-x-10 sm:gap-y-0">
+              {trustPoints.map(({ icon: Icon, title, desc }) => (
+                <div key={title} className="border-t border-[hsl(var(--pb-ink-soft)/0.18)] pt-4 text-left sm:pt-5">
+                  <Icon className="h-5 w-5 text-[hsl(var(--pb-violet))]" />
+                  <p className="mt-3 font-serif text-base italic text-[hsl(var(--pb-ink))] sm:text-lg">
+                    {title}
+                  </p>
+                  <p className="pb-copy mt-1 text-xs leading-5">{desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ━━ FOUNDING BETA REWARDS — ivory alt emphasis ━━━━━ */}
+        <div className="pb-section-alt">
+          <FreeProSpotlight isFull={isFull} />
+        </div>
         <FoundingPartnerSection utm={utm} isFull={isFull} />
 
         {/* ━━ TICKER 3 — Beta social proof ━━━━━━━━━━━━━━━━━━━ */}
-        <TickerBar items={[`${BETA_TOTAL_PARTNERS} founding partner seats`, "Free Pro for Life reward", `${BETA_DURATION_DAYS}-day beta`, "Concierge setup included", "Every partner earns a reward"]} />
+        <TickerBar tone="paper" items={[`${BETA_TOTAL_PARTNERS} founding partner seats`, "Free Pro for Life reward", `${BETA_DURATION_DAYS}-day beta`, "Concierge setup included", "Every partner earns a reward"]} />
 
-        {/* ━━ AGENT-POWERED APPLICATION — alt panel ━━━━━━━━━━ */}
+        {/* ━━ AGENT-POWERED APPLICATION — ivory alt ━━━━━━━━━━ */}
         <section id="apply" className="pb-section pb-section-alt scroll-mt-8">
           <div className="pb-container">
             <BetaOnboardingAgentExperience
