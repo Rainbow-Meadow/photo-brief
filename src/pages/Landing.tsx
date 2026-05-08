@@ -1154,8 +1154,8 @@ function UseCaseSection() {
           </h2>
           <p className="pb-copy mt-4 text-base sm:text-lg">
             Anywhere a missing photo slows the next step — quoting, scheduling,
-            approving, reviewing, or documenting — PhotoBrief turns intake into
-            actionable lead packets.
+            approving, or documenting — PhotoBrief structures the intake so
+            your team has everything on the first pass.
           </p>
         </div>
         {/* Horizontal scroll on mobile, grid on desktop */}
