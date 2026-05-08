@@ -13,6 +13,7 @@ import {
   DollarSign,
   Eye,
   FileCheck2,
+  FileText,
   FormInput,
   Gift,
   Globe2,
@@ -940,36 +941,30 @@ function FoundingPartnerBetaSection({ isFull }: { isFull: boolean }) {
   return (
     <section id="beta-program" className="pb-section">
       <div className="pb-container">
-        <div className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:gap-14">
-          {/* LEFT — narrative */}
-          <div className="lg:pr-2">
-            <img
-              src={foundingBadgeIllo}
-              alt="Hand-drawn illustration of three numbered ribbon badges pinned to a corkboard"
-              width={1024}
-              height={1024}
-              loading="lazy"
-              decoding="async"
-              className="mb-6 w-full max-w-[260px] drop-shadow-[0_22px_36px_hsl(var(--pb-ink-soft)/0.28)]"
-            />
-            <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[hsl(var(--pb-lavender))]">
-              <Stamp className="-mt-0.5 mr-1 inline h-3 w-3" /> Accepting applications
-            </p>
-            <h2 className="mt-4 font-serif text-3xl italic leading-[1.05] tracking-tight text-white sm:text-4xl lg:text-5xl">
+        <SectionIntro
+          eyebrow={<><Stamp className="h-3.5 w-3.5" /> Accepting applications</>}
+          title={
+            <>
               Built with real workflows,{" "}
               <span className="not-italic font-semibold bg-gradient-to-r from-[hsl(var(--pb-lavender))] to-[hsl(var(--pb-violet))] bg-clip-text text-transparent">
                 with you.
               </span>
-            </h2>
-            <p className="pb-copy mt-5 text-base leading-relaxed sm:text-lg">
-              Visual intake is workflow-specific — every trade, every service type
-              needs something slightly different. The only way to get it right is
-              to build alongside real businesses running real jobs. That's why
-              this is a hands-on beta, not a waitlist.
-            </p>
+            </>
+          }
+          description="Visual intake is workflow-specific — every trade, every service type needs something slightly different. The only way to get it right is to build alongside real businesses running real jobs. That's why this is a hands-on beta, not a waitlist."
+          accent={
+            <TradeAccent
+              src={foundingBadgeIllo}
+              alt="Hand-drawn illustration of three numbered ribbon badges pinned to a corkboard"
+            />
+          }
+        />
 
+        <div className="mt-10 grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:gap-14 sm:mt-14">
+          {/* LEFT — narrative detail */}
+          <div className="lg:pr-2">
             {/* Seat tracker */}
-            <div className="mt-7">
+            <div>
               <BetaSeatTracker className="w-full max-w-sm" />
             </div>
 
@@ -1608,31 +1603,19 @@ function RewardTiersSection() {
   return (
     <section className="pb-section-tight">
       <div className="pb-container">
-        <div className="mx-auto max-w-3xl">
-          <div className="text-center">
-            <img
+        <SectionIntro
+          eyebrow={<><Gift className="h-3.5 w-3.5" /> Reward tiers</>}
+          title="Every partner earns something."
+          description="Your tier is based on the quality of your feedback — not just how much you use the product. We track engagement internally; no self-reporting required."
+          accent={
+            <TradeAccent
               src={rewardRibbonsIllo}
               alt="Hand-drawn illustration of layered award rosette ribbons"
-              width={1024}
-              height={1024}
-              loading="lazy"
-              decoding="async"
-              className="mx-auto mb-5 w-full max-w-[220px] drop-shadow-[0_22px_36px_hsl(var(--pb-ink-soft)/0.28)]"
             />
-            <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[hsl(var(--pb-lavender))]">
-              <Gift className="-mt-0.5 mr-1 inline h-3 w-3" /> Reward tiers
-            </p>
-            <h2 className="mt-3 font-serif text-2xl italic leading-[1.1] tracking-tight text-white sm:text-3xl">
-              Every partner earns something.
-            </h2>
-            <p className="pb-copy mx-auto mt-3 max-w-xl text-sm leading-relaxed sm:text-base">
-              Your tier is based on the quality of your feedback — not just how
-              much you use the product. We track engagement internally; no
-              self-reporting required.
-            </p>
-          </div>
-
-          <div className="mt-8 grid border-t border-[hsl(var(--pb-ink-soft)/0.18)]">
+          }
+        />
+        <div className="mx-auto mt-10 max-w-3xl sm:mt-14">
+          <div className="grid border-t border-[hsl(var(--pb-ink-soft)/0.18)]">
             {REWARD_TIERS.map((tier) => {
               const isTopTier = tier.duration === "free-pro";
               return (
@@ -1697,22 +1680,19 @@ function BetaDetailsAccordion({ value, onValueChange }: BetaDetailsAccordionProp
   return (
     <section className="pb-section-tight">
       <div className="pb-container">
-        <div className="mx-auto max-w-3xl">
-          <div className="mb-2 flex justify-center">
-            <img
+        <SectionIntro
+          eyebrow={<><FileText className="h-3.5 w-3.5" /> The fine print</>}
+          title="Everything in writing."
+          description="How the program runs, what we ask of partners, and exactly how rewards are decided."
+          accent={
+            <TradeAccent
               src={betaNotebookIllo}
               alt="Hand-drawn illustration of an open notebook with a magnifying glass — the fine print"
-              width={1024}
-              height={1024}
-              loading="lazy"
-              decoding="async"
-              className="w-full max-w-[200px] drop-shadow-[0_18px_30px_hsl(var(--pb-ink-soft)/0.28)]"
             />
-          </div>
-          <div className="flex items-center justify-between gap-4 border-y border-[hsl(var(--pb-ink-soft)/0.18)] py-4">
-            <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[hsl(var(--pb-violet))]">
-              The fine print
-            </p>
+          }
+        />
+        <div className="mx-auto mt-10 max-w-3xl sm:mt-14">
+          <div className="flex items-center justify-end border-b border-[hsl(var(--pb-ink-soft)/0.18)] py-3">
             <button
               type="button"
               className="pb-master-toggle"

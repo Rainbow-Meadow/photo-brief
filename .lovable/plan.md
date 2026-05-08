@@ -1,43 +1,34 @@
 ## Goal
 
-Give every major content section on the landing page its own anchor illustration. Five sections still need one. New illustrations are **object/scene-based, no people, no professions** — they extend the existing hand-drawn ink + lavender/ochre watercolor language already used by the hero and trade illustrations.
+Bring the three beta sections in line with the editorial 2-column rhythm used by Pain Point, Workflow, Comparison, Use Cases and Website Intelligence — eyebrow + title + description on the left, illustration as a right-column accent (`SectionIntro` with `accent`).
 
-## Sections still missing an anchor (5)
+Today these three sections each use ad-hoc layouts and place the illustration inline (small, off-grid). This makes the beta zone feel disconnected from the rest of the page.
 
-| # | Section | Concept | Filename |
-|---|---|---|---|
-| 1 | "See the difference" (InteractiveHeroBriefAssembly intro) | A crumpled scrap of paper transforming into a neatly clipped photo packet — visualizes vague → structured. | `transformation-illustration.png` |
-| 2 | Founding Partner Beta | A small corkboard with three numbered ribbon badges ("001 / 002 / 003") and a brass pin — captures the limited-seat founding cohort feel. | `founding-badge-illustration.png` |
-| 3 | Reward Tiers | A stack of layered rosette ribbons / award medals with paper tags fanned out — speaks to escalating rewards. | `reward-ribbons-illustration.png` |
-| 4 | Beta Details (accordion) | An open lined notebook with handwritten clauses, a paperclip, and a small magnifying glass resting on the page — reads as "the fine print". | `beta-notebook-illustration.png` |
-| 5 | Final CTA | A raised mailbox flag with a couple of envelopes tucked inside, ribbon tied — invites the next move without depicting a person. | `mailbox-flag-illustration.png` |
+## Current vs target
 
-All assets land in `src/assets/scenes/` (new folder) so they're cleanly separated from `src/assets/trades/`.
+| Section | Today | Target |
+|---|---|---|
+| Founding Partner Beta | Eyebrow + title + body stacked above a 2-col `narrative / apply agent` grid; badge illustration tucked top-left of narrative at 260px | Lift eyebrow + title + lead paragraph into a `SectionIntro` with `foundingBadgeIllo` as `accent`. Keep the existing narrative-detail + apply-agent grid below it as a separate row. |
+| Reward Tiers | Centered `max-w-3xl` block; ribbons illustration centered above eyebrow at 220px | Convert the intro (eyebrow + title + description) into a `SectionIntro` with `rewardRibbonsIllo` as `accent`. Keep the tier list and "what drives placement" block below at the same `max-w-3xl` width. |
+| Beta Details Accordion | Centered `max-w-3xl`; notebook centered above the "Fine print / Show all details" header strip at 200px | Convert the header strip into a `SectionIntro` (eyebrow = "The fine print", small title like "Everything in writing.", short one-liner description) with `betaNotebookIllo` as `accent`. Move the master "Show all details" toggle to a small row directly above the accordion (below the intro), preserving the divider rule. |
 
-## Visual spec (shared)
+## Visual contract (matches the rest of the page)
 
-- 1024×1024 PNG, transparent background, "on a clean white background" prompt.
-- Loose ink line + watercolor wash; palette: lavender `#8f63ff` / `#b98cff`, ochre/cream accents, soft graphite shadows. Same painterly weight as the existing hero/trade illustrations so they read as a family.
-- No human figures, no logos, no readable text inside the art (numerals like "001" are fine as scribbled marks).
-- Composition centered with breathing room — they'll be rendered at ~`max-w-[420px]` with a `drop-shadow` consistent with `TradeAccent`.
+- Use the existing `SectionIntro` component with `accent={<TradeAccent src={...} alt="..." />}`.
+- On `lg`: 1.15fr / 0.85fr split, left-aligned text, illustration right; on mobile, stacks centered. (Already what `SectionIntro` provides.)
+- Illustrations render at `max-w-[420px]` via `TradeAccent` — same scale as the upstream sections.
+- Remove the small inline `<img>` blocks added to these three sections in the prior pass; they're replaced by the `SectionIntro` accent so the illustration appears once, properly sized.
 
-## Placement (`src/pages/Landing.tsx`)
+## Copy
 
-1. **"See the difference"** — replace the `StatAccent` in the existing `SectionIntro` with `<TradeAccent src={transformationIllo} … />`.
-2. **Founding Partner Beta** — find the section's `SectionIntro` (or top heading) and pass the badge illustration as `accent`. If it doesn't use `SectionIntro`, drop a `TradeAccent`-shaped block beside the heading using the same 1.15fr / 0.85fr split.
-3. **Reward Tiers** — same treatment with the rosette illustration.
-4. **Beta Details Accordion** — small inline anchor (max-w 280–320px) next to the accordion header so it doesn't overpower the disclosure UI.
-5. **Final CTA** — anchor the mailbox-flag illustration to the side of the CTA copy on `lg`, stacking above on mobile.
-
-`TradeAccent` is reused as-is — no new helper. Imports added at the top of `Landing.tsx`.
+No new copy needed — we'll reuse what's already on each section. Only addition: a single-sentence description for the Beta Details intro since today it's just an eyebrow strip. Suggested: "How the program runs, what we ask of partners, and exactly how rewards are decided." (Open to other phrasing — flag if you want different wording.)
 
 ## Out of scope
 
-- No copy changes, no new sections, no layout overhauls beyond placing the accent.
-- No edits to existing trade illustrations or the hero.
-- No backend, no SEO/meta changes.
+- No changes to the apply agent, the seat tracker, the reward callout card, the tier list, or the accordion content/items.
+- No new illustrations; no asset edits; no SEO/meta changes; no backend.
+- The beta-zone background tinting (`pb-beta-zone`, `pb-section-alt`) stays as-is.
 
 ## Files
 
-- New: 5 PNGs under `src/assets/scenes/`.
-- Edited: `src/pages/Landing.tsx` (imports + 5 accent placements).
+- Edited: `src/pages/Landing.tsx` only (three section refactors + remove three small inline `<img>` blocks added previously).
