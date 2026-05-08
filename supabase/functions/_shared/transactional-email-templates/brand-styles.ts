@@ -3,26 +3,27 @@ import * as React from 'npm:react@18.3.1'
 import { Container, Hr, Img, Section, Text } from 'npm:@react-email/components@0.0.22'
 
 // ─── PhotoBrief.ai Email Brand System ───────────────────────────────
-// Dark navy + purple/lavender palette matching the landing page.
+// Cream + navy + amber palette matching the new logo identity.
 
 const LOGO_URL = 'https://mvlcefiygkzzewcdzsmj.supabase.co/storage/v1/object/public/email-assets/mark-color.png'
 
 export const BRAND = {
   name: 'PhotoBrief.ai',
+  tagline: 'Guide · Capture · Close',
   fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
   logoUrl: LOGO_URL,
   colors: {
-    bg: '#0c0915',
-    surface: '#15121f',
-    primary: '#f8f5ff',
-    secondary: '#ffffffad',       // rgba(255,255,255,0.68)
-    border: '#cfb2ff24',          // rgba(207,178,255,0.14)
-    cta: '#8f63ff',
-    ctaHover: '#b98cff',
-    accent: '#b98cff',
-    muted: '#ffffff80',           // rgba(255,255,255,0.50)
-    darkBg: '#07050d',
-    darkSurface: '#0c0915',
+    bg: '#FAF7F2',           // cream
+    surface: '#FFFFFF',
+    primary: '#1B2A4A',      // navy text
+    secondary: '#3F4A66',    // softer navy body text
+    border: 'rgba(27,42,74,0.10)',
+    cta: '#F2A33A',          // amber CTA
+    ctaHover: '#D88A20',
+    accent: '#F2A33A',
+    muted: '#6B7691',
+    darkBg: '#10172A',
+    darkSurface: '#FAF7F2',
   },
 } as const
 
@@ -42,25 +43,25 @@ export const s = {
     margin: '0 auto',
     backgroundColor: BRAND.colors.surface,
     borderRadius: '16px',
-    border: `1px solid rgba(207,178,255,0.14)`,
+    border: `1px solid ${BRAND.colors.border}`,
     overflow: 'hidden' as const,
-    boxShadow: '0 36px 92px -70px rgba(143,99,255,0.50), 0 20px 64px -48px rgba(0,0,0,0.82)',
+    boxShadow: '0 32px 80px -56px rgba(27,42,74,0.30), 0 16px 48px -32px rgba(27,42,74,0.18)',
   },
   header: {
     padding: '28px 32px 20px',
-    borderBottom: '1px solid rgba(207,178,255,0.14)',
+    borderBottom: `1px solid ${BRAND.colors.border}`,
   },
   wordmark: {
     fontSize: '18px',
     fontWeight: 700,
-    color: BRAND.colors.cta,
+    color: BRAND.colors.primary,
     letterSpacing: '-0.02em',
     margin: '0',
     lineHeight: '1',
   },
   logo: {
-    height: '36px',
-    width: 'auto',
+    height: '40px',
+    width: '40px',
   },
   body: {
     padding: '28px 32px 32px',
@@ -68,14 +69,14 @@ export const s = {
   eyebrow: {
     fontSize: '11px',
     fontWeight: 700,
-    letterSpacing: '0.1em',
-    color: BRAND.colors.accent,
+    letterSpacing: '0.16em',
+    color: BRAND.colors.cta,
     textTransform: 'uppercase' as const,
     margin: '0 0 14px',
   },
   h1: {
     fontSize: '24px',
-    fontWeight: 600,
+    fontWeight: 700,
     color: BRAND.colors.primary,
     margin: '0 0 16px',
     lineHeight: '1.25',
@@ -98,7 +99,7 @@ export const s = {
     borderRadius: '10px',
     padding: '14px 28px',
     fontSize: '15px',
-    fontWeight: 600,
+    fontWeight: 700,
     textDecoration: 'none',
     display: 'inline-block',
     textAlign: 'center' as const,
@@ -107,30 +108,37 @@ export const s = {
     margin: '24px 0 20px',
   },
   link: {
-    color: BRAND.colors.accent,
+    color: BRAND.colors.primary,
     textDecoration: 'underline',
     wordBreak: 'break-all' as const,
   },
   card: {
-    backgroundColor: '#1b1726',
-    border: '1px solid rgba(207,178,255,0.12)',
+    backgroundColor: '#FBF6EC',
+    border: `1px solid ${BRAND.colors.border}`,
     borderRadius: '12px',
     padding: '20px 22px',
     margin: '8px 0 20px',
   },
   hr: {
-    borderColor: 'rgba(207,178,255,0.14)',
+    borderColor: BRAND.colors.border,
     margin: '24px 0 20px',
   },
   footer: {
     padding: '20px 32px 28px',
-    borderTop: '1px solid rgba(207,178,255,0.14)',
+    borderTop: `1px solid ${BRAND.colors.border}`,
   },
   footerText: {
     fontSize: '12px',
     color: BRAND.colors.muted,
     lineHeight: '1.5',
     margin: '0',
+  },
+  tagline: {
+    fontSize: '10px',
+    color: BRAND.colors.muted,
+    letterSpacing: '0.22em',
+    textTransform: 'uppercase' as const,
+    margin: '4px 0 0',
   },
 } as const
 
@@ -153,4 +161,5 @@ export const BrandFooter = ({ extra }: { extra?: string }) =>
       extra ? `${extra} · ` : '',
       `Sent via ${BRAND.name}`,
     ),
+    React.createElement(Text, { style: s.tagline }, BRAND.tagline),
   )

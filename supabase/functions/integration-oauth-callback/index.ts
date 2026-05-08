@@ -20,7 +20,7 @@ function html(title: string, body: string, redirectTo?: string | null, status = 
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>${title}</title>
     <style>
-      body{margin:0;min-height:100vh;display:grid;place-items:center;background:#07060a;color:#f8f5ff;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.card{width:min(92vw,520px);border:1px solid rgba(196,162,255,.25);border-radius:28px;padding:32px;background:linear-gradient(145deg,rgba(255,255,255,.08),rgba(255,255,255,.035));box-shadow:0 30px 90px rgba(0,0,0,.45)}h1{margin:0 0 12px;font-size:28px;letter-spacing:-.04em}p{margin:0;color:rgba(248,245,255,.72);line-height:1.6}.btn{display:inline-block;margin-top:22px;border-radius:999px;background:#a985ff;color:#09070f;padding:12px 18px;font-weight:700;text-decoration:none}
+      body{margin:0;min-height:100vh;display:grid;place-items:center;background:#FAF7F2;color:#1B2A4A;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.card{width:min(92vw,520px);border:1px solid rgba(27,42,74,0.10);border-radius:28px;padding:32px;background:linear-gradient(145deg,rgba(255,255,255,.08),rgba(255,255,255,.035));box-shadow:0 30px 90px rgba(0,0,0,.45)}h1{margin:0 0 12px;font-size:28px;letter-spacing:-.04em}p{margin:0;color:rgba(27,42,74,0.7);line-height:1.6}.btn{display:inline-block;margin-top:22px;border-radius:999px;background:#F2A33A;color:#fff;padding:12px 18px;font-weight:700;text-decoration:none}
     </style>
   </head>
   <body>

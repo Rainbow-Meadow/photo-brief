@@ -6,14 +6,21 @@
 export const BRAND = {
   /** Core brand colors (HSL value strings, no `hsl()` wrapper) */
   colors: {
-    violet: "262 83% 58%",
-    lavender: "264 100% 78%",
-    electric: "246 100% 72%",
+    navy: "219 47% 20%",
+    amber: "33 88% 55%",
+    amberLight: "33 89% 69%",
+    amberHover: "35 74% 49%",
+    cream: "39 33% 97%",
+    creamWarm: "36 34% 94%",
+    graphite: "219 47% 14%",
+    paper: "39 33% 97%",
+    night: "219 50% 7%",
+    ink: "219 47% 14%",
+    /** Legacy aliases — point to the closest current value to avoid breaking imports. */
+    violet: "33 88% 55%",
+    lavender: "33 89% 69%",
+    electric: "219 47% 20%",
     mint: "166 92% 54%",
-    graphite: "255 11% 7%",
-    paper: "260 24% 96%",
-    night: "260 52% 4%",
-    ink: "258 45% 7%",
   },
 
   /** Font stacks */
@@ -39,5 +46,5 @@ export const BRAND = {
   },
 
   /** General visual tone */
-  tone: "premium-dark" as const,
+  tone: "premium-light" as const,
 } as const;
