@@ -4,6 +4,7 @@
 // client (see tokenClient.ts) so RLS can validate via x-request-token.
 
 import { supabase } from "@/integrations/supabase/client";
+import { withSupabaseRetry as withRetry } from "@/lib/supabaseRetry";
 import { getTokenClient } from "@/integrations/supabase/tokenClient";
 import { conversions, trackEvent } from "@/lib/analytics";
 import type { PhotoBriefRequest, RequestStatus } from "@/types/photobrief";
@@ -65,13 +66,13 @@ export interface CreateRequestInput {
 
 export const requestsService = {
   async list(workspaceId: string): Promise<PhotoBriefRequest[]> {
-    // Read from the denormalized inbox view: one query, includes guide name,
-    // assignee name, latest readiness score, missing items, and last activity.
-    const { data, error } = await supabase
-      .from("requests_inbox_view")
-      .select("*")
-      .eq("workspace_id", workspaceId)
-      .order("last_activity_at", { ascending: false });
+    const { data, error } = await withRetry(async () =>
+      await supabase
+        .from("requests_inbox_view")
+        .select("*")
+        .eq("workspace_id", workspaceId)
+        .order("last_activity_at", { ascending: false }),
+    );
     if (error) throw error;
 
     return (data ?? []).map((row: any): PhotoBriefRequest => ({
@@ -101,11 +102,13 @@ export const requestsService = {
   },
 
   async getById(id: string): Promise<PhotoBriefRequest | null> {
-    const { data, error } = await supabase
-      .from("photo_brief_requests")
-      .select("*, photo_guides(name)")
-      .eq("id", id)
-      .maybeSingle();
+    const { data, error } = await withRetry(async () =>
+      await supabase
+        .from("photo_brief_requests")
+        .select("*, photo_guides(name)")
+        .eq("id", id)
+        .maybeSingle(),
+    );
     if (error) throw error;
     if (!data) return null;
     return toDomain(data as any, (data as any).photo_guides?.name ?? null, null);

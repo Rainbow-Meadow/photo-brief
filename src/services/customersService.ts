@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { withSupabaseRetry as withRetry } from "@/lib/supabaseRetry";
 import type { Customer, CustomerInput } from "@/types/customer";
 
 function toDomain(row: any): Customer {
@@ -48,17 +49,15 @@ export const customersService = {
     } else if (opts?.sortBy === "created") {
       q = q.order("created_at", { ascending: false });
     } else {
-      // Default: recently used
       q = q.order("last_request_at", { ascending: false, nullsFirst: false })
            .order("created_at", { ascending: false });
     }
 
-    const { data, error } = await q.limit(200);
+    const { data, error } = await withRetry(async () => await q.limit(200));
     if (error) throw error;
 
     return (data ?? []).map((row: any) => {
       const r = toDomain(row);
-      // Supabase returns aggregated count as [{count: N}]
       const countArr = row.photo_brief_requests;
       r.requestCount =
         Array.isArray(countArr) && countArr.length > 0
@@ -69,11 +68,13 @@ export const customersService = {
   },
 
   async getById(id: string): Promise<Customer | null> {
-    const { data, error } = await supabase
-      .from("customers")
-      .select("*")
-      .eq("id", id)
-      .maybeSingle();
+    const { data, error } = await withRetry(async () =>
+      await supabase
+        .from("customers")
+        .select("*")
+        .eq("id", id)
+        .maybeSingle(),
+    );
     if (error) throw error;
     if (!data) return null;
     return toDomain(data);
