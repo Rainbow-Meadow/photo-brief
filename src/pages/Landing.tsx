@@ -1530,9 +1530,10 @@ function FinalCta({ isFull }: { isFull: boolean }) {
               Get quote-ready leads, not vague messages.
             </h2>
             <p className="pb-copy mx-auto mt-4 max-w-2xl text-base sm:text-lg">
-              Replace your generic website form with guided visual intake.
-              Customers submit the right photos, notes, and context — and your
-              team gets an actionable lead packet instead of another follow-up.
+              Stop chasing customers for missing photos and context.
+              With PhotoBrief, every inquiry arrives as a complete, actionable
+              lead packet — so your team can quote, schedule, or approve
+              without a single follow-up.
             </p>
             <div className="mt-6 flex flex-col justify-center gap-2.5 sm:flex-row sm:gap-3">
               <Button
