@@ -187,35 +187,30 @@ const cleanSignals = [
 const useCases = [
   {
     icon: Leaf,
-    image: landscaperIllo,
     title: "Landscapers — quote yards without a site visit",
     body: "Ask homeowners for the wide yard shot, problem beds, fence line, and access path so you can scope mowing, cleanups, or installs from your truck.",
     stamp: "Landscaping",
   },
   {
     icon: Truck,
-    image: junkHaulerIllo,
     title: "Junk haulers — price the pile from the driveway",
     body: "Guided pile, appliance, and access photos turn a vague \"come haul this\" into a quotable load with the right truck and crew.",
     stamp: "Junk removal",
   },
   {
     icon: Wind,
-    image: hvacTechIllo,
     title: "Repair & HVAC techs — show up with the right part",
     body: "Capture nameplate, filter, breaker, and surrounding access shots so techs roll with the right model number, refrigerant, and gear.",
     stamp: "HVAC & repair",
   },
   {
     icon: Wrench,
-    image: plumberIllo,
     title: "Plumbers — diagnose the leak before the truck rolls",
     body: "Walk customers through shutoff, leak source, and supply lines so dispatch knows whether it's a 30-minute fix or a half-day repipe.",
     stamp: "Plumbing",
   },
   {
     icon: Package,
-    image: estimatorIllo,
     title: "Damage & return estimators — turn customer photos into evidence",
     body: "Insurance, warranty, and e-commerce returns: collect angles, scale, and serial shots in a structured packet reviewers can act on first pass.",
     stamp: "Estimating",
