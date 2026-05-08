@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { NavLink, useSearchParams } from "react-router-dom";
 import {
   ArrowRight,
@@ -152,7 +152,7 @@ const workflowSteps = [
     icon: FileCheck2,
     eyebrow: "Deliver",
     title: "Your team gets an actionable lead packet",
-    body: "Photos, notes, customer context, and readiness status land together — ready for quoting, dispatch, review, or documentation.",
+    body: "Photos, notes, customer context, and readiness status land together — structured and ready for quoting, dispatch, or documentation.",
   },
 ];
 
@@ -410,7 +410,10 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ━━ 2. PAIN POINTS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+        {/* ━━ TICKER 1 — Industry signals ━━━━━━━━━━━━━━━━━━━━━ */}
+        <TickerBar items={["81% of forms abandoned before submit", "78% buy from whoever responds first", "4.2 hr avg lead response time", "60% of estimates never followed up", "5+ follow-ups to close — most stop at 1"]} />
+
+        {/* ━━ 2. PAIN POINTS (carousel) ━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <PainPointSection />
 
         {/* ━━ ROI CALCULATOR ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
@@ -451,6 +454,9 @@ export default function LandingPage() {
           mode={comparisonMode}
           onModeChange={setComparisonMode}
         />
+
+        {/* ━━ TICKER 2 — Product signals ━━━━━━━━━━━━━━━━━━━━━━ */}
+        <TickerBar items={["Website scan included", "Hosted link or embed", "No app required for customers", "AI photo quality checks", "Lead packets — not form spam"]} direction="right" />
 
         {/* ── Chapter break: Solution → Fit ── */}
         <ChapterDivider />
@@ -495,6 +501,8 @@ export default function LandingPage() {
             />
           </div>
         </section>
+        {/* ━━ TICKER 3 — Beta social proof ━━━━━━━━━━━━━━━━━━━ */}
+        <TickerBar items={[`${BETA_TOTAL_PARTNERS} founding partner seats`, "Free Pro for Life reward", `${BETA_DURATION_DAYS}-day beta`, "Concierge setup included", "Every partner earns a reward"]} />
 
         {/* ━━ 12. FINAL CTA ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <FinalCta isFull={isFull} />
@@ -534,6 +542,7 @@ const FORM_RECOVERY_FACTOR = 0.25; // 25% of abandoned forms recovered with guid
 
 function RoiCalculatorSection() {
   const [open, setOpen] = useState(false);
+  const calcRef = useRef<HTMLDivElement>(null);
   const [monthlyVisitors, setMonthlyVisitors] = useState(500);
   const [avgJobValue, setAvgJobValue] = useState(2000);
   const [currentConversion, setCurrentConversion] = useState(3);
@@ -553,90 +562,57 @@ function RoiCalculatorSection() {
   }
 
   return (
-    <section className="pb-section-tight">
+    <section className="pb-section-tight" ref={calcRef}>
       <div className="pb-container">
-        {!open ? (
-          <button
-            type="button"
-            onClick={() => setOpen(true)}
-            className="group mx-auto flex w-full max-w-2xl items-center justify-between gap-4 rounded-[1.5rem] border border-[hsl(var(--pb-lavender)/0.25)] bg-gradient-to-r from-[hsl(var(--pb-violet)/0.10)] via-[hsl(var(--pb-ink))] to-[hsl(var(--pb-lavender)/0.06)] p-5 text-left transition hover:border-[hsl(var(--pb-lavender)/0.4)] sm:p-6"
-          >
-            <div className="flex items-center gap-4">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[hsl(var(--pb-lavender)/0.12)]">
-                <Calculator className="h-6 w-6 text-[hsl(var(--pb-lavender))]" />
-              </div>
-              <div>
-                <p className="text-base font-bold tracking-tight text-white sm:text-lg">
-                  How much is weak intake costing you?
-                </p>
-                <p className="pb-copy mt-0.5 text-xs sm:text-sm">
-                  Plug in your numbers — see leads and revenue you could recover.
-                </p>
-              </div>
+        <button
+          type="button"
+          onClick={() => {
+            setOpen((p) => !p);
+            if (!open) setTimeout(() => calcRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+          }}
+          className="group mx-auto flex w-full max-w-2xl items-center justify-between gap-4 rounded-[1.5rem] border border-[hsl(var(--pb-lavender)/0.25)] bg-gradient-to-r from-[hsl(var(--pb-violet)/0.10)] via-[hsl(var(--pb-ink))] to-[hsl(var(--pb-lavender)/0.06)] p-5 text-left transition hover:border-[hsl(var(--pb-lavender)/0.4)] sm:p-6"
+        >
+          <div className="flex items-center gap-4">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[hsl(var(--pb-lavender)/0.12)]">
+              <Calculator className="h-6 w-6 text-[hsl(var(--pb-lavender))]" />
             </div>
-            <span className="hidden shrink-0 rounded-full border border-[hsl(var(--pb-lavender)/0.3)] px-4 py-2 text-xs font-bold text-[hsl(var(--pb-lavender))] transition group-hover:bg-[hsl(var(--pb-lavender)/0.1)] sm:inline-flex">
-              Calculate →
-            </span>
-          </button>
-        ) : (
-          <>
-            <div className="mx-auto max-w-3xl text-center">
-              <span className="pb-eyebrow">
-                <Calculator className="h-3.5 w-3.5" /> ROI calculator
-              </span>
-              <h2 className="pb-section-title mt-4 text-white">
+            <div>
+              <p className="text-base font-bold tracking-tight text-white sm:text-lg">
                 How much is weak intake costing you?
-              </h2>
-              <p className="pb-copy mt-4 text-base sm:text-lg">
-                Plug in your numbers. The math uses the same industry benchmarks
-                from the studies above.
+              </p>
+              <p className="pb-copy mt-0.5 text-xs sm:text-sm">
+                Plug in your numbers — see leads and revenue you could recover.
               </p>
             </div>
+          </div>
+          <span className={`hidden shrink-0 rounded-full border border-[hsl(var(--pb-lavender)/0.3)] px-4 py-2 text-xs font-bold text-[hsl(var(--pb-lavender))] transition group-hover:bg-[hsl(var(--pb-lavender)/0.1)] sm:inline-flex ${open ? "rotate-90" : ""}`}>
+            {open ? "Close ×" : "Calculate →"}
+          </span>
+        </button>
 
-            <div className="mx-auto mt-8 max-w-4xl sm:mt-10">
+        {/* Smooth expand */}
+        <div
+          className="mx-auto max-w-4xl overflow-hidden transition-all duration-500 ease-in-out"
+          style={{
+            display: "grid",
+            gridTemplateRows: open ? "1fr" : "0fr",
+          }}
+        >
+          <div className="min-h-0">
+            <div className="pt-6 sm:pt-8">
               <div className="pb-command-panel grid gap-6 p-5 sm:p-6 lg:grid-cols-[1fr_1fr] lg:gap-8 lg:p-8">
-                {/* Inputs */}
                 <div className="relative z-10 grid gap-5">
-                  <RoiSlider
-                    label="Monthly website visitors"
-                    value={monthlyVisitors}
-                    onChange={setMonthlyVisitors}
-                    min={100}
-                    max={10000}
-                    step={100}
-                    format={(v) => v.toLocaleString()}
-                  />
-                  <RoiSlider
-                    label="Average job value"
-                    value={avgJobValue}
-                    onChange={setAvgJobValue}
-                    min={100}
-                    max={25000}
-                    step={100}
-                    format={(v) => `$${v.toLocaleString()}`}
-                  />
-                  <RoiSlider
-                    label="Current form conversion rate"
-                    value={currentConversion}
-                    onChange={setCurrentConversion}
-                    min={1}
-                    max={15}
-                    step={0.5}
-                    format={(v) => `${v}%`}
-                  />
+                  <RoiSlider label="Monthly website visitors" value={monthlyVisitors} onChange={setMonthlyVisitors} min={100} max={10000} step={100} format={(v) => v.toLocaleString()} />
+                  <RoiSlider label="Average job value" value={avgJobValue} onChange={setAvgJobValue} min={100} max={25000} step={100} format={(v) => `$${v.toLocaleString()}`} />
+                  <RoiSlider label="Current form conversion rate" value={currentConversion} onChange={setCurrentConversion} min={1} max={15} step={0.5} format={(v) => `${v}%`} />
                 </div>
-
-                {/* Results */}
                 <div className="relative z-10 grid gap-3 sm:gap-4">
                   <div className="rounded-[1.25rem] border border-white/10 bg-white/[0.04] p-4">
                     <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-white/45">
                       <UserCheck className="h-3.5 w-3.5" /> Current monthly leads
                     </div>
-                    <p className="mt-2 text-3xl font-black tracking-tight text-white sm:text-4xl">
-                      {currentLeads}
-                    </p>
+                    <p className="mt-2 text-3xl font-black tracking-tight text-white sm:text-4xl">{currentLeads}</p>
                   </div>
-
                   <div className="rounded-[1.25rem] border border-[hsl(var(--pb-lavender)/0.3)] bg-[hsl(var(--pb-lavender)/0.06)] p-4">
                     <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-[hsl(var(--pb-lavender))]">
                       <ArrowRight className="h-3.5 w-3.5" /> Leads recovered with PhotoBrief
@@ -644,32 +620,24 @@ function RoiCalculatorSection() {
                     <p className="mt-2 text-3xl font-black tracking-tight text-[hsl(var(--pb-lavender))] sm:text-4xl">
                       +{totalRecovered}<span className="text-lg font-bold text-white/50"> /mo</span>
                     </p>
-                    <p className="pb-copy mt-1 text-xs">
-                      {recoveredFromForm} from better intake · {recoveredFromSpeed} from faster response
-                    </p>
+                    <p className="pb-copy mt-1 text-xs">{recoveredFromForm} from better intake · {recoveredFromSpeed} from faster response</p>
                   </div>
-
                   <div className="rounded-[1.25rem] border border-[hsl(var(--pb-mint)/0.3)] bg-[hsl(var(--pb-mint)/0.06)] p-4">
                     <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-[hsl(var(--pb-mint))]">
                       <DollarSign className="h-3.5 w-3.5" /> Estimated annual revenue recovered
                     </div>
-                    <p className="mt-2 text-3xl font-black tracking-tight text-[hsl(var(--pb-mint))] sm:text-4xl">
-                      {formatDollars(annualRevenue)}
-                    </p>
-                    <p className="pb-copy mt-1 text-xs">
-                      {formatDollars(monthlyRevenue)}/mo × 12 · based on {totalRecovered} recovered leads at {`$${avgJobValue.toLocaleString()}`} avg job
-                    </p>
+                    <p className="mt-2 text-3xl font-black tracking-tight text-[hsl(var(--pb-mint))] sm:text-4xl">{formatDollars(annualRevenue)}</p>
+                    <p className="pb-copy mt-1 text-xs">{formatDollars(monthlyRevenue)}/mo × 12 · based on {totalRecovered} recovered leads at {`$${avgJobValue.toLocaleString()}`} avg job</p>
                   </div>
                 </div>
               </div>
-
               <p className="pb-copy mx-auto mt-4 max-w-xl text-center text-[0.65rem] italic sm:text-xs">
                 Estimates use 81% form abandonment (Numen Technology), 25% intake recovery rate,
                 and 30% speed-to-lead improvement (MIT Lead Response Study). Your results will vary.
               </p>
             </div>
-          </>
-        )}
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -760,11 +728,36 @@ const painPoints = [
 ];
 
 function PainPointSection() {
-  const [expanded, setExpanded] = useState(false);
-  const visible = expanded ? painPoints : painPoints.slice(0, 3);
+  const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (paused) return;
+    const id = setInterval(() => {
+      setActive((prev) => (prev + 1) % painPoints.length);
+    }, 5000);
+    return () => clearInterval(id);
+  }, [paused]);
+
+  const go = useCallback((i: number) => {
+    setActive(i);
+    setPaused(true);
+    setTimeout(() => setPaused(false), 8000);
+  }, []);
+
+  const point = painPoints[active];
+  const Icon = point.icon;
 
   return (
-    <section className="pb-section">
+    <section
+      className="pb-section"
+      ref={sectionRef}
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onTouchStart={() => setPaused(true)}
+      onTouchEnd={() => { setTimeout(() => setPaused(false), 6000); }}
+    >
       <div className="pb-container">
         <div className="mx-auto max-w-3xl text-center">
           <span className="pb-eyebrow">
@@ -779,59 +772,99 @@ function PainPointSection() {
           </p>
         </div>
 
-        <div className="mt-8 grid gap-3 sm:mt-10 sm:grid-cols-2 lg:grid-cols-3">
-          {visible.map((point) => {
-            const Icon = point.icon;
-            return (
-              <article
-                key={point.number + point.label}
-                className="pb-card flex flex-col p-4 sm:p-5"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-[hsl(var(--pb-line-strong))] bg-[hsl(var(--pb-ink))] text-[hsl(var(--pb-lavender))]">
-                    <Icon className="h-5 w-5" />
-                  </div>
-                  <span className="text-3xl font-extrabold tracking-tight text-[hsl(var(--pb-lavender))] sm:text-4xl">
-                    {point.number}
-                  </span>
-                </div>
-                <p className="mt-3 text-sm font-bold tracking-tight text-white sm:text-base">
-                  {point.label}
-                </p>
-                <p className="pb-copy mt-1 text-xs leading-relaxed sm:text-sm">
-                  {point.context}
-                </p>
-                <a
-                  href={point.citation.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-2 inline-flex items-center gap-1 text-[0.65rem] font-medium text-white/40 transition hover:text-[hsl(var(--pb-lavender))] sm:text-xs"
+        {/* Carousel card */}
+        <div className="relative mx-auto mt-8 max-w-2xl sm:mt-10">
+          <div className="pb-card relative overflow-hidden p-6 sm:p-8">
+            {/* Crossfade wrapper */}
+            {painPoints.map((p, i) => {
+              const PIcon = p.icon;
+              return (
+                <div
+                  key={p.number}
+                  className={`transition-all duration-500 ${i === active ? "relative opacity-100" : "pointer-events-none absolute inset-0 p-6 opacity-0 sm:p-8"}`}
+                  aria-hidden={i !== active}
                 >
-                  Source: {point.citation.text} ↗
-                </a>
-              </article>
-            );
-          })}
+                  <div className="flex items-center gap-4">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-[hsl(var(--pb-line-strong))] bg-[hsl(var(--pb-ink))] text-[hsl(var(--pb-lavender))]">
+                      <PIcon className="h-6 w-6" />
+                    </div>
+                    <span className="text-5xl font-extrabold tracking-tight text-[hsl(var(--pb-lavender))] sm:text-6xl">
+                      {p.number}
+                    </span>
+                  </div>
+                  <p className="mt-4 text-lg font-bold tracking-tight text-white sm:text-xl">
+                    {p.label}
+                  </p>
+                  <p className="pb-copy mt-2 text-sm leading-relaxed sm:text-base">
+                    {p.context}
+                  </p>
+                  <a
+                    href={p.citation.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-white/40 transition hover:text-[hsl(var(--pb-lavender))] sm:text-sm"
+                  >
+                    Source: {p.citation.text} ↗
+                  </a>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Left/right tap zones */}
+          <button
+            type="button"
+            aria-label="Previous stat"
+            onClick={() => go((active - 1 + painPoints.length) % painPoints.length)}
+            className="absolute left-0 top-0 h-full w-1/4 cursor-w-resize opacity-0"
+          />
+          <button
+            type="button"
+            aria-label="Next stat"
+            onClick={() => go((active + 1) % painPoints.length)}
+            className="absolute right-0 top-0 h-full w-1/4 cursor-e-resize opacity-0"
+          />
+
+          {/* Dot indicators */}
+          <div className="mt-4 flex items-center justify-center gap-2">
+            {painPoints.map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                aria-label={`Stat ${i + 1}`}
+                onClick={() => go(i)}
+                className={`h-2 rounded-full transition-all duration-300 ${i === active ? "w-6 bg-[hsl(var(--pb-lavender))]" : "w-2 bg-white/20 hover:bg-white/40"}`}
+              />
+            ))}
+          </div>
         </div>
 
-        {!expanded && (
-          <div className="mt-4 text-center sm:mt-6">
-            <button
-              type="button"
-              onClick={() => setExpanded(true)}
-              className="inline-flex items-center gap-1.5 rounded-full border border-white/12 bg-white/[0.04] px-5 py-2.5 text-xs font-semibold text-white/60 transition hover:border-white/20 hover:bg-white/[0.07] hover:text-white sm:text-sm"
-            >
-              See 2 more stats <ArrowRight className="h-3.5 w-3.5" />
-            </button>
-          </div>
-        )}
-
         <p className="pb-copy mx-auto mt-6 max-w-xl text-center text-sm italic sm:mt-8 sm:text-base">
-          PhotoBrief replaces the gap between first contact and actionable
-          information with guided visual intake.
+          PhotoBrief closes the gap between first contact and quote-ready
+          information.
         </p>
       </div>
     </section>
+  );
+}
+
+/* ── Ticker bar ─────────────────────────────────────────── */
+
+function TickerBar({ items, direction = "left" }: { items: string[]; direction?: "left" | "right" }) {
+  const content = items.map((t) => t.toUpperCase()).join("  ·  ");
+  const doubled = `${content}  ·  ${content}  ·  `;
+  return (
+    <div className="overflow-hidden border-y border-white/[0.06] bg-white/[0.015] py-2.5" aria-hidden>
+      <div
+        className="whitespace-nowrap text-[0.6rem] font-bold tracking-[0.2em] text-white/25 sm:text-xs"
+        style={{
+          animation: `marquee ${items.length * 5}s linear infinite`,
+          animationDirection: direction === "right" ? "reverse" : "normal",
+        }}
+      >
+        {doubled}
+      </div>
+    </div>
   );
 }
 
@@ -880,9 +913,9 @@ function WorkflowSection() {
               From website visit to actionable lead packet.
             </h2>
             <p className="pb-copy mt-4 max-w-lg text-base sm:text-lg">
-              PhotoBrief scans your website, maps your services into guided
-              intake paths, and delivers structured lead packets your team can
-              act on immediately.
+              PhotoBrief turns your website into a structured intake
+              machine — from first visit to a quote-ready packet your team
+              can act on without follow-ups.
             </p>
           </div>
           <div className="relative">
@@ -941,8 +974,8 @@ function ComparisonSection({
             Generic form vs. guided visual intake.
           </h2>
           <p className="pb-copy mt-4 text-lg">
-            The difference is not more photos — it's the right photos, tied to
-            the right service, with enough context to act.
+            The difference is not more photos — it's structured context
+            that lets your team skip the back-and-forth entirely.
           </p>
         </div>
 
@@ -1121,8 +1154,8 @@ function UseCaseSection() {
           </h2>
           <p className="pb-copy mt-4 text-base sm:text-lg">
             Anywhere a missing photo slows the next step — quoting, scheduling,
-            approving, reviewing, or documenting — PhotoBrief turns intake into
-            actionable lead packets.
+            approving, or documenting — PhotoBrief structures the intake so
+            your team has everything on the first pass.
           </p>
         </div>
         {/* Horizontal scroll on mobile, grid on desktop */}
@@ -1497,9 +1530,10 @@ function FinalCta({ isFull }: { isFull: boolean }) {
               Get quote-ready leads, not vague messages.
             </h2>
             <p className="pb-copy mx-auto mt-4 max-w-2xl text-base sm:text-lg">
-              Replace your generic website form with guided visual intake.
-              Customers submit the right photos, notes, and context — and your
-              team gets an actionable lead packet instead of another follow-up.
+              Stop chasing customers for missing photos and context.
+              With PhotoBrief, every inquiry arrives as a complete, actionable
+              lead packet — so your team can quote, schedule, or approve
+              without a single follow-up.
             </p>
             <div className="mt-6 flex flex-col justify-center gap-2.5 sm:flex-row sm:gap-3">
               <Button

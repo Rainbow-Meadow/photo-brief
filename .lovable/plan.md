@@ -1,43 +1,51 @@
 
-# Make the landing page digestible — Apple-style
+# Landing Page Polish: Copy, Carousel, Tickers, and Interaction Refinement
 
-The page currently has ~12 back-to-back sections with uniform visual weight. The result feels like a wall of content. This plan applies Apple's core readability techniques: **generous whitespace**, **progressive disclosure**, **visual hierarchy through contrast**, and **rhythm breaks**.
+## 1. De-duplicate repetitive copy
 
-## Changes
+The following phrases repeat 4-6 times across sections and need variation:
 
-### 1. Pain points: show 3, reveal 2
-Show only the first 3 pain-point cards by default. Add a subtle "See more stats" expand button that reveals the remaining 2. This reduces initial cognitive load from 5 dense stat cards to 3.
+| Phrase (overused) | Sections where it appears |
+|---|---|
+| "actionable lead packet(s)" | Hero, Interactive Demo, Workflow, Comparison, Use Cases, Final CTA |
+| "guided visual intake" | Hero, Comparison, Pain Points closing, Final CTA |
+| "right photos, notes, and context" | Hero, Interactive Demo, Final CTA |
+| "vague messages" | Hero, Final CTA |
 
-### 2. ROI calculator: collapsed by default
-Wrap the ROI calculator in a visually distinct "expand" card — a single prominent banner that says *"How much is weak intake costing you?"* with a "Calculate →" button. Clicking reveals the sliders/results. This removes a heavy interactive block from the default scroll path.
+**Fix:** Rewrite each occurrence so the core idea lands but with different phrasing per section. The hero and final CTA can share a phrase (bookend effect), but everything in between should use distinct language.
 
-### 3. Increase spacing between major sections
-Upgrade key sections from `pb-section-tight` to `pb-section` (or add custom larger padding). Specifically: Pain Points, Interactive Demo, and Founding Partner sections get more breathing room. This creates rhythm — the page "breathes" between ideas instead of stacking them.
+## 2. Pain Points → Auto-rotating carousel
 
-### 4. Founding Partner section: accordion for dense details
-The Founding Partner area currently renders 4 sub-blocks (benefits/expectations, detailed expectations, reward tiers, scoring rubric) as a continuous scroll. Consolidate:
-- Keep benefits/expectations panel visible (it's the hook).
-- Collapse **detailed expectations**, **reward tiers**, and **scoring rubric** into an `Accordion` component (3 items). Each is expandable. This cuts the visible height of this section by ~60%.
+Replace the static 3-card grid + "See 2 more" button with a single-card auto-advancing carousel:
 
-### 5. Visual rhythm breaks between sections
-Add subtle horizontal dividers or gradient fades between major section groups to create visual "chapters":
-- **Chapter 1**: Hero → Pain Points → ROI (the problem)
-- **Chapter 2**: Interactive Demo → How It Works → Before/After (the solution)
-- **Chapter 3**: Use Cases → Website Intelligence (the fit)
-- **Chapter 4**: Beta Program → Application → Final CTA (the action)
+- One stat visible at a time, large and cinematic (number, label, context, citation)
+- Auto-advances every 5 seconds; pauses on hover/touch
+- Dot indicators + left/right tap zones
+- Smooth crossfade or slide transition (CSS `transition` + `opacity`, no heavy libs)
+- All 5 pain points rotate — no "show more" gate
 
-These are thin gradient lines or soft spacing bumps — not heavy chrome.
+## 3. News headline ticker bars
 
-### 6. Use Cases: tighten to horizontal scroll on mobile
-On mobile, the 5 use-case cards stack very tall. Convert to a horizontal scroll strip on small screens (keep grid on desktop). This matches Apple's product-page card carousels.
+Add 2-3 horizontal scrolling ticker strips at chapter break points (between major sections). Content:
 
-## Files changed
-- `src/pages/Landing.tsx` — all changes in this single file
+- **Ticker 1** (after Hero): Industry signals — e.g. "81% of forms abandoned before submit · 78% buy from whoever responds first · 4.2 hr avg response time · 60% of estimates never followed up"
+- **Ticker 2** (after Comparison, before Use Cases): Product signals — e.g. "Website scan included · Hosted link or embed · No app required for customers · Lead packets, not form spam · AI photo quality checks"
+- **Ticker 3** (before Final CTA): Social proof / beta — e.g. "10 founding partner seats · Free Pro for Life reward · 60-day beta · Concierge setup included"
 
-## What stays the same
-- All existing content, copy, and data
-- SEO/PageMeta/JSON-LD
-- Beta agent application
-- Routing
-- Responsive behavior (enhanced, not broken)
-- All existing component imports and visual system
+Each ticker: single-line, infinite CSS scroll animation (`@keyframes marquee`), duplicated content for seamless loop, subtle text styling (uppercase, small, muted).
+
+## 4. Interaction polish
+
+- **Collapse/expand transitions**: Add `transition-all duration-300` and `overflow-hidden` to ROI calculator expand. Use `max-height` or `grid-template-rows: 0fr → 1fr` for smooth open/close instead of hard mount/unmount.
+- **Section scroll memory**: When ROI calculator or pain point carousel state changes, use `scrollIntoView({ behavior: 'smooth', block: 'nearest' })` to keep the active content in view without jarring jumps.
+- **Smooth carousel transitions**: Use `transition-opacity duration-500` for crossfade between pain point cards.
+
+## Technical details
+
+**Files changed:** `src/pages/Landing.tsx` only (all sections are inline components).
+
+**No new dependencies.** Carousel uses `useState` + `useEffect` interval. Tickers use pure CSS `@keyframes`. Collapse animation uses Tailwind transitions.
+
+**New CSS** (in `src/index.css` or inline): `@keyframes marquee` for ticker infinite scroll.
+
+Copy edits are text-only changes to existing JSX strings.
