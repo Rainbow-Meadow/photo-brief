@@ -612,8 +612,8 @@ function RoiCalculatorSection() {
   }
 
   return (
-    <section className="pb-section-tight my-0" ref={calcRef}>
-      <div className="pb-container">
+    <section className="w-full" ref={calcRef}>
+      <div className="mx-auto w-full max-w-sm">
         <button
           type="button"
           onClick={() => {
