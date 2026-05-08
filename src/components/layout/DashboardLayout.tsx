@@ -62,7 +62,7 @@ export function DashboardLayout() {
           </div>
 
           <div className="relative flex min-w-0 flex-1 flex-col">
-            <header className="pb-nav-bar sticky top-0 z-30 flex h-16 items-center gap-3 border-b px-3 pt-safe sm:px-5">
+            <header className="material-chrome sticky top-0 z-30 flex h-16 items-center gap-3 rounded-none border-0 px-3 pt-safe hairline-apple-b sm:px-5">
               <div className="hidden lg:block">
                 <SidebarTrigger />
               </div>
