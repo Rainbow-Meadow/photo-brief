@@ -1269,12 +1269,13 @@ function WorkflowSection() {
             </p>
             <div className="mt-8 hidden lg:block">
               <img
-                src={estimatorIllo}
-                alt="Hand-drawn illustration of an estimator assembling an evidence packet from customer photos"
+                src={hvacTechIllo}
+                alt="Hand-drawn illustration of an HVAC technician working through a structured intake checklist"
                 width={1024}
                 height={1024}
                 loading="lazy"
-                className="w-full max-w-sm drop-shadow-[0_24px_40px_hsl(var(--pb-ink-soft)/0.22)]"
+                decoding="async"
+                className="w-full max-w-[420px] drop-shadow-[0_24px_40px_hsl(var(--pb-ink-soft)/0.28)]"
               />
             </div>
           </div>
