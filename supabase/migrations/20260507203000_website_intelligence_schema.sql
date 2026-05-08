@@ -152,13 +152,24 @@ CREATE TABLE IF NOT EXISTS public.website_change_events (
   CONSTRAINT website_change_events_status_check CHECK (status IN ('pending', 'accepted', 'ignored', 'review_later'))
 );
 
-ALTER TABLE public.business_intake_profiles
-  ADD CONSTRAINT IF NOT EXISTS business_intake_profiles_latest_scan_fk
-  FOREIGN KEY (latest_scan_job_id) REFERENCES public.website_scan_jobs(id) ON DELETE SET NULL;
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'business_intake_profiles_latest_scan_fk'
+  ) THEN
+    ALTER TABLE public.business_intake_profiles
+      ADD CONSTRAINT business_intake_profiles_latest_scan_fk
+      FOREIGN KEY (latest_scan_job_id) REFERENCES public.website_scan_jobs(id) ON DELETE SET NULL;
+  END IF;
 
-ALTER TABLE public.business_intake_profiles
-  ADD CONSTRAINT IF NOT EXISTS business_intake_profiles_approved_blueprint_fk
-  FOREIGN KEY (approved_blueprint_id) REFERENCES public.intake_blueprints(id) ON DELETE SET NULL;
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'business_intake_profiles_approved_blueprint_fk'
+  ) THEN
+    ALTER TABLE public.business_intake_profiles
+      ADD CONSTRAINT business_intake_profiles_approved_blueprint_fk
+      FOREIGN KEY (approved_blueprint_id) REFERENCES public.intake_blueprints(id) ON DELETE SET NULL;
+  END IF;
+END $$;
 
 CREATE INDEX IF NOT EXISTS idx_business_intake_profiles_workspace ON public.business_intake_profiles(workspace_id);
 CREATE INDEX IF NOT EXISTS idx_business_intake_profiles_beta_app ON public.business_intake_profiles(beta_application_id);
@@ -180,15 +191,18 @@ CREATE INDEX IF NOT EXISTS idx_website_change_events_status ON public.website_ch
 DO $$
 BEGIN
   IF EXISTS (SELECT 1 FROM pg_proc WHERE proname = 'update_updated_at_column') THEN
-    CREATE TRIGGER update_business_intake_profiles_updated_at
-      BEFORE UPDATE ON public.business_intake_profiles
-      FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
-    CREATE TRIGGER update_service_catalog_items_updated_at
-      BEFORE UPDATE ON public.service_catalog_items
-      FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+    IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_business_intake_profiles_updated_at') THEN
+      CREATE TRIGGER update_business_intake_profiles_updated_at
+        BEFORE UPDATE ON public.business_intake_profiles
+        FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+    END IF;
+
+    IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_service_catalog_items_updated_at') THEN
+      CREATE TRIGGER update_service_catalog_items_updated_at
+        BEFORE UPDATE ON public.service_catalog_items
+        FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+    END IF;
   END IF;
-EXCEPTION WHEN duplicate_object THEN
-  NULL;
 END $$;
 
 ALTER TABLE public.business_intake_profiles ENABLE ROW LEVEL SECURITY;
@@ -203,6 +217,7 @@ ALTER TABLE public.website_change_events ENABLE ROW LEVEL SECURITY;
 DO $$
 DECLARE
   tbl text;
+  policy_name text;
 BEGIN
   FOREACH tbl IN ARRAY ARRAY[
     'business_intake_profiles',
@@ -214,12 +229,19 @@ BEGIN
     'intake_routing_rules',
     'website_change_events'
   ] LOOP
-    EXECUTE format(
-      'CREATE POLICY %I ON public.%I FOR ALL USING (EXISTS (SELECT 1 FROM public.platform_admins pa WHERE pa.user_id = auth.uid())) WITH CHECK (EXISTS (SELECT 1 FROM public.platform_admins pa WHERE pa.user_id = auth.uid()))',
-      tbl || '_platform_admin_all',
-      tbl
-    );
+    policy_name := tbl || '_platform_admin_all';
+    IF NOT EXISTS (
+      SELECT 1
+      FROM pg_policies
+      WHERE schemaname = 'public'
+        AND tablename = tbl
+        AND policyname = policy_name
+    ) THEN
+      EXECUTE format(
+        'CREATE POLICY %I ON public.%I FOR ALL USING (EXISTS (SELECT 1 FROM public.platform_admins pa WHERE pa.user_id = auth.uid())) WITH CHECK (EXISTS (SELECT 1 FROM public.platform_admins pa WHERE pa.user_id = auth.uid()))',
+        policy_name,
+        tbl
+      );
+    END IF;
   END LOOP;
-EXCEPTION WHEN duplicate_object THEN
-  NULL;
 END $$;
