@@ -474,8 +474,10 @@ export default function LandingPage() {
           <BetaDetailsAccordion />
         </div>
 
-        {/* ━━ FINAL CTA ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-        <FinalCta isFull={isFull} />
+        {/* ━━ FINAL CTA — the one dark zone ━━━━━━━━━━━━━━━━━ */}
+        <div className="pb-final-dark pb-dark-island">
+          <FinalCta isFull={isFull} />
+        </div>
       </main>
 
       <Dialog open={demoOpen} onOpenChange={setDemoOpen}>
