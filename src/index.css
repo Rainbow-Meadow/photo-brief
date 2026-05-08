@@ -419,9 +419,9 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
 
   .pb-landing {
     background:
-      radial-gradient(70% 45% at 50% 0%, hsl(var(--pb-violet) / 0.10), transparent 72%),
-      radial-gradient(40% 30% at 15% 26%, hsl(var(--pb-electric) / 0.06), transparent 72%),
-      linear-gradient(180deg, hsl(var(--pb-night)) 0%, hsl(var(--pb-ink)) 46%, hsl(256 16% 8%) 100%);
+      radial-gradient(60% 40% at 50% 0%, hsl(var(--pb-lavender) / 0.10), transparent 72%),
+      linear-gradient(180deg, hsl(var(--pb-cream)) 0%, hsl(var(--pb-cream-warm)) 100%);
+    color: hsl(var(--pb-ink-soft));
   }
 
   /* ── Editorial / Surveva-style warm paper surface ───────────── */
