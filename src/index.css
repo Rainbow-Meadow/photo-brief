@@ -569,7 +569,7 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
   .pb-paper-link[data-active="true"] { color: hsl(var(--pb-violet)); }
   /* Soft fade where paper meets the dark sections below */
   .pb-paper-fade-bottom {
-    background: linear-gradient(180deg, transparent 0%, hsl(var(--pb-night)) 100%);
+    background: linear-gradient(180deg, transparent 0%, hsl(var(--pb-night) / 0.5) 55%, hsl(var(--pb-night)) 100%);
   }
 
   .pb-copy { color: hsl(var(--pb-muted)); font-size: clamp(0.938rem, 0.4vw + 0.875rem, 1.125rem); line-height: 1.65; }
