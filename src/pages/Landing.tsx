@@ -347,7 +347,7 @@ export default function LandingPage() {
                   actionable lead packets instead of vague messages.
                 </p>
 
-                <div className="mx-auto mt-5 flex max-w-lg flex-col gap-2.5 sm:mt-6 sm:max-w-none sm:flex-row sm:justify-center sm:gap-3 lg:mx-0 lg:justify-start">
+                <div className="mx-auto mt-5 flex max-w-lg flex-col gap-2.5 sm:mt-6 sm:max-w-none sm:flex-row sm:justify-center sm:gap-3 lg:hidden">
                   <Button
                     size="xl"
                     variant="pb-primary"
