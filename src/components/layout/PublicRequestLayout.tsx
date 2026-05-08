@@ -38,12 +38,12 @@ export function PublicRequestLayout() {
       </main>
 
       {!hidePhotobriefBranding ? (
-        <footer className="hairline-t bg-background/60 py-4 backdrop-blur">
+        <footer className="material-thin rounded-none border-0 hairline-apple-t py-4">
           <div className="mx-auto flex w-full max-w-2xl flex-col gap-3 px-4 sm:flex-row sm:items-center sm:justify-between">
             <PoweredByBadge size={42} />
-            <nav aria-label="Legal" className="flex items-center gap-4 text-xs text-muted-foreground">
-              <NavLink to="/privacy" className="hover:text-foreground transition-colors">Privacy</NavLink>
-              <NavLink to="/terms" className="hover:text-foreground transition-colors">Terms</NavLink>
+            <nav aria-label="Legal" className="flex items-center gap-4 text-footnote text-label-secondary">
+              <NavLink to="/privacy" className="tap-apple hover:text-label transition-colors">Privacy</NavLink>
+              <NavLink to="/terms" className="tap-apple hover:text-label transition-colors">Terms</NavLink>
             </nav>
           </div>
         </footer>
