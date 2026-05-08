@@ -9,8 +9,6 @@
  *   // schema.spacing.lg, schema.motion.transitionDuration, etc.
  */
 
-export { BRAND } from "./shared/brand.tokens";
-export { SEMANTIC_COLORS } from "./shared/color.tokens";
 export {
   APPLE_SYSTEM_COLORS,
   APPLE_LABEL_OPACITY,
