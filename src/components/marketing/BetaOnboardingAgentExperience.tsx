@@ -304,8 +304,8 @@ export function BetaOnboardingAgentExperience({
                 </div>
 
                 {next ? (
-                  <div className="rounded-[1.25rem] border border-white/10 bg-white/[0.045] p-4">
-                    <p className="text-sm font-semibold text-white">{next.prompt}</p>
+                  <div className="border-l-2 border-[hsl(var(--pb-lavender)/0.5)] pl-4">
+                    <p className="font-serif text-base italic text-white sm:text-lg">{next.prompt}</p>
                     <p className="pb-copy mt-1.5 text-xs">{next.helper}</p>
                     <Textarea
                       value={answer}
@@ -337,8 +337,8 @@ export function BetaOnboardingAgentExperience({
                     </div>
                   </div>
                 ) : (
-                  <div className="rounded-[1.25rem] border border-[hsl(var(--pb-mint)/0.25)] bg-[hsl(var(--pb-mint)/0.07)] p-4">
-                    <div className="flex items-center gap-2 text-sm font-semibold text-white">
+                  <div className="border-l-2 border-[hsl(var(--pb-mint)/0.5)] pl-4">
+                    <div className="flex items-center gap-2 font-serif text-base italic text-white sm:text-lg">
                       <CheckCircle2 className="h-4 w-4 text-[hsl(var(--pb-mint))]" />
                       The agent has enough to recommend your beta path.
                     </div>
@@ -358,15 +358,11 @@ export function BetaOnboardingAgentExperience({
           </div>
         </div>
 
-        <div className="pb-card relative overflow-hidden p-4 sm:p-6 lg:p-7">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-[hsl(var(--pb-lavender)/0.18)] blur-[60px]"
-          />
+        <div className="relative lg:pl-2">
           <div className="relative z-10">
-            <span className="pb-eyebrow">
-              <ClipboardCheck className="h-3.5 w-3.5" /> Agent output
-            </span>
+            <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[hsl(var(--pb-lavender))]">
+              <ClipboardCheck className="-mt-0.5 mr-1 inline h-3 w-3" /> Agent output
+            </p>
             {recommendation ? (
               <div className="mt-5 grid gap-4">
                 <div className="rounded-[1.25rem] border border-white/10 bg-white/[0.045] p-4">
