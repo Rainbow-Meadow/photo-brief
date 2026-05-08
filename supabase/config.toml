@@ -14,3 +14,6 @@ verify_jwt = false
 
 [functions.live-preview-submission]
 verify_jwt = false
+
+[functions.website-intelligence]
+verify_jwt = true
