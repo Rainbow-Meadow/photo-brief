@@ -911,12 +911,6 @@ function PainPointSection() {
           information.
         </p>
       </div>
-
-        <p className="pb-copy mx-auto mt-6 max-w-xl text-center text-sm italic sm:mt-8 sm:text-base">
-          PhotoBrief closes the gap between first contact and quote-ready
-          information.
-        </p>
-      </div>
     </section>
   );
 }
