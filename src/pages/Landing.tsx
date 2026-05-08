@@ -861,16 +861,87 @@ function TickerBar({
   );
 }
 
-function BetaBridgeSection() {
+function FoundingPartnerBetaSection({ isFull }: { isFull: boolean }) {
   return (
-    <section className="pb-section">
+    <section id="beta-program" className="pb-section">
       <div className="pb-container">
-        <SectionIntro
-          eyebrow={<><Users className="h-3.5 w-3.5" /> Early access</>}
-          title={<>We're building this <span className="bg-gradient-to-r from-[hsl(var(--pb-lavender))] to-[hsl(var(--pb-violet))] bg-clip-text text-transparent">with you</span>, not just for you.</>}
-          description="Visual intake is workflow-specific — every trade, every service type needs something slightly different. The only way to get it right is to build alongside real businesses running real jobs. That's why this is a hands-on beta, not a waitlist."
-          accent={<BetaSeatTracker className="w-full max-w-sm" />}
-        />
+        <div className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:gap-14">
+          {/* LEFT — narrative */}
+          <div className="lg:pr-2">
+            <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[hsl(var(--pb-lavender))]">
+              <Stamp className="-mt-0.5 mr-1 inline h-3 w-3" /> Accepting applications
+            </p>
+            <h2 className="mt-4 font-serif text-3xl italic leading-[1.05] tracking-tight text-white sm:text-4xl lg:text-5xl">
+              Built with real workflows,{" "}
+              <span className="not-italic font-semibold bg-gradient-to-r from-[hsl(var(--pb-lavender))] to-[hsl(var(--pb-violet))] bg-clip-text text-transparent">
+                with you.
+              </span>
+            </h2>
+            <p className="pb-copy mt-5 text-base leading-relaxed sm:text-lg">
+              Visual intake is workflow-specific — every trade, every service type
+              needs something slightly different. The only way to get it right is
+              to build alongside real businesses running real jobs. That's why
+              this is a hands-on beta, not a waitlist.
+            </p>
+
+            {/* Seat tracker */}
+            <div className="mt-7">
+              <BetaSeatTracker className="w-full max-w-sm" />
+            </div>
+
+            {/* Reward callout */}
+            <div className="mt-7 rounded-xl border border-[hsl(var(--pb-lavender)/0.35)] bg-[hsl(var(--pb-lavender)/0.06)] p-5 sm:p-6">
+              <div className="flex items-start gap-4">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[hsl(var(--pb-lavender)/0.4)] bg-[hsl(var(--pb-lavender)/0.1)]">
+                  <Trophy className="h-4.5 w-4.5 text-[hsl(var(--pb-lavender))]" />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[hsl(var(--pb-lavender))]">
+                    Beta reward
+                  </p>
+                  <p className="mt-1.5 font-serif text-lg italic leading-snug text-white sm:text-xl">
+                    2 partners get{" "}
+                    <span className="not-italic font-semibold">Free Pro for Life</span>.
+                    All {BETA_TOTAL_PARTNERS} earn a post-launch reward tier.
+                  </p>
+                  <FreeProEligibilityModal>
+                    {(open) => (
+                      <button
+                        type="button"
+                        onClick={open}
+                        className="mt-2 text-xs font-semibold text-[hsl(var(--pb-lavender))] underline decoration-[hsl(var(--pb-lavender)/0.4)] underline-offset-2 transition hover:text-white hover:decoration-white/60"
+                      >
+                        Terms &amp; eligibility →
+                      </button>
+                    )}
+                  </FreeProEligibilityModal>
+                </div>
+              </div>
+            </div>
+
+            {/* Trust strip */}
+            <div className="mt-8 grid gap-5 sm:grid-cols-3 sm:gap-x-6 sm:gap-y-0">
+              {trustPoints.map(({ icon: Icon, title, desc }) => (
+                <div key={title} className="border-t border-[hsl(var(--pb-ink-soft)/0.18)] pt-3.5">
+                  <Icon className="h-4 w-4 text-[hsl(var(--pb-violet))]" />
+                  <p className="mt-2 font-serif text-sm italic leading-snug text-[hsl(var(--pb-ink))]">
+                    {title}
+                  </p>
+                  <p className="pb-copy mt-1 text-[11px] leading-[1.45]">{desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* RIGHT — apply agent */}
+          <div id="apply" className="scroll-mt-8 lg:sticky lg:top-6 lg:self-start">
+            <BetaOnboardingAgentExperience
+              source="landing"
+              title={isFull ? "Join the waitlist" : "Apply for the Founding Partner Beta"}
+              description={`Share your website and intake context. The onboarding agent qualifies your workflow, recommends your first intake paths, and submits your application for one of ${BETA_TOTAL_PARTNERS} founding partner seats.`}
+            />
+          </div>
+        </div>
       </div>
     </section>
   );
