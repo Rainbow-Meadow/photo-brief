@@ -152,7 +152,7 @@ const workflowSteps = [
     icon: FileCheck2,
     eyebrow: "Deliver",
     title: "Your team gets an actionable lead packet",
-    body: "Photos, notes, customer context, and readiness status land together — ready for quoting, dispatch, review, or documentation.",
+    body: "Photos, notes, customer context, and readiness status land together — structured and ready for quoting, dispatch, or documentation.",
   },
 ];
 
