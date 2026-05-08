@@ -435,7 +435,7 @@ export default function LandingPage() {
 
         <section className="pb-section">
           <div className="pb-container">
-            <div className="mx-auto max-w-3xl text-center mb-6 sm:mb-8">
+            <div className="mx-auto max-w-3xl text-center mb-6 sm:mb-8 lg:max-w-5xl">
               <span className="pb-eyebrow">
                 <Sparkles className="h-3.5 w-3.5" /> See the difference
               </span>
