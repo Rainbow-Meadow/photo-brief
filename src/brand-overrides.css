@@ -42,6 +42,25 @@
   --brand-cream-warm: 36 34% 94%;
   --brand-graphite: 219 47% 14%;
 
+  /* Landing aliases — old token names now resolve to the new identity. */
+  --pb-night: 219 50% 7%;
+  --pb-ink: 219 47% 14%;
+  --pb-panel: 0 0% 100%;
+  --pb-panel-2: 39 30% 94%;
+  --pb-line: 32 18% 86%;
+  --pb-line-strong: 32 20% 78%;
+  --pb-violet: 33 88% 55%;
+  --pb-lavender: 33 89% 69%;
+  --pb-electric: 219 47% 20%;
+  --pb-mint: 152 60% 34%;
+  --pb-paper: 39 33% 97%;
+  --pb-muted: 219 18% 36%;
+  --pb-shadow: 219 47% 20%;
+  --pb-cream: 39 33% 97%;
+  --pb-cream-warm: 36 34% 94%;
+  --pb-ink-soft: 219 47% 14%;
+  --pb-ink-muted: 219 18% 36%;
+
   /* Wordmark: solid two-tone — kept as a CSS var so SSR/preview match. */
   --pb-wordmark-navy: 219 47% 20%;
   --pb-wordmark-amber: 33 88% 55%;
@@ -127,6 +146,24 @@
   --brand-amber-light: 33 89% 72%;
   --brand-cream: 39 33% 97%;
   --brand-graphite: 219 50% 7%;
+
+  --pb-night: 219 50% 7%;
+  --pb-ink: 219 42% 11%;
+  --pb-panel: 219 42% 11%;
+  --pb-panel-2: 219 30% 16%;
+  --pb-line: 219 26% 20%;
+  --pb-line-strong: 219 20% 30%;
+  --pb-violet: 33 89% 62%;
+  --pb-lavender: 33 89% 72%;
+  --pb-electric: 39 33% 97%;
+  --pb-mint: 152 55% 56%;
+  --pb-paper: 39 33% 97%;
+  --pb-muted: 219 14% 70%;
+  --pb-shadow: 0 0% 0%;
+  --pb-cream: 219 50% 7%;
+  --pb-cream-warm: 219 42% 11%;
+  --pb-ink-soft: 39 33% 97%;
+  --pb-ink-muted: 219 14% 70%;
 
   --pb-wordmark-navy: 39 33% 97%;
   --pb-wordmark-amber: 33 89% 62%;
