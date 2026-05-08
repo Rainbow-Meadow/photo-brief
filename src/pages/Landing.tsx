@@ -381,7 +381,7 @@ export default function LandingPage() {
                 </Button>
               </div>
 
-              <div className="mx-auto mt-4 flex max-w-md justify-center gap-2 sm:mt-5 sm:gap-2.5">
+              <div className="mx-auto mt-4 flex max-w-md flex-wrap justify-center gap-2 sm:mt-5 sm:gap-2.5">
                 {[
                   "Website scan included",
                   "Hosted link or embed",
@@ -389,7 +389,7 @@ export default function LandingPage() {
                 ].map((item) => (
                   <span
                     key={item}
-                    className="pb-route-chip whitespace-nowrap px-2.5 py-1.5 text-center text-[0.65rem] font-semibold sm:px-3 sm:py-2 sm:text-xs"
+                    className="pb-route-chip px-2.5 py-1.5 text-center text-[0.65rem] font-semibold sm:px-3 sm:py-2 sm:text-xs"
                   >
                     {item}
                   </span>
