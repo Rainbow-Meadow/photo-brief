@@ -13,21 +13,21 @@ export function PublicRequestLayout() {
   return (
     <div className="recipient-shell relative isolate flex min-h-screen flex-col bg-gradient-subtle">
       <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[40vh] bg-ambient-sky" aria-hidden />
-      <header className="sticky top-0 z-30 glass-nav">
+      <header className="material-chrome sticky top-0 z-30 rounded-none border-0 hairline-apple-b">
         <div className="mx-auto flex h-14 w-full max-w-2xl items-center justify-between px-4">
-          <div className="flex items-center gap-2 text-sm font-medium text-foreground">
+          <div className="flex items-center gap-2 text-callout font-semibold text-label">
             {logoUrl ? (
               <img
                 src={logoUrl}
                 alt={businessName}
-                className="h-7 w-7 rounded-lg object-cover ring-1 ring-border"
+                className="h-7 w-7 rounded-lg object-cover ring-1 ring-separator"
               />
             ) : (
               <BrandMark variant="horizontal" tone="dark" size={28} eager />
             )}
             {logoUrl ? <span>{businessName}</span> : null}
           </div>
-          <span className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Secure intake</span>
+          <span className="text-caption-2 font-semibold uppercase tracking-wide text-label-tertiary">Secure intake</span>
         </div>
       </header>
 
