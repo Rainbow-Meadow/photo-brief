@@ -422,8 +422,47 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
       radial-gradient(70% 45% at 50% 0%, hsl(var(--pb-violet) / 0.17), transparent 72%),
       radial-gradient(40% 30% at 15% 26%, hsl(var(--pb-electric) / 0.10), transparent 72%),
       linear-gradient(180deg, hsl(var(--pb-night)) 0%, hsl(var(--pb-ink)) 46%, hsl(258 38% 5%) 100%);
-    color: hsl(var(--pb-paper));
   }
+
+  /* ── Editorial / Surveva-style warm paper surface ───────────── */
+  .pb-paper-surface {
+    background:
+      radial-gradient(60% 50% at 80% 0%, hsl(var(--pb-violet) / 0.08), transparent 70%),
+      radial-gradient(40% 35% at 8% 18%, hsl(var(--pb-lavender) / 0.10), transparent 72%),
+      linear-gradient(180deg, hsl(var(--pb-cream)) 0%, hsl(var(--pb-cream-warm)) 100%);
+    color: hsl(var(--pb-ink-soft));
+  }
+  .pb-paper-surface .pb-eyebrow {
+    background: hsl(0 0% 100% / 0.6);
+    border-color: hsl(var(--pb-ink-soft) / 0.12);
+    color: hsl(var(--pb-violet));
+  }
+  .pb-display {
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    line-height: 0.98;
+    color: hsl(var(--pb-violet));
+    font-size: clamp(2.5rem, 7.2vw, 6rem);
+  }
+  .pb-display-ink { color: hsl(var(--pb-ink-soft)); }
+  .pb-paper-pill {
+    background: hsl(0 0% 100% / 0.78);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid hsl(var(--pb-ink-soft) / 0.08);
+    box-shadow: 0 18px 40px -28px hsl(var(--pb-ink-soft) / 0.5);
+  }
+  .pb-paper-link {
+    color: hsl(var(--pb-ink-soft) / 0.78);
+    transition: color 180ms ease;
+  }
+  .pb-paper-link:hover { color: hsl(var(--pb-violet)); }
+  .pb-paper-link[data-active="true"] { color: hsl(var(--pb-violet)); }
+  /* Soft fade where paper meets the dark sections below */
+  .pb-paper-fade-bottom {
+    background: linear-gradient(180deg, transparent 0%, hsl(var(--pb-night)) 100%);
+  }
+
   .pb-copy { color: hsl(var(--pb-muted)); font-size: clamp(0.938rem, 0.4vw + 0.875rem, 1.125rem); line-height: 1.65; }
   .pb-container { width: min(100% - 2rem, 1280px); margin-inline: auto; }
   @media (min-width: 640px) { .pb-container { width: min(100% - 3rem, 1280px); } }
