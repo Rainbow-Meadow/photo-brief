@@ -982,6 +982,12 @@ function StatAccent({
       : tone === "amber"
         ? "text-amber-300"
         : "text-[hsl(var(--pb-lavender))]";
+  const borderClass =
+    tone === "mint"
+      ? "border-[hsl(var(--pb-mint)/0.5)]"
+      : tone === "amber"
+        ? "border-amber-300/50"
+        : "border-[hsl(var(--pb-lavender)/0.5)]";
   return (
     <div className="w-full max-w-sm text-left">
       <div className={`flex items-center gap-2 ${toneClass}`}>
@@ -990,7 +996,7 @@ function StatAccent({
           By the numbers
         </span>
       </div>
-      <div className={`mt-3 border-t-2 pt-4 ${toneClass.replace("text-", "border-")}`}>
+      <div className={`mt-3 border-t-2 pt-4 ${borderClass}`}>
         <div className={`font-serif text-5xl italic leading-none tracking-tight sm:text-6xl ${toneClass}`}>
           {value}
         </div>
