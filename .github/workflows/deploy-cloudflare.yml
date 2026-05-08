@@ -99,3 +99,6 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: workers/beta-onboarding-agent
           command: deploy
+
+      - name: Smoke test public production endpoints
+        run: node scripts/smoke-public-endpoints.mjs
