@@ -306,120 +306,31 @@ export default function LandingPage() {
       />
 
       <main className="pb-landing">
-        {/* ━━ 1. HERO ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-        <section className="relative isolate overflow-hidden -mt-[4.5rem] pt-[5.5rem] sm:-mt-[5rem] sm:pt-[6rem] lg:pt-[6.5rem]">
-          <div className="pb-lens-field" />
-          <div className="pb-container relative pb-8 sm:pb-10 lg:pb-12">
-            <div className="relative z-10 mx-auto max-w-3xl text-center lg:mx-0 lg:grid lg:max-w-none lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:gap-16 lg:text-left">
-              {/* Mark — mobile/tablet only (lives above title) */}
-              <div className="mb-4 sm:mb-5 lg:hidden">
-                <div className="relative inline-flex items-center justify-center">
-                  <div
-                    aria-hidden
-                    className="pointer-events-none absolute h-36 w-36 rounded-full bg-[hsl(var(--pb-violet)/0.35)] blur-[60px] sm:h-48 sm:w-48 sm:blur-[80px]"
-                  />
-                  <BrandMark
-                    variant="mark"
-                    size={88}
-                    eager
-                    className="relative sm:hidden"
-                  />
-                  <BrandMark
-                    variant="mark"
-                    size={120}
-                    eager
-                    className="relative hidden sm:inline-flex"
-                  />
-                </div>
-              </div>
-
-              {/* Left column — copy + CTAs */}
-              <div className="lg:min-w-0 text-left">
-                <span className="pb-eyebrow text-center">
+        {/* ━━ 1. HERO — editorial / paper ━━━━━━━━━━━━━━━━━━━━━ */}
+        <section className="pb-paper-surface relative isolate overflow-hidden -mt-[4.5rem] pt-[7rem] sm:-mt-[5rem] sm:pt-[8rem] lg:pt-[9rem]">
+          <div className="pb-container relative pb-16 sm:pb-20 lg:pb-28">
+            <div className="grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
+              {/* Left — copy */}
+              <div className="text-left">
+                <span className="pb-eyebrow">
                   <Sparkles className="h-3.5 w-3.5" /> Accepting beta applications
                 </span>
 
-                <h1 className="mx-auto mt-3 max-w-2xl font-bold tracking-tight sm:mt-4 lg:mx-0 lg:max-w-none text-white text-[clamp(2.25rem,5.6vw,4.5rem)] leading-[1.05] text-left">
-                  Replace weak website forms with guided visual intake.
+                <h1 className="pb-display mt-6 sm:mt-8">
+                  Replace weak forms.
+                  <br />
+                  <span className="pb-display-ink">Send a guided</span>
+                  <br />
+                  <span className="pb-display-ink">photo brief.</span>
                 </h1>
 
-                <p className="mx-auto mt-4 max-w-2xl text-muted-foreground lg:max-w-xl leading-[1.5] text-lg text-left">
+                <p className="mt-6 max-w-xl text-base leading-[1.65] text-[hsl(var(--pb-ink-muted))] sm:text-lg sm:mt-8">
                   PhotoBrief scans your website, maps your services, and gives
-                  customers a simple photo-guided path so your team gets
+                  customers a simple photo-guided path — so your team gets
                   actionable lead packets instead of vague messages.
                 </p>
 
-                <div className="mx-auto mt-5 flex max-w-lg flex-col gap-2.5 sm:mt-6 sm:max-w-none sm:flex-row sm:justify-center sm:gap-3 lg:hidden">
-                  <Button
-                    size="xl"
-                    variant="pb-primary"
-                    onClick={() => {
-                      trackEvent("cta_click", {
-                        location: "hero",
-                        label: "primary",
-                      });
-                      document
-                        .getElementById("apply")
-                        ?.scrollIntoView({ behavior: "smooth" });
-                    }}
-                  >
-                    {isFull ? "Join the waitlist" : "Apply for the beta"}{" "}
-                    <ArrowRight className="ml-1 h-4 w-4" />
-                  </Button>
-                  <Button asChild size="xl" variant="pb-secondary">
-                    <a
-                      href="#workflow"
-                      onClick={() =>
-                        trackEvent("cta_click", {
-                          location: "hero",
-                          label: "workflow",
-                        })
-                      }
-                    >
-                      See the intake flow
-                    </a>
-                  </Button>
-                  <Button
-                    size="xl"
-                    variant="pb-ghost"
-                    onClick={() => setDemoOpen(true)}
-                  >
-                    <PlayCircle className="mr-1.5 h-4.5 w-4.5" /> Product
-                    spotlight
-                  </Button>
-                </div>
-
-                <div className="mx-auto mt-4 max-w-none flex-nowrap gap-2 sm:mt-5 sm:gap-2.5 flex items-center justify-start">
-                  {[
-                    "Website scan included",
-                    "Hosted link or embed",
-                    "Lead packets, not form spam",
-                  ].map((item) => (
-                    <span
-                      key={item}
-                      className="pb-route-chip px-2.5 py-1.5 text-[0.65rem] font-semibold sm:px-3 sm:py-2 sm:text-xs text-center"
-                    >
-                      {item}
-                    </span>
-                  ))}
-                </div>
-
-                {/* Seat tracker — mobile/tablet placement */}
-                <BetaSeatTracker className="mx-auto mt-4 max-w-sm sm:mt-5 lg:hidden" />
-              </div>
-
-              {/* Right column — large mark + seat tracker (desktop only) */}
-              <div className="hidden lg:flex lg:flex-col lg:items-center lg:gap-6">
-                <div className="relative inline-flex items-center justify-center">
-                  <div
-                    aria-hidden
-                    className="pointer-events-none absolute h-64 w-64 rounded-full bg-[hsl(var(--pb-violet)/0.35)] blur-[100px]"
-                  />
-                  <BrandMark variant="mark" size={200} eager className="relative" />
-                </div>
-                <BetaSeatTracker className="w-full max-w-sm" />
-
-                <div className="flex w-full max-w-md flex-col items-stretch gap-3">
+                <div className="mt-8 flex flex-col gap-3 sm:mt-10 sm:flex-row sm:items-center">
                   <Button
                     size="xl"
                     variant="pb-primary"
@@ -427,34 +338,55 @@ export default function LandingPage() {
                       trackEvent("cta_click", { location: "hero", label: "primary" });
                       document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" });
                     }}
+                    className="rounded-full"
                   >
-                    {isFull ? "Join the waitlist" : "Apply for the beta"}{" "}
+                    {isFull ? "Join the waitlist" : "Apply for the beta"}
                     <ArrowRight className="ml-1 h-4 w-4" />
                   </Button>
-                  <div className="flex gap-3">
-                    <Button asChild size="xl" variant="pb-secondary" className="flex-1">
-                      <a
-                        href="#workflow"
-                        onClick={() =>
-                          trackEvent("cta_click", { location: "hero", label: "workflow" })
-                        }
-                      >
-                        See the intake flow
-                      </a>
-                    </Button>
-                    <Button
-                      size="xl"
-                      variant="pb-ghost"
-                      className="flex-1"
-                      onClick={() => setDemoOpen(true)}
-                    >
-                      <PlayCircle className="mr-1.5 h-4.5 w-4.5" /> Spotlight
-                    </Button>
-                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setDemoOpen(true)}
+                    className="group inline-flex items-center gap-2 self-start rounded-full px-3 py-2 text-sm font-medium text-[hsl(var(--pb-ink-soft))] transition hover:text-[hsl(var(--pb-violet))]"
+                  >
+                    <PlayCircle className="h-5 w-5 text-[hsl(var(--pb-violet))]" />
+                    Watch the product spotlight
+                  </button>
                 </div>
+
+                <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-medium text-[hsl(var(--pb-ink-muted))] sm:text-sm">
+                  {[
+                    "Website scan included",
+                    "Hosted link or embed",
+                    "Lead packets, not form spam",
+                  ].map((item) => (
+                    <span key={item} className="inline-flex items-center gap-1.5">
+                      <span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--pb-violet)/0.55)]" />
+                      {item}
+                    </span>
+                  ))}
+                </div>
+
+                <BetaSeatTracker className="mt-8 max-w-sm sm:mt-10" />
+              </div>
+
+              {/* Right — hand-drawn illustration */}
+              <div className="relative flex justify-center lg:justify-end">
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 -z-10 mx-auto max-w-md rounded-full bg-[hsl(var(--pb-lavender)/0.18)] blur-[80px]"
+                />
+                <img
+                  src={heroIllustration}
+                  alt="Hand-drawn illustration of a phone showing a guided photo-request flow"
+                  width={1024}
+                  height={1024}
+                  className="relative w-full max-w-md drop-shadow-[0_30px_50px_hsl(var(--pb-ink-soft)/0.18)] sm:max-w-lg"
+                />
               </div>
             </div>
           </div>
+          {/* Soft fade where paper meets the dark sections below */}
+          <div className="pb-paper-fade-bottom pointer-events-none absolute inset-x-0 bottom-0 h-24" aria-hidden />
         </section>
 
         {/* ━━ TICKER 1 — Industry signals ━━━━━━━━━━━━━━━━━━━━━ */}
