@@ -1204,7 +1204,7 @@ function UseCaseSection() {
           </p>
         </div>
         {/* Horizontal scroll on mobile, grid on desktop */}
-        <div className="mt-8 flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory sm:mt-10 md:grid md:grid-cols-2 md:overflow-visible md:pb-0 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="mt-8 flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory sm:mt-10 md:grid md:grid-cols-2 md:overflow-visible md:pb-0 lg:grid-cols-3 xl:grid-cols-5">
           {useCases.map((item) => {
             const Icon = item.icon;
             return (
