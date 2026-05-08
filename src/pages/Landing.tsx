@@ -902,6 +902,7 @@ function BetaBridgeSection() {
   );
 }
 
+function ChapterDivider() {
   return (
     <div className="pb-container" aria-hidden>
       <div className="mx-auto h-px max-w-lg bg-gradient-to-r from-transparent via-white/12 to-transparent" />
