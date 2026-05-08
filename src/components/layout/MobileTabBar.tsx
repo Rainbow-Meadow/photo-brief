@@ -97,12 +97,12 @@ function TabLink({
     <NavLink
       to={to}
       className={cn(
-        "pb-nav-link flex flex-col items-center justify-center gap-0.5 rounded-xl px-1 py-1 text-xs font-medium transition active:scale-95",
-        active ? "active text-primary" : "text-muted-foreground",
+        "tap-apple focus-apple flex flex-col items-center justify-center gap-0.5 rounded-xl px-1 py-1 touch-target-apple",
+        active ? "text-system-blue" : "text-label-secondary",
       )}
     >
       <Icon className="h-6 w-6" />
-      <span className="text-[10px] leading-none">{label}</span>
+      <span className="text-caption-2 font-semibold leading-none">{label}</span>
     </NavLink>
   );
 }
