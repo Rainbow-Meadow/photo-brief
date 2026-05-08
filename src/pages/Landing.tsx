@@ -387,7 +387,7 @@ export default function LandingPage() {
                   </Button>
                 </div>
 
-                <div className="mx-auto mt-4 flex max-w-md flex-wrap justify-center gap-2 sm:mt-5 sm:gap-2.5">
+                <div className="mx-auto mt-4 flex max-w-none flex-nowrap justify-center gap-2 sm:mt-5 sm:gap-2.5">
                   {[
                     "Website scan included",
                     "Hosted link or embed",
