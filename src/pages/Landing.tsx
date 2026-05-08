@@ -470,19 +470,20 @@ export default function LandingPage() {
 
         <section className="pb-section">
           <div className="pb-container">
-            <div className="mx-auto max-w-3xl text-center mb-6 sm:mb-8 lg:max-w-5xl">
-              <span className="pb-eyebrow">
-                <Sparkles className="h-3.5 w-3.5" /> See the difference
-              </span>
-              <h2 className="pb-section-title mt-4 text-white">
-                Vague website form becomes an actionable lead packet.
-              </h2>
-              <p className="pb-copy mt-4 text-base sm:text-lg">
-                Watch how a generic "tell us about your project" message turns
-                into a structured packet with the right photos, notes, and
-                context — ready for your team to act on.
-              </p>
-            </div>
+            <SectionIntro
+              className="mb-6 sm:mb-8"
+              eyebrow={<><Sparkles className="h-3.5 w-3.5" /> See the difference</>}
+              title="Vague website form becomes an actionable lead packet."
+              description={`Watch how a generic "tell us about your project" message turns into a structured packet with the right photos, notes, and context — ready for your team to act on.`}
+              accent={
+                <StatAccent
+                  icon={Sparkles}
+                  value="12 min"
+                  label="Saved per lead — fewer follow-up calls, less back-and-forth."
+                  tone="lavender"
+                />
+              }
+            />
             <Suspense fallback={<div className="min-h-[400px]" />}>
               <InteractiveHeroBriefAssembly />
             </Suspense>
@@ -811,18 +812,19 @@ function PainPointSection() {
       onTouchEnd={() => { setTimeout(() => setPaused(false), 6000); }}
     >
       <div className="pb-container">
-        <div className="mx-auto max-w-3xl text-center">
-          <span className="pb-eyebrow">
-            <MessageSquareWarning className="h-3.5 w-3.5" /> The problem
-          </span>
-          <h2 className="pb-section-title mt-4 text-white">
-            Your website intake is leaking money.
-          </h2>
-          <p className="pb-copy mt-4 text-base sm:text-lg">
-            These are real industry numbers. Generic contact forms don't just
-            lose information — they lose customers.
-          </p>
-        </div>
+        <SectionIntro
+          eyebrow={<><MessageSquareWarning className="h-3.5 w-3.5" /> The problem</>}
+          title="Your website intake is leaking money."
+          description="These are real industry numbers. Generic contact forms don't just lose information — they lose customers."
+          accent={
+            <StatAccent
+              icon={TrendingDown}
+              value="81%"
+              label="of website forms are abandoned before submit."
+              tone="amber"
+            />
+          }
+        />
 
         {/* Carousel card */}
         <div className="relative mx-auto mt-8 max-w-2xl sm:mt-10">
@@ -925,24 +927,12 @@ function BetaBridgeSection() {
   return (
     <section className="pb-section">
       <div className="pb-container">
-        <div className="mx-auto max-w-2xl text-center">
-          <span className="pb-eyebrow">
-            <Users className="h-3.5 w-3.5" /> Early access
-          </span>
-          <h2 className="pb-section-title mt-5 text-white">
-            We're building this{" "}
-            <span className="bg-gradient-to-r from-[hsl(var(--pb-lavender))] to-[hsl(var(--pb-mint))] bg-clip-text text-transparent">
-              with you
-            </span>
-            , not just for you.
-          </h2>
-          <p className="pb-copy mx-auto mt-5 max-w-lg text-base leading-relaxed sm:text-lg sm:leading-8">
-            Visual intake is workflow-specific — every trade, every service
-            type needs something slightly different. The only way to get it
-            right is to build alongside real businesses running real jobs.
-            That's why this is a hands-on beta, not a waitlist.
-          </p>
-        </div>
+        <SectionIntro
+          eyebrow={<><Users className="h-3.5 w-3.5" /> Early access</>}
+          title={<>We're building this <span className="bg-gradient-to-r from-[hsl(var(--pb-lavender))] to-[hsl(var(--pb-mint))] bg-clip-text text-transparent">with you</span>, not just for you.</>}
+          description="Visual intake is workflow-specific — every trade, every service type needs something slightly different. The only way to get it right is to build alongside real businesses running real jobs. That's why this is a hands-on beta, not a waitlist."
+          accent={<BetaSeatTracker className="w-full max-w-sm" />}
+        />
       </div>
     </section>
   );
@@ -1131,18 +1121,19 @@ function ComparisonSection({
   return (
     <section id="comparison" className="pb-section-tight">
       <div className="pb-container">
-        <div className="mx-auto max-w-3xl text-center">
-          <span className="pb-eyebrow">
-            <MessageSquareWarning className="h-3.5 w-3.5" /> Before / after
-          </span>
-          <h2 className="pb-section-title mt-4 text-white">
-            Generic form vs. guided visual intake.
-          </h2>
-          <p className="pb-copy mt-4 text-lg">
-            The difference is not more photos — it's structured context
-            that lets your team skip the back-and-forth entirely.
-          </p>
-        </div>
+        <SectionIntro
+          eyebrow={<><MessageSquareWarning className="h-3.5 w-3.5" /> Before / after</>}
+          title="Generic form vs. guided visual intake."
+          description="The difference is not more photos — it's structured context that lets your team skip the back-and-forth entirely."
+          accent={
+            <StatAccent
+              icon={CheckCircle2}
+              value="0"
+              label="Follow-up calls needed when intake arrives structured."
+              tone="mint"
+            />
+          }
+        />
 
         <div className="mx-auto mt-8 flex max-w-md rounded-full border border-white/12 bg-[hsl(var(--pb-panel)/0.72)] p-1 sm:mt-10">
           {[
@@ -1310,19 +1301,19 @@ function UseCaseSection() {
   return (
     <section id="use-cases" className="pb-section">
       <div className="pb-container">
-        <div className="mx-auto max-w-3xl text-center lg:max-w-5xl">
-          <span className="pb-eyebrow">
-            <ClipboardList className="h-3.5 w-3.5" /> Use cases
-          </span>
-          <h2 className="pb-section-title mt-4 text-white">
-            Built for businesses that need to see before they act.
-          </h2>
-          <p className="pb-copy mt-4 text-base sm:text-lg">
-            Anywhere a missing photo slows the next step — quoting, scheduling,
-            approving, or documenting — PhotoBrief structures the intake so
-            your team has everything on the first pass.
-          </p>
-        </div>
+        <SectionIntro
+          eyebrow={<><ClipboardList className="h-3.5 w-3.5" /> Use cases</>}
+          title="Built for businesses that need to see before they act."
+          description="Anywhere a missing photo slows the next step — quoting, scheduling, approving, or documenting — PhotoBrief structures the intake so your team has everything on the first pass."
+          accent={
+            <StatAccent
+              icon={ClipboardList}
+              value="5+"
+              label="Industries shipping with PhotoBrief in beta."
+              tone="lavender"
+            />
+          }
+        />
         {/* Horizontal scroll on mobile, grid on desktop */}
         <div className="mt-8 flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory sm:mt-10 md:grid md:grid-cols-2 md:overflow-visible md:pb-0 lg:grid-cols-3 xl:grid-cols-5">
           {useCases.map((item) => {
@@ -1350,20 +1341,19 @@ function WebsiteIntelligenceSection() {
   return (
     <section id="website-intelligence" className="pb-section">
       <div className="pb-container">
-        <div className="mx-auto max-w-3xl text-center lg:max-w-5xl">
-          <span className="pb-eyebrow">
-            <Globe2 className="h-3.5 w-3.5" /> Website Intelligence
-          </span>
-          <h2 className="pb-section-title mt-4 text-white">
-            Your website becomes your intake engine.
-          </h2>
-          <p className="pb-copy mx-auto mt-4 max-w-2xl text-base sm:text-lg">
-            PhotoBrief scans your services, current forms, and
-            calls-to-action, then maps them into 2–3 simple intake paths
-            you can launch with a hosted link or embed. Beta partners get
-            this built for them during concierge setup.
-          </p>
-        </div>
+        <SectionIntro
+          eyebrow={<><Globe2 className="h-3.5 w-3.5" /> Website Intelligence</>}
+          title="Your website becomes your intake engine."
+          description="PhotoBrief scans your services, current forms, and calls-to-action, then maps them into 2–3 simple intake paths you can launch with a hosted link or embed. Beta partners get this built for them during concierge setup."
+          accent={
+            <StatAccent
+              icon={Scan}
+              value="< 5 min"
+              label="From a website URL to a working intake path."
+              tone="mint"
+            />
+          }
+        />
 
         <div className="mt-8 grid gap-4 sm:mt-10 md:grid-cols-3">
           {websiteIntelCards.map((card) => {
