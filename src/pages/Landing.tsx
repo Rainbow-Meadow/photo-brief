@@ -81,6 +81,7 @@ import wideGarage from "@/assets/junk-removal/wide-garage.webp";
 import pileCloseup from "@/assets/junk-removal/pile-closeup.webp";
 import appliances from "@/assets/junk-removal/appliances.webp";
 import drivewayAccess from "@/assets/junk-removal/driveway-access.webp";
+import heroIllustration from "@/assets/landing-hero-illustration.png";
 
 /* ── JSON-LD ───────────────────────────────────────────────── */
 
