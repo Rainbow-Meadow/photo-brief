@@ -333,16 +333,16 @@ export default function LandingPage() {
               </div>
 
               {/* Left column — copy + CTAs */}
-              <div className="lg:min-w-0 text-center">
+              <div className="lg:min-w-0 text-left">
                 <span className="pb-eyebrow text-center">
                   <Sparkles className="h-3.5 w-3.5" /> Accepting beta applications
                 </span>
 
-                <h1 className="mx-auto mt-3 max-w-2xl font-bold tracking-tight sm:mt-4 lg:mx-0 lg:max-w-none text-center text-white text-[clamp(2.25rem,5.6vw,4.5rem)] leading-[1.05]">
+                <h1 className="mx-auto mt-3 max-w-2xl font-bold tracking-tight sm:mt-4 lg:mx-0 lg:max-w-none text-white text-[clamp(2.25rem,5.6vw,4.5rem)] leading-[1.05] text-left">
                   Replace weak website forms with guided visual intake.
                 </h1>
 
-                <p className="mx-auto mt-4 max-w-2xl text-muted-foreground lg:max-w-xl text-center leading-[1.5] text-lg">
+                <p className="mx-auto mt-4 max-w-2xl text-muted-foreground lg:max-w-xl leading-[1.5] text-lg text-left">
                   PhotoBrief scans your website, maps your services, and gives
                   customers a simple photo-guided path so your team gets
                   actionable lead packets instead of vague messages.
@@ -388,7 +388,7 @@ export default function LandingPage() {
                   </Button>
                 </div>
 
-                <div className="mx-auto mt-4 flex max-w-none flex-nowrap justify-center gap-2 sm:mt-5 sm:gap-2.5">
+                <div className="mx-auto mt-4 max-w-none flex-nowrap gap-2 sm:mt-5 sm:gap-2.5 flex items-center justify-start">
                   {[
                     "Website scan included",
                     "Hosted link or embed",
@@ -396,7 +396,7 @@ export default function LandingPage() {
                   ].map((item) => (
                     <span
                       key={item}
-                      className="pb-route-chip px-2.5 py-1.5 text-center text-[0.65rem] font-semibold sm:px-3 sm:py-2 sm:text-xs"
+                      className="pb-route-chip px-2.5 py-1.5 text-[0.65rem] font-semibold sm:px-3 sm:py-2 sm:text-xs text-center"
                     >
                       {item}
                     </span>
