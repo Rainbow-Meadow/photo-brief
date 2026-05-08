@@ -225,12 +225,12 @@ async function requirePlatformAdmin(req: Request) {
   const authHeader = req.headers.get("Authorization");
   if (!authHeader?.startsWith("Bearer ")) return { error: json({ error: "unauthorized" }, 401) };
   const userClient = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!, { global: { headers: { Authorization: authHeader } } });
-  const { data: claims, error: claimsErr } = await userClient.auth.getClaims(authHeader.replace("Bearer ", ""));
-  if (claimsErr || !claims?.claims?.sub) return { error: json({ error: "unauthorized" }, 401) };
+  const { data: { user }, error: userErr } = await userClient.auth.getUser();
+  if (userErr || !user) return { error: json({ error: "unauthorized" }, 401) };
   const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
-  const { data: adminRow } = await admin.from("platform_admins").select("user_id").eq("user_id", claims.claims.sub).maybeSingle();
+  const { data: adminRow } = await admin.from("platform_admins").select("user_id").eq("user_id", user.id).maybeSingle();
   if (!adminRow) return { error: json({ error: "forbidden" }, 403) };
-  return { admin, userId: claims.claims.sub as string };
+  return { admin, userId: user.id };
 }
 
 Deno.serve(async (req) => {
