@@ -217,6 +217,13 @@ export default function AuthPage() {
             <Label htmlFor="password">Password</Label>
             <Input id="password" type="password" placeholder="••••••••" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} />
           </div>
+          <TurnstileWidget
+            onVerify={(t) => setTurnstileToken(t)}
+            onExpire={() => setTurnstileToken(null)}
+            onError={() => setTurnstileToken(null)}
+            action={mode === "signup" ? "signup" : "signin"}
+            className="flex justify-center"
+          />
           <Button type="submit" className="w-full" disabled={submitting}>
             {submitting ? "Please wait..." : mode === "signup" ? "Create account" : "Sign in"}
           </Button>
