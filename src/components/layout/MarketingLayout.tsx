@@ -31,6 +31,8 @@ import {
  */
 export function MarketingLayout() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { pathname } = useLocation();
+  const isLanding = pathname === "/";
 
   return (
     <div className="pb-landing flex min-h-screen flex-col">
