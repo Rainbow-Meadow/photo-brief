@@ -35,53 +35,58 @@ export function MarketingLayout() {
   return (
     <div className="pb-landing flex min-h-screen flex-col">
       <div className="sticky top-0 z-40 px-3 pt-3 sm:px-6 sm:pt-4 pt-safe">
-        <header className="mx-auto flex h-14 w-full max-w-7xl items-center justify-between gap-4 rounded-full glass-nav px-3 sm:h-16 sm:px-5">
-          <NavLink
-            to="/"
-            aria-label="PhotoBrief.ai"
-            className="flex items-center pl-1"
-          >
-            <BrandMark
-              variant="wordmark"
-              tone="auto"
-              size={22}
-              eager
-              className="sm:hidden"
-            />
-            <BrandMark
-              variant="wordmark"
-              tone="auto"
-              size={26}
-              eager
-              className="hidden sm:block"
-            />
-          </NavLink>
+        <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-3">
+          {/* Centered floating pill: links | LOGO | links */}
+          <header className="paper-pill-nav mx-auto flex h-12 items-center gap-1 rounded-full px-2 text-sm font-medium sm:h-14 sm:gap-2 sm:px-3">
+            {/* Left links (desktop) */}
+            <nav className="hidden items-center gap-1 md:flex">
+              {marketingLinks.slice(0, 1).map((l) => (
+                <NavLink
+                  key={l.to}
+                  to={l.to}
+                  className={({ isActive }) =>
+                    `pb-paper-link rounded-full px-3 py-1.5 ${isActive ? "font-semibold" : ""}`
+                  }
+                >
+                  {l.label}
+                </NavLink>
+              ))}
+            </nav>
 
-          <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
-            {marketingLinks.map((l) => (
-              <NavLink
-                key={l.to}
-                to={l.to}
-                className={({ isActive }) =>
-                  `rounded-full px-3 py-1.5 transition-colors ${
-                    isActive
-                      ? "bg-[hsl(var(--pb-lavender)/0.12)] text-[hsl(var(--pb-lavender))]"
-                      : "text-white/62 hover:bg-white/7 hover:text-white"
-                  }`
-                }
-              >
-                {l.label}
-              </NavLink>
-            ))}
-          </nav>
+            {/* Centered brand mark */}
+            <NavLink
+              to="/"
+              aria-label="PhotoBrief.ai"
+              className="flex items-center px-2 sm:px-3"
+            >
+              <BrandMark variant="wordmark" tone="dark" size={22} eager className="sm:hidden" />
+              <BrandMark variant="wordmark" tone="dark" size={26} eager className="hidden sm:block" />
+            </NavLink>
 
-          <div className="flex items-center gap-1.5">
+            {/* Right links (desktop) */}
+            <nav className="hidden items-center gap-1 md:flex">
+              {marketingLinks.slice(1).map((l) => (
+                <NavLink
+                  key={l.to}
+                  to={l.to}
+                  className={({ isActive }) =>
+                    `pb-paper-link rounded-full px-3 py-1.5 ${isActive ? "font-semibold" : ""}`
+                  }
+                >
+                  {l.label}
+                </NavLink>
+              ))}
+            </nav>
+          </header>
+
+          {/* CTAs sit outside the pill, on the far right */}
+          <div className="absolute right-3 top-3 flex items-center gap-1.5 sm:right-6 sm:top-4">
             <ThemeToggle hideLabel className="hidden md:inline-flex" />
             <Button
               asChild
               variant="ghost"
               size="sm"
-              className="hidden rounded-full sm:inline-flex"
+              className="hidden rounded-full text-[hsl(var(--pb-ink-soft))] hover:bg-white/60 sm:inline-flex"
             >
               <NavLink to="/auth">Sign in</NavLink>
             </Button>
@@ -93,14 +98,14 @@ export function MarketingLayout() {
               type="button"
               variant="ghost"
               size="icon"
-              className="h-10 w-10 rounded-full md:hidden"
+              className="h-10 w-10 rounded-full text-[hsl(var(--pb-ink-soft))] md:hidden"
               aria-label="Open menu"
               onClick={() => setMenuOpen(true)}
             >
               <Menu className="h-5 w-5" />
             </Button>
           </div>
-        </header>
+        </div>
       </div>
 
       {/* Mobile nav sheet */}
