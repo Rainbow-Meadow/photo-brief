@@ -12,6 +12,11 @@ import {
   LifeBuoy,
   Globe2,
   Plug,
+  Shield,
+  ScanSearch,
+  Terminal,
+  UserPlus,
+  Bot,
 } from "lucide-react";
 
 import {
@@ -31,6 +36,7 @@ import { BrandMark } from "@/components/layout/BrandMark";
 import { UpgradePromptCard } from "@/components/shared/UpgradePromptCard";
 import { WorkspaceSwitcher } from "@/features/workspace/components/WorkspaceSwitcher";
 import { usePlan } from "@/hooks/usePlan";
+import { usePlatformAdmin } from "@/hooks/usePlatformAdmin";
 import { cn } from "@/lib/utils";
 
 const mainItems = [
@@ -41,6 +47,13 @@ const mainItems = [
   { title: "Website Intake", url: "/intake", icon: Globe2, feature: "website_intake" as const },
 ];
 
+const adminItems = [
+  { title: "Command Center", url: "/admin/command", icon: Terminal },
+  { title: "Beta Program", url: "/admin/beta", icon: Shield },
+  { title: "Invites", url: "/admin/invites", icon: UserPlus },
+  { title: "AI Rerun", url: "/admin/ai-rerun", icon: Bot },
+  { title: "Website Intel", url: "/admin/website-intelligence", icon: ScanSearch },
+];
 const settingsItems = [
   { title: "Brand", url: "/settings/brand", icon: Sparkles },
   { title: "Team", url: "/settings/team", icon: Settings },
@@ -54,6 +67,7 @@ export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const { plan, loading: planLoading, can } = usePlan();
+  const { isAdmin } = usePlatformAdmin();
   // Hide the upgrade card for users already on Pro or higher.
   // Plans below Pro: free, starter. Don't render until plan is resolved
   // to avoid flashing the wrong CTA during the brief auth/workspace load.
@@ -158,6 +172,26 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        {isAdmin ? (
+          <SidebarGroup>
+            <SidebarGroupLabel>Admin</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {adminItems.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild isActive={isActive(item.url)} tooltip={item.title}>
+                      <NavLink to={item.url} className="pb-nav-link flex items-center gap-2">
+                        <item.icon className="h-4 w-4" />
+                        {!collapsed && <span>{item.title}</span>}
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        ) : null}
       </SidebarContent>
 
       {!collapsed && showUpgradeCard ? (
