@@ -764,7 +764,7 @@ function PainPointSection() {
             <span className="pb-eyebrow">
               <MessageSquareWarning className="h-3.5 w-3.5" /> The problem
             </span>
-            <h2 className="pb-section-title mt-4 text-white text-4xl">
+            <h2 className="pb-section-title mt-4 text-white">
               Your website intake is leaking money.
             </h2>
             <p className="pb-copy mx-auto mt-4 max-w-2xl text-base sm:text-lg lg:mx-0 lg:max-w-xl">
@@ -938,7 +938,7 @@ function SectionIntro({
     return (
       <div className={`mx-auto max-w-3xl text-center lg:max-w-5xl ${className ?? ""}`}>
         <span className="pb-eyebrow">{eyebrow}</span>
-        <h2 className="pb-section-title mt-4 text-white text-4xl">{title}</h2>
+        <h2 className="pb-section-title mt-4 text-white">{title}</h2>
         {description ? (
           <p className="pb-copy mx-auto mt-4 max-w-2xl text-base sm:text-lg">{description}</p>
         ) : null}
@@ -952,7 +952,7 @@ function SectionIntro({
     >
       <div className="lg:min-w-0">
         <span className="pb-eyebrow">{eyebrow}</span>
-        <h2 className="pb-section-title mt-4 text-white text-4xl">{title}</h2>
+        <h2 className="pb-section-title mt-4 text-white">{title}</h2>
         {description ? (
           <p className="pb-copy mx-auto mt-4 max-w-2xl text-base sm:text-lg lg:mx-0 lg:max-w-xl">
             {description}
@@ -1044,7 +1044,7 @@ function WorkflowSection() {
             <span className="pb-eyebrow">
               <Route className="h-3.5 w-3.5" /> How it works
             </span>
-            <h2 className="pb-section-title mt-4 max-w-xl text-white text-4xl">
+            <h2 className="pb-section-title mt-4 max-w-xl text-white">
               From website visit to actionable lead packet.
             </h2>
             <p className="pb-copy mt-4 max-w-lg text-base sm:text-lg">
