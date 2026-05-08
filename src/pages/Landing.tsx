@@ -774,15 +774,16 @@ function PainPointSection() {
 
         {/* Carousel card */}
         <div className="relative mx-auto mt-8 max-w-2xl sm:mt-10">
-          <div className="pb-card relative overflow-hidden p-6 sm:p-8">
-            {/* Crossfade wrapper */}
+          <div className="pb-card relative overflow-hidden p-6 sm:p-8" style={{ minHeight: 260 }}>
+            {/* Crossfade — all cards absolutely positioned, container sized by tallest */}
             {painPoints.map((p, i) => {
               const PIcon = p.icon;
+              const isActive = i === active;
               return (
                 <div
                   key={p.number}
-                  className={`transition-all duration-500 ${i === active ? "relative opacity-100" : "pointer-events-none absolute inset-0 p-6 opacity-0 sm:p-8"}`}
-                  aria-hidden={i !== active}
+                  className={`absolute inset-0 p-6 sm:p-8 transition-opacity duration-500 ${isActive ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"}`}
+                  aria-hidden={!isActive}
                 >
                   <div className="flex items-center gap-4">
                     <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-[hsl(var(--pb-line-strong))] bg-[hsl(var(--pb-ink))] text-[hsl(var(--pb-lavender))]">
