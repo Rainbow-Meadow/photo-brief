@@ -1248,13 +1248,7 @@ function WorkflowSection() {
   );
 }
 
-function ComparisonSection({
-  mode,
-  onModeChange,
-}: {
-  mode: "messy" | "clean";
-  onModeChange: (mode: "messy" | "clean") => void;
-}) {
+function ComparisonSection({ mode }: { mode: "messy" | "clean" }) {
   const isClean = mode === "clean";
   const signals = isClean ? cleanSignals : messySignals;
 
@@ -1274,30 +1268,6 @@ function ComparisonSection({
             />
           }
         />
-
-        {/* Editorial toggle — minimal underline tabs */}
-        <div className="mx-auto mt-8 flex max-w-sm items-center justify-center gap-8 border-b border-[hsl(var(--pb-ink-soft)/0.18)] sm:mt-10">
-          {[
-            { id: "messy", label: "Before" },
-            { id: "clean", label: "PhotoBrief" },
-          ].map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => onModeChange(item.id as "messy" | "clean")}
-              className={`relative -mb-px px-1 pb-3 text-xs font-black uppercase tracking-[0.22em] transition focus-visible:outline-none ${
-                mode === item.id
-                  ? "text-[hsl(var(--pb-ink))]"
-                  : "text-[hsl(var(--pb-ink-muted))] hover:text-[hsl(var(--pb-ink))]"
-              }`}
-            >
-              {item.label}
-              {mode === item.id && (
-                <span className="absolute inset-x-0 -bottom-px h-px bg-[hsl(var(--pb-violet))]" />
-              )}
-            </button>
-          ))}
-        </div>
 
         {/* Editorial spread — two columns separated by a hairline rule */}
         <div className="mt-8 grid gap-6 sm:mt-10 sm:gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-stretch lg:gap-0 lg:divide-x lg:divide-[hsl(var(--pb-ink-soft)/0.18)]">
