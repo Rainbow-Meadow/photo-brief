@@ -437,15 +437,15 @@ export default function LandingPage() {
           {/* ━━ 5. HOW IT WORKS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
           <WorkflowSection />
 
+          {/* ━━ 6. BEFORE / AFTER ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+          <ComparisonSection
+            mode={comparisonMode}
+            onModeChange={setComparisonMode}
+          />
+
           {/* Soft fade where paper meets the dark sections below */}
           <div className="pb-paper-fade-bottom pointer-events-none h-24 w-full" aria-hidden />
         </div>
-
-        {/* ━━ 6. BEFORE / AFTER ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-        <ComparisonSection
-          mode={comparisonMode}
-          onModeChange={setComparisonMode}
-        />
 
         {/* ━━ TICKER 2 — Product signals ━━━━━━━━━━━━━━━━━━━━━━ */}
         <TickerBar items={["Website scan included", "Hosted link or embed", "No app required for customers", "AI photo quality checks", "Lead packets — not form spam"]} direction="right" />
