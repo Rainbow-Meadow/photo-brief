@@ -1,78 +1,67 @@
-## Goal
+# Consolidate the beta zone
 
-Make the entire landing page live on **one cohesive editorial paper system**. No dark navy zone, no two-palette split. Quiet ivory bands provide section rhythm. Violet/lavender is the only accent.
+Today the beta zone is 6 stacked sections that repeat the same ideas (apply CTA appears 5+ times, "Free Pro for Life" 4 times, expectations / rewards / scoring split across header columns *and* accordions). Goal: keep every fact, drop the duplication, give it one cohesive shape.
 
-## What changes
+## New shape (3 sections)
 
-### 1. Surface — kill the dark zone
-
-`src/index.css`
-- **`.pb-landing`** — replace the dark gradient with the same warm-paper background as `.pb-paper-surface`. Remove the violet/electric radial washes; keep one very subtle lavender radial top-center for warmth.
-- **`.pb-paper-fade-bottom`** — remove (no dark to fade into anymore).
-- **`.pb-section-alt`** — repurpose to a quiet **ivory band** (slightly deeper cream, e.g. `hsl(var(--pb-cream-warm))` with hairline ink rules at top/bottom) instead of the dark-tinted version it has now.
-- Apply `.pb-on-paper` semantics globally: ensure the `<main>` carries `pb-on-paper` so every white-text class auto-maps to ink.
-
-### 2. Page structure — one surface
-
-`src/pages/Landing.tsx`
-- Add `pb-on-paper` to `<main className="pb-landing">`.
-- **Remove** the inner `<div className="pb-paper-surface pb-on-paper">` wrapper around the top half — the whole page is now paper.
-- **Remove** `<div className="pb-paper-fade-bottom" />`.
-- **Remove** the violet "major chapter break" gradient divider between WebsiteIntelligence and BetaBridge — replace with a standard `<ChapterDivider tone="paper" />`.
-- Apply `tone="paper"` to all remaining `TickerBar`, `SectionNav`, `ChapterDivider` calls (the Beta-zone ones currently default to `dark`).
-- Wrap the new alt-band sections (BetaBridge+TrustPoints, BetaAgent application) with the repurposed `.pb-section-alt` (now ivory).
-
-### 3. Color pass — violet/lavender only, no mint
-
-Replace every `--pb-mint` accent with violet/lavender (or neutral ink for body):
-
-- **`SectionIntro` titles** with mint gradient (BetaBridge "with you") → solid violet emphasis or `pb-gradient-text` (already lavender→violet).
-- **`StatAccent` `tone="mint"`** (WebsiteIntelligence) → `tone="lavender"`. Drop the mint and amber tone branches entirely from the component (lavender only).
-- **`FreeProSpotlight`** "Free Pro for Life" gradient lavender→mint → solid `pb-violet`. Replace `<Gift className="text-pb-mint">` with lavender.
-- **`FoundingPartnerSection`** mint accents on tier numbers (`text-pb-mint`) and check icons → lavender / `pb-violet`.
-- **`WorkflowSection`** vertical timeline gradient `from-lavender via-mint` → `from-lavender via-violet`.
-- **ROI calculator** mint annual-revenue card → lavender (already has a lavender card above; differentiate with intensity, not hue).
-- **`BetaOnboardingAgentExperience`** — mint "Live" pulse dot, mint progress bar gradient, mint left-bar callouts, mint security `ShieldCheck` → lavender / violet.
-
-### 4. Component dark-token cleanup
-
-These still reference dark tokens directly and need to flip to ink-on-paper equivalents (or be removed since `.pb-on-paper` overrides handle most of them):
-
-- `bg-[hsl(var(--pb-ink))]` icon-badge backgrounds (PainPoints, Workflow, old StatAccent) → `bg-[hsl(var(--pb-ink-soft)/0.06)]` with `border-[hsl(var(--pb-ink-soft)/0.18)]`.
-- `border-[hsl(var(--pb-line-strong))]` → `border-[hsl(var(--pb-ink-soft)/0.18)]`.
-- `bg-[hsl(var(--pb-night)/0.82)]` on the sticky `SectionNav` → `bg-[hsl(var(--pb-cream)/0.86)]` with paper backdrop blur.
-- The hairline rules in refactored sections (`border-white/12`) — already auto-mapped by `.pb-on-paper`, but audit for any heavy `border-white/20+` that won't map cleanly.
-
-### 5. Final section rhythm
-
-Top → bottom, all on paper:
-
-```
-Hero (paper)
-Ticker 1 (paper)
-PainPoints + ROI (ivory alt)
-Brief Assembly (paper)
-SectionNav (paper sticky)
-Workflow (paper)
-Comparison (ivory alt)
-Ticker 2 (paper)
-UseCases (paper)
-WebsiteIntelligence (ivory alt)
-BetaBridge + TrustPoints (paper)
-FreeProSpotlight (ivory alt — emphasis band)
-FoundingPartner (paper)
-Ticker 3 (paper)
-BetaAgent application (ivory alt)
-FinalCta (paper)
+```text
+┌─ FOUNDING PARTNER BETA ────────────────────────────────────┐
+│  LEFT (narrative)              │  RIGHT (apply agent)      │
+│  • Eyebrow: Accepting apps     │  BetaOnboardingAgent      │
+│  • Headline: "Built with real  │  (existing component,     │
+│    workflows, with you"        │   unchanged)              │
+│  • 2-paragraph intro           │                           │
+│  • BetaSeatTracker             │                           │
+│  • Reward callout (Trophy +    │                           │
+│    "2 partners get Free Pro    │                           │
+│    for Life" + terms link)     │                           │
+│  • Trust strip (3 icons inline)│                           │
+└────────────────────────────────────────────────────────────┘
+┌─ REWARD TIERS (inline table) — ivory alt ──────────────────┐
+│  Compact tier rows + "what drives placement" hairline note │
+└────────────────────────────────────────────────────────────┘
+┌─ DETAILS (collapsed) ──────────────────────────────────────┐
+│  ▸ What it means to be a founding partner (expectations)   │
+│  ▸ Scoring rubric — how we pick the top 2                  │
+└────────────────────────────────────────────────────────────┘
+                       FinalCta (unchanged)
 ```
 
-## Out of scope
+## What's removed / merged
 
-- No font changes — italic-serif headlines and SF Pro body stay as-is.
-- BrandMark / logo behavior unchanged.
-- No copy changes.
-- Other pages (pricing, dashboard, etc.) unchanged — only `Landing.tsx`, `BetaOnboardingAgentExperience.tsx`, and `index.css`.
+- **BetaBridgeSection** → folded into the new header's narrative column.
+- **trustPoints strip** → 3-icon hairline row at the bottom of the narrative column.
+- **FreeProSpotlight** → reward becomes a Trophy callout block inside the narrative column. No standalone CTA (the agent IS the CTA, right next to it).
+- **Beta TickerBar (3rd one)** → removed; its 5 facts are already in the header (seat tracker, reward, beta length, concierge, every-partner-rewards).
+- **FoundingPartnerSection benefit columns** ("Beta partners get" / "We ask for") → removed from the header. "Beta partners get" content merges into the rewards section; "We ask for" becomes the expectations accordion.
+- **Rewards accordion** → promoted to its own inline section (ivory alt) so partners see tiers without clicking.
+- **Expectations + Scoring accordions** → kept, only 2 items now, below the rewards section.
+- **ChapterDivider before BetaBridge** stays (still the Product → Beta break).
 
-## Verification
+## CTA discipline
 
-After edits, screenshot the full landing in the preview and confirm: (a) no dark navy band anywhere, (b) clean ivory↔cream alternation, (c) no remaining mint accents, (d) hairlines and serif numerals read consistently top-to-bottom.
+Apply CTAs in the beta zone go from **5+ → 2**:
+1. The agent form itself (in the merged header)
+2. FinalCta
+
+Reward "Terms & eligibility" link stays as a quiet underline next to the trophy callout.
+
+## Files touched
+
+- `src/pages/Landing.tsx`
+  - Replace lines ~460–500 (BetaBridge + trustPoints strip + FreeProSpotlight wrapper + FoundingPartner + Ticker + apply section) with the new 3-section block.
+  - Delete `BetaBridgeSection`, `FreeProSpotlight` functions.
+  - Rewrite `FoundingPartnerSection` into two smaller components: `RewardTiersSection` (inline rewards) and `BetaDetailsAccordion` (expectations + scoring only).
+  - Build new `FoundingPartnerBetaSection` that holds narrative + agent in a `lg:grid-cols-[0.95fr_1.05fr]` layout, with the agent sticky-top on desktop.
+  - Remove the now-unused `trustPoints` const usage at the section level (move data inline into the new header).
+
+No other files change. No copy is invented — all text comes from existing constants (`PARTNER_BENEFITS`, `PARTNER_EXPECTATIONS`, `DETAILED_EXPECTATIONS`, `REWARD_TIERS`, `REWARD_CRITERIA`, `SCORING_RUBRIC`, `trustPoints`) and the existing section bodies, just rearranged.
+
+## Visual rhythm
+
+- Section 1 (header + apply): paper (cream)
+- Section 2 (reward tiers): `pb-section-alt` ivory band — gives the rewards visual weight
+- Section 3 (details accordion): paper, tight
+- FinalCta: paper (unchanged)
+
+Keeps the cream ↔ ivory alternation already established earlier in the page.
