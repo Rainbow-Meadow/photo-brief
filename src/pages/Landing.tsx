@@ -1190,7 +1190,7 @@ function UseCaseSection() {
   return (
     <section id="use-cases" className="pb-section">
       <div className="pb-container">
-        <div className="mx-auto max-w-3xl text-center">
+        <div className="mx-auto max-w-3xl text-center lg:max-w-5xl">
           <span className="pb-eyebrow">
             <ClipboardList className="h-3.5 w-3.5" /> Use cases
           </span>
@@ -1204,7 +1204,7 @@ function UseCaseSection() {
           </p>
         </div>
         {/* Horizontal scroll on mobile, grid on desktop */}
-        <div className="mt-8 flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory sm:mt-10 md:grid md:grid-cols-2 md:overflow-visible md:pb-0 lg:grid-cols-3">
+        <div className="mt-8 flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory sm:mt-10 md:grid md:grid-cols-2 md:overflow-visible md:pb-0 lg:grid-cols-3 xl:grid-cols-4">
           {useCases.map((item) => {
             const Icon = item.icon;
             return (
