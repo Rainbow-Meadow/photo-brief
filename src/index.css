@@ -451,7 +451,18 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
     -webkit-backdrop-filter: blur(14px);
     border: 1px solid hsl(var(--pb-ink-soft) / 0.08);
     box-shadow: 0 18px 40px -28px hsl(var(--pb-ink-soft) / 0.5);
+    --pb-wordmark-gradient: linear-gradient(135deg, hsl(var(--pb-ink-soft)) 0%, hsl(var(--pb-violet)) 100%);
   }
+  /* Re-theme dark-on-dark widgets when placed on the paper surface */
+  .pb-on-paper {
+    color: hsl(var(--pb-ink-soft));
+  }
+  .pb-on-paper .text-white\/90,
+  .pb-on-paper .text-white { color: hsl(var(--pb-ink-soft)); }
+  .pb-on-paper .text-white\/45,
+  .pb-on-paper .text-white\/62,
+  .pb-on-paper .text-white\/36 { color: hsl(var(--pb-ink-muted)); }
+
   .pb-paper-link {
     color: hsl(var(--pb-ink-soft) / 0.78);
     transition: color 180ms ease;
