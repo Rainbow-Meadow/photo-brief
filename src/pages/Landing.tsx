@@ -1504,78 +1504,78 @@ function FoundingPartnerSection({
           </div>
         </div>
 
-        {/* Collapsible details — accordion for progressive disclosure */}
-        <div className="mx-auto mt-8 max-w-3xl">
-          <Accordion type="multiple" className="grid gap-3">
+        {/* Collapsible details — editorial hairline rows */}
+        <div className="mx-auto mt-12 max-w-3xl border-t border-white/12">
+          <Accordion type="multiple" className="grid">
             {/* Partner expectations */}
-            <AccordionItem value="expectations" className="rounded-[1.2rem] border border-white/12 bg-white/[0.025] px-4 sm:px-5">
-              <AccordionTrigger className="py-4 text-sm font-bold text-white hover:no-underline sm:text-base [&>svg]:text-[hsl(var(--pb-lavender))]">
-                <span className="flex items-center gap-2">
+            <AccordionItem value="expectations" className="border-b border-white/12">
+              <AccordionTrigger className="py-5 text-left text-sm font-bold text-white hover:no-underline sm:text-base [&>svg]:text-[hsl(var(--pb-lavender))]">
+                <span className="flex items-center gap-3">
                   <Users className="h-4 w-4 text-[hsl(var(--pb-lavender))]" />
                   What it means to be a founding beta partner
                 </span>
               </AccordionTrigger>
-              <AccordionContent>
-                <p className="pb-copy mb-4 text-sm">
+              <AccordionContent className="pb-6">
+                <p className="pb-copy mb-5 text-sm">
                   We're accepting {BETA_TOTAL_PARTNERS} businesses. The{" "}
                   {BETA_DURATION_DAYS}-day beta clock starts {BETA_SETUP_BUFFER_DAYS}{" "}
                   days after the final seat is filled, giving every partner time for
                   concierge setup.
                 </p>
-                <div className="grid gap-3 sm:gap-4">
+                <ol className="grid gap-5">
                   {DETAILED_EXPECTATIONS.map((exp, i) => (
-                    <div key={i} className="flex gap-3">
-                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[hsl(var(--pb-lavender)/0.13)] text-xs font-black text-[hsl(var(--pb-lavender))] sm:h-8 sm:w-8">
-                        {i + 1}
+                    <li key={i} className="flex gap-4 border-t border-white/8 pt-4 first:border-0 first:pt-0">
+                      <span className="font-serif text-xl leading-none text-[hsl(var(--pb-lavender))] sm:text-2xl">
+                        {String(i + 1).padStart(2, "0")}
                       </span>
                       <div>
-                        <p className="text-sm font-semibold text-white">
+                        <p className="font-serif text-base italic text-white sm:text-lg">
                           {exp.title}
                         </p>
-                        <p className="pb-copy mt-0.5 text-xs leading-5 sm:text-sm">
+                        <p className="pb-copy mt-1 text-xs leading-5 sm:text-sm">
                           {exp.description}
                         </p>
                       </div>
-                    </div>
+                    </li>
                   ))}
-                </div>
+                </ol>
               </AccordionContent>
             </AccordionItem>
 
             {/* Reward tiers */}
-            <AccordionItem value="rewards" className="rounded-[1.2rem] border border-white/12 bg-white/[0.025] px-4 sm:px-5">
-              <AccordionTrigger className="py-4 text-sm font-bold text-white hover:no-underline sm:text-base [&>svg]:text-[hsl(var(--pb-lavender))]">
-                <span className="flex items-center gap-2">
+            <AccordionItem value="rewards" className="border-b border-white/12">
+              <AccordionTrigger className="py-5 text-left text-sm font-bold text-white hover:no-underline sm:text-base [&>svg]:text-[hsl(var(--pb-lavender))]">
+                <span className="flex items-center gap-3">
                   <Gift className="h-4 w-4 text-[hsl(var(--pb-lavender))]" />
                   Reward tiers — every partner earns something
                 </span>
               </AccordionTrigger>
-              <AccordionContent>
-                <p className="pb-copy mb-4 text-sm">
+              <AccordionContent className="pb-6">
+                <p className="pb-copy mb-5 text-sm">
                   Every beta partner earns a post-launch discount. Your tier is
                   based on the quality of your feedback — not just how much you
                   use the product.
                 </p>
-                <div className="grid gap-2">
-                  {REWARD_TIERS.map((tier) => {
+                <div className="grid">
+                  {REWARD_TIERS.map((tier, idx) => {
                     const isTopTier = tier.duration === "free-pro";
                     return (
                       <div
                         key={tier.label}
-                        className={`flex items-center justify-between rounded-2xl px-3 py-2.5 sm:px-4 sm:py-3 ${isTopTier ? "border-2 border-[hsl(var(--pb-lavender)/0.5)] bg-gradient-to-r from-[hsl(var(--pb-violet)/0.15)] to-[hsl(var(--pb-lavender)/0.08)] shadow-md shadow-[hsl(var(--pb-violet)/0.2)]" : "border border-white/10 bg-white/[0.035]"}`}
+                        className={`flex items-center justify-between gap-3 py-3 ${idx > 0 ? "border-t border-white/8" : ""}`}
                       >
                         <div className="flex items-center gap-3">
                           {isTopTier ? (
-                            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[hsl(var(--pb-lavender))] to-[hsl(var(--pb-violet))] sm:h-8 sm:w-8">
+                            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[hsl(var(--pb-lavender))] to-[hsl(var(--pb-violet))]">
                               <Trophy className="h-3.5 w-3.5 text-white" />
                             </span>
                           ) : (
-                            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[hsl(var(--pb-lavender)/0.13)] text-[10px] font-black text-[hsl(var(--pb-lavender))] sm:h-8 sm:w-8">
-                              {tier.count}
+                            <span className="font-serif text-lg leading-none text-[hsl(var(--pb-lavender))] sm:text-xl">
+                              {String(tier.count).padStart(2, "0")}
                             </span>
                           )}
                           <span
-                            className={`text-sm font-semibold ${isTopTier ? "text-[hsl(var(--pb-lavender))]" : "text-white"}`}
+                            className={`text-sm font-semibold sm:text-base ${isTopTier ? "text-[hsl(var(--pb-lavender))]" : "text-white"}`}
                           >
                             {tier.label}
                           </span>
@@ -1587,15 +1587,15 @@ function FoundingPartnerSection({
                     );
                   })}
                 </div>
-                <div className="mt-4 rounded-[1.2rem] border border-[hsl(var(--pb-lavender)/0.2)] bg-[hsl(var(--pb-lavender)/0.04)] p-3 sm:p-4">
-                  <p className="text-xs font-semibold text-white/80 sm:text-sm">
-                    What drives your tier placement:
+                <div className="mt-6 border-l-2 border-[hsl(var(--pb-lavender)/0.4)] pl-4">
+                  <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[hsl(var(--pb-lavender))]">
+                    What drives your tier placement
                   </p>
                   <ul className="mt-2 grid gap-1.5">
                     {REWARD_CRITERIA.map((criterion) => (
                       <li
                         key={criterion}
-                        className="flex items-start gap-2 text-xs text-white/60 sm:text-sm"
+                        className="flex items-start gap-2 text-xs text-white/70 sm:text-sm"
                       >
                         <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[hsl(var(--pb-mint)/0.7)]" />
                         <span>{criterion}</span>
@@ -1607,34 +1607,37 @@ function FoundingPartnerSection({
             </AccordionItem>
 
             {/* Scoring rubric */}
-            <AccordionItem value="scoring" className="rounded-[1.2rem] border border-white/12 bg-white/[0.025] px-4 sm:px-5">
-              <AccordionTrigger className="py-4 text-sm font-bold text-white hover:no-underline sm:text-base [&>svg]:text-[hsl(var(--pb-lavender))]">
-                <span className="flex items-center gap-2">
+            <AccordionItem value="scoring" className="border-b border-white/12">
+              <AccordionTrigger className="py-5 text-left text-sm font-bold text-white hover:no-underline sm:text-base [&>svg]:text-[hsl(var(--pb-lavender))]">
+                <span className="flex items-center gap-3">
                   <Trophy className="h-4 w-4 text-[hsl(var(--pb-lavender))]" />
                   Scoring rubric — how we pick the top 2
                 </span>
               </AccordionTrigger>
-              <AccordionContent>
-                <p className="pb-copy mb-4 text-sm">
+              <AccordionContent className="pb-6">
+                <p className="pb-copy mb-5 text-sm">
                   There's no secret formula — just four dimensions we weight
                   equally-ish. Here's exactly what we look at.
                 </p>
-                <div className="grid gap-4">
-                  {SCORING_RUBRIC.map((dim) => (
-                    <div key={dim.label} className="rounded-xl border border-white/8 bg-white/[0.025] p-3 sm:p-4">
-                      <div className="flex flex-wrap items-center gap-3">
-                        <h3 className="text-sm font-bold tracking-tight text-white sm:text-base">
+                <div className="grid">
+                  {SCORING_RUBRIC.map((dim, idx) => (
+                    <div
+                      key={dim.label}
+                      className={`py-5 ${idx > 0 ? "border-t border-white/8" : ""}`}
+                    >
+                      <div className="flex flex-wrap items-baseline justify-between gap-3">
+                        <h3 className="font-serif text-lg italic text-white sm:text-xl">
                           {dim.label}
                         </h3>
-                        <span className="rounded-full border border-[hsl(var(--pb-lavender)/0.3)] bg-[hsl(var(--pb-lavender)/0.08)] px-2.5 py-0.5 text-[11px] font-extrabold tracking-wider text-[hsl(var(--pb-lavender))]">
+                        <span className="text-[10px] font-black uppercase tracking-[0.22em] text-[hsl(var(--pb-lavender))]">
                           {dim.weight}
                         </span>
                       </div>
                       <p className="pb-copy mt-2 text-xs leading-relaxed sm:text-sm">
                         {dim.description}
                       </p>
-                      <div className="mt-2 rounded-lg border border-white/6 bg-white/[0.02] p-2.5">
-                        <p className="mb-1.5 text-[10px] font-bold uppercase tracking-widest text-white/40">
+                      <div className="mt-3 border-l-2 border-white/12 pl-3">
+                        <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/40">
                           Examples of great feedback
                         </p>
                         {dim.examples.map((ex, i) => (
@@ -1649,8 +1652,8 @@ function FoundingPartnerSection({
                     </div>
                   ))}
                 </div>
-                <div className="mt-4 rounded-[1.2rem] border border-[hsl(var(--pb-mint)/0.2)] bg-[hsl(var(--pb-mint)/0.04)] p-4 text-center">
-                  <p className="text-sm font-semibold text-white/90">
+                <div className="mt-6 border-l-2 border-[hsl(var(--pb-mint)/0.4)] pl-4">
+                  <p className="font-serif text-base italic text-white/90 sm:text-lg">
                     Every partner earns a reward tier. The rubric above determines who
                     lands in the top&nbsp;2.
                   </p>
