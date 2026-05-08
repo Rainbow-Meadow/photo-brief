@@ -16,7 +16,6 @@ const checks = [
   { label: "Sitemap", url: "https://photobrief.ai/sitemap.xml", expect: [200] },
   { label: "Robots", url: "https://photobrief.ai/robots.txt", expect: [200] },
   { label: "Beta agent health", url: "https://beta-agent.photobrief.ai/health", expect: [200], jsonOk: true },
-  { label: "Legacy beta redirect", url: "https://photobrief.ai/beta-onboarding", expect: [301, 302, 307, 308], redirectLocationIncludes: "/#apply", redirect: "manual" },
 ];
 
 const failures = [];

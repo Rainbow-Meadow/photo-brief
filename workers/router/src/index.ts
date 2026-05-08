@@ -113,16 +113,6 @@ export default {
     const url = new URL(request.url);
     const path = url.pathname;
 
-    // Legacy beta onboarding links now consolidate back to the landing page
-    // application anchor. Do this at the edge so old links never render a
-    // separate application surface.
-    if (path === "/beta-onboarding" || path === "/beta-onboarding/") {
-      const target = new URL(request.url);
-      target.pathname = "/";
-      target.hash = "apply";
-      return Response.redirect(target.toString(), 308);
-    }
-
     // Pages-only static files (sitemap, robots, llms.txt, .well-known, og-image…).
     // These have stable filenames and only the Pages build emits them.
     // /assets/* is deliberately NOT included here — see PAGES_STATIC_PREFIXES.
