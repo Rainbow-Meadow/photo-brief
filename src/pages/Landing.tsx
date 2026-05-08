@@ -333,16 +333,16 @@ export default function LandingPage() {
               </div>
 
               {/* Left column — copy + CTAs */}
-              <div className="lg:min-w-0 text-center">
+              <div className="lg:min-w-0 text-left">
                 <span className="pb-eyebrow text-center">
                   <Sparkles className="h-3.5 w-3.5" /> Accepting beta applications
                 </span>
 
-                <h1 className="mx-auto mt-3 max-w-2xl font-bold tracking-tight sm:mt-4 lg:mx-0 lg:max-w-none text-center text-white text-[clamp(2.25rem,5.6vw,4.5rem)] leading-[1.05]">
+                <h1 className="mx-auto mt-3 max-w-2xl font-bold tracking-tight sm:mt-4 lg:mx-0 lg:max-w-none text-white text-[clamp(2.25rem,5.6vw,4.5rem)] leading-[1.05] text-left">
                   Replace weak website forms with guided visual intake.
                 </h1>
 
-                <p className="mx-auto mt-4 max-w-2xl text-muted-foreground lg:max-w-xl text-center leading-[1.5] text-lg">
+                <p className="mx-auto mt-4 max-w-2xl text-muted-foreground lg:max-w-xl leading-[1.5] text-lg text-left">
                   PhotoBrief scans your website, maps your services, and gives
                   customers a simple photo-guided path so your team gets
                   actionable lead packets instead of vague messages.
