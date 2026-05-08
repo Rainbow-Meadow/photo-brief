@@ -26,6 +26,41 @@
 interface Env {
   PAGES_HOST: string; // e.g. "photobrief-marketing.pages.dev"
   LOVABLE_HOST: string; // e.g. "photobrief.lovable.app"
+  ROUTER_CONFIG?: KVNamespace;
+}
+
+// Cache KV reads for 60s to keep latency low. Cloudflare's edge cache
+// already deduplicates, but this avoids a KV round-trip per request.
+interface RouterConfig {
+  force_origin: "pages" | "lovable" | null;
+  maintenance_mode: boolean;
+  loadedAt: number;
+}
+let configCache: RouterConfig | null = null;
+const CONFIG_TTL_MS = 60_000;
+
+async function loadConfig(env: Env): Promise<RouterConfig> {
+  const now = Date.now();
+  if (configCache && now - configCache.loadedAt < CONFIG_TTL_MS) return configCache;
+  const fresh: RouterConfig = {
+    force_origin: null,
+    maintenance_mode: false,
+    loadedAt: now,
+  };
+  if (env.ROUTER_CONFIG) {
+    try {
+      const [force, maint] = await Promise.all([
+        env.ROUTER_CONFIG.get("force_origin"),
+        env.ROUTER_CONFIG.get("maintenance_mode"),
+      ]);
+      if (force === "pages" || force === "lovable") fresh.force_origin = force;
+      if (maint === "1" || maint === "true") fresh.maintenance_mode = true;
+    } catch {
+      /* fall back to defaults */
+    }
+  }
+  configCache = fresh;
+  return fresh;
 }
 
 // Exact paths served from Pages (everything else, including /auth, falls
