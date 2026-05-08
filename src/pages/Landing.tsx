@@ -907,10 +907,11 @@ function BetaBridgeSection() {
   );
 }
 
-function ChapterDivider() {
+function ChapterDivider({ tone = "dark" }: { tone?: "dark" | "paper" }) {
+  const via = tone === "paper" ? "via-[hsl(var(--pb-ink-soft)/0.18)]" : "via-white/12";
   return (
     <div className="pb-container" aria-hidden>
-      <div className="mx-auto h-px max-w-lg bg-gradient-to-r from-transparent via-white/12 to-transparent" />
+      <div className={`mx-auto h-px max-w-lg bg-gradient-to-r from-transparent ${via} to-transparent`} />
     </div>
   );
 }
