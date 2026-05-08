@@ -70,6 +70,7 @@ const AdminInvitesPage = lazy(() => import("@/pages/AdminInvites"));
 const AdminAIRerunPage = lazy(() => import("@/pages/AdminAIRerun"));
 const AdminCommandCenter = lazy(() => import("@/pages/AdminCommandCenter"));
 const AdminBetaPage = lazy(() => import("@/pages/AdminBeta"));
+const AdminWebsiteIntelligencePage = lazy(() => import("@/pages/AdminWebsiteIntelligence"));
 const SupportPage = lazy(() => import("@/features/support/pages/SupportPage"));
 
 const queryClient = new QueryClient();
@@ -204,6 +205,16 @@ const App = () => (
                 <RequireAuth requireOnboarding={false}>
                   <RequirePlatformAdmin>
                     <AdminBetaPage />
+                  </RequirePlatformAdmin>
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/admin/website-intelligence"
+              element={
+                <RequireAuth requireOnboarding={false}>
+                  <RequirePlatformAdmin>
+                    <AdminWebsiteIntelligencePage />
                   </RequirePlatformAdmin>
                 </RequireAuth>
               }
