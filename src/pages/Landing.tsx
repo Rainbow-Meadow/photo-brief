@@ -305,9 +305,9 @@ export default function LandingPage() {
         breadcrumbs={[{ name: "Home", path: "/" }]}
       />
 
-      <main className="pb-landing">
+      <main className="pb-landing pb-on-paper">
         {/* ━━ 1. HERO — editorial / paper ━━━━━━━━━━━━━━━━━━━━━ */}
-        <section className="pb-paper-surface relative isolate overflow-hidden -mt-[4.5rem] pt-[7rem] sm:-mt-[5rem] sm:pt-[8rem] lg:pt-[9rem]">
+        <section className="relative isolate overflow-hidden -mt-[4.5rem] pt-[7rem] sm:-mt-[5rem] sm:pt-[8rem] lg:pt-[9rem]">
           <div className="pb-container relative pb-16 sm:pb-20 lg:pb-28">
             <div className="grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
               {/* Left — copy */}
