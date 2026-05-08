@@ -38,7 +38,7 @@ async function sendReadyEmail(resendKey: string, email: string, requestUrl: stri
         <div style="font-family:Inter,Arial,sans-serif;line-height:1.5;color:#17131f">
           <h1 style="margin:0 0 12px;font-size:24px">Your PhotoBrief is ready</h1>
           <p style="margin:0 0 18px">Open your draft request and try the guided photo intake flow.</p>
-          <p><a href="${requestUrl}" style="display:inline-block;background:#8f63ff;color:#fff;text-decoration:none;padding:12px 16px;border-radius:999px;font-weight:700">Open your request</a></p>
+          <p><a href="${requestUrl}" style="display:inline-block;background:#F2A33A;color:#fff;text-decoration:none;padding:12px 16px;border-radius:999px;font-weight:700">Open your request</a></p>
         </div>
       `,
     }),
