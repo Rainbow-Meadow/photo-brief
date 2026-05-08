@@ -337,11 +337,11 @@ export default function LandingPage() {
                   <Sparkles className="h-3.5 w-3.5" /> Accepting beta applications
                 </span>
 
-                <h1 className="mx-auto mt-3 max-w-2xl font-bold tracking-tight sm:mt-4 lg:mx-0 lg:max-w-none text-center text-white text-7xl">
+                <h1 className="mx-auto mt-3 max-w-2xl font-bold tracking-tight sm:mt-4 lg:mx-0 lg:max-w-none text-center text-white text-[clamp(2.25rem,5.6vw,4.5rem)] leading-[1.05]">
                   Replace weak website forms with guided visual intake.
                 </h1>
 
-                <p className="mx-auto mt-4 max-w-2xl text-muted-foreground lg:max-w-xl text-center text-2xl">
+                <p className="mx-auto mt-4 max-w-2xl text-muted-foreground lg:max-w-xl text-center text-[clamp(0.95rem,1.55vw,1.5rem)] leading-[1.5]">
                   PhotoBrief scans your website, maps your services, and gives
                   customers a simple photo-guided path so your team gets
                   actionable lead packets instead of vague messages.
