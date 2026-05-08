@@ -890,7 +890,7 @@ function PainPointSection() {
           </div>
 
           {/* Right column — 81% stat + ROI calculator */}
-          <div className="mt-8 flex-col items-center gap-6 lg:mt-0 flex lg:items-center justify-center">
+          <div className="mt-6 flex flex-col items-center gap-3 lg:mt-0 lg:items-stretch lg:justify-center">
             <div className="flex justify-center lg:justify-end">
               <StatAccent
                 icon={TrendingDown}
