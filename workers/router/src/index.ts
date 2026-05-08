@@ -161,6 +161,14 @@ export default {
       );
     }
 
+    // Edge feature-flags endpoint. The SPA hits this on boot to read flags
+    // in <10ms with no Supabase round-trip. Flags live in ROUTER_CONFIG KV
+    // under keys `flag:<name>` (value: "1"/"0") or `flags:<workspace_id>`
+    // (JSON object). Keys can be flipped live with `wrangler kv key put`.
+    if (path === "/api/flags" || path === "/api/flags/") {
+      return handleFlags(url, env);
+    }
+
     // Pages-only static files (sitemap, robots, llms.txt, .well-known, og-image…).
     // These have stable filenames and only the Pages build emits them.
     // /assets/* is deliberately NOT included here — see PAGES_STATIC_PREFIXES.
@@ -187,11 +195,143 @@ export default {
       return res;
     }
 
+    // Recipient capture links /r/{token}: proxy to Lovable, then use
+    // HTMLRewriter to inject workspace branding (title, OG image, primary
+    // color CSS var) into the SPA shell BEFORE it reaches the browser.
+    // First paint shows the contractor's brand instead of a flash of
+    // unbranded React shell. Branding payload comes from WORKSPACE_BRAND
+    // KV, populated by a Supabase trigger on workspace updates.
+    if (path.startsWith("/r/") && env.WORKSPACE_BRAND) {
+      return handleRecipientPage(request, env);
+    }
+
     // Non-marketing paths (auth, app, recipient links, etc.) always go to
     // the live SPA on Lovable.
     return proxyTo(env.LOVABLE_HOST, request);
   },
 };
+
+/**
+ * GET /api/flags?ws=<workspace_id>
+ * Returns: { flags: { [name]: boolean } }
+ *
+ * Reads from ROUTER_CONFIG KV:
+ *   - flag:<name>           → global default ("1"|"0")
+ *   - flags:<workspace_id>  → JSON object with per-workspace overrides
+ */
+async function handleFlags(url: URL, env: Env): Promise<Response> {
+  const headers = {
+    "content-type": "application/json",
+    "cache-control": "public, max-age=30, s-maxage=30, stale-while-revalidate=60",
+    "access-control-allow-origin": "*",
+  };
+  if (!env.ROUTER_CONFIG) {
+    return new Response(JSON.stringify({ flags: {} }), { headers });
+  }
+  try {
+    const ws = url.searchParams.get("ws");
+    const flags: Record<string, boolean> = {};
+    // Cloudflare doesn't expose a cheap "list keys with prefix" inside hot
+    // path, so we read a single index key `flag:_index` (JSON array of names).
+    const index = await env.ROUTER_CONFIG.get("flag:_index", { type: "json" }) as
+      | string[]
+      | null;
+    if (Array.isArray(index)) {
+      const values = await Promise.all(
+        index.map((name) => env.ROUTER_CONFIG!.get(`flag:${name}`)),
+      );
+      index.forEach((name, i) => {
+        flags[name] = values[i] === "1" || values[i] === "true";
+      });
+    }
+    if (ws) {
+      const overrides = await env.ROUTER_CONFIG.get(`flags:${ws}`, { type: "json" }) as
+        | Record<string, boolean>
+        | null;
+      if (overrides && typeof overrides === "object") {
+        for (const [k, v] of Object.entries(overrides)) flags[k] = !!v;
+      }
+    }
+    return new Response(JSON.stringify({ flags }), { headers });
+  } catch {
+    return new Response(JSON.stringify({ flags: {} }), { headers });
+  }
+}
+
+/**
+ * Inject per-workspace branding into the recipient capture SPA shell at the
+ * edge using HTMLRewriter. The token in /r/{token} maps to a workspace via
+ * a KV lookup. KV value shape:
+ *   { name: string, primary?: string, logo?: string, og?: string }
+ *
+ * Falls through to the unmodified Lovable response if no brand is found
+ * or HTMLRewriter is unavailable.
+ */
+async function handleRecipientPage(request: Request, env: Env): Promise<Response> {
+  const url = new URL(request.url);
+  const token = url.pathname.split("/")[2] || "";
+  const upstream = await proxyTo(env.LOVABLE_HOST, request);
+  if (!token || !env.WORKSPACE_BRAND) return upstream;
+  const ct = upstream.headers.get("content-type") || "";
+  if (!ct.includes("text/html")) return upstream;
+
+  let brand: { name?: string; primary?: string; logo?: string; og?: string } | null = null;
+  try {
+    brand = await env.WORKSPACE_BRAND.get(`token:${token}`, { type: "json" });
+  } catch {
+    /* ignore */
+  }
+  if (!brand) return upstream;
+
+  const title = brand.name ? `${brand.name} — Photo capture` : null;
+  const ogImage = brand.og || brand.logo || null;
+  const cssVar = brand.primary
+    ? `:root{--brand-primary:${brand.primary};--brand-primary-rgb:${hexToRgb(brand.primary)}}`
+    : "";
+
+  const rewriter = new HTMLRewriter()
+    .on("title", {
+      element(el) {
+        if (title) el.setInnerContent(title);
+      },
+    })
+    .on('meta[property="og:title"]', {
+      element(el) {
+        if (title) el.setAttribute("content", title);
+      },
+    })
+    .on('meta[property="og:image"]', {
+      element(el) {
+        if (ogImage) el.setAttribute("content", ogImage);
+      },
+    })
+    .on("head", {
+      element(el) {
+        if (cssVar) el.append(`<style>${cssVar}</style>`, { html: true });
+        if (brand?.name) {
+          el.append(
+            `<meta name="x-pb-brand" content="${escapeAttr(brand.name)}">`,
+            { html: true },
+          );
+        }
+      },
+    });
+
+  return rewriter.transform(upstream);
+}
+
+function hexToRgb(hex: string): string {
+  const h = hex.replace("#", "");
+  if (h.length !== 6) return "0,0,0";
+  const r = parseInt(h.slice(0, 2), 16);
+  const g = parseInt(h.slice(2, 4), 16);
+  const b = parseInt(h.slice(4, 6), 16);
+  return `${r},${g},${b}`;
+}
+
+function escapeAttr(s: string): string {
+  return s.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+}
 
 /**
  * Proxy the incoming request to the given origin host, preserving the path,
