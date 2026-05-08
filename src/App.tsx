@@ -16,10 +16,10 @@ import { RequireAuth } from "@/components/auth/RequireAuth";
 import { RouteTracker } from "@/components/analytics/RouteTracker";
 import { FeatureGate } from "@/components/shared/FeatureGate";
 
-// Eager: marketing + auth + recipient capture. These are the entry points
+// Eager: auth + recipient capture. These are the entry points
 // for unauthenticated visitors and the public recipient flow, so they stay
 // in the main bundle to avoid a Suspense flash on first paint.
-import LandingPage from "@/pages/Landing";
+const LandingPage = lazy(() => import("@/pages/Landing"));
 import AuthPage from "@/pages/Auth";
 import PricingPage from "@/pages/Pricing";
 import ForAiAgentsPage from "@/pages/ForAiAgents";
@@ -95,8 +95,8 @@ const App = () => (
         <AuthProvider>
         <CurrentWorkspaceProvider>
           <RouteTracker />
-          <InviteAcceptanceGuard>
-          <Suspense fallback={null}>
+          <ErrorBoundary>
+          <Suspense fallback={<div className="flex min-h-screen items-center justify-center"><div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" /></div>}>
           <Routes>
           {/* Marketing + auth */}
           <Route element={<MarketingLayout />}>
