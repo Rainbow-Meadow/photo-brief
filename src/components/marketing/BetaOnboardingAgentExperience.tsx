@@ -228,8 +228,8 @@ export function BetaOnboardingAgentExperience({
               <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[hsl(var(--pb-lavender))]">
                 <Bot className="-mt-0.5 mr-1 inline h-3 w-3" /> Guided beta intake
               </p>
-              <span className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.22em] text-[hsl(var(--pb-mint))]">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[hsl(var(--pb-mint))]" />
+              <span className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.22em] text-[hsl(var(--pb-violet))]">
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[hsl(var(--pb-violet))]" />
                 Live
               </span>
             </div>
@@ -287,7 +287,7 @@ export function BetaOnboardingAgentExperience({
                   </div>
                   <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/10">
                     <div
-                      className="h-full rounded-full bg-gradient-to-r from-[hsl(var(--pb-lavender))] to-[hsl(var(--pb-mint))] transition-all"
+                      className="h-full rounded-full bg-gradient-to-r from-[hsl(var(--pb-lavender))] to-[hsl(var(--pb-violet))] transition-all"
                       style={{ width: `${progress}%` }}
                     />
                   </div>
@@ -327,9 +327,9 @@ export function BetaOnboardingAgentExperience({
                     </div>
                   </div>
                 ) : (
-                  <div className="border-l-2 border-[hsl(var(--pb-mint)/0.5)] pl-4">
+                  <div className="border-l-2 border-[hsl(var(--pb-violet)/0.5)] pl-4">
                     <div className="flex items-center gap-2 font-serif text-base italic text-white sm:text-lg">
-                      <CheckCircle2 className="h-4 w-4 text-[hsl(var(--pb-mint))]" />
+                      <CheckCircle2 className="h-4 w-4 text-[hsl(var(--pb-violet))]" />
                       The agent has enough to recommend your beta path.
                     </div>
                     <Button
@@ -417,8 +417,8 @@ export function BetaOnboardingAgentExperience({
                     <p className="pb-copy mt-1.5 text-xs">{example.value}</p>
                   </button>
                 ))}
-                <div className="mt-4 flex items-start gap-3 border-l-2 border-[hsl(var(--pb-mint)/0.4)] pl-4">
-                  <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[hsl(var(--pb-mint))]" />
+                <div className="mt-4 flex items-start gap-3 border-l-2 border-[hsl(var(--pb-violet)/0.4)] pl-4">
+                  <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[hsl(var(--pb-violet))]" />
                   <p className="pb-copy text-xs">
                     The agent uses opaque session IDs and submits through the same beta
                     intake pipeline as the original application form.

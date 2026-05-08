@@ -53,7 +53,7 @@ import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { PageMeta } from "@/hooks/seo/usePageMeta";
 import { buildHowToJsonLd } from "@/hooks/seo/buildHowToJsonLd";
 import { buildFaqJsonLd } from "@/hooks/seo/buildFaqJsonLd";
-import { BrandMark } from "@/components/layout/BrandMark";
+
 import { FreeProEligibilityModal } from "@/components/marketing/FreeProEligibilityModal";
 import { BetaSeatTracker } from "@/components/marketing/BetaSeatTracker";
 import { BetaOnboardingAgentExperience } from "@/components/marketing/BetaOnboardingAgentExperience";
@@ -305,9 +305,9 @@ export default function LandingPage() {
         breadcrumbs={[{ name: "Home", path: "/" }]}
       />
 
-      <main className="pb-landing">
+      <main className="pb-landing pb-on-paper">
         {/* ━━ 1. HERO — editorial / paper ━━━━━━━━━━━━━━━━━━━━━ */}
-        <section className="pb-paper-surface relative isolate overflow-hidden -mt-[4.5rem] pt-[7rem] sm:-mt-[5rem] sm:pt-[8rem] lg:pt-[9rem]">
+        <section className="relative isolate overflow-hidden -mt-[4.5rem] pt-[7rem] sm:-mt-[5rem] sm:pt-[8rem] lg:pt-[9rem]">
           <div className="pb-container relative pb-16 sm:pb-20 lg:pb-28">
             <div className="grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
               {/* Left — copy */}
@@ -387,112 +387,108 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ━━ PAPER BLOCK — Problem → Solution (editorial) ━━━━━ */}
-        <div className="pb-paper-surface pb-on-paper relative isolate overflow-hidden">
-          {/* ━━ TICKER 1 — Industry signals ━━━━━━━━━━━━━━━━━━━ */}
-          <TickerBar
-            tone="paper"
-            items={[
-              "81% of forms abandoned before submit",
-              "78% buy from whoever responds first",
-              "4.2 hr avg lead response time",
-              "60% of estimates never followed up",
-              "5+ follow-ups to close — most stop at 1",
-            ]}
-          />
+        {/* ━━ TICKER 1 — Industry signals ━━━━━━━━━━━━━━━━━━━ */}
+        <TickerBar
+          tone="paper"
+          items={[
+            "81% of forms abandoned before submit",
+            "78% buy from whoever responds first",
+            "4.2 hr avg lead response time",
+            "60% of estimates never followed up",
+            "5+ follow-ups to close — most stop at 1",
+          ]}
+        />
 
-          {/* ━━ 2. PAIN POINTS (carousel + ROI) ━━━━━━━━━━━━━━━ */}
+        {/* ━━ 2. PAIN POINTS + ROI — ivory alt ━━━━━━━━━━━━━━ */}
+        <div className="pb-section-alt">
           <PainPointSection />
+        </div>
 
-          {/* ── Chapter break: Problem → Solution ── */}
-          <div className="pb-container" aria-hidden>
-            <div className="mx-auto h-px max-w-lg bg-gradient-to-r from-transparent via-[hsl(var(--pb-ink-soft)/0.18)] to-transparent" />
+        {/* ── Chapter break: Problem → Solution ── */}
+        <ChapterDivider tone="paper" />
+
+        <section className="pb-section">
+          <div className="pb-container">
+            <SectionIntro
+              className="mb-6 sm:mb-8"
+              eyebrow={<><Sparkles className="h-3.5 w-3.5" /> See the difference</>}
+              title="Vague website form becomes an actionable lead packet."
+              description={`Watch how a generic "tell us about your project" message turns into a structured packet with the right photos, notes, and context — ready for your team to act on.`}
+              accent={
+                <StatAccent
+                  icon={Sparkles}
+                  value="12 min"
+                  label="Saved per lead — fewer follow-up calls, less back-and-forth."
+                  tone="lavender"
+                />
+              }
+            />
+            <Suspense fallback={<div className="min-h-[400px]" />}>
+              <InteractiveHeroBriefAssembly />
+            </Suspense>
           </div>
+        </section>
 
-          <section className="pb-section">
-            <div className="pb-container">
-              <SectionIntro
-                className="mb-6 sm:mb-8"
-                eyebrow={<><Sparkles className="h-3.5 w-3.5" /> See the difference</>}
-                title="Vague website form becomes an actionable lead packet."
-                description={`Watch how a generic "tell us about your project" message turns into a structured packet with the right photos, notes, and context — ready for your team to act on.`}
-                accent={
-                  <StatAccent
-                    icon={Sparkles}
-                    value="12 min"
-                    label="Saved per lead — fewer follow-up calls, less back-and-forth."
-                    tone="lavender"
-                  />
-                }
-              />
-          <Suspense fallback={<div className="min-h-[400px]" />}>
-                <InteractiveHeroBriefAssembly />
-              </Suspense>
-            </div>
-          </section>
+        {/* ━━ 4. STICKY SECTION NAV ━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+        <SectionNav tone="paper" />
 
-          {/* ━━ 4. STICKY SECTION NAV ━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-          <SectionNav tone="paper" />
+        {/* ━━ 5. HOW IT WORKS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+        <WorkflowSection />
 
-          {/* ━━ 5. HOW IT WORKS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-          <WorkflowSection />
-
-          {/* ━━ 6. BEFORE / AFTER ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+        {/* ━━ 6. BEFORE / AFTER — ivory alt ━━━━━━━━━━━━━━━━━━ */}
+        <div className="pb-section-alt">
           <ComparisonSection
             mode={comparisonMode}
             onModeChange={setComparisonMode}
           />
-
-          {/* ━━ TICKER 2 — Product signals ━━━━━━━━━━━━━━━━━━━━━━ */}
-          <TickerBar tone="paper" items={["Website scan included", "Hosted link or embed", "No app required for customers", "AI photo quality checks", "Lead packets — not form spam"]} direction="right" />
-
-          {/* ── Chapter break: Solution → Fit ── */}
-          <ChapterDivider tone="paper" />
-
-          {/* ━━ 7. USE CASES ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-          <UseCaseSection />
-
-          {/* Soft fade where paper meets the dark sections below */}
-          <div className="pb-paper-fade-bottom pointer-events-none h-24 w-full" aria-hidden />
         </div>
 
-        {/* ━━ 8. WEBSITE INTELLIGENCE ━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-        <WebsiteIntelligenceSection />
+        {/* ━━ TICKER 2 — Product signals ━━━━━━━━━━━━━━━━━━━━━━ */}
+        <TickerBar tone="paper" items={["Website scan included", "Hosted link or embed", "No app required for customers", "AI photo quality checks", "Lead packets — not form spam"]} direction="right" />
 
-        {/* ── Major chapter break: Product → Beta ── */}
-        <div className="pb-container py-6 sm:py-10" aria-hidden>
-          <div className="mx-auto h-px max-w-2xl bg-gradient-to-r from-transparent via-[hsl(var(--pb-lavender)/0.3)] to-transparent" />
-        </div>
+        {/* ── Chapter break: Solution → Fit ── */}
+        <ChapterDivider tone="paper" />
 
-        {/* ━━ BRIDGE + TRUST POINTS — alt panel ━━━━━━━━━━━━━━━ */}
+        {/* ━━ 7. USE CASES ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+        <UseCaseSection />
+
+        {/* ━━ 8. WEBSITE INTELLIGENCE — ivory alt ━━━━━━━━━━━━━ */}
         <div className="pb-section-alt">
-          <BetaBridgeSection />
-
-          <section className="pb-section-tight">
-            <div className="pb-container">
-              <div className="mx-auto grid max-w-3xl gap-6 sm:grid-cols-3 sm:gap-x-10 sm:gap-y-0">
-                {trustPoints.map(({ icon: Icon, title, desc }) => (
-                  <div key={title} className="border-t border-white/12 pt-4 text-left sm:pt-5">
-                    <Icon className="h-5 w-5 text-[hsl(var(--pb-lavender))]" />
-                    <p className="mt-3 font-serif text-base italic text-white sm:text-lg">
-                      {title}
-                    </p>
-                    <p className="pb-copy mt-1 text-xs leading-5">{desc}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
+          <WebsiteIntelligenceSection />
         </div>
 
-        {/* ━━ FOUNDING BETA REWARDS ━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-        <FreeProSpotlight isFull={isFull} />
+        {/* ── Chapter break: Product → Beta ── */}
+        <ChapterDivider tone="paper" />
+
+        {/* ━━ BRIDGE + TRUST POINTS ━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+        <BetaBridgeSection />
+
+        <section className="pb-section-tight">
+          <div className="pb-container">
+            <div className="mx-auto grid max-w-3xl gap-6 sm:grid-cols-3 sm:gap-x-10 sm:gap-y-0">
+              {trustPoints.map(({ icon: Icon, title, desc }) => (
+                <div key={title} className="border-t border-[hsl(var(--pb-ink-soft)/0.18)] pt-4 text-left sm:pt-5">
+                  <Icon className="h-5 w-5 text-[hsl(var(--pb-violet))]" />
+                  <p className="mt-3 font-serif text-base italic text-[hsl(var(--pb-ink))] sm:text-lg">
+                    {title}
+                  </p>
+                  <p className="pb-copy mt-1 text-xs leading-5">{desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ━━ FOUNDING BETA REWARDS — ivory alt emphasis ━━━━━ */}
+        <div className="pb-section-alt">
+          <FreeProSpotlight isFull={isFull} />
+        </div>
         <FoundingPartnerSection utm={utm} isFull={isFull} />
 
         {/* ━━ TICKER 3 — Beta social proof ━━━━━━━━━━━━━━━━━━━ */}
-        <TickerBar items={[`${BETA_TOTAL_PARTNERS} founding partner seats`, "Free Pro for Life reward", `${BETA_DURATION_DAYS}-day beta`, "Concierge setup included", "Every partner earns a reward"]} />
+        <TickerBar tone="paper" items={[`${BETA_TOTAL_PARTNERS} founding partner seats`, "Free Pro for Life reward", `${BETA_DURATION_DAYS}-day beta`, "Concierge setup included", "Every partner earns a reward"]} />
 
-        {/* ━━ AGENT-POWERED APPLICATION — alt panel ━━━━━━━━━━ */}
+        {/* ━━ AGENT-POWERED APPLICATION — ivory alt ━━━━━━━━━━ */}
         <section id="apply" className="pb-section pb-section-alt scroll-mt-8">
           <div className="pb-container">
             <BetaOnboardingAgentExperience
@@ -621,11 +617,11 @@ function RoiCalculatorSection() {
                     </p>
                     <p className="pb-copy mt-1 text-xs">{recoveredFromForm} from better intake · {recoveredFromSpeed} from faster response</p>
                   </div>
-                  <div className="rounded-[1.25rem] border border-[hsl(var(--pb-mint)/0.3)] bg-[hsl(var(--pb-mint)/0.06)] p-4">
-                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-[hsl(var(--pb-mint))]">
+                  <div className="rounded-[1.25rem] border border-[hsl(var(--pb-violet)/0.3)] bg-[hsl(var(--pb-violet)/0.06)] p-4">
+                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-[hsl(var(--pb-violet))]">
                       <DollarSign className="h-3.5 w-3.5" /> Estimated annual revenue recovered
                     </div>
-                    <p className="mt-2 text-3xl font-black tracking-tight text-[hsl(var(--pb-mint))] sm:text-4xl">{formatDollars(annualRevenue)}</p>
+                    <p className="mt-2 text-3xl font-black tracking-tight text-[hsl(var(--pb-violet))] sm:text-4xl">{formatDollars(annualRevenue)}</p>
                     <p className="pb-copy mt-1 text-xs">{formatDollars(monthlyRevenue)}/mo × 12 · based on {totalRecovered} recovered leads at {`$${avgJobValue.toLocaleString()}`} avg job</p>
                   </div>
                 </div>
@@ -785,7 +781,7 @@ function PainPointSection() {
                       aria-hidden={!isActive}
                     >
                       <div className="flex items-center gap-4">
-                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-[hsl(var(--pb-line-strong))] bg-[hsl(var(--pb-ink))] text-[hsl(var(--pb-lavender))]">
+                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-[hsl(var(--pb-ink-soft)/0.18)] bg-[hsl(var(--pb-ink-soft)/0.06)] text-[hsl(var(--pb-lavender))]">
                           <PIcon className="h-6 w-6" />
                         </div>
                         <span className="text-5xl font-extrabold tracking-tight text-[hsl(var(--pb-lavender))] sm:text-6xl">
@@ -844,7 +840,7 @@ function PainPointSection() {
               icon={TrendingDown}
               value="81%"
               label="of website forms are abandoned before submit."
-              tone="amber"
+              tone="lavender"
             />
             <RoiCalculatorSection />
             <p className="pb-copy max-w-sm text-center text-sm italic sm:text-base mt-[24px]">
@@ -899,7 +895,7 @@ function BetaBridgeSection() {
       <div className="pb-container">
         <SectionIntro
           eyebrow={<><Users className="h-3.5 w-3.5" /> Early access</>}
-          title={<>We're building this <span className="bg-gradient-to-r from-[hsl(var(--pb-lavender))] to-[hsl(var(--pb-mint))] bg-clip-text text-transparent">with you</span>, not just for you.</>}
+          title={<>We're building this <span className="bg-gradient-to-r from-[hsl(var(--pb-lavender))] to-[hsl(var(--pb-violet))] bg-clip-text text-transparent">with you</span>, not just for you.</>}
           description="Visual intake is workflow-specific — every trade, every service type needs something slightly different. The only way to get it right is to build alongside real businesses running real jobs. That's why this is a hands-on beta, not a waitlist."
           accent={<BetaSeatTracker className="w-full max-w-sm" />}
         />
@@ -969,35 +965,23 @@ function StatAccent({
   value,
   label,
   icon: Icon,
-  tone = "lavender",
 }: {
   value: ReactNode;
   label: ReactNode;
   icon?: LucideIcon;
+  /** Kept for backward-compat; ignored — single violet accent system. */
   tone?: "lavender" | "mint" | "amber";
 }) {
-  const toneClass =
-    tone === "mint"
-      ? "text-[hsl(var(--pb-mint))]"
-      : tone === "amber"
-        ? "text-amber-300"
-        : "text-[hsl(var(--pb-lavender))]";
-  const borderClass =
-    tone === "mint"
-      ? "border-[hsl(var(--pb-mint)/0.5)]"
-      : tone === "amber"
-        ? "border-amber-300/50"
-        : "border-[hsl(var(--pb-lavender)/0.5)]";
   return (
     <div className="w-full max-w-sm text-left">
-      <div className={`flex items-center gap-2 ${toneClass}`}>
+      <div className="flex items-center gap-2 text-[hsl(var(--pb-violet))]">
         {Icon ? <Icon className="h-4 w-4" /> : null}
         <span className="text-[10px] font-black uppercase tracking-[0.28em]">
           By the numbers
         </span>
       </div>
-      <div className={`mt-3 border-t-2 pt-4 ${borderClass}`}>
-        <div className={`font-serif text-5xl italic leading-none tracking-tight sm:text-6xl ${toneClass}`}>
+      <div className="mt-3 border-t-2 border-[hsl(var(--pb-violet)/0.45)] pt-4">
+        <div className="font-serif text-5xl italic leading-none tracking-tight text-[hsl(var(--pb-violet))] sm:text-6xl">
           {value}
         </div>
         <p className="pb-copy mt-3 max-w-xs text-sm leading-snug">{label}</p>
@@ -1015,7 +999,7 @@ function SectionNav({ tone = "dark" }: { tone?: "dark" | "paper" }) {
       className={
         isPaper
           ? "sticky top-[4.5rem] z-30 border-y border-[hsl(var(--pb-ink-soft)/0.10)] bg-[hsl(var(--pb-cream)/0.85)] backdrop-blur-xl"
-          : "sticky top-[4.5rem] z-30 border-y border-white/10 bg-[hsl(var(--pb-night)/0.82)] backdrop-blur-xl"
+          : "sticky top-[4.5rem] z-30 border-y border-white/10 bg-[hsl(var(--pb-cream)/0.86)] backdrop-blur-xl"
       }
     >
       <div className="pb-container flex justify-start gap-1.5 overflow-x-auto py-2 sm:gap-2 sm:py-3 sm:justify-center">
@@ -1059,7 +1043,7 @@ function WorkflowSection() {
             </p>
           </div>
           <div className="relative">
-            <div className="absolute left-6 top-8 hidden h-[calc(100%-4rem)] w-px bg-gradient-to-b from-[hsl(var(--pb-lavender))] via-[hsl(var(--pb-mint))] to-transparent md:block" />
+            <div className="absolute left-6 top-8 hidden h-[calc(100%-4rem)] w-px bg-gradient-to-b from-[hsl(var(--pb-lavender))] via-[hsl(var(--pb-violet))] to-transparent md:block" />
             <div className="grid gap-3 sm:gap-4">
               {workflowSteps.map((step, index) => {
                 const Icon = step.icon;
@@ -1068,7 +1052,7 @@ function WorkflowSection() {
                     key={step.title}
                     className="pb-card relative grid gap-3 p-4 sm:gap-4 sm:p-5 md:grid-cols-[4rem_1fr] md:p-6"
                   >
-                    <div className="relative z-10 flex h-12 w-12 items-center justify-center rounded-2xl border border-[hsl(var(--pb-line-strong))] bg-[hsl(var(--pb-ink))] text-[hsl(var(--pb-lavender))] sm:h-14 sm:w-14">
+                    <div className="relative z-10 flex h-12 w-12 items-center justify-center rounded-2xl border border-[hsl(var(--pb-ink-soft)/0.18)] bg-[hsl(var(--pb-ink-soft)/0.06)] text-[hsl(var(--pb-lavender))] sm:h-14 sm:w-14">
                       <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
                     </div>
                     <div>
@@ -1115,7 +1099,7 @@ function ComparisonSection({
               icon={CheckCircle2}
               value="0"
               label="Follow-up calls needed when intake arrives structured."
-              tone="mint"
+              tone="lavender"
             />
           }
         />
@@ -1154,7 +1138,7 @@ function ComparisonSection({
               <span
                 className={`text-[10px] font-black uppercase tracking-[0.22em] ${
                   isClean
-                    ? "text-[hsl(var(--pb-mint-deep,var(--pb-mint)))]"
+                    ? "text-[hsl(var(--pb-violet))]"
                     : "text-[hsl(var(--pb-violet))]"
                 }`}
               >
@@ -1170,7 +1154,7 @@ function ComparisonSection({
                   <span
                     className={`mt-0.5 font-serif text-2xl leading-none ${
                       isClean
-                        ? "text-[hsl(var(--pb-mint-deep,var(--pb-mint)))]"
+                        ? "text-[hsl(var(--pb-violet))]"
                         : "text-[hsl(var(--pb-violet))]"
                     }`}
                   >
@@ -1360,7 +1344,7 @@ function WebsiteIntelligenceSection() {
               icon={Scan}
               value="< 5 min"
               label="From a website URL to a working intake path."
-              tone="mint"
+              tone="lavender"
             />
           }
         />
@@ -1405,7 +1389,7 @@ function FreeProSpotlight({ isFull }: { isFull: boolean }) {
           </p>
           <h2 className="mt-3 font-serif text-2xl italic leading-[1.1] tracking-tight text-white sm:text-3xl md:text-4xl">
             2 partners get{" "}
-            <span className="not-italic font-semibold bg-gradient-to-r from-[hsl(var(--pb-lavender))] to-[hsl(var(--pb-mint))] bg-clip-text text-transparent">
+            <span className="not-italic font-semibold bg-gradient-to-r from-[hsl(var(--pb-lavender))] to-[hsl(var(--pb-violet))] bg-clip-text text-transparent">
               Free Pro for Life
             </span>
           </h2>
@@ -1421,7 +1405,7 @@ function FreeProSpotlight({ isFull }: { isFull: boolean }) {
               Quality over quantity
             </span>
             <span className="flex items-center gap-1.5">
-              <Gift className="h-3.5 w-3.5 text-[hsl(var(--pb-mint))]" />
+              <Gift className="h-3.5 w-3.5 text-[hsl(var(--pb-violet))]" />
               All {BETA_TOTAL_PARTNERS} partners earn rewards
             </span>
           </div>
@@ -1586,7 +1570,7 @@ function FoundingPartnerSection({
                             {tier.label}
                           </span>
                         </div>
-                        <span className="text-xs font-bold text-[hsl(var(--pb-mint))] sm:text-sm">
+                        <span className="text-xs font-bold text-[hsl(var(--pb-violet))] sm:text-sm">
                           {tier.shortDescription}
                         </span>
                       </div>
@@ -1603,7 +1587,7 @@ function FoundingPartnerSection({
                         key={criterion}
                         className="flex items-start gap-2 text-xs text-white/70 sm:text-sm"
                       >
-                        <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[hsl(var(--pb-mint)/0.7)]" />
+                        <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[hsl(var(--pb-violet)/0.7)]" />
                         <span>{criterion}</span>
                       </li>
                     ))}
@@ -1658,7 +1642,7 @@ function FoundingPartnerSection({
                     </div>
                   ))}
                 </div>
-                <div className="mt-6 border-l-2 border-[hsl(var(--pb-mint)/0.4)] pl-4">
+                <div className="mt-6 border-l-2 border-[hsl(var(--pb-violet)/0.4)] pl-4">
                   <p className="font-serif text-base italic text-white/90 sm:text-lg">
                     Every partner earns a reward tier. The rubric above determines who
                     lands in the top&nbsp;2.
@@ -1743,7 +1727,7 @@ function BenefitList({ title, items }: { title: string; items: string[] }) {
             key={item}
             className="flex gap-3 text-sm leading-6 text-white/76"
           >
-            <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-[hsl(var(--pb-mint))]" />
+            <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-[hsl(var(--pb-violet))]" />
             <span>{item}</span>
           </li>
         ))}

@@ -419,9 +419,9 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
 
   .pb-landing {
     background:
-      radial-gradient(70% 45% at 50% 0%, hsl(var(--pb-violet) / 0.10), transparent 72%),
-      radial-gradient(40% 30% at 15% 26%, hsl(var(--pb-electric) / 0.06), transparent 72%),
-      linear-gradient(180deg, hsl(var(--pb-night)) 0%, hsl(var(--pb-ink)) 46%, hsl(256 16% 8%) 100%);
+      radial-gradient(60% 40% at 50% 0%, hsl(var(--pb-lavender) / 0.10), transparent 72%),
+      linear-gradient(180deg, hsl(var(--pb-cream)) 0%, hsl(var(--pb-cream-warm)) 100%);
+    color: hsl(var(--pb-ink-soft));
   }
 
   /* ── Editorial / Surveva-style warm paper surface ───────────── */
@@ -567,22 +567,18 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
   }
   .pb-paper-link:hover { color: hsl(var(--pb-violet)); }
   .pb-paper-link[data-active="true"] { color: hsl(var(--pb-violet)); }
-  /* Soft fade where paper meets the dark sections below */
-  .pb-paper-fade-bottom {
-    background: linear-gradient(180deg, transparent 0%, hsl(var(--pb-night) / 0.5) 55%, hsl(var(--pb-night)) 100%);
-  }
+  /* (pb-paper-fade-bottom removed — entire landing is paper now) */
 
   .pb-copy { color: hsl(var(--pb-muted)); font-size: clamp(0.938rem, 0.4vw + 0.875rem, 1.125rem); line-height: 1.65; }
   .pb-container { width: min(100% - 2rem, 1280px); margin-inline: auto; }
   @media (min-width: 640px) { .pb-container { width: min(100% - 3rem, 1280px); } }
   .pb-section { padding-block: clamp(2rem, 3.5vw, 3.5rem); position: relative; }
   .pb-section-tight { padding-block: clamp(1.25rem, 2.25vw, 2.25rem); position: relative; }
-  /* Subtle alt surface for alternating dark sections — keeps editorial feel */
+  /* Quiet ivory alt band on the paper surface — provides section rhythm */
   .pb-section-alt {
     background:
-      linear-gradient(180deg, hsl(var(--pb-paper) / 0.025) 0%, hsl(var(--pb-paper) / 0) 60%),
-      hsl(var(--pb-ink) / 0.55);
-    border-block: 1px solid hsl(var(--pb-paper) / 0.06);
+      linear-gradient(180deg, hsl(32 38% 90%) 0%, hsl(34 36% 92%) 100%);
+    border-block: 1px solid hsl(var(--pb-ink-soft) / 0.10);
   }
   .pb-container-narrow { width: min(100% - 2rem, 860px); margin-inline: auto; }
   @media (min-width: 640px) { .pb-container-narrow { width: min(100% - 3rem, 860px); } }
