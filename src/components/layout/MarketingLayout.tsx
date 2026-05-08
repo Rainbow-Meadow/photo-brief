@@ -38,7 +38,7 @@ export function MarketingLayout() {
         <header className="mx-auto flex h-14 w-full max-w-7xl items-center justify-between gap-4 rounded-full glass-nav px-3 sm:h-16 sm:px-5">
           <NavLink
             to="/"
-            aria-label="PhotoBrief.ai home"
+            aria-label="PhotoBrief.ai"
             className="flex items-center pl-1"
           >
             <BrandMark
