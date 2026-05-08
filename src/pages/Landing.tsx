@@ -940,36 +940,30 @@ function FoundingPartnerBetaSection({ isFull }: { isFull: boolean }) {
   return (
     <section id="beta-program" className="pb-section">
       <div className="pb-container">
-        <div className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:gap-14">
-          {/* LEFT — narrative */}
-          <div className="lg:pr-2">
-            <img
-              src={foundingBadgeIllo}
-              alt="Hand-drawn illustration of three numbered ribbon badges pinned to a corkboard"
-              width={1024}
-              height={1024}
-              loading="lazy"
-              decoding="async"
-              className="mb-6 w-full max-w-[260px] drop-shadow-[0_22px_36px_hsl(var(--pb-ink-soft)/0.28)]"
-            />
-            <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[hsl(var(--pb-lavender))]">
-              <Stamp className="-mt-0.5 mr-1 inline h-3 w-3" /> Accepting applications
-            </p>
-            <h2 className="mt-4 font-serif text-3xl italic leading-[1.05] tracking-tight text-white sm:text-4xl lg:text-5xl">
+        <SectionIntro
+          eyebrow={<><Stamp className="h-3.5 w-3.5" /> Accepting applications</>}
+          title={
+            <>
               Built with real workflows,{" "}
               <span className="not-italic font-semibold bg-gradient-to-r from-[hsl(var(--pb-lavender))] to-[hsl(var(--pb-violet))] bg-clip-text text-transparent">
                 with you.
               </span>
-            </h2>
-            <p className="pb-copy mt-5 text-base leading-relaxed sm:text-lg">
-              Visual intake is workflow-specific — every trade, every service type
-              needs something slightly different. The only way to get it right is
-              to build alongside real businesses running real jobs. That's why
-              this is a hands-on beta, not a waitlist.
-            </p>
+            </>
+          }
+          description="Visual intake is workflow-specific — every trade, every service type needs something slightly different. The only way to get it right is to build alongside real businesses running real jobs. That's why this is a hands-on beta, not a waitlist."
+          accent={
+            <TradeAccent
+              src={foundingBadgeIllo}
+              alt="Hand-drawn illustration of three numbered ribbon badges pinned to a corkboard"
+            />
+          }
+        />
 
+        <div className="mt-10 grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:gap-14 sm:mt-14">
+          {/* LEFT — narrative detail */}
+          <div className="lg:pr-2">
             {/* Seat tracker */}
-            <div className="mt-7">
+            <div>
               <BetaSeatTracker className="w-full max-w-sm" />
             </div>
 
