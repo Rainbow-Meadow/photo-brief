@@ -217,6 +217,36 @@
   --app-pill-info-fg: 33 89% 78%;
 }
 
+/* Marketing stays light per the new brand direction, even if the app theme is dark. */
+.pb-landing {
+  --background: 39 33% 97%;
+  --foreground: 219 47% 14%;
+  --primary: 33 88% 55%;
+  --primary-foreground: 219 47% 14%;
+  --primary-glow: 33 89% 69%;
+  --ring: 33 88% 55%;
+
+  --pb-night: 219 50% 7%;
+  --pb-ink: 219 47% 14%;
+  --pb-panel: 0 0% 100%;
+  --pb-panel-2: 39 30% 94%;
+  --pb-line: 32 18% 86%;
+  --pb-line-strong: 32 20% 78%;
+  --pb-violet: 33 88% 55%;
+  --pb-lavender: 33 89% 69%;
+  --pb-electric: 219 47% 20%;
+  --pb-mint: 152 60% 34%;
+  --pb-paper: 39 33% 97%;
+  --pb-muted: 219 18% 36%;
+  --pb-shadow: 219 47% 20%;
+  --pb-cream: 39 33% 97%;
+  --pb-cream-warm: 36 34% 94%;
+  --pb-ink-soft: 219 47% 14%;
+  --pb-ink-muted: 219 18% 36%;
+  --pb-wordmark-navy: 219 47% 20%;
+  --pb-wordmark-amber: 33 88% 55%;
+}
+
 .app-shell,
 .recipient-shell {
   --primary: var(--app-primary);
