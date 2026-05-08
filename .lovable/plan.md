@@ -1,82 +1,58 @@
-# Apple-Native Design Schema Refactor
+## Goal
 
-Goal: make PhotoBrief look and behave like a native, App Store–approved Apple app — on iOS (mobile), iPadOS (tablet), and macOS (desktop) — without breaking existing screens. The current schema is close (Apple easing, glass primitives, platform tokens), but it mixes "premium SaaS" tropes with HIG. This plan tightens it into a true HIG-aligned system.
+Right now on desktop the landing page reads like a phone screen stretched onto a 1382px viewport: a single ~672px center column with huge empty purple gutters on either side. Mobile and tablet stay perfect — only `lg:` and `xl:` breakpoints change.
 
-## What changes (user-visible)
+## Changes
 
-- Typography that matches SF (system font stack, Dynamic Type-style scale, tighter tracking on large titles).
-- Apple-correct hierarchy: Large Title → Title 1/2/3 → Headline → Body → Callout → Subhead → Footnote → Caption.
-- Materials instead of "glass cards": `regular`, `thick`, `thin`, `ultraThin`, `chrome` — mapped to backdrop-filter + vibrancy overlays, with proper light/dark variants.
-- iOS-correct controls: 44pt min touch targets, segmented controls, sheet-style modals (detents), bottom tab bar with SF-style icons and labels, large-title scroll-collapsing headers.
-- macOS/iPadOS-correct desktop: sidebar with translucent chrome, traffic-light spacing, hairline 0.5px separators, focus rings using `accentColor`.
-- Motion: spring-based (not linear/ease) with Apple's standard spring curves; reduced-motion fully respected; tap = scale 0.97 + haptic-style opacity flash; sheets slide with rubber-band.
-- System color palette: replace bespoke "PhotoBrief blue" primary mapping with Apple System Colors (systemBlue/systemIndigo/systemPurple) as the semantic source, with brand purple kept as `--brand-accent` for marketing surfaces only.
-- Dark mode parity tuned to iOS dark (true blacks on OLED surfaces, elevated grays for cards) instead of navy.
+### 1. Hero — two-column on `lg+`
+File: `src/pages/Landing.tsx` (~lines 308–411)
 
-## Architecture changes (technical section)
+Convert the centered stack into a 2‑column grid at `lg:` (≥1024px), keep the current centered stack on mobile/tablet.
 
-### 1. Token layer rewrite
-- `src/design-system/shared/apple.tokens.ts` (new): single source for Apple system colors (light/dark), materials, type ramp, spring curves, radii, hairlines, safe-area, haptics-substitute timings.
-- Refactor `desktop.tokens.ts` → `macos.tokens.ts` and `mobile.tokens.ts` → `ios.tokens.ts`. Add `ipados.tokens.ts`.
-- Extend `usePlatformSchema()` to return `ios | ipados | macos` (detect via viewport + pointer media query `(pointer: coarse)` and `(hover: hover)`), keeping `isMobile/isDesktop` for back-compat.
+```text
+mobile / tablet (unchanged)        desktop ≥1024px
+┌────────────────────┐             ┌──────────────────────┬────────────────┐
+│      [mark]        │             │  Accepting beta…     │                │
+│   Accepting beta…  │             │  Replace weak        │   [big mark]   │
+│   Replace weak     │             │  website forms…      │   with halo    │
+│   website forms…   │             │  Lede copy…          │                │
+│   Lede copy        │             │  [CTA] [CTA] [CTA]   │  Seat tracker  │
+│   [CTA] [CTA] [CTA]│             │  chip chip chip      │   card        │
+│   chips            │             │                      │                │
+│   seat tracker     │             └──────────────────────┴────────────────┘
+└────────────────────┘             ratio ~ 1.15fr / 0.85fr, gap 4rem, items-center
+```
 
-### 2. CSS variable rewrite in `src/index.css`
-- Replace `--primary` mapping to use Apple systemBlue (`211 100% 50%` light / `211 100% 60%` dark) as the default; expose `--brand-accent` (current purple) for marketing.
-- Add Apple system grays: `--system-gray-1..6` and `--label`, `--secondary-label`, `--tertiary-label`, `--quaternary-label`, `--separator`, `--opaque-separator`, `--system-background`, `--secondary-system-background`, `--tertiary-system-background`, `--system-grouped-background` (and grouped variants).
-- Materials as classes: `.material-ultraThin`, `.material-thin`, `.material-regular`, `.material-thick`, `.material-chrome` — each is `backdrop-filter: blur(Npx) saturate(180%)` + tinted overlay + 0.5px hairline border.
-- Hairlines: `.hairline-t/b/l/r` using `box-shadow: inset 0 0.5px 0 hsl(var(--separator))` (true 1 device-pixel via `transform: scaleY(.5)` fallback).
-- Type utility classes: `.text-large-title`, `.text-title-1/2/3`, `.text-headline`, `.text-body`, `.text-callout`, `.text-subhead`, `.text-footnote`, `.text-caption-1/2`. Sizes/leading/tracking from SF spec.
-- Replace `--ease-apple` with full motion set: `--spring-default`, `--spring-snappy`, `--spring-gentle`, `--ease-in-out-quart`, plus durations `--dur-quick (180ms)`, `--dur-standard (260ms)`, `--dur-slow (380ms)`.
+Specifics:
+- Grid: `lg:grid lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:gap-16 lg:text-left`.
+- Drop `mx-auto max-w-2xl` on h1/p at `lg:` so they fill the left column; widen `pb-container` for hero only via `lg:max-w-[1280px]`.
+- CTA row: `lg:justify-start` instead of `sm:justify-center`.
+- Chips row: `lg:justify-start mx-0`.
+- BetaSeatTracker: move into the right column under the brand mark on `lg+`, stays centered below CTAs on smaller screens (render twice with `lg:hidden` / `hidden lg:block`, or use CSS order).
+- Brand mark: only the `lg:` 144px variant lives in the right column; mobile/tablet variants stay where they are.
 
-### 3. Tailwind config (`tailwind.config.ts`)
-- Add `fontFamily.sans` to Apple system stack: `-apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, ...`.
-- Add `fontFamily.rounded` (SF Rounded) and `fontFamily.mono` (SF Mono).
-- Add Apple type scale to `fontSize` with line-height + letter-spacing tuples.
-- Add `colors.label`, `colors.fill`, `colors.separator`, `colors.systemBackground` semantic groups.
-- Add `borderWidth.hairline: '0.5px'`.
-- Add `transitionTimingFunction.spring`, `.springSnappy`.
-- Keep existing tokens as deprecated aliases to avoid breakage.
+### 2. Section titles — let them breathe on desktop
+Several section heads use `mx-auto max-w-3xl text-center` which keeps long copy in a narrow column even at 1400px. Loosen to `lg:max-w-5xl` for these (text stays centered, just wider before wrapping):
+- Brief assembly section header (line 427)
+- Use cases header (line 1182)
+- Website intelligence header (line 1222)
+- Final CTA copy (line 1557)
 
-### 4. Component primitives
-- Rename `GlassPanel` → `Material` (keep `GlassPanel` re-export for back-compat). Variants: `ultraThin | thin | regular | thick | chrome`. Drop `elevation` (HIG materials don't stack shadows; depth comes from material thickness + hairlines).
-- New `LargeTitleHeader` component: collapses to inline title on scroll like iOS Navigation.
-- New `Sheet` wrapper around Radix Dialog implementing iOS detents (`medium`, `large`) on touch and centered modal on macOS.
-- New `SegmentedControl` (Radix Tabs styled).
-- New `ListSection` + `ListRow` (iOS grouped table style) for settings pages.
-- `Button` variants extended: `filled`, `tinted`, `gray`, `plain`, `destructive` (HIG button styles); enforce 44px min height on touch.
-- `MobileTabBar` restyled: SF-style stacked icon+label, translucent material chrome, top hairline, safe-area padding.
-- `AppSidebar` restyled to macOS sidebar: translucent material, vibrancy text colors, rounded selection pill in `accentColor`.
+### 3. Use cases grid — 4-up on `xl`
+Line 1196: today the grid maxes at `lg:grid-cols-3`. Add `xl:grid-cols-4` so wide screens get a tighter, more scannable row instead of three large cards with side gutters. Cards already collapse cleanly on smaller widths.
 
-### 5. Motion overhaul
-- Replace `lift-in`/`bubble-in` keyframes with spring-feel cubic-bezier sequences (Apple's standard `cubic-bezier(0.32, 0.72, 0, 1)` already present; add overshoot variant for sheets).
-- Standard interactions: tap → scale `.97` + opacity `.85` over 120ms; release → spring back over 240ms. Hover (desktop only) → subtle tint shift, no lift.
-- All animations gated by `prefers-reduced-motion`.
-
-### 6. Dark mode retune
-- iOS-correct elevated surfaces: `--system-background: 0 0% 0%` (true black) on OLED-class viewports; `--secondary-system-background: 0 0% 11%`; `--tertiary: 0 0% 17%`. Cards use elevated grays, not navy.
-- Materials in dark mode use vibrancy: tinted white overlay at low alpha over blurred backdrop.
-
-### 7. Cleanup
-- Remove hover-lift, glow shadows, gradient-heavy "premium" surfaces from app shell (keep them quarantined to marketing pages via a `marketing-surface` class).
-- Remove `bg-ambient-future` / heavy radial washes from in-app pages; replace with subtle `--system-grouped-background`.
-- Audit `text-white`, `bg-black`, raw HSL colors in components — replace with semantic tokens (already a project rule, enforce via codemod pass).
-
-## Rollout (phased, no big-bang)
-
-1. **Tokens & CSS variables** — add new variables, keep old ones as aliases. No visual change yet.
-2. **Tailwind config + type utilities** — ship Apple type scale and system font stack. Visible: typography snaps to SF.
-3. **Materials + Sheet + SegmentedControl + ListRow primitives** — new components available, old ones still work.
-4. **Shell refactor** — `DashboardLayout`, `AppSidebar`, `MobileTabBar`, headers swapped to materials + large-title pattern.
-5. **Page sweep** — convert Settings, Customers, Requests, Submissions to ListSection/ListRow + Sheet.
-6. **Motion + dark mode tune** — swap easings, retune dark surfaces.
-7. **Marketing isolation** — wrap Landing/Pricing/Help in `.marketing-surface` so brand purple + glow effects survive.
+### 4. Container ceiling for wide viewports
+`src/index.css` line 423 caps `.pb-container` at 1180px. Bump to 1280px (still narrower than the 1400px design-system `containerMax` and well within Apple-style readable bounds). This single change gives the whole page ~100px more horizontal room on `xl` without touching mobile (the `min(100% - 2rem, …)` formula keeps small screens identical).
 
 ## Out of scope
 
-- No changes to business logic, routes, data, or backend.
-- No changes to Remotion video theme.
-- Brand identity (logo, marketing pages) stays purple/lavender; only the in-app product chrome moves to system colors.
+- No copy changes, no new sections, no color/typography tweaks.
+- Mobile and tablet layouts are not touched — all changes are gated behind `lg:`/`xl:` or live in the `min(...)` clamp.
+- Dashboard shell, marketing nav, and other layouts already refactored in earlier turns are left alone.
 
-## Open questions
+## Verification
 
-Before I implement, I want to confirm a few direction choices.
+After implementing, screenshot the landing page at 1440×900 and 1024×768 to confirm:
+- Hero shows side-by-side layout at 1440, stacked at 1024.
+- Use cases shows 4 columns at 1440, 3 at 1280, 2 at md, 1-card carousel at mobile.
+- No horizontal scrollbar at any width.
