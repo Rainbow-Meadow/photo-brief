@@ -47,6 +47,13 @@ const mainItems = [
   { title: "Website Intake", url: "/intake", icon: Globe2, feature: "website_intake" as const },
 ];
 
+const adminItems = [
+  { title: "Command Center", url: "/admin/command", icon: Terminal },
+  { title: "Beta Program", url: "/admin/beta", icon: Shield },
+  { title: "Invites", url: "/admin/invites", icon: UserPlus },
+  { title: "AI Rerun", url: "/admin/ai-rerun", icon: Bot },
+  { title: "Website Intel", url: "/admin/website-intelligence", icon: ScanSearch },
+];
 const settingsItems = [
   { title: "Brand", url: "/settings/brand", icon: Sparkles },
   { title: "Team", url: "/settings/team", icon: Settings },
