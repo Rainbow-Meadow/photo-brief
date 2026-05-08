@@ -27,6 +27,7 @@ interface Env {
   PAGES_HOST: string; // e.g. "photobrief-marketing.pages.dev"
   LOVABLE_HOST: string; // e.g. "photobrief.lovable.app"
   ROUTER_CONFIG?: KVNamespace;
+  WORKSPACE_BRAND?: KVNamespace;
 }
 
 // Cache KV reads for 60s to keep latency low. Cloudflare's edge cache
