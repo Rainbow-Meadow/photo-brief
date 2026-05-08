@@ -191,14 +191,14 @@ function ConnectionLine() {
   return (
     <div className="hidden items-center justify-center self-center lg:flex">
       <div className="flex flex-col items-center gap-2">
-        <div className="h-20 w-px border-l border-dashed border-white/15" />
+        <div className="h-20 w-px border-l border-dashed border-[hsl(var(--pb-ink-soft)/0.18)]" />
         <div className="flex h-8 w-8 items-center justify-center rounded-full border border-[hsl(var(--pb-violet)/0.4)] bg-[hsl(var(--pb-violet)/0.12)]">
-          <ArrowRight className="h-3.5 w-3.5 text-[hsl(var(--pb-lavender))]" />
+          <ArrowRight className="h-3.5 w-3.5 text-[hsl(var(--pb-violet))]" />
         </div>
-        <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-white/25">
+        <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-[hsl(var(--pb-ink-muted))]">
           Live sync
         </span>
-        <div className="h-20 w-px border-l border-dashed border-white/15" />
+        <div className="h-20 w-px border-l border-dashed border-[hsl(var(--pb-ink-soft)/0.18)]" />
       </div>
     </div>
   );
