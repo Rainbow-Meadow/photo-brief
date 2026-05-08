@@ -1728,15 +1728,15 @@ function FinalCta({ isFull }: { isFull: boolean }) {
 
 function BenefitList({ title, items }: { title: string; items: string[] }) {
   return (
-    <div className="rounded-[1.2rem] border border-white/12 bg-white/[0.035] p-4 sm:rounded-[1.4rem] sm:p-5">
-      <h3 className="text-base font-semibold tracking-tight text-white sm:text-lg">
+    <div className="border-t border-white/12 pt-5">
+      <h3 className="font-serif text-lg italic text-white sm:text-xl">
         {title}
       </h3>
-      <ul className="mt-3 grid gap-2.5 sm:mt-4 sm:gap-3">
+      <ul className="mt-4 grid gap-3">
         {items.map((item) => (
           <li
             key={item}
-            className="flex gap-3 text-sm font-semibold leading-6 text-white/76"
+            className="flex gap-3 text-sm leading-6 text-white/76"
           >
             <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-[hsl(var(--pb-mint))]" />
             <span>{item}</span>
