@@ -768,11 +768,36 @@ const painPoints = [
 ];
 
 function PainPointSection() {
-  const [expanded, setExpanded] = useState(false);
-  const visible = expanded ? painPoints : painPoints.slice(0, 3);
+  const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (paused) return;
+    const id = setInterval(() => {
+      setActive((prev) => (prev + 1) % painPoints.length);
+    }, 5000);
+    return () => clearInterval(id);
+  }, [paused]);
+
+  const go = useCallback((i: number) => {
+    setActive(i);
+    setPaused(true);
+    setTimeout(() => setPaused(false), 8000);
+  }, []);
+
+  const point = painPoints[active];
+  const Icon = point.icon;
 
   return (
-    <section className="pb-section">
+    <section
+      className="pb-section"
+      ref={sectionRef}
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onTouchStart={() => setPaused(true)}
+      onTouchEnd={() => { setTimeout(() => setPaused(false), 6000); }}
+    >
       <div className="pb-container">
         <div className="mx-auto max-w-3xl text-center">
           <span className="pb-eyebrow">
@@ -787,59 +812,99 @@ function PainPointSection() {
           </p>
         </div>
 
-        <div className="mt-8 grid gap-3 sm:mt-10 sm:grid-cols-2 lg:grid-cols-3">
-          {visible.map((point) => {
-            const Icon = point.icon;
-            return (
-              <article
-                key={point.number + point.label}
-                className="pb-card flex flex-col p-4 sm:p-5"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-[hsl(var(--pb-line-strong))] bg-[hsl(var(--pb-ink))] text-[hsl(var(--pb-lavender))]">
-                    <Icon className="h-5 w-5" />
-                  </div>
-                  <span className="text-3xl font-extrabold tracking-tight text-[hsl(var(--pb-lavender))] sm:text-4xl">
-                    {point.number}
-                  </span>
-                </div>
-                <p className="mt-3 text-sm font-bold tracking-tight text-white sm:text-base">
-                  {point.label}
-                </p>
-                <p className="pb-copy mt-1 text-xs leading-relaxed sm:text-sm">
-                  {point.context}
-                </p>
-                <a
-                  href={point.citation.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-2 inline-flex items-center gap-1 text-[0.65rem] font-medium text-white/40 transition hover:text-[hsl(var(--pb-lavender))] sm:text-xs"
+        {/* Carousel card */}
+        <div className="relative mx-auto mt-8 max-w-2xl sm:mt-10">
+          <div className="pb-card relative overflow-hidden p-6 sm:p-8">
+            {/* Crossfade wrapper */}
+            {painPoints.map((p, i) => {
+              const PIcon = p.icon;
+              return (
+                <div
+                  key={p.number}
+                  className={`transition-all duration-500 ${i === active ? "relative opacity-100" : "pointer-events-none absolute inset-0 p-6 opacity-0 sm:p-8"}`}
+                  aria-hidden={i !== active}
                 >
-                  Source: {point.citation.text} ↗
-                </a>
-              </article>
-            );
-          })}
+                  <div className="flex items-center gap-4">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-[hsl(var(--pb-line-strong))] bg-[hsl(var(--pb-ink))] text-[hsl(var(--pb-lavender))]">
+                      <PIcon className="h-6 w-6" />
+                    </div>
+                    <span className="text-5xl font-extrabold tracking-tight text-[hsl(var(--pb-lavender))] sm:text-6xl">
+                      {p.number}
+                    </span>
+                  </div>
+                  <p className="mt-4 text-lg font-bold tracking-tight text-white sm:text-xl">
+                    {p.label}
+                  </p>
+                  <p className="pb-copy mt-2 text-sm leading-relaxed sm:text-base">
+                    {p.context}
+                  </p>
+                  <a
+                    href={p.citation.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-white/40 transition hover:text-[hsl(var(--pb-lavender))] sm:text-sm"
+                  >
+                    Source: {p.citation.text} ↗
+                  </a>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Left/right tap zones */}
+          <button
+            type="button"
+            aria-label="Previous stat"
+            onClick={() => go((active - 1 + painPoints.length) % painPoints.length)}
+            className="absolute left-0 top-0 h-full w-1/4 cursor-w-resize opacity-0"
+          />
+          <button
+            type="button"
+            aria-label="Next stat"
+            onClick={() => go((active + 1) % painPoints.length)}
+            className="absolute right-0 top-0 h-full w-1/4 cursor-e-resize opacity-0"
+          />
+
+          {/* Dot indicators */}
+          <div className="mt-4 flex items-center justify-center gap-2">
+            {painPoints.map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                aria-label={`Stat ${i + 1}`}
+                onClick={() => go(i)}
+                className={`h-2 rounded-full transition-all duration-300 ${i === active ? "w-6 bg-[hsl(var(--pb-lavender))]" : "w-2 bg-white/20 hover:bg-white/40"}`}
+              />
+            ))}
+          </div>
         </div>
 
-        {!expanded && (
-          <div className="mt-4 text-center sm:mt-6">
-            <button
-              type="button"
-              onClick={() => setExpanded(true)}
-              className="inline-flex items-center gap-1.5 rounded-full border border-white/12 bg-white/[0.04] px-5 py-2.5 text-xs font-semibold text-white/60 transition hover:border-white/20 hover:bg-white/[0.07] hover:text-white sm:text-sm"
-            >
-              See 2 more stats <ArrowRight className="h-3.5 w-3.5" />
-            </button>
-          </div>
-        )}
-
         <p className="pb-copy mx-auto mt-6 max-w-xl text-center text-sm italic sm:mt-8 sm:text-base">
-          PhotoBrief replaces the gap between first contact and actionable
-          information with guided visual intake.
+          PhotoBrief closes the gap between first contact and quote-ready
+          information.
         </p>
       </div>
     </section>
+  );
+}
+
+/* ── Ticker bar ─────────────────────────────────────────── */
+
+function TickerBar({ items, direction = "left" }: { items: string[]; direction?: "left" | "right" }) {
+  const content = items.map((t) => t.toUpperCase()).join("  ·  ");
+  const doubled = `${content}  ·  ${content}  ·  `;
+  return (
+    <div className="overflow-hidden border-y border-white/[0.06] bg-white/[0.015] py-2.5" aria-hidden>
+      <div
+        className="whitespace-nowrap text-[0.6rem] font-bold tracking-[0.2em] text-white/25 sm:text-xs"
+        style={{
+          animation: `marquee ${items.length * 5}s linear infinite`,
+          animationDirection: direction === "right" ? "reverse" : "normal",
+        }}
+      >
+        {doubled}
+      </div>
+    </div>
   );
 }
 
