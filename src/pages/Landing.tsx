@@ -437,15 +437,15 @@ export default function LandingPage() {
           {/* ━━ 5. HOW IT WORKS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
           <WorkflowSection />
 
+          {/* ━━ 6. BEFORE / AFTER ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+          <ComparisonSection
+            mode={comparisonMode}
+            onModeChange={setComparisonMode}
+          />
+
           {/* Soft fade where paper meets the dark sections below */}
           <div className="pb-paper-fade-bottom pointer-events-none h-24 w-full" aria-hidden />
         </div>
-
-        {/* ━━ 6. BEFORE / AFTER ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-        <ComparisonSection
-          mode={comparisonMode}
-          onModeChange={setComparisonMode}
-        />
 
         {/* ━━ TICKER 2 — Product signals ━━━━━━━━━━━━━━━━━━━━━━ */}
         <TickerBar items={["Website scan included", "Hosted link or embed", "No app required for customers", "AI photo quality checks", "Lead packets — not form spam"]} direction="right" />
@@ -1114,7 +1114,7 @@ function ComparisonSection({
         />
 
         {/* Editorial toggle — minimal underline tabs */}
-        <div className="mx-auto mt-8 flex max-w-sm items-center justify-center gap-8 border-b border-white/10 sm:mt-10">
+        <div className="mx-auto mt-8 flex max-w-sm items-center justify-center gap-8 border-b border-[hsl(var(--pb-ink-soft)/0.18)] sm:mt-10">
           {[
             { id: "messy", label: "Before" },
             { id: "clean", label: "PhotoBrief" },
@@ -1125,30 +1125,30 @@ function ComparisonSection({
               onClick={() => onModeChange(item.id as "messy" | "clean")}
               className={`relative -mb-px px-1 pb-3 text-xs font-black uppercase tracking-[0.22em] transition focus-visible:outline-none ${
                 mode === item.id
-                  ? "text-white"
-                  : "text-white/40 hover:text-white/70"
+                  ? "text-[hsl(var(--pb-ink))]"
+                  : "text-[hsl(var(--pb-ink-muted))] hover:text-[hsl(var(--pb-ink))]"
               }`}
             >
               {item.label}
               {mode === item.id && (
-                <span className="absolute inset-x-0 -bottom-px h-px bg-[hsl(var(--pb-lavender))]" />
+                <span className="absolute inset-x-0 -bottom-px h-px bg-[hsl(var(--pb-violet))]" />
               )}
             </button>
           ))}
         </div>
 
         {/* Editorial spread — two columns separated by a hairline rule */}
-        <div className="mt-8 grid gap-6 sm:mt-10 sm:gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-stretch lg:gap-0 lg:divide-x lg:divide-white/10">
+        <div className="mt-8 grid gap-6 sm:mt-10 sm:gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-stretch lg:gap-0 lg:divide-x lg:divide-[hsl(var(--pb-ink-soft)/0.18)]">
           <div className="lg:pr-8 xl:pr-12">
-            <div className="flex items-baseline justify-between gap-3 border-b border-white/10 pb-3">
-              <p className="font-serif text-lg italic text-white/80 sm:text-xl">
+            <div className="flex items-baseline justify-between gap-3 border-b border-[hsl(var(--pb-ink-soft)/0.18)] pb-3">
+              <p className="font-serif text-lg italic text-[hsl(var(--pb-ink))] sm:text-xl">
                 {isClean ? "Guided visual intake" : "Generic website form"}
               </p>
               <span
                 className={`text-[10px] font-black uppercase tracking-[0.22em] ${
                   isClean
-                    ? "text-[hsl(var(--pb-mint))]"
-                    : "text-[hsl(var(--pb-lavender))]"
+                    ? "text-[hsl(var(--pb-mint-deep,var(--pb-mint)))]"
+                    : "text-[hsl(var(--pb-violet))]"
                 }`}
               >
                 {isClean ? "Actionable" : "Vague"}
@@ -1158,18 +1158,18 @@ function ComparisonSection({
               {signals.map((signal, index) => (
                 <li
                   key={signal}
-                  className="flex items-start gap-4 border-b border-white/5 pb-4 last:border-0"
+                  className="flex items-start gap-4 border-b border-[hsl(var(--pb-ink-soft)/0.10)] pb-4 last:border-0"
                 >
                   <span
                     className={`mt-0.5 font-serif text-2xl leading-none ${
                       isClean
-                        ? "text-[hsl(var(--pb-mint))]"
-                        : "text-[hsl(var(--pb-lavender))]"
+                        ? "text-[hsl(var(--pb-mint-deep,var(--pb-mint)))]"
+                        : "text-[hsl(var(--pb-violet))]"
                     }`}
                   >
                     {String(index + 1).padStart(2, "0")}
                   </span>
-                  <p className="text-sm text-white/82 sm:text-base">
+                  <p className="text-sm text-[hsl(var(--pb-ink-soft))] sm:text-base">
                     {signal}
                   </p>
                 </li>
@@ -1178,7 +1178,7 @@ function ComparisonSection({
           </div>
 
           <div className="relative min-h-[320px] overflow-hidden sm:min-h-[420px] lg:pl-8 xl:pl-12">
-            <div className="absolute inset-0 opacity-25">
+            <div className="absolute inset-0 opacity-15">
               <div className="pb-lens-field" />
             </div>
             {isClean ? <CleanPacketVisual /> : <MessyThreadVisual />}
