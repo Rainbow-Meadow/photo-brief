@@ -3,6 +3,7 @@
 // + submission_answers into the legacy Submission shape so existing UI keeps working.
 
 import { supabase } from "@/integrations/supabase/client";
+import { withSupabaseRetry as withRetry } from "@/lib/supabaseRetry";
 import { getTokenClient } from "@/integrations/supabase/tokenClient";
 import { r2MediaService } from "@/services/r2MediaService";
 import type {
@@ -98,11 +99,13 @@ async function hydrate(
 
 export const submissionsService = {
   async list(workspaceId: string): Promise<Submission[]> {
-    const { data, error } = await supabase
-      .from("submissions")
-      .select("*, photo_brief_requests!inner(guide_id, photo_guides(name))")
-      .eq("workspace_id", workspaceId)
-      .order("created_at", { ascending: false });
+    const { data, error } = await withRetry(async () =>
+      await supabase
+        .from("submissions")
+        .select("*, photo_brief_requests!inner(guide_id, photo_guides(name))")
+        .eq("workspace_id", workspaceId)
+        .order("created_at", { ascending: false }),
+    );
     if (error) throw error;
 
     const rows = (data ?? []).map((r: any) => ({
@@ -110,28 +113,29 @@ export const submissionsService = {
       guide_name: r.photo_brief_requests?.photo_guides?.name ?? "",
     }));
 
-    // Hydrate without per-row queries for the list view (shots/details/answers lazy).
     return Promise.all(rows.map((r: any) => hydrate(r, [], [], [], [])));
   },
 
   async getById(id: string): Promise<Submission | null> {
-    const { data, error } = await supabase
-      .from("submissions")
-      .select("*, photo_brief_requests!inner(guide_id, photo_guides(name))")
-      .eq("id", id)
-      .maybeSingle();
+    const { data, error } = await withRetry(async () =>
+      await supabase
+        .from("submissions")
+        .select("*, photo_brief_requests!inner(guide_id, photo_guides(name))")
+        .eq("id", id)
+        .maybeSingle(),
+    );
     if (error) throw error;
     if (!data) return null;
 
     const [shotsRes, detailsRes, notesRes, answersRes] = await Promise.all([
-      supabase.from("captured_media").select("*, guide_steps(title)").eq("submission_id", id),
-      supabase.from("extracted_details").select("*").eq("submission_id", id),
-      supabase.from("internal_notes").select("*").eq("submission_id", id),
-      (supabase as any)
+      withRetry(async () => await supabase.from("captured_media").select("*, guide_steps(title)").eq("submission_id", id)),
+      withRetry(async () => await supabase.from("extracted_details").select("*").eq("submission_id", id)),
+      withRetry(async () => await supabase.from("internal_notes").select("*").eq("submission_id", id)),
+      withRetry(async () => await (supabase as any)
         .from("submission_answers")
         .select("*")
         .eq("submission_id", id)
-        .order("order_index", { ascending: true }),
+        .order("order_index", { ascending: true })),
     ]);
 
     return hydrate(
@@ -144,11 +148,13 @@ export const submissionsService = {
   },
 
   async countByStatus(workspaceId: string, status: SubmissionStatus): Promise<number> {
-    const { count, error } = await supabase
-      .from("submissions")
-      .select("id", { count: "exact", head: true })
-      .eq("workspace_id", workspaceId)
-      .eq("status", status);
+    const { count, error } = await withRetry(async () =>
+      await supabase
+        .from("submissions")
+        .select("id", { count: "exact", head: true })
+        .eq("workspace_id", workspaceId)
+        .eq("status", status),
+    );
     if (error) throw error;
     return count ?? 0;
   },
@@ -207,11 +213,6 @@ export const submissionsService = {
     };
   },
 
-  /**
-   * Reviewer-side: reject one or more captured shots, append per-shot
-   * comments, push the submission back to "needs_more", and record an
-   * audit entry that powers first/second-pass acceptance metrics.
-   */
   async rejectShots(args: {
     submissionId: string;
     workspaceId: string;
@@ -290,10 +291,6 @@ export const submissionsService = {
     if (error) throw error;
   },
 
-  /**
-   * Recipient-side: finalize a submission row, upload any remaining fallback
-   * media, persist recipient answers, and trigger AI summary.
-   */
   async submitFromRecipient(args: {
     token: string;
     requestId: string;
@@ -334,9 +331,6 @@ export const submissionsService = {
       submissionId = subRow.id;
     }
 
-    // Fallback path for rare cases where a photo reached review without the
-    // normal live R2 upload path. New live captures should already have
-    // captured_media rows by the time this function runs.
     for (const p of args.photos) {
       const uploaded = await r2MediaService.uploadOriginalForAnalysis({
         token: args.token,
@@ -355,7 +349,6 @@ export const submissionsService = {
       }).catch((err) => console.warn("fallback WebP promotion failed", err));
     }
 
-    // Replace answers for this submission so retries / resumed submits are idempotent.
     const answerClient = client as any;
     const normalizedAnswers = (args.answers ?? [])
       .map((a, idx) => ({
@@ -387,7 +380,6 @@ export const submissionsService = {
       .update({ status: "submitted" })
       .eq("id", args.requestId);
 
-    // Use the token-scoped client so the summarizer can authorize this public submit.
     client.functions
       .invoke("ai-summarize-submission", { body: { submissionId } })
       .catch((e) => console.warn("summary trigger failed", e));
