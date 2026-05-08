@@ -620,7 +620,7 @@ function RoiCalculatorSection() {
             setOpen((p) => !p);
             if (!open) setTimeout(() => calcRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
           }}
-          className="group mx-auto flex w-full max-w-sm flex-col items-center gap-3 rounded-[1.5rem] border border-[hsl(var(--pb-lavender)/0.25)] bg-gradient-to-r from-[hsl(var(--pb-violet)/0.10)] via-[hsl(var(--pb-ink))] to-[hsl(var(--pb-lavender)/0.06)] p-5 text-center transition hover:border-[hsl(var(--pb-lavender)/0.4)] sm:p-6"
+          className="group mx-auto flex w-full max-w-sm flex-col items-center gap-3 rounded-[1.5rem] border border-[hsl(var(--pb-lavender)/0.25)] bg-gradient-to-r from-[hsl(var(--pb-violet)/0.10)] via-[hsl(var(--pb-ink))] to-[hsl(var(--pb-lavender)/0.06)] p-5 transition hover:border-[hsl(var(--pb-lavender)/0.4)] sm:p-6 text-left pt-[24px] mt-[24px]"
         >
           <div className="flex items-center gap-4">
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[hsl(var(--pb-lavender)/0.12)]">
