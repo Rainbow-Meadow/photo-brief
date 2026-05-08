@@ -11,6 +11,11 @@ on:
         options:
           - "true"
           - "false"
+      migration_glob:
+        description: "Migration file glob (default: all pending in supabase/migrations/*.sql)"
+        required: false
+        default: "supabase/migrations/*.sql"
+        type: string
       deploy_functions:
         description: "Deploy Supabase Edge Functions"
         required: true
@@ -41,13 +46,39 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
 
-      - name: Apply database migrations (via edge function)
-        if: ${{ github.event_name == 'push' || inputs.deploy_database == 'true' }}
+      - name: Apply database migrations (push — changed files only)
+        if: ${{ github.event_name == 'push' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "$ADMIN_EMAIL" ] || [ -z "$ADMIN_PASSWORD" ]; then
+            echo "ADMIN_EMAIL and ADMIN_PASSWORD secrets are required for database migrations."
+            exit 1
+          fi
+          if [ -z "$VITE_SUPABASE_URL" ] || [ -z "$VITE_SUPABASE_PUBLISHABLE_KEY" ]; then
+            echo "VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY secrets are required for database migrations."
+            exit 1
+          fi
+
+          mapfile -t files < <(git diff --name-only "${{ github.event.before }}" "${{ github.sha }}" -- 'supabase/migrations/*.sql')
+
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "No migration files changed in this push."
+            exit 0
+          fi
+
+          echo "Changed migration files: ${files[*]}"
+          node scripts/run-migration.mjs "${files[@]}"
+
+      - name: Apply database migrations (workflow_dispatch)
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.deploy_database == 'true' }}
         shell: bash
         run: |
           set -euo pipefail
@@ -60,9 +91,9 @@ jobs:
             exit 1
           fi
           shopt -s nullglob
-          files=(supabase/migrations/*.sql)
+          files=(${{ inputs.migration_glob }})
           if [ ${#files[@]} -eq 0 ]; then
-            echo "No migration files found."
+            echo "No migration files found matching glob."
             exit 0
           fi
           echo "Found ${#files[@]} migration file(s)."
