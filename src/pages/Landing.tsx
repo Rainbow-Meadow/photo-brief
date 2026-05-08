@@ -1498,11 +1498,9 @@ function UseCaseSection({ activeStamp }: { activeStamp?: string | null }) {
           title="Built for the trades that need to see before they act."
           description="Landscapers, junk haulers, HVAC and repair techs, plumbers, and damage / return estimators — anywhere a missing photo slows the next step, PhotoBrief structures the intake so your team has everything on the first pass."
           accent={
-            <StatAccent
-              icon={ClipboardList}
-              value="5"
-              label="Trades shipping with PhotoBrief in beta."
-              tone="lavender"
+            <TradeAccent
+              src={landscaperIllo}
+              alt="Hand-drawn illustration of a landscaper sending a yard photo from a phone"
             />
           }
         />
