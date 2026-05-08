@@ -1595,12 +1595,33 @@ function RewardTiersSection() {
   );
 }
 
-function BetaDetailsAccordion() {
+function BetaDetailsAccordion({
+  value,
+  onValueChange,
+}: {
+  value: string[];
+  onValueChange: (value: string[]) => void;
+}) {
+  const ALL_ITEMS = ["expectations", "scoring"];
+  const allOpen = ALL_ITEMS.every((id) => value.includes(id));
   return (
     <section className="pb-section-tight">
       <div className="pb-container">
-        <div className="mx-auto max-w-3xl border-t border-[hsl(var(--pb-ink-soft)/0.18)]">
-          <Accordion type="multiple" className="grid">
+        <div className="mx-auto max-w-3xl">
+          <div className="flex items-center justify-between gap-4 border-y border-[hsl(var(--pb-ink-soft)/0.18)] py-4">
+            <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[hsl(var(--pb-violet))]">
+              The fine print
+            </p>
+            <button
+              type="button"
+              className="pb-master-toggle"
+              onClick={() => onValueChange(allOpen ? [] : ALL_ITEMS)}
+              aria-expanded={allOpen}
+            >
+              {allOpen ? "Hide details ↑" : "Show all details ↓"}
+            </button>
+          </div>
+          <Accordion type="multiple" value={value} onValueChange={onValueChange} className="grid">
             <AccordionItem value="expectations" className="border-b border-[hsl(var(--pb-ink-soft)/0.18)]">
               <AccordionTrigger className="py-5 text-left text-sm font-bold text-white hover:no-underline sm:text-base [&>svg]:text-[hsl(var(--pb-lavender))]">
                 <span className="flex items-center gap-3">
