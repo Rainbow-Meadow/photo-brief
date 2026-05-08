@@ -19,7 +19,7 @@ export function PageHeader({ title, description, eyebrow, actions, bordered = tr
     <div
       className={cn(
         "flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between",
-        bordered ? "hairline-b pb-5" : "pb-1",
+        bordered ? "hairline-apple-b pb-5" : "pb-1",
         className,
       )}
     >
