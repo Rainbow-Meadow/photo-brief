@@ -1602,31 +1602,19 @@ function RewardTiersSection() {
   return (
     <section className="pb-section-tight">
       <div className="pb-container">
-        <div className="mx-auto max-w-3xl">
-          <div className="text-center">
-            <img
+        <SectionIntro
+          eyebrow={<><Gift className="h-3.5 w-3.5" /> Reward tiers</>}
+          title="Every partner earns something."
+          description="Your tier is based on the quality of your feedback — not just how much you use the product. We track engagement internally; no self-reporting required."
+          accent={
+            <TradeAccent
               src={rewardRibbonsIllo}
               alt="Hand-drawn illustration of layered award rosette ribbons"
-              width={1024}
-              height={1024}
-              loading="lazy"
-              decoding="async"
-              className="mx-auto mb-5 w-full max-w-[220px] drop-shadow-[0_22px_36px_hsl(var(--pb-ink-soft)/0.28)]"
             />
-            <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[hsl(var(--pb-lavender))]">
-              <Gift className="-mt-0.5 mr-1 inline h-3 w-3" /> Reward tiers
-            </p>
-            <h2 className="mt-3 font-serif text-2xl italic leading-[1.1] tracking-tight text-white sm:text-3xl">
-              Every partner earns something.
-            </h2>
-            <p className="pb-copy mx-auto mt-3 max-w-xl text-sm leading-relaxed sm:text-base">
-              Your tier is based on the quality of your feedback — not just how
-              much you use the product. We track engagement internally; no
-              self-reporting required.
-            </p>
-          </div>
-
-          <div className="mt-8 grid border-t border-[hsl(var(--pb-ink-soft)/0.18)]">
+          }
+        />
+        <div className="mx-auto mt-10 max-w-3xl sm:mt-14">
+          <div className="grid border-t border-[hsl(var(--pb-ink-soft)/0.18)]">
             {REWARD_TIERS.map((tier) => {
               const isTopTier = tier.duration === "free-pro";
               return (
