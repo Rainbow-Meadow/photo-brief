@@ -13,6 +13,8 @@ import { lovable } from "@/integrations/lovable";
 import { toast } from "@/hooks/use-toast";
 import { trackEvent } from "@/lib/analytics";
 import { INVITE_ONLY_BETA } from "@/config/access";
+import { TurnstileWidget } from "@/components/security/TurnstileWidget";
+import { verifyTurnstileToken } from "@/config/turnstile";
 
 type ValidationState =
   | { kind: "loading" }
