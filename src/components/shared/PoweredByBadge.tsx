@@ -16,13 +16,18 @@ export function PoweredByBadge({ className, size = 48 }: PoweredByBadgeProps) {
   return (
     <div
       className={cn(
-        "flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground",
+        "flex flex-col items-center justify-center gap-1 text-[11px] text-muted-foreground",
         className,
       )}
     >
-      <Camera className="h-3 w-3 shrink-0" />
-      <span>Sent securely with</span>
-      <BrandMark variant="wordmark" tone="auto" size={size} />
+      <div className="flex items-center justify-center gap-1.5">
+        <Camera className="h-3 w-3 shrink-0" />
+        <span>Sent securely with</span>
+        <BrandMark variant="wordmark" tone="auto" size={size} />
+      </div>
+      <span className="uppercase tracking-[0.22em] text-[9px] text-brand-navy/60">
+        Guide · Capture · Close
+      </span>
     </div>
   );
 }
