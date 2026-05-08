@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useRef, useState, ReactNode } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { onboardingDebug, supabaseErrorDebug } from "@/lib/onboardingDebug";
@@ -20,8 +20,12 @@ const AuthContext = createContext<AuthContextValue>({
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  // Prevent getSession from overwriting a newer onAuthStateChange result
+  const listenerFiredRef = useRef(false);
 
   useEffect(() => {
+    listenerFiredRef.current = false;
+
     // Set up listener BEFORE fetching session
     const { data: sub } = supabase.auth.onAuthStateChange((event, newSession) => {
       onboardingDebug("auth.state_change", {
@@ -30,6 +34,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         currentUserId: newSession?.user?.id ?? null,
         currentUserEmail: newSession?.user?.email ?? null,
       });
+      listenerFiredRef.current = true;
       setSession(newSession);
       setLoading(false);
     });
@@ -42,8 +47,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         currentUserEmail: data.session?.user?.email ?? null,
         error: supabaseErrorDebug(error),
       });
-      setSession(data.session);
-      setLoading(false);
+      // Only apply if the listener hasn't already delivered a fresher state
+      if (!listenerFiredRef.current) {
+        setSession(data.session);
+        setLoading(false);
+      }
     });
 
     return () => sub.subscription.unsubscribe();
