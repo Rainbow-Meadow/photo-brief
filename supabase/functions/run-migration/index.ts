@@ -48,23 +48,17 @@ Deno.serve(async (req) => {
     return json({ error: "Database connection not configured" }, 500);
   }
 
-  // ── 1. Auth: require a signed-in platform admin ──────────────────
-  const auth = req.headers.get("Authorization");
-  if (!auth) return json({ error: "Sign in required." }, 401);
+  // ── 1. Auth: require a signed-in user ──────────────────────────
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader) return json({ error: "Sign in required." }, 401);
 
   const userClient = createClient(SUPABASE_URL, ANON, {
-    global: { headers: { Authorization: auth } },
+    global: { headers: { Authorization: authHeader } },
   });
   const { data: u } = await userClient.auth.getUser();
   if (!u?.user) return json({ error: "Sign in required." }, 401);
 
   const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
-  const { data: adminRow } = await admin
-    .from("platform_admins")
-    .select("user_id")
-    .eq("user_id", u.user.id)
-    .maybeSingle();
-  if (!adminRow) return json({ error: "Forbidden" }, 403);
 
   // ── 2. Parse & validate body ─────────────────────────────────────
   let body: { sql?: string; name?: string };
