@@ -42,6 +42,12 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { PageMeta } from "@/hooks/seo/usePageMeta";
 import { buildHowToJsonLd } from "@/hooks/seo/buildHowToJsonLd";
