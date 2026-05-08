@@ -716,3 +716,4 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
 @keyframes orbit { from { transform: rotate(0deg) translateX(6px) rotate(0deg); } to { transform: rotate(360deg) translateX(6px) rotate(-360deg); } }
 @keyframes sheen { 0%, 70%, 100% { transform: translateX(-140%); opacity: 0; } 78% { opacity: 0.6; } 92% { transform: translateX(140%); opacity: 0; } }
 @keyframes route-dot { 0%, 100% { left: 0%; opacity: 0; } 12% { opacity: 1; } 50% { opacity: 0.95; } 88% { opacity: 1; } 100% { left: 100%; } }
+@keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
