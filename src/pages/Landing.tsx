@@ -64,6 +64,16 @@ import { FreeProEligibilityModal } from "@/components/marketing/FreeProEligibili
 import { BetaSeatTracker } from "@/components/marketing/BetaSeatTracker";
 import { BetaOnboardingAgentExperience } from "@/components/marketing/BetaOnboardingAgentExperience";
 import { BrandMark } from "@/components/layout/BrandMark";
+import {
+  Section,
+  Container,
+  Eyebrow,
+  Title,
+  Subtitle,
+  Body,
+  CTA,
+  CTAGroup,
+} from "@/pages/landing/schema";
 import { howItWorksSteps } from "@/components/marketing/HowItWorksSteps";
 const InteractiveHeroBriefAssembly = lazy(() =>
   import("@/components/marketing/InteractiveHeroBriefAssembly").then((m) => ({
@@ -350,47 +360,48 @@ export default function LandingPage() {
                     className="h-20 sm:h-28 lg:h-36 w-auto select-none"
                   />
                 </div>
-                <span className="pb-eyebrow">
+                <Eyebrow>
                   <Sparkles className="h-3.5 w-3.5" /> Accepting beta applications
-                </span>
+                </Eyebrow>
 
-                <h1 className="pb-display mt-6 sm:mt-8">
-                  Replace weak forms.
-                  <br />
-                  <span className="pb-display-ink">Send a guided</span>
-                  <br />
-                  <span className="pb-display-ink">photo brief.</span>
-                </h1>
+                <div className="mt-6 sm:mt-8">
+                  <Title level={1}>
+                    Replace weak forms.
+                    <br />
+                    Send a guided
+                    <br />
+                    photo brief.
+                  </Title>
+                </div>
 
-                <p className="mt-6 max-w-xl text-base leading-[1.65] text-[hsl(var(--pb-ink-muted))] sm:text-lg sm:mt-8">
-                  PhotoBrief scans your website, maps your services, and gives
-                  customers a simple photo-guided path — so your team gets
-                  actionable lead packets instead of vague messages. Built for
-                  landscapers, junk haulers, HVAC and repair techs, plumbers,
-                  and damage estimators.
-                </p>
+                <div className="mt-6 sm:mt-8 max-w-xl">
+                  <Subtitle>
+                    PhotoBrief scans your website, maps your services, and gives
+                    customers a simple photo-guided path — so your team gets
+                    actionable lead packets instead of vague messages. Built for
+                    landscapers, junk haulers, HVAC and repair techs, plumbers,
+                    and damage estimators.
+                  </Subtitle>
+                </div>
 
-                <div className="mt-8 flex flex-col gap-3 sm:mt-10 sm:flex-row sm:items-center">
-                  <Button
-                    size="xl"
-                    variant="pb-primary"
-                    onClick={() => {
-                      trackEvent("cta_click", { location: "hero", label: "primary" });
-                      document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" });
-                    }}
-                    className="rounded-full"
-                  >
-                    {isFull ? "Join the waitlist" : "Apply for the beta"}
-                    <ArrowRight className="ml-1 h-4 w-4" />
-                  </Button>
-                  <button
-                    type="button"
-                    onClick={() => setDemoOpen(true)}
-                    className="group inline-flex items-center gap-2 self-start rounded-full px-3 py-2 text-sm font-medium text-[hsl(var(--pb-ink-soft))] transition hover:text-[hsl(var(--pb-violet))]"
-                  >
-                    <PlayCircle className="h-5 w-5 text-[hsl(var(--pb-violet))]" />
-                    Watch the product spotlight
-                  </button>
+                <div className="mt-8 sm:mt-10">
+                  <CTAGroup>
+                    <CTA
+                      variant="primary"
+                      size="lg"
+                      onClick={() => {
+                        trackEvent("cta_click", { location: "hero", label: "primary" });
+                        document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" });
+                      }}
+                    >
+                      {isFull ? "Join the waitlist" : "Apply for the beta"}
+                      <ArrowRight className="h-4 w-4" />
+                    </CTA>
+                    <CTA variant="quiet" size="lg" onClick={() => setDemoOpen(true)}>
+                      <PlayCircle className="h-5 w-5" />
+                      Watch the product spotlight
+                    </CTA>
+                  </CTAGroup>
                 </div>
 
                 <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-medium text-[hsl(var(--pb-ink-muted))] sm:text-sm">
@@ -1808,60 +1819,53 @@ function BetaDetailsAccordion({ value, onValueChange }: BetaDetailsAccordionProp
 
 function FinalCta({ isFull }: { isFull: boolean }) {
   return (
-    <section className="pb-section">
-      <div className="pb-container">
-        <div className="border-t border-white/12 pt-10 md:pt-14">
-          <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[hsl(var(--pb-lavender))]">
-            The last word
-          </p>
-          <div className="mt-6 grid gap-10 md:gap-14 lg:grid-cols-[1.15fr_1fr] lg:items-start">
-            <h2 className="font-serif text-4xl italic leading-[1.04] tracking-tight text-white sm:text-5xl md:text-[3.5rem] lg:text-[4rem]">
-              Get quote-ready leads,{" "}
-              <span className="not-italic font-semibold">
-                not vague messages.
-              </span>
-            </h2>
-            <div className="lg:pt-3">
-              <img
-                src={mailboxFlagIllo}
-                alt="Hand-drawn illustration of a mailbox with the flag raised — invitation to apply"
-                width={1024}
-                height={1024}
-                loading="lazy"
-                decoding="async"
-                className="mb-6 w-full max-w-[220px] drop-shadow-[0_22px_36px_hsl(var(--pb-ink-soft)/0.28)]"
-              />
-              <p className="pb-copy max-w-md text-base leading-relaxed sm:text-lg">
+    <Section tone="dark">
+      <Container>
+        <Eyebrow>The last word</Eyebrow>
+        <div className="mt-6 grid gap-10 md:gap-14 lg:grid-cols-[1.15fr_1fr] lg:items-start">
+          <Title level={2}>
+            Get quote-ready leads, not vague messages.
+          </Title>
+          <div className="lg:pt-3">
+            <img
+              src={mailboxFlagIllo}
+              alt="Hand-drawn illustration of a mailbox with the flag raised — invitation to apply"
+              width={1024}
+              height={1024}
+              loading="lazy"
+              decoding="async"
+              className="mb-6 w-full max-w-[220px]"
+            />
+            <div className="max-w-md">
+              <Body size="lg">
                 Stop chasing customers for missing photos and context. Every
                 inquiry arrives as a complete, actionable lead packet — so your
                 team can quote, schedule, or approve without a single follow-up.
-              </p>
-              <div className="mt-7 flex flex-col items-start gap-2.5 sm:flex-row sm:gap-3">
-                <Button
-                  size="xl"
-                  variant="pb-primary"
+              </Body>
+            </div>
+            <div className="mt-7">
+              <CTAGroup>
+                <CTA
+                  variant="primary"
+                  size="lg"
                   onClick={() =>
                     document
                       .getElementById("apply")
                       ?.scrollIntoView({ behavior: "smooth" })
                   }
                 >
-                  {isFull ? "Join the waitlist" : "Apply for the beta"}{" "}
-                  <ArrowRight className="ml-1 h-4 w-4" />
-                </Button>
-                <Button asChild size="xl" variant="pb-secondary">
-                  <NavLink to="/pricing">See plans</NavLink>
-                </Button>
-              </div>
-              <p className="mt-4 text-xs font-medium text-white/46">
-                Customers do not need an account or app to complete a
-                PhotoBrief intake.
-              </p>
+                  {isFull ? "Join the waitlist" : "Apply for the beta"}
+                  <ArrowRight className="h-4 w-4" />
+                </CTA>
+                <CTA variant="secondary" size="lg" href="/pricing">
+                  See plans
+                </CTA>
+              </CTAGroup>
             </div>
           </div>
         </div>
-      </div>
-    </section>
+      </Container>
+    </Section>
   );
 }
 
