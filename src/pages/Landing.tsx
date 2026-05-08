@@ -1000,11 +1000,16 @@ function StatAccent({
 }
 
 
-function SectionNav() {
+function SectionNav({ tone = "dark" }: { tone?: "dark" | "paper" }) {
+  const isPaper = tone === "paper";
   return (
     <nav
       aria-label="Landing page sections"
-      className="sticky top-[4.5rem] z-30 border-y border-white/10 bg-[hsl(var(--pb-night)/0.82)] backdrop-blur-xl"
+      className={
+        isPaper
+          ? "sticky top-[4.5rem] z-30 border-y border-[hsl(var(--pb-ink-soft)/0.10)] bg-[hsl(var(--pb-cream)/0.85)] backdrop-blur-xl"
+          : "sticky top-[4.5rem] z-30 border-y border-white/10 bg-[hsl(var(--pb-night)/0.82)] backdrop-blur-xl"
+      }
     >
       <div className="pb-container flex justify-start gap-1.5 overflow-x-auto py-2 sm:gap-2 sm:py-3 sm:justify-center">
         {sectionLinks.map((item) => (
@@ -1014,7 +1019,11 @@ function SectionNav() {
             onClick={() =>
               trackEvent("landing_jump_nav_click", { target: item.href })
             }
-            className="min-w-max rounded-full border border-transparent px-3 py-1.5 text-xs font-semibold text-white/62 transition hover:border-white/14 hover:bg-white/7 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--pb-lavender))] sm:px-4 sm:py-2 sm:text-sm"
+            className={
+              isPaper
+                ? "min-w-max rounded-full border border-transparent px-3 py-1.5 text-xs font-semibold text-[hsl(var(--pb-ink-muted))] transition hover:border-[hsl(var(--pb-violet)/0.25)] hover:bg-[hsl(var(--pb-violet)/0.06)] hover:text-[hsl(var(--pb-violet))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--pb-violet))] sm:px-4 sm:py-2 sm:text-sm"
+                : "min-w-max rounded-full border border-transparent px-3 py-1.5 text-xs font-semibold text-white/62 transition hover:border-white/14 hover:bg-white/7 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--pb-lavender))] sm:px-4 sm:py-2 sm:text-sm"
+            }
           >
             {item.label}
           </a>
