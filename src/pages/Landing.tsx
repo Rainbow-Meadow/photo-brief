@@ -443,18 +443,18 @@ export default function LandingPage() {
             onModeChange={setComparisonMode}
           />
 
+          {/* ━━ TICKER 2 — Product signals ━━━━━━━━━━━━━━━━━━━━━━ */}
+          <TickerBar tone="paper" items={["Website scan included", "Hosted link or embed", "No app required for customers", "AI photo quality checks", "Lead packets — not form spam"]} direction="right" />
+
+          {/* ── Chapter break: Solution → Fit ── */}
+          <ChapterDivider tone="paper" />
+
+          {/* ━━ 7. USE CASES ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+          <UseCaseSection />
+
           {/* Soft fade where paper meets the dark sections below */}
           <div className="pb-paper-fade-bottom pointer-events-none h-24 w-full" aria-hidden />
         </div>
-
-        {/* ━━ TICKER 2 — Product signals ━━━━━━━━━━━━━━━━━━━━━━ */}
-        <TickerBar items={["Website scan included", "Hosted link or embed", "No app required for customers", "AI photo quality checks", "Lead packets — not form spam"]} direction="right" />
-
-        {/* ── Chapter break: Solution → Fit ── */}
-        <ChapterDivider />
-
-        {/* ━━ 7. USE CASES ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-        <UseCaseSection />
 
         {/* ━━ 8. WEBSITE INTELLIGENCE ━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <WebsiteIntelligenceSection />
@@ -907,10 +907,11 @@ function BetaBridgeSection() {
   );
 }
 
-function ChapterDivider() {
+function ChapterDivider({ tone = "dark" }: { tone?: "dark" | "paper" }) {
+  const via = tone === "paper" ? "via-[hsl(var(--pb-ink-soft)/0.18)]" : "via-white/12";
   return (
     <div className="pb-container" aria-hidden>
-      <div className="mx-auto h-px max-w-lg bg-gradient-to-r from-transparent via-white/12 to-transparent" />
+      <div className={`mx-auto h-px max-w-lg bg-gradient-to-r from-transparent ${via} to-transparent`} />
     </div>
   );
 }
@@ -1316,21 +1317,21 @@ function UseCaseSection() {
             return (
               <article
                 key={item.title}
-                className="w-[78vw] max-w-[300px] shrink-0 snap-start border-t border-white/12 pt-5 md:w-auto md:max-w-none md:min-w-0 md:pt-6"
+                className="w-[78vw] max-w-[300px] shrink-0 snap-start border-t border-[hsl(var(--pb-ink-soft)/0.18)] pt-5 md:w-auto md:max-w-none md:min-w-0 md:pt-6"
               >
                 <div className="flex items-baseline justify-between gap-3">
-                  <span className="font-serif text-2xl leading-none text-[hsl(var(--pb-lavender))] sm:text-3xl">
+                  <span className="font-serif text-2xl leading-none text-[hsl(var(--pb-violet))] sm:text-3xl">
                     {String(index + 1).padStart(2, "0")}
                   </span>
-                  <Icon className="h-5 w-5 text-white/40" />
+                  <Icon className="h-5 w-5 text-[hsl(var(--pb-ink-muted))]" />
                 </div>
-                <p className="mt-4 text-[10px] font-black uppercase tracking-[0.22em] text-white/50">
+                <p className="mt-4 text-[10px] font-black uppercase tracking-[0.22em] text-[hsl(var(--pb-ink-muted))]">
                   {item.stamp}
                 </p>
-                <h3 className="mt-2 font-serif text-xl italic leading-tight text-white sm:text-2xl">
+                <h3 className="mt-2 font-serif text-xl italic leading-tight text-[hsl(var(--pb-ink))] sm:text-2xl">
                   {item.title}
                 </h3>
-                <p className="pb-copy mt-3 text-sm leading-6">{item.body}</p>
+                <p className="mt-3 text-sm leading-6 text-[hsl(var(--pb-ink-soft))]">{item.body}</p>
               </article>
             );
           })}
