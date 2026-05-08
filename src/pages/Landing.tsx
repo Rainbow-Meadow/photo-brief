@@ -562,23 +562,33 @@ function RoiCalculatorSection() {
   }
 
   return (
-    <section className="pb-section-tight">
+    <section className="pb-section-tight" ref={calcRef}>
       <div className="pb-container">
-        {!open ? (
-          <button
-            type="button"
-            onClick={() => setOpen(true)}
-            className="group mx-auto flex w-full max-w-2xl items-center justify-between gap-4 rounded-[1.5rem] border border-[hsl(var(--pb-lavender)/0.25)] bg-gradient-to-r from-[hsl(var(--pb-violet)/0.10)] via-[hsl(var(--pb-ink))] to-[hsl(var(--pb-lavender)/0.06)] p-5 text-left transition hover:border-[hsl(var(--pb-lavender)/0.4)] sm:p-6"
-          >
-            <div className="flex items-center gap-4">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[hsl(var(--pb-lavender)/0.12)]">
-                <Calculator className="h-6 w-6 text-[hsl(var(--pb-lavender))]" />
-              </div>
-              <div>
-                <p className="text-base font-bold tracking-tight text-white sm:text-lg">
-                  How much is weak intake costing you?
-                </p>
-                <p className="pb-copy mt-0.5 text-xs sm:text-sm">
+        <button
+          type="button"
+          onClick={() => {
+            setOpen((p) => !p);
+            if (!open) setTimeout(() => calcRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+          }}
+          className="group mx-auto flex w-full max-w-2xl items-center justify-between gap-4 rounded-[1.5rem] border border-[hsl(var(--pb-lavender)/0.25)] bg-gradient-to-r from-[hsl(var(--pb-violet)/0.10)] via-[hsl(var(--pb-ink))] to-[hsl(var(--pb-lavender)/0.06)] p-5 text-left transition hover:border-[hsl(var(--pb-lavender)/0.4)] sm:p-6"
+        >
+          <div className="flex items-center gap-4">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[hsl(var(--pb-lavender)/0.12)]">
+              <Calculator className="h-6 w-6 text-[hsl(var(--pb-lavender))]" />
+            </div>
+            <div>
+              <p className="text-base font-bold tracking-tight text-white sm:text-lg">
+                How much is weak intake costing you?
+              </p>
+              <p className="pb-copy mt-0.5 text-xs sm:text-sm">
+                Plug in your numbers — see leads and revenue you could recover.
+              </p>
+            </div>
+          </div>
+          <span className={`hidden shrink-0 rounded-full border border-[hsl(var(--pb-lavender)/0.3)] px-4 py-2 text-xs font-bold text-[hsl(var(--pb-lavender))] transition group-hover:bg-[hsl(var(--pb-lavender)/0.1)] sm:inline-flex ${open ? "rotate-90" : ""}`}>
+            {open ? "Close ×" : "Calculate →"}
+          </span>
+        </button>
                   Plug in your numbers — see leads and revenue you could recover.
                 </p>
               </div>
