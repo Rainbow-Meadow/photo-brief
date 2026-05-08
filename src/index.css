@@ -580,6 +580,21 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
       linear-gradient(180deg, hsl(32 38% 90%) 0%, hsl(34 36% 92%) 100%);
     border-block: 1px solid hsl(var(--pb-ink-soft) / 0.10);
   }
+
+  /* ── Beta zone — cooler lavender-tinted paper for a distinct chapter ── */
+  .pb-beta-zone {
+    background:
+      radial-gradient(55% 40% at 12% 0%, hsl(var(--pb-violet) / 0.10), transparent 70%),
+      radial-gradient(45% 35% at 92% 18%, hsl(var(--pb-lavender) / 0.14), transparent 72%),
+      linear-gradient(180deg, hsl(258 32% 95%) 0%, hsl(262 28% 93%) 100%);
+    border-block: 1px solid hsl(var(--pb-violet) / 0.14);
+  }
+  /* Override the generic ivory alt band when nested inside the beta zone — keep contrast but stay in the violet family */
+  .pb-beta-zone .pb-section-alt {
+    background:
+      linear-gradient(180deg, hsl(258 36% 91%) 0%, hsl(262 32% 89%) 100%);
+    border-block: 1px solid hsl(var(--pb-violet) / 0.18);
+  }
   .pb-container-narrow { width: min(100% - 2rem, 860px); margin-inline: auto; }
   @media (min-width: 640px) { .pb-container-narrow { width: min(100% - 3rem, 860px); } }
   .pb-eyebrow {
