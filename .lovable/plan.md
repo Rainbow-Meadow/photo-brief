@@ -1,66 +1,50 @@
 
-## Goal
+# Separate Desktop vs Touch UX
 
-Create an admin-protected edge function `run-migration` that accepts SQL and executes it against the database using the service role key (already available as `SUPABASE_SERVICE_ROLE_KEY` in the edge function environment). This lets you apply migrations from your repo without needing direct Supabase CLI credentials.
+The project already has strong foundations:
+- Tailwind's `hoverOnlyWhenSupported: true` wraps all `hover:` utilities in `@media (hover: hover)`, so they already don't fire on touch devices
+- CSS in `index.css` already has `@media (hover: hover)`, `@media (hover: none)`, and mobile-width overrides
+- The design system has separate desktop/mobile token sets
 
-## What gets built
+The remaining gaps are:
 
-### 1. Edge function: `supabase/functions/run-migration/index.ts`
+## 1. Suppress expensive effects on touch devices (index.css)
 
-- **Auth**: Requires a valid JWT from a platform admin (same pattern as `admin-ai-rerun`)
-- **Input**: `{ sql: string, name?: string }` — the migration SQL and an optional label
-- **Execution**: Uses the service role Supabase client to call `rpc` or direct postgres via `SUPABASE_DB_URL`
-- **Safety guardrails**:
-  - Platform admin only (checked against `platform_admins` table)
-  - Max SQL size limit (e.g. 500KB)
-  - Logs each execution with timestamp, admin user ID, migration name, and success/failure to a `migration_log` table
-- **Output**: `{ ok: true, name, rows_affected }` or `{ ok: false, error }`
+Add to the existing `@media (hover: none)` / mobile blocks:
+- Disable `pb-lens-field` (radial gradient overlays) — they cause compositing overhead during scroll
+- Reduce `backdrop-blur` values on sticky nav (e.g. `backdrop-blur-xl` to `backdrop-blur-sm`)
+- Kill `animate-sheen` infinite animation
+- Kill `animate-ping` on the interactive hero (or reduce to a static dot)
+- Disable decorative blur blobs (`blur-[60px]`, `blur-[50px]`) — replace with simpler opacity gradients or hide entirely
 
-Since `SUPABASE_DB_URL` is already configured as a secret, the function will use a direct Postgres connection (via `deno-postgres`) for full DDL support (CREATE TABLE, ALTER, etc.) — the Supabase JS client's `rpc` can't run arbitrary DDL.
+## 2. Add `will-change` and containment for scroll performance (index.css)
 
-### 2. Migration log table
+- Add `contain: layout style paint` to `.pb-card` on touch devices to isolate repaints
+- Add `will-change: transform` only to elements that actually animate (sticky nav), not broadly
 
-A new `admin_migration_log` table to track what was applied:
+## 3. Remove `active:scale-[0.98]` from non-button elements (InteractiveHeroBriefAssembly.tsx)
 
+The interactive hero has `active:scale-[0.98]` on several div-like containers. On touch, any press-and-drag (scroll attempt) triggers the scale transform, fighting smooth scroll. These should be buttons or have the active effect removed on touch.
+
+## 4. Ensure `.pb-card:hover` transform is fully suppressed on touch (index.css)
+
+The existing `@media (hover: hover)` block handles `.pb-card:hover` — but there's no explicit neutralization in `@media (hover: none)`. Add:
+```css
+@media (hover: none) {
+  .pb-card { transition: none; }
+}
 ```
-admin_migration_log
-  id          uuid PK
-  name        text
-  sql_hash    text        -- SHA-256 of the SQL to detect re-runs
-  executed_by uuid        -- refs auth.users
-  status      text        -- 'success' | 'error'
-  error_msg   text
-  created_at  timestamptz
-```
 
-RLS: only platform admins can read; inserts via service role only.
+## 5. Disable floating decorative elements on mobile (Landing.tsx)
 
-### 3. Local runner script
+The three `pb-lens-field` divs and decorative blur blobs are purely visual. On mobile/touch, hide them with a CSS class or conditional rendering using the existing `useIsMobile()` hook (already available but not used in Landing.tsx).
 
-A small Node.js script (`scripts/run-migration.mjs`) that:
-1. Reads a `.sql` file from `supabase/migrations/`
-2. Authenticates as your admin account to get a JWT
-3. POSTs the SQL to the `run-migration` edge function
-4. Prints the result
+## Files to change
 
-Usage: `node scripts/run-migration.mjs supabase/migrations/20260508_my_change.sql`
+| File | Change |
+|------|--------|
+| `src/index.css` | Add touch-device rules: suppress lens-field, reduce blur, kill sheen/ping, add containment, neutralize card transitions |
+| `src/pages/Landing.tsx` | Conditionally hide decorative blur blobs and lens-field on mobile; remove sticky nav heavy backdrop-blur on touch |
+| `src/components/marketing/InteractiveHeroBriefAssembly.tsx` | Remove `active:scale` from scrollable containers; conditionally skip ping animation on touch |
 
-The script reads credentials from environment variables (`ADMIN_EMAIL`, `ADMIN_PASSWORD`) or prompts for them.
-
-### 4. GitHub Actions workflow update
-
-Update `.github/workflows/deploy-supabase.yml` to use the edge function instead of `supabase db push`:
-- Authenticate as admin via the Supabase auth API
-- Loop through unapplied migrations (checking `admin_migration_log` by `sql_hash`)
-- POST each to the edge function
-- Secrets needed: `ADMIN_EMAIL` and `ADMIN_PASSWORD` (your platform admin account)
-
-### 5. Config
-
-Add `[functions.run-migration]` with `verify_jwt = true` to `supabase/config.toml`.
-
-## Technical details
-
-- The edge function uses `deno-postgres` (`https://deno.land/x/postgres/mod.ts`) for direct DB access, which supports full DDL statements
-- SQL is hashed (SHA-256) before execution; if the same hash exists in `admin_migration_log` with status `success`, the function returns a "already applied" response (idempotent)
-- The function runs each migration in a single transaction with automatic rollback on error
+No new files, no routing changes, no design system restructuring needed.
