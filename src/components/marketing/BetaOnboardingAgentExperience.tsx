@@ -364,44 +364,48 @@ export function BetaOnboardingAgentExperience({
               <ClipboardCheck className="-mt-0.5 mr-1 inline h-3 w-3" /> Agent output
             </p>
             {recommendation ? (
-              <div className="mt-5 grid gap-4">
-                <div className="rounded-[1.25rem] border border-white/10 bg-white/[0.045] p-4">
-                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-[hsl(var(--pb-lavender))]">
+              <div className="mt-5 grid gap-6">
+                <div className="border-l-2 border-[hsl(var(--pb-lavender)/0.5)] pl-4">
+                  <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[hsl(var(--pb-lavender))]">
                     Fit score
                   </p>
                   <div className="mt-2 flex items-end gap-3">
-                    <span className="text-5xl font-black tracking-tight text-white">
+                    <span className="font-serif text-6xl leading-none text-white">
                       {recommendation.fitScore}
                     </span>
                     <span className="pb-copy pb-2 text-sm">/ 5 for beta fit</span>
                   </div>
                   <p className="pb-copy mt-3 text-sm">{recommendation.summary}</p>
                 </div>
-                <div className="grid gap-3 sm:grid-cols-2">
+                <dl className="grid grid-cols-2 gap-x-6 gap-y-4 border-t border-white/12 pt-5 sm:grid-cols-4">
                   <Metric label="Workflow" value={recommendation.workflowType} />
                   <Metric label="Segment" value={recommendation.segment.replace(/_/g, " ")} />
-                  <Metric label="Starter template" value={recommendation.suggestedTemplate} />
-                  <Metric label="Status" value={state?.saved ? "Submitted" : "Ready to submit"} />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-white">First request steps</p>
-                  <div className="mt-3 grid gap-2">
+                  <Metric label="Template" value={recommendation.suggestedTemplate} />
+                  <Metric label="Status" value={state?.saved ? "Submitted" : "Ready"} />
+                </dl>
+                <div className="border-t border-white/12 pt-5">
+                  <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/50">
+                    First request steps
+                  </p>
+                  <ol className="mt-3 grid gap-3">
                     {recommendation.firstRequestSteps.map((step, i) => (
-                      <div
+                      <li
                         key={step}
-                        className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-sm text-white/80"
+                        className="flex items-baseline gap-3 text-sm text-white/82"
                       >
-                        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[hsl(var(--pb-lavender)/0.16)] text-xs font-black text-[hsl(var(--pb-lavender))]">
-                          {i + 1}
+                        <span className="font-serif text-base text-[hsl(var(--pb-lavender))]">
+                          {String(i + 1).padStart(2, "0")}
                         </span>
-                        {step}
-                      </div>
+                        <span>{step}</span>
+                      </li>
                     ))}
-                  </div>
+                  </ol>
                 </div>
                 {recommendation.concerns.length ? (
-                  <div className="rounded-[1rem] border border-white/10 bg-white/[0.035] p-3">
-                    <p className="text-xs font-semibold text-white/75">Manual review notes</p>
+                  <div className="border-l-2 border-white/15 pl-4">
+                    <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/50">
+                      Manual review notes
+                    </p>
                     <p className="pb-copy mt-1 text-xs">
                       {recommendation.concerns.join(" · ")}
                     </p>
@@ -409,19 +413,21 @@ export function BetaOnboardingAgentExperience({
                 ) : null}
               </div>
             ) : (
-              <div className="mt-5 grid gap-3">
-                {examples.map((example) => (
+              <div className="mt-5 grid">
+                {examples.map((example, idx) => (
                   <button
                     key={example.label}
                     type="button"
                     onClick={() => setAnswer(example.value)}
-                    className="rounded-[1.1rem] border border-white/10 bg-white/[0.04] p-4 text-left transition hover:border-[hsl(var(--pb-lavender)/0.45)] hover:bg-white/[0.07]"
+                    className={`group text-left transition py-4 ${idx > 0 ? "border-t border-white/10" : ""}`}
                   >
-                    <p className="text-sm font-semibold text-white">{example.label}</p>
+                    <p className="font-serif text-base italic text-white transition group-hover:text-[hsl(var(--pb-lavender))] sm:text-lg">
+                      {example.label}
+                    </p>
                     <p className="pb-copy mt-1.5 text-xs">{example.value}</p>
                   </button>
                 ))}
-                <div className="mt-2 flex items-start gap-3 rounded-[1rem] border border-[hsl(var(--pb-mint)/0.18)] bg-[hsl(var(--pb-mint)/0.06)] p-3">
+                <div className="mt-4 flex items-start gap-3 border-l-2 border-[hsl(var(--pb-mint)/0.4)] pl-4">
                   <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[hsl(var(--pb-mint))]" />
                   <p className="pb-copy text-xs">
                     The agent uses opaque session IDs and submits through the same beta
