@@ -467,14 +467,15 @@ export default function LandingPage() {
         {/* ━━ 8. WEBSITE INTELLIGENCE ━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <WebsiteIntelligenceSection />
 
-        {/* ── Chapter break: Fit → Action ── */}
-        <ChapterDivider />
+        {/* ── Major chapter break: Product → Beta ── */}
+        <div className="pb-container py-6 sm:py-10" aria-hidden>
+          <div className="mx-auto h-px max-w-2xl bg-gradient-to-r from-transparent via-[hsl(var(--pb-lavender)/0.3)] to-transparent" />
+        </div>
 
-        {/* ━━ 9. FOUNDING BETA REWARDS ━━━━━━━━━━━━━━━━━━━━━━━━ */}
-        <FreeProSpotlight isFull={isFull} />
-        <FoundingPartnerSection utm={utm} isFull={isFull} />
+        {/* ━━ BRIDGE: Why a beta? ━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+        <BetaBridgeSection />
 
-        {/* ━━ 10. TRUST POINTS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+        {/* ━━ TRUST POINTS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <section className="pb-section-tight">
           <div className="pb-container">
             <div className="mx-auto grid max-w-3xl gap-4 sm:grid-cols-3">
@@ -491,7 +492,14 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ━━ 11. AGENT-POWERED APPLICATION ━━━━━━━━━━━━━━━━━━━ */}
+        {/* ━━ FOUNDING BETA REWARDS ━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+        <FreeProSpotlight isFull={isFull} />
+        <FoundingPartnerSection utm={utm} isFull={isFull} />
+
+        {/* ━━ TICKER 3 — Beta social proof ━━━━━━━━━━━━━━━━━━━ */}
+        <TickerBar items={[`${BETA_TOTAL_PARTNERS} founding partner seats`, "Free Pro for Life reward", `${BETA_DURATION_DAYS}-day beta`, "Concierge setup included", "Every partner earns a reward"]} />
+
+        {/* ━━ AGENT-POWERED APPLICATION ━━━━━━━━━━━━━━━━━━━━━━ */}
         <section id="apply" className="pb-section scroll-mt-8">
           <div className="pb-container">
             <BetaOnboardingAgentExperience
@@ -501,10 +509,8 @@ export default function LandingPage() {
             />
           </div>
         </section>
-        {/* ━━ TICKER 3 — Beta social proof ━━━━━━━━━━━━━━━━━━━ */}
-        <TickerBar items={[`${BETA_TOTAL_PARTNERS} founding partner seats`, "Free Pro for Life reward", `${BETA_DURATION_DAYS}-day beta`, "Concierge setup included", "Every partner earns a reward"]} />
 
-        {/* ━━ 12. FINAL CTA ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+        {/* ━━ FINAL CTA ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <FinalCta isFull={isFull} />
       </main>
 
