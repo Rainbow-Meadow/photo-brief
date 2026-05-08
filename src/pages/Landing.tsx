@@ -63,6 +63,7 @@ import { buildFaqJsonLd } from "@/hooks/seo/buildFaqJsonLd";
 import { FreeProEligibilityModal } from "@/components/marketing/FreeProEligibilityModal";
 import { BetaSeatTracker } from "@/components/marketing/BetaSeatTracker";
 import { BetaOnboardingAgentExperience } from "@/components/marketing/BetaOnboardingAgentExperience";
+import { BrandMark } from "@/components/layout/BrandMark";
 import { howItWorksSteps } from "@/components/marketing/HowItWorksSteps";
 const InteractiveHeroBriefAssembly = lazy(() =>
   import("@/components/marketing/InteractiveHeroBriefAssembly").then((m) => ({
