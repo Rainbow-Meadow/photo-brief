@@ -970,11 +970,116 @@ function FoundingPartnerBetaSection({ isFull }: { isFull: boolean }) {
   );
 }
 
-function ChapterDivider({ tone = "dark" }: { tone?: "dark" | "paper" }) {
-  const via = tone === "paper" ? "via-[hsl(var(--pb-ink-soft)/0.18)]" : "via-white/12";
+/**
+ * ChapterMarker — animated seam with a chapter stamp + rotating word pair.
+ * Replaces the old passive ChapterDivider hairline.
+ */
+function ChapterMarker({
+  stamp,
+  words,
+}: {
+  stamp: string;
+  words: ReadonlyArray<readonly [string, string]>;
+}) {
+  const [idx, setIdx] = useState(0);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce || words.length <= 1) return;
+    const t = window.setInterval(() => setIdx((i) => (i + 1) % words.length), 2400);
+    return () => window.clearInterval(t);
+  }, [words.length]);
+  const [a, b] = words[idx];
   return (
-    <div className="pb-container" aria-hidden>
-      <div className={`mx-auto h-px max-w-lg bg-gradient-to-r from-transparent ${via} to-transparent`} />
+    <div className="pb-container">
+      <div className="pb-chapter-marker">
+        <span className="pb-chapter-marker-stamp">{stamp}</span>
+        <span className="pb-chapter-marker-rule" aria-hidden />
+        <span className="pb-chapter-marker-words" aria-live="polite">
+          <span key={`a-${idx}`} className="pb-chapter-marker-word">{a}</span>
+          <span className="pb-chapter-marker-arrow">→</span>
+          <span key={`b-${idx}`} className="pb-chapter-marker-word pb-chapter-marker-word-b">{b}</span>
+        </span>
+      </div>
+    </div>
+  );
+}
+
+/** ComparisonSeam — promotes the Before / PhotoBrief toggle into the seam between Workflow and Comparison. */
+function ComparisonSeam({
+  mode,
+  onModeChange,
+}: {
+  mode: "messy" | "clean";
+  onModeChange: (mode: "messy" | "clean") => void;
+}) {
+  return (
+    <div className="pb-seam-bar">
+      <div className="pb-container">
+        <div className="flex flex-col items-center justify-between gap-3 py-4 sm:flex-row sm:py-5">
+          <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[hsl(var(--pb-violet))]">
+            See the difference
+          </p>
+          <div className="pb-seam-toggle" role="tablist" aria-label="Comparison mode">
+            {[
+              { id: "messy", label: "Before" },
+              { id: "clean", label: "PhotoBrief" },
+            ].map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                role="tab"
+                aria-selected={mode === item.id}
+                data-active={mode === item.id}
+                onClick={() => onModeChange(item.id as "messy" | "clean")}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+          <p className="hidden text-[10px] font-black uppercase tracking-[0.28em] text-[hsl(var(--pb-ink-muted))] sm:block">
+            Toggle to compare
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** UseCaseChipRow — quick-filter pills that highlight a matching use case card. */
+function UseCaseChipRow({
+  active,
+  onChange,
+}: {
+  active: string | null;
+  onChange: (stamp: string | null) => void;
+}) {
+  const stamps = useCases.map((u) => u.stamp);
+  return (
+    <div className="border-b border-[hsl(var(--pb-ink-soft)/0.14)]">
+      <div className="pb-container">
+        <div className="pb-chip-row" role="tablist" aria-label="Filter use cases">
+          <button
+            type="button"
+            data-active={active === null}
+            onClick={() => onChange(null)}
+            className="pb-chip"
+          >
+            All
+          </button>
+          {stamps.map((stamp) => (
+            <button
+              key={stamp}
+              type="button"
+              data-active={active === stamp}
+              onClick={() => onChange(active === stamp ? null : stamp)}
+              className="pb-chip"
+            >
+              {stamp}
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
