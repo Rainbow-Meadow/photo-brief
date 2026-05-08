@@ -187,35 +187,30 @@ const cleanSignals = [
 const useCases = [
   {
     icon: Leaf,
-    image: landscaperIllo,
     title: "Landscapers — quote yards without a site visit",
     body: "Ask homeowners for the wide yard shot, problem beds, fence line, and access path so you can scope mowing, cleanups, or installs from your truck.",
     stamp: "Landscaping",
   },
   {
     icon: Truck,
-    image: junkHaulerIllo,
     title: "Junk haulers — price the pile from the driveway",
     body: "Guided pile, appliance, and access photos turn a vague \"come haul this\" into a quotable load with the right truck and crew.",
     stamp: "Junk removal",
   },
   {
     icon: Wind,
-    image: hvacTechIllo,
     title: "Repair & HVAC techs — show up with the right part",
     body: "Capture nameplate, filter, breaker, and surrounding access shots so techs roll with the right model number, refrigerant, and gear.",
     stamp: "HVAC & repair",
   },
   {
     icon: Wrench,
-    image: plumberIllo,
     title: "Plumbers — diagnose the leak before the truck rolls",
     body: "Walk customers through shutoff, leak source, and supply lines so dispatch knows whether it's a 30-minute fix or a half-day repipe.",
     stamp: "Plumbing",
   },
   {
     icon: Package,
-    image: estimatorIllo,
     title: "Damage & return estimators — turn customer photos into evidence",
     body: "Insurance, warranty, and e-commerce returns: collect angles, scale, and serial shots in a structured packet reviewers can act on first pass.",
     stamp: "Estimating",
@@ -797,6 +792,15 @@ function PainPointSection() {
         <div className="mx-auto max-w-3xl text-center lg:mx-0 lg:grid lg:max-w-none lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:gap-8 lg:text-left">
           {/* Left column — intro copy + carousel */}
           <div className="lg:min-w-0 lg:text-left">
+            <img
+              src={junkHaulerIllo}
+              alt="Hand-drawn illustration of a junk hauler standing beside an unsorted pile"
+              width={1024}
+              height={1024}
+              loading="lazy"
+              decoding="async"
+              className="mx-auto mb-6 w-full max-w-[280px] drop-shadow-[0_22px_36px_hsl(var(--pb-ink-soft)/0.28)] lg:mx-0 lg:max-w-[320px]"
+            />
             <span className="pb-eyebrow">
               <MessageSquareWarning className="h-3.5 w-3.5" /> The problem
             </span>
@@ -1133,6 +1137,21 @@ function UseCaseChipRow({
  * Two-column section intro.
  * Mobile/tablet: stacked centered. Desktop (lg+): copy left, accent right.
  */
+/** Trade illustration accent — drops into a SectionIntro `accent` slot. */
+function TradeAccent({ src, alt }: { src: string; alt: string }) {
+  return (
+    <img
+      src={src}
+      alt={alt}
+      width={1024}
+      height={1024}
+      loading="lazy"
+      decoding="async"
+      className="w-full max-w-[420px] drop-shadow-[0_22px_36px_hsl(var(--pb-ink-soft)/0.28)]"
+    />
+  );
+}
+
 function SectionIntro({
   eyebrow,
   title,
@@ -1259,12 +1278,13 @@ function WorkflowSection() {
             </p>
             <div className="mt-8 hidden lg:block">
               <img
-                src={estimatorIllo}
-                alt="Hand-drawn illustration of an estimator assembling an evidence packet from customer photos"
+                src={hvacTechIllo}
+                alt="Hand-drawn illustration of an HVAC technician working through a structured intake checklist"
                 width={1024}
                 height={1024}
                 loading="lazy"
-                className="w-full max-w-sm drop-shadow-[0_24px_40px_hsl(var(--pb-ink-soft)/0.22)]"
+                decoding="async"
+                className="w-full max-w-[420px] drop-shadow-[0_24px_40px_hsl(var(--pb-ink-soft)/0.28)]"
               />
             </div>
           </div>
@@ -1315,11 +1335,9 @@ function ComparisonSection({ mode }: { mode: "messy" | "clean" }) {
           title="Generic form vs. guided visual intake."
           description="The difference is not more photos — it's structured context that lets your team skip the back-and-forth entirely."
           accent={
-            <StatAccent
-              icon={CheckCircle2}
-              value="0"
-              label="Follow-up calls needed when intake arrives structured."
-              tone="lavender"
+            <TradeAccent
+              src={estimatorIllo}
+              alt="Hand-drawn illustration of a damage estimator reviewing a structured photo packet"
             />
           }
         />
@@ -1488,11 +1506,9 @@ function UseCaseSection({ activeStamp }: { activeStamp?: string | null }) {
           title="Built for the trades that need to see before they act."
           description="Landscapers, junk haulers, HVAC and repair techs, plumbers, and damage / return estimators — anywhere a missing photo slows the next step, PhotoBrief structures the intake so your team has everything on the first pass."
           accent={
-            <StatAccent
-              icon={ClipboardList}
-              value="5"
-              label="Trades shipping with PhotoBrief in beta."
-              tone="lavender"
+            <TradeAccent
+              src={landscaperIllo}
+              alt="Hand-drawn illustration of a landscaper sending a yard photo from a phone"
             />
           }
         />
@@ -1510,18 +1526,7 @@ function UseCaseSection({ activeStamp }: { activeStamp?: string | null }) {
                 data-dim={isDim || undefined}
                 className="w-[78vw] max-w-[300px] shrink-0 snap-start border-t border-[hsl(var(--pb-ink-soft)/0.18)] pt-5 md:w-auto md:max-w-none md:min-w-0 md:pt-6"
               >
-                {item.image ? (
-                  <div className="mb-4 flex h-40 items-end justify-center overflow-hidden sm:h-44">
-                    <img
-                      src={item.image}
-                      alt={`Hand-drawn illustration — ${item.stamp}`}
-                      width={1024}
-                      height={1024}
-                      loading="lazy"
-                      className="h-full w-auto object-contain object-bottom drop-shadow-[0_12px_22px_hsl(var(--pb-ink-soft)/0.18)]"
-                    />
-                  </div>
-                ) : null}
+                {/* image moved to section anchor */}
                 <div className="flex items-baseline justify-between gap-3">
                   <span className="font-serif text-2xl leading-none text-[hsl(var(--pb-violet))] sm:text-3xl">
                     {String(index + 1).padStart(2, "0")}
@@ -1553,11 +1558,9 @@ function WebsiteIntelligenceSection() {
           title="Your website becomes your intake engine."
           description="PhotoBrief scans your services, current forms, and calls-to-action, then maps them into 2–3 simple intake paths you can launch with a hosted link or embed. Beta partners get this built for them during concierge setup."
           accent={
-            <StatAccent
-              icon={Scan}
-              value="< 5 min"
-              label="From a website URL to a working intake path."
-              tone="lavender"
+            <TradeAccent
+              src={plumberIllo}
+              alt="Hand-drawn illustration of a plumber capturing a guided diagnostic photo"
             />
           }
         />
