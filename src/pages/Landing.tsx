@@ -375,9 +375,9 @@ export default function LandingPage() {
                   <button
                     type="button"
                     onClick={() => setDemoOpen(true)}
-                    className="group inline-flex items-center gap-2 self-start rounded-full px-3 py-2 text-sm font-medium text-[hsl(var(--pb-ink-soft))] transition hover:text-[hsl(var(--pb-violet))]"
+                    className="group inline-flex items-center gap-2 self-start rounded-full px-3 py-2 text-sm font-medium text-[hsl(var(--pb-ink-soft))] transition hover:text-[hsl(var(--brand-amber))]"
                   >
-                    <PlayCircle className="h-5 w-5 text-[hsl(var(--pb-violet))]" />
+                    <PlayCircle className="h-5 w-5 text-[hsl(var(--brand-amber))]" />
                     Watch the product spotlight
                   </button>
                 </div>
@@ -389,7 +389,7 @@ export default function LandingPage() {
                     "Lead packets, not form spam",
                   ].map((item) => (
                     <span key={item} className="inline-flex items-center gap-1.5">
-                      <span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--pb-violet)/0.55)]" />
+                      <span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--brand-amber)/0.75)]" />
                       {item}
                     </span>
                   ))}
@@ -405,9 +405,9 @@ export default function LandingPage() {
                       <a
                         key={name}
                         href="#use-cases"
-                        className="inline-flex items-center gap-1.5 rounded-full border border-[hsl(var(--pb-ink-soft)/0.18)] bg-[hsl(var(--pb-ink-soft)/0.04)] px-3 py-1.5 text-xs font-bold text-[hsl(var(--pb-ink))] transition hover:border-[hsl(var(--pb-violet)/0.55)] hover:text-[hsl(var(--pb-violet))] sm:text-sm"
+                        className="inline-flex items-center gap-1.5 rounded-full border border-[hsl(var(--pb-ink-soft)/0.18)] bg-[hsl(var(--pb-ink-soft)/0.04)] px-3 py-1.5 text-xs font-bold text-[hsl(var(--pb-ink))] transition hover:border-[hsl(var(--brand-amber)/0.65)] hover:text-[hsl(var(--brand-amber-hover))] sm:text-sm"
                       >
-                        <TIcon className="h-3.5 w-3.5 text-[hsl(var(--pb-violet))]" />
+                        <TIcon className="h-3.5 w-3.5 text-[hsl(var(--brand-amber))]" />
                         {name}
                       </a>
                     ))}
@@ -421,7 +421,7 @@ export default function LandingPage() {
               <div className="relative flex justify-center lg:justify-end">
                 <div
                   aria-hidden
-                  className="pointer-events-none absolute inset-0 -z-10 mx-auto max-w-md rounded-full bg-[hsl(var(--pb-lavender)/0.18)] blur-[80px]"
+                  className="pointer-events-none absolute inset-0 -z-10 mx-auto max-w-md rounded-full bg-[hsl(var(--brand-amber-light)/0.18)] blur-[80px]"
                 />
                 <img
                   src={heroIllustration}
