@@ -4,6 +4,7 @@
 // photo request templates from scratch and reuse only their own saved templates.
 
 import { supabase } from "@/integrations/supabase/client";
+import { withSupabaseRetry as withRetry } from "@/lib/supabaseRetry";
 import { getTokenClient } from "@/integrations/supabase/tokenClient";
 import type { PhotoGuide } from "@/types/photobrief";
 import type { RequestDraft } from "@/types/requestDraft";
@@ -45,13 +46,15 @@ function rowToGuide(g: any, steps: any[], questions: any[]): PhotoGuide {
 
 async function fetchWorkspaceGuides(workspaceId: string): Promise<PhotoGuide[]> {
   const client = supabase as any;
-  const { data: guides, error } = await client
-    .from("photo_guides")
-    .select("*")
-    .eq("workspace_id", workspaceId)
-    .eq("is_active", true)
-    .eq("is_request_scoped", false)
-    .order("created_at", { ascending: false });
+  const { data: guides, error } = await withRetry(async () =>
+    await client
+      .from("photo_guides")
+      .select("*")
+      .eq("workspace_id", workspaceId)
+      .eq("is_active", true)
+      .eq("is_request_scoped", false)
+      .order("created_at", { ascending: false }),
+  );
   if (error) throw error;
   if (!guides || guides.length === 0) return [];
   const ids = guides.map((g: any) => g.id);
