@@ -186,35 +186,49 @@ const cleanSignals = [
 
 const useCases = [
   {
-    icon: BadgeCheck,
-    title: "Quote and estimate requests",
-    body: "Ask for the photos your estimator needs before the first call becomes a chain of follow-ups.",
-    stamp: "Quote-ready",
+    icon: Leaf,
+    image: landscaperIllo,
+    title: "Landscapers — quote yards without a site visit",
+    body: "Ask homeowners for the wide yard shot, problem beds, fence line, and access path so you can scope mowing, cleanups, or installs from your truck.",
+    stamp: "Landscaping",
   },
   {
-    icon: MapPinned,
-    title: "Service and dispatch prep",
-    body: "Collect site access, issue context, and handling notes before a team heads out.",
-    stamp: "Field-ready",
+    icon: Truck,
+    image: junkHaulerIllo,
+    title: "Junk haulers — price the pile from the driveway",
+    body: "Guided pile, appliance, and access photos turn a vague \"come haul this\" into a quotable load with the right truck and crew.",
+    stamp: "Junk removal",
   },
   {
-    icon: ImageOff,
-    title: "Damage, warranty, and claims",
-    body: "Guide customers through the angles that matter so reviewers can understand the issue quickly.",
-    stamp: "Evidence packet",
+    icon: Wind,
+    image: hvacTechIllo,
+    title: "Repair & HVAC techs — show up with the right part",
+    body: "Capture nameplate, filter, breaker, and surrounding access shots so techs roll with the right model number, refrigerant, and gear.",
+    stamp: "HVAC & repair",
   },
   {
-    icon: ShieldCheck,
-    title: "Approvals and exceptions",
-    body: "Turn customer media into a packet that can be reviewed, approved, or escalated without guessing.",
-    stamp: "Decision-ready",
+    icon: Wrench,
+    image: plumberIllo,
+    title: "Plumbers — diagnose the leak before the truck rolls",
+    body: "Walk customers through shutoff, leak source, and supply lines so dispatch knows whether it's a 30-minute fix or a half-day repipe.",
+    stamp: "Plumbing",
   },
   {
-    icon: Eye,
-    title: "Product and service questions where visuals matter",
-    body: "When a customer's question only makes sense with a photo, give them a simple path to show what they mean.",
-    stamp: "Visual context",
+    icon: Package,
+    image: estimatorIllo,
+    title: "Damage & return estimators — turn customer photos into evidence",
+    body: "Insurance, warranty, and e-commerce returns: collect angles, scale, and serial shots in a structured packet reviewers can act on first pass.",
+    stamp: "Estimating",
   },
+];
+
+/** Trades targeted by PhotoBrief — used in the hero strip and SEO copy. */
+const TRADES = [
+  { name: "Landscapers", icon: Leaf, stamp: "Landscaping" },
+  { name: "Junk haulers", icon: Truck, stamp: "Junk removal" },
+  { name: "HVAC & repair", icon: Wind, stamp: "HVAC & repair" },
+  { name: "Plumbers", icon: Wrench, stamp: "Plumbing" },
+  { name: "Estimators", icon: Package, stamp: "Estimating" },
 ];
 
 const trustPoints = [
