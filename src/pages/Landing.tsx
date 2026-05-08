@@ -1682,7 +1682,7 @@ function FinalCta({ isFull }: { isFull: boolean }) {
               size={48}
               className="justify-center"
             />
-            <h2 className="pb-section-title mt-5 text-white">
+            <h2 className="pb-section-title mt-5 text-white text-4xl">
               Get quote-ready leads, not vague messages.
             </h2>
             <p className="pb-copy mx-auto mt-4 max-w-2xl text-base sm:text-lg">
