@@ -508,6 +508,30 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
   .pb-on-paper .bg-white\/\[0\.035\],
   .pb-on-paper .bg-white\/\[0\.015\] { background: hsl(0 0% 100% / 0.6); }
 
+  /* Dark island — preserve original dark UI inside paper sections (e.g. dark phone mockup) */
+  .pb-on-paper .pb-dark-island .text-white { color: white; }
+  .pb-on-paper .pb-dark-island .text-white\/90 { color: hsl(0 0% 100% / 0.9); }
+  .pb-on-paper .pb-dark-island .text-white\/82 { color: hsl(0 0% 100% / 0.82); }
+  .pb-on-paper .pb-dark-island .text-white\/80 { color: hsl(0 0% 100% / 0.8); }
+  .pb-on-paper .pb-dark-island .text-white\/74 { color: hsl(0 0% 100% / 0.74); }
+  .pb-on-paper .pb-dark-island .text-white\/70 { color: hsl(0 0% 100% / 0.7); }
+  .pb-on-paper .pb-dark-island .text-white\/62 { color: hsl(0 0% 100% / 0.62); }
+  .pb-on-paper .pb-dark-island .text-white\/58 { color: hsl(0 0% 100% / 0.58); }
+  .pb-on-paper .pb-dark-island .text-white\/50 { color: hsl(0 0% 100% / 0.5); }
+  .pb-on-paper .pb-dark-island .text-white\/48 { color: hsl(0 0% 100% / 0.48); }
+  .pb-on-paper .pb-dark-island .text-white\/45 { color: hsl(0 0% 100% / 0.45); }
+  .pb-on-paper .pb-dark-island .text-white\/40 { color: hsl(0 0% 100% / 0.4); }
+  .pb-on-paper .pb-dark-island .text-white\/36 { color: hsl(0 0% 100% / 0.36); }
+  .pb-on-paper .pb-dark-island .text-white\/35 { color: hsl(0 0% 100% / 0.35); }
+  .pb-on-paper .pb-dark-island .text-white\/30 { color: hsl(0 0% 100% / 0.3); }
+  .pb-on-paper .pb-dark-island .text-white\/25 { color: hsl(0 0% 100% / 0.25); }
+  .pb-on-paper .pb-dark-island .text-white\/20 { color: hsl(0 0% 100% / 0.2); }
+  .pb-on-paper .pb-dark-island .text-white\/15 { color: hsl(0 0% 100% / 0.15); }
+  .pb-on-paper .pb-dark-island .text-white\/10 { color: hsl(0 0% 100% / 0.1); }
+  .pb-on-paper .pb-dark-island .border-white\/10 { border-color: hsl(0 0% 100% / 0.1); }
+  .pb-on-paper .pb-dark-island .border-white\/15 { border-color: hsl(0 0% 100% / 0.15); }
+  .pb-on-paper .pb-dark-island .border-white\/20 { border-color: hsl(0 0% 100% / 0.2); }
+
   /* Re-tone arbitrary dark inline tokens used inside cards/icon badges */
   .pb-on-paper .bg-\[hsl\(var\(--pb-ink\)\)\] {
     background: hsl(0 0% 100% / 0.85);
