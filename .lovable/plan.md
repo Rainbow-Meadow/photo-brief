@@ -1,34 +1,43 @@
 
-# More compelling pain point statistics
+# Make the landing page digestible — Apple-style
 
-## Current state
+The page currently has ~12 back-to-back sections with uniform visual weight. The result feels like a wall of content. This plan applies Apple's core readability techniques: **generous whitespace**, **progressive disclosure**, **visual hierarchy through contrast**, and **rhythm breaks**.
 
-The five pain point cards use soft labels like "Text only", "Hours", "Back & forth", "Lost leads", and "Manual triage" — they feel generic and don't land with urgency.
+## Changes
 
-## Proposed changes
+### 1. Pain points: show 3, reveal 2
+Show only the first 3 pain-point cards by default. Add a subtle "See more stats" expand button that reveals the remaining 2. This reduces initial cognitive load from 5 dense stat cards to 3.
 
-Replace the `number` and `label` fields with statistics grounded in published industry research. Each stat is defensible and sourced from real studies (we won't cite them on-page, but they're real enough to withstand scrutiny):
+### 2. ROI calculator: collapsed by default
+Wrap the ROI calculator in a visually distinct "expand" card — a single prominent banner that says *"How much is weak intake costing you?"* with a "Calculate →" button. Clicking reveals the sliders/results. This removes a heavy interactive block from the default scroll path.
 
-| # | Current | New stat | New label | Source basis |
-|---|---------|----------|-----------|-------------|
-| 1 | "Text only" / "is all your website form captures" | **81%** / "of visitors abandon your form before submitting" | Form abandonment research (Numen Technology, FormStory) |
-| 2 | "Hours" / "lost chasing photos after submission" | **4.2 hrs** / "average response time — most leads are gone by then" | MIT Lead Response Study / RapportAgent benchmark |
-| 3 | "Back & forth" / "before anyone can quote or schedule" | **5+** / "follow-ups before a job closes — most teams stop at 1" | MarketingSherpa / RivetOps contractor data |
-| 4 | "Lost leads" / "from slow or incomplete intake" | **78%** / "of customers buy from whoever responds first" | InsideSales / MIT Lead Response Management Study |
-| 5 | "Manual triage" / "eats your team's time" | **60%** / "of estimates never get a single follow-up" | HomeAdvisor / US Tech Automations contractor data |
+### 3. Increase spacing between major sections
+Upgrade key sections from `pb-section-tight` to `pb-section` (or add custom larger padding). Specifically: Pain Points, Interactive Demo, and Founding Partner sections get more breathing room. This creates rhythm — the page "breathes" between ideas instead of stacking them.
 
-The `context` (description below each stat) will also be tightened to connect the stat back to the website intake problem PhotoBrief solves.
+### 4. Founding Partner section: accordion for dense details
+The Founding Partner area currently renders 4 sub-blocks (benefits/expectations, detailed expectations, reward tiers, scoring rubric) as a continuous scroll. Consolidate:
+- Keep benefits/expectations panel visible (it's the hook).
+- Collapse **detailed expectations**, **reward tiers**, and **scoring rubric** into an `Accordion` component (3 items). Each is expandable. This cuts the visible height of this section by ~60%.
 
-## Section header copy update
+### 5. Visual rhythm breaks between sections
+Add subtle horizontal dividers or gradient fades between major section groups to create visual "chapters":
+- **Chapter 1**: Hero → Pain Points → ROI (the problem)
+- **Chapter 2**: Interactive Demo → How It Works → Before/After (the solution)
+- **Chapter 3**: Use Cases → Website Intelligence (the fit)
+- **Chapter 4**: Beta Program → Application → Final CTA (the action)
 
-- Title stays: "Your website intake is leaking money."
-- Subtitle tightened to: "These are real industry numbers. Generic contact forms don't just lose information — they lose customers."
+These are thin gradient lines or soft spacing bumps — not heavy chrome.
+
+### 6. Use Cases: tighten to horizontal scroll on mobile
+On mobile, the 5 use-case cards stack very tall. Convert to a horizontal scroll strip on small screens (keep grid on desktop). This matches Apple's product-page card carousels.
+
+## Files changed
+- `src/pages/Landing.tsx` — all changes in this single file
 
 ## What stays the same
-
-- Visual layout, card structure, icons, and responsive behavior are unchanged
-- Only the text content of the `painPoints` array and the section subtitle are modified
-
-## File changed
-
-`src/pages/Landing.tsx` — the `painPoints` array (~lines 510–545) and the subtitle in `PainPointSection` (~line 559)
+- All existing content, copy, and data
+- SEO/PageMeta/JSON-LD
+- Beta agent application
+- Routing
+- Responsive behavior (enhanced, not broken)
+- All existing component imports and visual system
