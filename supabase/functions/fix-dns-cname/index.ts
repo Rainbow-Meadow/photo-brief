@@ -7,31 +7,38 @@ serve(async (req) => {
   const zoneId = await getZoneId(token, "photobrief.ai");
   if (!zoneId) return new Response("Zone not found", { status: 404 });
 
-  // Find the existing app CNAME
-  const listRes = await cf(`/zones/${zoneId}/dns_records?type=CNAME&name=app.photobrief.ai`, token);
+  // Find ALL records for app.photobrief.ai
+  const listRes = await cf(`/zones/${zoneId}/dns_records?name=app.photobrief.ai`, token);
   const records = listRes.result ?? [];
 
   if (records.length === 0) {
-    return Response.json({ error: "No app.photobrief.ai CNAME found" });
+    return Response.json({ error: "No app.photobrief.ai records found" });
   }
 
-  const record = records[0];
-  const currentContent = record.content;
-
-  if (currentContent === "photo-brief.lovable.app") {
-    return Response.json({ status: "already_correct", content: currentContent });
+  const results = [];
+  for (const record of records) {
+    // Delete old record
+    await cf(`/zones/${zoneId}/dns_records/${record.id}`, token, "DELETE");
+    results.push({ deleted: record.type, content: record.content, id: record.id });
   }
 
-  // Update to correct hostname
-  const updateRes = await cf(`/zones/${zoneId}/dns_records/${record.id}`, token, "PATCH", {
+  // Create correct CNAME
+  const createRes = await cf(`/zones/${zoneId}/dns_records`, token, "POST", {
+    type: "CNAME",
+    name: "app",
     content: "photo-brief.lovable.app",
+    proxied: true,
+    ttl: 1,
   });
 
   return Response.json({
-    status: "updated",
-    old: currentContent,
-    new: "photo-brief.lovable.app",
-    success: updateRes.success,
+    deleted: results,
+    created: {
+      success: createRes.success,
+      type: "CNAME",
+      content: "photo-brief.lovable.app",
+      id: createRes.result?.id,
+    },
   });
 });
 
