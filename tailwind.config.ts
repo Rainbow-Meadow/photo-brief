@@ -151,6 +151,18 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        brand: {
+          navy: "hsl(var(--brand-navy))",
+          "navy-foreground": "hsl(var(--brand-navy-foreground))",
+          amber: "hsl(var(--brand-amber))",
+          "amber-light": "hsl(var(--brand-amber-light))",
+          "amber-hover": "hsl(var(--brand-amber-hover))",
+          cream: "hsl(var(--brand-cream))",
+          "cream-warm": "hsl(var(--brand-cream-warm))",
+          graphite: "hsl(var(--brand-graphite))",
+          lens: "hsl(var(--brand-lens))",
+          flash: "hsl(var(--brand-flash))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
