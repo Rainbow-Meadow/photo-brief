@@ -470,14 +470,14 @@ export default function LandingPage() {
         {/* ━━ TRUST POINTS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <section className="pb-section-tight">
           <div className="pb-container">
-            <div className="mx-auto grid max-w-3xl gap-4 sm:grid-cols-3">
+            <div className="mx-auto grid max-w-3xl gap-6 sm:grid-cols-3 sm:gap-x-10 sm:gap-y-0">
               {trustPoints.map(({ icon: Icon, title, desc }) => (
-                <div key={title} className="pb-card p-4 text-center sm:p-5">
-                  <Icon className="mx-auto h-5 w-5 text-[hsl(var(--pb-muted))]" />
-                  <p className="mt-3 text-sm font-semibold text-white">
+                <div key={title} className="border-t border-white/12 pt-4 text-left sm:pt-5">
+                  <Icon className="h-5 w-5 text-[hsl(var(--pb-lavender))]" />
+                  <p className="mt-3 font-serif text-base italic text-white sm:text-lg">
                     {title}
                   </p>
-                  <p className="pb-copy mt-1 text-xs">{desc}</p>
+                  <p className="pb-copy mt-1 text-xs leading-5">{desc}</p>
                 </div>
               ))}
             </div>
