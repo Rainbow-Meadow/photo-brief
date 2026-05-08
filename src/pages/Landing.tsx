@@ -501,6 +501,8 @@ export default function LandingPage() {
             />
           </div>
         </section>
+        {/* ━━ TICKER 3 — Beta social proof ━━━━━━━━━━━━━━━━━━━ */}
+        <TickerBar items={[`${BETA_TOTAL_PARTNERS} founding partner seats`, "Free Pro for Life reward", `${BETA_DURATION_DAYS}-day beta`, "Concierge setup included", "Every partner earns a reward"]} />
 
         {/* ━━ 12. FINAL CTA ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <FinalCta isFull={isFull} />
