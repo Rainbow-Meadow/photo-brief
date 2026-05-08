@@ -61,7 +61,7 @@ export default MagicLinkEmail
 const main = { backgroundColor: '#FAF7F2', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }
 const outerPad = { backgroundColor: '#FAF7F2', padding: '40px 0' }
 const container = { maxWidth: '560px', margin: '0 auto', backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid rgba(27,42,74,0.10)', overflow: 'hidden' as const, boxShadow: '0 32px 80px -56px rgba(27,42,74,0.30), 0 16px 48px -32px rgba(27,42,74,0.18)' }
-const header = { padding: '28px 32px 20px', borderBottom: '1px solid rgba(207,178,255,0.14)' }
+const header = { padding: '28px 32px 20px', borderBottom: '1px solid rgba(27,42,74,0.10)' }
 const body = { padding: '28px 32px 32px' }
 const h1 = { fontSize: '24px', fontWeight: 600 as const, color: '#1B2A4A', margin: '0 0 16px', lineHeight: '1.25' }
 const text = { fontSize: '15px', color: '#3F4A66', lineHeight: '1.6', margin: '0 0 16px' }
