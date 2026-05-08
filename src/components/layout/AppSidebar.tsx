@@ -36,6 +36,7 @@ import { BrandMark } from "@/components/layout/BrandMark";
 import { UpgradePromptCard } from "@/components/shared/UpgradePromptCard";
 import { WorkspaceSwitcher } from "@/features/workspace/components/WorkspaceSwitcher";
 import { usePlan } from "@/hooks/usePlan";
+import { usePlatformAdmin } from "@/hooks/usePlatformAdmin";
 import { cn } from "@/lib/utils";
 
 const mainItems = [
