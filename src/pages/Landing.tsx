@@ -1518,18 +1518,7 @@ function UseCaseSection({ activeStamp }: { activeStamp?: string | null }) {
                 data-dim={isDim || undefined}
                 className="w-[78vw] max-w-[300px] shrink-0 snap-start border-t border-[hsl(var(--pb-ink-soft)/0.18)] pt-5 md:w-auto md:max-w-none md:min-w-0 md:pt-6"
               >
-                {item.image ? (
-                  <div className="mb-4 flex h-40 items-end justify-center overflow-hidden sm:h-44">
-                    <img
-                      src={item.image}
-                      alt={`Hand-drawn illustration — ${item.stamp}`}
-                      width={1024}
-                      height={1024}
-                      loading="lazy"
-                      className="h-full w-auto object-contain object-bottom drop-shadow-[0_12px_22px_hsl(var(--pb-ink-soft)/0.18)]"
-                    />
-                  </div>
-                ) : null}
+                {/* image moved to section anchor */}
                 <div className="flex items-baseline justify-between gap-3">
                   <span className="font-serif text-2xl leading-none text-[hsl(var(--pb-violet))] sm:text-3xl">
                     {String(index + 1).padStart(2, "0")}
