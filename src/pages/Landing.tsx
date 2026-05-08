@@ -840,7 +840,7 @@ function PainPointSection() {
               icon={TrendingDown}
               value="81%"
               label="of website forms are abandoned before submit."
-              tone="amber"
+              tone="lavender"
             />
             <RoiCalculatorSection />
             <p className="pb-copy max-w-sm text-center text-sm italic sm:text-base mt-[24px]">
@@ -1111,7 +1111,7 @@ function ComparisonSection({
               icon={CheckCircle2}
               value="0"
               label="Follow-up calls needed when intake arrives structured."
-              tone="mint"
+              tone="lavender"
             />
           }
         />
@@ -1356,7 +1356,7 @@ function WebsiteIntelligenceSection() {
               icon={Scan}
               value="< 5 min"
               label="From a website URL to a working intake path."
-              tone="mint"
+              tone="lavender"
             />
           }
         />
