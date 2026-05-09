@@ -347,7 +347,7 @@ export default function LandingPage() {
       <main className="pb-landing pb-on-paper">
         {/* ━━ 1. HERO — editorial / paper ━━━━━━━━━━━━━━━━━━━━━ */}
         <MarketingHero>
-          <div className="grid items-center gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-12">
+          <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
               {/* Left — copy */}
               <div className="text-left">
                 <div className="mb-4 sm:mb-6">
@@ -438,14 +438,14 @@ export default function LandingPage() {
               <div className="relative flex justify-center lg:justify-end">
                 <div
                   aria-hidden
-                  className="pointer-events-none absolute inset-0 -z-10 mx-auto max-w-md rounded-full bg-[hsl(var(--pb-lavender)/0.18)] blur-[80px]"
+                  className="pointer-events-none absolute inset-0 -z-10 mx-auto max-w-xl rounded-full bg-[hsl(var(--pb-lavender)/0.22)] blur-[110px]"
                 />
                 <img
                   src={heroIllustration}
                   alt="Hand-drawn illustration of a phone showing a guided photo-request flow"
                   width={1024}
                   height={1024}
-                  className="relative w-full max-w-md drop-shadow-[0_30px_50px_hsl(var(--pb-ink-soft)/0.18)] sm:max-w-lg"
+                  className="relative w-full max-w-md drop-shadow-[0_30px_50px_hsl(var(--pb-ink-soft)/0.18)] sm:max-w-lg lg:max-w-none lg:scale-110 lg:translate-x-2"
                 />
               </div>
             </div>
