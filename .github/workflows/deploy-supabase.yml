@@ -126,6 +126,5 @@ jobs:
           supabase functions deploy integration-webhook --project-ref "$SUPABASE_PROJECT_REF"
           supabase functions deploy integration-oauth-start --project-ref "$SUPABASE_PROJECT_REF"
           supabase functions deploy integration-oauth-callback --project-ref "$SUPABASE_PROJECT_REF"
-          supabase functions deploy live-preview-submission --project-ref "$SUPABASE_PROJECT_REF"
           supabase functions deploy website-intelligence --project-ref "$SUPABASE_PROJECT_REF"
           supabase functions deploy run-migration --project-ref "$SUPABASE_PROJECT_REF"
