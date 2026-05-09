@@ -27,7 +27,7 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
     color-scheme: light;
 
     /* ── Semantic surface + text ── */
-    --background: 220 32% 96%;           /* soft navy paper — tier 0 */
+    --background: 220 38% 94%;           /* soft navy paper — tier 0 */
     --foreground: 219 47% 14%;           /* navy ink */
     --card: 0 0% 100%;
     --card-foreground: 219 47% 14%;
