@@ -1524,8 +1524,8 @@ function UseCaseSection({ activeStamp }: { activeStamp?: string | null }) {
     <MarketingSection id="use-cases">
         <SectionIntro
           eyebrow={<><ClipboardList className="h-3.5 w-3.5" /> Use cases</>}
-          title="Built for the trades that need to see before they act."
-          description="Landscapers, junk haulers, HVAC and repair techs, plumbers, and damage / return estimators — anywhere a missing photo slows the next step, PhotoBrief structures the intake so your team has everything on the first pass."
+          title="If a missing photo can stall your next move — this is built for you."
+          description="Landscapers quoting blind. Junk haulers rolling the wrong truck. HVAC techs missing the part. Plumbers showing up to a four-hour job with a two-hour window. Estimators chasing the same claim through three rounds of email. PhotoBrief structures the intake so your team has every shot, every detail, every dollar of context — on the first pass."
           accent={
             <TradeAccent
               src={landscaperIllo}
