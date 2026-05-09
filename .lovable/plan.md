@@ -1,72 +1,98 @@
-
 ## Goal
 
-Bring every off-app brand surface (browser tab, OS home-screen, social share previews, PWA install) onto the new dark Field Manual system: near-black canvas `#0c0c0a`, cream wordmark `#F4F1EA`, single amber accent `#F2A33A`, monospace plate codes, hairline rules, tagline `GUIDE · CAPTURE · CLOSE`.
+Rebuild the Remotion video to match the dark editorial Field Manual system (cream hairlines on `#0E0E0C`, single amber accent per scene, mono plate codes), and score it with an ElevenLabs voiceover plus subtle SFX.
 
-## 1. App icons & favicon (dark canvas)
+## Scope
 
-Generate a single master icon (cream "Photo" + amber "brief" monogram on `#0c0c0a`, hairline amber rule above tagline, safe-area padding for maskable) and emit:
+```text
+remotion/
+  src/
+    theme.ts            ← rewrite tokens (dark shell, no gradients/glow)
+    MainVideo.tsx       ← rewrite: 5 scenes via TransitionSeries, drop old shell
+    Root.tsx            ← update durationInFrames (5 × 180 = 900 @ 30fps = 30s)
+    components/
+      PlateFrame.tsx    ← new: hairline grid + plate code + corner ticks
+      DrawnLine.tsx     ← new: strokeDashoffset animator
+      MonoLabel.tsx     ← new: tracked +160 mono label w/ leader line
+    scenes/
+      SceneResearch.tsx     ← PLT.A.02  magnifier over wireframe
+      SceneMechanism.tsx    ← PLT.A.03  three gears, smallest amber
+      SceneBrief.tsx        ← PLT.A.04  exploded brief packet
+      SceneCapture.tsx      ← PLT.A.01  phone + READY-TO-QUOTE stamp
+      SceneClose.tsx        ← PLT.A.06  hexagon+square interlock + wordmark
+  public/
+    audio/
+      voiceover.mp3     ← generated via ElevenLabs TTS (George - JBFqnCBsd6RMkjVDRZzb)
+      ambient.mp3       ← generated via ElevenLabs Music (low ambient bed)
+      tick.mp3          ← SFX: hairline draw tick (per scene start)
+  scripts/
+    generate-audio.mjs  ← one-off: call ElevenLabs, write to public/audio/
+```
 
-- `public/favicon.ico` (16/32/48 multi-res)
-- `public/favicon-16x16.png`, `public/favicon.png` (32×32)
-- `public/icon-192.png`, `public/icon-512.png` (any-purpose, dark)
-- `public/brand/icon-192.png`, `public/brand/icon-512.png` (maskable, with extra safe-area)
-- `public/apple-touch-icon.png` (180×180, dark)
+Old files removed: `AmbientBackground.tsx`, `SpotlightPrimitives.tsx`, `DashboardShell.tsx`, all `Scene*.tsx` under the old naming.
 
-Implementation: `imagegen` premium tier for the master, then `nix run nixpkgs#imagemagick` to downscale to each exact size and to build the `.ico`. Old cream-bg PNGs are overwritten in place so existing `<link rel="icon">` URLs don't change.
+## Visual contract (locked, per `field-manual.art-direction.md`)
 
-## 2. PWA manifest + index.html theme tokens
+- Background: solid `#0E0E0C`, no gradients
+- Lines: cream `#F4F1EA`, 1px hairline + 2.5px contour
+- Accent: amber `#F2A33A`, **once per scene**, on the focal element
+- Type: Fraunces (serif headlines, sparing) + Geist Mono (labels, plate codes, tracked +160, all-caps)
+- Plate code bottom-right per scene (`PLT.A.0X / RFM-METHOD`)
+- Faint 1px construction grid, 35–45% negative space
 
-`public/site.webmanifest`:
-- `background_color`: `#FAF7F2` → `#0c0c0a`
-- `theme_color`: `#F2A33A` → `#0c0c0a` (amber stays as accent inside icon, not as Android status bar wash)
-- `description` rewritten in declarative RMBC voice: "Guide. Capture. Close. Quote-ready customer briefs for service businesses."
+## Motion system
 
-`index.html`:
-- `theme-color` light/dark both → `#0c0c0a` (single-palette per `mem://design/color-system`)
-- `apple-mobile-web-app-status-bar-style` → `black-translucent`
-- Drop the legacy light/dark `prefers-color-scheme` split (we no longer ship a light theme)
-- `og:image` / `twitter:image` defaults point to new `/og-image.png` (1200×630)
-- JSON-LD `Organization.logo` updated to dedicated `/brand/logo-square.png`
+- Default entrance: `springTiming({ config: { damping: 200 }, durationInFrames: 24 })`
+- Subject contour: SVG `strokeDashoffset` 0 → length over 30–45 frames
+- Amber accent reveal: spring with overshoot (damping 14) at scene midpoint
+- Scene transitions: `fade` (12 frames) — never wipe/slide; keeps editorial calm
+- 5 scenes × 180 frames (6s) = 30s total; transitions overlap 12f → ~29.6s
 
-## 3. Per-page OG image variants (1200×630, Field Manual plate)
+## Voice + audio (ElevenLabs)
 
-Each variant uses the same template: dark `#0c0c0a` bg, 1px hairline frame inset 48px, monospace plate code top-left in amber (`[ NN ] LABEL`), cream editorial wordmark `Photo` + amber `brief`, page-specific eyebrow line, tagline `GUIDE · CAPTURE · CLOSE` bottom-right, single amber rule.
+Voice: **George** (`JBFqnCBsd6RMkjVDRZzb`) — calm, editorial baritone.
+Model: `eleven_multilingual_v2`, stability 0.55, similarity 0.78, style 0.35.
 
-| File | Plate | Eyebrow |
-|---|---|---|
-| `/og-image.png` (default) | `[ 00 ] FIELD MANUAL` | Quote-ready customer briefs for service businesses. |
-| `/og/pricing.png` | `[ 01 ] PRICING` | Free to start. Pro tiers when you scale. |
-| `/og/for-ai-agents.png` | `[ 02 ] FOR AI AGENTS` | MCP + OpenAPI. Programmable photo briefs. |
-| `/og/help.png` | `[ 03 ] HELP` | Setup, capture flow, recipient experience. |
-| `/og/beta.png` | `[ 04 ] BETA` | 60-day founding partner program. |
+Script (≈28s read at speed 1.0, paced to scene cuts):
 
-Generated via `imagegen` premium per page (text legibility), QA'd by inspecting each PNG before delivery.
+```text
+[00.0] Most quotes die in the gap between question and answer.
+[06.0] PhotoBrief closes the gap. Research the job.
+[10.0] Mechanism, captured by the customer in their pocket.
+[15.0] A brief, written for the way you actually quote.
+[20.0] Ready to quote, before you pick up the phone.
+[25.0] PhotoBrief. Guide. Capture. Close.
+```
 
-`SEOHead.tsx` default constant: `DEFAULT_OG_IMAGE = "/og-image.png"` (was `.svg`, file never existed → currently a broken share preview). Per-route pages opt into their variant via existing `ogImage` prop on `PageMeta` (`Pricing.tsx`, `ForAiAgents.tsx`, `Help.tsx`, `BetaWelcome.tsx`).
+Audio bed: ElevenLabs Music API, prompt
+`"Sparse editorial documentary score, low cello drone, single muted piano note every 4 seconds, no drums, 28 seconds, calm and confident"`, mixed at -18 dB under VO.
 
-## 4. Cloudflare router
+SFX: a single 0.4s `pencil tick` per scene cut (SFX API), aligned to `Sequence` starts at -10 dB.
 
-`workers/router/src/index.ts` `PAGES_STATIC_PREFIXES` already covers `/og-image` and `/brand/`. Add `/og/` so per-page variants are served from Pages with edge caching. No origin logic changes.
+Generation flow (one-off, run once and committed):
 
-## 5. Out of scope
+1. `scripts/generate-audio.mjs` reads `ELEVENLABS_API_KEY` from env, calls TTS → `public/audio/voiceover.mp3`, Music → `ambient.mp3`, SFX → `tick.mp3`.
+2. Run via `bun remotion/scripts/generate-audio.mjs` from `/dev-server`.
+3. Commit the three MP3s under `remotion/public/audio/`.
+4. `MainVideo.tsx` mounts `<Audio src={staticFile('audio/voiceover.mp3')} />`, `<Audio src={staticFile('audio/ambient.mp3')} volume={0.25} />`, and per-scene `<Audio src={staticFile('audio/tick.mp3')} volume={0.4} />` inside each scene's `<Sequence>`.
 
-- No changes to in-app `BrandMark` component or marketing pages.
-- No changes to email templates (already redesigned).
-- No service worker / vite-plugin-pwa work — manifest-only install path stays as-is.
-- No DB / RLS / edge-function logic changes.
+Note: `ELEVENLABS_API_KEY` is already linked via the **Pb** ElevenLabs connection — no user action needed.
 
-## 6. Verification
+## Render
 
-- `bun run build` clean.
-- Inspect each generated PNG visually (QA pass per skill instructions).
-- `curl -I https://photobrief.ai/og-image.png` returns 200 from Pages.
-- Validate share preview with `curl https://www.opengraph.xyz/url/...` after publish (manual step the user does).
-- `lighthouse` PWA audit: manifest installable, icon checks pass.
+```bash
+cd remotion && node scripts/render-remotion.mjs
+# outputs /mnt/documents/photobrief-rmbc.mp4
+```
 
-## Technical notes
+The existing `scripts/render-remotion.mjs` already handles the Nix Chromium quirks; the only change is dropping `muted: true` so the new audio bakes in.
 
-- ImageMagick path: `nix run nixpkgs#imagemagick -- convert master.png -resize 192x192 icon-192.png` etc.
-- `.ico` build: `convert favicon-48.png favicon-32.png favicon-16.png favicon.ico`.
-- Maskable safe area: keep all glyphs within central 80% (per W3C maskable spec) — generated source prompt enforces this.
-- Memory note to add after build: `mem://design/brand-system` should be updated with new icon canvas decision (dark `#0c0c0a`, single source set).
+## QA
+
+- `bunx remotion still src/index.ts main /tmp/f-{0,180,360,540,720,890}.png` — one frame per scene mid-point, inspect for: solid bg, single amber accent, plate code legible, no gradient drift.
+- Verify final MP4 file exists under `/mnt/documents/`, length ≈30s, audio present (`ffprobe`).
+
+## Out of scope
+
+- App UI, email templates, OG images (already aligned in earlier turns).
+- Workflow YAML changes — `render-demo-video.yml` already invokes the same render script.
