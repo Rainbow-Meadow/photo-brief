@@ -971,7 +971,7 @@ function FoundingPartnerBetaSection({ isFull }: { isFull: boolean }) {
           }
         />
 
-        <div className="mt-10 grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:gap-14 sm:mt-14">
+        <div className="mt-10 grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:gap-14 sm:mt-10">
           {/* LEFT — narrative detail */}
           <div className="lg:pr-2">
             {/* Seat tracker */}
@@ -1525,7 +1525,7 @@ function UseCaseSection({ activeStamp }: { activeStamp?: string | null }) {
           }
         />
         {/* Editorial index — numbered entries divided by hairlines */}
-        <div className="mt-8 flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory sm:mt-12 md:grid md:grid-cols-2 md:gap-x-10 md:gap-y-0 md:overflow-visible md:pb-0 lg:grid-cols-3 xl:grid-cols-5">
+        <div className="mt-8 flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory sm:mt-10 md:grid md:grid-cols-2 md:gap-x-10 md:gap-y-0 md:overflow-visible md:pb-0 lg:grid-cols-3 xl:grid-cols-5">
           {useCases.map((item, index) => {
             const Icon = item.icon;
             const isActive = activeStamp === item.stamp;
@@ -1575,7 +1575,7 @@ function WebsiteIntelligenceSection() {
           }
         />
 
-        <div className="mt-8 grid gap-6 sm:mt-12 md:grid-cols-3 md:gap-x-10 md:gap-y-0">
+        <div className="mt-8 grid gap-6 sm:mt-10 md:grid-cols-3 md:gap-x-10 md:gap-y-0">
           {websiteIntelCards.map((card, index) => {
             const Icon = card.icon;
             return (
@@ -1615,7 +1615,7 @@ function RewardTiersSection() {
             />
           }
         />
-        <div className="mx-auto mt-10 max-w-3xl sm:mt-14">
+        <div className="mx-auto mt-10 max-w-3xl sm:mt-10">
           <div className="grid border-t border-[hsl(var(--pb-ink-soft)/0.18)]">
             {REWARD_TIERS.map((tier) => {
               const isTopTier = tier.duration === "free-pro";
@@ -1690,7 +1690,7 @@ function BetaDetailsAccordion({ value, onValueChange }: BetaDetailsAccordionProp
             />
           }
         />
-        <div className="mx-auto mt-10 max-w-3xl sm:mt-14">
+        <div className="mx-auto mt-10 max-w-3xl sm:mt-10">
           <div className="flex items-center justify-end border-b border-[hsl(var(--pb-ink-soft)/0.18)] py-3">
             <button
               type="button"
