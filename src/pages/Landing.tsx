@@ -64,6 +64,7 @@ import { FreeProEligibilityModal } from "@/components/marketing/FreeProEligibili
 import { BetaSeatTracker } from "@/components/marketing/BetaSeatTracker";
 import { BetaOnboardingAgentExperience } from "@/components/marketing/BetaOnboardingAgentExperience";
 import { BrandMark } from "@/components/layout/BrandMark";
+import { MarketingHero, MarketingSection } from "@/components/layout/primitives";
 import {
   Section,
   Container,
@@ -345,9 +346,8 @@ export default function LandingPage() {
 
       <main className="pb-landing pb-on-paper">
         {/* ━━ 1. HERO — editorial / paper ━━━━━━━━━━━━━━━━━━━━━ */}
-        <section className="relative isolate overflow-hidden -mt-[4.5rem] pt-[7rem] sm:-mt-[5rem] sm:pt-[8rem] lg:pt-[9rem]">
-          <div className="pb-container relative pb-16 sm:pb-20 lg:pb-28">
-            <div className="grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
+        <MarketingHero>
+          <div className="grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
               {/* Left — copy */}
               <div className="text-left">
                 <div className="mb-6 sm:mb-8">
@@ -454,8 +454,7 @@ export default function LandingPage() {
                 />
               </div>
             </div>
-          </div>
-        </section>
+        </MarketingHero>
 
         {/* ━━ TICKER 1 — Industry signals ━━━━━━━━━━━━━━━━━━━ */}
         <TickerBar
@@ -484,25 +483,23 @@ export default function LandingPage() {
           ]}
         />
 
-        <section className="pb-section">
-          <div className="pb-container">
-            <SectionIntro
-              className="mb-6 sm:mb-8"
-              eyebrow={<><Sparkles className="h-3.5 w-3.5" /> See the difference</>}
-              title="Vague website form becomes an actionable lead packet."
-              description={`Watch how a generic "tell us about your project" message turns into a structured packet with the right photos, notes, and context — ready for your team to act on.`}
-              accent={
-                <TradeAccent
-                  src={transformationIllo}
-                  alt="Hand-drawn illustration of a crumpled note transforming into a tidy clipped photo packet"
-                />
-              }
-            />
-            <Suspense fallback={<div className="min-h-[400px]" />}>
-              <InteractiveHeroBriefAssembly />
-            </Suspense>
-          </div>
-        </section>
+        <MarketingSection>
+          <SectionIntro
+            className="mb-6 sm:mb-8"
+            eyebrow={<><Sparkles className="h-3.5 w-3.5" /> See the difference</>}
+            title="Vague website form becomes an actionable lead packet."
+            description={`Watch how a generic "tell us about your project" message turns into a structured packet with the right photos, notes, and context — ready for your team to act on.`}
+            accent={
+              <TradeAccent
+                src={transformationIllo}
+                alt="Hand-drawn illustration of a crumpled note transforming into a tidy clipped photo packet"
+              />
+            }
+          />
+          <Suspense fallback={<div className="min-h-[400px]" />}>
+            <InteractiveHeroBriefAssembly />
+          </Suspense>
+        </MarketingSection>
 
         {/* ━━ 4. STICKY SECTION NAV ━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <SectionNav tone="paper" />
@@ -959,8 +956,7 @@ function TickerBar({
 
 function FoundingPartnerBetaSection({ isFull }: { isFull: boolean }) {
   return (
-    <section id="beta-program" className="pb-section">
-      <div className="pb-container">
+    <MarketingSection id="beta-program">
         <SectionIntro
           eyebrow={<><Stamp className="h-3.5 w-3.5" /> Accepting applications</>}
           title={
@@ -1041,8 +1037,7 @@ function FoundingPartnerBetaSection({ isFull }: { isFull: boolean }) {
             />
           </div>
         </div>
-      </div>
-    </section>
+    </MarketingSection>
   );
 }
 
@@ -1288,8 +1283,7 @@ function SectionNav({ tone = "dark" }: { tone?: "dark" | "paper" }) {
 
 function WorkflowSection() {
   return (
-    <section id="workflow" className="pb-section">
-      <div className="pb-container">
+    <MarketingSection id="workflow">
         <div className="grid gap-8 lg:grid-cols-[0.7fr_1.3fr] lg:items-center lg:gap-10">
           <div>
             <span className="pb-eyebrow">
@@ -1345,8 +1339,7 @@ function WorkflowSection() {
             </div>
           </div>
         </div>
-      </div>
-    </section>
+    </MarketingSection>
   );
 }
 
@@ -1355,8 +1348,7 @@ function ComparisonSection({ mode }: { mode: "messy" | "clean" }) {
   const signals = isClean ? cleanSignals : messySignals;
 
   return (
-    <section id="comparison" className="pb-section-tight">
-      <div className="pb-container">
+    <MarketingSection id="comparison" spacing="tight">
         <SectionIntro
           eyebrow={<><MessageSquareWarning className="h-3.5 w-3.5" /> Before / after</>}
           title="Generic form vs. guided visual intake."
@@ -1416,8 +1408,7 @@ function ComparisonSection({ mode }: { mode: "messy" | "clean" }) {
             {isClean ? <CleanPacketVisual /> : <MessyThreadVisual />}
           </div>
         </div>
-      </div>
-    </section>
+    </MarketingSection>
   );
 }
 
@@ -1526,8 +1517,7 @@ function CleanPacketVisual() {
 
 function UseCaseSection({ activeStamp }: { activeStamp?: string | null }) {
   return (
-    <section id="use-cases" className="pb-section">
-      <div className="pb-container">
+    <MarketingSection id="use-cases">
         <SectionIntro
           eyebrow={<><ClipboardList className="h-3.5 w-3.5" /> Use cases</>}
           title="Built for the trades that need to see before they act."
@@ -1571,15 +1561,13 @@ function UseCaseSection({ activeStamp }: { activeStamp?: string | null }) {
             );
           })}
         </div>
-      </div>
-    </section>
+    </MarketingSection>
   );
 }
 
 function WebsiteIntelligenceSection() {
   return (
-    <section id="website-intelligence" className="pb-section">
-      <div className="pb-container">
+    <MarketingSection id="website-intelligence">
         <SectionIntro
           eyebrow={<><Globe2 className="h-3.5 w-3.5" /> Website Intelligence</>}
           title="Your website becomes your intake engine."
@@ -1614,15 +1602,13 @@ function WebsiteIntelligenceSection() {
             );
           })}
         </div>
-      </div>
-    </section>
+    </MarketingSection>
   );
 }
 
 function RewardTiersSection() {
   return (
-    <section className="pb-section-tight">
-      <div className="pb-container">
+    <MarketingSection spacing="tight">
         <SectionIntro
           eyebrow={<><Gift className="h-3.5 w-3.5" /> Reward tiers</>}
           title="Every partner earns something."
@@ -1684,8 +1670,7 @@ function RewardTiersSection() {
             </ul>
           </div>
         </div>
-      </div>
-    </section>
+    </MarketingSection>
   );
 }
 
@@ -1698,8 +1683,7 @@ function BetaDetailsAccordion({ value, onValueChange }: BetaDetailsAccordionProp
   const ALL_ITEMS = ["expectations", "scoring"];
   const allOpen = ALL_ITEMS.every((id) => value.includes(id));
   return (
-    <section className="pb-section-tight">
-      <div className="pb-container">
+    <MarketingSection spacing="tight">
         <SectionIntro
           eyebrow={<><FileText className="h-3.5 w-3.5" /> The fine print</>}
           title="Everything in writing."
@@ -1810,8 +1794,7 @@ function BetaDetailsAccordion({ value, onValueChange }: BetaDetailsAccordionProp
             </AccordionItem>
           </Accordion>
         </div>
-      </div>
-    </section>
+    </MarketingSection>
   );
 }
 
