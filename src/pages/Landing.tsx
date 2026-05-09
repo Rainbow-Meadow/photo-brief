@@ -68,6 +68,8 @@ import estimatorIllo from "@/assets/trades/estimator-illustration.png";
 import researchMagnifierIllo from "@/assets/rmbc/research-magnifier.png";
 import mechanismGearsIllo from "@/assets/rmbc/mechanism-gears.png";
 import briefPacketIllo from "@/assets/rmbc/brief-packet.png";
+import beforeIntakeFormIllo from "@/assets/comparison/before-intake-form.png";
+import afterCapturePipelineIllo from "@/assets/comparison/after-capture-pipeline.png";
 import methodOverviewIllo from "@/assets/rmbc/method-overview.png";
 
 const InteractiveHeroBriefAssembly = lazy(() =>
@@ -349,6 +351,14 @@ function ComparisonSection() {
                 </li>
               ))}
             </ul>
+            <div className="mt-6 aspect-[16/9] overflow-hidden border border-border bg-muted">
+              <img
+                src={beforeIntakeFormIllo}
+                alt="Illustration of a broken intake form with missing photo context"
+                className="h-full w-full object-contain p-4"
+                loading="lazy"
+              />
+            </div>
           </Card>
           <Card elevated>
             <span className="ls-numeral text-[hsl(var(--accent-kinetic))]">After · PhotoBrief</span>
@@ -367,8 +377,8 @@ function ComparisonSection() {
             </ul>
             <div className="mt-6 aspect-[16/9] overflow-hidden border border-border bg-muted">
               <img
-                src={briefPacketIllo}
-                alt="Brief packet preview"
+                src={afterCapturePipelineIllo}
+                alt="Illustration of a guided phone capture flow turning into a ready brief packet"
                 className="h-full w-full object-contain p-4"
                 loading="lazy"
               />
