@@ -1574,8 +1574,8 @@ function WebsiteIntelligenceSection() {
     <MarketingSection id="website-intelligence">
         <SectionIntro
           eyebrow={<><Globe2 className="h-3.5 w-3.5" /> Website Intelligence</>}
-          title="Your website becomes your intake engine."
-          description="PhotoBrief scans your services, current forms, and calls-to-action, then maps them into 2–3 simple intake paths you can launch with a hosted link or embed. Beta partners get this built for them during concierge setup."
+          title="Your website is already telling us how to fix it."
+          description="Every service page you've written, every quote button you've placed, every form field you've added — it's a map of the jobs you actually take. We read it, compress it into 2–3 customer choices, and ship a guided intake path live in seven days. Beta partners pay nothing for the build."
           accent={
             <TradeAccent
               src={plumberIllo}
