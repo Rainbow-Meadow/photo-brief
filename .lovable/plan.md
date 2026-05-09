@@ -1,85 +1,77 @@
+## What I got wrong
+
+Last turn I changed almost every BrandMark to `tone="light"` (navy ink). But the app is actually a **dark theme at the token level**:
+
+- `:root` declares `color-scheme: dark`, `--background: 60 8% 5%` (warm off-black), `--foreground: 42 32% 94%` (cream), `--card: 60 6% 8%`.
+- `--pb-paper: 60 8% 5%` is also dark — the token name implies cream but the value is off-black.
+- Marketing pages use `.pb-landing` which is a navy/amber gradient, not cream.
+- The `mem://core` note "cream bg #FAF7F2" is stale and doesn't reflect what `src/index.css` ships today.
+
+So `tone="light"` (navy mark + navy wordmark) renders **navy on near-black** — exactly the legibility bug you saw. The correct lockup almost everywhere in this app is `tone="dark"` (cream mark + cream/amber wordmark).
+
 ## Goal
 
-Use the dark-background BrandMark variant (`tone="dark"` → cream-colored mark + wordmark on `/brand/mark-on-dark.svg`) **only on actually dark surfaces**, the way the homepage does it (`<Section tone="dark">` → FinalCta + the dark footer when `isLanding`). Eliminate three current sources of drift:
+Use the **light brandmark on dark backgrounds** consistently — i.e. `tone="dark"` is the de-facto default for this app. Only the rare genuinely-light surface (a deliberately white card or an embed served onto a light host page) keeps `tone="light"`.
 
-1. A `tone="dark"` BrandMark that sits on a cream surface (invisible).
-2. `tone="auto"` / `tone="color"` used inconsistently — both currently fall through to the light lockup, which makes future intent unreadable.
-3. No contract test, so future pages can re-introduce mismatches.
+## Surface audit (call sites → correct tone)
 
-## The homepage pattern (source of truth)
-
-| Surface bg | Lockup tone | Asset | Used in |
+| File:line | Surrounding bg | Last turn (wrong) | Correct |
 |---|---|---|---|
-| Cream `--pb-paper` (default Section) | `tone="light"` | `mark.svg` + navy/amber wordmark | MarketingLayout header, app sidebar, dashboard header, in-page marks |
-| Dark `<Section tone="dark">` (FinalCta, `pb-footer-dark`) | `tone="dark"` | `mark-on-dark.svg` + cream/amber wordmark | MarketingLayout footer when `isLanding` |
-| Color/illustration backdrop | `tone="light"` (treat as light unless backdrop is demonstrably dark) | light asset | Signup hero, StarterRequestCard, BetaWelcome stacked logo |
-
-Rule: `tone` matches the surface the mark physically sits on, not the page's overall theme.
-
-## Findings — current call-site audit
-
-| File:line | Variant | Tone | Surface bg | Verdict |
-|---|---|---|---|---|
-| `src/pages/Landing.tsx:202` | horizontal | `dark` | Cream Hero `<Section>` | **Wrong** — cream ink on cream bg |
-| `src/pages/Signup.tsx:186` | stacked | `color` | Inside white form card on cream | OK render, but `color` is a misleading alias for "light" |
-| `src/pages/BetaWelcome.tsx:158` | stacked | `light` | Cream | OK |
-| `src/pages/IntakeBadge.tsx:53` | horizontal | `forceDark ? "light" : "auto"` | Embeddable badge — bg is host-driven | Replace `"auto"` → explicit `"light"`; comment the inversion |
-| `src/components/layout/MarketingLayout.tsx:63-64` | wordmark | `light` | Cream header | OK |
-| `src/components/layout/MarketingLayout.tsx:89` | mark | `isLanding ? "dark" : "light"` | The mobile sheet trigger sits on the cream header, not on the page hero — `isLanding` is the wrong signal | **Wrong** — should always be `"light"` |
-| `src/components/layout/MarketingLayout.tsx:125` | horizontal | `auto` | Inside cream mobile sheet | Replace `"auto"` → `"light"` |
-| `src/components/layout/MarketingLayout.tsx:171` | horizontal | `isLanding ? "dark" : "light"` | Footer bg flips via `pb-footer-dark` when `isLanding` | **Correct** — this is the canonical pattern |
-| `src/components/layout/DashboardLayout.tsx:55` | mark | `auto` | Cream app shell | Replace `"auto"` → `"light"` |
-| `src/components/layout/AppSidebar.tsx:88-91` | mark/horizontal | `light` | Cream sidebar | OK |
-| `src/components/layout/PublicRequestLayout.tsx:26` | horizontal | `dark` | Need to confirm — header may be cream | Verify against `PublicRequestLayout` header bg; correct to match |
-| `src/components/editorial/EditorialAuthShell.tsx:41` | stacked | `auto` | Cream auth shell | Replace `"auto"` → `"light"` |
-| `src/components/shared/PoweredByBadge.tsx:26` | wordmark | `auto` | Inherits from host page | Replace `"auto"` with a `tone` prop on `PoweredByBadge` so callers pass intent explicitly; default `"light"` |
-| `src/features/workspace/components/StarterRequestCard.tsx:24` | mark | `color` | Cream card | Replace `"color"` → `"light"` |
-| `src/features/integrations/components/ConnectorLogo.tsx:62` | mark | `auto` | Cream | Replace `"auto"` → `"light"` |
+| `pages/Landing.tsx:202` | Hero card on `.pb-landing` (dark) | `light` | **`dark`** (revert) |
+| `pages/Signup.tsx:186` | `bg-background` + `bg-ambient-sky` (dark) | `light` | **`dark`** |
+| `pages/BetaWelcome.tsx:158` | `.pb-landing` dark | `light` | **`dark`** |
+| `components/layout/MarketingLayout.tsx:63-64` | Floating header pill on `.pb-landing` dark | `light` | **`dark`** |
+| `components/layout/MarketingLayout.tsx:89` | Mobile menu trigger inside same dark pill | `light` | **`dark`** |
+| `components/layout/MarketingLayout.tsx:125` | Mobile sheet (`SheetContent` → `bg-background` dark) | `light` | **`dark`** |
+| `components/layout/MarketingLayout.tsx:171` | Footer (`pb-footer-dark` on landing, otherwise still on dark `.pb-landing`) | `isLanding ? "dark" : "light"` | Always **`dark`** |
+| `components/layout/DashboardLayout.tsx:55` | Header `bg-card` dark | `light` | **`dark`** |
+| `components/layout/AppSidebar.tsx:88-91` | `--app-sidebar-bg: 60 8% 3%` near-black | `light` | **`dark`** |
+| `components/layout/PublicRequestLayout.tsx:26` | Header `material-chrome` over dark recipient shell | `light` | **`dark`** |
+| `components/editorial/EditorialAuthShell.tsx:41` | `bg-background` dark | `light` | **`dark`** |
+| `components/shared/PoweredByBadge.tsx:26` | Used in PublicRequestLayout footer (dark) | `light` (default prop) | Default **`dark`** |
+| `features/workspace/components/StarterRequestCard.tsx:24` | Mark sits in a `bg-background` chip (dark) | `light` | **`dark`** |
+| `features/integrations/components/ConnectorLogo.tsx:62` | Connector chip on dark dashboard | `light` | **`dark`** |
+| `pages/IntakeBadge.tsx:53` | Embeddable; `forceDark` = host bg is dark | `forceDark ? "dark" : "light"` | Keep as-is (only spot where light surface exists, host-controlled) |
 
 ## Plan
 
-### 1. Tighten `BrandMark` API (`src/components/layout/BrandMark.tsx`)
+### 1. Flip the defaults
 
-- Narrow `BrandTone` from `"auto" | "light" | "dark" | "color"` → `"light" | "dark"`.
-- Remove the `auto`/`color` branches (they already collapse to "light"); export a deprecation comment so future PRs don't reintroduce them.
-- Default `tone` stays `"light"` (matches the cream-bg majority case).
+- `BrandMark` default tone: `"dark"` (cream lockup) — matches the dark app shell.
+- `PoweredByBadge` default tone: `"dark"`.
 
-### 2. Fix the wrong call sites
+### 2. Update every dark-surface call site to `tone="dark"`
 
-- `Landing.tsx:202` — change `tone="dark"` → `tone="light"` (the mark sits below the cream illustration card, on cream bg).
-- `MarketingLayout.tsx:89` — drop `isLanding` ternary, always `tone="light"` (mobile menu trigger is in the cream header on every route, including landing).
-- `PublicRequestLayout.tsx:26` — read the header's actual bg; if cream, switch to `tone="light"`. If the layout's header is genuinely dark navy, keep `tone="dark"` and document why.
+Apply the table above. Each edit is a one-token change in the JSX.
 
-### 3. Replace soft tones with explicit ones (no visual change, just intent)
+### 3. `MarketingLayout` footer simplification
 
-- `MarketingLayout.tsx:125`, `DashboardLayout.tsx:55`, `EditorialAuthShell.tsx:41`, `ConnectorLogo.tsx:62`: `"auto"` → `"light"`.
-- `Signup.tsx:186`, `StarterRequestCard.tsx:24`: `"color"` → `"light"`.
-- `IntakeBadge.tsx:53`: keep the host-driven inversion logic but spell it out — `tone={forceDark ? "light" : "dark"}` once we confirm which bg the badge sits on (the badge is meant to be embedded on customer sites, so this needs a one-line comment explaining that `forceDark` means "host page is dark, so render the light lockup"). Do not change runtime behaviour — only naming.
+Remove the `isLanding ? "dark" : "light"` ternary on line 171 — the footer is on a dark surface on every marketing route, so always `tone="dark"`. Keep the `pb-footer-dark` class flip on line 169 (that's a separate, deliberately-darker footer band on landing only).
 
-### 4. `PoweredByBadge` accepts `tone`
+### 4. Re-flip the contract test
 
-Add `tone?: BrandTone` (default `"light"`) and forward to `BrandMark`. No call sites currently pass it; existing renders stay light.
+`src/test/brand-mark-contract.test.ts` last turn enforced an allowlist for `"dark"`. Replace it with the inverse:
 
-### 5. Contract test (`src/test/brand-mark-contract.test.ts`)
+- Disallow the deprecated `"auto"` / `"color"` tones (keep this assertion — it's still correct).
+- Disallow `tone="light"` outside an explicit allowlist. The allowlist is just `pages/IntakeBadge.tsx` (host-controlled light embed). Any other file using `tone="light"` would render navy on the dark app shell — fail loudly.
+- Keep the "no raw `mark-on-dark.*` outside `BrandMark.tsx`" assertion.
 
-Plain string scan over the `src/` tree (same style as `landing-tokens.test.ts`):
+### 5. Update `landing-visual-contract.test.ts`
 
-- Fail if any file passes `tone="auto"` or `tone="color"` to `BrandMark`.
-- Fail if `BrandMark` is rendered with `tone="dark"` in the same file as `<Section tone="light">` or default `<Section>` without an intervening `<Section tone="dark">` (heuristic: scan adjacent JSX). If the heuristic is too brittle, fall back to a hard allowlist of files permitted to use `tone="dark"` (Landing FinalCta + MarketingLayout footer + PublicRequestLayout if applicable).
-- Fail if a raw `<img src=".../mark-on-dark.svg">` exists outside `BrandMark.tsx`.
+Replace the assertion I added last turn ("BrandMark must be `tone="light"`") with the correct one: every `BrandMark` in `Landing.tsx` must use `tone="dark"`. The FinalCta dark Section still has no logo; only the hero mark needs to be locked, and it must be the cream lockup.
 
-### 6. Update `landing-visual-contract.test.ts`
+### 6. QA
 
-Add an assertion: the only `BrandMark` in `Landing.tsx` uses `tone="light"` (since the FinalCta dark section doesn't render a BrandMark, only the hero does, and that one must be light).
+- `bun run test` — 8 suites must stay green with the inverted contract.
+- Browser walk at 390 + 1280: `/`, `/pricing`, `/auth`, `/signup`, `/dashboard`, `/dashboard` sidebar (lg), `/r/<token>`, `/badge/intake?theme=light`, `/badge/intake?theme=dark`. Confirm the cream wordmark + cream/amber mark are visible everywhere except `IntakeBadge` light mode.
+- Update any Playwright baselines that change.
 
-### 7. QA
+### 7. Memory housekeeping
 
-- `bun run test` — confirm the 7 existing suites + the new brand-mark contract test pass.
-- Browser walk: `/`, `/auth`, `/dashboard`, `/r/<token>`, `/badge/intake` at 390px and 1280px — visually confirm BrandMark renders correctly (no invisible cream-on-cream, no navy-on-navy).
-- Update Playwright baselines for any pages where the BrandMark visibly changes.
+After the QA passes, update `mem://design/color-system` (and the Core line in `mem://index.md`) to reflect that the live tokens are dark-themed (`--background: 60 8% 5%`, color-scheme: dark). The current memory note about cream `#FAF7F2` is misleading and led directly to last turn's mistake. I'll save this as a memory edit at the end so future turns don't repeat the error.
 
 ## Out of scope
 
-- No changes to BrandMark assets or the wordmark colors.
-- No changes to `PoweredByBadge` placement (only its API).
-- No new `tone` values, no auto-detection from CSS variables.
+- No changes to BrandMark assets or wordmark colors.
+- No changes to surface tokens in `src/index.css` — only flipping the lockup tone to match what the tokens already are.
+- No new component variants.
