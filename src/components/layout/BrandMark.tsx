@@ -9,7 +9,7 @@ interface BrandMarkProps {
   className?: string;
   /** Which lockup to render. Defaults to "horizontal". */
   variant?: BrandVariant;
-  /** Kept for API compatibility. The mark is full color and transparent on all surfaces. */
+  /** "dark" swaps mark + wordmark colors for dark backgrounds. Other values render the standard cream-bg lockup. */
   tone?: BrandTone;
   /** Visual height in px. Defaults to 28. */
   size?: number;
@@ -20,20 +20,25 @@ interface BrandMarkProps {
 }
 
 const ALT = "PhotoBrief.ai · Guide · Capture · Close";
-const MARK_SVG = "/brand/mark.svg";
-const MARK_PNG = "/brand/mark-color.png";
+const MARK_SVG_LIGHT = "/brand/mark.svg";
+const MARK_PNG_LIGHT = "/brand/mark-color.png";
+const MARK_SVG_DARK = "/brand/mark-on-dark.svg";
+const MARK_PNG_DARK = "/brand/mark-on-dark.png";
 const TAGLINE = "Guide · Capture · Close";
 
-function MarkImage({ size, eager }: { size: number; eager?: boolean }) {
+function MarkImage({ size, eager, tone }: { size: number; eager?: boolean; tone: BrandTone }) {
   const imgClass = "block select-none object-contain shrink-0";
   const imgStyle = { height: size, width: size } satisfies CSSProperties;
+  const isDark = tone === "dark";
+  const svg = isDark ? MARK_SVG_DARK : MARK_SVG_LIGHT;
+  const png = isDark ? MARK_PNG_DARK : MARK_PNG_LIGHT;
 
   // SVG first for crisp rendering; <picture> falls back to PNG when SVG fails.
   return (
     <picture>
-      <source srcSet={MARK_SVG} type="image/svg+xml" />
+      <source srcSet={svg} type="image/svg+xml" />
       <img
-        src={MARK_PNG}
+        src={png}
         alt=""
         aria-hidden="true"
         className={imgClass}
@@ -48,7 +53,10 @@ function MarkImage({ size, eager }: { size: number; eager?: boolean }) {
   );
 }
 
-function Wordmark({ size, compact = false }: { size: number; compact?: boolean }) {
+function Wordmark({ size, compact = false, tone }: { size: number; compact?: boolean; tone: BrandTone }) {
+  const isDark = tone === "dark";
+  const photoColor = isDark ? "hsl(var(--pb-cream))" : "hsl(var(--pb-wordmark-navy))";
+  const aiColor = isDark ? "hsl(var(--pb-cream) / 0.7)" : "hsl(var(--pb-wordmark-navy) / 0.55)";
   return (
     <span
       className="font-extrabold leading-none whitespace-nowrap"
@@ -57,11 +65,11 @@ function Wordmark({ size, compact = false }: { size: number; compact?: boolean }
         letterSpacing: compact ? "-0.055em" : "-0.05em",
       }}
     >
-      <span style={{ color: "hsl(var(--pb-wordmark-navy))" }}>Photo</span>
+      <span style={{ color: photoColor }}>Photo</span>
       <span style={{ color: "hsl(var(--pb-wordmark-amber))" }}>Brief</span>
       <span
         style={{
-          color: "hsl(var(--pb-wordmark-navy) / 0.55)",
+          color: aiColor,
           fontWeight: 600,
           fontSize: size * 0.62,
           marginLeft: size * 0.04,
@@ -75,14 +83,17 @@ function Wordmark({ size, compact = false }: { size: number; compact?: boolean }
   );
 }
 
-function Tagline({ size }: { size: number }) {
+function Tagline({ size, tone }: { size: number; tone: BrandTone }) {
+  const color = tone === "dark"
+    ? "hsl(var(--pb-cream) / 0.75)"
+    : "hsl(var(--pb-wordmark-navy) / 0.7)";
   return (
     <span
       className="block uppercase font-semibold whitespace-nowrap"
       style={{
         fontSize: Math.max(9, size * 0.13),
         letterSpacing: "0.22em",
-        color: "hsl(var(--pb-wordmark-navy) / 0.7)",
+        color,
         marginTop: Math.max(4, size * 0.05),
       }}
     >
@@ -94,6 +105,7 @@ function Tagline({ size }: { size: number }) {
 export function BrandMark({
   className,
   variant = "horizontal",
+  tone = "auto",
   size = 28,
   eager,
   showTagline = false,
@@ -103,7 +115,7 @@ export function BrandMark({
   if (resolvedVariant === "mark" || resolvedVariant === "primary") {
     return (
       <span role="img" aria-label={ALT} className={cn("inline-flex items-center justify-center", className)}>
-        <MarkImage size={size} eager={eager} />
+        <MarkImage size={size} eager={eager} tone={tone} />
       </span>
     );
   }
@@ -115,8 +127,8 @@ export function BrandMark({
         aria-label={ALT}
         className={cn("inline-flex flex-col items-start min-w-0", className)}
       >
-        <Wordmark size={size} />
-        {showTagline ? <Tagline size={size} /> : null}
+        <Wordmark size={size} tone={tone} />
+        {showTagline ? <Tagline size={size} tone={tone} /> : null}
       </span>
     );
   }
@@ -128,9 +140,9 @@ export function BrandMark({
         aria-label={ALT}
         className={cn("inline-flex flex-col items-center justify-center gap-2 min-w-0", className)}
       >
-        <MarkImage size={size} eager={eager} />
-        <Wordmark size={Math.max(14, size * 0.26)} />
-        {showTagline ? <Tagline size={Math.max(14, size * 0.26)} /> : null}
+        <MarkImage size={size} eager={eager} tone={tone} />
+        <Wordmark size={Math.max(14, size * 0.26)} tone={tone} />
+        {showTagline ? <Tagline size={Math.max(14, size * 0.26)} tone={tone} /> : null}
       </span>
     );
   }
@@ -139,10 +151,10 @@ export function BrandMark({
   const wordSize = Math.max(16, size * 0.72);
   return (
     <span role="img" aria-label={ALT} className={cn("inline-flex items-center gap-2.5 min-w-0", className)}>
-      <MarkImage size={size} eager={eager} />
+      <MarkImage size={size} eager={eager} tone={tone} />
       <span className="inline-flex flex-col items-start min-w-0">
-        <Wordmark size={wordSize} compact />
-        {showTagline ? <Tagline size={wordSize} /> : null}
+        <Wordmark size={wordSize} compact tone={tone} />
+        {showTagline ? <Tagline size={wordSize} tone={tone} /> : null}
       </span>
     </span>
   );
