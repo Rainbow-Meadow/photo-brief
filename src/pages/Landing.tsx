@@ -1690,10 +1690,10 @@ function BetaDetailsAccordion({ value, onValueChange }: BetaDetailsAccordionProp
     <MarketingSection spacing="tight">
       <div className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-start lg:gap-12">
         <div className="lg:min-w-0">
-          <span className="pb-eyebrow"><FileText className="h-3.5 w-3.5" /> The fine print</span>
-          <h2 className="pb-section-title mt-4 text-white">Everything in writing.</h2>
+          <span className="pb-eyebrow"><FileText className="h-3.5 w-3.5" /> Everything in writing</span>
+          <h2 className="pb-section-title mt-4 text-white">Because that's what founding partners deserve.</h2>
           <p className="pb-copy mt-4 max-w-xl text-base sm:text-lg">
-            How the program runs, what we ask of partners, and exactly how rewards are decided.
+            How the program runs. What we'll ask of you. Exactly how rewards are decided. No surprises, no asterisks, no fine-print games.
           </p>
           <div className="mt-8">
           <div className="flex items-center justify-end border-b border-[hsl(var(--pb-ink-soft)/0.18)] py-3">
