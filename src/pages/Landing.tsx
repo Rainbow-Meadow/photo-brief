@@ -241,7 +241,6 @@ const TRADES = [
   { name: "Junk haulers", icon: Truck, stamp: "Junk removal" },
   { name: "HVAC & repair", icon: Wind, stamp: "HVAC & repair" },
   { name: "Plumbers", icon: Wrench, stamp: "Plumbing" },
-  { name: "Estimators", icon: Package, stamp: "Estimating" },
 ];
 
 const trustPoints = [
