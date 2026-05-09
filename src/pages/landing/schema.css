@@ -156,7 +156,7 @@
     padding-inline: 0.4rem;
     min-height: 44px;
   }
-  .ls-section--dark .ls-cta-quiet { color: hsl(var(--background)); }
+  /* dark-section quiet cta override removed */
 
   @media (hover: hover) {
     .ls-cta-primary:hover   { transform: translateY(-1px); filter: brightness(1.03); }
