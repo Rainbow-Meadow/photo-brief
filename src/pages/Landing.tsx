@@ -60,7 +60,7 @@ import { useBetaSeats } from "@/hooks/useBetaSeats";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
-import heroIllustration from "@/assets/field-manual/hero-v2.png";
+import heroIllustration from "@/assets/hero-new.png";
 import landscaperIllo from "@/assets/trades/landscaper-illustration.png";
 import hvacTechIllo from "@/assets/trades/hvac-tech-illustration.png";
 import plumberIllo from "@/assets/trades/plumber-illustration.png";
