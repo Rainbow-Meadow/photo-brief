@@ -96,30 +96,33 @@ export default function TermsPage() {
       />
 
       <section className="pb-container-narrow pb-section">
-        <div className="pb-command-panel p-6 sm:p-8 lg:p-10">
-          <div className="relative z-10">
-            <span className="pb-eyebrow">
-              <Scale className="h-3.5 w-3.5" /> Terms of Service
-            </span>
-            <h1 className="mt-5 max-w-3xl text-4xl font-semibold tracking-tight text-white sm:text-6xl">
-              The ground rules for using PhotoBrief.
-            </h1>
-            <p className="pb-copy mt-5 max-w-3xl text-base sm:text-lg">
-              These terms are written for a practical B2B photo intake product: clear responsibilities, clear limits, and no fake legal theater.
-            </p>
-            <p className="mt-4 text-sm text-[hsl(var(--pb-muted))]">Last updated: {updatedAt}</p>
-          </div>
-        </div>
+        <p className="inline-flex items-baseline gap-2 font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+          <span className="inline-block h-px w-8 -translate-y-[0.25em] bg-[hsl(var(--accent-kinetic))]" />
+          <span className="text-[hsl(var(--accent-kinetic))]">[ 00 ]</span>
+          <span className="inline-flex items-center gap-1.5"><Scale className="h-3.5 w-3.5" /> Terms of Service</span>
+        </p>
+        <h1 className="mt-5 max-w-3xl text-[clamp(2.25rem,5vw,3.75rem)] font-semibold leading-[1.02] tracking-[-0.022em] text-foreground">
+          The ground rules for using PhotoBrief.
+        </h1>
+        <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+          These terms are written for a practical B2B photo intake product: clear responsibilities, clear limits, and no fake legal theater.
+        </p>
+        <p className="mt-4 font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground">
+          Last updated: {updatedAt}
+        </p>
       </section>
 
       <section className="pb-container-narrow pb-section">
         <div className="space-y-4">
-          {sections.map((section) => (
-            <article key={section.title} className="pb-card rounded-[1.5rem] p-5 sm:p-6">
-              <h2 className="flex items-center gap-2 text-xl font-semibold tracking-tight text-white">
-                <FileText className="h-5 w-5 text-[hsl(var(--pb-lavender))]" /> {section.title}
+          {sections.map((section, i) => (
+            <article key={section.title} className="border border-border bg-card p-6 sm:p-8">
+              <p className="font-mono text-[0.65rem] font-medium uppercase tracking-[0.18em] text-[hsl(var(--accent-kinetic))]">
+                [ {String(i + 1).padStart(2, "0")} ]
+              </p>
+              <h2 className="mt-2 flex items-center gap-2 text-xl font-semibold tracking-tight text-foreground">
+                <FileText className="h-5 w-5 text-[hsl(var(--accent-kinetic))]" /> {section.title}
               </h2>
-              <div className="mt-3 space-y-3 text-sm leading-7 text-[hsl(var(--pb-muted))] sm:text-base">
+              <div className="mt-4 space-y-3 text-sm leading-7 text-muted-foreground sm:text-base">
                 {section.body.map((paragraph) => (
                   <p key={paragraph}>{paragraph}</p>
                 ))}
@@ -127,12 +130,15 @@ export default function TermsPage() {
             </article>
           ))}
 
-          <article className="rounded-[1.5rem] border border-[hsl(var(--pb-mint)/0.3)] bg-[hsl(var(--pb-mint)/0.06)] p-5 sm:p-6">
-            <h2 className="flex items-center gap-2 text-xl font-semibold tracking-tight text-white">
-              <Mail className="h-5 w-5 text-[hsl(var(--pb-mint))]" /> Contact
+          <article className="border border-[hsl(var(--accent-sage)/0.4)] bg-[hsl(var(--accent-sage)/0.06)] p-6 sm:p-8">
+            <h2 className="flex items-center gap-2 text-xl font-semibold tracking-tight text-foreground">
+              <Mail className="h-5 w-5 text-[hsl(var(--accent-sage))]" /> Contact
             </h2>
-            <p className="mt-3 text-sm leading-7 text-[hsl(var(--pb-muted))] sm:text-base">
-              Questions about these Terms can be sent to <a className="font-semibold text-[hsl(var(--pb-lavender))] underline-offset-4 hover:underline" href="mailto:hello@photobrief.ai">hello@photobrief.ai</a>.
+            <p className="mt-3 text-sm leading-7 text-muted-foreground sm:text-base">
+              Questions about these Terms can be sent to{" "}
+              <a className="font-semibold text-[hsl(var(--accent-kinetic))] underline-offset-4 hover:underline" href="mailto:hello@photobrief.ai">
+                hello@photobrief.ai
+              </a>.
             </p>
           </article>
         </div>
