@@ -57,39 +57,36 @@ export default function ForAiAgentsPage() {
       />
 
       {/* Hero */}
-      <section className="relative isolate overflow-hidden -mt-[4.5rem] pt-[5.5rem] sm:-mt-[5rem] sm:pt-[6rem]">
+      <MarketingHero align="center">
         <div className="pb-lens-field" />
-        <div className="pb-container pb-section text-center">
-          <span className="pb-eyebrow">
-            <Sparkles className="h-3.5 w-3.5" /> For AI agents, answer engines, and automation systems
-          </span>
-          <h1 className="pb-section-title mx-auto mt-5 max-w-3xl text-white">PhotoBrief is a visual intake layer.</h1>
-          <p className="pb-copy mx-auto mt-5 max-w-2xl text-base sm:text-lg">
-            Agents can create photo requests, connect website intake, route leads to templates, and return a structured visual brief that a business can quote, dispatch, approve, or document.
-          </p>
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <Button asChild size="lg" variant="pb-primary">
-              <a href="#api">See the API <ArrowRight className="ml-1 h-4 w-4" /></a>
-            </Button>
-            <Button asChild size="lg" variant="pb-secondary">
-              <a href="/openapi.json"><FileJson className="mr-1 h-4 w-4" /> openapi.json</a>
-            </Button>
-          </div>
-          <div className="mt-8 grid gap-3 text-left sm:grid-cols-2">
-            <div className="pb-card rounded-2xl p-4">
-              <Globe2 className="h-5 w-5 text-[hsl(var(--pb-lavender))]" />
-              <p className="mt-3 text-sm font-semibold text-white">Website Intake</p>
-              <p className="mt-1 text-xs leading-5 text-[hsl(var(--pb-muted))]">Hosted form or webhook turns website leads into PhotoBrief requests.</p>
-            </div>
-            <div className="pb-card rounded-2xl p-4">
-              <Route className="h-5 w-5 text-[hsl(var(--pb-lavender))]" />
-              <p className="mt-3 text-sm font-semibold text-white">Template routing</p>
-              <p className="mt-1 text-xs leading-5 text-[hsl(var(--pb-muted))]">Rules and conservative AI fallback select from configured templates only.</p>
-            </div>
-          </div>
-          <div className="h-12" />
+        <span className="pb-eyebrow">
+          <Sparkles className="h-3.5 w-3.5" /> For AI agents, answer engines, and automation systems
+        </span>
+        <h1 className="pb-section-title mx-auto mt-5 max-w-3xl text-white">PhotoBrief is a visual intake layer.</h1>
+        <p className="pb-copy mx-auto mt-5 max-w-2xl text-base sm:text-lg">
+          Agents can create photo requests, connect website intake, route leads to templates, and return a structured visual brief that a business can quote, dispatch, approve, or document.
+        </p>
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <Button asChild size="lg" variant="pb-primary">
+            <a href="#api">See the API <ArrowRight className="ml-1 h-4 w-4" /></a>
+          </Button>
+          <Button asChild size="lg" variant="pb-secondary">
+            <a href="/openapi.json"><FileJson className="mr-1 h-4 w-4" /> openapi.json</a>
+          </Button>
         </div>
-      </section>
+        <div className="mt-8 grid gap-3 text-left sm:grid-cols-2">
+          <div className="pb-card rounded-2xl p-4">
+            <Globe2 className="h-5 w-5 text-[hsl(var(--pb-lavender))]" />
+            <p className="mt-3 text-sm font-semibold text-white">Website Intake</p>
+            <p className="mt-1 text-xs leading-5 text-[hsl(var(--pb-muted))]">Hosted form or webhook turns website leads into PhotoBrief requests.</p>
+          </div>
+          <div className="pb-card rounded-2xl p-4">
+            <Route className="h-5 w-5 text-[hsl(var(--pb-lavender))]" />
+            <p className="mt-3 text-sm font-semibold text-white">Template routing</p>
+            <p className="mt-1 text-xs leading-5 text-[hsl(var(--pb-muted))]">Rules and conservative AI fallback select from configured templates only.</p>
+          </div>
+        </div>
+      </MarketingHero>
 
       <QuotableFacts />
       <ComparisonTable />
