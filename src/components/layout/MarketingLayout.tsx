@@ -60,8 +60,8 @@ export function MarketingLayout() {
               aria-label="PhotoBrief.ai"
               className="flex items-center px-2 sm:px-3"
             >
-              <BrandMark variant="wordmark" tone="light" size={22} eager className="sm:hidden" />
-              <BrandMark variant="wordmark" tone="light" size={26} eager className="hidden sm:block" />
+              <BrandMark variant="wordmark" tone="dark" size={22} eager className="sm:hidden" />
+              <BrandMark variant="wordmark" tone="dark" size={26} eager className="hidden sm:block" />
             </NavLink>
 
             {/* Right links (desktop) */}
@@ -86,7 +86,7 @@ export function MarketingLayout() {
             aria-label="PhotoBrief.ai home"
             className="absolute inset-y-0 left-3 flex items-center sm:left-6"
           >
-            <BrandMark variant="mark" tone="light" size={36} eager />
+            <BrandMark variant="mark" tone="dark" size={36} eager />
           </NavLink>
 
           {/* CTAs sit outside the pill, on the far right */}
@@ -122,7 +122,7 @@ export function MarketingLayout() {
         <SheetContent side="right" className="w-[84vw] max-w-sm p-0">
           <SheetHeader className="border-b px-5 py-4 text-left">
             <SheetTitle>
-              <BrandMark variant="horizontal" tone="light" size={32} eager />
+              <BrandMark variant="horizontal" tone="dark" size={32} eager />
             </SheetTitle>
           </SheetHeader>
           <div className="border-b px-5 py-4">
@@ -170,7 +170,7 @@ export function MarketingLayout() {
         <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-8 text-sm text-[hsl(var(--pb-ink-soft))] sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
           <BrandMark
             variant="horizontal"
-            tone={isLanding ? "dark" : "light"}
+            tone="dark"
             size={28}
             className="opacity-90"
           />

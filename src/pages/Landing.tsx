@@ -201,7 +201,7 @@ function Hero() {
             </div>
             <BrandMark
               variant="horizontal"
-              tone="light"
+              tone="dark"
               size={28}
               className="mt-6 justify-center opacity-80"
             />

@@ -23,14 +23,16 @@ function walk(dir: string): string[] {
 const ALL_FILES = walk(SRC_DIR);
 
 /**
- * Files allowed to render `<BrandMark ... tone="dark" />`. The tone must match
- * the surface the mark physically sits on (a real dark navy bg), not the
- * page's overall theme. Adding a file here is a deliberate design decision.
+ * The app shell is dark-themed (`--background: 60 8% 5%`, `color-scheme: dark`),
+ * so the cream-on-dark lockup (`tone="dark"`) is the de-facto default.
+ *
+ * Files allowed to render `<BrandMark ... tone="light" />` are surfaces that
+ * are explicitly light (e.g. an embed served onto a host page the workspace
+ * doesn't control). Any other use of `tone="light"` would render navy ink on
+ * the dark app shell — illegible.
  */
-const DARK_TONE_ALLOWLIST = new Set([
-  // Marketing footer flips to a dark navy bg on the landing route.
-  "components/layout/MarketingLayout.tsx",
-  // Embeddable badge — host page may be dark; component honors `forceDark`.
+const LIGHT_TONE_ALLOWLIST = new Set([
+  // Embeddable badge — host page may be light; component honors `forceDark`.
   "pages/IntakeBadge.tsx",
 ]);
 
@@ -54,7 +56,7 @@ describe("BrandMark tone contract", () => {
     expect(offenders, `Deprecated BrandMark tones found:\n${offenders.join("\n")}`).toEqual([]);
   });
 
-  it("only uses tone=\"dark\" inside files explicitly allowlisted for dark surfaces", () => {
+  it('only uses tone="light" inside files explicitly allowlisted for light surfaces', () => {
     const offenders: string[] = [];
     for (const file of ALL_FILES) {
       const rel = file.replace(SRC_DIR + "/", "");
@@ -68,15 +70,15 @@ describe("BrandMark tone contract", () => {
       for (const tag of tags) {
         const m = tag.match(TONE_PROP);
         const tone = m?.[1] ?? m?.[2];
-        const usesDark = tone === "dark" || /tone=\{[^}]*"dark"[^}]*\}/.test(tag);
-        if (usesDark && !DARK_TONE_ALLOWLIST.has(rel)) {
+        const usesLight = tone === "light" || /tone=\{[^}]*"light"[^}]*\}/.test(tag);
+        if (usesLight && !LIGHT_TONE_ALLOWLIST.has(rel)) {
           offenders.push(`${rel}: ${tag}`);
         }
       }
     }
     expect(
       offenders,
-      `tone="dark" used outside the allowlist (mark would render cream-on-cream):\n${offenders.join("\n")}`,
+      `tone="light" used outside the allowlist (mark would render navy-on-dark):\n${offenders.join("\n")}`,
     ).toEqual([]);
   });
 

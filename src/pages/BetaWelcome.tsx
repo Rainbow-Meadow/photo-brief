@@ -155,7 +155,7 @@ export default function BetaWelcomePage() {
         <section className="pb-section relative isolate">
           <div className="pb-lens-field" />
           <div className="pb-container relative z-10 mx-auto max-w-lg text-center">
-            <BrandMark variant="stacked" tone="light" size={72} eager />
+            <BrandMark variant="stacked" tone="dark" size={72} eager />
             <div className="mx-auto mt-8 flex h-16 w-16 items-center justify-center rounded-full bg-[hsl(var(--pb-mint)/0.12)]">
               <CheckCircle2 className="h-8 w-8 text-[hsl(var(--pb-mint))]" />
             </div>
