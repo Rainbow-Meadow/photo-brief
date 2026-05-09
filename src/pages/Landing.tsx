@@ -430,11 +430,11 @@ export default function LandingPage() {
               </div>
 
               {/* Right — brand mark + hand-drawn illustration */}
-              <div className="relative flex flex-col items-center lg:items-end">
-                <div className="mb-4 w-full sm:mb-6 flex justify-center lg:justify-end">
-                  <BrandMark variant="horizontal" size={80} eager className="sm:hidden" />
-                  <BrandMark variant="horizontal" size={112} eager className="hidden sm:inline-flex lg:hidden" />
-                  <BrandMark variant="horizontal" size={144} eager className="hidden lg:inline-flex" />
+              <div className="relative flex flex-col items-center lg:items-end min-w-0">
+                <div className="mb-4 w-full sm:mb-6 flex justify-center lg:justify-end overflow-hidden">
+                  <BrandMark variant="horizontal" size={64} eager className="sm:hidden" />
+                  <BrandMark variant="horizontal" size={88} eager className="hidden sm:inline-flex lg:hidden" />
+                  <BrandMark variant="horizontal" size={112} eager className="hidden lg:inline-flex" />
                 </div>
                 <div className="relative flex w-full justify-center lg:justify-end">
                   <div
