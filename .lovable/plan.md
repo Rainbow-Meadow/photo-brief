@@ -1,52 +1,31 @@
-## Goal
+# Hero alignment + consistency pass
 
-Current tiers (96% / 92% / 86% lightness) read as nearly identical until the Workflow/Footer block. Push the ladder deeper and saturate it so each band is unmistakably its own surface, while staying in the "light navy paper" family (no dark mode).
+The hero is positioned where you want it. Auditing the markup shows a few inconsistencies between individual pieces — different sizing for sibling elements, asymmetric padding, and one label that escaped the design tokens. This plan aligns them without moving anything.
 
-## New palette (in `src/index.css`)
+## Issues found
 
-Increase saturation and widen the lightness gap between tiers:
+1. **Asymmetric outer padding.** The grid has `pl-[84px]` on the left only and nothing on the right, so the right column hugs the viewport edge. It's also a fixed value at every breakpoint, which overflows on mobile.
+2. **"Built for" label is off-system.** Uses `font-black … text-base` while every other small-caps label in the hero (Eyebrow, trust strip, etc.) uses the `text-[10px] tracking-[0.28em]` pattern.
+3. **Trade pill icons are stretched.** `w-[37px] h-[27px]` (a leftover from a different lucide class) gives them a non-square aspect and they tower over the pill text. Sibling inline icons in this same hero use `h-3.5 w-3.5` / `h-4 w-4`.
+4. **Trust-strip spacing breaks the rhythm.** Every other left-column block uses paired `mt-X sm:mt-Y` (e.g. `mt-6 sm:mt-8`). The trust strip is `mt-6` only.
+5. **Brand mark wrapper has `overflow-hidden`.** Now that we sized the wordmark down, the clip guard isn't needed and just risks hiding the trailing `.ai`.
+6. **Right column wrapper has unused `relative`.** Minor — only the inner illustration container needs it for the blur backdrop.
 
-- `--pb-tier-0`: `220 38% 94%` (was 32% / 96%) — base paper, still the lightest
-- `--pb-tier-1`: `222 36% 87%` (was 30% / 92%) — alt band, now clearly cooler/deeper
-- `--pb-tier-2`: `224 34% 78%` (was 28% / 86%) — feature anchor, distinctly denim
-- `--pb-paper-edge`: `224 28% 66%` — stronger hairline so seams read on every transition
-- `--pb-glass`: `220 40% 99% / 0.78` — header pill stays bright against deeper page
-- `--pb-ink-soft`: nudge to `222 40% 22%` for contrast on Tier 2
+## Changes (all in `src/pages/Landing.tsx`, hero block ~line 348–453)
 
-Amber accents (`--pb-amber`, `--pb-amber-soft`) unchanged — they'll pop more against the deeper base.
-
-## Section ladder adjustments
-
-Keep the existing 3-tone rhythm, but add tier swaps where the page currently feels flat:
-
-- Hero → Tier 0
-- Pain Points → Tier 1 (was 0) so the first transition is visible immediately
-- Brief Assembly → Tier 0
-- Workflow → Tier 2 (unchanged, now genuinely denim)
-- Comparison → Tier 1
-- Use Cases → Tier 0
-- Website Intelligence → Tier 1
-- Beta zone → Tier 0 with amber wash (unchanged)
-- Reward Tiers → Tier 1
-- Final CTA + Footer → Tier 2
-
-Tickers continue to render a half-step deeper than the surface they sit on (`color-mix` with `--pb-paper-edge`).
-
-## Component touch-ups
-
-- `.pb-card`: bg stays `--pb-glass`, border bumped to `hsl(var(--pb-paper-edge) / 0.7)`, shadow uses `--pb-ink / 0.18`.
-- `.pb-section-alt` rebound to Tier 1 token.
-- `.ls-section--dark` rebound to Tier 2 token (already light-navy, just deeper now).
-- Header pill: keep glass, but add a 1px bottom border in `--pb-paper-edge / 0.6` so it separates from the deeper hero.
-- Footer top hairline uses full `--pb-paper-edge`.
-
-## Files
-
-- `src/index.css` — palette tokens, `.pb-card`, `.pb-section-alt`, header glass border
-- `src/pages/landing/schema.css` — `.ls-section--dark` background swap
-- `src/pages/Landing.tsx` — tier classes on Pain Points, Comparison, Use Cases, Website Intelligence, Reward Tiers
-- `src/components/layout/MarketingLayout.tsx` — header pill border, footer hairline
+- **Outer grid wrapper**
+  - `pl-[84px]` → `px-0 lg:pl-20 lg:pr-8` so the offset only kicks in at desktop and is balanced on the right.
+- **"Built for" label**
+  - Replace classes with the same token used by `Eyebrow`: `text-[10px] font-black uppercase tracking-[0.28em] text-[hsl(var(--pb-ink-muted))]`.
+- **Trade pill icon**
+  - `lucide lucide-trending-down w-[37px] h-[27px] text-[hsl(var(--pb-violet))]` → `h-4 w-4 text-[hsl(var(--pb-violet))]` (square, matches the pill's text size).
+- **Trust strip spacing**
+  - `mt-6 flex flex-wrap …` → `mt-6 sm:mt-8 flex flex-wrap …` so it follows the same paired-rhythm as its neighbors.
+- **Right column brand mark wrapper**
+  - Drop `overflow-hidden` from the wordmark container; the responsive sizes already fit.
+- **Right column root**
+  - Drop the unused `relative` (kept on the inner illustration wrapper that owns the blur).
 
 ## Out of scope
-
-Authenticated app shell, copy, layout, illustrations, dark mode.
+- Layout/positioning changes — the column structure, brand-mark-above-phone arrangement, and BetaSeatTracker placement stay exactly as they are.
+- Copy, tokens, or BrandMark internals.
