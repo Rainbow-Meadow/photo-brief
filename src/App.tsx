@@ -243,6 +243,7 @@ const App = () => (
           </Suspense>
           </ErrorBoundary>
           </InviteAcceptanceGuard>
+          </LenisProvider>
         </CurrentWorkspaceProvider>
         </AuthProvider>
       </BrowserRouter>
