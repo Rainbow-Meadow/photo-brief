@@ -54,15 +54,6 @@ export function MarketingLayout() {
               ))}
             </nav>
 
-            {/* Left brand mark icon (links home) */}
-            <NavLink
-              to="/"
-              aria-label="PhotoBrief.ai home"
-              className="flex items-center px-2"
-            >
-              <BrandMark variant="mark" tone="light" size={28} eager />
-            </NavLink>
-
             {/* Centered wordmark */}
             <NavLink
               to="/"
@@ -88,6 +79,15 @@ export function MarketingLayout() {
               ))}
             </nav>
           </header>
+
+          {/* Brand mark icon on the far left, outside the pill */}
+          <NavLink
+            to="/"
+            aria-label="PhotoBrief.ai home"
+            className="absolute left-3 top-3 flex h-12 items-center sm:left-6 sm:top-4 sm:h-14"
+          >
+            <BrandMark variant="mark" tone="light" size={36} eager />
+          </NavLink>
 
           {/* CTAs sit outside the pill, on the far right */}
           <div className="absolute right-3 top-3 flex items-center gap-1.5 sm:right-6 sm:top-4">
