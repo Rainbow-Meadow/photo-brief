@@ -1,73 +1,55 @@
-# Landing QA — findings + fix plan
+## Goal
 
-## 1. Blocker: landing page is rendering blank
+Replace every illustration on the landing page with a cohesive set of **risograph-textured collages** that match the new Locomotive-inspired chrome (cream `#FAF7F2` ground, navy `#1B2A4A` ink, kinetic-orange `#F2A33A` accent). Tactile, two-color, photo-cutout + vector marks, visible paper grain and slight mis-registration.
 
-The live preview at `/` is a black canvas. Cause:
+## Visual recipe (applied to every image)
 
-- `src/lib/motion/lenis.tsx` does a top-level `import Lenis from "lenis"`.
-- Vite's dep optimizer is returning **504** for `lenis.js` repeatedly (verified across two dev-server restarts).
-- `LenisProvider` wraps the entire `<App>` tree in `src/App.tsx`, so the optimizer failure crashes the whole bundle — every route, not just `/`.
+- **Substrate:** cream paper ground with subtle grain.
+- **Inks:** navy as primary, kinetic-orange as accent. Treat as a 2-color riso print — overlap zones get a darkened multiply, mis-registration ~2–4px on accent layer.
+- **Content mix:** halftoned photo cutouts of real trade subjects (a hand, a ladder, an HVAC unit, a yard) layered with bold geometric marks (circles, arrows, registration crosses, numerals).
+- **Texture:** heavy grain, ink bleed at edges, tiny dust specks. No drop shadows, no gradients.
+- **Margin:** generous negative space; subject anchored, not centered.
+- **No text inside images** (typography lives in the page).
 
-Fix:
-- Convert Lenis to a **dynamic import inside the `useEffect`** (`const { default: Lenis } = await import("lenis")`). Keeps smooth scroll on capable devices, but a failed/late-loaded module can never blank the app.
-- Wrap the init in try/catch and short-circuit on touch / reduced-motion (already done).
-- Add `lenis` to `optimizeDeps.include` in `vite.config.ts` so prebundling is deterministic on cold start.
-- Add a tiny smoke test (`landing-renders.test.tsx`) that mounts `<LandingPage />` inside the providers and asserts the H1 text — guards against regressions where a motion provider takes the page down.
+## Image set & aspect ratios
 
-## 2. Typography fit for the service-trade audience
+Hero / featured
+1. `landing-hero-illustration.png` — **3:2** wide. Centerpiece collage: halftone close-up of a service-tech hand framing a phone over a worksite, orange registration ring, navy arrows.
 
-You're right — the current stack reads "design agency portfolio," not "contractor's intake tool." Specifics:
+RMBC method (square so they sit cleanly in the numbered grid)
+2. `rmbc/research-magnifier.png` — **1:1** magnifier over a halftone photo strip, orange dot of focus.
+3. `rmbc/mechanism-gears.png` — **1:1** interlocking navy gears + photo cutout of a clipboard, orange motion arc.
+4. `rmbc/brief-packet.png` — **1:1** stacked document packet with orange tabs, halftone photo peeking from inside.
+5. `rmbc/method-overview.png` — **1:1** isometric flow diagram (capture → brief → close), orange path line.
+6. `rmbc/close-handshake.png` — **1:1** halftone handshake, orange checkmark stamp.
 
-- **Bricolage Grotesque 800 + the italic accent on the `.`** is the most "boutique" element. Roofers, HVAC, landscapers don't trust playful italics — they read it as marketing fluff.
-- **Geist Mono** for every eyebrow, numeral, and CTA pushes the page even further into "code-y agency" territory.
-- The two faces together make the page feel like a SaaS-for-designers product, not a tool that books jobs for a plumber.
+Trades (portrait so they read as character cards in the use-case grid)
+7. `trades/plumber-illustration.png` — **3:4** wrench + pipe joint photo cutout, orange leak drop.
+8. `trades/hvac-tech-illustration.png` — **3:4** outdoor condenser unit, orange airflow arrows.
+9. `trades/landscaper-illustration.png` — **3:4** halftone lawn + slope contour lines, orange property pin.
+10. `trades/junk-hauler-illustration.png` — **3:4** loaded truck bed silhouette, orange hazard triangle.
+11. `trades/estimator-illustration.png` — **3:4** photo-grid contact sheet with orange measurement callouts.
 
-Direction: keep the editorial scale and rhythm Locomotive gave us, swap the *voices* for ones that signal industrial precision and trust. Two options to pick from in step 4 below — both stay free/Google Fonts, no Cloud changes.
+Use-case scenes (new — currently the grid reuses HVAC/landscaper; we'll wire one per card)
+- All 5 trades above become the per-card scene; no extra files needed beyond regenerating these five.
 
-Concrete swaps regardless of choice:
-- Drop `.ls-italic-accent` italic on `Close.` — replace with an accent-color period only, no italic.
-- Replace mono in CTAs (`.ls-cta`) with the chosen sans at uppercase + tracking. Keep mono **only** for true numerals (`Fig. 01`, index strip), where it still earns its place as "technical caption."
-- Tighten H1 weight 800 → 700 and letter-spacing -0.05em → -0.025em. 800/-0.05 looks like a fashion magazine; 700/-0.025 looks like a confident product headline.
-- Add `font-feature-settings: "ss01","cv11"` where supported to lean into the cleaner glyph variants.
+Total: **11 images regenerated in place**, same paths so no component imports change.
 
-## 3. Other QA items to fix in the same pass
+## Generation approach
 
-Found while reading the source — all small, all worth doing now so the reskin of Pricing/ForAiAgents/Auth inherits a clean baseline:
+- Use `imagegen--generate_image` with `model: "premium"` (no text in images, but premium gives us the cleanest halftone + grain control).
+- Shared style preamble appended to every prompt to lock the riso look, palette hexes, grain, and mis-registration.
+- Generate in parallel batches of 3–4.
+- Save directly over existing paths so no code edits are required for imports.
 
-- **Use-cases section** uses `hvacTechIllo` for Plumbers, HVAC, *and* Estimators, and `landscaperIllo` for both Landscapers and Junk haulers. Reads as a stock-photo bug. Use the icon-only treatment for the trades that don't have a dedicated illo, or drop the illustration prop on cards that repeat.
-- **Anchor index strip** lists 6 sections but `#apply` and `#beta-program` are adjacent + redundant — collapse to 5 entries.
-- **`.ls-card:hover` border tint** uses `--accent-kinetic / 0.4`. On the dark canvas the orange-on-graphite hover is fine, but pair it with a 1px translateY(-1px) so the editorial card feels physical, not just recolored.
-- **Hero anchor nav** is `lg:flex` only — on tablet (768–1024) the page jumps from oversized H1 straight to the marquee with no wayfinding. Show the strip from `md:` up.
-- **Section padding** `clamp(5rem, 9vw, 9rem)` is too generous on mobile (5rem top + 5rem bottom on a 375px viewport = ~25% of the fold gone before content). Lower the floor to `3rem` for mobile rhythm.
-- **Marquee** repeats only one row. Locomotive sites typically run two counter-rotating rows for kinesthetic depth — add a second row (reverse direction, ghost variant on the loud words) to earn the band.
-- **`prefers-reduced-motion`**: `RiseIn` and `MagneticCTA` need to short-circuit when reduced-motion is set. Currently they always animate. Add a guard hook (`useReducedMotion` from framer-motion) and render static when true.
-- **Accessibility**: `.ls-marquee-item--ghost` uses `-webkit-text-stroke` only — no Firefox fallback. Add `text-shadow` fallback or `@supports`.
-- **Tests**: rerun `landing-tokens.test.ts` and `landing-visual-contract.test.ts` after the typography swap and update the asserted font-family strings.
+## QA pass (mandatory before delivery)
 
-## 4. Decisions I need from you before writing the fix
-
-I'll batch these in `ask_questions` after you approve the plan, but here's the shape so you can think ahead:
-
-1. **Display + body type pairing** (pick one):
-   - **Geist Sans + Geist Mono** (Vercel) — engineered, neutral, modern. Reads as "serious software." Strongest "trust" signal.
-   - **Inter Tight (display) + Inter (body) + JetBrains Mono** — workhorse, slightly editorial through tight spacing. Most legible at every size.
-   - **IBM Plex Sans + Plex Sans Condensed (display) + Plex Mono** — explicitly industrial; designed for IBM's enterprise tools. Strongest "trade precision" signal.
-   - **Keep Bricolage** but only at 700 and only on H1; everything else moves to Inter. Lightest-touch change.
-
-2. **Italic accent treatment**: remove entirely / keep but use a cleaner italic from the chosen family / replace with a colored full-stop only.
-
-3. **Mono usage**: keep mono on eyebrows + numerals + CTAs / restrict to numerals only / drop mono entirely and use uppercase tracked sans.
+1. Open each generated PNG, verify: cream ground, only navy + orange inks, visible grain, no stray colors, no embedded text, correct aspect ratio, subject readable at card size (~280px wide).
+2. Drop the set into the live landing route at 1440 and 390 widths and screenshot to confirm cohesion across hero, RMBC strip, and trades grid.
+3. If any image drifts (extra colors, photoreal slickness, text artifacts), regenerate that single image with a tightened prompt — do not touch the rest.
 
 ## Out of scope
 
-- No copy rewrites beyond removing the italic accent.
-- No layout restructure of sections — only the type, the use-case duplication, and the motion guards.
-- No changes to dashboard chrome, Pricing, ForAiAgents, Auth — those wait for the planned full reskin, which proceeds *after* this QA closes.
-
-## Sequence
-
-1. Fix the Lenis blank-screen blocker + add smoke test → verify preview renders.
-2. Ask the 3 decisions above.
-3. Apply the typography swap + the small QA items in section 3.
-4. Re-run tests, screenshot the page at 1440 / 768 / 375, hand back for sign-off.
-5. Then resume the broader reskin of Pricing / ForAiAgents / Auth / dashboard chrome.
+- No layout, typography, or copy changes.
+- No new image slots — only replacing the 11 files already imported.
+- No dashboard / Pricing / Auth imagery (those come in the next reskin pass).
