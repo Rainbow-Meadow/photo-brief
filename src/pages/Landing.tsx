@@ -163,74 +163,74 @@ const workflowSteps = [
   {
     icon: Scan,
     eyebrow: "Scan",
-    title: "We scan your website",
-    body: "PhotoBrief identifies your service pages, quote buttons, contact forms, and intake gaps — so we know where guided visual intake fits.",
+    title: "We read your site like your best estimator would.",
+    body: "Before we ask your customer a single question, we crawl your services, your quote buttons, your forms, and your CTAs. We learn what jobs you actually take, what you charge for, and where the cracks in your current intake are leaking money. No upload. No spreadsheet. We just read.",
   },
   {
     icon: Route,
     eyebrow: "Map",
-    title: "We map the right intake paths",
-    body: "Your services are compressed into 2–3 simple customer choices, each with the right photo prompts attached.",
+    title: "We compress 27 service pages into 3 customer choices.",
+    body: "Most websites give visitors 14 ways to ask for help. We pick the 2–3 paths that actually drive revenue and attach the exact photo prompts each one needs — the panel access shot, the driveway angle, the nameplate close-up. The customer never sees the complexity. They just see the next button.",
   },
   {
     icon: Camera,
     eyebrow: "Capture",
-    title: "Customers submit the right photos and context",
-    body: "They open a guided flow on their phone or desktop — one clear prompt at a time — and attach notes, details, and photos before submitting.",
+    title: "Your customer takes the right photo, not just any photo.",
+    body: "One prompt at a time. On their phone, no app, no signup. They photograph what your team actually needs to quote — wide shot, scale shot, problem shot, access shot — guided in the order that mirrors how you walk a job. They can't skip. They can't send a blurry blob and call it a day.",
   },
   {
     icon: FileCheck2,
     eyebrow: "Deliver",
-    title: "Your team gets an actionable lead packet",
-    body: "Photos, notes, customer context, and readiness status land together — structured and ready for quoting, dispatch, or documentation.",
+    title: "Your inbox gets a packet. Not a guessing game.",
+    body: "Every photo labeled. Every note attached to the right service line. Readiness flags up top. By the time you open it, you already know whether to quote it, schedule it, or pass — without typing a single follow-up email. The first reply you send is the price.",
   },
 ];
 
 const messySignals = [
-  "Generic contact form captures name and message only",
-  "Photos arrive later through text or email",
-  "Missing scale, angles, and context",
-  "Team follows up manually before they can act",
-  "Lower-quality leads get lost or deprioritized",
+  "Generic form: name, email, and a 200-character box marked 'tell us about your project.'",
+  "Photos arrive three days later — by text, by email, on the wrong thread.",
+  "No scale. No angle. No clue what you're actually looking at.",
+  "You ask three follow-up questions before you can even start a quote.",
+  "Half the leads die in your inbox while you're chasing the other half.",
 ];
 
 const cleanSignals = [
-  "Customer chooses the right service path",
-  "Required photos are requested in order",
-  "Notes and photos stay attached to the lead",
-  "Readiness issues are visible before review",
-  "Team receives an actionable lead packet",
+  "Customer picks the exact service in two taps — no guessing required.",
+  "Required photos requested in order — wide shot, close-up, access, scale.",
+  "Notes stay glued to the right service line, not floating in a thread.",
+  "Readiness flags surface missing info before it ever hits your team.",
+  "Your first reply is the quote — not 'hey, can you send a few photos?'",
 ];
 
 const useCases = [
   {
     icon: Leaf,
-    title: "Estimators ",
-    body: "Turn customer photos into evidence.",
+    title: "Landscapers — quote the yard from the driveway shot",
+    body: "The customer who said 'just need a small cleanup' actually has a half-acre with three dead trees. Guided lot, slope, and access photos surface the real scope before your truck rolls — so you stop quoting blind and stop losing your shirt on $200 jobs that turn into $2,000 days.",
     stamp: "Landscaping",
   },
   {
     icon: Truck,
-    title: "Junk haulers — price the pile from the driveway",
-    body: "Guided pile, appliance, and access photos turn a vague \"come haul this\" into a quotable load with the right truck and crew.",
+    title: "Junk haulers — price the pile before you leave the shop",
+    body: "Vague 'come haul this' becomes a quoted load — pile shot, appliance shot, driveway access, hazardous flags. You roll with the right truck and the right crew. No second trips. No 'oh, I forgot to mention the piano.' Every $480 driveway hauler stays a $480 driveway hauler.",
     stamp: "Junk removal",
   },
   {
     icon: Wind,
-    title: "Repair & HVAC techs — show up with the right part",
-    body: "Capture nameplate, filter, breaker, and surrounding access shots so techs roll with the right model number, refrigerant, and gear.",
+    title: "HVAC & repair — show up with the right part the first time",
+    body: "Nameplate. Filter. Breaker. Surrounding access. Captured before the dispatch ticket closes. Your tech rolls with the right capacitor, the right refrigerant, the right model number. The HVAC tech who showed up empty-handed twice last month? That tech doesn't exist anymore.",
     stamp: "HVAC & repair",
   },
   {
     icon: Wrench,
     title: "Plumbers — diagnose the leak before the truck rolls",
-    body: "Walk customers through shutoff, leak source, and supply lines so dispatch knows whether it's a 30-minute fix or a half-day repipe.",
+    body: "Shutoff location. Leak source. Supply line condition. Captured by the customer in 90 seconds. Now dispatch knows whether it's a 30-minute fitting swap or a half-day repipe — before they assign the job. You stop sending two-hour windows for jobs that need four.",
     stamp: "Plumbing",
   },
   {
     icon: Package,
     title: "Damage & return estimators — turn customer photos into evidence",
-    body: "Insurance, warranty, and e-commerce returns: collect angles, scale, and serial shots in a structured packet reviewers can act on first pass.",
+    body: "Insurance. Warranty. E-commerce returns. Angles, scale references, and serial number shots arrive in a structured packet your reviewers can adjudicate first pass. No back-and-forth. No 'please resubmit with a measuring tape.' The claim closes in one round.",
     stamp: "Estimating",
   },
 ];
@@ -246,36 +246,36 @@ const TRADES = [
 const trustPoints = [
   {
     icon: Link2,
-    title: "Secure, expiring upload links",
-    desc: "Customers never see your dashboard or internal data.",
+    title: "Your customer never sees your dashboard",
+    desc: "Secure, expiring upload links. They submit. You receive. Nothing in between.",
   },
   {
     icon: Smartphone,
-    title: "No app or account for customers",
-    desc: "Take photos on mobile or upload from desktop. No install, no signup, no friction.",
+    title: "No app. No account. No friction.",
+    desc: "Your customer opens a link, takes the photos, and submits. That's it. If their grandma can text, she can use this.",
   },
   {
     icon: Lock,
-    title: "Your data stays yours",
-    desc: "Photos and briefs are never shared or used for training.",
+    title: "Your photos never train our models",
+    desc: "Period. Your data is yours. We don't share it, sell it, or feed it to anything.",
   },
 ];
 
 const websiteIntelCards = [
   {
     icon: Scan,
-    title: "Scan your current site",
-    body: "We identify service pages, quote buttons, contact forms, CTAs, and intake gaps.",
+    title: "What we read",
+    body: "Your service pages. Your quote buttons. Your contact forms. The CTAs that work and the ones that quietly leak. We map every place a visitor tries to talk to you — and every place you're missing them.",
   },
   {
     icon: Route,
-    title: "Map 2–3 intake paths",
-    body: "We compress your services into simple customer choices and attach the right photo prompts.",
+    title: "What we map",
+    body: "Twenty-seven service pages compressed into 2–3 customer choices, each with its own photo prompt order. The decisions you've been making in your head for ten years, finally written down — and pointed at your customer.",
   },
   {
     icon: Globe2,
-    title: "Launch with a hosted link or embed",
-    body: "Use PhotoBrief beside your current form, behind a quote button, or as a replacement intake path.",
+    title: "What we ship",
+    body: "A hosted intake link or a one-line embed. Drop it on your homepage. Put it behind your quote button. Replace the form that's been costing you. You're live in seven days. Beta partners pay nothing for the build.",
   },
 ];
 
