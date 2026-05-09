@@ -111,6 +111,9 @@
   color: hsl(var(--card-foreground));
   border: 1px solid hsl(var(--border));
   padding: clamp(1.5rem, 2.5vw, 2.25rem);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   transition:
     border-color 300ms var(--ease-locomotive, cubic-bezier(.215,.61,.355,1)),
     transform 300ms var(--ease-locomotive, cubic-bezier(.215,.61,.355,1));
