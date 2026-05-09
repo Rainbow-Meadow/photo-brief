@@ -483,25 +483,23 @@ export default function LandingPage() {
           ]}
         />
 
-        <section className="pb-section">
-          <div className="pb-container">
-            <SectionIntro
-              className="mb-6 sm:mb-8"
-              eyebrow={<><Sparkles className="h-3.5 w-3.5" /> See the difference</>}
-              title="Vague website form becomes an actionable lead packet."
-              description={`Watch how a generic "tell us about your project" message turns into a structured packet with the right photos, notes, and context — ready for your team to act on.`}
-              accent={
-                <TradeAccent
-                  src={transformationIllo}
-                  alt="Hand-drawn illustration of a crumpled note transforming into a tidy clipped photo packet"
-                />
-              }
-            />
-            <Suspense fallback={<div className="min-h-[400px]" />}>
-              <InteractiveHeroBriefAssembly />
-            </Suspense>
-          </div>
-        </section>
+        <MarketingSection>
+          <SectionIntro
+            className="mb-6 sm:mb-8"
+            eyebrow={<><Sparkles className="h-3.5 w-3.5" /> See the difference</>}
+            title="Vague website form becomes an actionable lead packet."
+            description={`Watch how a generic "tell us about your project" message turns into a structured packet with the right photos, notes, and context — ready for your team to act on.`}
+            accent={
+              <TradeAccent
+                src={transformationIllo}
+                alt="Hand-drawn illustration of a crumpled note transforming into a tidy clipped photo packet"
+              />
+            }
+          />
+          <Suspense fallback={<div className="min-h-[400px]" />}>
+            <InteractiveHeroBriefAssembly />
+          </Suspense>
+        </MarketingSection>
 
         {/* ━━ 4. STICKY SECTION NAV ━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <SectionNav tone="paper" />
