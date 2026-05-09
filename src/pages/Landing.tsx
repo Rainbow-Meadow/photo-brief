@@ -1408,8 +1408,7 @@ function ComparisonSection({ mode }: { mode: "messy" | "clean" }) {
             {isClean ? <CleanPacketVisual /> : <MessyThreadVisual />}
           </div>
         </div>
-      </div>
-    </section>
+    </MarketingSection>
   );
 }
 
