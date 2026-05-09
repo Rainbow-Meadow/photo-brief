@@ -1602,8 +1602,7 @@ function WebsiteIntelligenceSection() {
             );
           })}
         </div>
-      </div>
-    </section>
+    </MarketingSection>
   );
 }
 
