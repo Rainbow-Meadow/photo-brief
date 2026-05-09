@@ -60,8 +60,8 @@ export function MarketingLayout() {
               aria-label="PhotoBrief.ai"
               className="flex items-center px-2 sm:px-3"
             >
-              <BrandMark variant="wordmark" tone={isLanding ? "dark" : "light"} size={22} eager className="sm:hidden" />
-              <BrandMark variant="wordmark" tone={isLanding ? "dark" : "light"} size={26} eager className="hidden sm:block" />
+              <BrandMark variant="wordmark" tone="light" size={22} eager className="sm:hidden" />
+              <BrandMark variant="wordmark" tone="light" size={26} eager className="hidden sm:block" />
             </NavLink>
 
             {/* Right links (desktop) */}
