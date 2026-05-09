@@ -143,19 +143,18 @@ export default function ForAiAgentsPage() {
       </MarketingSection>
 
       {/* MCP & Agent manifests */}
-      <section id="mcp" aria-labelledby="mcp-heading">
-        <div className="pb-container pb-section">
-          <div className="mx-auto max-w-2xl text-center">
-            <span className="pb-eyebrow">MCP & Agent manifests</span>
-            <h2 id="mcp-heading" className="pb-section-title mt-4 text-white">Plug PhotoBrief into your agent</h2>
-            <p className="pb-copy mt-4 text-base">PhotoBrief runs a live MCP server. Connect it from Claude Code, Cursor, Windsurf, or any MCP-capable tool.</p>
-          </div>
+      <MarketingSection id="mcp" aria-labelledby="mcp-heading">
+        <div className="mx-auto max-w-2xl text-center">
+          <span className="pb-eyebrow">MCP & Agent manifests</span>
+          <h2 id="mcp-heading" className="pb-section-title mt-4 text-white">Plug PhotoBrief into your agent</h2>
+          <p className="pb-copy mt-4 text-base">PhotoBrief runs a live MCP server. Connect it from Claude Code, Cursor, Windsurf, or any MCP-capable tool.</p>
+        </div>
 
-          <div className="mt-10 overflow-hidden rounded-2xl border border-[hsl(var(--pb-line))] bg-[hsl(var(--pb-ink))]">
-            <div className="border-b border-white/10 bg-white/[0.03] px-5 py-3">
-              <p className="text-xs font-medium text-white/70">MCP endpoint — Streamable HTTP</p>
-            </div>
-            <pre className="overflow-x-auto p-5 text-xs leading-relaxed text-white/80"><code>{`# Endpoint
+        <div className="mt-10 overflow-hidden rounded-2xl border border-[hsl(var(--pb-line))] bg-[hsl(var(--pb-ink))]">
+          <div className="border-b border-white/10 bg-white/[0.03] px-5 py-3">
+            <p className="text-xs font-medium text-white/70">MCP endpoint — Streamable HTTP</p>
+          </div>
+          <pre className="overflow-x-auto p-5 text-xs leading-relaxed text-white/80"><code>{`# Endpoint
 https://mcp.photobrief.ai/mcp
 
 # Tools available
@@ -171,22 +170,74 @@ read_faq         — Canonical FAQ answers (no auth)
     }
   }
 }`}</code></pre>
-          </div>
-
-          <div className="mt-6 grid gap-4 sm:grid-cols-2">
-            <article className="pb-card rounded-2xl p-5">
-              <h3 className="text-sm font-semibold text-white">agent.json</h3>
-              <p className="mt-2 text-sm text-[hsl(var(--pb-muted))]">Capabilities, auth, and discovery URLs in one file.</p>
-              <pre className="mt-3 overflow-x-auto rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs text-white/70">{`GET https://photobrief.ai/.well-known/agent.json`}</pre>
-            </article>
-            <article className="pb-card rounded-2xl p-5">
-              <h3 className="text-sm font-semibold text-white">mcp.json</h3>
-              <p className="mt-2 text-sm text-[hsl(var(--pb-muted))]">Live MCP server descriptor with tools, transport, and auth details.</p>
-              <pre className="mt-3 overflow-x-auto rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs text-white/70">{`GET https://photobrief.ai/mcp.json`}</pre>
-            </article>
-          </div>
         </div>
-      </section>
+
+        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+          <article className="pb-card rounded-2xl p-5">
+            <h3 className="text-sm font-semibold text-white">agent.json</h3>
+            <p className="mt-2 text-sm text-[hsl(var(--pb-muted))]">Capabilities, auth, and discovery URLs in one file.</p>
+            <pre className="mt-3 overflow-x-auto rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs text-white/70">{`GET https://photobrief.ai/.well-known/agent.json`}</pre>
+          </article>
+          <article className="pb-card rounded-2xl p-5">
+            <h3 className="text-sm font-semibold text-white">mcp.json</h3>
+            <p className="mt-2 text-sm text-[hsl(var(--pb-muted))]">Live MCP server descriptor with tools, transport, and auth details.</p>
+            <pre className="mt-3 overflow-x-auto rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs text-white/70">{`GET https://photobrief.ai/mcp.json`}</pre>
+          </article>
+        </div>
+      </MarketingSection>
+
+      {/* x402 Agentic Payments */}
+      <MarketingSection id="x402" aria-labelledby="x402-heading">
+        <div className="mx-auto max-w-2xl text-center">
+          <span className="pb-eyebrow"><CreditCard className="h-3.5 w-3.5" /> Agentic payments</span>
+          <h2 id="x402-heading" className="pb-section-title mt-4 text-white">Pay per call with x402</h2>
+          <p className="pb-copy mt-4 text-base">
+            AI agents without a <code className="rounded border border-white/10 bg-white/[0.05] px-1.5 py-0.5 text-xs text-[hsl(var(--pb-lavender))]">pb_</code> API key can pay per-call using the x402 protocol. No billing setup, no subscription — just machine-to-machine payments.
+          </p>
+        </div>
+
+        <div className="mt-10 grid gap-4 sm:grid-cols-3">
+          <article className="pb-card rounded-2xl p-5">
+            <Zap className="h-5 w-5 text-[hsl(var(--pb-lavender))]" />
+            <h3 className="mt-3 text-sm font-semibold text-white">Per-call pricing</h3>
+            <p className="mt-2 text-sm text-[hsl(var(--pb-muted))]"><code className="text-[hsl(var(--pb-lavender))]">create_request</code> = $0.10 USD (1 credit)</p>
+            <p className="mt-1 text-sm text-[hsl(var(--pb-muted))]"><code className="text-[hsl(var(--pb-lavender))]">lookup_pricing</code> and <code className="text-[hsl(var(--pb-lavender))]">read_faq</code> = free</p>
+          </article>
+          <article className="pb-card rounded-2xl p-5">
+            <Globe2 className="h-5 w-5 text-[hsl(var(--pb-lavender))]" />
+            <h3 className="mt-3 text-sm font-semibold text-white">Network</h3>
+            <p className="mt-2 text-sm text-[hsl(var(--pb-muted))]">Base Sepolia (testnet). Mainnet support coming soon.</p>
+          </article>
+          <article className="pb-card rounded-2xl p-5">
+            <Route className="h-5 w-5 text-[hsl(var(--pb-lavender))]" />
+            <h3 className="mt-3 text-sm font-semibold text-white">How it works</h3>
+            <p className="mt-2 text-sm text-[hsl(var(--pb-muted))]">Call without auth → get 402 + requirements → send <code className="text-[hsl(var(--pb-lavender))]">X-Payment</code> header → done.</p>
+          </article>
+        </div>
+
+        <div className="mt-6 overflow-hidden rounded-2xl border border-[hsl(var(--pb-line))] bg-[hsl(var(--pb-ink))]">
+          <div className="border-b border-white/10 bg-white/[0.03] px-5 py-3">
+            <p className="text-xs font-medium text-white/70">x402 payment flow</p>
+          </div>
+          <pre className="overflow-x-auto p-5 text-xs leading-relaxed text-white/80"><code>{`# 1. Get payment requirements
+GET https://mcp.photobrief.ai/x402/requirements?tool=create_request
+
+# 2. Pay and execute in one call
+curl -X POST https://mcp.photobrief.ai/x402/pay \\
+  -H "Content-Type: application/json" \\
+  -H "X-Payment: eyJ0cmFuc2FjdGlvbiI6IjB4Li4uIiwicGF5ZXIiOiIweC4uLiJ9" \\
+  -d '{"recipient_name":"Jane","recipient_email":"jane@example.com"}'
+
+# Or via MCP: pass x_payment parameter instead of api_key
+{
+  "mcpServers": {
+    "photobrief": {
+      "url": "https://mcp.photobrief.ai/mcp"
+    }
+  }
+}`}</code></pre>
+        </div>
+      </MarketingSection>
 
       {/* x402 Agentic Payments */}
       <section id="x402" aria-labelledby="x402-heading">
