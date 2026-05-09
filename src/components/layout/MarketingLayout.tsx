@@ -86,7 +86,7 @@ export function MarketingLayout() {
             aria-label="PhotoBrief.ai home"
             className="absolute inset-y-0 left-3 flex items-center sm:left-6"
           >
-            <BrandMark variant="mark" tone="light" size={36} eager />
+            <BrandMark variant="mark" tone={isLanding ? "dark" : "light"} size={36} eager />
           </NavLink>
 
           {/* CTAs sit outside the pill, on the far right */}
