@@ -1,10 +1,10 @@
 /// <reference types="npm:@types/react@18.3.1" />
 import * as React from 'npm:react@18.3.1'
 import {
-  Body, Button, Container, Head, Heading, Html, Link, Preview, Section, Text,
+  Body, Container, Head, Heading, Html, Preview, Section, Text,
 } from 'npm:@react-email/components@0.0.22'
 import type { TemplateEntry } from './registry.ts'
-import { BRAND, s, BrandHeader, BrandFooter } from './brand-styles.ts'
+import { s, BrandHeader, BrandFooter, RmbcBlock, CTAButton, MonoLink } from './brand-styles.ts'
 
 interface Props {
   ownerName?: string
@@ -20,7 +20,7 @@ const BusinessRequestReadyEmail = ({
   ownerName, customerFirstName, customerName, businessName,
   requestTitle, requestLink, viewUrl,
 }: Props) => {
-  const greeting = ownerName ? `Hi ${ownerName},` : 'Hi there,'
+  const greeting = ownerName ? `Hi ${ownerName}.` : 'Hi there.'
   const firstName = customerFirstName || (customerName ? customerName.split(' ')[0] : 'your customer')
   const biz = businessName || 'your business'
   const title = requestTitle || 'your request'
@@ -35,30 +35,30 @@ const BusinessRequestReadyEmail = ({
           <Container style={s.container}>
             <BrandHeader />
             <Section style={s.body}>
-              <Heading style={s.h1}>{greeting}</Heading>
-              <Text style={s.text}>
-                Your PhotoBrief link for <strong>{title}</strong> is ready. Send it
-                to {firstName} so they can capture and submit their photos — no app
-                or account needed on their end.
-              </Text>
-              <Section style={s.card}>
-                <Text style={{ ...s.text, margin: '0 0 10px', fontWeight: 600, color: BRAND.colors.primary, fontSize: '13px' }}>
-                  Recommended message
+              <RmbcBlock code="01" label="MECHANISM" first>
+                <Heading style={s.h1}>{greeting}</Heading>
+                <Text style={s.text}>
+                  Your PhotoBrief link for <strong>{title}</strong> is packaged and
+                  ready to send to {firstName}. No app or account on their end.
                 </Text>
-                <Text style={{ ...s.text, fontSize: '14px', margin: '0', fontStyle: 'italic' }}>
-                  Hi {firstName} — this is {biz}. Please add the requested photos for {title} here
-                  so we can review this faster:{'\n'}{'\n'}
-                  {link}{'\n'}{'\n'}
-                  It takes about 2 minutes.
+                <Text style={s.meta}>RECIPIENT · {firstName.toUpperCase()}</Text>
+                <Text style={s.meta}>LINK · </Text>
+                <MonoLink href={link} />
+              </RmbcBlock>
+              <RmbcBlock code="02" label="BRIEF">
+                <Text style={s.text}>
+                  Suggested message to {firstName}:
                 </Text>
-              </Section>
-              <Text style={s.textSmall}>
-                PhotoBrief link:{' '}
-                <Link href={link} style={s.link}>{link}</Link>
-              </Text>
-              <Section style={s.ctaWrap}>
-                <Button href={cta} style={s.button}>View in dashboard</Button>
-              </Section>
+                <Section style={s.card}>
+                  <Text style={{ ...s.text, fontSize: '14px', margin: 0, fontStyle: 'italic' }}>
+                    Hi {firstName} — this is {biz}. Please add the requested photos
+                    for {title} here so we can move faster:{'\n'}{'\n'}
+                    {link}{'\n'}{'\n'}
+                    Takes about 2 minutes.
+                  </Text>
+                </Section>
+                <CTAButton href={cta}>Open in dashboard</CTAButton>
+              </RmbcBlock>
             </Section>
             <BrandFooter />
           </Container>

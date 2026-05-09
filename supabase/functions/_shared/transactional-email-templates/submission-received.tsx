@@ -1,10 +1,10 @@
 /// <reference types="npm:@types/react@18.3.1" />
 import * as React from 'npm:react@18.3.1'
 import {
-  Body, Button, Container, Head, Heading, Html, Preview, Section, Text,
+  Body, Container, Head, Heading, Html, Preview, Section, Text,
 } from 'npm:@react-email/components@0.0.22'
 import type { TemplateEntry } from './registry.ts'
-import { BRAND, s, BrandHeader, BrandFooter } from './brand-styles.ts'
+import { s, BrandHeader, BrandFooter, RmbcBlock, CTAButton } from './brand-styles.ts'
 
 interface Props {
   ownerName?: string
@@ -19,7 +19,7 @@ interface Props {
 const SubmissionReceivedEmail = ({
   ownerName, recipientName, guideName, reviewUrl, photoCount, requestTitle, submittedAt,
 }: Props) => {
-  const greeting = ownerName ? `Hi ${ownerName},` : 'Hi there,'
+  const greeting = ownerName ? `Hi ${ownerName}.` : 'Hi there.'
   const who = recipientName || 'A customer'
   const title = requestTitle || guideName
   const cta = reviewUrl || 'https://photobrief.ai/dashboard'
@@ -32,35 +32,30 @@ const SubmissionReceivedEmail = ({
           <Container style={s.container}>
             <BrandHeader />
             <Section style={s.body}>
-              <Text style={s.eyebrow}>NEW SUBMISSION</Text>
-              <Heading style={s.h1}>{greeting}</Heading>
-              <Section style={s.card}>
-                <Text style={{ ...s.text, margin: '0 0 8px', fontWeight: 600, color: BRAND.colors.primary }}>
-                  {who}
+              <RmbcBlock code="01" label="RESEARCH" first>
+                <Heading style={s.h1}>{greeting}</Heading>
+                <Text style={s.text}>
+                  A new PhotoBrief submission just landed in your dashboard.
                 </Text>
-                {title ? (
-                  <Text style={{ ...s.textSmall, margin: '0 0 6px' }}>
-                    Request: {title}
-                  </Text>
-                ) : null}
+                <Text style={s.meta}>FROM · {who}</Text>
+                {title ? <Text style={s.meta}>REQUEST · {title}</Text> : null}
                 {typeof photoCount === 'number' ? (
-                  <Text style={{ ...s.textSmall, margin: '0 0 6px' }}>
-                    Photos: {photoCount}
-                  </Text>
+                  <Text style={s.meta}>PHOTOS · {photoCount}</Text>
                 ) : null}
-                {submittedAt ? (
-                  <Text style={{ ...s.textSmall, margin: '0' }}>
-                    Submitted: {submittedAt}
-                  </Text>
-                ) : null}
-              </Section>
-              <Text style={s.text}>
-                Review the submission, check completeness, and download or forward
-                the photos from your dashboard.
-              </Text>
-              <Section style={s.ctaWrap}>
-                <Button href={cta} style={s.button}>Review brief</Button>
-              </Section>
+                {submittedAt ? <Text style={s.meta}>SUBMITTED · {submittedAt}</Text> : null}
+              </RmbcBlock>
+              <RmbcBlock code="02" label="MECHANISM">
+                <Text style={s.text}>
+                  Each photo has been auto-checked for completeness against the
+                  guide. Anything flagged is marked for review.
+                </Text>
+              </RmbcBlock>
+              <RmbcBlock code="03" label="BRIEF">
+                <Text style={s.text}>
+                  Open the brief to inspect, download, or forward the photos.
+                </Text>
+                <CTAButton href={cta}>Review brief</CTAButton>
+              </RmbcBlock>
             </Section>
             <BrandFooter />
           </Container>

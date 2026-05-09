@@ -1,10 +1,10 @@
 /// <reference types="npm:@types/react@18.3.1" />
 import * as React from 'npm:react@18.3.1'
 import {
-  Body, Container, Head, Heading, Hr, Html, Preview, Section, Text,
+  Body, Container, Head, Heading, Html, Preview, Section, Text,
 } from 'npm:@react-email/components@0.0.22'
 import type { TemplateEntry } from './registry.ts'
-import { BRAND, s, BrandHeader, BrandFooter } from './brand-styles.ts'
+import { BRAND, s, BrandHeader, BrandFooter, RmbcBlock } from './brand-styles.ts'
 
 interface Props {
   name?: string
@@ -42,29 +42,25 @@ const WaitlistAdminEmail = (props: Props) => {
           <Container style={s.container}>
             <BrandHeader />
             <Section style={s.body}>
-              <Text style={s.eyebrow}>WAITLIST · NEW SIGNUP</Text>
-              <Heading style={s.h1}>{headline}</Heading>
-              <Row label="Name" value={name} />
-              <Row label="Email" value={email} />
-              <Row label="Business" value={business_name} />
-              <Row label="Business type" value={business_type} />
-              <Row label="Website" value={website} />
-              <Row label="Est. monthly requests" value={estimated_monthly_requests} />
-              <Row label="Source" value={source} />
-              <Row label="Signed up" value={created_at} />
+              <RmbcBlock code="01" label="RESEARCH · NEW SIGNUP" first>
+                <Heading style={s.h1}>{headline}</Heading>
+                <Row label="NAME" value={name} />
+                <Row label="EMAIL" value={email} />
+                <Row label="BUSINESS TYPE" value={business_type} />
+                <Row label="WEBSITE" value={website} />
+                <Row label="EST. MONTHLY REQUESTS" value={estimated_monthly_requests} />
+                <Row label="SOURCE" value={source} />
+                <Row label="SIGNED UP" value={created_at} />
+              </RmbcBlock>
               {use_case ? (
-                <>
-                  <Hr style={s.hr} />
-                  <Text style={blockLabel}>Use case</Text>
+                <RmbcBlock code="02" label="USE CASE">
                   <Text style={blockText}>{use_case}</Text>
-                </>
+                </RmbcBlock>
               ) : null}
               {notes ? (
-                <>
-                  <Hr style={s.hr} />
-                  <Text style={blockLabel}>Notes</Text>
+                <RmbcBlock code="03" label="NOTES">
                   <Text style={blockText}>{notes}</Text>
-                </>
+                </RmbcBlock>
               ) : null}
             </Section>
             <BrandFooter />
@@ -96,8 +92,7 @@ export const template = {
   },
 } satisfies TemplateEntry
 
-const rowStyle = { fontSize: '14px', color: BRAND.colors.primary, margin: '0 0 8px', display: 'block' as const }
-const labelStyle = { display: 'inline-block', minWidth: '170px', color: BRAND.colors.muted, fontWeight: 600, fontSize: '12px', textTransform: 'uppercase' as const, letterSpacing: '0.05em' }
-const valueStyle = { color: BRAND.colors.primary, fontSize: '14px' }
-const blockLabel = { fontSize: '12px', color: BRAND.colors.muted, fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '0.05em', margin: '0 0 6px' }
-const blockText = { fontSize: '14px', color: BRAND.colors.primary, lineHeight: '1.55', whiteSpace: 'pre-wrap' as const, margin: '0 0 8px' }
+const rowStyle = { fontSize: '13px', color: BRAND.colors.ink, margin: '0 0 6px', display: 'block' as const }
+const labelStyle = { display: 'inline-block', minWidth: '180px', color: BRAND.colors.muted, fontWeight: 700, fontSize: '11px', textTransform: 'uppercase' as const, letterSpacing: '0.14em', fontFamily: BRAND.monoFamily }
+const valueStyle = { color: BRAND.colors.ink, fontSize: '14px' }
+const blockText = { fontSize: '14px', color: BRAND.colors.ink, lineHeight: '1.55', whiteSpace: 'pre-wrap' as const, margin: '0 0 8px' }
