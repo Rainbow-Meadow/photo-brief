@@ -40,7 +40,6 @@ export function RevealText({ children, delay = 0, as = "span", className, style 
           delay,
           ease: [0.215, 0.61, 0.355, 1],
         }}
-        style2={undefined}
       >
         {children}
       </Tag>
