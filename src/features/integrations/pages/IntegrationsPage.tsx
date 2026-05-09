@@ -103,14 +103,14 @@ function PrimaryIntegrationAction({ action }: { action: IntegrationActionDefinit
 
   if (action.kind === "copy") {
     return (
-      <Button size="sm" variant="outline" className="h-9 rounded-full bg-background/70 px-4" onClick={() => copyValue(action)}>
+      <Button size="sm" variant="outline" className="h-9 rounded-full bg-background px-4" onClick={() => copyValue(action)}>
         <Clipboard className="mr-2 h-4 w-4" /> {action.label}
       </Button>
     );
   }
 
   return (
-    <Button size="sm" variant="outline" className="h-9 rounded-full bg-background/70 px-4" disabled>
+    <Button size="sm" variant="outline" className="h-9 rounded-full bg-background px-4" disabled>
       {action.kind === "oauth_placeholder" ? <ExternalLink className="mr-2 h-4 w-4" /> : <Clipboard className="mr-2 h-4 w-4" />}
       {action.label}
     </Button>
@@ -281,7 +281,7 @@ function ConnectorRow({
       {/* Action buttons — always visible below header on mobile, inline on desktop */}
       <div className="flex flex-wrap gap-2 border-t px-3 pb-3 pt-2">
         {connection && canProvisionWebhook ? (
-          <Button size="sm" variant="outline" className="h-9 rounded-full bg-background/70 px-4" onClick={copyWebhookUrl}>
+          <Button size="sm" variant="outline" className="h-9 rounded-full bg-background px-4" onClick={copyWebhookUrl}>
             <Clipboard className="mr-2 h-4 w-4" /> Copy webhook
           </Button>
         ) : null}
@@ -296,7 +296,7 @@ function ConnectorRow({
           </Button>
         ) : null}
         {showOAuthButton && connection?.status === "needs_attention" ? (
-          <Button size="sm" variant="outline" className="h-9 rounded-full bg-background/70 px-4" onClick={startOAuth} disabled={busy || !planAllowed}>
+          <Button size="sm" variant="outline" className="h-9 rounded-full bg-background px-4" onClick={startOAuth} disabled={busy || !planAllowed}>
             Reconnect
           </Button>
         ) : null}
@@ -340,26 +340,26 @@ function ConnectorContractPanel() {
             Each provider maps into the same PhotoBrief primitives: customers, requests, messages, submissions, briefs, and activity logs.
           </p>
         </div>
-        <Button asChild variant="outline" className="rounded-full bg-background/70">
+        <Button asChild variant="outline" className="rounded-full bg-background">
           <NavLink to="/intake">Website Intake <ArrowRight className="ml-2 h-4 w-4" /></NavLink>
         </Button>
       </div>
       <div className="mt-4 grid gap-3 lg:grid-cols-2">
-        <div className="rounded-2xl border bg-muted/30 p-3">
+        <div className="rounded-[0.25rem] border bg-muted/30 p-3">
           <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Triggers</p>
           <div className="mt-2 flex flex-wrap gap-1.5">
             {integrationContract.triggers.slice(0, 6).map((trigger) => (
-              <Badge key={trigger} variant="outline" className="rounded-full bg-background/70 font-mono text-[10px]">
+              <Badge key={trigger} variant="outline" className="rounded-full bg-background font-mono text-[10px]">
                 {trigger}
               </Badge>
             ))}
           </div>
         </div>
-        <div className="rounded-2xl border bg-muted/30 p-3">
+        <div className="rounded-[0.25rem] border bg-muted/30 p-3">
           <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Actions</p>
           <div className="mt-2 flex flex-wrap gap-1.5">
             {integrationContract.actions.slice(0, 6).map((action) => (
-              <Badge key={action} variant="outline" className="rounded-full bg-background/70 font-mono text-[10px]">
+              <Badge key={action} variant="outline" className="rounded-full bg-background font-mono text-[10px]">
                 {action}
               </Badge>
             ))}
@@ -430,7 +430,7 @@ export default function IntegrationsPage() {
         <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
         <div className="relative flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
           <div>
-            <span className="inline-flex items-center gap-2 rounded-full border bg-background/70 px-3 py-1 text-xs font-semibold text-primary">
+            <span className="inline-flex items-center gap-2 rounded-full border bg-background px-3 py-1 text-xs font-semibold text-primary">
               <Plug className="h-3.5 w-3.5" /> Connector repository
             </span>
             <h1 className="mt-4 text-3xl font-semibold tracking-tight text-foreground sm:text-5xl">Connectors</h1>
@@ -439,11 +439,11 @@ export default function IntegrationsPage() {
             </p>
           </div>
           <div className="grid grid-cols-2 gap-2 text-sm sm:min-w-60">
-            <div className="rounded-2xl border bg-background/70 p-3">
+            <div className="rounded-[0.25rem] border bg-background p-3">
               <p className="text-2xl font-semibold text-foreground">{connectedCount}</p>
               <p className="text-xs text-muted-foreground">Connected</p>
             </div>
-            <div className="rounded-2xl border bg-background/70 p-3">
+            <div className="rounded-[0.25rem] border bg-background p-3">
               <p className="text-2xl font-semibold text-foreground">{integrationDefinitions.length}</p>
               <p className="text-xs text-muted-foreground">Available</p>
             </div>
@@ -459,7 +459,7 @@ export default function IntegrationsPage() {
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Search connectors"
-              className="h-12 w-full rounded-2xl border bg-card px-11 text-base outline-none transition placeholder:text-muted-foreground/80 focus:border-primary focus:ring-4 focus:ring-primary/10"
+              className="h-12 w-full rounded-[0.25rem] border bg-card px-11 text-base outline-none transition placeholder:text-muted-foreground/80 focus:border-primary focus:ring-4 focus:ring-primary/10"
             />
             {query ? (
               <button
@@ -501,7 +501,7 @@ export default function IntegrationsPage() {
       </section>
 
       {connectionLoadError ? (
-        <section className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-800 dark:text-amber-200">
+        <section className="rounded-[0.25rem] border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-800 dark:text-amber-200">
           {connectionLoadError}
         </section>
       ) : null}
@@ -538,7 +538,7 @@ export default function IntegrationsPage() {
           })}
 
         {visibleIntegrations.length === 0 ? (
-          <div className="rounded-[1.5rem] border bg-card/80 p-8 text-center">
+          <div className="rounded-[0.25rem] border bg-card p-8 text-center">
             <p className="text-lg font-semibold text-foreground">No connectors found</p>
             <p className="mt-2 text-sm text-muted-foreground">Try searching for "SMS," "website," "email," "CRM," or "automation."</p>
           </div>

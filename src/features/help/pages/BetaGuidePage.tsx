@@ -134,13 +134,14 @@ export default function BetaGuidePage() {
           { name: "Help", path: "/help" },
         ]}
       />
-      <header className="relative isolate overflow-hidden rounded-[2rem] border border-border/70 bg-card/85 p-6 shadow-[0_30px_90px_-55px_hsl(222_47%_11%/0.55)] backdrop-blur sm:p-10">
-        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-56 bg-ambient-sky opacity-70" />
+      <header className="relative border border-border bg-card p-6 sm:p-10">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-3">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.08] bg-white/[0.04] px-3 py-1 text-xs font-medium text-muted-foreground">
-              <Rocket className="h-3.5 w-3.5 text-primary" /> Simple setup guide
-            </span>
+            <p className="inline-flex items-baseline gap-2 font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+              <span className="inline-block h-px w-8 -translate-y-[0.25em] bg-[hsl(var(--accent-kinetic))]" />
+              <span className="text-[hsl(var(--accent-kinetic))]">[ HG ]</span>
+              <span className="inline-flex items-center gap-1.5"><Rocket className="h-3 w-3" /> Simple setup guide</span>
+            </p>
             <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
               Set up PhotoBrief without overthinking it.
             </h1>
@@ -154,7 +155,7 @@ export default function BetaGuidePage() {
                 Start here <ArrowRight className="ml-1 h-4 w-4" />
               </a>
             </Button>
-            <Button asChild size="sm" variant="outline" className="rounded-full bg-background/70">
+            <Button asChild size="sm" variant="outline" className="rounded-full bg-background">
               <a href="#website-tools" onClick={() => handleTabChange("tools")}>
                 Website tools
               </a>
@@ -172,7 +173,7 @@ export default function BetaGuidePage() {
 
         <div className="min-w-0">
           <Tabs value={tab} onValueChange={handleTabChange} className="space-y-6">
-            <TabsList className="flex w-full flex-wrap gap-1 rounded-2xl bg-muted/60 p-1">
+            <TabsList className="flex w-full flex-wrap gap-1 rounded-[0.25rem] bg-muted/60 p-1">
               <TabsTrigger value="quick" className="gap-1.5 rounded-xl"><Rocket className="h-3.5 w-3.5" /> Start</TabsTrigger>
               <TabsTrigger value="business" className="gap-1.5 rounded-xl"><Building2 className="h-3.5 w-3.5" /> Setup</TabsTrigger>
               <TabsTrigger value="intake" className="gap-1.5 rounded-xl"><Globe2 className="h-3.5 w-3.5" /> Intake</TabsTrigger>
@@ -220,7 +221,7 @@ export default function BetaGuidePage() {
               <SectionIntro icon={<HelpCircle className="h-4 w-4" />} title="FAQ" body="Quick answers for beta access, setup, intake, badge embeds, and customer capture." />
               <div className="space-y-2">
                 <h3 className="text-sm font-semibold text-foreground">For businesses</h3>
-                <Accordion type="single" collapsible className="rounded-2xl border bg-card">
+                <Accordion type="single" collapsible className="rounded-[0.25rem] border bg-card">
                   {businessFaqs.map((f) => (
                     <AccordionItem key={f.id} value={f.id} className="px-4">
                       <AccordionTrigger className="text-left text-sm font-medium">{f.q}</AccordionTrigger>
@@ -231,7 +232,7 @@ export default function BetaGuidePage() {
               </div>
               <div className="space-y-2">
                 <h3 className="text-sm font-semibold text-foreground">For customers</h3>
-                <Accordion type="single" collapsible className="rounded-2xl border bg-card">
+                <Accordion type="single" collapsible className="rounded-[0.25rem] border bg-card">
                   {recipientFaqs.map((f) => (
                     <AccordionItem key={f.id} value={f.id} className="px-4">
                       <AccordionTrigger className="text-left text-sm font-medium">{f.q}</AccordionTrigger>
@@ -243,7 +244,7 @@ export default function BetaGuidePage() {
             </TabsContent>
           </Tabs>
 
-          <div className="mt-10 rounded-2xl border bg-card p-5 text-sm sm:p-6">
+          <div className="mt-10 rounded-[0.25rem] border bg-card p-5 text-sm sm:p-6">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-2 text-foreground">
                 <BookOpen className="h-4 w-4 text-primary" />
@@ -262,7 +263,7 @@ export default function BetaGuidePage() {
 
 function SectionIntro({ icon, title, body }: { icon: ReactNode; title: string; body: string }) {
   return (
-    <div className="space-y-1 rounded-2xl border bg-card/80 p-4 shadow-sm">
+    <div className="space-y-1 rounded-[0.25rem] border bg-card p-4 shadow-sm">
       <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">{icon} {title}</span>
       <p className="text-sm leading-6 text-muted-foreground">{body}</p>
     </div>
@@ -271,7 +272,7 @@ function SectionIntro({ icon, title, body }: { icon: ReactNode; title: string; b
 
 function WebsiteToolCard({ guide }: { guide: WebsiteToolGuide }) {
   return (
-    <section className="overflow-hidden rounded-2xl border bg-card shadow-sm">
+    <section className="overflow-hidden rounded-[0.25rem] border bg-card shadow-sm">
       <div className="grid gap-4 p-5 sm:p-6 lg:grid-cols-[0.82fr_1.18fr]">
         <div className="space-y-4">
           <div>
@@ -282,7 +283,7 @@ function WebsiteToolCard({ guide }: { guide: WebsiteToolGuide }) {
             <h3 className="mt-3 text-lg font-semibold leading-tight text-foreground sm:text-xl">{guide.recommendedAction}</h3>
             <p className="mt-2 text-sm leading-6 text-muted-foreground">{guide.bestFor}</p>
           </div>
-          <div className="rounded-2xl border bg-background/70 p-4">
+          <div className="rounded-[0.25rem] border bg-background p-4">
             <div className="flex items-center gap-2 text-sm font-semibold text-foreground"><Link2 className="h-4 w-4 text-primary" /> Simple setup</div>
             <p className="mt-2 text-sm leading-6 text-muted-foreground">Use the branded PhotoBrief.ai badge when possible. Fall back to the hosted link when your website builder only supports button links.</p>
           </div>
@@ -291,14 +292,14 @@ function WebsiteToolCard({ guide }: { guide: WebsiteToolGuide }) {
         <div className="space-y-4">
           <ol className="space-y-2">
             {guide.simplestSteps.map((step, index) => (
-              <li key={step} className="flex gap-3 rounded-2xl bg-muted/40 p-3 text-sm leading-6 text-muted-foreground">
+              <li key={step} className="flex gap-3 rounded-[0.25rem] bg-muted/40 p-3 text-sm leading-6 text-muted-foreground">
                 <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">{index + 1}</span>
                 <span>{step}</span>
               </li>
             ))}
           </ol>
           {guide.advancedSteps?.length ? (
-            <Accordion type="single" collapsible className="rounded-2xl border bg-background/60 px-4">
+            <Accordion type="single" collapsible className="rounded-[0.25rem] border bg-background/60 px-4">
               <AccordionItem value={`${guide.id}-advanced`} className="border-0">
                 <AccordionTrigger className="gap-2 text-left text-sm font-semibold text-foreground"><span className="inline-flex items-center gap-2"><PlugZap className="h-4 w-4 text-primary" /> {guide.advancedTitle ?? "Advanced option"}</span></AccordionTrigger>
                 <AccordionContent className="space-y-3 pb-4">

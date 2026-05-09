@@ -52,7 +52,7 @@ export function BriefHeader({
     <section className="surface-card-elevated relative isolate overflow-hidden p-5 sm:p-7">
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-48 bg-ambient-sky opacity-60"
+        className="hidden"
       />
 
       <div className="grid gap-6 lg:grid-cols-[auto_1fr_auto] lg:items-start">
@@ -95,7 +95,7 @@ export function BriefHeader({
           </div>
 
           {/* AI summary */}
-          <div className="glass rounded-2xl px-4 py-3">
+          <div className="glass rounded-[0.25rem] px-4 py-3">
             <p className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-primary">
               <Sparkles className="h-3 w-3" /> AI summary
             </p>
@@ -133,7 +133,7 @@ export function BriefHeader({
 
           {/* Suggested next action — primary CTA */}
           {submission.suggestedNextAction ? (
-            <div className="rounded-2xl border border-primary/30 bg-primary/5 p-3.5">
+            <div className="rounded-[0.25rem] border border-primary/30 bg-primary/5 p-3.5">
               <p className="text-[11px] font-semibold uppercase tracking-wide text-primary">
                 Suggested next action
               </p>

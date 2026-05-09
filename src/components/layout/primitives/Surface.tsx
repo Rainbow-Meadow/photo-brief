@@ -13,9 +13,9 @@ const variantClasses: Record<SurfaceVariant, string> = {
 };
 
 const radiusClasses: Record<SurfaceRadius, string> = {
-  default: "rounded-2xl",
-  lg: "rounded-3xl",
-  pill: "rounded-full",
+  default: "rounded-[0.25rem]",
+  lg: "rounded-[0.25rem]",
+  pill: "rounded-[0.25rem]",
 };
 
 const paddingClasses: Record<SurfacePadding, string> = {

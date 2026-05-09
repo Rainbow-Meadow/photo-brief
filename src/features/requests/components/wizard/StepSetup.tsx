@@ -60,7 +60,7 @@ export function StepSetup({
             {draft && (
               <Button
                 size="lg"
-                className="h-14 w-full rounded-2xl text-base shadow-glow"
+                className="h-14 w-full rounded-[0.25rem] text-base"
                 onClick={onNext}
               >
                 Continue with this draft <ArrowRight className="ml-2 h-5 w-5" />

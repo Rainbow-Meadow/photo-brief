@@ -116,7 +116,7 @@ export function AppSidebar() {
                           <>
                             <span className="min-w-0 flex-1">{item.title}</span>
                             {locked ? (
-                              <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary">
+                              <span className="border border-[hsl(var(--accent-kinetic))] px-1.5 py-px font-mono text-[0.6rem] font-semibold uppercase tracking-[0.18em] text-[hsl(var(--accent-kinetic))]">
                                 Pro
                               </span>
                             ) : null}

@@ -9,10 +9,10 @@ interface Props {
 
 export function StarterRequestCard(_props: Props) {
   return (
-    <section className="relative isolate overflow-hidden rounded-[2rem] border border-border/70 bg-card/75 p-6 shadow-[0_30px_80px_-45px_hsl(222_47%_11%/0.45)] backdrop-blur sm:p-10">
+    <section className="relative isolate overflow-hidden rounded-[0.25rem] border border-border/70 bg-card/75 p-6 shadow-[0_30px_80px_-45px_hsl(222_47%_11%/0.45)] backdrop-blur sm:p-10">
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-72 bg-ambient-sky opacity-80"
+        className="hidden"
       />
       <div
         aria-hidden
@@ -20,10 +20,10 @@ export function StarterRequestCard(_props: Props) {
       />
       <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
         <div>
-          <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-background/80 shadow-sm ring-1 ring-border/70">
+          <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-[0.25rem] bg-background shadow-sm ring-1 ring-border/70">
             <BrandMark variant="mark" tone="color" size={34} />
           </div>
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-background/70 px-3 py-1 text-xs font-medium text-muted-foreground shadow-sm">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-background px-3 py-1 text-xs font-medium text-muted-foreground shadow-sm">
             <Sparkles className="h-3 w-3 text-primary" /> Get started
           </span>
 
@@ -48,7 +48,7 @@ export function StarterRequestCard(_props: Props) {
           </div>
         </div>
 
-        <div className="rounded-[1.5rem] border border-border/70 bg-background/70 p-4 shadow-sm backdrop-blur sm:p-5">
+        <div className="rounded-[0.25rem] border border-border/70 bg-background p-4 shadow-sm backdrop-blur sm:p-5">
           <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">
             How it works
           </p>
@@ -65,7 +65,7 @@ export function StarterRequestCard(_props: Props) {
 
 function GuidelessStep({ icon: Icon, title, copy }: { icon: typeof Camera; title: string; copy: string }) {
   return (
-    <div className="flex gap-3 rounded-2xl bg-muted/45 p-3">
+    <div className="flex gap-3 rounded-[0.25rem] bg-muted/45 p-3">
       <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-background text-primary shadow-sm ring-1 ring-border/70">
         <Icon className="h-4 w-4" />
       </div>

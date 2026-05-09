@@ -105,11 +105,11 @@ export function ManualSmsShareCard({ request, businessName, link, onLogged }: Ma
   }
 
   return (
-    <section className="relative isolate overflow-hidden rounded-[2rem] border border-primary/20 bg-gradient-to-br from-card via-card to-primary/5 p-5 shadow-[0_24px_70px_-50px_hsl(var(--primary)/0.55)] sm:p-6">
+    <section className="relative isolate overflow-hidden rounded-[0.25rem] border border-primary/20 bg-gradient-to-br from-card via-card to-primary/5 p-5 shadow-[0_24px_70px_-50px_hsl(var(--primary)/0.55)] sm:p-6">
       <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 -z-10 h-56 w-56 rounded-full bg-primary/12 blur-3xl" />
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="max-w-2xl">
-          <span className="inline-flex items-center gap-1.5 rounded-full border bg-background/70 px-3 py-1 text-xs font-semibold text-primary">
+          <span className="inline-flex items-center gap-1.5 rounded-full border bg-background px-3 py-1 text-xs font-semibold text-primary">
             <MessageSquareText className="h-3.5 w-3.5" /> Send from your own phone number
           </span>
           <h2 className="mt-4 text-2xl font-semibold tracking-tight text-foreground">Copy a polished customer text.</h2>
@@ -118,24 +118,24 @@ export function ManualSmsShareCard({ request, businessName, link, onLogged }: Ma
           </p>
         </div>
         <div className="flex flex-wrap gap-2 lg:justify-end">
-          <Button className="rounded-2xl" onClick={copyMessage}>
+          <Button className="rounded-[0.25rem]" onClick={copyMessage}>
             <Clipboard className="mr-2 h-4 w-4" /> Copy text
           </Button>
-          <Button asChild variant="outline" className="rounded-2xl bg-background/70" disabled={!hasPhone}>
+          <Button asChild variant="outline" className="rounded-[0.25rem] bg-background" disabled={!hasPhone}>
             <a href={smsHref} onClick={() => trackEvent("manual_sms_app_opened", { request_id: request.id, has_phone: hasPhone })}>
               <ExternalLink className="mr-2 h-4 w-4" /> Open Messages
             </a>
           </Button>
-          <Button variant="outline" className="rounded-2xl bg-background/70" onClick={shareMessage}>
+          <Button variant="outline" className="rounded-[0.25rem] bg-background" onClick={shareMessage}>
             <Share2 className="mr-2 h-4 w-4" /> Share
           </Button>
-          <Button variant={logged ? "secondary" : "outline"} className="rounded-2xl bg-background/70" onClick={markSent} disabled={logging || logged}>
+          <Button variant={logged ? "secondary" : "outline"} className="rounded-[0.25rem] bg-background" onClick={markSent} disabled={logging || logged}>
             <CheckCircle2 className="mr-2 h-4 w-4" /> {logged ? "Sent" : logging ? "Marking…" : "Mark as sent"}
           </Button>
         </div>
       </div>
 
-      <div className="mt-5 rounded-[1.5rem] border bg-background/75 p-4 shadow-inner">
+      <div className="mt-5 rounded-[0.25rem] border bg-background/75 p-4 shadow-inner">
         <div className="mb-3 flex items-center justify-between gap-3 text-xs text-muted-foreground">
           <span>Message preview</span>
           <span>{message.length} characters</span>

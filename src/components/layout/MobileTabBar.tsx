@@ -29,7 +29,7 @@ export function MobileTabBar() {
         aria-label="Primary"
         className={cn(
           "fixed inset-x-0 bottom-0 z-40 lg:hidden",
-          "material-chrome rounded-none border-0 hairline-apple-t",
+          "border-t border-border bg-card",
           "pb-safe",
         )}
       >
@@ -45,14 +45,16 @@ export function MobileTabBar() {
               to="/requests/new"
               aria-label="New photo request"
               className={cn(
-                "-mt-6 inline-flex h-14 w-14 items-center justify-center rounded-full",
-                "bg-system-blue text-white shadow-elev-md",
-                "ring-4 ring-systemBackground tap-apple focus-apple",
+                "-mt-6 inline-flex h-14 w-14 items-center justify-center",
+                "bg-[hsl(var(--accent-kinetic))] text-[hsl(var(--primary-foreground))]",
+                "border-4 border-card tap-apple focus-apple",
               )}
             >
               <Plus className="h-6 w-6" />
             </NavLink>
-            <span className="mt-0.5 text-caption-2 font-semibold leading-none text-system-blue">Request</span>
+            <span className="mt-0.5 font-mono text-[0.6rem] font-semibold uppercase leading-none tracking-[0.18em] text-[hsl(var(--accent-kinetic))]">
+              Request
+            </span>
           </div>
 
           {/* Last regular tab */}
@@ -67,12 +69,12 @@ export function MobileTabBar() {
             onClick={() => setSettingsOpen(true)}
             aria-label="Settings"
             className={cn(
-              "tap-apple focus-apple flex flex-col items-center justify-center gap-0.5 rounded-xl px-1 py-1 touch-target-apple",
-              isSettingsActive ? "text-system-blue" : "text-label-secondary",
+              "tap-apple focus-apple flex flex-col items-center justify-center gap-0.5 px-1 py-1 touch-target-apple",
+              isSettingsActive ? "text-[hsl(var(--accent-kinetic))]" : "text-muted-foreground",
             )}
           >
             <Settings className="h-6 w-6" />
-            <span className="text-caption-2 font-semibold leading-none">Settings</span>
+            <span className="font-mono text-[0.6rem] font-semibold uppercase leading-none tracking-[0.18em]">Settings</span>
           </button>
         </div>
       </nav>
@@ -97,12 +99,12 @@ function TabLink({
     <NavLink
       to={to}
       className={cn(
-        "tap-apple focus-apple flex flex-col items-center justify-center gap-0.5 rounded-xl px-1 py-1 touch-target-apple",
-        active ? "text-system-blue" : "text-label-secondary",
+        "tap-apple focus-apple flex flex-col items-center justify-center gap-0.5 px-1 py-1 touch-target-apple",
+        active ? "text-[hsl(var(--accent-kinetic))]" : "text-muted-foreground",
       )}
     >
       <Icon className="h-6 w-6" />
-      <span className="text-caption-2 font-semibold leading-none">{label}</span>
+      <span className="font-mono text-[0.6rem] font-semibold uppercase leading-none tracking-[0.18em]">{label}</span>
     </NavLink>
   );
 }

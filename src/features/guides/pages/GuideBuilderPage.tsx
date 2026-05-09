@@ -131,7 +131,7 @@ export default function GuideBuilderPage() {
         }
       />
 
-      <section className="rounded-3xl border bg-card p-5 shadow-elev-sm sm:p-6">
+      <section className="rounded-[0.25rem] border bg-card p-5 shadow-elev-sm sm:p-6">
         <div className="grid gap-5 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
           <div>
             <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
@@ -160,7 +160,7 @@ export default function GuideBuilderPage() {
         </div>
       </section>
 
-      <section className="rounded-2xl border bg-card p-5 shadow-elev-sm">
+      <section className="rounded-[0.25rem] border bg-card p-5 shadow-elev-sm">
         <div className="grid gap-4">
           <div className="space-y-1.5">
             <Label htmlFor="guide-name">Template name</Label>
@@ -185,7 +185,7 @@ export default function GuideBuilderPage() {
         </div>
       </section>
 
-      <section className="space-y-3 rounded-2xl border bg-card p-5 shadow-elev-sm">
+      <section className="space-y-3 rounded-[0.25rem] border bg-card p-5 shadow-elev-sm">
         <header>
           <h2 className="text-sm font-semibold text-foreground">
             Photos to request
@@ -200,7 +200,7 @@ export default function GuideBuilderPage() {
         />
       </section>
 
-      <section className="space-y-3 rounded-2xl border bg-card p-5 shadow-elev-sm">
+      <section className="space-y-3 rounded-[0.25rem] border bg-card p-5 shadow-elev-sm">
         <header>
           <h2 className="text-sm font-semibold text-foreground">
             Questions to ask, if any
@@ -216,9 +216,9 @@ export default function GuideBuilderPage() {
       </section>
 
       {/* Sticky mobile save bar */}
-      <div className="fixed inset-x-0 bottom-16 z-30 border-t bg-background/90 p-3 backdrop-blur-xl sm:hidden">
+      <div className="fixed inset-x-0 bottom-16 z-30 border-t bg-background/90 p-3 touch-blur-reduce backdrop-blur-md sm:hidden">
         <Button
-          className="h-12 w-full gap-1.5 rounded-2xl text-base"
+          className="h-12 w-full gap-1.5 rounded-[0.25rem] text-base"
           disabled={save.isPending || !canSave}
           onClick={() => save.mutate()}
         >
