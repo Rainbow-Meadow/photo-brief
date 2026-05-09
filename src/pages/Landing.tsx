@@ -956,8 +956,7 @@ function TickerBar({
 
 function FoundingPartnerBetaSection({ isFull }: { isFull: boolean }) {
   return (
-    <section id="beta-program" className="pb-section">
-      <div className="pb-container">
+    <MarketingSection id="beta-program">
         <SectionIntro
           eyebrow={<><Stamp className="h-3.5 w-3.5" /> Accepting applications</>}
           title={
@@ -1285,8 +1284,7 @@ function SectionNav({ tone = "dark" }: { tone?: "dark" | "paper" }) {
 
 function WorkflowSection() {
   return (
-    <section id="workflow" className="pb-section">
-      <div className="pb-container">
+    <MarketingSection id="workflow">
         <div className="grid gap-8 lg:grid-cols-[0.7fr_1.3fr] lg:items-center lg:gap-10">
           <div>
             <span className="pb-eyebrow">
@@ -1352,8 +1350,7 @@ function ComparisonSection({ mode }: { mode: "messy" | "clean" }) {
   const signals = isClean ? cleanSignals : messySignals;
 
   return (
-    <section id="comparison" className="pb-section-tight">
-      <div className="pb-container">
+    <MarketingSection id="comparison" spacing="tight">
         <SectionIntro
           eyebrow={<><MessageSquareWarning className="h-3.5 w-3.5" /> Before / after</>}
           title="Generic form vs. guided visual intake."
@@ -1523,8 +1520,7 @@ function CleanPacketVisual() {
 
 function UseCaseSection({ activeStamp }: { activeStamp?: string | null }) {
   return (
-    <section id="use-cases" className="pb-section">
-      <div className="pb-container">
+    <MarketingSection id="use-cases">
         <SectionIntro
           eyebrow={<><ClipboardList className="h-3.5 w-3.5" /> Use cases</>}
           title="Built for the trades that need to see before they act."
@@ -1575,8 +1571,7 @@ function UseCaseSection({ activeStamp }: { activeStamp?: string | null }) {
 
 function WebsiteIntelligenceSection() {
   return (
-    <section id="website-intelligence" className="pb-section">
-      <div className="pb-container">
+    <MarketingSection id="website-intelligence">
         <SectionIntro
           eyebrow={<><Globe2 className="h-3.5 w-3.5" /> Website Intelligence</>}
           title="Your website becomes your intake engine."
