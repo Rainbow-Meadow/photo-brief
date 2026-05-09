@@ -54,14 +54,23 @@ export function MarketingLayout() {
               ))}
             </nav>
 
-            {/* Centered brand mark */}
+            {/* Left brand mark icon (links home) */}
+            <NavLink
+              to="/"
+              aria-label="PhotoBrief.ai home"
+              className="flex items-center px-2"
+            >
+              <BrandMark variant="mark" tone="light" size={28} eager />
+            </NavLink>
+
+            {/* Centered wordmark */}
             <NavLink
               to="/"
               aria-label="PhotoBrief.ai"
               className="flex items-center px-2 sm:px-3"
             >
-              <BrandMark variant="wordmark" tone="dark" size={22} eager className="sm:hidden" />
-              <BrandMark variant="wordmark" tone="dark" size={26} eager className="hidden sm:block" />
+              <BrandMark variant="wordmark" tone="light" size={22} eager className="sm:hidden" />
+              <BrandMark variant="wordmark" tone="light" size={26} eager className="hidden sm:block" />
             </NavLink>
 
             {/* Right links (desktop) */}
