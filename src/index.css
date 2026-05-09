@@ -174,144 +174,6 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
     --ease-apple: cubic-bezier(0.32, 0.72, 0, 1);
   }
 
-  .dark {
-    color-scheme: dark;
-
-    --background: 219 50% 7%;
-    --foreground: 39 33% 97%;
-    --card: 219 42% 11%;
-    --card-foreground: 39 33% 97%;
-    --popover: 219 42% 11%;
-    --popover-foreground: 39 33% 97%;
-
-    --primary: 33 89% 62%;
-    --primary-foreground: 219 50% 7%;
-    --primary-glow: 33 89% 72%;
-
-    --secondary: 219 30% 16%;
-    --secondary-foreground: 39 33% 97%;
-
-    --muted: 219 30% 16%;
-    --muted-foreground: 219 14% 70%;
-
-    --accent: 219 40% 22%;
-    --accent-foreground: 33 89% 78%;
-
-    --destructive: 0 70% 55%;
-    --destructive-foreground: 39 33% 97%;
-    --success: 151 50% 50%;
-    --success-foreground: 219 50% 7%;
-    --warning: 33 89% 62%;
-    --warning-foreground: 219 50% 7%;
-    --info: 33 89% 62%;
-    --info-foreground: 219 50% 7%;
-
-    --border: 219 26% 20%;
-    --input: 219 26% 20%;
-    --ring: 33 89% 62%;
-
-    /* Brand identity stays the same conceptual palette in dark mode. */
-    --brand-navy: 219 50% 7%;
-    --brand-navy-foreground: 39 33% 97%;
-    --brand-amber: 33 89% 62%;
-    --brand-amber-light: 33 89% 72%;
-    --brand-amber-hover: 35 86% 52%;
-    --brand-cream: 39 33% 97%;
-    --brand-cream-warm: 36 30% 88%;
-    --brand-graphite: 219 50% 7%;
-    --brand-paper: 39 33% 97%;
-    --brand-lens: 33 89% 62%;
-    --brand-flash: 33 89% 72%;
-
-    --pb-night: 219 50% 7%;
-    --pb-ink: 39 33% 97%;
-    --pb-ink-soft: 39 30% 88%;
-    --pb-ink-muted: 219 14% 70%;
-    --pb-panel: 219 42% 11%;
-    --pb-panel-2: 219 36% 14%;
-    --pb-line: 219 26% 20%;
-    --pb-line-strong: 219 26% 30%;
-    --pb-paper: 39 33% 97%;
-    --pb-cream: 219 42% 11%;
-    --pb-cream-warm: 219 36% 14%;
-    --pb-muted: 219 14% 70%;
-    --pb-shadow: 219 60% 3%;
-    --pb-violet: 33 89% 62%;
-    --pb-lavender: 33 89% 72%;
-    --pb-electric: 39 33% 97%;
-    --pb-mint: 33 89% 72%;
-    --pb-wordmark-navy: 39 33% 97%;
-    --pb-wordmark-amber: 33 89% 62%;
-
-    --app-bg: 219 50% 7%;
-    --app-sidebar-bg: 219 50% 5%;
-    --app-sidebar-fg: 39 33% 97%;
-    --app-sidebar-muted: 219 14% 60%;
-    --app-sidebar-active-bg: 33 89% 62%;
-    --app-sidebar-active-fg: 219 50% 7%;
-    --app-sidebar-border: 219 30% 16%;
-    --app-primary: 33 89% 62%;
-    --app-primary-glow: 33 89% 72%;
-    --app-primary-fg: 219 50% 7%;
-    --app-pill-pass-bg: 151 60% 16%;
-    --app-pill-pass-fg: 151 60% 75%;
-    --app-pill-warn-bg: 35 70% 18%;
-    --app-pill-warn-fg: 35 90% 75%;
-    --app-pill-fail-bg: 0 60% 22%;
-    --app-pill-fail-fg: 0 80% 80%;
-    --app-pill-info-bg: 219 40% 22%;
-    --app-pill-info-fg: 33 89% 78%;
-
-    --sidebar-background: 219 50% 5%;
-    --sidebar-foreground: 39 33% 97%;
-    --sidebar-primary: 33 89% 62%;
-    --sidebar-primary-foreground: 219 50% 7%;
-    --sidebar-accent: 219 40% 22%;
-    --sidebar-accent-foreground: 33 89% 78%;
-    --sidebar-border: 219 30% 16%;
-    --sidebar-ring: 33 89% 62%;
-
-    --gradient-primary: linear-gradient(135deg, hsl(33 89% 62%), hsl(33 89% 72%));
-    --gradient-subtle: linear-gradient(180deg, hsl(219 50% 7%), hsl(219 42% 11%));
-    --gradient-brand: linear-gradient(135deg, hsl(219 50% 7%) 0%, hsl(219 42% 11%) 58%, hsl(33 70% 28%) 132%);
-    --gradient-radial-glow: radial-gradient(60% 50% at 50% 0%, hsl(33 89% 62% / 0.22), transparent 72%);
-
-    --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.4);
-    --shadow-md: 0 4px 12px -2px hsl(0 0% 0% / 0.5);
-    --shadow-lg: 0 12px 32px -8px hsl(0 0% 0% / 0.6);
-    --shadow-glow: 0 18px 62px -26px hsl(33 89% 62% / 0.42);
-    --shadow-brand: 0 34px 92px -34px hsl(0 0% 0% / 0.82);
-
-    --glass-bg-strong: 219 42% 11% / 0.84;
-    --glass-bg: 219 42% 11% / 0.62;
-    --glass-bg-soft: 219 42% 11% / 0.40;
-    --glass-bg-onDark: 219 42% 11% / 0.84;
-    --glass-border: 39 33% 97% / 0.11;
-    --glass-border-strong: 39 33% 97% / 0.18;
-    --glass-border-onDark: 39 33% 97% / 0.14;
-    --glass-highlight: 39 33% 97% / 0.06;
-    --glass-shadow:
-      inset 0 1px 0 hsl(39 33% 97% / 0.06),
-      0 20px 40px -22px hsl(0 0% 0% / 0.65),
-      0 8px 24px -14px hsl(0 0% 0% / 0.55);
-    --glass-shadow-lg:
-      inset 0 1px 0 hsl(39 33% 97% / 0.08),
-      0 30px 60px -24px hsl(0 0% 0% / 0.75);
-    --glass-shadow-onDark:
-      inset 0 1px 0 hsl(39 33% 97% / 0.08),
-      0 30px 60px -24px hsl(0 0% 0% / 0.75);
-
-    --ambient-sky: radial-gradient(80% 60% at 50% 0%, hsl(33 89% 62% / 0.20), transparent 70%);
-    --ambient-sky-soft: radial-gradient(60% 50% at 50% 0%, hsl(33 89% 62% / 0.14), transparent 75%);
-    --ambient-mesh:
-      radial-gradient(40% 30% at 15% 20%, hsl(33 89% 62% / 0.16), transparent 70%),
-      radial-gradient(35% 30% at 85% 10%, hsl(33 89% 72% / 0.10), transparent 70%),
-      radial-gradient(50% 40% at 50% 100%, hsl(33 88% 55% / 0.08), transparent 70%);
-    --ambient-future:
-      radial-gradient(50% 35% at 20% 12%, hsl(33 89% 62% / 0.22), transparent 72%),
-      radial-gradient(42% 32% at 82% 16%, hsl(33 89% 72% / 0.13), transparent 76%),
-      radial-gradient(58% 48% at 50% 92%, hsl(219 47% 20% / 0.10), transparent 72%);
-  }
 }
 
 @layer base {
@@ -434,7 +296,6 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
       0 1px 0 hsl(220 30% 90% / 0.35),
       0 8px 24px -16px hsl(222 47% 11% / 0.10);
   }
-  .dark .surface-card { box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.05), 0 8px 24px -16px hsl(0 0% 0% / 0.5); }
   .surface-card-elevated {
     background-color: hsl(var(--card));
     border: 1px solid hsl(var(--glass-border));
@@ -444,7 +305,6 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
       0 24px 48px -24px hsl(222 47% 11% / 0.18),
       0 8px 24px -16px hsl(222 47% 11% / 0.10);
   }
-  .dark .surface-card-elevated { box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.06), 0 30px 60px -24px hsl(0 0% 0% / 0.65); }
   .surface-divider { border-top: 1px solid hsl(var(--glass-border)); }
 
   /* ── Shared navigation bar surface ── */
@@ -1020,7 +880,6 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
     --sidebar-primary: var(--app-primary);
     --sidebar-primary-foreground: var(--app-primary-fg);
   }
-  .dark .app-shell { --accent: 217 50% 18%; --accent-foreground: 217 80% 80%; }
   .recipient-shell {
     --primary: var(--app-primary);
     --primary-glow: var(--app-primary-glow);
@@ -1245,59 +1104,6 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
     --dur-slow:     380ms;
   }
 
-  .dark {
-    /* System Colors — dark (vivid variants per HIG) */
-    --system-blue:   211 100% 60%;
-    --system-indigo: 239 75% 70%;
-    --system-purple: 280 70% 65%;
-    --system-pink:   344 88% 65%;
-    --system-red:    5 90% 65%;
-    --system-orange: 28 100% 60%;
-    --system-yellow: 48 100% 60%;
-    --system-green:  135 50% 55%;
-    --system-mint:   168 55% 60%;
-    --system-teal:   189 55% 60%;
-    --system-cyan:   200 70% 60%;
-    --system-brown:  27 31% 60%;
-
-    /* System Grays — dark */
-    --system-gray-1: 240 2% 56%;
-    --system-gray-2: 240 2% 39%;
-    --system-gray-3: 240 2% 28%;
-    --system-gray-4: 240 2% 22%;
-    --system-gray-5: 240 2% 17%;
-    --system-gray-6: 240 2% 11%;
-
-    /* Backgrounds — dark (true black for OLED parity) */
-    --system-background:           0 0% 0%;
-    --secondary-system-background: 240 2% 11%;
-    --tertiary-system-background:  240 2% 17%;
-    --system-grouped-background:   0 0% 0%;
-    --secondary-system-grouped-background: 240 2% 11%;
-    --tertiary-system-grouped-background:  240 2% 17%;
-
-    --label:            0 0% 100%;
-    --label-secondary:  0 0% 100%;
-    --label-tertiary:   0 0% 100%;
-    --label-quaternary: 0 0% 100%;
-    --label-secondary-alpha:  0.6;
-    --label-tertiary-alpha:   0.3;
-    --label-quaternary-alpha: 0.16;
-
-    --separator:        0 0% 100% / 0.18;
-    --opaque-separator: 240 2% 22%;
-
-    --system-fill:           240 2% 75% / 0.18;
-    --secondary-system-fill: 240 2% 75% / 0.14;
-    --tertiary-system-fill:  240 2% 75% / 0.10;
-    --quaternary-system-fill:240 2% 75% / 0.06;
-
-    --material-ultraThin: 0 0% 0% / 0.45;
-    --material-thin:      0 0% 0% / 0.55;
-    --material-regular:   0 0% 0% / 0.65;
-    --material-thick:     0 0% 0% / 0.78;
-    --material-chrome:    0 0% 0% / 0.88;
-  }
 }
 
 @layer utilities {
