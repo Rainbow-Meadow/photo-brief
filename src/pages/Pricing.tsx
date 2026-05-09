@@ -51,6 +51,7 @@ export default function PricingPage() {
         title={`Pricing | PhotoBrief.ai Founding Partner Beta`}
         description={`PhotoBrief.ai is accepting founding beta partners. Apply for ${BETA_DURATION_DAYS}-day beta access, concierge setup, direct support, and tiered post-launch rewards — up to 75% off or free Pro for life.`}
         canonicalPath="/pricing"
+        ogImage="/og/pricing.png"
         jsonLd={jsonLd}
         breadcrumbs={[{ name: "Home", path: "/" }, { name: "Pricing", path: "/pricing" }]}
       />

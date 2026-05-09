@@ -86,8 +86,12 @@ const MARKETING_PATHS = new Set<string>([
 // real users — so we let /assets/* fall through to Lovable.
 const PAGES_STATIC_PREFIXES = [
   "/og-image",
+  "/og/",
   "/favicon",
   "/apple-touch-icon",
+  "/icon-",
+  "/site.webmanifest",
+  "/brand/",
   "/robots.txt",
   "/sitemap.xml",
   "/llms.txt",

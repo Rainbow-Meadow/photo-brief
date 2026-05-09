@@ -5,23 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <script>
-      (() => {
-        try {
-          const stored = localStorage.getItem("pb-theme");
-          const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-          const theme = stored === "light" || stored === "dark" ? stored : prefersDark ? "dark" : "light";
-          document.documentElement.classList.toggle("dark", theme === "dark");
-          document.documentElement.style.colorScheme = theme;
-        } catch (_) {}
-      })();
-    </script>
+    
     <title>PhotoBrief | Guide · Capture · Close</title>
-    <meta name="description" content="PhotoBrief: guide, capture, and close. Turn customer photo requests into quote-ready briefs for service businesses and trades.">
+    <meta name="description" content="Guide. Capture. Close. PhotoBrief turns customer photo requests into quote-ready briefs for service businesses and trades.">
     <meta name="author" content="PhotoBrief" />
-    <meta name="theme-color" content="#FAF7F2" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#10172A" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#0c0c0a" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="PhotoBrief" />
     <link rel="preconnect" href="https://mvlcefiygkzzewcdzsmj.supabase.co" crossorigin>
 
@@ -52,7 +41,7 @@
           "@id": "https://photobrief.ai/#org",
           "name": "PhotoBrief",
           "url": "https://photobrief.ai",
-          "logo": "https://photobrief.ai/og-image.png",
+          "logo": "https://photobrief.ai/brand/logo-square.png",
           "email": "hello@photobrief.ai",
           "sameAs": []
         },

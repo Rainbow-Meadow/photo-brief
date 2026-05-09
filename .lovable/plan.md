@@ -1,90 +1,72 @@
 
-# Email Pipeline Redesign — Field Manual + RMBC
+## Goal
 
-Translate the editorial system used across the app into an inbox-safe email language, and rewrite every template's copy into RMBC-aligned sections (Research → Mechanism → Brief → Close). Pipeline plumbing (queue, suppression, idempotency, registry contract) stays intact — only presentation, brand tokens, and content change.
+Bring every off-app brand surface (browser tab, OS home-screen, social share previews, PWA install) onto the new dark Field Manual system: near-black canvas `#0c0c0a`, cream wordmark `#F4F1EA`, single amber accent `#F2A33A`, monospace plate codes, hairline rules, tagline `GUIDE · CAPTURE · CLOSE`.
 
-## 1. New email design system (`brand-styles.ts`)
+## 1. App icons & favicon (dark canvas)
 
-Replace the cream/rounded-card system with a white-canvas Field Manual variant:
+Generate a single master icon (cream "Photo" + amber "brief" monogram on `#0c0c0a`, hairline amber rule above tagline, safe-area padding for maskable) and emit:
 
-- **Canvas**: `#FFFFFF` body, no outer cream wash, single 1px hairline frame in `rgba(20,20,18,0.12)`. No border-radius (or `2px` max), no box-shadow.
-- **Type**: body in the existing system stack, **labels/eyebrows/plate codes in `ui-monospace, "SF Mono", Menlo, Consolas, monospace`** at 11px, `letter-spacing: 0.18em`, uppercase.
-- **Color tokens**:
-  - `ink` `#141412` (body headings)
-  - `body` `#3A3A36` (paragraph)
-  - `muted` `#7A7A72` (meta)
-  - `rule` `rgba(20,20,18,0.12)` (hairlines)
-  - `accent` `#F2A33A` (the only color accent — used for plate codes, CTA fill, focus underlines)
-  - `accentInk` `#1A1208` (text on amber CTA)
-- **Header**: hairline-bottom band; two-tone `Photo` (ink) + `Brief` (amber) wordmark rendered as styled text (no logo image required, but keep `Img` fallback). Tagline `GUIDE · CAPTURE · CLOSE` in mono 10px under it.
-- **Components exported from `brand-styles.ts`**:
-  - `BrandHeader` — wordmark + tagline + hairline rule
-  - `BrandFooter` — mono meta line + tagline
-  - `PlateCode({ code, label })` → `[ 02 ] RESEARCH` style mono row used to open every RMBC block
-  - `RuleBlock({ code, label, children })` — wraps a section with a top hairline, plate code, then content
-  - `Eyebrow`, `H1`, `Body`, `Meta`, `MonoLink`, `CTAButton` (squared 2px, amber fill)
-  - `Divider` (1px hairline, 24px vertical margin)
-- Style objects renamed and re-exported as `s` so existing template imports keep working; legacy keys aliased so build doesn't break mid-migration.
+- `public/favicon.ico` (16/32/48 multi-res)
+- `public/favicon-16x16.png`, `public/favicon.png` (32×32)
+- `public/icon-192.png`, `public/icon-512.png` (any-purpose, dark)
+- `public/brand/icon-192.png`, `public/brand/icon-512.png` (maskable, with extra safe-area)
+- `public/apple-touch-icon.png` (180×180, dark)
 
-## 2. RMBC content model
+Implementation: `imagegen` premium tier for the master, then `nix run nixpkgs#imagemagick` to downscale to each exact size and to build the `.ico`. Old cream-bg PNGs are overwritten in place so existing `<link rel="icon">` URLs don't change.
 
-Each template gets restructured into the subset of RMBC blocks that fit its purpose. Block names map to plate codes:
+## 2. PWA manifest + index.html theme tokens
 
-```text
-[ 01 ] RESEARCH    — context / what triggered this email
-[ 02 ] MECHANISM   — what the system / business is doing now
-[ 03 ] BRIEF       — what the recipient needs to do (or knows next)
-[ 04 ] CLOSE       — signoff, expectations, escape hatch
-```
+`public/site.webmanifest`:
+- `background_color`: `#FAF7F2` → `#0c0c0a`
+- `theme_color`: `#F2A33A` → `#0c0c0a` (amber stays as accent inside icon, not as Android status bar wash)
+- `description` rewritten in declarative RMBC voice: "Guide. Capture. Close. Quote-ready customer briefs for service businesses."
 
-Templates that are pure acknowledgements (e.g. waitlist confirmation) may use only RESEARCH + CLOSE. Operational ones (request link, reminder) use BRIEF as the dominant block with the CTA inside it. Voice: declarative, present-tense, no exclamation marks, no emojis, sentence case in body, all-caps mono only in plate codes/labels.
+`index.html`:
+- `theme-color` light/dark both → `#0c0c0a` (single-palette per `mem://design/color-system`)
+- `apple-mobile-web-app-status-bar-style` → `black-translucent`
+- Drop the legacy light/dark `prefers-color-scheme` split (we no longer ship a light theme)
+- `og:image` / `twitter:image` defaults point to new `/og-image.png` (1200×630)
+- JSON-LD `Organization.logo` updated to dedicated `/brand/logo-square.png`
 
-## 3. Per-template rewrites
+## 3. Per-page OG image variants (1200×630, Field Manual plate)
 
-All 14 transactional + 6 auth templates are rewritten. Each retains its current `template` export shape, props interface, `displayName`, and `previewData` keys (no registry or send-function changes required).
+Each variant uses the same template: dark `#0c0c0a` bg, 1px hairline frame inset 48px, monospace plate code top-left in amber (`[ NN ] LABEL`), cream editorial wordmark `Photo` + amber `brief`, page-specific eyebrow line, tagline `GUIDE · CAPTURE · CLOSE` bottom-right, single amber rule.
 
-**Transactional**
-1. `customer-submission-confirmation` — RESEARCH (photos received for "{requestTitle}") · CLOSE (no action needed, business will follow up).
-2. `submission-received` (business-side) — RESEARCH (new submission from {customer}) · BRIEF (review link CTA) · CLOSE.
-3. `business-request-ready` — MECHANISM (request packaged) · BRIEF (open brief CTA) · CLOSE.
-4. `recipient-request-link` — RESEARCH (who/what) · BRIEF (open link CTA, expiry meta) · CLOSE.
-5. `recipient-reminder` — RESEARCH (still waiting on…) · BRIEF (CTA + expiry).
-6. `workspace-welcome` — RESEARCH (workspace ready) · MECHANISM (3 mono numbered next-steps) · BRIEF (open dashboard) · CLOSE.
-7. `founding-partner-welcome` — RESEARCH · MECHANISM (what founding tier includes) · BRIEF · CLOSE.
-8. `waitlist-confirmation` — RESEARCH · CLOSE.
-9. `waitlist-admin-notification` — RESEARCH (new entry) · MECHANISM (queue position) · CLOSE.
-10. `beta-first-request-nudge` — RESEARCH (no first request yet) · BRIEF (CTA).
-11. `beta-stalled-checkin` — RESEARCH · BRIEF (async reply CTA).
-12. `beta-feedback-checkin` — RESEARCH · BRIEF (3 mono prompt questions, reply via email).
-13. `beta-testimonial-request` — RESEARCH · BRIEF (link + reply).
-14. `beta-graduation` — RESEARCH (60-day clock complete) · MECHANISM (what changes) · BRIEF (next step) · CLOSE.
+| File | Plate | Eyebrow |
+|---|---|---|
+| `/og-image.png` (default) | `[ 00 ] FIELD MANUAL` | Quote-ready customer briefs for service businesses. |
+| `/og/pricing.png` | `[ 01 ] PRICING` | Free to start. Pro tiers when you scale. |
+| `/og/for-ai-agents.png` | `[ 02 ] FOR AI AGENTS` | MCP + OpenAPI. Programmable photo briefs. |
+| `/og/help.png` | `[ 03 ] HELP` | Setup, capture flow, recipient experience. |
+| `/og/beta.png` | `[ 04 ] BETA` | 60-day founding partner program. |
 
-**Auth (`_shared/email-templates/`)** — `signup`, `magic-link`, `recovery`, `invite`, `email-change`, `reauthentication` get the same shell, RESEARCH (one line of context) + BRIEF (CTA + raw URL fallback in mono) + CLOSE (ignore-if-not-you line). Each adopts `brand-styles.ts` instead of inline style constants.
+Generated via `imagegen` premium per page (text legibility), QA'd by inspecting each PNG before delivery.
 
-## 4. Pipeline touch-ups (presentation only)
+`SEOHead.tsx` default constant: `DEFAULT_OG_IMAGE = "/og-image.png"` (was `.svg`, file never existed → currently a broken share preview). Per-route pages opt into their variant via existing `ogImage` prop on `PageMeta` (`Pricing.tsx`, `ForAiAgents.tsx`, `Help.tsx`, `BetaWelcome.tsx`).
 
-- `auth-email-hook/index.ts`: no logic change. Only update the import surface so auth templates use `brand-styles.ts` consistently. JWT, queue, retry, idempotency untouched.
-- `send-transactional-email/index.ts`: unchanged. Subjects can be tightened in each template's `subject` field (sentence case, no emoji). Suppression check, system unsubscribe footer injection, queue enqueue all preserved.
-- `registry.ts`: unchanged structure; `previewData` updated to RMBC-friendly samples.
+## 4. Cloudflare router
+
+`workers/router/src/index.ts` `PAGES_STATIC_PREFIXES` already covers `/og-image` and `/brand/`. Add `/og/` so per-page variants are served from Pages with edge caching. No origin logic changes.
 
 ## 5. Out of scope
 
-- No DB, RLS, queue, cron, or webhook changes.
-- No new templates, no marketing emails.
-- No changes to send-side logic, idempotency keys, suppression, or unsubscribe flow.
-- The system unsubscribe footer remains system-managed.
+- No changes to in-app `BrandMark` component or marketing pages.
+- No changes to email templates (already redesigned).
+- No service worker / vite-plugin-pwa work — manifest-only install path stays as-is.
+- No DB / RLS / edge-function logic changes.
 
 ## 6. Verification
 
 - `bun run build` clean.
-- Render every template via the existing preview path (`previewData`) and visually inspect each at 600px and 360px widths — confirm hairlines, mono plate codes, amber-only accent, white canvas, no rounded cards, no emoji.
-- Deploy `auth-email-hook`, `send-transactional-email`, `process-email-queue` after edits.
-- Spot-send one transactional (`customer-submission-confirmation`) and one auth (`signup`) to a test inbox via existing flows; confirm `email_send_log` row + rendered output.
+- Inspect each generated PNG visually (QA pass per skill instructions).
+- `curl -I https://photobrief.ai/og-image.png` returns 200 from Pages.
+- Validate share preview with `curl https://www.opengraph.xyz/url/...` after publish (manual step the user does).
+- `lighthouse` PWA audit: manifest installable, icon checks pass.
 
 ## Technical notes
 
-- All color values stay literal hex/rgba in inline styles (email clients ignore CSS vars).
-- Body background MUST remain `#FFFFFF` per Lovable email rule.
-- Wordmark rendered as styled `<Text>` spans inside the header `Section`; logo `Img` kept as a 28px mark to the left for clients that strip styles.
-- Plate code component renders as `<Text style={mono}>[ 02 ]&nbsp;&nbsp;RESEARCH</Text>` followed by a 1px top-rule on the wrapping section — Outlook-safe (no flex, no grid).
-- Buttons: `border-radius: 2px`, amber fill, dark ink text, 14px mono uppercase label, full width on mobile via `min-width: 200px`.
+- ImageMagick path: `nix run nixpkgs#imagemagick -- convert master.png -resize 192x192 icon-192.png` etc.
+- `.ico` build: `convert favicon-48.png favicon-32.png favicon-16.png favicon.ico`.
+- Maskable safe area: keep all glyphs within central 80% (per W3C maskable spec) — generated source prompt enforces this.
+- Memory note to add after build: `mem://design/brand-system` should be updated with new icon canvas decision (dark `#0c0c0a`, single source set).

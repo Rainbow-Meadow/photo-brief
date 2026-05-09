@@ -85,6 +85,7 @@ export default function ForAiAgentsPage() {
         description="Build with PhotoBrief: Website Intake automation, request creation API, OpenAPI, MCP descriptor, manifests, and code samples for AI agents."
         canonicalPath="/for-ai-agents"
         ogType="article"
+        ogImage="/og/for-ai-agents.png"
         jsonLd={[articleJsonLd, howToJsonLd, faqJsonLd]}
         breadcrumbs={[{ name: "Home", path: "/" }, { name: "For AI agents", path: "/for-ai-agents" }]}
       />
