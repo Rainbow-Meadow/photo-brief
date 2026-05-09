@@ -1,12 +1,12 @@
 {
-  "name": "PhotoBrief.ai — Guide · Capture · Close",
+  "name": "PhotoBrief — Guide · Capture · Close",
   "short_name": "PhotoBrief",
-  "description": "Guide. Capture. Close. Photo-ready customer briefs for service businesses.",
+  "description": "Guide. Capture. Close. Quote-ready customer briefs for service businesses.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#FAF7F2",
-  "theme_color": "#F2A33A",
+  "background_color": "#0c0c0a",
+  "theme_color": "#0c0c0a",
   "icons": [
     {
       "src": "/icon-192.png",
