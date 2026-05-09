@@ -533,11 +533,11 @@ export default function LandingPage() {
         <TickerBar
           tone="paper"
           items={[
-            `${BETA_TOTAL_PARTNERS} founding partner seats`,
-            "Free Pro for Life reward",
-            `${BETA_DURATION_DAYS}-day beta`,
-            "Concierge setup included",
-            "Every partner earns a reward",
+            `Only ${BETA_TOTAL_PARTNERS} founding seats — ever`,
+            "2 partners win Free Pro for Life",
+            "Concierge build in 7 days",
+            `${BETA_DURATION_DAYS}-day clock starts when the last seat fills`,
+            "Every partner walks out with a reward",
           ]}
         />
 
