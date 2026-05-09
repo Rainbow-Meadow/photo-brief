@@ -660,18 +660,18 @@ function RoiCalculatorSection() {
                 <div className="relative z-10 grid gap-3 sm:gap-4">
                   <div className="rounded-[1.25rem] border border-white/10 bg-white/[0.04] p-4">
                     <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-white/45">
-                      <UserCheck className="h-3.5 w-3.5" /> Current monthly leads
+                      <UserCheck className="h-3.5 w-3.5" /> What you're catching today
                     </div>
                     <p className="mt-2 text-3xl font-black tracking-tight text-white sm:text-4xl">{currentLeads}</p>
                   </div>
                   <div className="rounded-[1.25rem] border border-[hsl(var(--pb-lavender)/0.3)] bg-[hsl(var(--pb-lavender)/0.06)] p-4">
                     <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-[hsl(var(--pb-lavender))]">
-                      <ArrowRight className="h-3.5 w-3.5" /> Leads recovered with PhotoBrief
+                      <ArrowRight className="h-3.5 w-3.5" /> What you're leaving on the table
                     </div>
                     <p className="mt-2 text-3xl font-black tracking-tight text-[hsl(var(--pb-lavender))] sm:text-4xl">
                       +{totalRecovered}<span className="text-lg font-bold text-white/50"> /mo</span>
                     </p>
-                    <p className="pb-copy mt-1 text-xs">{recoveredFromForm} from better intake · {recoveredFromSpeed} from faster response</p>
+                    <p className="pb-copy mt-1 text-xs">{recoveredFromForm} the form lost · {recoveredFromSpeed} speed lost</p>
                   </div>
                   <div className="rounded-[1.25rem] border border-[hsl(var(--pb-violet)/0.3)] bg-[hsl(var(--pb-violet)/0.06)] p-4">
                     <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-[hsl(var(--pb-violet))]">
