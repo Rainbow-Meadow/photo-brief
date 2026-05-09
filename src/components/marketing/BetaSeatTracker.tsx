@@ -32,7 +32,7 @@ export function BetaSeatTracker({ variant = "default", className = "" }: BetaSea
   return (
     <div className={`${className}`}>
       {/* Seat count headline */}
-      <div className="flex items-center justify-center gap-2">
+      <div className="flex items-center gap-2">
         <Users className="h-3.5 w-3.5 text-[hsl(var(--pb-lavender))]" />
         <span className="text-xs font-bold tracking-wide text-white/90">
           <span className="text-[hsl(var(--pb-lavender))]">{seatsRemaining}</span> of {BETA_TOTAL_PARTNERS} seats remaining
@@ -40,7 +40,7 @@ export function BetaSeatTracker({ variant = "default", className = "" }: BetaSea
       </div>
 
       {/* Segmented progress bar */}
-      <div className="mx-auto mt-2.5 flex max-w-xs gap-[3px]" role="img" aria-label={`${seatsFilled} of ${BETA_TOTAL_PARTNERS} seats filled`}>
+      <div className="mt-2.5 flex w-full max-w-xs gap-[3px]" role="img" aria-label={`${seatsFilled} of ${BETA_TOTAL_PARTNERS} seats filled`}>
         {Array.from({ length: BETA_TOTAL_PARTNERS }, (_, i) => (
           <div
             key={i}
@@ -55,7 +55,7 @@ export function BetaSeatTracker({ variant = "default", className = "" }: BetaSea
 
       {/* Subtext */}
       {variant === "default" && (
-        <p className="mt-2 text-center text-[11px] font-medium text-white/45">
+        <p className="mt-2 text-[11px] font-medium text-white/45">
           Each application is reviewed for workflow fit before acceptance
         </p>
       )}
