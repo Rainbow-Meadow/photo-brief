@@ -411,12 +411,16 @@ export default function WebsiteIntakePage() {
                   key={tool.id}
                   type="button"
                   onClick={() => setToolId(tool.id)}
-                  className={`rounded-none border p-4 text-left transition hover:-translate-y-0.5 hover:border-primary/35 hover:bg-primary/5 ${
-                    tool.id === selectedTool.id ? "border-primary/50 bg-primary/10 shadow-sm" : "bg-background"
+                  className={`border p-4 text-left transition ${
+                    tool.id === selectedTool.id
+                      ? "border-[hsl(var(--accent-kinetic))] bg-[hsl(var(--accent-kinetic)/0.06)]"
+                      : "border-border bg-background hover:border-[hsl(var(--accent-kinetic)/0.5)]"
                   }`}
                 >
-                  <span className="block text-sm font-semibold text-foreground">{tool.name}</span>
-                  <span className="mt-1 block text-xs font-medium text-primary">{tool.mode === "webhook" ? "Webhook path" : "Hosted link path"}</span>
+                  <span className="block font-[Geist,Inter,system-ui,sans-serif] text-sm font-semibold text-foreground">{tool.name}</span>
+                  <span className="mt-1 block font-mono text-[0.65rem] uppercase tracking-[0.16em] text-[hsl(var(--accent-kinetic))]">
+                    {tool.mode === "webhook" ? "Webhook path" : "Hosted link path"}
+                  </span>
                   <span className="mt-2 block text-xs leading-5 text-muted-foreground">{tool.bestFor}</span>
                 </button>
               ))}
