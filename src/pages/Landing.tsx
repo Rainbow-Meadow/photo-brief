@@ -120,7 +120,7 @@ const SOFTWARE_APP_JSONLD: Record<string, unknown> = {
   applicationCategory: "BusinessApplication",
   operatingSystem: "Web",
   description:
-    "Replace weak website forms with guided visual intake. PhotoBrief scans your website, maps your services, and gives customers a simple photo-guided path so your team gets actionable lead packets instead of vague messages.",
+    "Stop chasing customers for missing photos. PhotoBrief uses the Reverse-Form Method — instead of asking your customer what they need, you tell them exactly what to send. The form follows the job, and a quote-ready lead packet lands in your inbox on the first try.",
   offers: [
     { "@type": "Offer", name: "Free", price: "0", priceCurrency: "USD" },
     { "@type": "Offer", name: "Starter", price: "19", priceCurrency: "USD" },
@@ -142,11 +142,11 @@ const SOFTWARE_APP_JSONLD: Record<string, unknown> = {
 /* ── Section nav anchors ──────────────────────────────────── */
 
 const sectionLinks = [
-  { href: "#workflow", label: "How it works" },
+  { href: "#workflow", label: "The mechanism" },
   { href: "#comparison", label: "Before / after" },
-  { href: "#use-cases", label: "Use cases" },
-  { href: "#website-intelligence", label: "Website Intelligence" },
-  { href: "#beta-program", label: "Beta rewards" },
+  { href: "#use-cases", label: "Who it's for" },
+  { href: "#website-intelligence", label: "Site scan" },
+  { href: "#beta-program", label: "Founding seats" },
   { href: "#apply", label: "Apply" },
 ];
 
@@ -163,74 +163,74 @@ const workflowSteps = [
   {
     icon: Scan,
     eyebrow: "Scan",
-    title: "We scan your website",
-    body: "PhotoBrief identifies your service pages, quote buttons, contact forms, and intake gaps — so we know where guided visual intake fits.",
+    title: "We read your site like your best estimator would.",
+    body: "Before we ask your customer a single question, we crawl your services, your quote buttons, your forms, and your CTAs. We learn what jobs you actually take, what you charge for, and where the cracks in your current intake are leaking money. No upload. No spreadsheet. We just read.",
   },
   {
     icon: Route,
     eyebrow: "Map",
-    title: "We map the right intake paths",
-    body: "Your services are compressed into 2–3 simple customer choices, each with the right photo prompts attached.",
+    title: "We compress 27 service pages into 3 customer choices.",
+    body: "Most websites give visitors 14 ways to ask for help. We pick the 2–3 paths that actually drive revenue and attach the exact photo prompts each one needs — the panel access shot, the driveway angle, the nameplate close-up. The customer never sees the complexity. They just see the next button.",
   },
   {
     icon: Camera,
     eyebrow: "Capture",
-    title: "Customers submit the right photos and context",
-    body: "They open a guided flow on their phone or desktop — one clear prompt at a time — and attach notes, details, and photos before submitting.",
+    title: "Your customer takes the right photo, not just any photo.",
+    body: "One prompt at a time. On their phone, no app, no signup. They photograph what your team actually needs to quote — wide shot, scale shot, problem shot, access shot — guided in the order that mirrors how you walk a job. They can't skip. They can't send a blurry blob and call it a day.",
   },
   {
     icon: FileCheck2,
     eyebrow: "Deliver",
-    title: "Your team gets an actionable lead packet",
-    body: "Photos, notes, customer context, and readiness status land together — structured and ready for quoting, dispatch, or documentation.",
+    title: "Your inbox gets a packet. Not a guessing game.",
+    body: "Every photo labeled. Every note attached to the right service line. Readiness flags up top. By the time you open it, you already know whether to quote it, schedule it, or pass — without typing a single follow-up email. The first reply you send is the price.",
   },
 ];
 
 const messySignals = [
-  "Generic contact form captures name and message only",
-  "Photos arrive later through text or email",
-  "Missing scale, angles, and context",
-  "Team follows up manually before they can act",
-  "Lower-quality leads get lost or deprioritized",
+  "Generic form: name, email, and a 200-character box marked 'tell us about your project.'",
+  "Photos arrive three days later — by text, by email, on the wrong thread.",
+  "No scale. No angle. No clue what you're actually looking at.",
+  "You ask three follow-up questions before you can even start a quote.",
+  "Half the leads die in your inbox while you're chasing the other half.",
 ];
 
 const cleanSignals = [
-  "Customer chooses the right service path",
-  "Required photos are requested in order",
-  "Notes and photos stay attached to the lead",
-  "Readiness issues are visible before review",
-  "Team receives an actionable lead packet",
+  "Customer picks the exact service in two taps — no guessing required.",
+  "Required photos requested in order — wide shot, close-up, access, scale.",
+  "Notes stay glued to the right service line, not floating in a thread.",
+  "Readiness flags surface missing info before it ever hits your team.",
+  "Your first reply is the quote — not 'hey, can you send a few photos?'",
 ];
 
 const useCases = [
   {
     icon: Leaf,
-    title: "Estimators ",
-    body: "Turn customer photos into evidence.",
+    title: "Landscapers — quote the yard from the driveway shot",
+    body: "The customer who said 'just need a small cleanup' actually has a half-acre with three dead trees. Guided lot, slope, and access photos surface the real scope before your truck rolls — so you stop quoting blind and stop losing your shirt on $200 jobs that turn into $2,000 days.",
     stamp: "Landscaping",
   },
   {
     icon: Truck,
-    title: "Junk haulers — price the pile from the driveway",
-    body: "Guided pile, appliance, and access photos turn a vague \"come haul this\" into a quotable load with the right truck and crew.",
+    title: "Junk haulers — price the pile before you leave the shop",
+    body: "Vague 'come haul this' becomes a quoted load — pile shot, appliance shot, driveway access, hazardous flags. You roll with the right truck and the right crew. No second trips. No 'oh, I forgot to mention the piano.' Every $480 driveway hauler stays a $480 driveway hauler.",
     stamp: "Junk removal",
   },
   {
     icon: Wind,
-    title: "Repair & HVAC techs — show up with the right part",
-    body: "Capture nameplate, filter, breaker, and surrounding access shots so techs roll with the right model number, refrigerant, and gear.",
+    title: "HVAC & repair — show up with the right part the first time",
+    body: "Nameplate. Filter. Breaker. Surrounding access. Captured before the dispatch ticket closes. Your tech rolls with the right capacitor, the right refrigerant, the right model number. The HVAC tech who showed up empty-handed twice last month? That tech doesn't exist anymore.",
     stamp: "HVAC & repair",
   },
   {
     icon: Wrench,
     title: "Plumbers — diagnose the leak before the truck rolls",
-    body: "Walk customers through shutoff, leak source, and supply lines so dispatch knows whether it's a 30-minute fix or a half-day repipe.",
+    body: "Shutoff location. Leak source. Supply line condition. Captured by the customer in 90 seconds. Now dispatch knows whether it's a 30-minute fitting swap or a half-day repipe — before they assign the job. You stop sending two-hour windows for jobs that need four.",
     stamp: "Plumbing",
   },
   {
     icon: Package,
     title: "Damage & return estimators — turn customer photos into evidence",
-    body: "Insurance, warranty, and e-commerce returns: collect angles, scale, and serial shots in a structured packet reviewers can act on first pass.",
+    body: "Insurance. Warranty. E-commerce returns. Angles, scale references, and serial number shots arrive in a structured packet your reviewers can adjudicate first pass. No back-and-forth. No 'please resubmit with a measuring tape.' The claim closes in one round.",
     stamp: "Estimating",
   },
 ];
@@ -246,36 +246,36 @@ const TRADES = [
 const trustPoints = [
   {
     icon: Link2,
-    title: "Secure, expiring upload links",
-    desc: "Customers never see your dashboard or internal data.",
+    title: "Your customer never sees your dashboard",
+    desc: "Secure, expiring upload links. They submit. You receive. Nothing in between.",
   },
   {
     icon: Smartphone,
-    title: "No app or account for customers",
-    desc: "Take photos on mobile or upload from desktop. No install, no signup, no friction.",
+    title: "No app. No account. No friction.",
+    desc: "Your customer opens a link, takes the photos, and submits. That's it. If their grandma can text, she can use this.",
   },
   {
     icon: Lock,
-    title: "Your data stays yours",
-    desc: "Photos and briefs are never shared or used for training.",
+    title: "Your photos never train our models",
+    desc: "Period. Your data is yours. We don't share it, sell it, or feed it to anything.",
   },
 ];
 
 const websiteIntelCards = [
   {
     icon: Scan,
-    title: "Scan your current site",
-    body: "We identify service pages, quote buttons, contact forms, CTAs, and intake gaps.",
+    title: "What we read",
+    body: "Your service pages. Your quote buttons. Your contact forms. The CTAs that work and the ones that quietly leak. We map every place a visitor tries to talk to you — and every place you're missing them.",
   },
   {
     icon: Route,
-    title: "Map 2–3 intake paths",
-    body: "We compress your services into simple customer choices and attach the right photo prompts.",
+    title: "What we map",
+    body: "Twenty-seven service pages compressed into 2–3 customer choices, each with its own photo prompt order. The decisions you've been making in your head for ten years, finally written down — and pointed at your customer.",
   },
   {
     icon: Globe2,
-    title: "Launch with a hosted link or embed",
-    body: "Use PhotoBrief beside your current form, behind a quote button, or as a replacement intake path.",
+    title: "What we ship",
+    body: "A hosted intake link or a one-line embed. Drop it on your homepage. Put it behind your quote button. Replace the form that's been costing you. You're live in seven days. Beta partners pay nothing for the build.",
   },
 ];
 
@@ -336,8 +336,8 @@ export default function LandingPage() {
   return (
     <>
       <PageMeta
-        title="PhotoBrief.ai | Visual intake for landscapers, junk haulers, HVAC, plumbers & estimators"
-        description="PhotoBrief replaces weak website forms with guided visual intake — built for landscapers, junk haulers, HVAC and repair techs, plumbers, and damage / return estimators. Scan your site, map your services, and get actionable lead packets instead of vague messages."
+        title="PhotoBrief.ai | Stop chasing customers for photos. Send a guided brief instead."
+        description="The Reverse-Form Method™ for landscapers, junk haulers, HVAC and repair techs, plumbers, and damage estimators. We tell your customer exactly what to send — guided, in order, from their phone — and a quote-ready lead packet lands in your inbox on the first try."
         canonicalPath="/"
         jsonLd={jsonLd}
         breadcrumbs={[{ name: "Home", path: "/" }]}
@@ -350,26 +350,28 @@ export default function LandingPage() {
               {/* Left — copy */}
               <div className="text-left pl-0">
                 <Eyebrow>
-                  <Sparkles className="h-3.5 w-3.5" /> Accepting beta applications
+                  <Sparkles className="h-3.5 w-3.5" /> Founding Partner Beta · Now reviewing applications
                 </Eyebrow>
 
                 <div className="mt-4 sm:mt-6">
                   <Title level={1}>
-                    Replace weak forms.
+                    Your contact form
                     <br />
-                    Send a guided
+                    is leaking money.
                     <br />
-                    photo brief.
+                    Patch it.
                   </Title>
                 </div>
 
                 <div className="mt-4 sm:mt-6 max-w-xl">
                   <Subtitle>
-                    PhotoBrief scans your website, maps your services, and gives
-                    customers a simple photo-guided path — so your team gets
-                    actionable lead packets instead of vague messages. Built for
-                    landscapers, junk haulers, HVAC and repair techs, plumbers,
-                    and damage estimators.
+                    Stop asking customers <em>"what do you need?"</em> and hoping
+                    they spell it out. PhotoBrief flips the form: we tell them
+                    exactly what to send — guided, in order, from their phone.
+                    The lead packet that lands in your inbox is already
+                    quote-ready. Built for landscapers, junk haulers, HVAC and
+                    repair techs, plumbers, and damage estimators who are tired
+                    of chasing photos.
                   </Subtitle>
                 </div>
 
@@ -383,21 +385,21 @@ export default function LandingPage() {
                         document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" });
                       }}
                     >
-                      {isFull ? "Join the waitlist" : "Apply for the beta"}
+                      {isFull ? "Join the waitlist" : "Claim a founding seat"}
                       <ArrowRight className="h-4 w-4" />
                     </CTA>
                     <CTA variant="quiet" size="lg" onClick={() => setDemoOpen(true)}>
                       <PlayCircle className="h-5 w-5" />
-                      Watch the product spotlight
+                      Watch the 90-second walkthrough
                     </CTA>
                   </CTAGroup>
                 </div>
 
                 <div className="mt-6 sm:mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-medium text-[hsl(var(--pb-ink-muted))] sm:text-sm">
                   {[
-                    "Website scan included",
-                    "Hosted link or embed",
-                    "Lead packets, not form spam",
+                    "Site scan included",
+                    "Live in 7 days",
+                    "You keep every photo",
                   ].map((item) => (
                     <span key={item} className="inline-flex items-center gap-1.5">
                       <span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--pb-violet)/0.55)]" />
@@ -456,11 +458,11 @@ export default function LandingPage() {
         <TickerBar
           tone="paper"
           items={[
-            "81% of forms abandoned before submit",
-            "78% buy from whoever responds first",
-            "4.2 hr avg lead response time",
-            "60% of estimates never followed up",
-            "5+ follow-ups to close — most stop at 1",
+            "81% bail before they hit submit",
+            "Your competitor replied in 22 minutes — you took 4.2 hours",
+            "60% of estimates die without a single follow-up",
+            "$1 in = $36 back when intake actually works",
+            "Most teams stop following up after the first try",
           ]}
         />
 
@@ -471,20 +473,20 @@ export default function LandingPage() {
 
         {/* ━━ SEAM A — Chapter marker (Problem → Solution) ━━━━ */}
         <ChapterMarker
-          stamp="Chapter II · The fix"
+          stamp="Chapter II · The mechanism"
           words={[
-            ["messy form", "clean packet"],
-            ["vague intake", "actionable lead"],
-            ["back-and-forth", "one round trip"],
+            ["form-first", "job-first"],
+            ["chasing photos", "receiving briefs"],
+            ["five-day thread", "one round trip"],
           ]}
         />
 
         <MarketingSection>
           <SectionIntro
             className="mb-6 sm:mb-8"
-            eyebrow={<><Sparkles className="h-3.5 w-3.5" /> See the difference</>}
-            title="Vague website form becomes an actionable lead packet."
-            description={`Watch how a generic "tell us about your project" message turns into a structured packet with the right photos, notes, and context — ready for your team to act on.`}
+            eyebrow={<><Sparkles className="h-3.5 w-3.5" /> The mechanism</>}
+            title={`Watch a vague "I need a quote" turn into a quotable job in 38 seconds.`}
+            description={`This is the Reverse-Form Method™ in motion. We read your site → we know your services → we ask only what we need → photos and notes arrive labeled to the right service line. No app for the customer. No follow-ups for your team. Just a packet.`}
             accent={
               <TradeAccent
                 src={transformationIllo}
@@ -514,7 +516,7 @@ export default function LandingPage() {
         </div>
 
         {/* ━━ TICKER 2 — Product signals ━━━━━━━━━━━━━━━━━━━━━━ */}
-        <TickerBar tone="paper" items={["Website scan included", "Hosted link or embed", "No app required for customers", "AI photo quality checks", "Lead packets — not form spam"]} direction="right" />
+        <TickerBar tone="paper" items={["Site scan included", "Hosted link or one-line embed", "No app for your customer — ever", "AI catches blurry shots before you do", "Lead packets, not form spam"]} direction="right" />
 
         {/* ━━ SEAM C — Use case chip filter ━━━━━━━━━━━━━━━━━━ */}
         <UseCaseChipRow active={activeUseCaseStamp} onChange={setActiveUseCaseStamp} />
@@ -531,11 +533,11 @@ export default function LandingPage() {
         <TickerBar
           tone="paper"
           items={[
-            `${BETA_TOTAL_PARTNERS} founding partner seats`,
-            "Free Pro for Life reward",
-            `${BETA_DURATION_DAYS}-day beta`,
-            "Concierge setup included",
-            "Every partner earns a reward",
+            `Only ${BETA_TOTAL_PARTNERS} founding seats — ever`,
+            "2 partners win Free Pro for Life",
+            "Concierge build in 7 days",
+            `${BETA_DURATION_DAYS}-day clock starts when the last seat fills`,
+            "Every partner walks out with a reward",
           ]}
         />
 
@@ -627,10 +629,10 @@ function RoiCalculatorSection() {
             </div>
             <div>
               <p className="text-base font-bold tracking-tight text-white sm:text-lg">
-                How much is weak intake costing you?
+                Want to see what the leak is costing you?
               </p>
               <p className="pb-copy mt-0.5 text-xs sm:text-sm">
-                Plug in your numbers — see leads and revenue you could recover.
+                Drop in three numbers. We'll show you the leads — and the dollars — your form is quietly walking out the door with.
               </p>
             </div>
           </div>
@@ -658,25 +660,25 @@ function RoiCalculatorSection() {
                 <div className="relative z-10 grid gap-3 sm:gap-4">
                   <div className="rounded-[1.25rem] border border-white/10 bg-white/[0.04] p-4">
                     <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-white/45">
-                      <UserCheck className="h-3.5 w-3.5" /> Current monthly leads
+                      <UserCheck className="h-3.5 w-3.5" /> What you're catching today
                     </div>
                     <p className="mt-2 text-3xl font-black tracking-tight text-white sm:text-4xl">{currentLeads}</p>
                   </div>
                   <div className="rounded-[1.25rem] border border-[hsl(var(--pb-lavender)/0.3)] bg-[hsl(var(--pb-lavender)/0.06)] p-4">
                     <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-[hsl(var(--pb-lavender))]">
-                      <ArrowRight className="h-3.5 w-3.5" /> Leads recovered with PhotoBrief
+                      <ArrowRight className="h-3.5 w-3.5" /> What you're leaving on the table
                     </div>
                     <p className="mt-2 text-3xl font-black tracking-tight text-[hsl(var(--pb-lavender))] sm:text-4xl">
                       +{totalRecovered}<span className="text-lg font-bold text-white/50"> /mo</span>
                     </p>
-                    <p className="pb-copy mt-1 text-xs">{recoveredFromForm} from better intake · {recoveredFromSpeed} from faster response</p>
+                    <p className="pb-copy mt-1 text-xs">{recoveredFromForm} the form lost · {recoveredFromSpeed} speed lost</p>
                   </div>
                   <div className="rounded-[1.25rem] border border-[hsl(var(--pb-violet)/0.3)] bg-[hsl(var(--pb-violet)/0.06)] p-4">
                     <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-[hsl(var(--pb-violet))]">
-                      <DollarSign className="h-3.5 w-3.5" /> Estimated annual revenue recovered
+                      <DollarSign className="h-3.5 w-3.5" /> What that's worth in a year
                     </div>
                     <p className="mt-2 text-3xl font-black tracking-tight text-[hsl(var(--pb-violet))] sm:text-4xl">{formatDollars(annualRevenue)}</p>
-                    <p className="pb-copy mt-1 text-xs">{formatDollars(monthlyRevenue)}/mo × 12 · based on {totalRecovered} recovered leads at {`$${avgJobValue.toLocaleString()}`} avg job</p>
+                    <p className="pb-copy mt-1 text-xs">{formatDollars(monthlyRevenue)}/mo × 12 · {totalRecovered} jobs you would've never seen, at {`$${avgJobValue.toLocaleString()}`} a piece</p>
                   </div>
                 </div>
               </div>
@@ -737,41 +739,41 @@ const painPoints = [
   {
     icon: FormInput,
     number: "81%",
-    label: "of visitors abandon your form before submitting",
+    label: "of your website visitors quit before they hit submit",
     context:
-      "Most website forms ask for too much or too little. Visitors leave before your team ever sees the lead.",
+      "Four out of every five ready-to-buy customers walk off your lot before you even know they were there. Not because your prices are wrong. Because your form asked them to think.",
     citation: { text: "Numen Technology — Form Optimization Study", url: "https://www.numentechnology.co.uk/blog/contact-form-optimization-conversion-rates" },
   },
   {
     icon: Clock,
     number: "4.2 hrs",
-    label: "average response time — most leads are gone by then",
+    label: "your average reply time — your competitor took 22 minutes",
     context:
-      "The industry average lead response time is over four hours. Leads contacted in under five minutes convert at 100× the rate.",
+      "Reply in under five minutes and you convert at 100× the rate. Reply in four hours and the customer has already booked the other guy. They don't tell you. They just stop replying.",
     citation: { text: "MIT Lead Response Management Study", url: "https://www.drivenresults.co/learn/b/lead-response-time-statistics-2025" },
   },
   {
     icon: MessageSquareWarning,
     number: "5+",
-    label: "follow-ups to close a job — most teams stop at 1",
+    label: "follow-ups it takes to close — most teams stop at 1",
     context:
-      "Without the right photos and context upfront, every job starts with a chain of follow-ups before anyone can quote.",
+      "Every job that needs a photo you don't have, a question you forgot to ask, or a detail you have to chase — that's a follow-up. Five of those between you and a closed quote. Most teams give up after one.",
     citation: { text: "MarketingSherpa / RivetOps", url: "https://www.rivetops.io/how-many-follow-ups-to-close-a-job" },
   },
   {
     icon: TrendingDown,
     number: "78%",
-    label: "of customers buy from whoever responds first",
+    label: "of buyers go with whoever responds first",
     context:
-      "Speed wins. If your intake doesn't collect what your team needs immediately, a faster competitor gets the job.",
+      "Speed is the entire game. If your intake doesn't hand your team a quotable lead on first contact, the faster competitor wins — and you spent your marketing budget warming up someone else's customer.",
     citation: { text: "InsideSales.com / MIT Study", url: "https://www.rapportagent.com/benchmarks/" },
   },
   {
     icon: UserX,
     number: "60%",
-    label: "of estimates never get a single follow-up",
+    label: "of estimates die without a single follow-up",
     context:
-      "When intake is manual and incomplete, follow-up falls through the cracks — and revenue walks out the door.",
+      "More than half the quotes you'd send never get sent. The lead goes cold in someone's inbox while they're chasing the photo, the address, the model number. Money on the floor.",
     citation: { text: "HomeAdvisor / US Tech Automations", url: "https://ustechautomations.com/resources/blog/home-service-estimate-follow-up-automation-case-study" },
   },
 ];
@@ -822,14 +824,17 @@ function PainPointSection() {
               className="mx-auto mb-6 w-full max-w-[280px] drop-shadow-[0_22px_36px_hsl(var(--pb-ink-soft)/0.28)] lg:mx-0 lg:max-w-[320px] text-left object-cover scale-150 origin-center lg:origin-left"
             />
             <span className="pb-eyebrow">
-              <MessageSquareWarning className="h-3.5 w-3.5" /> The problem
+              <MessageSquareWarning className="h-3.5 w-3.5" /> The leak
             </span>
             <h2 className="pb-section-title mt-4 text-white">
-              Your website intake is leaking money.
+              Your contact form is bleeding revenue. You just can't see it.
             </h2>
             <p className="pb-copy mx-auto mt-4 max-w-2xl text-base sm:text-lg lg:mx-0 lg:max-w-xl">
-              These are real industry numbers. Generic contact forms don't
-              just lose information — they lose customers.
+              For a contractor doing 500 site visits a month, a generic form
+              quietly walks off with somewhere between $40,000 and $200,000 in
+              annual revenue. Not because the leads are bad. Because the form
+              never let them tell you what they actually needed. These are the
+              numbers nobody's pricing in.
             </p>
           </div>
 
@@ -838,12 +843,12 @@ function PainPointSection() {
             <StatAccent
               icon={TrendingDown}
               value="81%"
-              label="of website forms are abandoned before submit."
+              label="of website forms get abandoned mid-submit. That's four out of every five ready-to-buy customers walking off your lot before you ever knew they were there."
               tone="lavender"
             />
             <RoiCalculatorSection />
             <p className="pb-copy max-w-sm text-center text-sm italic sm:text-base mt-[24px]">
-              PhotoBrief closes the gap between first contact and quote-ready information.
+              This is the leak. The Reverse-Form Method™ is how you patch it.
             </p>
           </div>
         </div>
@@ -957,16 +962,16 @@ function FoundingPartnerBetaSection({ isFull }: { isFull: boolean }) {
   return (
     <MarketingSection id="beta-program">
         <SectionIntro
-          eyebrow={<><Stamp className="h-3.5 w-3.5" /> Accepting applications</>}
+          eyebrow={<><Stamp className="h-3.5 w-3.5" /> Founding Partner Beta · Now reviewing applications</>}
           title={
             <>
-              Built with real workflows,{" "}
+              This isn't a waitlist. It's a{" "}
               <span className="not-italic font-semibold bg-gradient-to-r from-[hsl(var(--pb-lavender))] to-[hsl(var(--pb-violet))] bg-clip-text text-transparent">
-                with you.
+                30-person room.
               </span>
             </>
           }
-          description="Visual intake is workflow-specific — every trade, every service type needs something slightly different. The only way to get it right is to build alongside real businesses running real jobs. That's why this is a hands-on beta, not a waitlist."
+          description="Visual intake is workflow-specific. Every trade prices a job differently, photographs a job differently, walks a job differently. The only way to build something that fits is to build it next to the people running the work. Thirty founding partners. Two of them never pay for Pro again. Every one walks out with a tier reward and a working intake their old form couldn't touch. We're not looking for testers. We're looking for co-builders."
           accent={
             <TradeAccent
               src={foundingBadgeIllo}
@@ -991,12 +996,12 @@ function FoundingPartnerBetaSection({ isFull }: { isFull: boolean }) {
                 </span>
                 <div className="min-w-0">
                   <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[hsl(var(--pb-lavender))]">
-                    Beta reward
+                    The grand prize
                   </p>
                   <p className="mt-1.5 font-serif text-lg italic leading-snug text-white sm:text-xl">
-                    2 partners get{" "}
+                    The 2 partners who teach us the most get{" "}
                     <span className="not-italic font-semibold">Free Pro for Life</span>.
-                    All {BETA_TOTAL_PARTNERS} earn a post-launch reward tier.
+                    The other {BETA_TOTAL_PARTNERS - 2}? Every one walks out with a reward tier they earned.
                   </p>
                   <FreeProEligibilityModal>
                     {(open) => (
@@ -1031,8 +1036,8 @@ function FoundingPartnerBetaSection({ isFull }: { isFull: boolean }) {
           <div id="apply" className="scroll-mt-8 lg:sticky lg:top-6 lg:self-start">
             <BetaOnboardingAgentExperience
               source="landing"
-              title={isFull ? "Join the waitlist" : "Apply for the Founding Partner Beta"}
-              description={`Share your website and intake context. The onboarding agent qualifies your workflow, recommends your first intake paths, and submits your application for one of ${BETA_TOTAL_PARTNERS} founding partner seats.`}
+              title={isFull ? "Join the waitlist" : "Apply for a founding seat"}
+              description={`Tell us about your site and how leads come in today. Our onboarding agent qualifies the fit, sketches your first 2–3 intake paths on the spot, and submits your application for one of ${BETA_TOTAL_PARTNERS} founding seats. Takes about 6 minutes.`}
             />
           </div>
         </div>
@@ -1289,12 +1294,12 @@ function WorkflowSection() {
               <Route className="h-3.5 w-3.5" /> How it works
             </span>
             <h2 className="pb-section-title mt-4 max-w-xl text-white">
-              From website visit to actionable lead packet.
+              From a website visit to a packet your team can quote — without typing a single follow-up.
             </h2>
             <p className="pb-copy mt-4 max-w-lg text-base sm:text-lg">
-              PhotoBrief turns your website into a structured intake
-              machine — from first visit to a quote-ready packet your team
-              can act on without follow-ups.
+              Four moves. Roughly 38 seconds for the customer. Zero
+              back-and-forth for your team. This is the Reverse-Form Method™
+              from the inside.
             </p>
             <div className="mt-8 hidden lg:block">
               <img
@@ -1350,8 +1355,8 @@ function ComparisonSection({ mode }: { mode: "messy" | "clean" }) {
     <MarketingSection id="comparison" spacing="tight">
         <SectionIntro
           eyebrow={<><MessageSquareWarning className="h-3.5 w-3.5" /> Before / after</>}
-          title="Generic form vs. guided visual intake."
-          description="The difference is not more photos — it's structured context that lets your team skip the back-and-forth entirely."
+          title="Same customer. Same job. Different intake. Different outcome."
+          description="It's not that PhotoBrief asks for more photos. It asks for the right ones, in the right order, attached to the right service. The back-and-forth that used to take five days now doesn't have to happen at all."
           accent={
             <TradeAccent
               src={estimatorIllo}
@@ -1365,7 +1370,7 @@ function ComparisonSection({ mode }: { mode: "messy" | "clean" }) {
           <div className="lg:pr-8 xl:pr-12">
             <div className="flex items-baseline justify-between gap-3 border-b border-[hsl(var(--pb-ink-soft)/0.18)] pb-3">
               <p className="font-serif text-lg italic text-[hsl(var(--pb-ink))] sm:text-xl">
-                {isClean ? "Guided visual intake" : "Generic website form"}
+                {isClean ? "The Reverse-Form Method™" : "The form you're using now"}
               </p>
               <span
                 className={`text-[10px] font-black uppercase tracking-[0.22em] ${
@@ -1519,8 +1524,8 @@ function UseCaseSection({ activeStamp }: { activeStamp?: string | null }) {
     <MarketingSection id="use-cases">
         <SectionIntro
           eyebrow={<><ClipboardList className="h-3.5 w-3.5" /> Use cases</>}
-          title="Built for the trades that need to see before they act."
-          description="Landscapers, junk haulers, HVAC and repair techs, plumbers, and damage / return estimators — anywhere a missing photo slows the next step, PhotoBrief structures the intake so your team has everything on the first pass."
+          title="If a missing photo can stall your next move — this is built for you."
+          description="Landscapers quoting blind. Junk haulers rolling the wrong truck. HVAC techs missing the part. Plumbers showing up to a four-hour job with a two-hour window. Estimators chasing the same claim through three rounds of email. PhotoBrief structures the intake so your team has every shot, every detail, every dollar of context — on the first pass."
           accent={
             <TradeAccent
               src={landscaperIllo}
@@ -1569,8 +1574,8 @@ function WebsiteIntelligenceSection() {
     <MarketingSection id="website-intelligence">
         <SectionIntro
           eyebrow={<><Globe2 className="h-3.5 w-3.5" /> Website Intelligence</>}
-          title="Your website becomes your intake engine."
-          description="PhotoBrief scans your services, current forms, and calls-to-action, then maps them into 2–3 simple intake paths you can launch with a hosted link or embed. Beta partners get this built for them during concierge setup."
+          title="Your website is already telling us how to fix it."
+          description="Every service page you've written, every quote button you've placed, every form field you've added — it's a map of the jobs you actually take. We read it, compress it into 2–3 customer choices, and ship a guided intake path live in seven days. Beta partners pay nothing for the build."
           accent={
             <TradeAccent
               src={plumberIllo}
@@ -1610,8 +1615,8 @@ function RewardTiersSection() {
     <MarketingSection spacing="tight">
         <SectionIntro
           eyebrow={<><Gift className="h-3.5 w-3.5" /> Reward tiers</>}
-          title="Every partner earns something."
-          description="Your tier is based on the quality of your feedback — not just how much you use the product. We track engagement internally; no self-reporting required."
+          title="Every founding partner walks out with something."
+          description="No participation trophies. Your tier is earned by the quality of the feedback you give us — the calls you flag, the workflows you walk us through, the things you tell us we got wrong. We track engagement internally so you never have to write a report."
           accent={
             <TradeAccent
               src={rewardRibbonsIllo}
@@ -1685,10 +1690,10 @@ function BetaDetailsAccordion({ value, onValueChange }: BetaDetailsAccordionProp
     <MarketingSection spacing="tight">
       <div className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-start lg:gap-12">
         <div className="lg:min-w-0">
-          <span className="pb-eyebrow"><FileText className="h-3.5 w-3.5" /> The fine print</span>
-          <h2 className="pb-section-title mt-4 text-white">Everything in writing.</h2>
+          <span className="pb-eyebrow"><FileText className="h-3.5 w-3.5" /> Everything in writing</span>
+          <h2 className="pb-section-title mt-4 text-white">Because that's what founding partners deserve.</h2>
           <p className="pb-copy mt-4 max-w-xl text-base sm:text-lg">
-            How the program runs, what we ask of partners, and exactly how rewards are decided.
+            How the program runs. What we'll ask of you. Exactly how rewards are decided. No surprises, no asterisks, no fine-print games.
           </p>
           <div className="mt-8">
           <div className="flex items-center justify-end border-b border-[hsl(var(--pb-ink-soft)/0.18)] py-3">
@@ -1807,17 +1812,21 @@ function FinalCta({ isFull }: { isFull: boolean }) {
       <Container>
         <div className="grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-16">
           <div>
-            <Eyebrow>The last word</Eyebrow>
+            <Eyebrow>One last thing</Eyebrow>
             <div className="mt-6">
               <Title level={2}>
-                Get quote-ready leads, not vague messages.
+                30 seats. 60 days. Two free-for-life winners. Pick up the pen.
               </Title>
             </div>
             <div className="mt-6 max-w-md">
               <Body size="lg">
-                Stop chasing customers for missing photos and context. Every
-                inquiry arrives as a complete, actionable lead packet — so your
-                team can quote, schedule, or approve without a single follow-up.
+                You're applying for one of {BETA_TOTAL_PARTNERS} founding seats in
+                the only intake program built next to the trades that actually
+                run the work. It costs you nothing. You walk away with a guided
+                intake your old form couldn't touch — and a real shot at never
+                paying for Pro again. The seats fill the way they always do:
+                quietly, then all at once. Don't be the person who emailed us
+                the day after.
               </Body>
             </div>
             <div className="mt-7">
@@ -1831,7 +1840,7 @@ function FinalCta({ isFull }: { isFull: boolean }) {
                       ?.scrollIntoView({ behavior: "smooth" })
                   }
                 >
-                  {isFull ? "Join the waitlist" : "Apply for the beta"}
+                  {isFull ? "Join the waitlist" : "Send my application"}
                   <ArrowRight className="h-4 w-4" />
                 </CTA>
                 <CTA variant="secondary" size="lg" href="/pricing">
