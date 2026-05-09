@@ -1,107 +1,94 @@
-# Landing copy rewrite — Stefan Georgi / RMBC
+# Landing Page Polish + RMBC Visual System
 
-A complete copy refactor of `src/pages/Landing.tsx` (and the content arrays it consumes) into Stefan Georgi's RMBC framework: **R**esearch · **M**echanism · **B**elief · **C**lose. Voice will be punchy, emotional, long-form direct response. Page gets noticeably longer because each section earns its job in the funnel instead of just describing a feature.
+Three coordinated workstreams: (1) meticulous spacing/alignment/sizing audit per section, (2) regression tests that lock in the visual language, (3) a new set of line-art illustrations explicitly themed to the RMBC method (Research → Mechanism → Brief → Close).
 
-## The proposed mechanism
+---
 
-Every Georgi page lives or dies on the named mechanism — the "this is why it works when nothing else has" idea. After reading the page end-to-end, the cleanest fit is:
+## 1. Section-by-Section Spacing & Alignment Audit
 
-> **The Reverse-Form Method™** — instead of asking your customer *"what do you need?"* and hoping they spell it out, you *tell them exactly what to send* — guided, in order, from their phone. The mechanism is the **inversion**: the form follows the job, not the other way around.
+For each section in `src/pages/Landing.tsx` (in render order) I'll inspect at three viewports (390, 834, 1378) and normalize against a single rhythm: section padding, container width, eyebrow→title→subtitle gap, title→content gap, intra-grid gap, card padding, illustration size relative to copy column.
 
-This frames PhotoBrief as a category-of-one (no one else inverts the form), explains the website-scan ("we have to read your services first to know what to ask for"), and makes the lead packet feel like an inevitable output, not a feature. Used as the spine of the page from hero to final close.
+Sections to audit (in order):
 
-## Voice rules
+1. **Hero** (`MarketingHero`) — headline width, subtitle line-length, CTA group spacing, trust-strip gap, hero illustration max-width and centering relative to phone (per earlier rule: logo stays centered over phone).
+2. **Industry-signal ticker** — vertical padding, ticker item spacing, divider treatment.
+3. **Pain Points** (`PainPointSection`) — eyebrow→title gap, stat card grid gap, citation footer alignment, dollarized consequence emphasis.
+4. **Brief Assembly** (`InteractiveHeroBriefAssembly` wrapper) — container width vs. inner widget, caption spacing.
+5. **Workflow** (`WorkflowSection`, 4 steps) — equal card heights, icon badge size, step number alignment, body line-length.
+6. **Comparison** (`ComparisonSection`) — left/right column parity, row vertical rhythm, italic kicker placement.
+7. **Use Cases** (`UseCaseSection`) — trade illustration size cap, micro-story line-length, stamp/badge alignment.
+8. **Website Intelligence** (`WebsiteIntelligenceSection`) — three-card grid gap, "read · map · ship" eyebrow rhythm.
+9. **ROI Calculator** (`RoiCalculatorSection`) — input/output column balance, number tabular-nums, CTA spacing.
+10. **Beta Crossover ticker** — match section #2 rhythm.
+11. **Founding Partner Beta** (`FoundingPartnerBetaSection`) — sticky `#apply` panel offset, seat tracker spacing, badge illustration size.
+12. **Reward Tiers** (`RewardTiersSection`) — tier card parity, ribbon illustration size, consequence line spacing.
+13. **Fine-print accordion** — item padding, divider weight.
+14. **Final CTA** (`Section tone="dark"`) — 4-line urgency stack rhythm, mailbox illustration size, CTA group centering.
 
-- Short. Punchy. One thought per line.
-- Open loops: stat → silence → reveal.
-- Specific over generic ("the $480 driveway hauler" not "your business").
-- Italicized asides that sound like a human voice next to the reader.
-- "You" 3× more often than "we." "We" only when it earns trust.
-- No corporate hedge words ("solutions", "leverage", "streamline").
-- Earn every claim with a number, a name, or a citation.
-- CTA copy never describes the button — it describes the *next moment in the reader's life.*
+**Normalization rules I'll apply (where missing):**
+- Section vertical rhythm: `pb-section` everywhere, `spacing="tight"` only for tickers/accordion.
+- Eyebrow → title: 12px. Title → subtitle: 12px. Subtitle → content: 32–48px (clamp).
+- Grid gaps: `gap-5 md:gap-6` for card grids; `gap-3 md:gap-4` for trust strips.
+- Illustration max-widths: hero ~520px, trade illustrations ~280px, scene illustrations ~360px.
+- Text column max widths: section header `max-w-2xl`, body `max-w-prose`.
+- All CTAs use the `CTA` schema primitive (no ad-hoc buttons).
 
-## Section-by-section direction
+Output: edits scoped to `src/pages/Landing.tsx` and inline section components only. No design-system token changes. Hover/touch rules from `mem://design/touch-vs-desktop` preserved.
 
-### 1. Hero — Big Promise + Mechanism Tease (RMBC: open with Belief shift)
-- Eyebrow: "Founding Partner Beta · Now Reviewing Applications"
-- Headline (3 lines, drumbeat): *"Your contact form is leaking money."* / *"Replace it with the Reverse-Form Method™."* / *"Lead packets land ready to quote — not vague messages you have to chase."*
-- Sub: 2-sentence promise + mechanism name-drop + who it's for.
-- Primary CTA: *"Apply for a Founding Seat →"* · Quiet CTA stays.
-- Trust strip rewrites to outcomes: "No app for your customer · 12-min concierge setup · You keep every photo."
+---
 
-### 2. Industry-signal ticker — Research stack
-Tighter, more visceral stats: *"81% bail before they hit submit"*, *"4.2 hrs to your first reply — your competitor took 22 minutes"*, *"60% of estimates die without a single follow-up"*, *"$1 in = $36 back when intake actually works"*, *"5+ touches to close — most teams stop at 1."*
+## 2. Visual Regression / Consistency Tests
 
-### 3. Pain Point section ("The problem") — Research, deep
-- New title: *"Your website intake is leaking money — and you can't see where."*
-- Lead-in paragraph that names the cost in dollars per month for a typical contractor doing 500 visits/mo.
-- Carousel: 5 stats stay, but each gets a Georgi treatment — open loop, named source, dollarized consequence, twist of the knife.
-- 81% StatAccent re-captioned: *"of website forms are abandoned mid-submit. That's 4 out of every 5 ready-to-buy customers walking off your lot before you ever knew they were there."*
-- Tagline below ROI: *"This is the leak. The Reverse-Form Method™ is how you patch it."*
+Add a new test file `src/test/landing-visual-contract.test.tsx` (vitest + @testing-library/react, jsdom). These are *contract* tests, not pixel snapshots — they assert the structural rhythm so future edits can't silently drift.
 
-### 4. Brief Assembly section — Mechanism reveal
-- Eyebrow: "The Mechanism"
-- Title: *"Watch a vague 'I need a quote' turn into a quotable job in 38 seconds."*
-- Lead-in: 3-sentence tour of the inversion — *we read your site → we know your services → we ask only what we need → photos and notes arrive labeled to the right service line.*
+Assertions per section:
+- Each `<section>` (or `MarketingSection`/`Section` primitive) renders with the expected `id` and an allowed tone (`paper | alt | dark`).
+- Each section header block contains exactly one eyebrow, one h2, optional subtitle, in that DOM order.
+- Card grids contain the expected count (e.g. workflow=4, intel=3, reward tiers=N).
+- All CTAs in the page resolve to `.ls-cta` or `MarketingCTA` — no raw `<button class="bg-primary">`.
+- Hero illustration is centered (parent has `justify-center` / `mx-auto`) and the brand mark is rendered above it.
+- No section uses both `spacing="tight"` and a dark tone unless whitelisted (tickers/accordion/final CTA).
+- Section render order matches the documented sequence above (regression for accidental reorders).
 
-### 5. Workflow (4 steps, "How it works") — Mechanism mechanics
-Re-eyebrow each step in DR voice:
-1. **Scan** — *"We read your site like your best estimator would."*
-2. **Map** — *"We compress 27 service pages into 3 customer choices."*
-3. **Capture** — *"Your customer takes the right photo, not just any photo."*
-4. **Deliver** — *"Your inbox gets a packet. Not a guessing game."*
-Each body re-written ~40% longer with concrete example ("the driveway photo, the breaker plate, the panel access shot").
+Plus a small lint-style test `src/test/landing-tokens.test.ts`:
+- Greps `src/pages/Landing.tsx` for forbidden classes (`text-white`, `bg-black`, hex literals, `text-[#`, `bg-[#`) — fails if found.
+- Verifies every imported asset under `@/assets/...` is referenced at least once.
 
-### 6. Comparison (Before / PhotoBrief) — Belief stack
-Rewrite both signal lists as *parallel pairs*, dollarized where possible. Add a new italic kicker between the two columns: *"Same customer. Same job. Different intake. Different outcome."*
+Run via existing vitest config; no new deps.
 
-### 7. Use cases — Belief / proof per trade
-Rewrite each card as a 3-beat micro-story: *the moment intake fails → what PhotoBrief would have caught → the dollar at stake.* Stamps stay. Each gets a fresh title verb. Tone: *"The HVAC tech who showed up without the right capacitor — twice."*
+---
 
-### 8. Website Intelligence — Mechanism, technical layer
-- Title: *"Your website is already telling us how to fix it."*
-- 3 cards rewritten as *"What we read · What we map · What we ship"* (verb-led, present tense, owned by us).
-- Closing line: *"Beta partners get this built for them in 7 days. Free."*
+## 3. New RMBC-Themed Line-Art Illustrations
 
-### 9. Beta crossover ticker
-Rewrites: *"30 founding seats"*, *"2 win Free Pro for Life"*, *"Concierge setup in 7 days"*, *"60-day clock starts when the last seat fills"*, *"Every partner earns a reward tier."*
+Same artistic line — soft cream background, navy line work, amber accent, the visual language already used in `src/assets/scenes/*` and `src/assets/trades/*`. Four new pieces, one per RMBC stage, plus one composite "method overview" graphic:
 
-### 10. Founding Partner Beta — Big Belief + Authority
-- Title: *"This isn't a waitlist. It's a 30-person room — and we're hiring two co-builders."*
-- Lead: 3 short paragraphs — why a beta and not a launch, why these 30, what kind of person we're looking for, why now.
-- Reward callout rewrite: *"The 2 partners who teach us the most? They never pay for PhotoBrief Pro again. Ever."*
-- Trust strip: 3 micro-promises, italic, single-sentence each ("Your photos never train our models. Period.").
+| File | Stage | Concept |
+|---|---|---|
+| `src/assets/rmbc/research-magnifier.png` | Research | Magnifier hovering over a website wireframe with photo thumbnails surfacing — the site-scan moment. |
+| `src/assets/rmbc/mechanism-gears.png` | Mechanism | A labeled "Reverse-Form Method™" device: form upside-down, photo tiles dropping out the bottom in order. |
+| `src/assets/rmbc/brief-packet.png` | Brief | A neatly assembled lead packet (photos + answers + AI summary) tied with an amber ribbon. |
+| `src/assets/rmbc/close-handshake.png` | Close | A quote PDF sliding into an inbox with a checkmark — the "ready to quote" moment. |
+| `src/assets/rmbc/method-overview.png` | Composite | Four-panel strip used at the top of the mechanism section. |
 
-### 11. Reward Tiers — Stack the value
-- Title stays warm but adds DR weight: *"Every founding partner walks out with something."*
-- Add a 1-line consequence per tier ("Free Pro for Life = $588/yr you'll never invoice").
+Generated via `imagegen--generate_image` (premium for the composite, fast for the singles), `transparent_background: false`, prompts pinned to: "soft cream #FAF7F2 background, hand-drawn navy #1B2A4A line art, single amber #F2A33A accent highlight, editorial illustration, warm and confident, no text labels, matches PhotoBrief brand line work". After generation I'll QA each by viewing and re-prompt if any drift from the established style.
 
-### 12. Fine print accordion
-- Section eyebrow: *"Everything in writing — because that's what founding partners deserve."*
-- Tightened intro line, but inner copy mostly intact (legal-adjacent).
+Placement on the page:
+- `research-magnifier` → header of Website Intelligence section (replaces nothing, additive).
+- `mechanism-gears` → header of new "The Mechanism" intro panel above Workflow.
+- `brief-packet` → header of Brief Assembly section.
+- `close-handshake` → final CTA section, replacing or paired with `mailbox-flag-illustration`.
+- `method-overview` → small inline strip near the top of Pain Points, anchoring the RMBC narrative.
 
-### 13. Final CTA — The Close
-- Eyebrow: *"One last thing."*
-- Title: *"30 seats. 60 days. Two free-for-life winners. Pick up the pen."*
-- Body: 4-line urgency stack — what they're applying for, what it costs (nothing), what they walk away with (a working intake regardless of acceptance), and the one-sentence dare.
-- Primary CTA: *"Send My Application →"* (replaces "Apply for the beta")
-- Secondary stays "See plans".
+---
 
-## Files touched
+## Out of Scope
+- No copy rewrites (Stefan-Georgi pass already shipped).
+- No layout/component refactors beyond spacing tokens.
+- No design-system or color-token changes.
+- No changes to auth, pricing, dashboard, or BetaOnboardingAgentExperience.
 
-- `src/pages/Landing.tsx` — all visible strings in JSX (hero, sections, CTAs, footers within sections, accent captions).
-- Content arrays inside `Landing.tsx`: `painPoints`, `workflowSteps`, `useCases`, `messySignals`, `cleanSignals`, `websiteIntelCards`, `trustPoints`, `TRADES`, `sectionLinks`, `SOFTWARE_APP_JSONLD.description` (kept SEO-aligned), TickerBar `items` props.
-- `src/components/marketing/HowItWorksSteps.ts(x)` if it duplicates step copy used in JSON-LD.
-- Any image `alt` text that becomes inaccurate.
-
-## Out of scope
-
-- Layout, components, animations, colors, illustrations.
-- The auth pages, pricing page, dashboard, BetaOnboardingAgentExperience copy (it's a workspace component).
-- New section additions — we work within the existing 13 sections.
-- FAQ content (lives in `src/features/help/content/faq.tsx`, not visible on landing).
-
-## How we'll ship
-
-One pass on `Landing.tsx` from top to bottom, rewriting strings in place. Then a sweep of the content arrays. Then a quick read at desktop + mobile widths to make sure no rewritten line breaks the layout.
+## Files Touched
+- `src/pages/Landing.tsx` (spacing normalization + new image placements)
+- `src/test/landing-visual-contract.test.tsx` (new)
+- `src/test/landing-tokens.test.ts` (new)
+- `src/assets/rmbc/*.png` (5 new illustrations)
