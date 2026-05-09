@@ -485,22 +485,22 @@ function CustomerRequestScreen({ onSubmit }: { onSubmit: () => void }) {
 
       {/* Form fields */}
       <div className="space-y-2">
-        <div className="flex items-center gap-2 rounded-xl bg-black/[0.04] px-3 py-2.5">
+        <div className="flex items-center gap-2 border border-black/15 px-3 py-2.5">
           <User className="h-3.5 w-3.5 shrink-0 text-black/25" />
           <span className="text-[12px] text-black/55">Sarah Johnson</span>
         </div>
-        <div className="flex items-center gap-2 rounded-xl bg-black/[0.04] px-3 py-2.5">
+        <div className="flex items-center gap-2 border border-black/15 px-3 py-2.5">
           <MapPin className="h-3.5 w-3.5 shrink-0 text-black/25" />
           <span className="text-[12px] text-black/55">742 Evergreen Terrace</span>
         </div>
-        <div className="flex items-center justify-between rounded-xl bg-black/[0.04] px-3 py-2.5">
+        <div className="flex items-center justify-between border border-black/15 px-3 py-2.5">
           <span className="flex items-center gap-2 text-[12px] text-black/55">
             <Package className="h-3.5 w-3.5 shrink-0 text-black/25" />
             Garage cleanout
           </span>
           <ChevronRight className="h-3.5 w-3.5 text-black/20" />
         </div>
-        <div className="rounded-xl bg-black/[0.04] px-3 py-2.5">
+        <div className="border border-black/15 px-3 py-2.5">
           <p className="text-[12px] text-black/40 leading-[1.5]">
             Need the garage cleared before we move. Lots of old furniture and a broken fridge…
           </p>
@@ -540,7 +540,7 @@ function CustomerRoutingScreen({ onDone }: { onDone: () => void }) {
         <p className="mt-1.5 px-4 text-[12px] leading-[1.6] text-black/40">
           {BRAND.short} uses PhotoBrief to collect the right photos upfront — so they can quote faster.
         </p>
-        <div className="mt-5 flex items-center gap-2 rounded-full bg-black/[0.04] px-3 py-1.5">
+        <div className="mt-5 flex items-center gap-2 rounded-full border border-black/15 px-3 py-1.5">
           <Camera className="h-3 w-3 text-black/30" />
           <span className="text-[10px] font-semibold text-black/40">4 photos · 3 questions · ~3 min</span>
         </div>
@@ -609,7 +609,7 @@ function CustomerQuestionsScreen({ onContinue }: { onContinue: () => void }) {
                 className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-medium transition-all ${
                   active
                     ? "text-white"
-                    : "bg-black/[0.04] text-black/50"
+                    : "border border-black/15 text-black/55"
                 }`}
                 style={active ? { backgroundColor: BRAND.color } : undefined}
               >
@@ -632,7 +632,7 @@ function CustomerQuestionsScreen({ onContinue }: { onContinue: () => void }) {
               className={`flex-1 rounded-xl py-2 text-[11px] font-medium capitalize transition-all ${
                 selected.volume === v
                   ? "text-white"
-                  : "bg-black/[0.04] text-black/50"
+                  : "border border-black/15 text-black/55"
               }`}
               style={selected.volume === v ? { backgroundColor: BRAND.color } : undefined}
             >
@@ -654,7 +654,7 @@ function CustomerQuestionsScreen({ onContinue }: { onContinue: () => void }) {
               className={`flex-1 rounded-xl py-2 text-[11px] font-medium capitalize transition-all ${
                 selected.stairs === v
                   ? "text-white"
-                  : "bg-black/[0.04] text-black/50"
+                  : "border border-black/15 text-black/55"
               }`}
               style={selected.stairs === v ? { backgroundColor: BRAND.color } : undefined}
             >
@@ -727,7 +727,7 @@ function CustomerCaptureScreen({
       </div>
 
       {/* Photo viewfinder */}
-      <div className="relative overflow-hidden rounded-2xl bg-black/[0.03]">
+      <div className="relative overflow-hidden border border-black/15">
         {isBlurryShot ? (
           <div className="relative">
             <img
@@ -752,7 +752,7 @@ function CustomerCaptureScreen({
              />
             <div className="absolute inset-0 flex items-center justify-center bg-black/20">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90">
-                <CheckCircle2 className="h-6 w-6 text-emerald-500" />
+                <CheckCircle2 className="h-6 w-6 text-[#0d9488]" />
               </div>
             </div>
           </div>
@@ -784,7 +784,7 @@ function CustomerCaptureScreen({
 
       {/* Normal prompt */}
       {!isBlurryShot && (
-        <div className="mt-3 rounded-xl bg-black/[0.04] p-3">
+        <div className="mt-3 border border-black/15 p-3">
           <p className="flex items-center gap-2 text-[13px] font-semibold text-black/70">
             <Camera className="h-3.5 w-3.5 shrink-0" style={{ color: BRAND.color }} />
             {photo.label}
@@ -827,7 +827,7 @@ function CustomerCaptureScreen({
             className={`relative aspect-square overflow-hidden rounded-lg ${
               i === currentStep
                 ? "ring-2"
-                : "ring-1 ring-black/[0.06]"
+                : "border border-black/15"
             }`}
             style={i === currentStep ? { boxShadow: `0 0 0 2px ${BRAND.color}` } : undefined}
           >
@@ -851,12 +851,12 @@ function CustomerCaptureScreen({
                   className="h-full w-full object-cover"
                   width={300} height={300} loading="lazy" sizes="48px"
                 />
-                <span className="absolute right-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500">
+                <span className="absolute right-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#0d9488]">
                   <CheckCircle2 className="h-2.5 w-2.5 text-white" />
                 </span>
               </>
             ) : (
-              <div className="flex h-full w-full items-center justify-center bg-black/[0.03]">
+              <div className="flex h-full w-full items-center justify-center border border-black/10">
                 <span className="text-[10px] font-bold text-black/20">
                   {i + 1}
                 </span>
@@ -876,7 +876,7 @@ function CustomerReviewScreen({ onSubmit }: { onSubmit: () => void }) {
       <div className="mb-3 mt-1">
         <div className="flex items-center justify-between">
           <ClearPathHeader compact />
-          <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold text-emerald-600">
+          <span className="rounded-full border border-[#0d9488]/40 px-2 py-0.5 text-[10px] font-bold text-[#0d9488]">
             {photos.length}/{photos.length}
           </span>
         </div>
@@ -889,7 +889,7 @@ function CustomerReviewScreen({ onSubmit }: { onSubmit: () => void }) {
       </div>
 
       {/* Answers summary */}
-      <div className="mb-2 rounded-xl bg-black/[0.03] p-2.5">
+      <div className="mb-2 border border-black/15 p-2.5">
         <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-black/30 mb-1.5">Your answers</p>
         {CUSTOMER_ANSWERS.map((qa) => (
           <div key={qa.q} className="flex items-center justify-between py-0.5">
@@ -902,16 +902,16 @@ function CustomerReviewScreen({ onSubmit }: { onSubmit: () => void }) {
       {/* All captured thumbnails */}
       <div className="grid grid-cols-2 gap-2">
         {photos.map((p) => (
-          <div key={p.id} className="overflow-hidden rounded-xl ring-1 ring-black/[0.06]">
+          <div key={p.id} className="overflow-hidden rounded-xl border border-black/15">
             <img
               src={p.src}
               alt={p.label}
               className="h-[72px] w-full object-cover"
               width={300} height={300} loading="lazy" sizes="150px"
             />
-            <div className="flex items-center justify-between px-2 py-1.5 bg-black/[0.02]">
+            <div className="flex items-center justify-between px-2 py-1.5 border-t border-black/10">
               <span className="text-[10px] font-semibold text-black/50">{p.label}</span>
-              <span className="flex items-center gap-0.5 text-[9px] font-bold text-emerald-500">
+              <span className="flex items-center gap-0.5 text-[9px] font-bold text-[#0d9488]">
                 <CheckCircle2 className="h-2.5 w-2.5" /> OK
               </span>
             </div>
@@ -937,8 +937,8 @@ function CustomerReviewScreen({ onSubmit }: { onSubmit: () => void }) {
 function CustomerConfirmationScreen() {
   return (
     <div className="flex min-h-[420px] flex-col items-center justify-center text-center">
-      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/10">
-        <CheckCircle2 className="h-8 w-8 text-emerald-500" />
+      <div className="flex h-16 w-16 items-center justify-center rounded-full border border-[#0d9488]/40">
+        <CheckCircle2 className="h-8 w-8 text-[#0d9488]" />
       </div>
       <h3 className="mt-4 text-[16px] font-bold tracking-tight text-black/85">
         Photos sent!
@@ -946,7 +946,7 @@ function CustomerConfirmationScreen() {
       <p className="mt-2 text-[12px] leading-[1.6] text-black/45 px-4">
         {BRAND.name} has your photos and will follow up with a quote.
       </p>
-      <div className="mt-5 rounded-xl bg-black/[0.03] px-4 py-3">
+      <div className="mt-5 border border-black/15 px-4 py-3">
         <p className="text-[10px] text-black/30">
           You can close this page now.
         </p>
