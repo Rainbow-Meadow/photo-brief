@@ -131,6 +131,9 @@ function isValidEmail(value: string) {
 
 /* ── Phone bezel — FIXED SIZE ── */
 const PHONE_CONTENT_H = 520;
+const AMBER = "#F2A33A";
+const CREAM = "#F4F1EA";
+const INK = "#0E0E0C";
 
 function PhoneMockup({
   label,
@@ -143,30 +146,30 @@ function PhoneMockup({
   children: React.ReactNode;
   variant?: "light" | "dark";
 }) {
-  const bg = variant === "dark" ? "bg-[#0c0e14]" : "bg-white";
-  const islandClass = variant === "dark" ? "pb-dark-island" : "";
+  const bg = variant === "dark" ? "bg-[#0E0E0C]" : "bg-[#F4F1EA]";
+  const statusColor = variant === "dark" ? "text-[#F4F1EA]/40" : "text-[#0E0E0C]/40";
   return (
     <div className="flex flex-col items-center gap-3">
-      <div className="text-center">
-        <span className="text-xs font-bold uppercase tracking-[0.16em] text-[hsl(var(--pb-ink-muted))]">
+      <div className="text-center font-mono">
+        <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-foreground/55">
           {label}
         </span>
         {sublabel && (
-          <span className="ml-2 text-xs text-[hsl(var(--pb-ink-muted)/0.7)]">{sublabel}</span>
+          <span className="ml-2 text-[10px] uppercase tracking-[0.22em] text-foreground/35">// {sublabel}</span>
         )}
       </div>
-      <div aria-hidden="true" className={`relative w-[260px] rounded-[2.25rem] border-[3px] border-white/[0.08] bg-[#1a1a1f] p-[3px] shadow-[0_8px_40px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,255,255,0.04)] sm:w-[280px] sm:rounded-[2.5rem] ${islandClass}`}>
+      <div aria-hidden="true" className="relative w-[260px] rounded-[2.25rem] border border-foreground/15 bg-[#0E0E0C] p-[3px] sm:w-[280px] sm:rounded-[2.5rem]">
         {/* Notch */}
         <div className="absolute left-1/2 top-[10px] z-20 h-[22px] w-[90px] -translate-x-1/2 rounded-full bg-black" />
         <div
-          className={`relative overflow-hidden rounded-[2.25rem] ${bg}`}
+          className={`relative overflow-hidden rounded-[2.1rem] ${bg}`}
           style={{ height: PHONE_CONTENT_H + 52 }}
         >
           {/* Status bar */}
           <div
-            className={`flex items-center justify-between px-6 pb-1 pt-[38px] text-[10px] font-semibold ${variant === "dark" ? "text-white/50" : "text-black/40"}`}
+            className={`flex items-center justify-between px-6 pb-1 pt-[38px] font-mono text-[10px] font-semibold ${statusColor}`}
           >
-            <span>9:41</span>
+            <span>09:41</span>
             <div className="flex items-center gap-1">
               <Signal className="h-3 w-3" />
               <Wifi className="h-3 w-3" />
@@ -191,23 +194,23 @@ function ConnectionLine() {
   return (
     <div className="hidden items-center justify-center self-center lg:flex">
       <div className="flex flex-col items-center gap-2">
-        <div className="h-20 w-px border-l border-dashed border-[hsl(var(--pb-ink-soft)/0.18)]" />
-        <div className="flex h-8 w-8 items-center justify-center rounded-full border border-[hsl(var(--pb-violet)/0.4)] bg-[hsl(var(--pb-violet)/0.12)]">
-          <ArrowRight className="h-3.5 w-3.5 text-[hsl(var(--pb-violet))]" />
+        <div className="h-20 w-px bg-foreground/20" />
+        <div className="flex h-8 w-8 items-center justify-center rounded-none border border-[#F2A33A]">
+          <ArrowRight className="h-3.5 w-3.5 text-[#F2A33A]" />
         </div>
-        <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-[hsl(var(--pb-ink-muted))]">
-          Live sync
+        <span className="font-mono text-[9px] font-bold uppercase tracking-[0.32em] text-foreground/55">
+          LIVE&nbsp;SYNC
         </span>
-        <div className="h-20 w-px border-l border-dashed border-[hsl(var(--pb-ink-soft)/0.18)]" />
+        <div className="h-20 w-px bg-foreground/20" />
       </div>
     </div>
   );
 }
 
-/* ── Powered by PhotoBrief mini-badge (for customer screens) ── */
+/* ── Powered by PhotoBrief mini-badge (for customer screens — cream paper) ── */
 function MiniPoweredBy() {
   return (
-    <p className="mt-3 flex items-center justify-center gap-1 text-[9px] text-black/25">
+    <p className="mt-3 flex items-center justify-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.28em] text-black/40">
       <Camera className="h-2.5 w-2.5" />
       Powered by PhotoBrief
     </p>
