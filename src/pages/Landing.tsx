@@ -1615,8 +1615,8 @@ function RewardTiersSection() {
     <MarketingSection spacing="tight">
         <SectionIntro
           eyebrow={<><Gift className="h-3.5 w-3.5" /> Reward tiers</>}
-          title="Every partner earns something."
-          description="Your tier is based on the quality of your feedback — not just how much you use the product. We track engagement internally; no self-reporting required."
+          title="Every founding partner walks out with something."
+          description="No participation trophies. Your tier is earned by the quality of the feedback you give us — the calls you flag, the workflows you walk us through, the things you tell us we got wrong. We track engagement internally so you never have to write a report."
           accent={
             <TradeAccent
               src={rewardRibbonsIllo}
