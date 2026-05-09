@@ -187,7 +187,7 @@ function Hero() {
           </div>
 
           <RiseIn delay={0.4} className="relative">
-            <div className="relative aspect-[3/2] w-full overflow-hidden border border-border bg-[#FAF7F2]">
+            <div className="relative aspect-[3/2] w-full overflow-hidden border border-border bg-[hsl(var(--pb-paper))]">
               <img
                 src={heroIllustration}
                 alt="Customer capturing the photos a contractor actually needs."
