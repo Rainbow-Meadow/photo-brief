@@ -739,41 +739,41 @@ const painPoints = [
   {
     icon: FormInput,
     number: "81%",
-    label: "of visitors abandon your form before submitting",
+    label: "of your website visitors quit before they hit submit",
     context:
-      "Most website forms ask for too much or too little. Visitors leave before your team ever sees the lead.",
+      "Four out of every five ready-to-buy customers walk off your lot before you even know they were there. Not because your prices are wrong. Because your form asked them to think.",
     citation: { text: "Numen Technology — Form Optimization Study", url: "https://www.numentechnology.co.uk/blog/contact-form-optimization-conversion-rates" },
   },
   {
     icon: Clock,
     number: "4.2 hrs",
-    label: "average response time — most leads are gone by then",
+    label: "your average reply time — your competitor took 22 minutes",
     context:
-      "The industry average lead response time is over four hours. Leads contacted in under five minutes convert at 100× the rate.",
+      "Reply in under five minutes and you convert at 100× the rate. Reply in four hours and the customer has already booked the other guy. They don't tell you. They just stop replying.",
     citation: { text: "MIT Lead Response Management Study", url: "https://www.drivenresults.co/learn/b/lead-response-time-statistics-2025" },
   },
   {
     icon: MessageSquareWarning,
     number: "5+",
-    label: "follow-ups to close a job — most teams stop at 1",
+    label: "follow-ups it takes to close — most teams stop at 1",
     context:
-      "Without the right photos and context upfront, every job starts with a chain of follow-ups before anyone can quote.",
+      "Every job that needs a photo you don't have, a question you forgot to ask, or a detail you have to chase — that's a follow-up. Five of those between you and a closed quote. Most teams give up after one.",
     citation: { text: "MarketingSherpa / RivetOps", url: "https://www.rivetops.io/how-many-follow-ups-to-close-a-job" },
   },
   {
     icon: TrendingDown,
     number: "78%",
-    label: "of customers buy from whoever responds first",
+    label: "of buyers go with whoever responds first",
     context:
-      "Speed wins. If your intake doesn't collect what your team needs immediately, a faster competitor gets the job.",
+      "Speed is the entire game. If your intake doesn't hand your team a quotable lead on first contact, the faster competitor wins — and you spent your marketing budget warming up someone else's customer.",
     citation: { text: "InsideSales.com / MIT Study", url: "https://www.rapportagent.com/benchmarks/" },
   },
   {
     icon: UserX,
     number: "60%",
-    label: "of estimates never get a single follow-up",
+    label: "of estimates die without a single follow-up",
     context:
-      "When intake is manual and incomplete, follow-up falls through the cracks — and revenue walks out the door.",
+      "More than half the quotes you'd send never get sent. The lead goes cold in someone's inbox while they're chasing the photo, the address, the model number. Money on the floor.",
     citation: { text: "HomeAdvisor / US Tech Automations", url: "https://ustechautomations.com/resources/blog/home-service-estimate-follow-up-automation-case-study" },
   },
 ];
