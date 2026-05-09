@@ -996,12 +996,12 @@ function FoundingPartnerBetaSection({ isFull }: { isFull: boolean }) {
                 </span>
                 <div className="min-w-0">
                   <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[hsl(var(--pb-lavender))]">
-                    Beta reward
+                    The grand prize
                   </p>
                   <p className="mt-1.5 font-serif text-lg italic leading-snug text-white sm:text-xl">
-                    2 partners get{" "}
+                    The 2 partners who teach us the most get{" "}
                     <span className="not-italic font-semibold">Free Pro for Life</span>.
-                    All {BETA_TOTAL_PARTNERS} earn a post-launch reward tier.
+                    The other {BETA_TOTAL_PARTNERS - 2}? Every one walks out with a reward tier they earned.
                   </p>
                   <FreeProEligibilityModal>
                     {(open) => (
