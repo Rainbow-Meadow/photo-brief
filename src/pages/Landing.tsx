@@ -142,11 +142,11 @@ const SOFTWARE_APP_JSONLD: Record<string, unknown> = {
 /* ── Section nav anchors ──────────────────────────────────── */
 
 const sectionLinks = [
-  { href: "#workflow", label: "How it works" },
+  { href: "#workflow", label: "The mechanism" },
   { href: "#comparison", label: "Before / after" },
-  { href: "#use-cases", label: "Use cases" },
-  { href: "#website-intelligence", label: "Website Intelligence" },
-  { href: "#beta-program", label: "Beta rewards" },
+  { href: "#use-cases", label: "Who it's for" },
+  { href: "#website-intelligence", label: "Site scan" },
+  { href: "#beta-program", label: "Founding seats" },
   { href: "#apply", label: "Apply" },
 ];
 
