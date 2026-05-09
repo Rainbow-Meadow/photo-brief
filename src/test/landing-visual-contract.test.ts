@@ -19,6 +19,13 @@ describe("Landing visual contract (Locomotive editorial)", () => {
     }
   });
 
+  it("anchor index strip lists exactly 5 entries (beta-program is its own section but excluded from the strip)", () => {
+    const arr = SRC.match(/const sectionLinks = \[([\s\S]*?)\n\];/);
+    expect(arr).not.toBeNull();
+    const count = (arr![1].match(/^\s*{/gm) ?? []).length;
+    expect(count).toBe(5);
+  });
+
   it("uses tone='dark' only on the final CTA section", () => {
     const dark = SRC.match(/tone="dark"/g) ?? [];
     expect(dark.length).toBe(1);
