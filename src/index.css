@@ -314,21 +314,15 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
 
   .surface-card {
     background-color: hsl(var(--card));
-    border: 1px solid hsl(var(--glass-border));
-    border-radius: var(--radius);
-    box-shadow:
-      inset 0 1px 0 hsl(0 0% 100% / 0.6),
-      0 1px 0 hsl(220 30% 90% / 0.35),
-      0 8px 24px -16px hsl(222 47% 11% / 0.10);
+    border: 1px solid hsl(var(--border));
+    border-radius: 0.25rem;
+    box-shadow: none;
   }
   .surface-card-elevated {
     background-color: hsl(var(--card));
-    border: 1px solid hsl(var(--glass-border));
-    border-radius: calc(var(--radius) + 4px);
-    box-shadow:
-      inset 0 1px 0 hsl(0 0% 100% / 0.65),
-      0 24px 48px -24px hsl(222 47% 11% / 0.18),
-      0 8px 24px -16px hsl(222 47% 11% / 0.10);
+    border: 1px solid hsl(var(--border));
+    border-radius: 0.25rem;
+    box-shadow: 0 30px 60px -30px hsl(60 8% 0% / 0.18);
   }
   .surface-divider { border-top: 1px solid hsl(var(--glass-border)); }
 
