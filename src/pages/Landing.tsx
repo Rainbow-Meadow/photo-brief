@@ -1812,17 +1812,21 @@ function FinalCta({ isFull }: { isFull: boolean }) {
       <Container>
         <div className="grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-16">
           <div>
-            <Eyebrow>The last word</Eyebrow>
+            <Eyebrow>One last thing</Eyebrow>
             <div className="mt-6">
               <Title level={2}>
-                Get quote-ready leads, not vague messages.
+                30 seats. 60 days. Two free-for-life winners. Pick up the pen.
               </Title>
             </div>
             <div className="mt-6 max-w-md">
               <Body size="lg">
-                Stop chasing customers for missing photos and context. Every
-                inquiry arrives as a complete, actionable lead packet — so your
-                team can quote, schedule, or approve without a single follow-up.
+                You're applying for one of {BETA_TOTAL_PARTNERS} founding seats in
+                the only intake program built next to the trades that actually
+                run the work. It costs you nothing. You walk away with a guided
+                intake your old form couldn't touch — and a real shot at never
+                paying for Pro again. The seats fill the way they always do:
+                quietly, then all at once. Don't be the person who emailed us
+                the day after.
               </Body>
             </div>
             <div className="mt-7">
@@ -1836,7 +1840,7 @@ function FinalCta({ isFull }: { isFull: boolean }) {
                       ?.scrollIntoView({ behavior: "smooth" })
                   }
                 >
-                  {isFull ? "Join the waitlist" : "Apply for the beta"}
+                  {isFull ? "Join the waitlist" : "Send my application"}
                   <ArrowRight className="h-4 w-4" />
                 </CTA>
                 <CTA variant="secondary" size="lg" href="/pricing">
