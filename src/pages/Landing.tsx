@@ -1670,8 +1670,7 @@ function RewardTiersSection() {
             </ul>
           </div>
         </div>
-      </div>
-    </section>
+    </MarketingSection>
   );
 }
 
