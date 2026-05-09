@@ -429,13 +429,13 @@ export default function LandingPage() {
               </div>
 
               {/* Right — brand mark + hand-drawn illustration */}
-              <div className="flex flex-col items-center min-w-0 lg:items-end">
-                <div className="mb-4 w-full sm:mb-6 flex justify-center lg:justify-end">
+              <div className="flex flex-col items-center min-w-0">
+                <div className="mb-4 sm:mb-6 w-full max-w-md sm:max-w-lg lg:max-w-none lg:translate-x-2 flex justify-center">
                   <BrandMark variant="horizontal" size={64} eager className="sm:hidden" />
                   <BrandMark variant="horizontal" size={88} eager className="hidden sm:inline-flex lg:hidden" />
                   <BrandMark variant="horizontal" size={112} eager className="hidden lg:inline-flex" />
                 </div>
-                <div className="relative flex w-full justify-center lg:justify-end">
+                <div className="relative flex w-full justify-center">
                   <div
                     aria-hidden
                     className="pointer-events-none absolute inset-0 -z-10 mx-auto max-w-xl rounded-full bg-[hsl(var(--pb-lavender)/0.22)] blur-[110px]"

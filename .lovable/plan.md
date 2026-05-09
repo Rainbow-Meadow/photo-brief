@@ -1,31 +1,20 @@
-# Hero alignment + consistency pass
+# Center the wordmark over the phone
 
-The hero is positioned where you want it. Auditing the markup shows a few inconsistencies between individual pieces — different sizing for sibling elements, asymmetric padding, and one label that escaped the design tokens. This plan aligns them without moving anything.
+Right now the right column uses `items-end` at `lg`, so the wordmark snaps to the right edge of the column while the phone illustration (which has its own `lg:scale-110 lg:translate-x-2` offset and a much larger rendered width) sits slightly inboard. The two pieces share an edge but not a center.
 
-## Issues found
+## Fix
 
-1. **Asymmetric outer padding.** The grid has `pl-[84px]` on the left only and nothing on the right, so the right column hugs the viewport edge. It's also a fixed value at every breakpoint, which overflows on mobile.
-2. **"Built for" label is off-system.** Uses `font-black … text-base` while every other small-caps label in the hero (Eyebrow, trust strip, etc.) uses the `text-[10px] tracking-[0.28em]` pattern.
-3. **Trade pill icons are stretched.** `w-[37px] h-[27px]` (a leftover from a different lucide class) gives them a non-square aspect and they tower over the pill text. Sibling inline icons in this same hero use `h-3.5 w-3.5` / `h-4 w-4`.
-4. **Trust-strip spacing breaks the rhythm.** Every other left-column block uses paired `mt-X sm:mt-Y` (e.g. `mt-6 sm:mt-8`). The trust strip is `mt-6` only.
-5. **Brand mark wrapper has `overflow-hidden`.** Now that we sized the wordmark down, the clip guard isn't needed and just risks hiding the trailing `.ai`.
-6. **Right column wrapper has unused `relative`.** Minor — only the inner illustration container needs it for the blur backdrop.
+Wrap the wordmark in a container that matches the phone illustration's bounding box, then center the wordmark inside that wrapper. That way the wordmark's horizontal center always tracks the phone's center, regardless of viewport width or the phone's `translate-x` nudge.
 
-## Changes (all in `src/pages/Landing.tsx`, hero block ~line 348–453)
+### Change (in `src/pages/Landing.tsx`, hero right column ~line 432–451)
 
-- **Outer grid wrapper**
-  - `pl-[84px]` → `px-0 lg:pl-20 lg:pr-8` so the offset only kicks in at desktop and is balanced on the right.
-- **"Built for" label**
-  - Replace classes with the same token used by `Eyebrow`: `text-[10px] font-black uppercase tracking-[0.28em] text-[hsl(var(--pb-ink-muted))]`.
-- **Trade pill icon**
-  - `lucide lucide-trending-down w-[37px] h-[27px] text-[hsl(var(--pb-violet))]` → `h-4 w-4 text-[hsl(var(--pb-violet))]` (square, matches the pill's text size).
-- **Trust strip spacing**
-  - `mt-6 flex flex-wrap …` → `mt-6 sm:mt-8 flex flex-wrap …` so it follows the same paired-rhythm as its neighbors.
-- **Right column brand mark wrapper**
-  - Drop `overflow-hidden` from the wordmark container; the responsive sizes already fit.
-- **Right column root**
-  - Drop the unused `relative` (kept on the inner illustration wrapper that owns the blur).
+- Right column root: keep `flex flex-col`, drop `items-center lg:items-end` → use `items-center` only, so the column itself centers its children.
+- Wordmark wrapper: replace `w-full flex justify-center lg:justify-end` with a width-matched wrapper (`w-full max-w-md sm:max-w-lg lg:max-w-none flex justify-center`) that mirrors the phone's `max-w-*` ladder, plus the same `lg:translate-x-2` so the wordmark inherits the phone's horizontal offset.
+- Phone wrapper: unchanged structure; it already centers within its own `max-w-*` box.
+
+Result: at every breakpoint, the wordmark and phone share the same center line.
 
 ## Out of scope
-- Layout/positioning changes — the column structure, brand-mark-above-phone arrangement, and BetaSeatTracker placement stay exactly as they are.
-- Copy, tokens, or BrandMark internals.
+- Sizing of the wordmark or phone illustration.
+- Vertical spacing between the two.
+- Any change to the left column.
