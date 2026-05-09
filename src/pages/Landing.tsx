@@ -346,7 +346,7 @@ export default function LandingPage() {
       <main className="pb-landing pb-on-paper">
         {/* ━━ 1. HERO — editorial / paper ━━━━━━━━━━━━━━━━━━━━━ */}
         <MarketingHero width="full" className="px-4 sm:px-6 lg:px-8">
-          <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-12 pl-[84px]">
+          <div className="grid items-center gap-8 px-0 lg:grid-cols-2 lg:gap-12 lg:pl-20 lg:pr-8">
               {/* Left — copy */}
               <div className="text-left pl-0">
                 <Eyebrow>
@@ -393,7 +393,7 @@ export default function LandingPage() {
                   </CTAGroup>
                 </div>
 
-                <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-medium text-[hsl(var(--pb-ink-muted))] sm:text-sm">
+                <div className="mt-6 sm:mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-medium text-[hsl(var(--pb-ink-muted))] sm:text-sm">
                   {[
                     "Website scan included",
                     "Hosted link or embed",
@@ -408,7 +408,7 @@ export default function LandingPage() {
 
                 {/* Built-for trade strip — links to matching use case */}
                 <div className="mt-8 sm:mt-10">
-                  <p className="font-black uppercase tracking-[0.28em] text-base text-[hsl(var(--pb-ink-muted))]">
+                  <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[hsl(var(--pb-ink-muted))]">
                     Built for
                   </p>
                   <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
@@ -418,7 +418,7 @@ export default function LandingPage() {
                         href="#use-cases"
                         className="inline-flex items-center gap-1.5 rounded-full border border-[hsl(var(--pb-ink-soft)/0.18)] bg-[hsl(var(--pb-ink-soft)/0.04)] px-3 py-1.5 text-xs font-bold text-[hsl(var(--pb-ink))] transition hover:border-[hsl(var(--pb-violet)/0.55)] hover:text-[hsl(var(--pb-violet))] sm:text-sm"
                       >
-                        <TIcon className="lucide lucide-trending-down w-[37px] h-[27px] text-[hsl(var(--pb-violet))]" />
+                        <TIcon className="h-4 w-4 text-[hsl(var(--pb-violet))]" />
                         {name}
                       </a>
                     ))}
@@ -429,8 +429,8 @@ export default function LandingPage() {
               </div>
 
               {/* Right — brand mark + hand-drawn illustration */}
-              <div className="relative flex flex-col items-center lg:items-end min-w-0">
-                <div className="mb-4 w-full sm:mb-6 flex justify-center lg:justify-end overflow-hidden">
+              <div className="flex flex-col items-center min-w-0 lg:items-end">
+                <div className="mb-4 w-full sm:mb-6 flex justify-center lg:justify-end">
                   <BrandMark variant="horizontal" size={64} eager className="sm:hidden" />
                   <BrandMark variant="horizontal" size={88} eager className="hidden sm:inline-flex lg:hidden" />
                   <BrandMark variant="horizontal" size={112} eager className="hidden lg:inline-flex" />
