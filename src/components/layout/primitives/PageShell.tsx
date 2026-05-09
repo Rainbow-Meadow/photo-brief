@@ -12,7 +12,8 @@ const widthClasses: Record<Width, string> = {
 
 interface PageShellProps extends HTMLAttributes<HTMLDivElement> {
   width?: Width;
-  /** Adds bottom padding to clear the mobile tab bar. Default true. */
+  /** Adds extra bottom padding to clear the mobile tab bar. Default false
+   * because DashboardLayout's <main> already includes pb-24/lg:pb-10. */
   bottomSafe?: boolean;
   children: ReactNode;
 }
@@ -25,7 +26,7 @@ interface PageShellProps extends HTMLAttributes<HTMLDivElement> {
  */
 export function PageShell({
   width = "default",
-  bottomSafe = true,
+  bottomSafe = false,
   className,
   children,
   ...rest
