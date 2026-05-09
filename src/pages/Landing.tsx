@@ -473,11 +473,11 @@ export default function LandingPage() {
 
         {/* ━━ SEAM A — Chapter marker (Problem → Solution) ━━━━ */}
         <ChapterMarker
-          stamp="Chapter II · The fix"
+          stamp="Chapter II · The mechanism"
           words={[
-            ["messy form", "clean packet"],
-            ["vague intake", "actionable lead"],
-            ["back-and-forth", "one round trip"],
+            ["form-first", "job-first"],
+            ["chasing photos", "receiving briefs"],
+            ["five-day thread", "one round trip"],
           ]}
         />
 
