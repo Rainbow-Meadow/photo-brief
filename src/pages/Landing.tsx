@@ -629,10 +629,10 @@ function RoiCalculatorSection() {
             </div>
             <div>
               <p className="text-base font-bold tracking-tight text-white sm:text-lg">
-                How much is weak intake costing you?
+                Want to see what the leak is costing you?
               </p>
               <p className="pb-copy mt-0.5 text-xs sm:text-sm">
-                Plug in your numbers — see leads and revenue you could recover.
+                Drop in three numbers. We'll show you the leads — and the dollars — your form is quietly walking out the door with.
               </p>
             </div>
           </div>
