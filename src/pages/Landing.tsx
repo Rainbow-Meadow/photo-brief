@@ -962,16 +962,16 @@ function FoundingPartnerBetaSection({ isFull }: { isFull: boolean }) {
   return (
     <MarketingSection id="beta-program">
         <SectionIntro
-          eyebrow={<><Stamp className="h-3.5 w-3.5" /> Accepting applications</>}
+          eyebrow={<><Stamp className="h-3.5 w-3.5" /> Founding Partner Beta · Now reviewing applications</>}
           title={
             <>
-              Built with real workflows,{" "}
+              This isn't a waitlist. It's a{" "}
               <span className="not-italic font-semibold bg-gradient-to-r from-[hsl(var(--pb-lavender))] to-[hsl(var(--pb-violet))] bg-clip-text text-transparent">
-                with you.
+                30-person room.
               </span>
             </>
           }
-          description="Visual intake is workflow-specific — every trade, every service type needs something slightly different. The only way to get it right is to build alongside real businesses running real jobs. That's why this is a hands-on beta, not a waitlist."
+          description="Visual intake is workflow-specific. Every trade prices a job differently, photographs a job differently, walks a job differently. The only way to build something that fits is to build it next to the people running the work. Thirty founding partners. Two of them never pay for Pro again. Every one walks out with a tier reward and a working intake their old form couldn't touch. We're not looking for testers. We're looking for co-builders."
           accent={
             <TradeAccent
               src={foundingBadgeIllo}
