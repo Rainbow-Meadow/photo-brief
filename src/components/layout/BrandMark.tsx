@@ -3,13 +3,22 @@ import type { CSSProperties } from "react";
 import { cn } from "@/lib/utils";
 
 export type BrandVariant = "horizontal" | "stacked" | "wordmark" | "mark" | "primary";
-export type BrandTone = "auto" | "light" | "dark" | "color";
+/**
+ * Surface the lockup is rendered on.
+ * - "light" → cream-bg lockup (navy + amber wordmark, light mark asset).
+ * - "dark"  → dark-bg lockup (cream + amber wordmark, dark mark asset).
+ *
+ * Tone matches the surface the BrandMark physically sits on, NOT the page's
+ * overall theme. Do not reintroduce "auto" / "color" — they collapsed to
+ * "light" silently and made author intent unreadable.
+ */
+export type BrandTone = "light" | "dark";
 
 interface BrandMarkProps {
   className?: string;
   /** Which lockup to render. Defaults to "horizontal". */
   variant?: BrandVariant;
-  /** "dark" swaps mark + wordmark colors for dark backgrounds. Other values render the standard cream-bg lockup. */
+  /** Surface tone (see BrandTone). Defaults to "light". */
   tone?: BrandTone;
   /** Visual height in px. Defaults to 28. */
   size?: number;
@@ -105,7 +114,7 @@ function Tagline({ size, tone }: { size: number; tone: BrandTone }) {
 export function BrandMark({
   className,
   variant = "horizontal",
-  tone = "auto",
+  tone = "light",
   size = 28,
   eager,
   showTagline = false,

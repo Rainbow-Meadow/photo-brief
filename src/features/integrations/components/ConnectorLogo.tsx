@@ -59,7 +59,7 @@ export function ConnectorLogo({ integrationKey, name, fallbackIcon: FallbackIcon
           onError={() => setFailed(true)}
         />
       ) : isInternal ? (
-        <BrandMark variant="mark" tone="auto" size={34} />
+        <BrandMark variant="mark" tone="light" size={34} />
       ) : (
         <FallbackIcon aria-label={`${name} connector`} className="h-7 w-7" />
       )}

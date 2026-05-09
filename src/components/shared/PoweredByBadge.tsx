@@ -1,18 +1,20 @@
 import { Camera } from "lucide-react";
-import { BrandMark } from "@/components/layout/BrandMark";
+import { BrandMark, type BrandTone } from "@/components/layout/BrandMark";
 import { cn } from "@/lib/utils";
 
 interface PoweredByBadgeProps {
   className?: string;
   /** Size of the wordmark in px. Default 48. */
   size?: number;
+  /** Surface tone the badge sits on. Defaults to "light" (cream surface). */
+  tone?: BrandTone;
 }
 
 /**
  * Reusable "Sent securely with PhotoBrief" attribution badge.
  * Used on recipient confirmation, public pages, and other external surfaces.
  */
-export function PoweredByBadge({ className, size = 48 }: PoweredByBadgeProps) {
+export function PoweredByBadge({ className, size = 48, tone = "light" }: PoweredByBadgeProps) {
   return (
     <div
       className={cn(
@@ -23,7 +25,7 @@ export function PoweredByBadge({ className, size = 48 }: PoweredByBadgeProps) {
       <div className="flex items-center justify-center gap-1.5">
         <Camera className="h-3 w-3 shrink-0" />
         <span>Sent securely with</span>
-        <BrandMark variant="wordmark" tone="auto" size={size} />
+        <BrandMark variant="wordmark" tone={tone} size={size} />
       </div>
       <span className="uppercase tracking-[0.22em] text-[9px] text-brand-navy/60">
         Guide · Capture · Close

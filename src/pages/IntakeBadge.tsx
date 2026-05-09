@@ -50,7 +50,8 @@ export default function IntakeBadgePage() {
         >
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-3">
-              <BrandMark variant="horizontal" tone={forceDark ? "light" : "auto"} size={28} eager />
+              {/* `forceDark` means the host page bg is dark — render the light/cream lockup so the wordmark is legible. */}
+              <BrandMark variant="horizontal" tone={forceDark ? "dark" : "light"} size={28} eager />
               <span className="inline-flex items-baseline gap-2 font-mono text-[0.65rem] font-medium uppercase tracking-[0.18em]">
                 <span className="inline-block h-px w-6 -translate-y-[0.25em] bg-[hsl(var(--accent-kinetic))]" />
                 <span className="text-[hsl(var(--accent-kinetic))]">[ PB ]</span>
