@@ -63,35 +63,41 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
 
     /* ── Brand identity tokens ── */
     --brand-navy: 219 47% 20%;
-    --brand-navy-foreground: 39 33% 97%;
+    --brand-navy-foreground: 220 32% 96%;
     --brand-amber: 33 88% 55%;
     --brand-amber-light: 33 89% 69%;
     --brand-amber-hover: 35 74% 49%;
-    --brand-cream: 39 33% 97%;
-    --brand-cream-warm: 36 34% 94%;
+    --brand-cream: 220 32% 96%;          /* legacy name → tier 0 */
+    --brand-cream-warm: 220 30% 92%;     /* legacy name → tier 1 */
     --brand-graphite: 219 47% 14%;
-    --brand-paper: 39 33% 97%;
-    --brand-lens: 33 88% 55%;            /* alias → amber */
-    --brand-flash: 33 89% 69%;           /* alias → amber-light */
+    --brand-paper: 220 32% 96%;          /* legacy name → tier 0 */
+    --brand-lens: 33 88% 55%;
+    --brand-flash: 33 89% 69%;
 
-    /* ── Marketing surface tokens (legacy --pb-*, all brand-derived) ── */
+    /* ── Soft navy paper ladder — single source for landing surfaces ── */
+    --pb-tier-0: 220 32% 96%;            /* base paper (lightest) */
+    --pb-tier-1: 220 30% 92%;            /* alt band */
+    --pb-tier-2: 220 28% 86%;            /* feature band (deepest light) */
+    --pb-paper-edge: 220 24% 78%;        /* hairline / divider */
+
+    /* ── Marketing surface tokens (legacy --pb-*, all navy-paper-derived) ── */
     --pb-night: 219 50% 7%;
     --pb-ink: 219 47% 14%;
-    --pb-ink-soft: 219 30% 28%;
-    --pb-ink-muted: 219 18% 42%;
+    --pb-ink-soft: 219 38% 26%;
+    --pb-ink-muted: 219 22% 44%;
     --pb-panel: 0 0% 100%;
-    --pb-panel-2: 36 34% 94%;
-    --pb-line: 32 18% 86%;
-    --pb-line-strong: 32 18% 76%;
-    --pb-paper: 39 33% 97%;
-    --pb-cream: 39 33% 97%;
-    --pb-cream-warm: 36 34% 94%;
-    --pb-muted: 219 18% 42%;
+    --pb-panel-2: 220 30% 92%;
+    --pb-line: 220 24% 82%;
+    --pb-line-strong: 220 24% 72%;
+    --pb-paper: 220 32% 96%;             /* legacy name → tier 0 */
+    --pb-cream: 220 32% 96%;             /* legacy name → tier 0 */
+    --pb-cream-warm: 220 30% 92%;        /* legacy name → tier 1 */
+    --pb-muted: 219 22% 44%;
     --pb-shadow: 219 50% 7%;
     --pb-violet: 33 88% 55%;             /* legacy → amber */
     --pb-lavender: 33 89% 69%;           /* legacy → amber-light */
-    --pb-electric: 219 47% 20%;          /* legacy → navy */
-    --pb-mint: 33 89% 69%;               /* legacy → amber-light */
+    --pb-electric: 219 47% 20%;
+    --pb-mint: 33 89% 69%;
     --pb-wordmark-navy: 219 47% 20%;
     --pb-wordmark-amber: 33 88% 55%;
     --pb-font-serif: "Inter", system-ui, -apple-system, sans-serif;
