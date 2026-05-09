@@ -33,8 +33,6 @@ import pileCloseup from "@/assets/junk-removal/pile-closeup.webp";
 import appliances from "@/assets/junk-removal/appliances.webp";
 import drivewayAccess from "@/assets/junk-removal/driveway-access.webp";
 
-const API_URL =
-  "https://mvlcefiygkzzewcdzsmj.functions.supabase.co/live-preview-submission";
 const SESSION_KEY = "pb-session";
 
 /** Index of the photo that will be "blurry" on first capture */
@@ -1007,49 +1005,11 @@ export function InteractiveHeroBriefAssembly() {
       return;
     }
     setSubmitting(true);
+    // Lead capture backend was retired; the hero now runs as a pure
+    // demo. Acknowledge the email locally and clear the form.
     try {
-      const selectedPhotos = [...captured]
-        .sort((a, b) => a - b)
-        .map((i) => photos[i]);
-      const payload = {
-        session_id: getSessionId(),
-        source: "photobrief-marketing-hero",
-        workflow_mode: "capture",
-        brief: {
-          selected_count: captured.size,
-          required_count: photos.length,
-          readiness: "ready",
-          issue: hasFlag ? "Appliance review needed" : null,
-          summary: hasFlag
-            ? "Brief complete with appliance review needed before quoting."
-            : "Brief ready for quote review.",
-        },
-        photos: selectedPhotos.map(({ id, label, status, note }) => ({
-          id,
-          label,
-          status,
-          note,
-        })),
-        missing: [],
-        lead: { email: email.trim(), consented: true },
-      };
-      const response = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      const data = await response.json().catch(() => ({}));
-      if (!response.ok)
-        throw new Error(data?.error || "Could not create request.");
-      if (!data?.request_url)
-        throw new Error("Request was saved, but no request link came back.");
-      setRequestUrl(data.request_url);
-    } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Something went wrong creating the request.",
-      );
+      void getSessionId();
+      setRequestUrl(null);
     } finally {
       setSubmitting(false);
     }
