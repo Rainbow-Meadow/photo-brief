@@ -1,39 +1,52 @@
-## Problem
-The hero on `/` clips the wordmark to "PhotoBrie" because:
-- `src/pages/Landing.tsx` (line 354–361) renders the brand lockup as `<img src="/brand/full-logo.svg" ...>`.
-- The generated `public/brand/full-logo.svg` uses `<text>` for "PhotoBrief.ai" inside a viewBox whose width was estimated (`markSize + gap + 360 + padding*2 ≈ 526`). The actual rendered text width at font-size 86 with `letter-spacing: -0.05em` overflows that 360px allotment, so anything past the viewBox right edge is clipped when scaled by `<img>` with `w-auto`.
-- This also violates the brand-system rule (`mem://design/brand-system`): "BrandMark renders Photo (navy) + Brief (amber) two-tone — never inline `<img>` for the logo."
+# New line-art illustrations for the landing page
 
-## Fix
+Regenerate every illustration on `src/pages/Landing.tsx` so the visual language matches the new brandmark (`public/brand/mark-color.png`): clean monoline strokes, navy `#1B2A4A` outlines on transparent/cream, a single amber `#F2A33A` accent per scene (mirroring how the camera shutter has one filled wedge), generous negative space, no shading, no gradients, no photoreal elements.
 
-### 1. Replace the hero `<img>` with the `BrandMark` component (primary fix)
-In `src/pages/Landing.tsx` hero block, swap:
+## Style spec (applies to every image)
 
-```tsx
-<img src="/brand/full-logo.svg" ... className="h-20 sm:h-28 lg:h-36 w-auto" />
-```
+- Pure 2D line art, ~6–8px stroke at 1024px, rounded caps/joins, single line weight throughout
+- Color palette only: navy `#1B2A4A` lines, optional amber `#F2A33A` for one focal accent, transparent background (PNG)
+- Composition centered, square 1024×1024, ~8% padding, subject sized to fill ~85% of canvas (matches mark proportions)
+- No text, no labels, no logos, no faces with detail (silhouettes / iconic forms only — same vocabulary as the mark: cameras, tools, belts, geometric props)
+- Each scene must read instantly at 200px and still hold up at 800px
 
-for responsive `BrandMark` instances:
+## Image-by-section map
 
-```tsx
-<BrandMark variant="horizontal" size={80}  eager className="sm:hidden" />
-<BrandMark variant="horizontal" size={112} eager className="hidden sm:inline-flex lg:hidden" />
-<BrandMark variant="horizontal" size={144} eager className="hidden lg:inline-flex" />
-```
+Replace each file in place (same path, same dimensions) so no code changes are needed.
 
-`BrandMark` already composes the new mark (`/brand/mark.svg`) with the two-tone wordmark using real CSS — no SVG text clipping possible, and respects the brand-system memory.
+| # | File | Section | New concept |
+|---|---|---|---|
+| 1 | `src/assets/landing-hero-illustration.png` | Hero — "Replace weak forms. Send a guided photo brief." | Phone held in line-drawn hand; on screen, a 2×2 photo-grid brief with one amber checkmark; small camera-shutter glyph echoing the mark in the corner |
+| 2 | `src/assets/scenes/transformation-illustration.png` | "Vague form becomes an actionable lead packet" | Crumpled paper on the left → arrow → tidy clipped photo packet on the right; clip is amber |
+| 3 | `src/assets/trades/junk-hauler-illustration.png` | Junk hauler scene | Line-art pickup truck beside a stacked pile of boxes/appliances; one amber tag on the pile |
+| 4 | `src/assets/scenes/founding-badge-illustration.png` | Beta program — "Accepting applications" | Three numbered ribbon rosettes pinned to a corkboard; center ribbon amber |
+| 5 | `src/assets/trades/hvac-tech-illustration.png` | HVAC tech / structured intake | Technician silhouette beside an HVAC unit with a clipboard checklist; one checklist tick amber |
+| 6 | `src/assets/trades/estimator-illustration.png` | Comparison — damage estimator | Magnifying glass over a stack of photos with measurement marks; lens rim amber |
+| 7 | `src/assets/trades/landscaper-illustration.png` | Use cases — landscaper | Hand holding a phone framing a yard scene (tree + lawn shapes); shutter accent amber |
+| 8 | `src/assets/trades/plumber-illustration.png` | Website intelligence — plumber diagnostic | Phone capturing under-sink pipe with a flashlight cone; flashlight cone amber |
+| 9 | `src/assets/scenes/reward-ribbons-illustration.png` | Reward tiers | Three layered award rosettes of ascending size; top ribbon tail amber |
+| 10 | `src/assets/scenes/beta-notebook-illustration.png` | Fine print | Open notebook with a magnifying glass over neat ruled lines; magnifier handle amber |
+| 11 | `src/assets/scenes/mailbox-flag-illustration.png` | Final CTA — invitation | Classic mailbox with flag raised and one envelope peeking out; flag amber |
 
-### 2. Rebuild `public/brand/full-logo.svg` so any future consumer renders correctly
-Regenerate with a viewBox sized to actually contain the wordmark:
-- Approximate `text-width ≈ chars × font-size × avg-glyph-ratio`. For Inter/SF heavy bold, "PhotoBrief" (10 chars) at fs 86 with `-0.05em` ≈ ~10 × 86 × 0.55 = ~473px, plus ".ai" at fs 53 ≈ ~85px → ~560px text.
-- Set viewBox width = `padding + markSize + gap + textWidth + safetyPad + padding` (≈ 16 + 120 + 14 + 560 + 40 + 16 = ~766) so even with font fallback variance there is no clipping.
-- Keep height = markSize + 2·padding so the lockup vertical proportions stay identical.
-- Optionally render the wordmark via `<text>` AND set `overflow="visible"` on the SVG root as a belt-and-suspenders guard.
+Hero illustration gets the most detail since it sits next to the brandmark and must clearly belong to the same family.
 
-### 3. QA
-- Reload the preview at `/`, screenshot the hero at the current viewport (1223×887) plus `sm` (640px) and `lg` (1280px) widths, crop the lockup region with `image_tools--zoom_image`, and confirm the full "PhotoBrief.ai" wordmark renders without clipping.
-- Open `/brand/full-logo.svg` directly to confirm it no longer clips for downstream consumers.
+## Generation approach
+
+- Use `imagegen--edit_image` with `public/brand/mark-color.png` as the single style reference for every call, so stroke weight, line treatment, and amber-accent rule stay identical across the set
+- One prompt per image, written in the same voice ("monoline navy line art on transparent background, single amber accent on [X], matching the reference camera+toolbelt mark style, 1024×1024, no text, no shading")
+- Save outputs back to the existing paths (overwrite); aspect ratio `1:1`
+
+## QA pass
+
+After all 11 are generated:
+1. View each PNG in a 4-up grid to confirm consistent stroke weight, palette, and amber-accent discipline
+2. Open `/` in the preview at 1380px and scroll the full landing page; screenshot the hero, transformation, use cases, beta, comparison, website intelligence, rewards, fine print, and final CTA sections
+3. Verify each illustration reads at its rendered size and no element clips its container
+4. Re-generate any image that drifts off-style (wrong palette, photoreal, multiple amber accents, text artifacts)
 
 ## Out of scope
-- No changes to wordmark colors, tagline, BrandMark API, color tokens, or layout primitives.
-- No changes to other BrandMark usages (header, footer, sidebar, dashboard) — they already use the component correctly.
+
+- No code changes in `Landing.tsx` (paths and dimensions stay identical)
+- No changes to the brandmark, wordmark, or `BrandMark` component
+- No new sections, no copy edits, no layout adjustments
+- The four `junk-removal/*.webp` photos (wide-garage, pile-closeup, appliances, driveway-access) stay as-is — they are intentionally photographic "evidence" inside the product demo, not editorial illustration
