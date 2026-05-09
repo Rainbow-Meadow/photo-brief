@@ -1037,8 +1037,7 @@ function FoundingPartnerBetaSection({ isFull }: { isFull: boolean }) {
             />
           </div>
         </div>
-      </div>
-    </section>
+    </MarketingSection>
   );
 }
 
