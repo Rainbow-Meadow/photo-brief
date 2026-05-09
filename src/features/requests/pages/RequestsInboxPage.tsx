@@ -533,6 +533,6 @@ export default function RequestsInboxPage() {
           </table>
         </div>
       </div>
-    </div>
+    </PageStack></PageShell>
   );
 }
