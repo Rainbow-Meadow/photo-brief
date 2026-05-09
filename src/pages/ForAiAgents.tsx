@@ -141,8 +141,7 @@ export default function ForAiAgentsPage() {
               </ul>
             </article>
           </div>
-        </div>
-      </section>
+      </MarketingSection>
 
       {/* MCP & Agent manifests */}
       <section id="mcp" aria-labelledby="mcp-heading">
