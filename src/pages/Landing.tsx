@@ -824,14 +824,17 @@ function PainPointSection() {
               className="mx-auto mb-6 w-full max-w-[280px] drop-shadow-[0_22px_36px_hsl(var(--pb-ink-soft)/0.28)] lg:mx-0 lg:max-w-[320px] text-left object-cover scale-150 origin-center lg:origin-left"
             />
             <span className="pb-eyebrow">
-              <MessageSquareWarning className="h-3.5 w-3.5" /> The problem
+              <MessageSquareWarning className="h-3.5 w-3.5" /> The leak
             </span>
             <h2 className="pb-section-title mt-4 text-white">
-              Your website intake is leaking money.
+              Your contact form is bleeding revenue. You just can't see it.
             </h2>
             <p className="pb-copy mx-auto mt-4 max-w-2xl text-base sm:text-lg lg:mx-0 lg:max-w-xl">
-              These are real industry numbers. Generic contact forms don't
-              just lose information — they lose customers.
+              For a contractor doing 500 site visits a month, a generic form
+              quietly walks off with somewhere between $40,000 and $200,000 in
+              annual revenue. Not because the leads are bad. Because the form
+              never let them tell you what they actually needed. These are the
+              numbers nobody's pricing in.
             </p>
           </div>
 
@@ -840,12 +843,12 @@ function PainPointSection() {
             <StatAccent
               icon={TrendingDown}
               value="81%"
-              label="of website forms are abandoned before submit."
+              label="of website forms get abandoned mid-submit. That's four out of every five ready-to-buy customers walking off your lot before you ever knew they were there."
               tone="lavender"
             />
             <RoiCalculatorSection />
             <p className="pb-copy max-w-sm text-center text-sm italic sm:text-base mt-[24px]">
-              PhotoBrief closes the gap between first contact and quote-ready information.
+              This is the leak. The Reverse-Form Method™ is how you patch it.
             </p>
           </div>
         </div>
