@@ -205,8 +205,8 @@ const cleanSignals = [
 const useCases = [
   {
     icon: Leaf,
-    title: "Landscapers — quote yards without a site visit",
-    body: "Ask homeowners for the wide yard shot, problem beds, fence line, and access path so you can scope mowing, cleanups, or installs from your truck.",
+    title: "Estimators ",
+    body: "Turn customer photos into evidence.",
     stamp: "Landscaping",
   },
   {
