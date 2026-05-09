@@ -347,10 +347,10 @@ export default function LandingPage() {
       <main className="pb-landing pb-on-paper">
         {/* ━━ 1. HERO — editorial / paper ━━━━━━━━━━━━━━━━━━━━━ */}
         <MarketingHero>
-          <div className="grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
+          <div className="grid items-center gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-12">
               {/* Left — copy */}
               <div className="text-left">
-                <div className="mb-6 sm:mb-8">
+                <div className="mb-4 sm:mb-6">
                   <BrandMark variant="horizontal" size={80} eager className="sm:hidden" />
                   <BrandMark variant="horizontal" size={112} eager className="hidden sm:inline-flex lg:hidden" />
                   <BrandMark variant="horizontal" size={144} eager className="hidden lg:inline-flex" />
@@ -359,7 +359,7 @@ export default function LandingPage() {
                   <Sparkles className="h-3.5 w-3.5" /> Accepting beta applications
                 </Eyebrow>
 
-                <div className="mt-6 sm:mt-8">
+                <div className="mt-4 sm:mt-6">
                   <Title level={1}>
                     Replace weak forms.
                     <br />
@@ -369,7 +369,7 @@ export default function LandingPage() {
                   </Title>
                 </div>
 
-                <div className="mt-6 sm:mt-8 max-w-xl">
+                <div className="mt-4 sm:mt-6 max-w-xl">
                   <Subtitle>
                     PhotoBrief scans your website, maps your services, and gives
                     customers a simple photo-guided path — so your team gets
@@ -379,7 +379,7 @@ export default function LandingPage() {
                   </Subtitle>
                 </div>
 
-                <div className="mt-8 sm:mt-10">
+                <div className="mt-6 sm:mt-8">
                   <CTAGroup>
                     <CTA
                       variant="primary"
@@ -399,7 +399,7 @@ export default function LandingPage() {
                   </CTAGroup>
                 </div>
 
-                <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-medium text-[hsl(var(--pb-ink-muted))] sm:text-sm">
+                <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-medium text-[hsl(var(--pb-ink-muted))] sm:text-sm">
                   {[
                     "Website scan included",
                     "Hosted link or embed",
