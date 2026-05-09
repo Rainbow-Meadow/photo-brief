@@ -1608,8 +1608,7 @@ function WebsiteIntelligenceSection() {
 
 function RewardTiersSection() {
   return (
-    <section className="pb-section-tight">
-      <div className="pb-container">
+    <MarketingSection spacing="tight">
         <SectionIntro
           eyebrow={<><Gift className="h-3.5 w-3.5" /> Reward tiers</>}
           title="Every partner earns something."
@@ -1685,8 +1684,7 @@ function BetaDetailsAccordion({ value, onValueChange }: BetaDetailsAccordionProp
   const ALL_ITEMS = ["expectations", "scoring"];
   const allOpen = ALL_ITEMS.every((id) => value.includes(id));
   return (
-    <section className="pb-section-tight">
-      <div className="pb-container">
+    <MarketingSection spacing="tight">
         <SectionIntro
           eyebrow={<><FileText className="h-3.5 w-3.5" /> The fine print</>}
           title="Everything in writing."
