@@ -1,49 +1,75 @@
 ## Goal
 
-Replace the solid background pixels in marketing illustrations with **true alpha transparency** (alpha channel = 0), so the images composite cleanly onto any page background — not painted over a checkerboard, not a baked white/cream rectangle.
+Reskin every page in the app to match the updated landing's editorial Locomotive-inspired language: Geist Sans + Geist Mono, sharp 1px borders (radius `0` / `0.25rem`), kinetic-orange accent, mono numerals/eyebrows, uppercase-tracked CTAs, paper/alt/dark section tones. The brand rules in memory (cream + navy + amber, BrandMark two-tone) stay intact.
 
-## Scope (images to process)
+## Approach: Full editorial port
 
-PNG illustrations in `src/assets/` that have a flat solid background:
+Promote the landing's ad-hoc `ls-*` schema in `src/pages/landing/schema.css` + `schema.tsx` into a **first-class shared design system** that any page (marketing, app, admin) can compose. Then rewrite each page on top of those primitives instead of the current shadcn-rounded-soft-card look.
 
-- `src/assets/hero-new.png` (the new landing hero)
-- `src/assets/brand/*.png` — logo variants (re-process to guarantee clean alpha; skip if already fully transparent)
-- `src/assets/comparison/*.png`
-- `src/assets/empty-states/*.png`
-- `src/assets/rmbc/*.png`
-- `src/assets/scenes/*.png`
-- `src/assets/trades/*.png`
+## Phase 1 — Promote the schema (foundation)
 
-Excluded (real photographs with meaningful backgrounds, no flat color to remove):
+1. **Move + rename**: `src/pages/landing/schema.{tsx,css}` → `src/components/editorial/{Section,Container,Eyebrow,Title,Subtitle,Body,Card,Grid,CTA,CTAGroup}.tsx` with the `.ls-*` CSS moved to `src/components/editorial/editorial.css` (imported once from `src/index.css`). Update `Landing.tsx` import path.
+2. **Add app-shell-friendly variants** so primitives work inside `DashboardLayout` (which has its own header):
+   - `Section size="page"` — no top padding, for in-app pages
+   - `Section tone="paper-soft"` — uses cream `--pb-paper` for app surfaces
+   - `Card variant="data"` — denser padding for tables/forms
+   - `Card variant="form"` — wraps form blocks
+3. **Add editorial form primitives**: `EditorialField`, `EditorialInput`, `EditorialSelect`, `EditorialTextarea` — sharp 1px borders, mono labels, kinetic focus ring. These wrap shadcn underneath so validation/`react-hook-form` keeps working.
+4. **Editorial table primitive**: `EditorialTable` (head row mono uppercase, hairline rules, no zebra) for inbox/customers/guides/admin lists.
+5. **Editorial nav chrome**: re-skin `MarketingLayout` header pill and `DashboardLayout` header to use sharp borders, mono labels, kinetic accent on active nav. Re-skin `AppSidebar` items (mono `0X · LABEL` format) and `MobileTabBar` (sharp top border, no soft pill).
+6. **Token reconciliation**: confirm `--accent-kinetic`, `--accent-sage`, `--pb-paper`, `--pb-ink-soft` exist in `src/index.css`; add any missing ones (no new colors, only aliases) so the editorial schema doesn't depend on landing-only vars.
 
-- `src/assets/leak-photo.jpg`
-- `src/assets/junk-removal/*.jpg|webp`
-- `src/assets/submission/*.jpg`
+## Phase 2 — Marketing pages (uses MarketingLayout)
 
-## Method — flood-fill to alpha (lossless on subject edges)
+Rewrite to compose the promoted primitives, matching landing rhythm (eyebrow → display title → subtitle → grid of sharp-bordered cards):
 
-Use a Python/Pillow script. For each PNG:
+- `Pricing.tsx` — Section + Grid of `Card` for tiers; replace `PricingCardGrid` rounded shadcn cards with sharp editorial cards; uppercase CTA on selected tier; mono price numerals.
+- `Auth.tsx`, `Signup.tsx`, `ForgotPassword.tsx`, `ResetPassword.tsx` — narrow Container, single `Card variant="form"` with editorial inputs, mono eyebrow ("[ 01 ] SIGN IN"), kinetic CTA.
+- `Privacy.tsx`, `Terms.tsx` — narrow Container, editorial typography, mono section numerals.
+- `ForAiAgents.tsx` — full editorial port mirroring landing layout.
+- `BetaInvite.tsx`, `BetaWelcome.tsx`, `Unsubscribe.tsx`, `NotFound.tsx` — single-card editorial treatment.
 
-1. Open as RGBA. Sample the 4 corner pixels to detect the dominant background color (white `#FFFFFF`, cream `#FAF7F2`, or near-white).
-2. Run a **scanline flood fill** from each corner with a small color tolerance (Euclidean distance ≤ 24 in RGB). This only erases connected background regions — it will not punch holes through the subject even if the subject contains similar colors.
-3. Set matched pixels' alpha to 0 (preserve their RGB so anti-aliased edges don't fringe).
-4. Apply a 1px **alpha matte clean-up**: for pixels with partial alpha touching fully transparent ones, recompute RGB by un-premultiplying against the detected bg color to remove the white/cream halo.
-5. Save back over the original path (PNG, RGBA). Skip files where >98% of pixels are already transparent (already done).
+## Phase 3 — Recipient / public flows
 
-Verification step (mandatory before finishing):
+- `PublicRecipientPage.tsx`, `RecipientConfirmationPage.tsx`, `PublicIntakePage.tsx`, `WebsiteIntakePage.tsx`, `IntakeBadge.tsx` — apply editorial chrome but **preserve mobile capture UX rules** from `mem://design/touch-vs-desktop` (no hover, no blur). Use `Card variant="form"` and editorial inputs; keep `RecipientBrandingContext` overrides intact.
 
-- Re-open each output, composite it once over `#FF00FF` magenta and once over `#1B2A4A` navy, and write side-by-side QA thumbnails to `/tmp/alpha-qa/`. Inspect to confirm:
-  - No white/cream rectangle remains.
-  - Subject edges are not eroded and have no colored halo.
-  - No interior holes punched into the subject.
-- If any image fails QA, raise tolerance or restrict seeds and re-run for just that file.
+## Phase 4 — Dashboard app pages (uses DashboardLayout)
 
-## Code references — no changes expected
+Re-skin in place; same data, new chrome:
 
-References to these PNGs already use `<img src={…}>` with transparent-aware layouts (BrandMark, marketing sections). No component edits required; the file swap is enough.
+- `DashboardPage`, `RequestsInboxPage`, `RequestDetailPage`, `CreateRequestPage` (preserve fullscreen wizard), `SubmissionReviewPage`
+- `CustomersPage`, `CustomerDetailPage`
+- `GuideLibraryPage`, `GuideBuilderPage`, `GuideDetailPage`
+- `IntegrationsPage`, `SupportPage`, `BetaGuidePage`
+- Workspace settings: `OnboardingPage`, `BrandSettingsPage`, `MessageTemplatesPage`, `SmsSettingsPage`, `TeamSettingsPage`, `BillingSettingsPage`, `AcceptInvitePage`
+
+For each: `PageHeader` becomes editorial (mono eyebrow + display title + hairline rule), tables → `EditorialTable`, forms → editorial fields, metric/empty-state cards → sharp `Card`. Replace `MetricCard`, `EmptyState`, `StarterRequestCard`, `UpgradePromptCard`, `StatusBadge`, `PlanTag`, `ScoreRing`, `ReadinessProgress` chrome with editorial equivalents (logic untouched).
+
+## Phase 5 — Admin pages
+
+- `AdminBeta`, `AdminCommandCenter`, `AdminInvites`, `AdminAIRerun`, `AdminWebsiteIntelligence` — same chrome treatment; admin pages are dense, so use `Card variant="data"` and `EditorialTable`.
+
+## Phase 6 — Shared widgets
+
+Re-skin so they look correct on every page they appear in:
+- `FeedbackWidget`, `NotificationBell` dropdown, `WorkspaceSwitcher`, `MobileSettingsSheet`, `PoweredByBadge`, `FoundingCustomerBanner`, `PaymentTestModeBanner`, `ChannelPicker`, `TurnstileWidget` wrapper, dialog/sheet/drawer chrome (override shadcn radius to `0.25rem` and 1px borders via component variants — not by editing shadcn primitives).
+
+## Phase 7 — QA
+
+1. Run existing tests: `landing-tokens`, `landing-typography`, `landing-visual-contract`, `nav-links`, `route-contract`. Update visual-contract snapshots that asserted landing-only `ls-*` selectors.
+2. Browser walk every top-level route (marketing, dashboard tier accounts from `mem://seed-users`, recipient flow, admin) at mobile + desktop viewports, screenshot, fix layout regressions.
+3. Verify dark mode is **not** reintroduced (memory rule); editorial dark sections use the existing `--pb-ink` palette, not a `.dark` class.
 
 ## Out of scope
 
-- JPG photos (no alpha channel; backgrounds are real scenes).
-- Any AI-based segmentation — the user explicitly chose flood-fill.
-- SVG assets (already vector-transparent).
+- No business-logic changes, no DB migrations, no copy edits beyond mechanical replacements (e.g., button label casing).
+- BrandMark rendering rules unchanged.
+- Remotion scenes, edge functions, workers — untouched.
+
+## Technical details
+
+- Schema lives in `src/components/editorial/`; barrel export `index.ts`.
+- `editorial.css` imported once from `src/index.css` after Tailwind base/components/utilities so `@layer` precedence holds.
+- shadcn overrides via per-component CVA variants (`variant="editorial"`) — never edit `src/components/ui/*` primitives directly.
+- All colors stay HSL via existing tokens; no new color values introduced.
+- Touch rules from `mem://design/touch-vs-desktop` enforced: editorial card hover gated behind `@media (hover: hover)` (already true in current schema — keep pattern).
