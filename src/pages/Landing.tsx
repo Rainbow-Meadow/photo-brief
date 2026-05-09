@@ -346,7 +346,7 @@ export default function LandingPage() {
 
       <main className="pb-landing pb-on-paper">
         {/* ━━ 1. HERO — editorial / paper ━━━━━━━━━━━━━━━━━━━━━ */}
-        <MarketingHero>
+        <MarketingHero width="full" className="px-4 sm:px-6 lg:px-8">
           <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
               {/* Left — copy */}
               <div className="text-left">
