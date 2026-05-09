@@ -1797,22 +1797,15 @@ function FinalCta({ isFull }: { isFull: boolean }) {
   return (
     <Section tone="dark">
       <Container>
-        <Eyebrow>The last word</Eyebrow>
-        <div className="mt-6 grid gap-10 md:gap-14 lg:grid-cols-[1.15fr_1fr] lg:items-start">
-          <Title level={2}>
-            Get quote-ready leads, not vague messages.
-          </Title>
-          <div className="lg:pt-3">
-            <img
-              src={mailboxFlagIllo}
-              alt="Hand-drawn illustration of a mailbox with the flag raised — invitation to apply"
-              width={1024}
-              height={1024}
-              loading="lazy"
-              decoding="async"
-              className="mb-6 w-full max-w-[220px]"
-            />
-            <div className="max-w-md">
+        <div className="grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-16">
+          <div>
+            <Eyebrow>The last word</Eyebrow>
+            <div className="mt-6">
+              <Title level={2}>
+                Get quote-ready leads, not vague messages.
+              </Title>
+            </div>
+            <div className="mt-6 max-w-md">
               <Body size="lg">
                 Stop chasing customers for missing photos and context. Every
                 inquiry arrives as a complete, actionable lead packet — so your
@@ -1838,6 +1831,17 @@ function FinalCta({ isFull }: { isFull: boolean }) {
                 </CTA>
               </CTAGroup>
             </div>
+          </div>
+          <div className="flex justify-center lg:justify-end">
+            <img
+              src={mailboxFlagIllo}
+              alt="Hand-drawn illustration of a mailbox with the flag raised — invitation to apply"
+              width={1024}
+              height={1024}
+              loading="lazy"
+              decoding="async"
+              className="w-full max-w-[320px]"
+            />
           </div>
         </div>
       </Container>
