@@ -183,7 +183,7 @@ export default function SignupPage() {
 
       <div className="mx-auto flex w-full max-w-md flex-col px-4 py-16">
         <div className="mb-6 flex justify-center animate-brand-entrance">
-          <BrandMark variant="stacked" tone="light" size={96} eager />
+          <BrandMark variant="stacked" tone="dark" size={96} eager />
         </div>
 
         {state.kind === "loading" && (

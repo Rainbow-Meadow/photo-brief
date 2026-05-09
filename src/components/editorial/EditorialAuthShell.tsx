@@ -38,7 +38,7 @@ export function EditorialAuthShell({
           aria-label="PhotoBrief.ai home"
           className="mx-auto mb-8 flex items-center"
         >
-          <BrandMark variant="stacked" tone="light" size={64} eager />
+          <BrandMark variant="stacked" tone="dark" size={64} eager />
         </NavLink>
         <article
           className={cn(
