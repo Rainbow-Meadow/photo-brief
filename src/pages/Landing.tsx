@@ -152,7 +152,7 @@ function Hero() {
   return (
     <Section>
       <Container>
-        <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr] lg:items-end">
+        <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
           <div>
             <p className="ls-eyebrow">[ 01 ] Visual intake, redesigned</p>
             <RiseIn delay={0.05}>
@@ -187,11 +187,11 @@ function Hero() {
           </div>
 
           <RiseIn delay={0.4} className="relative">
-            <div className="relative aspect-[4/5] w-full overflow-hidden border border-border bg-muted">
+            <div className="relative aspect-[3/2] w-full overflow-hidden border border-border bg-[#FAF7F2]">
               <img
                 src={heroIllustration}
                 alt="Customer capturing the photos a contractor actually needs."
-                className="h-full w-full object-cover opacity-90"
+                className="h-full w-full object-contain"
                 loading="eager"
               />
               <div className="absolute inset-x-0 bottom-0 flex items-center justify-between p-4 text-[10px] uppercase tracking-[0.2em] text-foreground/80 mix-blend-difference">
