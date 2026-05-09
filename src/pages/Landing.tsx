@@ -675,10 +675,10 @@ function RoiCalculatorSection() {
                   </div>
                   <div className="rounded-[1.25rem] border border-[hsl(var(--pb-violet)/0.3)] bg-[hsl(var(--pb-violet)/0.06)] p-4">
                     <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-[hsl(var(--pb-violet))]">
-                      <DollarSign className="h-3.5 w-3.5" /> Estimated annual revenue recovered
+                      <DollarSign className="h-3.5 w-3.5" /> What that's worth in a year
                     </div>
                     <p className="mt-2 text-3xl font-black tracking-tight text-[hsl(var(--pb-violet))] sm:text-4xl">{formatDollars(annualRevenue)}</p>
-                    <p className="pb-copy mt-1 text-xs">{formatDollars(monthlyRevenue)}/mo × 12 · based on {totalRecovered} recovered leads at {`$${avgJobValue.toLocaleString()}`} avg job</p>
+                    <p className="pb-copy mt-1 text-xs">{formatDollars(monthlyRevenue)}/mo × 12 · {totalRecovered} jobs you would've never seen, at {`$${avgJobValue.toLocaleString()}`} a piece</p>
                   </div>
                 </div>
               </div>
