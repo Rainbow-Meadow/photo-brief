@@ -110,11 +110,10 @@ export default function LandingPage() {
   const showAgent = params.get("agent") === "1";
   const { isFull } = useBetaSeats();
 
-  const heroJsonLd = buildHowToJsonLd({
-    name: "How PhotoBrief works",
-    description: "The Reverse-Form Method in four steps.",
-    steps: howItWorksSteps.map((s) => ({ name: s.title, text: s.description })),
-  });
+  const heroJsonLd = buildHowToJsonLd(
+    "How PhotoBrief works",
+    howItWorksSteps.map((s) => ({ title: s.title, body: s.body })),
+  );
   const faqJsonLd = buildFaqJsonLd(faqItems);
 
   return (
