@@ -109,8 +109,11 @@ import mailboxFlagIllo from "@/assets/scenes/mailbox-flag-illustration.png";
 import researchMagnifierIllo from "@/assets/rmbc/research-magnifier.png";
 import mechanismGearsIllo from "@/assets/rmbc/mechanism-gears.png";
 import briefPacketIllo from "@/assets/rmbc/brief-packet.png";
-import closeHandshakeIllo from "@/assets/rmbc/close-handshake.png";
 import methodOverviewIllo from "@/assets/rmbc/method-overview.png";
+import { z } from "zod";
+import { Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 
 /* ── JSON-LD ───────────────────────────────────────────────── */
 
@@ -1865,15 +1868,7 @@ function FinalCta({ isFull }: { isFull: boolean }) {
             </div>
           </div>
           <div className="flex flex-col items-center gap-6 lg:items-end">
-            <img
-              src={closeHandshakeIllo}
-              alt="Hand-drawn illustration of a quote sliding into an inbox — the close"
-              width={1024}
-              height={1024}
-              loading="lazy"
-              decoding="async"
-              className="w-full max-w-[360px]"
-            />
+            <FinalCtaQuickApply isFull={isFull} />
             <img
               src={mailboxFlagIllo}
               alt="Hand-drawn illustration of a mailbox with the flag raised — invitation to apply"
