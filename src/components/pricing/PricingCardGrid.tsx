@@ -275,7 +275,7 @@ export function PricingCardGrid({
                     <CheckCircle2
                       className={cn(
                         "mt-0.5 h-4 w-4 shrink-0",
-                        onDark ? "text-primary-glow" : "text-success",
+                        onDark ? "text-[hsl(var(--accent-kinetic))]" : "text-primary",
                       )}
                     />
                     <span className={onDark ? "text-white/85" : "text-foreground"}>{f}</span>
