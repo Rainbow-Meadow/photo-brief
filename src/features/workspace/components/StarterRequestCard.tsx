@@ -21,7 +21,7 @@ export function StarterRequestCard(_props: Props) {
       <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
         <div>
           <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-[0.25rem] bg-background shadow-sm ring-1 ring-border/70">
-            <BrandMark variant="mark" tone="color" size={34} />
+            <BrandMark variant="mark" tone="light" size={34} />
           </div>
           <span className="inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-background px-3 py-1 text-xs font-medium text-muted-foreground shadow-sm">
             <Sparkles className="h-3 w-3 text-primary" /> Get started

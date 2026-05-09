@@ -23,7 +23,7 @@ export function PublicRequestLayout() {
                 className="h-7 w-7 rounded-lg object-cover ring-1 ring-separator"
               />
             ) : (
-              <BrandMark variant="horizontal" tone="dark" size={28} eager />
+              <BrandMark variant="horizontal" tone="light" size={28} eager />
             )}
             {logoUrl ? <span>{businessName}</span> : null}
           </div>
