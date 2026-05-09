@@ -499,8 +499,10 @@ export default function LandingPage() {
         {/* ━━ 4. STICKY SECTION NAV ━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <SectionNav tone="paper" />
 
-        {/* ━━ 5. HOW IT WORKS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-        <WorkflowSection />
+        {/* ━━ 5. HOW IT WORKS — tier 2 anchor ━━━━━━━━━━━━━━━━━ */}
+        <div className="pb-tier-2">
+          <WorkflowSection />
+        </div>
 
         {/* ━━ SEAM B — Comparison toggle promoted to seam ━━━━━ */}
         <ComparisonSeam mode={comparisonMode} onModeChange={setComparisonMode} />
