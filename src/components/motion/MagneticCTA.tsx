@@ -42,7 +42,7 @@ export function MagneticCTA(props: MagneticButtonProps | MagneticLinkProps) {
   };
 
   if ("href" in rest && rest.href) {
-    const { href, ...anchor } = rest as MagneticLinkProps;
+    const { href, ...anchor } = rest as { href: string } & Record<string, unknown>;
     return (
       <motion.a
         ref={ref as React.RefObject<HTMLAnchorElement>}
