@@ -484,9 +484,9 @@ export default function LandingPage() {
         <MarketingSection>
           <SectionIntro
             className="mb-6 sm:mb-8"
-            eyebrow={<><Sparkles className="h-3.5 w-3.5" /> See the difference</>}
-            title="Vague website form becomes an actionable lead packet."
-            description={`Watch how a generic "tell us about your project" message turns into a structured packet with the right photos, notes, and context — ready for your team to act on.`}
+            eyebrow={<><Sparkles className="h-3.5 w-3.5" /> The mechanism</>}
+            title={`Watch a vague "I need a quote" turn into a quotable job in 38 seconds.`}
+            description={`This is the Reverse-Form Method™ in motion. We read your site → we know your services → we ask only what we need → photos and notes arrive labeled to the right service line. No app for the customer. No follow-ups for your team. Just a packet.`}
             accent={
               <TradeAccent
                 src={transformationIllo}
