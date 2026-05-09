@@ -22,162 +22,176 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
    Every token consumed anywhere in the app is defined here.
    No other file should declare a color token. All values HSL.
    ────────────────────────────────────────────────────────────────────── */
+/* ── Locomotive editorial palette ──────────────────────────
+   Reinterpreted from the brand: warm off-black surfaces, paper-white
+   ink, a single kinetic-orange accent, sage as quiet tertiary.
+   All token NAMES kept stable so the rest of the app inherits the
+   new aesthetic without per-component edits. Brand wordmark colors
+   (--pb-wordmark-*) deliberately preserved.
+   ──────────────────────────────────────────────────────────── */
 @layer base {
   :root {
-    color-scheme: light;
+    color-scheme: dark;
 
     /* ── Semantic surface + text ── */
-    --background: 220 38% 94%;           /* soft navy paper — tier 0 */
-    --foreground: 219 47% 14%;           /* navy ink */
-    --card: 0 0% 100%;
-    --card-foreground: 219 47% 14%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 219 47% 14%;
+    --background: 60 8% 5%;              /* warm off-black #0E0E0C */
+    --foreground: 42 32% 94%;            /* paper white #F4F1EA */
+    --card: 60 6% 8%;
+    --card-foreground: 42 32% 94%;
+    --popover: 60 6% 8%;
+    --popover-foreground: 42 32% 94%;
 
-    --primary: 33 88% 55%;               /* amber CTA */
-    --primary-foreground: 0 0% 100%;
-    --primary-glow: 33 89% 69%;          /* amber light */
+    --primary: 16 100% 56%;              /* kinetic orange #FF5A1F */
+    --primary-foreground: 42 32% 96%;
+    --primary-glow: 16 100% 65%;
 
-    --secondary: 220 30% 92%;            /* tier 1 — alt band */
-    --secondary-foreground: 219 47% 14%;
+    --secondary: 60 5% 11%;              /* graphite */
+    --secondary-foreground: 42 32% 94%;
 
-    --muted: 220 28% 89%;                /* between tier 1 and tier 2 */
-    --muted-foreground: 219 22% 44%;
+    --muted: 60 5% 14%;
+    --muted-foreground: 42 8% 64%;
 
-    --accent: 33 92% 92%;                /* amber wash */
-    --accent-foreground: 35 74% 30%;
+    --accent: 16 100% 56%;               /* same as primary, used as wash */
+    --accent-foreground: 42 32% 96%;
 
-    --destructive: 0 76% 52%;
-    --destructive-foreground: 0 0% 100%;
-    --success: 151 56% 34%;
-    --success-foreground: 0 0% 100%;
-    --warning: 35 74% 49%;
-    --warning-foreground: 0 0% 100%;
-    --info: 219 47% 20%;
-    --info-foreground: 0 0% 100%;
+    --destructive: 0 72% 52%;
+    --destructive-foreground: 42 32% 96%;
+    --success: 145 50% 55%;
+    --success-foreground: 60 8% 5%;
+    --warning: 36 100% 60%;
+    --warning-foreground: 60 8% 5%;
+    --info: 80 21% 71%;                  /* sage */
+    --info-foreground: 60 8% 5%;
 
-    --border: 220 24% 82%;               /* navy-tinted hairline */
-    --input: 220 24% 82%;
-    --ring: 33 88% 55%;
-    --radius: 0.75rem;
+    --border: 42 18% 94% / 0.08;         /* hairline 8% paper */
+    --input: 42 18% 94% / 0.12;
+    --ring: 16 100% 56%;
+    --radius: 0.5rem;                    /* tighter editorial radius */
 
-    /* ── Brand identity tokens ── */
+    /* ── Brand identity tokens (wordmark colors preserved) ── */
     --brand-navy: 219 47% 20%;
-    --brand-navy-foreground: 220 32% 96%;
+    --brand-navy-foreground: 42 32% 96%;
     --brand-amber: 33 88% 55%;
     --brand-amber-light: 33 89% 69%;
     --brand-amber-hover: 35 74% 49%;
-    --brand-cream: 220 32% 96%;          /* legacy name → tier 0 */
-    --brand-cream-warm: 220 30% 92%;     /* legacy name → tier 1 */
-    --brand-graphite: 219 47% 14%;
-    --brand-paper: 220 32% 96%;          /* legacy name → tier 0 */
-    --brand-lens: 33 88% 55%;
-    --brand-flash: 33 89% 69%;
+    --brand-cream: 42 32% 94%;
+    --brand-cream-warm: 42 28% 88%;
+    --brand-graphite: 60 8% 5%;
+    --brand-paper: 42 32% 94%;
+    --brand-lens: 16 100% 56%;
+    --brand-flash: 16 100% 65%;
 
-    /* ── Soft navy paper ladder — single source for landing surfaces ── */
-    --pb-tier-0: 220 38% 94%;            /* base paper (lightest) */
-    --pb-tier-1: 222 36% 87%;            /* alt band */
-    --pb-tier-2: 224 34% 78%;            /* feature band (deepest light) */
-    --pb-paper-edge: 224 28% 66%;        /* hairline / divider */
+    /* ── Editorial surface ladder — remapped from old --pb-tier-* ── */
+    --pb-tier-0: 60 8% 5%;               /* base canvas */
+    --pb-tier-1: 60 6% 8%;               /* alt band */
+    --pb-tier-2: 60 5% 11%;              /* feature band */
+    --pb-paper-edge: 42 18% 94%;         /* used with /opacity */
 
-    /* ── Marketing surface tokens (legacy --pb-*, all navy-paper-derived) ── */
-    --pb-night: 219 50% 7%;
-    --pb-ink: 219 47% 14%;
-    --pb-ink-soft: 222 40% 22%;
-    --pb-ink-muted: 219 22% 44%;
-    --pb-panel: 0 0% 100%;
-    --pb-panel-2: 222 36% 87%;
-    --pb-line: 224 28% 72%;
-    --pb-line-strong: 224 28% 62%;
-    --pb-paper: 220 38% 94%;             /* legacy name → tier 0 */
-    --pb-cream: 220 38% 94%;             /* legacy name → tier 0 */
-    --pb-cream-warm: 222 36% 87%;        /* legacy name → tier 1 */
-    --pb-muted: 219 22% 44%;
-    --pb-shadow: 219 50% 7%;
-    --pb-violet: 33 88% 55%;             /* legacy → amber */
-    --pb-lavender: 33 89% 69%;           /* legacy → amber-light */
-    --pb-electric: 219 47% 20%;
-    --pb-mint: 33 89% 69%;
-    --pb-wordmark-navy: 219 47% 20%;
-    --pb-wordmark-amber: 33 88% 55%;
-    --pb-font-serif: "Inter", system-ui, -apple-system, sans-serif;
+    /* ── Marketing surface legacy tokens — remapped ── */
+    --pb-night: 60 8% 3%;
+    --pb-ink: 42 32% 94%;                /* on-dark text */
+    --pb-ink-soft: 42 18% 78%;
+    --pb-ink-muted: 42 8% 60%;
+    --pb-panel: 60 6% 8%;
+    --pb-panel-2: 60 5% 11%;
+    --pb-line: 42 18% 94%;               /* used with /opacity */
+    --pb-line-strong: 42 18% 94%;        /* used with /opacity */
+    --pb-paper: 60 8% 5%;
+    --pb-cream: 42 32% 94%;              /* now means "paper white" */
+    --pb-cream-warm: 42 28% 88%;
+    --pb-muted: 42 8% 60%;
+    --pb-shadow: 60 8% 0%;
+    --pb-violet: 16 100% 56%;            /* legacy → kinetic orange */
+    --pb-lavender: 16 100% 65%;
+    --pb-electric: 80 21% 71%;           /* legacy → sage */
+    --pb-mint: 145 50% 55%;
+    --pb-wordmark-navy: 219 47% 20%;     /* preserved — used by BrandMark */
+    --pb-wordmark-amber: 33 88% 55%;     /* preserved — used by BrandMark */
+    --pb-font-serif: "Bricolage Grotesque", "Inter", system-ui, sans-serif;
 
-    /* ── Authenticated app shell tokens ── */
-    --app-bg: 39 33% 97%;
-    --app-sidebar-bg: 219 47% 14%;
-    --app-sidebar-fg: 39 33% 97%;
-    --app-sidebar-muted: 219 14% 70%;
-    --app-sidebar-active-bg: 33 88% 55%;
-    --app-sidebar-active-fg: 219 47% 14%;
-    --app-sidebar-border: 219 30% 22%;
-    --app-primary: 33 88% 55%;
-    --app-primary-glow: 33 89% 69%;
-    --app-primary-fg: 0 0% 100%;
-    --app-pill-pass-bg: 151 60% 90%;
-    --app-pill-pass-fg: 151 56% 24%;
-    --app-pill-warn-bg: 35 92% 90%;
-    --app-pill-warn-fg: 35 74% 28%;
-    --app-pill-fail-bg: 0 80% 94%;
-    --app-pill-fail-fg: 0 65% 38%;
-    --app-pill-info-bg: 219 50% 92%;
-    --app-pill-info-fg: 219 47% 24%;
+    /* ── Kinetic / editorial extensions ── */
+    --accent-kinetic: 16 100% 56%;
+    --accent-sage: 80 21% 71%;
+    --surface-paper: 42 32% 94%;
+    --rule-hairline: 42 18% 94% / 0.10;
+    --grain-opacity: 0.05;
+
+    /* ── Authenticated app shell tokens (dark) ── */
+    --app-bg: 60 8% 5%;
+    --app-sidebar-bg: 60 8% 3%;
+    --app-sidebar-fg: 42 32% 94%;
+    --app-sidebar-muted: 42 8% 55%;
+    --app-sidebar-active-bg: 16 100% 56%;
+    --app-sidebar-active-fg: 60 8% 5%;
+    --app-sidebar-border: 42 18% 94% / 0.08;
+    --app-primary: 16 100% 56%;
+    --app-primary-glow: 16 100% 65%;
+    --app-primary-fg: 42 32% 96%;
+    --app-pill-pass-bg: 145 30% 18%;
+    --app-pill-pass-fg: 145 50% 75%;
+    --app-pill-warn-bg: 36 40% 18%;
+    --app-pill-warn-fg: 36 100% 75%;
+    --app-pill-fail-bg: 0 35% 18%;
+    --app-pill-fail-fg: 0 72% 80%;
+    --app-pill-info-bg: 80 15% 18%;
+    --app-pill-info-fg: 80 30% 80%;
 
     /* ── Sidebar (shadcn) ── */
-    --sidebar-background: 39 33% 97%;
-    --sidebar-foreground: 219 47% 14%;
-    --sidebar-primary: 33 88% 55%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 33 92% 92%;
-    --sidebar-accent-foreground: 35 74% 30%;
-    --sidebar-border: 32 18% 86%;
-    --sidebar-ring: 33 88% 55%;
+    --sidebar-background: 60 8% 3%;
+    --sidebar-foreground: 42 32% 94%;
+    --sidebar-primary: 16 100% 56%;
+    --sidebar-primary-foreground: 60 8% 5%;
+    --sidebar-accent: 60 5% 12%;
+    --sidebar-accent-foreground: 42 32% 94%;
+    --sidebar-border: 42 18% 94% / 0.08;
+    --sidebar-ring: 16 100% 56%;
 
     /* ── Gradients + shadows + ambient washes ── */
-    --gradient-primary: linear-gradient(135deg, hsl(33 88% 55%), hsl(33 89% 69%));
-    --gradient-subtle: linear-gradient(180deg, hsl(39 33% 97%), hsl(0 0% 100%));
-    --gradient-brand: linear-gradient(135deg, hsl(219 47% 20%) 0%, hsl(219 47% 28%) 55%, hsl(33 88% 55%) 130%);
-    --gradient-radial-glow: radial-gradient(60% 50% at 50% 0%, hsl(33 88% 55% / 0.18), transparent 70%);
+    --gradient-primary: linear-gradient(135deg, hsl(16 100% 56%), hsl(16 100% 65%));
+    --gradient-subtle: linear-gradient(180deg, hsl(60 8% 5%), hsl(60 6% 8%));
+    --gradient-brand: linear-gradient(135deg, hsl(60 8% 3%) 0%, hsl(60 5% 11%) 55%, hsl(16 100% 56%) 130%);
+    --gradient-radial-glow: radial-gradient(60% 50% at 50% 0%, hsl(16 100% 56% / 0.22), transparent 70%);
 
-    --shadow-sm: 0 1px 2px 0 hsl(219 47% 14% / 0.05);
-    --shadow-md: 0 4px 12px -2px hsl(219 47% 14% / 0.08);
-    --shadow-lg: 0 12px 32px -8px hsl(219 47% 14% / 0.12);
-    --shadow-glow: 0 8px 32px -8px hsl(33 88% 55% / 0.35);
-    --shadow-brand: 0 24px 60px -20px hsl(219 47% 20% / 0.35);
+    --shadow-sm: 0 1px 2px 0 hsl(60 8% 0% / 0.5);
+    --shadow-md: 0 4px 12px -2px hsl(60 8% 0% / 0.55);
+    --shadow-lg: 0 12px 32px -8px hsl(60 8% 0% / 0.6);
+    --shadow-glow: 0 8px 32px -8px hsl(16 100% 56% / 0.45);
+    --shadow-brand: 0 24px 60px -20px hsl(60 8% 0% / 0.7);
 
-    --glass-bg-strong: 0 0% 100% / 0.78;
-    --glass-bg: 0 0% 100% / 0.58;
-    --glass-bg-soft: 0 0% 100% / 0.36;
-    --glass-bg-onDark: 219 47% 14% / 0.55;
-    --glass-border: 32 22% 84% / 0.7;
-    --glass-border-strong: 32 22% 76% / 0.9;
-    --glass-border-onDark: 39 33% 97% / 0.14;
-    --glass-highlight: 0 0% 100% / 0.6;
+    --glass-bg-strong: 60 8% 5% / 0.82;
+    --glass-bg: 60 8% 5% / 0.6;
+    --glass-bg-soft: 60 8% 5% / 0.36;
+    --glass-bg-onDark: 60 8% 5% / 0.7;
+    --glass-border: 42 18% 94% / 0.10;
+    --glass-border-strong: 42 18% 94% / 0.18;
+    --glass-border-onDark: 42 18% 94% / 0.12;
+    --glass-highlight: 42 18% 94% / 0.06;
     --glass-shadow:
-      inset 0 1px 0 hsl(0 0% 100% / 0.6),
-      0 1px 0 hsl(32 22% 86% / 0.4),
-      0 20px 40px -22px hsl(219 47% 14% / 0.18),
-      0 8px 24px -14px hsl(219 47% 14% / 0.14);
+      inset 0 1px 0 hsl(42 18% 94% / 0.06),
+      0 20px 40px -22px hsl(60 8% 0% / 0.6),
+      0 8px 24px -14px hsl(60 8% 0% / 0.5);
     --glass-shadow-lg:
-      inset 0 1px 0 hsl(0 0% 100% / 0.65),
-      0 30px 60px -24px hsl(219 47% 14% / 0.22),
-      0 12px 36px -16px hsl(219 47% 14% / 0.18);
+      inset 0 1px 0 hsl(42 18% 94% / 0.08),
+      0 30px 60px -24px hsl(60 8% 0% / 0.7),
+      0 12px 36px -16px hsl(60 8% 0% / 0.55);
     --glass-shadow-onDark:
-      inset 0 1px 0 hsl(0 0% 100% / 0.08),
-      0 30px 60px -24px hsl(219 50% 4% / 0.55);
+      inset 0 1px 0 hsl(42 18% 94% / 0.06),
+      0 30px 60px -24px hsl(60 8% 0% / 0.8);
 
-    --ambient-sky: radial-gradient(80% 60% at 50% 0%, hsl(33 89% 69% / 0.18), transparent 70%);
-    --ambient-sky-soft: radial-gradient(60% 50% at 50% 0%, hsl(33 89% 69% / 0.12), transparent 75%);
+    --ambient-sky: radial-gradient(80% 60% at 50% 0%, hsl(16 100% 56% / 0.18), transparent 70%);
+    --ambient-sky-soft: radial-gradient(60% 50% at 50% 0%, hsl(16 100% 56% / 0.10), transparent 75%);
     --ambient-mesh:
-      radial-gradient(40% 30% at 15% 20%, hsl(33 89% 69% / 0.14), transparent 70%),
-      radial-gradient(35% 30% at 85% 10%, hsl(33 88% 55% / 0.10), transparent 70%),
-      radial-gradient(50% 40% at 50% 100%, hsl(219 47% 20% / 0.08), transparent 70%);
+      radial-gradient(40% 30% at 15% 20%, hsl(16 100% 56% / 0.12), transparent 70%),
+      radial-gradient(35% 30% at 85% 10%, hsl(80 21% 71% / 0.06), transparent 70%),
+      radial-gradient(50% 40% at 50% 100%, hsl(16 100% 56% / 0.08), transparent 70%);
     --ambient-future:
-      radial-gradient(50% 35% at 20% 12%, hsl(33 89% 69% / 0.20), transparent 72%),
-      radial-gradient(42% 32% at 82% 16%, hsl(33 88% 55% / 0.13), transparent 76%),
-      radial-gradient(58% 48% at 50% 92%, hsl(219 47% 20% / 0.10), transparent 72%);
+      radial-gradient(50% 35% at 20% 12%, hsl(16 100% 56% / 0.18), transparent 72%),
+      radial-gradient(42% 32% at 82% 16%, hsl(80 21% 71% / 0.08), transparent 76%),
+      radial-gradient(58% 48% at 50% 92%, hsl(16 100% 56% / 0.12), transparent 72%);
 
     --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
     --ease-apple: cubic-bezier(0.32, 0.72, 0, 1);
+    --ease-locomotive: cubic-bezier(0.215, 0.610, 0.355, 1.000);
   }
 
 }
