@@ -1,28 +1,22 @@
 import { useState } from "react";
 import {
   ArrowRight,
-  BadgeCheck,
   Calendar,
   CheckCircle2,
   Crown,
   Gift,
   Headphones,
   MessageSquare,
-  Palette,
   Rocket,
   Send,
   Settings,
-  Sparkles,
   Star,
-  Users,
   Zap,
 } from "lucide-react";
 
 import { SEOHead } from "@/components/seo/SEOHead";
 import { BrandMark } from "@/components/layout/BrandMark";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -57,6 +51,24 @@ const timelineSteps = [
   { icon: Rocket, title: "Send your first PhotoBrief", body: "You're live — send a real guided photo request to a customer." },
 ];
 
+/* ── shared editorial classes ───────────────────────────── */
+
+const eyebrowCls =
+  "inline-flex items-baseline gap-2 font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground";
+const accentCodeCls = "text-[hsl(var(--accent-kinetic))]";
+const sectionLabelCls =
+  "font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-[hsl(var(--accent-kinetic))]";
+const fieldLabelCls =
+  "block font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground";
+const inputCls =
+  "h-12 rounded-none border border-border bg-background px-3 text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--ring))]";
+const textareaCls =
+  "rounded-none border border-border bg-background p-3 text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--ring))]";
+const selectCls =
+  "h-12 w-full rounded-none border border-border bg-background px-3 text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--ring))]";
+const primaryBtn =
+  "inline-flex items-center justify-center gap-2 bg-[hsl(var(--accent-kinetic))] px-6 font-[Geist,Inter,system-ui,sans-serif] text-[0.85rem] font-semibold uppercase tracking-[0.14em] text-[hsl(var(--primary-foreground))] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--ring))]";
+
 /* ── form state ─────────────────────────────────────────── */
 
 interface FormState {
@@ -79,7 +91,7 @@ interface FormState {
 
 const EMPTY: FormState = {
   email: "", name: "", business_name: "", industry: "",
-  website: "", phone: "", brand_color: "#0A6BFF", tagline: "",
+  website: "", phone: "", brand_color: "#F2A33A", tagline: "",
   logo_description: "", photo_use_case: "", monthly_volume: "",
   reviewer_info: "", preferred_channel: "email", template_ideas: "",
   notes: "",
@@ -87,19 +99,37 @@ const EMPTY: FormState = {
 
 /* ── helpers ────────────────────────────────────────────── */
 
-function Field({ id, label, required, children }: { id: string; label: string; required?: boolean; children: React.ReactNode }) {
+function Field({
+  id,
+  label,
+  required,
+  children,
+}: {
+  id: string;
+  label: string;
+  required?: boolean;
+  children: React.ReactNode;
+}) {
   return (
-    <div className="space-y-1.5">
-      <Label htmlFor={id} className="text-sm font-medium text-white/80">
-        {label}{required && <span className="ml-0.5 text-[hsl(var(--pb-lavender))]">*</span>}
-      </Label>
+    <div className="space-y-2">
+      <label htmlFor={id} className={fieldLabelCls}>
+        {label}
+        {required && <span className="ml-1 text-[hsl(var(--accent-kinetic))]">*</span>}
+      </label>
       {children}
     </div>
   );
 }
 
-const inputClass = "h-12 border-white/12 bg-white/[0.05] text-white placeholder:text-white/30";
-const textareaClass = "border-white/12 bg-white/[0.05] text-white placeholder:text-white/30";
+function Eyebrow({ code, children }: { code: string; children: React.ReactNode }) {
+  return (
+    <p className={eyebrowCls}>
+      <span className="inline-block h-px w-8 -translate-y-[0.25em] bg-[hsl(var(--accent-kinetic))]" />
+      <span className={accentCodeCls}>[ {code} ]</span>
+      <span className="inline-flex items-center gap-1.5">{children}</span>
+    </p>
+  );
+}
 
 /* ── main component ─────────────────────────────────────── */
 
@@ -152,40 +182,52 @@ export default function BetaWelcomePage() {
     return (
       <>
         <SEOHead title="We've got everything — PhotoBrief.ai" description="Your concierge setup details have been received." canonicalPath="/welcome" />
-        <section className="pb-section relative isolate">
-          <div className="pb-lens-field" />
-          <div className="pb-container relative z-10 mx-auto max-w-lg text-center">
-            <BrandMark variant="stacked" tone="dark" size={72} eager />
-            <div className="mx-auto mt-8 flex h-16 w-16 items-center justify-center rounded-full bg-[hsl(var(--pb-mint)/0.12)]">
-              <CheckCircle2 className="h-8 w-8 text-[hsl(var(--pb-mint))]" />
+        <main className="relative isolate min-h-screen bg-background px-4 py-16">
+          <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[60vh] bg-ambient-sky" aria-hidden />
+          <div className="mx-auto max-w-lg">
+            <div className="mb-8 flex justify-center">
+              <BrandMark variant="stacked" tone="dark" size={72} eager />
             </div>
-            <h1 className="pb-section-title mt-6 text-white">We've got everything we need</h1>
-            <p className="pb-copy mt-4">
-              Your concierge setup is in the queue. We'll configure your account and reach out via email or chat to walk you through everything — usually within 48 hours.
-            </p>
+            <article className="border border-border bg-card p-7 text-center">
+              <Eyebrow code="OK">Founding Partner Beta</Eyebrow>
+              <span className="mx-auto mt-6 flex h-14 w-14 items-center justify-center border border-[hsl(var(--accent-kinetic))] text-[hsl(var(--accent-kinetic))]">
+                <CheckCircle2 className="h-7 w-7" />
+              </span>
+              <h1 className="mt-5 text-[clamp(1.6rem,3vw,2rem)] font-semibold leading-[1.05] tracking-[-0.022em] text-foreground">
+                We've got everything we need
+              </h1>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                Your concierge setup is in the queue. We'll configure your account and reach out via email or chat to walk you through everything — usually within 48 hours.
+              </p>
 
-            <div className="pb-card mt-8 p-5 text-left sm:p-6">
-              <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[hsl(var(--pb-lavender))]">What happens now</p>
-              <ol className="mt-4 grid gap-3">
-                {[
-                  "We set up your workspace, brand, and first templates.",
-                  "You'll receive an email when your account is ready.",
-                  "We'll walk you through everything via chat or email — no call needed.",
-                  "You send your first guided PhotoBrief to a real customer.",
-                ].map((text, i) => (
-                  <li key={i} className="flex gap-3">
-                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[hsl(var(--pb-lavender)/0.13)] text-xs font-black text-[hsl(var(--pb-lavender))]">{i + 1}</span>
-                    <span className="pb-copy text-sm">{text}</span>
-                  </li>
-                ))}
-              </ol>
-            </div>
+              <div className="mt-7 border-t border-border pt-6 text-left">
+                <p className={sectionLabelCls}>What happens now</p>
+                <ol className="mt-4 grid gap-3">
+                  {[
+                    "We set up your workspace, brand, and first templates.",
+                    "You'll receive an email when your account is ready.",
+                    "We'll walk you through everything via chat or email — no call needed.",
+                    "You send your first guided PhotoBrief to a real customer.",
+                  ].map((text, i) => (
+                    <li key={i} className="flex items-start gap-3">
+                      <span className="font-mono text-[0.7rem] font-semibold tabular-nums uppercase tracking-[0.16em] text-[hsl(var(--accent-kinetic))]">
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <span className="text-sm leading-6 text-foreground">{text}</span>
+                    </li>
+                  ))}
+                </ol>
+              </div>
 
-            <p className="mt-6 text-xs text-white/40">
-              Questions? <a href="mailto:hello@photobrief.ai" className="text-[hsl(var(--pb-lavender))] hover:underline">hello@photobrief.ai</a> — replies go straight to the team.
-            </p>
+              <p className="mt-6 border-t border-border pt-5 font-mono text-[0.7rem] uppercase tracking-[0.18em] text-muted-foreground">
+                Questions?{" "}
+                <a href="mailto:hello@photobrief.ai" className="text-[hsl(var(--accent-kinetic))] hover:underline">
+                  hello@photobrief.ai
+                </a>
+              </p>
+            </article>
           </div>
-        </section>
+        </main>
       </>
     );
   }
@@ -199,217 +241,250 @@ export default function BetaWelcomePage() {
         canonicalPath="/welcome"
       />
 
-      {/* ━━ HERO ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-      <section className="relative isolate overflow-hidden pt-8 sm:pt-14">
-        <div className="pb-lens-field" />
-        <div className="pb-container relative z-10 pb-4 sm:pb-10">
+      <main className="relative isolate bg-background">
+        <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[60vh] bg-ambient-sky" aria-hidden />
+
+        {/* HERO */}
+        <section className="px-4 pb-10 pt-12 sm:pt-20">
           <div className="mx-auto max-w-2xl text-center">
-            <div className="mb-3 sm:mb-5">
-              <div className="relative inline-flex items-center justify-center">
-                <div aria-hidden className="pointer-events-none absolute h-28 w-28 rounded-full bg-[hsl(var(--pb-violet)/0.35)] blur-[50px] sm:h-48 sm:w-48 sm:blur-[80px]" />
-                <BrandMark variant="mark" size={56} eager className="relative sm:hidden" />
-                <BrandMark variant="mark" size={120} eager className="relative hidden sm:inline-flex" />
-              </div>
+            <div className="mb-6 flex justify-center">
+              <BrandMark variant="stacked" tone="dark" size={72} eager />
             </div>
-
-            <span className="pb-eyebrow"><Crown className="h-3.5 w-3.5" /> Founding Partner Beta</span>
-
-            <h1 className="pb-hero-title mx-auto mt-2 max-w-xl text-white sm:mt-4">
+            <Eyebrow code="00"><Crown className="h-3.5 w-3.5" /> Founding Partner Beta</Eyebrow>
+            <h1 className="mx-auto mt-5 max-w-xl text-[clamp(2.5rem,6vw,4rem)] font-semibold leading-[1.02] tracking-[-0.025em] text-foreground">
               You're in.
             </h1>
-
-            <p className="pb-copy mx-auto mt-3 max-w-xl text-[0.938rem] leading-[1.6] sm:mt-4 sm:text-lg sm:leading-8">
+            <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
               You've been selected for the PhotoBrief.ai Founding Partner Beta — a small, hand-picked group of businesses getting early access with concierge setup and direct support.
             </p>
 
-            <div className="mx-auto mt-4 flex max-w-md justify-center gap-2 sm:mt-5 sm:gap-2.5">
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
               {["Hand-picked cohort", "Concierge setup", "Direct support"].map((item) => (
-                <span key={item} className="pb-route-chip whitespace-nowrap px-2 py-1 text-center text-[0.6rem] font-semibold sm:px-3 sm:py-2 sm:text-xs">{item}</span>
+                <span
+                  key={item}
+                  className="inline-flex items-center border border-border bg-card px-3 py-1.5 font-mono text-[0.65rem] uppercase tracking-[0.16em] text-muted-foreground"
+                >
+                  {item}
+                </span>
               ))}
             </div>
 
-            <Button size="xl" variant="pb-primary" className="mt-6" onClick={() => document.getElementById("setup")?.scrollIntoView({ behavior: "smooth" })}>
-              Let's set up your account <ArrowRight className="ml-1 h-4 w-4" />
-            </Button>
+            <button
+              type="button"
+              onClick={() => document.getElementById("setup")?.scrollIntoView({ behavior: "smooth" })}
+              className={`${primaryBtn} mt-8 h-14 px-7 rounded-[0.25rem]`}
+            >
+              Let's set up your account <ArrowRight className="h-4 w-4" />
+            </button>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ━━ WHAT YOU GET ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-      <section className="pb-section-tight">
-        <div className="pb-container">
+        {/* BENEFITS */}
+        <section className="px-4 py-12 sm:py-16">
           <div className="mx-auto max-w-2xl">
             <div className="text-center">
-              <span className="pb-eyebrow"><BadgeCheck className="h-3.5 w-3.5" /> What's included</span>
-              <h2 className="pb-section-title mt-3 text-white">Founding Partner benefits</h2>
+              <Eyebrow code="01">What's included</Eyebrow>
+              <h2 className="mt-5 text-[clamp(1.6rem,3vw,2.25rem)] font-semibold tracking-tight text-foreground">
+                Founding Partner benefits
+              </h2>
             </div>
-
-            <div className="mt-6 grid gap-3 sm:mt-8 sm:grid-cols-2 sm:gap-4">
-              {benefits.map(({ icon: Icon, text }) => (
-                <div key={text} className="pb-card flex items-start gap-3 p-4">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[hsl(var(--pb-lavender)/0.12)]">
-                    <Icon className="h-4.5 w-4.5 text-[hsl(var(--pb-lavender))]" />
+            <div className="mt-8 grid gap-3 sm:grid-cols-2">
+              {benefits.map(({ icon: Icon, text }, i) => (
+                <div key={text} className="border border-border bg-card p-5">
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-[0.65rem] font-medium uppercase tracking-[0.18em] text-[hsl(var(--accent-kinetic))]">
+                      [ {String(i + 1).padStart(2, "0")} ]
+                    </span>
+                    <span className="flex h-9 w-9 items-center justify-center border border-border bg-background text-[hsl(var(--accent-kinetic))]">
+                      <Icon className="h-4 w-4" />
+                    </span>
                   </div>
-                  <p className="pb-copy text-sm leading-snug">{text}</p>
+                  <p className="mt-4 text-sm leading-snug text-foreground">{text}</p>
                 </div>
               ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ━━ TIMELINE ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-      <section className="pb-section-tight">
-        <div className="pb-container">
+        {/* TIMELINE */}
+        <section className="px-4 py-12 sm:py-16">
           <div className="mx-auto max-w-2xl">
             <div className="text-center">
-              <span className="pb-eyebrow"><Sparkles className="h-3.5 w-3.5" /> How it works</span>
-              <h2 className="pb-section-title mt-3 text-white">From here to your first PhotoBrief</h2>
+              <Eyebrow code="02">How it works</Eyebrow>
+              <h2 className="mt-5 text-[clamp(1.6rem,3vw,2.25rem)] font-semibold tracking-tight text-foreground">
+                From here to your first PhotoBrief
+              </h2>
             </div>
-
-            <div className="mt-6 sm:mt-8">
+            <ol className="mt-8 border-l border-border">
               {timelineSteps.map(({ icon: Icon, title, body }, i) => (
-                <div key={title} className="relative flex gap-4 pb-6 last:pb-0">
-                  {/* Vertical connector line */}
-                  {i < timelineSteps.length - 1 && (
-                    <div className="absolute left-[17px] top-10 bottom-0 w-px bg-[hsl(var(--pb-lavender)/0.18)]" />
-                  )}
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[hsl(var(--pb-lavender)/0.12)] ring-2 ring-[hsl(var(--pb-lavender)/0.25)]">
-                    <Icon className="h-4 w-4 text-[hsl(var(--pb-lavender))]" />
+                <li key={title} className="relative grid grid-cols-[auto_1fr] gap-4 pb-8 pl-6 last:pb-0">
+                  <span className="absolute -left-px top-0 h-px w-4 bg-[hsl(var(--accent-kinetic))]" aria-hidden />
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center border border-border bg-background text-[hsl(var(--accent-kinetic))]">
+                    <Icon className="h-4 w-4" />
                   </div>
-                  <div className="min-w-0 pt-0.5">
-                    <p className="text-sm font-semibold text-white">{title}</p>
-                    <p className="pb-copy mt-0.5 text-sm">{body}</p>
+                  <div className="min-w-0">
+                    <p className="font-mono text-[0.65rem] uppercase tracking-[0.18em] text-[hsl(var(--accent-kinetic))]">
+                      [ {String(i + 1).padStart(2, "0")} ]
+                    </p>
+                    <p className="mt-1 text-sm font-semibold text-foreground">{title}</p>
+                    <p className="mt-1 text-sm leading-6 text-muted-foreground">{body}</p>
                   </div>
-                </div>
+                </li>
               ))}
-            </div>
+            </ol>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ━━ CONCIERGE INTAKE FORM ━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-      <section id="setup" className="pb-section-tight scroll-mt-8">
-        <div className="pb-container">
-          <div className="pb-command-panel mx-auto max-w-xl p-4 sm:p-6 lg:p-8">
-            <div className="relative z-10">
-              <span className="pb-eyebrow"><Users className="h-3.5 w-3.5" /> Concierge setup</span>
-              <h2 className="mt-3 text-lg font-semibold tracking-tight text-white sm:mt-4 sm:text-2xl">
+        {/* CONCIERGE INTAKE FORM */}
+        <section id="setup" className="scroll-mt-8 px-4 pb-20 pt-12 sm:pt-16">
+          <div className="mx-auto max-w-xl">
+            <article className="border border-border bg-card p-5 sm:p-7 lg:p-9">
+              <Eyebrow code="03">Concierge setup</Eyebrow>
+              <h2 className="mt-5 text-[clamp(1.4rem,2.5vw,2rem)] font-semibold tracking-tight text-foreground">
                 Tell us about your business
               </h2>
-              <p className="pb-copy mt-1.5 text-sm">
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
                 We'll use this to configure your account, brand settings, and first templates before your concierge walkthrough.
               </p>
 
-              <form onSubmit={onSubmit} className="mt-5 space-y-6 sm:mt-6">
-                {/* ── Section 1: Business basics ── */}
-                <div>
-                  <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[hsl(var(--pb-lavender))]">Business basics</p>
-                  <div className="mt-3 grid gap-3.5 sm:gap-4">
-                    <div className="grid gap-3.5 sm:grid-cols-2 sm:gap-4">
-                      <Field id="bw-name" label="Your name">
-                        <Input id="bw-name" value={form.name} onChange={update("name")} autoComplete="name" placeholder="Alex Johnson" className={inputClass} />
-                      </Field>
-                      <Field id="bw-email" label="Email" required>
-                        <Input id="bw-email" type="email" value={form.email} onChange={update("email")} autoComplete="email" required placeholder="you@company.com" className={inputClass} />
-                      </Field>
-                    </div>
-                    <Field id="bw-biz" label="Business name" required>
-                      <Input id="bw-biz" value={form.business_name} onChange={update("business_name")} autoComplete="organization" required className={inputClass} />
+              <form onSubmit={onSubmit} className="mt-7 space-y-8">
+                {/* Section 1 */}
+                <div className="space-y-4">
+                  <p className={sectionLabelCls}>[ A ] Business basics</p>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <Field id="bw-name" label="Your name">
+                      <Input id="bw-name" value={form.name} onChange={update("name")} autoComplete="name" placeholder="Alex Johnson" className={inputCls} />
                     </Field>
-                    <div className="grid gap-3.5 sm:grid-cols-2 sm:gap-4">
-                      <Field id="bw-industry" label="Industry">
-                        <select id="bw-industry" value={form.industry} onChange={update("industry")} className={`flex w-full rounded-xl border px-3 py-2 text-sm shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--pb-lavender))] ${inputClass}`}>
-                          <option value="">Select…</option>
-                          {INDUSTRIES.map((i) => <option key={i} value={i}>{i}</option>)}
-                        </select>
-                      </Field>
-                      <Field id="bw-phone" label="Phone">
-                        <Input id="bw-phone" type="tel" value={form.phone} onChange={update("phone")} autoComplete="tel" placeholder="(555) 123-4567" className={inputClass} />
-                      </Field>
-                    </div>
-                    <Field id="bw-web" label="Website">
-                      <Input id="bw-web" value={form.website} onChange={update("website")} placeholder="https://" autoComplete="url" className={inputClass} />
+                    <Field id="bw-email" label="Email" required>
+                      <Input id="bw-email" type="email" value={form.email} onChange={update("email")} autoComplete="email" required placeholder="you@company.com" className={inputCls} />
                     </Field>
                   </div>
-                </div>
-
-                {/* ── Section 2: Brand & identity ── */}
-                <div>
-                  <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[hsl(var(--pb-lavender))]">Brand & identity</p>
-                  <p className="pb-copy mt-1 text-xs">We'll use these to customize how PhotoBrief looks to your customers.</p>
-                  <div className="mt-3 grid gap-3.5 sm:gap-4">
-                    <div className="grid gap-3.5 sm:grid-cols-2 sm:gap-4">
-                      <Field id="bw-color" label="Primary brand color">
-                        <div className="flex items-center gap-2">
-                          <input type="color" id="bw-color-picker" value={form.brand_color} onChange={(e) => setForm(prev => ({ ...prev, brand_color: e.target.value }))} className="h-10 w-10 shrink-0 cursor-pointer rounded-lg border border-white/12 bg-transparent" />
-                          <Input id="bw-color" value={form.brand_color} onChange={update("brand_color")} placeholder="#0A6BFF" className={`flex-1 ${inputClass}`} />
-                        </div>
-                      </Field>
-                      <Field id="bw-tagline" label="Tagline or short description">
-                        <Input id="bw-tagline" value={form.tagline} onChange={update("tagline")} placeholder="Reliable plumbing since 2005" className={inputClass} />
-                      </Field>
-                    </div>
-                    <Field id="bw-logo" label="Logo description">
-                      <Input id="bw-logo" value={form.logo_description} onChange={update("logo_description")} placeholder="Describe your logo or paste a link to it" className={inputClass} />
+                  <Field id="bw-biz" label="Business name" required>
+                    <Input id="bw-biz" value={form.business_name} onChange={update("business_name")} autoComplete="organization" required className={inputCls} />
+                  </Field>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <Field id="bw-industry" label="Industry">
+                      <select id="bw-industry" value={form.industry} onChange={update("industry")} className={selectCls}>
+                        <option value="">Select…</option>
+                        {INDUSTRIES.map((i) => <option key={i} value={i}>{i}</option>)}
+                      </select>
+                    </Field>
+                    <Field id="bw-phone" label="Phone">
+                      <Input id="bw-phone" type="tel" value={form.phone} onChange={update("phone")} autoComplete="tel" placeholder="(555) 123-4567" className={inputCls} />
                     </Field>
                   </div>
+                  <Field id="bw-web" label="Website">
+                    <Input id="bw-web" value={form.website} onChange={update("website")} placeholder="https://" autoComplete="url" className={inputCls} />
+                  </Field>
                 </div>
 
-                {/* ── Section 3: Photo workflow ── */}
-                <div>
-                  <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[hsl(var(--pb-lavender))]">Photo workflow</p>
-                  <p className="pb-copy mt-1 text-xs">Help us understand how you'll use PhotoBrief so we can tailor your templates.</p>
-                  <div className="mt-3 grid gap-3.5 sm:gap-4">
-                    <Field id="bw-usecase" label="What do you need customer photos for?" required>
-                      <Textarea id="bw-usecase" value={form.photo_use_case} onChange={update("photo_use_case")} rows={2} required placeholder="e.g. We need roof damage photos before sending a quote — close-ups of the damage, full roof overview, and any visible flashing or gutter issues." className={textareaClass} />
+                {/* Section 2 */}
+                <div className="space-y-4 border-t border-border pt-7">
+                  <div>
+                    <p className={sectionLabelCls}>[ B ] Brand & identity</p>
+                    <p className="mt-1 text-xs leading-5 text-muted-foreground">We'll use these to customize how PhotoBrief looks to your customers.</p>
+                  </div>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <Field id="bw-color" label="Primary brand color">
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="color"
+                          id="bw-color-picker"
+                          value={form.brand_color}
+                          onChange={(e) => setForm((prev) => ({ ...prev, brand_color: e.target.value }))}
+                          className="h-12 w-12 shrink-0 cursor-pointer rounded-none border border-border bg-transparent p-1"
+                        />
+                        <Input id="bw-color" value={form.brand_color} onChange={update("brand_color")} placeholder="#F2A33A" className={`${inputCls} flex-1`} />
+                      </div>
                     </Field>
-                    <div className="grid gap-3.5 sm:grid-cols-2 sm:gap-4">
-                      <Field id="bw-vol" label="Monthly photo requests (approx.)">
-                        <select id="bw-vol" value={form.monthly_volume} onChange={update("monthly_volume")} className={`flex w-full rounded-xl border px-3 py-2 text-sm shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--pb-lavender))] ${inputClass}`}>
-                          <option value="">Select…</option>
-                          {VOLUMES.map((v) => <option key={v} value={v}>{v}</option>)}
-                        </select>
-                      </Field>
-                      <Field id="bw-channel" label="How do you reach customers?">
-                        <select id="bw-channel" value={form.preferred_channel} onChange={update("preferred_channel")} className={`flex w-full rounded-xl border px-3 py-2 text-sm shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--pb-lavender))] ${inputClass}`}>
-                          {CHANNELS.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
-                        </select>
-                      </Field>
-                    </div>
-                    <Field id="bw-reviewer" label="Who reviews incoming photos?">
-                      <Input id="bw-reviewer" value={form.reviewer_info} onChange={update("reviewer_info")} placeholder="e.g. Office manager Sarah, or the estimating team" className={inputClass} />
+                    <Field id="bw-tagline" label="Tagline or short description">
+                      <Input id="bw-tagline" value={form.tagline} onChange={update("tagline")} placeholder="Reliable plumbing since 2005" className={inputCls} />
                     </Field>
                   </div>
+                  <Field id="bw-logo" label="Logo description">
+                    <Input id="bw-logo" value={form.logo_description} onChange={update("logo_description")} placeholder="Describe your logo or paste a link to it" className={inputCls} />
+                  </Field>
                 </div>
 
-                {/* ── Section 4: First templates ── */}
-                <div>
-                  <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[hsl(var(--pb-lavender))]">First template ideas</p>
-                  <p className="pb-copy mt-1 text-xs">We'll build your first templates based on this. Don't overthink it — we'll refine together over chat or email.</p>
-                  <div className="mt-3 grid gap-3.5 sm:gap-4">
-                    <Field id="bw-templates" label="What should your first 1–2 templates cover?">
-                      <Textarea id="bw-templates" value={form.template_ideas} onChange={update("template_ideas")} rows={3} placeholder="e.g. Roof damage assessment — need overall roof shot, close-up of damage area, photos of gutters and flashing, and any interior water stains." className={textareaClass} />
+                {/* Section 3 */}
+                <div className="space-y-4 border-t border-border pt-7">
+                  <div>
+                    <p className={sectionLabelCls}>[ C ] Photo workflow</p>
+                    <p className="mt-1 text-xs leading-5 text-muted-foreground">Help us understand how you'll use PhotoBrief so we can tailor your templates.</p>
+                  </div>
+                  <Field id="bw-usecase" label="What do you need customer photos for?" required>
+                    <Textarea
+                      id="bw-usecase"
+                      value={form.photo_use_case}
+                      onChange={update("photo_use_case")}
+                      rows={3}
+                      required
+                      placeholder="e.g. We need roof damage photos before sending a quote — close-ups of the damage, full roof overview, and any visible flashing or gutter issues."
+                      className={textareaCls}
+                    />
+                  </Field>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <Field id="bw-vol" label="Monthly photo requests (approx.)">
+                      <select id="bw-vol" value={form.monthly_volume} onChange={update("monthly_volume")} className={selectCls}>
+                        <option value="">Select…</option>
+                        {VOLUMES.map((v) => <option key={v} value={v}>{v}</option>)}
+                      </select>
                     </Field>
-                    <Field id="bw-notes" label="Anything else we should know?">
-                      <Textarea id="bw-notes" value={form.notes} onChange={update("notes")} rows={2} placeholder="Special requirements, team size, preferred communication channel, etc." className={textareaClass} />
+                    <Field id="bw-channel" label="How do you reach customers?">
+                      <select id="bw-channel" value={form.preferred_channel} onChange={update("preferred_channel")} className={selectCls}>
+                        {CHANNELS.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
+                      </select>
                     </Field>
                   </div>
+                  <Field id="bw-reviewer" label="Who reviews incoming photos?">
+                    <Input id="bw-reviewer" value={form.reviewer_info} onChange={update("reviewer_info")} placeholder="e.g. Office manager Sarah, or the estimating team" className={inputCls} />
+                  </Field>
                 </div>
 
-                <Button type="submit" size="xl" variant="pb-primary" className="w-full" disabled={submitting}>
+                {/* Section 4 */}
+                <div className="space-y-4 border-t border-border pt-7">
+                  <div>
+                    <p className={sectionLabelCls}>[ D ] First template ideas</p>
+                    <p className="mt-1 text-xs leading-5 text-muted-foreground">We'll build your first templates based on this. Don't overthink it — we'll refine together over chat or email.</p>
+                  </div>
+                  <Field id="bw-templates" label="What should your first 1–2 templates cover?">
+                    <Textarea
+                      id="bw-templates"
+                      value={form.template_ideas}
+                      onChange={update("template_ideas")}
+                      rows={4}
+                      placeholder="e.g. Roof damage assessment — need overall roof shot, close-up of damage area, photos of gutters and flashing, and any interior water stains."
+                      className={textareaCls}
+                    />
+                  </Field>
+                  <Field id="bw-notes" label="Anything else we should know?">
+                    <Textarea
+                      id="bw-notes"
+                      value={form.notes}
+                      onChange={update("notes")}
+                      rows={3}
+                      placeholder="Special requirements, team size, preferred communication channel, etc."
+                      className={textareaCls}
+                    />
+                  </Field>
+                </div>
+
+                <button type="submit" disabled={submitting} className={`${primaryBtn} h-14 w-full rounded-[0.25rem]`}>
                   {submitting ? "Submitting…" : "Submit for concierge setup"}
-                  {!submitting && <ArrowRight className="ml-1 h-4 w-4" />}
-                </Button>
+                  {!submitting && <ArrowRight className="h-4 w-4" />}
+                </button>
 
-                <p className="text-center text-xs text-white/40">
-                  Questions? <a href="mailto:hello@photobrief.ai" className="text-[hsl(var(--pb-lavender))] hover:underline">hello@photobrief.ai</a> — replies go straight to the team.
+                <p className="text-center font-mono text-[0.7rem] uppercase tracking-[0.16em] text-muted-foreground">
+                  Questions?{" "}
+                  <a href="mailto:hello@photobrief.ai" className="text-[hsl(var(--accent-kinetic))] hover:underline">
+                    hello@photobrief.ai
+                  </a>
                 </p>
               </form>
-            </div>
+            </article>
           </div>
-        </div>
-      </section>
+        </section>
+      </main>
     </>
   );
 }
