@@ -12,7 +12,7 @@ export function StarterRequestCard(_props: Props) {
     <section className="relative isolate overflow-hidden rounded-[0.25rem] border border-border/70 bg-card/75 p-6 shadow-[0_30px_80px_-45px_hsl(222_47%_11%/0.45)] backdrop-blur sm:p-10">
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-72 bg-ambient-sky opacity-80"
+        className="hidden"
       />
       <div
         aria-hidden

@@ -52,7 +52,7 @@ export function BriefHeader({
     <section className="surface-card-elevated relative isolate overflow-hidden p-5 sm:p-7">
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-48 bg-ambient-sky opacity-60"
+        className="hidden"
       />
 
       <div className="grid gap-6 lg:grid-cols-[auto_1fr_auto] lg:items-start">

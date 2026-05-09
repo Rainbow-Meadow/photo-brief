@@ -135,7 +135,7 @@ export default function BetaGuidePage() {
         ]}
       />
       <header className="relative isolate overflow-hidden rounded-[0.25rem] border border-border/70 bg-card p-6 shadow-[0_30px_90px_-55px_hsl(222_47%_11%/0.55)] backdrop-blur sm:p-10">
-        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-56 bg-ambient-sky opacity-70" />
+        
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-3">
             <span className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.08] bg-white/[0.04] px-3 py-1 text-xs font-medium text-muted-foreground">
