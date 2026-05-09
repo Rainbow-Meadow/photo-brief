@@ -1,19 +1,40 @@
-## Tighten the "Fine Print" section layout
+## Dark-background brand variant
 
-Currently the section has a wide two-column intro (text left, large notebook illustration right at `max-w-[420px]`), then a big `mt-10` gap, then a narrow `max-w-3xl` accordion centered below — leaving a hollow void on the left side under the headline and excess space between the intro and the accordion.
+The `BrandMark` component already accepts a `tone` prop and several callsites pass `tone="dark"`, but the prop is ignored — so on dark surfaces (floating nav over dark hero, the `FinalCta` "last word" section, public request layout) the navy mark and "Photo" / ".ai" wordmark portions disappear into the background. Only "Brief" (amber) is visible — exactly what the screenshot shows.
 
-### Changes (single file: `src/pages/Landing.tsx`, `BetaDetailsAccordion`, ~lines 1681–1693)
+### Changes
 
-1. **Reduce intro→accordion gap**
-   - `mx-auto mt-10 max-w-3xl sm:mt-10` → `mx-auto mt-6 max-w-3xl sm:mt-8`
+**1. New asset: `public/brand/mark-on-dark.svg`**
+- Recolor the existing `mark.svg` artwork: replace navy strokes/fills (`#1B2A4A` / `hsl(219 47% 20%)`) with cream (`#FAF7F2`). Amber accents stay amber. Same dimensions, same artwork — only the navy ink swaps to cream so it reads on dark navy backgrounds.
+- Add a matching raster fallback `public/brand/mark-on-dark.png` (1024×1024) for the `<picture>` fallback path.
 
-2. **Shrink the notebook illustration locally** (only in this section, not the shared `TradeAccent`)
-   - Wrap the `TradeAccent` in a `div className="mx-auto w-full max-w-[260px] lg:ml-auto lg:mr-0"` so the illustration caps around 260px instead of 420px, pulling the right column tighter and reducing intro height.
+**2. Wire up `tone` in `src/components/layout/BrandMark.tsx`**
+- `MarkImage` accepts `tone`; when `tone === "dark"`, swap `MARK_SVG` → `/brand/mark-on-dark.svg` and `MARK_PNG` → `/brand/mark-on-dark.png`.
+- `Wordmark` accepts `tone`; when `tone === "dark"`:
+  - "Photo" → `hsl(var(--pb-cream))` (cream)
+  - "Brief" → keep `hsl(var(--pb-wordmark-amber))` (amber stays — readable on both)
+  - ".ai" → `hsl(var(--pb-cream) / 0.7)`
+- `Tagline` accepts `tone`; when `tone === "dark"` use `hsl(var(--pb-cream) / 0.75)`.
+- `tone="light" | "auto" | "color"` keep current behavior (no regression).
+- Pipe `tone` through all variants (mark, wordmark, stacked, horizontal).
 
-3. **Pull accordion up under the intro tightly**
-   - Already covered by step 1.
+**3. No new tokens needed**
+`--pb-cream` already exists in `src/index.css`. No CSS changes.
 
-No copy, token, or component-API changes. No edits to `SectionIntro`/`TradeAccent` themselves (they're shared).
+**4. Memory update**
+Update `mem://design/brand-system` to document:
+- `mark-on-dark.svg` / `mark-on-dark.png` exist
+- `tone="dark"` is now a real, honored variant for use on navy/dark surfaces
 
 ### Out of scope
-Other sections, accordion internals, copy, illustrations.
+- No callsite changes (existing `tone="dark"` callers will start rendering correctly automatically).
+- No changes to `full-logo.svg`, favicon set, email assets, or Remotion theme — those surfaces are cream/light by design.
+- No new color tokens.
+
+### Files touched
+- New: `public/brand/mark-on-dark.svg`, `public/brand/mark-on-dark.png`
+- Edit: `src/components/layout/BrandMark.tsx`
+- Edit: `mem://design/brand-system`
+
+### Validation
+Visit `/` (floating nav over dark hero edge, FinalCta section) and `/r/...` (PublicRequestLayout) — wordmark + mark should be fully legible on the dark backgrounds.
