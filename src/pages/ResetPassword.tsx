@@ -3,14 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { BrandMark } from "@/components/layout/BrandMark";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { EditorialAuthShell } from "@/components/editorial/EditorialAuthShell";
 
-/**
- * Password reset landing page. Supabase delivers the user here from the
- * password recovery email with a recovery session already established.
- */
 export default function ResetPasswordPage() {
   const navigate = useNavigate();
   const [ready, setReady] = useState(false);
@@ -19,11 +15,9 @@ export default function ResetPasswordPage() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    // Supabase fires PASSWORD_RECOVERY when the recovery link establishes a session.
     const { data: sub } = supabase.auth.onAuthStateChange((event) => {
       if (event === "PASSWORD_RECOVERY" || event === "SIGNED_IN") setReady(true);
     });
-    // Also handle case where the session is already present on mount.
     supabase.auth.getSession().then(({ data }) => {
       if (data.session) setReady(true);
     });
@@ -33,18 +27,11 @@ export default function ResetPasswordPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password.length < 8) {
-      toast({
-        title: "Password too short",
-        description: "Use at least 8 characters.",
-        variant: "destructive",
-      });
+      toast({ title: "Password too short", description: "Use at least 8 characters.", variant: "destructive" });
       return;
     }
     if (password !== confirm) {
-      toast({
-        title: "Passwords don't match",
-        variant: "destructive",
-      });
+      toast({ title: "Passwords don't match", variant: "destructive" });
       return;
     }
     setSubmitting(true);
@@ -65,52 +52,43 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <div className="relative isolate min-h-[100vh] overflow-hidden">
-      <div className="pointer-events-none absolute inset-0 -z-10 bg-ambient-mesh" aria-hidden />
-      <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[60vh] bg-ambient-sky" aria-hidden />
-      <div className="mx-auto flex min-h-[100vh] w-full max-w-md flex-col justify-center px-4 py-10">
-        <div className="mb-8 flex justify-center animate-brand-entrance">
-          <BrandMark variant="stacked" tone="color" size={96} eager />
+    <EditorialAuthShell
+      numeral="00"
+      eyebrow="New password"
+      title="Choose a new password"
+      description={ready ? "Enter a new password for your account." : "Verifying your reset link…"}
+    >
+      <form className="space-y-4" onSubmit={handleSubmit}>
+        <div className="space-y-1.5">
+          <Label htmlFor="password" className="font-mono text-[0.65rem] uppercase tracking-[0.16em] text-muted-foreground">New password</Label>
+          <Input
+            id="password"
+            type="password"
+            required
+            minLength={8}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            disabled={!ready}
+            className="rounded-[0.25rem]"
+          />
         </div>
-        <div className="glass-strong rounded-3xl p-7 animate-lift-in">
-          <h1 className="text-2xl font-semibold tracking-tight text-foreground">Choose a new password</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {ready
-              ? "Enter a new password for your account."
-              : "Verifying your reset link…"}
-          </p>
-
-        <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
-          <div className="space-y-1.5">
-            <Label htmlFor="password">New password</Label>
-            <Input
-              id="password"
-              type="password"
-              required
-              minLength={8}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              disabled={!ready}
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="confirm">Confirm password</Label>
-            <Input
-              id="confirm"
-              type="password"
-              required
-              minLength={8}
-              value={confirm}
-              onChange={(e) => setConfirm(e.target.value)}
-              disabled={!ready}
-            />
-          </div>
-          <Button type="submit" className="w-full" disabled={submitting || !ready}>
-            {submitting ? "Updating..." : "Update password"}
-          </Button>
-        </form>
-      </div>
-      </div>
-    </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="confirm" className="font-mono text-[0.65rem] uppercase tracking-[0.16em] text-muted-foreground">Confirm password</Label>
+          <Input
+            id="confirm"
+            type="password"
+            required
+            minLength={8}
+            value={confirm}
+            onChange={(e) => setConfirm(e.target.value)}
+            disabled={!ready}
+            className="rounded-[0.25rem]"
+          />
+        </div>
+        <Button type="submit" className="w-full rounded-[0.25rem]" disabled={submitting || !ready}>
+          {submitting ? "Updating..." : "Update password"}
+        </Button>
+      </form>
+    </EditorialAuthShell>
   );
 }

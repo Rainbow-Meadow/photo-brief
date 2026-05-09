@@ -57,22 +57,27 @@ export default function PricingPage() {
 
       {/* Hero */}
       <MarketingHero align="center">
-        <div className="pb-lens-field" />
-        <span className="pb-eyebrow"><Sparkles className="h-3.5 w-3.5" /> Founding Partner Beta Pricing</span>
-        <h1 className="pb-section-title mx-auto mt-4 max-w-3xl text-white">Apply now. Lock in launch-year savings if accepted.</h1>
-        <p className="pb-copy mx-auto mt-5 max-w-2xl text-base sm:text-xl">
+        <p className="inline-flex items-baseline gap-2 font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+          <span className="inline-block h-px w-8 -translate-y-[0.25em] bg-[hsl(var(--accent-kinetic))]" />
+          <span className="text-[hsl(var(--accent-kinetic))]">[ 00 ]</span>
+          <span className="inline-flex items-center gap-1.5"><Sparkles className="h-3.5 w-3.5" /> Founding Partner Beta Pricing</span>
+        </p>
+        <h1 className="mx-auto mt-5 max-w-3xl text-[clamp(2.5rem,6vw,4.5rem)] font-semibold leading-[1.02] tracking-[-0.025em] text-foreground">
+          Apply now. Lock in launch-year savings if accepted.
+        </h1>
+        <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
           PhotoBrief.ai is invite-only while we onboard founding partners. Accepted beta businesses get {BETA_DURATION_DAYS} days free, concierge setup, direct support, and tiered post-launch rewards — up to 75% off or free Pro for life.
         </p>
-        <p className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-[hsl(var(--pb-mint)/0.4)] bg-[hsl(var(--pb-mint)/0.08)] px-3 py-1 text-sm font-medium text-[hsl(var(--pb-mint))]">
+        <p className="mx-auto mt-5 inline-flex items-center gap-1.5 border border-[hsl(var(--accent-sage)/0.4)] bg-[hsl(var(--accent-sage)/0.08)] px-3 py-1 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[hsl(var(--accent-sage))]">
           <ShieldCheck className="h-4 w-4" /> First-pass follow-up photos do not consume credits.
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <Button asChild size="xl" variant="pb-primary">
+          <Button asChild size="xl" className="rounded-[0.25rem] uppercase tracking-[0.14em]">
             <NavLink to={signupCtaTarget()}>
               {signupCtaLabel()} <ArrowRight className="ml-1 h-4 w-4" />
             </NavLink>
           </Button>
-          <Button asChild size="xl" variant="pb-secondary">
+          <Button asChild size="xl" variant="outline" className="rounded-[0.25rem] border-border uppercase tracking-[0.14em]">
             <NavLink to="/#beta-program">View beta program</NavLink>
           </Button>
         </div>
@@ -81,15 +86,20 @@ export default function PricingPage() {
       {/* Beta offer cards */}
       <MarketingSection spacing="tight">
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {betaOffer.map((item) => {
+          {betaOffer.map((item, i) => {
             const Icon = item.icon;
             return (
-              <div key={item.label} className="pb-card rounded-2xl p-5">
-                <span className="flex h-11 w-11 items-center justify-center rounded-2xl border border-[hsl(var(--pb-line-strong))] bg-[hsl(var(--pb-ink))] text-[hsl(var(--pb-lavender))]">
-                  <Icon className="h-5 w-5" />
-                </span>
-                <p className="mt-4 text-sm font-semibold text-white">{item.label}</p>
-                <p className="mt-1 text-xs leading-5 text-[hsl(var(--pb-muted))]">{item.copy}</p>
+              <div key={item.label} className="border border-border bg-card p-5">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-[0.65rem] font-medium uppercase tracking-[0.18em] text-[hsl(var(--accent-kinetic))]">
+                    [ {String(i + 1).padStart(2, "0")} ]
+                  </span>
+                  <span className="flex h-9 w-9 items-center justify-center border border-border bg-background text-[hsl(var(--accent-kinetic))]">
+                    <Icon className="h-4 w-4" />
+                  </span>
+                </div>
+                <p className="mt-5 text-sm font-semibold text-foreground">{item.label}</p>
+                <p className="mt-2 text-xs leading-5 text-muted-foreground">{item.copy}</p>
               </div>
             );
           })}
@@ -99,15 +109,15 @@ export default function PricingPage() {
       {/* Intake modes */}
       <MarketingSection spacing="tight">
         <div className="grid gap-4 md:grid-cols-2">
-          {intakeModes.map((mode) => {
+          {intakeModes.map((mode, i) => {
             const Icon = mode.icon;
             return (
-              <article key={mode.title} className="pb-card rounded-2xl p-6">
-                <span className="pb-eyebrow">
-                  <Icon className="h-3.5 w-3.5" /> {mode.title}
-                </span>
-                <h2 className="mt-4 text-2xl font-semibold tracking-tight text-white">{mode.label}</h2>
-                <p className="pb-copy mt-2 text-sm leading-6">{mode.copy}</p>
+              <article key={mode.title} className="border border-border bg-card p-6 sm:p-8">
+                <p className="inline-flex items-center gap-2 font-mono text-[0.7rem] font-medium uppercase tracking-[0.16em] text-[hsl(var(--accent-kinetic))]">
+                  <Icon className="h-3.5 w-3.5" /> [ 0{i + 1} ] {mode.title}
+                </p>
+                <h2 className="mt-5 text-2xl font-semibold tracking-tight text-foreground">{mode.label}</h2>
+                <p className="mt-3 text-sm leading-6 text-muted-foreground">{mode.copy}</p>
               </article>
             );
           })}
@@ -129,29 +139,33 @@ export default function PricingPage() {
       <section className="pb-section">
         <div className="pb-container-narrow">
           <div className="text-center">
-            <span className="pb-eyebrow">FAQ</span>
-            <h2 className="pb-section-title mt-4 text-white">
+            <p className="inline-flex items-baseline gap-2 font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+              <span className="inline-block h-px w-8 -translate-y-[0.25em] bg-[hsl(var(--accent-kinetic))]" />
+              <span className="text-[hsl(var(--accent-kinetic))]">[ 99 ]</span>
+              <span>FAQ</span>
+            </p>
+            <h2 className="mt-5 text-[clamp(2rem,4vw,3rem)] font-semibold tracking-tight text-foreground">
               Questions, answered.
             </h2>
           </div>
-          <Accordion type="single" collapsible className="mt-8 pb-command-panel rounded-2xl px-4 sm:px-6">
+          <Accordion type="single" collapsible className="mt-8 border border-border bg-card px-4 sm:px-6">
             {businessFaqs.map((f) => (
-              <AccordionItem key={f.id} value={f.id} className="border-white/10">
-                <AccordionTrigger className="text-left text-white/90">{f.q}</AccordionTrigger>
-                <AccordionContent className="text-[hsl(var(--pb-muted))]">{f.a}</AccordionContent>
+              <AccordionItem key={f.id} value={f.id} className="border-border">
+                <AccordionTrigger className="text-left text-foreground">{f.q}</AccordionTrigger>
+                <AccordionContent className="text-muted-foreground">{f.a}</AccordionContent>
               </AccordionItem>
             ))}
           </Accordion>
 
-          <div className="relative mt-12 overflow-hidden rounded-[2.4rem] border border-[hsl(var(--pb-lavender)/0.35)] bg-[hsl(var(--pb-panel)/0.84)] p-8 text-center shadow-[0_36px_100px_-64px_hsl(var(--pb-violet))]">
-            <div className="pb-lens-field" />
+          <div className="relative mt-12 overflow-hidden border border-border bg-card p-8 text-center">
+            <div className="absolute inset-x-0 top-0 h-px bg-[hsl(var(--accent-kinetic))]" aria-hidden />
             <div className="relative z-10 flex flex-col items-center gap-3">
-              <Sparkles className="h-8 w-8 text-[hsl(var(--pb-lavender))]" />
-              <p className="text-base font-semibold text-white">Become a founding partner before public launch.</p>
-              <p className="pb-copy max-w-md text-sm">
+              <Sparkles className="h-8 w-8 text-[hsl(var(--accent-kinetic))]" />
+              <p className="text-base font-semibold text-foreground">Become a founding partner before public launch.</p>
+              <p className="max-w-md text-sm text-muted-foreground">
                 Get early access, hands-on setup, feature influence, and first-year savings in exchange for using PhotoBrief in real workflows and sharing honest feedback.
               </p>
-              <Button asChild size="xl" variant="pb-primary" className="mt-2">
+              <Button asChild size="xl" className="mt-2 rounded-[0.25rem] uppercase tracking-[0.14em]">
                 <NavLink to={signupCtaTarget()}>
                   {signupCtaLabel()} <ArrowRight className="ml-1 h-4 w-4" />
                 </NavLink>

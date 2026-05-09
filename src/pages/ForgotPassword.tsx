@@ -3,11 +3,11 @@ import { NavLink } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { BrandMark } from "@/components/layout/BrandMark";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { TurnstileWidget } from "@/components/security/TurnstileWidget";
 import { verifyTurnstileToken } from "@/config/turnstile";
+import { EditorialAuthShell } from "@/components/editorial/EditorialAuthShell";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -40,58 +40,51 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="relative isolate min-h-[100vh] overflow-hidden">
-      <div className="pointer-events-none absolute inset-0 -z-10 bg-ambient-mesh" aria-hidden />
-      <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[60vh] bg-ambient-sky" aria-hidden />
-      <div className="mx-auto flex min-h-[100vh] w-full max-w-md flex-col justify-center px-4 py-10">
-        <div className="mb-8 flex justify-center animate-brand-entrance">
-          <BrandMark variant="stacked" tone="color" size={96} eager />
-        </div>
-        <div className="glass-strong rounded-3xl p-7 animate-lift-in">
-          <h1 className="text-2xl font-semibold tracking-tight text-foreground">Reset your password</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Enter your email and we'll send you a link to choose a new password.
-          </p>
-
-        {sent ? (
-          <div className="mt-6 rounded-md border border-success/30 bg-success/10 p-4 text-sm text-foreground">
-            If an account exists for <span className="font-medium">{email}</span>, a password
-            reset link is on its way. Check your inbox.
-          </div>
-        ) : (
-          <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
-            <div className="space-y-1.5">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="you@business.com"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <TurnstileWidget
-              onVerify={(t) => setTurnstileToken(t)}
-              onExpire={() => setTurnstileToken(null)}
-              onError={() => setTurnstileToken(null)}
-              action="password-reset"
-              className="flex justify-center"
-            />
-            <Button type="submit" className="w-full" disabled={submitting}>
-              {submitting ? "Sending..." : "Send reset link"}
-            </Button>
-          </form>
-        )}
-
-        <p className="mt-6 text-center text-sm text-muted-foreground">
+    <EditorialAuthShell
+      numeral="00"
+      eyebrow="Reset password"
+      title="Reset your password"
+      description="Enter your email and we'll send you a link to choose a new password."
+      footer={
+        <p>
           Remembered it?{" "}
-          <NavLink to="/auth" className="font-medium text-primary hover:underline">
+          <NavLink to="/auth" className="font-medium text-[hsl(var(--accent-kinetic))] hover:underline">
             Back to sign in
           </NavLink>
         </p>
-      </div>
-      </div>
-    </div>
+      }
+    >
+      {sent ? (
+        <div className="border border-success/30 bg-success/10 p-4 text-sm text-foreground">
+          If an account exists for <span className="font-medium">{email}</span>, a password
+          reset link is on its way. Check your inbox.
+        </div>
+      ) : (
+        <form className="space-y-4" onSubmit={handleSubmit}>
+          <div className="space-y-1.5">
+            <Label htmlFor="email" className="font-mono text-[0.65rem] uppercase tracking-[0.16em] text-muted-foreground">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="you@business.com"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="rounded-[0.25rem]"
+            />
+          </div>
+          <TurnstileWidget
+            onVerify={(t) => setTurnstileToken(t)}
+            onExpire={() => setTurnstileToken(null)}
+            onError={() => setTurnstileToken(null)}
+            action="password-reset"
+            className="flex justify-center"
+          />
+          <Button type="submit" className="w-full rounded-[0.25rem]" disabled={submitting}>
+            {submitting ? "Sending..." : "Send reset link"}
+          </Button>
+        </form>
+      )}
+    </EditorialAuthShell>
   );
 }

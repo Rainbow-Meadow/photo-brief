@@ -3,28 +3,37 @@ import { NavLink } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-interface PageHeaderProps {
-  title: string;
-  description?: string;
-  /** Mono uppercase eyebrow above the title. Pass a `[ 0X ]` numeral for the editorial cadence. */
+interface EditorialPageHeaderProps {
+  /** Two-digit numeral or short eyebrow label. Rendered in mono uppercase. */
+  numeral?: string;
   eyebrow?: ReactNode;
+  title: string;
+  description?: ReactNode;
   actions?: ReactNode;
   bordered?: boolean;
   className?: string;
-  /** Renders a small back arrow + label above the title. */
   backTo?: { label: string; href: string; mobileOnly?: boolean };
 }
 
 /**
- * In-app page header — editorial cadence (mono eyebrow, display title,
- * hairline rule). Used across every DashboardLayout page.
+ * Editorial in-app page header — mono numeral + eyebrow + display title +
+ * hairline rule. Drop-in replacement for the legacy <PageHeader>.
  */
-export function PageHeader({ title, description, eyebrow, actions, bordered = true, className, backTo }: PageHeaderProps) {
+export function EditorialPageHeader({
+  numeral,
+  eyebrow,
+  title,
+  description,
+  actions,
+  bordered = true,
+  className,
+  backTo,
+}: EditorialPageHeaderProps) {
   return (
     <header
       className={cn(
         "flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between",
-        bordered ? "border-b border-border pb-6" : "pb-1",
+        bordered && "border-b border-border pb-6",
         className,
       )}
     >
@@ -41,13 +50,18 @@ export function PageHeader({ title, description, eyebrow, actions, bordered = tr
             {backTo.label}
           </NavLink>
         ) : null}
-        {eyebrow ? (
+        {(numeral || eyebrow) && (
           <p className="mb-3 inline-flex items-baseline gap-2 font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
-            <span className="inline-block h-px w-8 -translate-y-[0.25em] bg-[hsl(var(--accent-kinetic))]" />
-            <span>{eyebrow}</span>
+            {numeral ? (
+              <>
+                <span className="inline-block h-px w-8 -translate-y-[0.25em] bg-[hsl(var(--accent-kinetic))]" />
+                <span className="text-[hsl(var(--accent-kinetic))]">[ {numeral} ]</span>
+              </>
+            ) : null}
+            {eyebrow ? <span>{eyebrow}</span> : null}
           </p>
-        ) : null}
-        <h1 className="text-[clamp(1.55rem,2.6vw,2.25rem)] font-semibold leading-[1.05] tracking-[-0.022em] text-foreground">
+        )}
+        <h1 className="font-[Geist,Inter,system-ui,sans-serif] text-[clamp(1.6rem,3vw,2.4rem)] font-semibold leading-[1.05] tracking-[-0.022em] text-foreground">
           {title}
         </h1>
         {description ? (
@@ -56,7 +70,9 @@ export function PageHeader({ title, description, eyebrow, actions, bordered = tr
           </p>
         ) : null}
       </div>
-      {actions ? <div className="flex flex-wrap items-center gap-2">{actions}</div> : null}
+      {actions ? (
+        <div className="flex flex-wrap items-center gap-2">{actions}</div>
+      ) : null}
     </header>
   );
 }
