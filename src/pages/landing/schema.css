@@ -96,11 +96,7 @@
     border-color: hsl(var(--foreground) / 0.1);
     color: hsl(var(--foreground));
   }
-  .ls-section--dark .ls-card {
-    background: hsl(var(--background) / 0.05);
-    border-color: hsl(var(--background) / 0.12);
-    color: hsl(var(--background));
-  }
+  /* dark-section card override removed — cards stay light on the new tier 2 surface */
 
   /* ── Grid ───────────────────────────────────────────────── */
   .ls-grid { display: grid; gap: 1rem; }
