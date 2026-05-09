@@ -505,7 +505,7 @@ function BetaProgramSection() {
    Apply — onboarding agent
    ───────────────────────────────────────────────────────── */
 
-function ApplySection({ showAgent }: { showAgent: boolean }) {
+function ApplySection({ showAgent: _showAgent }: { showAgent: boolean }) {
   return (
     <Section id="apply" tone="alt">
       <Container>
@@ -516,7 +516,7 @@ function ApplySection({ showAgent }: { showAgent: boolean }) {
         />
         <div className="border border-border bg-background p-2 sm:p-4">
           <Suspense fallback={<div className="flex h-96 items-center justify-center text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin" /></div>}>
-            <BetaOnboardingAgentExperience autoStart={showAgent} />
+            <BetaOnboardingAgentExperience />
           </Suspense>
         </div>
       </Container>
