@@ -351,14 +351,9 @@ export default function LandingPage() {
               {/* Left — copy */}
               <div className="text-left">
                 <div className="mb-6 sm:mb-8">
-                  <img
-                    src="/brand/full-logo.svg"
-                    alt="PhotoBrief.ai — Guide · Capture · Close"
-                    loading="eager"
-                    decoding="async"
-                    fetchPriority="high"
-                    className="h-20 sm:h-28 lg:h-36 w-auto select-none"
-                  />
+                  <BrandMark variant="horizontal" size={80} eager className="sm:hidden" />
+                  <BrandMark variant="horizontal" size={112} eager className="hidden sm:inline-flex lg:hidden" />
+                  <BrandMark variant="horizontal" size={144} eager className="hidden lg:inline-flex" />
                 </div>
                 <Eyebrow>
                   <Sparkles className="h-3.5 w-3.5" /> Accepting beta applications
