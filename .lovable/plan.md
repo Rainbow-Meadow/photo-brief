@@ -1,25 +1,19 @@
-## Rebalance the "Last Word" final CTA section
+## Tighten the "Fine Print" section layout
 
-The section currently has the headline alone in the left column and everything else (illustration, body, CTAs) crammed into the right — leaving a big empty void under the headline.
+Currently the section has a wide two-column intro (text left, large notebook illustration right at `max-w-[420px]`), then a big `mt-10` gap, then a narrow `max-w-3xl` accordion centered below — leaving a hollow void on the left side under the headline and excess space between the intro and the accordion.
 
-### Change (single file: `src/pages/Landing.tsx`, FinalCta, ~lines 1796–1846)
+### Changes (single file: `src/pages/Landing.tsx`, `BetaDetailsAccordion`, ~lines 1681–1693)
 
-Restructure to a balanced two-column layout:
+1. **Reduce intro→accordion gap**
+   - `mx-auto mt-10 max-w-3xl sm:mt-10` → `mx-auto mt-6 max-w-3xl sm:mt-8`
 
-**Left column** (text, left-aligned, vertically centered):
-- Eyebrow "The last word"
-- Headline "Get quote-ready leads, not vague messages."
-- Body paragraph ("Stop chasing customers…")
-- CTA group (Apply for the beta / See plans)
+2. **Shrink the notebook illustration locally** (only in this section, not the shared `TradeAccent`)
+   - Wrap the `TradeAccent` in a `div className="mx-auto w-full max-w-[260px] lg:ml-auto lg:mr-0"` so the illustration caps around 260px instead of 420px, pulling the right column tighter and reducing intro height.
 
-**Right column** (illustration, vertically centered):
-- Mailbox illustration, increased to ~`max-w-[320px]`, centered within its column
+3. **Pull accordion up under the intro tightly**
+   - Already covered by step 1.
 
-### Implementation notes
-- Move `<Eyebrow>` inside the grid's left column so the whole text block aligns together.
-- Grid: `lg:grid-cols-2 lg:items-center gap-10 lg:gap-16`.
-- Drop the `lg:pt-3` and `mb-6` on the image; use flex centering instead.
-- Keep all copy, CTAs, tones, and tokens unchanged — purely a layout rebalance.
+No copy, token, or component-API changes. No edits to `SectionIntro`/`TradeAccent` themselves (they're shared).
 
 ### Out of scope
-No copy changes, no other sections, no token/CSS edits.
+Other sections, accordion internals, copy, illustrations.
