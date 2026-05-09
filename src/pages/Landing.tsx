@@ -429,19 +429,26 @@ export default function LandingPage() {
                 <BetaSeatTracker className="pb-on-paper mt-8 max-w-sm sm:mt-10" />
               </div>
 
-              {/* Right — hand-drawn illustration */}
-              <div className="relative flex justify-center lg:justify-end">
-                <div
-                  aria-hidden
-                  className="pointer-events-none absolute inset-0 -z-10 mx-auto max-w-xl rounded-full bg-[hsl(var(--pb-lavender)/0.22)] blur-[110px]"
-                />
-                <img
-                  src={heroIllustration}
-                  alt="Hand-drawn illustration of a phone showing a guided photo-request flow"
-                  width={1024}
-                  height={1024}
-                  className="relative w-full max-w-md drop-shadow-[0_30px_50px_hsl(var(--pb-ink-soft)/0.18)] sm:max-w-lg lg:max-w-none lg:scale-110 lg:translate-x-2"
-                />
+              {/* Right — brand mark + hand-drawn illustration */}
+              <div className="relative flex flex-col items-center lg:items-end">
+                <div className="mb-4 w-full sm:mb-6 flex justify-center lg:justify-end">
+                  <BrandMark variant="horizontal" size={80} eager className="sm:hidden" />
+                  <BrandMark variant="horizontal" size={112} eager className="hidden sm:inline-flex lg:hidden" />
+                  <BrandMark variant="horizontal" size={144} eager className="hidden lg:inline-flex" />
+                </div>
+                <div className="relative flex w-full justify-center lg:justify-end">
+                  <div
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0 -z-10 mx-auto max-w-xl rounded-full bg-[hsl(var(--pb-lavender)/0.22)] blur-[110px]"
+                  />
+                  <img
+                    src={heroIllustration}
+                    alt="Hand-drawn illustration of a phone showing a guided photo-request flow"
+                    width={1024}
+                    height={1024}
+                    className="relative w-full max-w-md drop-shadow-[0_30px_50px_hsl(var(--pb-ink-soft)/0.18)] sm:max-w-lg lg:max-w-none lg:scale-110 lg:translate-x-2"
+                  />
+                </div>
               </div>
             </div>
         </MarketingHero>
