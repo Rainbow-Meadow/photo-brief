@@ -1,41 +1,25 @@
-## Goal
-Replace the current hero illustration with one seminal, iconic image that embodies all three beats of the brand promise — **Guide → Capture → Close** — in a single composition.
+## Problem
+The hero illustration tells a 3-beat horizontal story (Guide → Capture → Close) at a 3:2 aspect ratio, but it's being rendered inside a portrait `aspect-[4/5]` frame with `object-cover` — so the right third (inbox + checkmark) gets cropped off. The grid also gives the copy column 1.4× the width of the image column, squeezing it further.
 
-## Concept
+## Fix (Hero block in `src/pages/Landing.tsx`, lines ~155–208)
 
-**"The Guided Capture"** — one unified kinetic-vector scene reading left → center → right:
+1. **Rebalance the grid**
+   - `lg:grid-cols-[1.4fr_1fr]` → `lg:grid-cols-2`
+   - `lg:items-end` → `lg:items-center` so the headline and illustration share a vertical center line.
 
-```text
-   GUIDE              CAPTURE              CLOSE
- ───────────         ─────────           ──────────
-  Navy hand          Phone in hand        Folded brief
-  pointing /         framing the          packet sliding
-  spotlight          HVAC unit            into inbox tray
-  beam onto          (live capture        with orange
-  the subject        viewfinder)          checkmark seal
-```
+2. **Match the frame to the source aspect**
+   - `aspect-[4/5]` → `aspect-[3/2]` (matches the 1536×1024 source).
+   - `object-cover` → `object-contain` with a cream background (`bg-[hsl(var(--background))]` or existing brand cream) so the full scene is visible with no cropping.
+   - Keep the `border border-border`, the `Fig. 01` / `Reverse-Form Method™` corner overlay, and the BrandMark below.
 
-All three beats live in **one continuous composition** — not a triptych with dividers, but a single illustration where the eye travels through the story:
-
-1. **Left third — GUIDE**: A navy hand/finger emerging from frame edge, casting an orange directional beam (think stage spotlight or guidance arrow) onto the subject. Tiny "01" tick mark.
-2. **Center — CAPTURE**: The hero phone (same kinetic vector language as current hero) framing an HVAC condenser inside its viewfinder. Orange burst rays radiate outward — the moment of capture. Tick "02".
-3. **Right third — CLOSE**: A neat brief-packet/folder with orange tab sliding into a simple inbox tray, sealed with an orange checkmark. Tick "03".
-
-A single thin orange arc/ribbon weaves through all three zones, tying them into one gesture (Guide → Capture → Close as one continuous motion, not three separate steps).
-
-**Style** (locked to existing kinetic vector system):
-- Cream `#FAF7F2` background, navy `#1B2A4A` solid shapes, orange `#F2A33A` accents
-- Thick navy outlines, flat fills, no gradients/halftones/shadows/photos
-- Poster-art energy, kinetic gestures, FIG. 01 / REVERSE-FORM METHOD™ corner ticks preserved
-- Aspect 3:2 (1536×1024) to match current hero slot
-
-## Implementation
-
-1. Generate `src/assets/landing-hero-illustration.png` (overwrite current hero) at 1536×1024 via `imagegen--generate_image` with a detailed kinetic-vector prompt encoding the three-zone composition above.
-2. No code changes needed — `Landing.tsx` already imports this exact path. Existing `FIG. 01` / `REVERSE-FORM METHOD™` overlay labels stay.
-3. QA: view the generated PNG, confirm all three beats are legible, palette is correct, no embedded text, composition reads left-to-right, and the orange ribbon ties the scene together. Iterate prompt if any beat is missing or muddy.
+3. **Subtle polish**
+   - Bump `opacity-90` → `opacity-100` on the image (the muted overlay was compensating for the crop; with `object-contain` it can read at full strength).
+   - Keep the existing `mix-blend-difference` corner labels — they remain legible on cream.
 
 ## Out of scope
-- No layout, copy, or token changes in `Landing.tsx`
-- No changes to RMBC, trades, or comparison illustrations
-- No new asset files — overwriting the existing hero path only
+- No copy, color token, or typography changes.
+- No new assets; the same `landing-hero-illustration.png` is reused.
+- No mobile-specific changes — the `grid gap-10` already stacks correctly under `lg`.
+
+## Verify
+- Open `/` at 1513×887 (current viewport) and 390×844. Confirm: full illustration visible (hand → phone → inbox), headline and image vertically centered, no cropping, no layout shift.
