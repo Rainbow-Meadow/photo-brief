@@ -516,7 +516,7 @@ export default function LandingPage() {
         </div>
 
         {/* ━━ TICKER 2 — Product signals ━━━━━━━━━━━━━━━━━━━━━━ */}
-        <TickerBar tone="paper" items={["Website scan included", "Hosted link or embed", "No app required for customers", "AI photo quality checks", "Lead packets — not form spam"]} direction="right" />
+        <TickerBar tone="paper" items={["Site scan included", "Hosted link or one-line embed", "No app for your customer — ever", "AI catches blurry shots before you do", "Lead packets, not form spam"]} direction="right" />
 
         {/* ━━ SEAM C — Use case chip filter ━━━━━━━━━━━━━━━━━━ */}
         <UseCaseChipRow active={activeUseCaseStamp} onChange={setActiveUseCaseStamp} />
