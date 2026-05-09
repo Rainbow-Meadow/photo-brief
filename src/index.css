@@ -1104,59 +1104,6 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
     --dur-slow:     380ms;
   }
 
-  .dark {
-    /* System Colors — dark (vivid variants per HIG) */
-    --system-blue:   211 100% 60%;
-    --system-indigo: 239 75% 70%;
-    --system-purple: 280 70% 65%;
-    --system-pink:   344 88% 65%;
-    --system-red:    5 90% 65%;
-    --system-orange: 28 100% 60%;
-    --system-yellow: 48 100% 60%;
-    --system-green:  135 50% 55%;
-    --system-mint:   168 55% 60%;
-    --system-teal:   189 55% 60%;
-    --system-cyan:   200 70% 60%;
-    --system-brown:  27 31% 60%;
-
-    /* System Grays — dark */
-    --system-gray-1: 240 2% 56%;
-    --system-gray-2: 240 2% 39%;
-    --system-gray-3: 240 2% 28%;
-    --system-gray-4: 240 2% 22%;
-    --system-gray-5: 240 2% 17%;
-    --system-gray-6: 240 2% 11%;
-
-    /* Backgrounds — dark (true black for OLED parity) */
-    --system-background:           0 0% 0%;
-    --secondary-system-background: 240 2% 11%;
-    --tertiary-system-background:  240 2% 17%;
-    --system-grouped-background:   0 0% 0%;
-    --secondary-system-grouped-background: 240 2% 11%;
-    --tertiary-system-grouped-background:  240 2% 17%;
-
-    --label:            0 0% 100%;
-    --label-secondary:  0 0% 100%;
-    --label-tertiary:   0 0% 100%;
-    --label-quaternary: 0 0% 100%;
-    --label-secondary-alpha:  0.6;
-    --label-tertiary-alpha:   0.3;
-    --label-quaternary-alpha: 0.16;
-
-    --separator:        0 0% 100% / 0.18;
-    --opaque-separator: 240 2% 22%;
-
-    --system-fill:           240 2% 75% / 0.18;
-    --secondary-system-fill: 240 2% 75% / 0.14;
-    --tertiary-system-fill:  240 2% 75% / 0.10;
-    --quaternary-system-fill:240 2% 75% / 0.06;
-
-    --material-ultraThin: 0 0% 0% / 0.45;
-    --material-thin:      0 0% 0% / 0.55;
-    --material-regular:   0 0% 0% / 0.65;
-    --material-thick:     0 0% 0% / 0.78;
-    --material-chrome:    0 0% 0% / 0.88;
-  }
 }
 
 @layer utilities {
