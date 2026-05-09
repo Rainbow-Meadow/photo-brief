@@ -26,8 +26,9 @@ describe("Landing visual contract (Locomotive editorial)", () => {
     expect(count).toBe(5);
   });
 
-  it("uses tone='dark' only on the final CTA section", () => {
-    const dark = SRC.match(/tone="dark"/g) ?? [];
+  it("uses Section tone='dark' only on the final CTA section", () => {
+    // Match `<Section ... tone="dark"`, not unrelated props (e.g. <BrandMark tone="dark" />).
+    const dark = SRC.match(/<Section\b[^>]*tone="dark"/g) ?? [];
     expect(dark.length).toBe(1);
   });
 
