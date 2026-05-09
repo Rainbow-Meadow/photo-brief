@@ -1097,13 +1097,16 @@ export function InteractiveHeroBriefAssembly() {
     <div className="relative mt-2">
       {/* Section header */}
       <div className="mb-6 text-center sm:mb-8">
-        <span className="pb-eyebrow border-white/12 bg-white/[0.03]">
+        <p className="font-mono text-[10px] uppercase tracking-[0.32em] text-foreground/40">
+          PLT.D.01 / FIELD-MANUAL
+        </p>
+        <span className="mt-2 inline-block border border-[#F2A33A]/60 px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.28em] text-[#F2A33A]">
           Interactive demo
         </span>
-        <h2 className="mt-3 text-xl font-semibold tracking-tight text-white sm:text-2xl">
+        <h2 className="mt-3 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
           See how a PhotoBrief comes together.
         </h2>
-        <p className="mx-auto mt-2 max-w-lg text-sm text-white/45">
+        <p className="mx-auto mt-2 max-w-lg font-mono text-[11px] uppercase tracking-[0.18em] text-foreground/55">
           {PHASE_HINTS[phase]}
         </p>
       </div>
@@ -1120,11 +1123,11 @@ export function InteractiveHeroBriefAssembly() {
 
         {/* Mobile separator */}
         <div className="flex items-center gap-3 lg:hidden">
-          <div className="h-px w-12 bg-white/10" />
-          <div className="flex h-7 w-7 items-center justify-center rounded-full border border-[hsl(var(--pb-violet)/0.3)] bg-[hsl(var(--pb-violet)/0.1)]">
-            <ArrowRight className="h-3 w-3 rotate-90 text-[hsl(var(--pb-lavender))]" />
+          <div className="h-px w-12 bg-foreground/20" />
+          <div className="flex h-7 w-7 items-center justify-center border border-[#F2A33A]">
+            <ArrowRight className="h-3 w-3 rotate-90 text-[#F2A33A]" />
           </div>
-          <div className="h-px w-12 bg-white/10" />
+          <div className="h-px w-12 bg-foreground/20" />
         </div>
 
         {/* Customer phone */}
@@ -1136,14 +1139,14 @@ export function InteractiveHeroBriefAssembly() {
       {/* Lead capture below phones — only after complete */}
       {phase === "COMPLETE" && (
         <div className="mx-auto mt-8 max-w-md">
-          <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-5 backdrop-blur-sm">
+          <div className="border border-foreground/15 p-5">
             <form onSubmit={submitLead}>
-              <p className="text-center text-sm font-semibold text-white/80">
+              <p className="text-center font-mono text-[11px] font-bold uppercase tracking-[0.24em] text-foreground/80">
                 {hasFlag
-                  ? "Brief complete — appliance needs review."
-                  : "Brief is quote-ready."}
+                  ? "Brief complete — appliance needs review"
+                  : "Brief is quote-ready"}
               </p>
-              <p className="mt-1 text-center text-xs text-white/40">
+              <p className="mt-1 text-center text-xs text-foreground/45">
                 Send yourself the real PhotoBrief link.
               </p>
               <div className="mt-4 flex gap-2">
@@ -1157,18 +1160,18 @@ export function InteractiveHeroBriefAssembly() {
                   placeholder="you@company.com"
                   type="email"
                   autoComplete="email"
-                  className="min-w-0 flex-1 rounded-xl border border-white/10 bg-white/[0.05] px-4 py-2.5 text-sm text-white placeholder:text-white/25 focus:border-[hsl(var(--pb-violet)/0.5)] focus:outline-none focus:ring-1 focus:ring-[hsl(var(--pb-violet)/0.3)]"
+                  className="min-w-0 flex-1 border border-foreground/15 bg-transparent px-4 py-2.5 text-sm text-foreground placeholder:text-foreground/30 focus:border-[#F2A33A] focus:outline-none focus:ring-1 focus:ring-[#F2A33A]/40"
                 />
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="shrink-0 rounded-xl bg-[hsl(var(--pb-violet))] px-5 py-2.5 text-sm font-bold text-white transition hover:brightness-110 disabled:opacity-50"
+                  className="shrink-0 border border-[#F2A33A] bg-[#F2A33A] px-5 py-2.5 font-mono text-xs font-bold uppercase tracking-[0.24em] text-[#0E0E0C] disabled:opacity-50"
                 >
                   {submitting ? "…" : "Send"}
                 </button>
               </div>
-              <p className="mt-2 text-center text-[10px] text-white/25">
-                No spam. This creates a real draft PhotoBrief request.
+              <p className="mt-2 text-center font-mono text-[9px] uppercase tracking-[0.22em] text-foreground/30">
+                No spam · creates a real draft PhotoBrief request
               </p>
               {error && (
                 <p className="mt-2 text-center text-xs font-bold text-red-400">
@@ -1178,14 +1181,14 @@ export function InteractiveHeroBriefAssembly() {
             </form>
             {requestUrl && (
               <div className="mt-3 text-center">
-                <p className="text-xs font-bold text-emerald-400">
-                  PhotoBrief created.
+                <p className="font-mono text-xs font-bold uppercase tracking-[0.24em] text-[#F2A33A]">
+                  PhotoBrief created
                 </p>
                 <a
                   href={requestUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="mt-1 inline-block text-xs font-semibold text-[hsl(var(--pb-lavender))] underline underline-offset-2"
+                  className="mt-1 inline-block text-xs font-semibold text-[#F2A33A] underline underline-offset-2"
                 >
                   Open your request →
                 </a>
