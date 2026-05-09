@@ -1,48 +1,27 @@
-## Two-variant new mark, sitewide
+## Goal
+Balance the hero section so the right-side illustration fills its column instead of floating small in lots of empty space.
 
-The uploaded mark (cream line-art + amber wedge on transparent) is already deployed as the dark-bg variant. We'll generate a navy-recolored version of that exact same artwork for light backgrounds, swap it in everywhere small renders happen, and delete every legacy logo file.
+## Changes (single file: `src/pages/Landing.tsx`, hero block lines ~349–451)
 
-### What gets built
+1. **Rebalance the column ratio**
+   - Change grid from `lg:grid-cols-[1.1fr_0.9fr]` to `lg:grid-cols-2` so the right column has equal width to grow into.
 
-**1. New light-bg variant** (auto-recolor cream → navy `#1B2A4A`, keep amber wedge)
-- `public/brand/mark.svg`
-- `public/brand/mark-color.png` (1024×1024)
-- `public/brand/mark-color.webp`, `mark-color-sm.webp` (256px)
+2. **Let the illustration fill its column**
+   - Remove the `max-w-md` / `sm:max-w-lg` caps on the `<img>`.
+   - Make it `w-full` with no max width on `lg`, anchored right (`lg:justify-end` already there).
+   - Add a soft scale-up on large viewports (`lg:scale-110 lg:translate-x-4` or similar) so it visually anchors the column without being cropped.
+   - Keep aspect ratio intact (1024×1024 source).
 
-**2. Favicons + app icons** regenerated from the new navy mark on cream `#FAF7F2`
-- `public/favicon.ico`, `public/favicon.png`, `public/favicon-16x16.png`
-- `public/icon-192.png`, `public/icon-512.png`, `public/apple-touch-icon.png`
-- `public/brand/favicon.ico`, `public/brand/icon-192.png`, `public/brand/icon-512.png`, `public/brand/apple-touch-icon.png`
+3. **Grow the lavender glow halo**
+   - Bump the halo from `max-w-md` / `blur-[80px]` to roughly `max-w-xl` / `blur-[110px]` and shift it slightly behind the phone so the right side reads as a finished composition rather than a small illustration on white.
 
-**3. Dark-bg variant** — already correct, no changes
-- `public/brand/mark-on-dark.svg`, `public/brand/mark-on-dark.png`
+4. **Vertically center alignment stays** (`items-center` on the grid) — the illustration grows to roughly match the height of the left column instead of sitting short.
 
-**4. Delete legacy / superseded files** (zero code references confirmed)
-- `public/photobrief-logo.png`
-- `public/photobrief-mark.png`
-- `public/brand/full-logo.svg` (old wordmark lockup — `BrandMark` builds the wordmark from text, never references this file)
-- `public/og-image.png`, `public/og-betalist.png` (old OG share images — confirmed no code reference)
+## Out of scope
+- No new copy, no new sections, no changes to the seat tracker, trades strip, or CTAs.
+- No changes outside the hero grid block.
+- No design-token changes.
 
-### Technical approach
-
-```text
-1. Load /public/brand/mark-on-dark.png (the new artwork)
-2. Pillow recolor: where alpha>0 AND (R,G,B) is near cream/white,
-   replace with navy #1B2A4A; preserve amber pixels
-3. Save mark-color.png/webp/sm.webp + mark.svg wrapper
-4. Trim → render padded squares for all favicon/app-icon sizes on cream
-5. Bundle multi-size favicon.ico (16/32/48)
-6. Delete the four legacy files via rm
-7. QA: open the regenerated raster previews, then load /, footer (dark),
-   nav (light), and a public request page to confirm both variants render
-```
-
-### Out of scope
-
-- No code edits in `BrandMark.tsx` or callsites — paths stay the same.
-- No changes to `index.html` / `site.webmanifest` (they already point at the regenerated paths).
-- No changes to email assets, Remotion theme, or the wordmark text rendering — only the small mark/icon raster set.
-
-### Validation
-
-After regeneration, visually QA `mark-color.png`, `icon-512.png`, and `favicon.png` in the file viewer, then check the running preview at `/` (light nav, dark footer) and `/r/...` (PublicRequestLayout) to confirm both variants render correctly.
+## Verification
+- Reload `/` at 1403×887 (current viewport) and confirm the illustration column is visibly fuller and roughly column-balanced with the copy.
+- Spot-check `sm` (≥640px single column) and `lg` (≥1024px two column) to make sure nothing overflows horizontally.
