@@ -205,8 +205,8 @@ const cleanSignals = [
 const useCases = [
   {
     icon: Leaf,
-    title: "Landscapers — quote yards without a site visit",
-    body: "Ask homeowners for the wide yard shot, problem beds, fence line, and access path so you can scope mowing, cleanups, or installs from your truck.",
+    title: "Estimators ",
+    body: "Turn customer photos into evidence.",
     stamp: "Landscaping",
   },
   {
@@ -1551,7 +1551,7 @@ function UseCaseSection({ activeStamp }: { activeStamp?: string | null }) {
                 <h3 className="mt-2 font-serif text-xl italic leading-tight text-[hsl(var(--pb-ink))] sm:text-2xl">
                   {item.title}
                 </h3>
-                <p className="mt-3 text-sm leading-6 text-[hsl(var(--pb-ink-soft))]">{item.body}</p>
+                <p className="mt-3 leading-6 text-[hsl(var(--pb-ink-soft))] text-lg">{item.body}</p>
               </article>
             );
           })}
