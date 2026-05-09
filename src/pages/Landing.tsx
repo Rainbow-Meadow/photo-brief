@@ -499,6 +499,20 @@ export default function LandingPage() {
             />
           }
         />
+          <figure className="mx-auto mt-8 max-w-3xl sm:mt-10">
+            <img
+              src={methodOverviewIllo}
+              alt="Four-panel hand-drawn diagram of the Reverse-Form Method — research, mechanism, brief, close"
+              width={1920}
+              height={576}
+              loading="lazy"
+              decoding="async"
+              className="w-full rounded-2xl border border-[hsl(var(--pb-ink-soft)/0.18)]"
+            />
+            <figcaption className="pb-copy mt-3 text-center text-xs italic sm:text-sm">
+              Research · Mechanism · Brief · Close — the four moves of the Reverse-Form Method™.
+            </figcaption>
+          </figure>
           <Suspense fallback={<div className="min-h-[400px]" />}>
             <InteractiveHeroBriefAssembly />
           </Suspense>
