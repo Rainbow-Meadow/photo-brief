@@ -350,6 +350,6 @@ export default function AdminWebsiteIntelligencePage() {
           </GlassPanel>
         </div>
       ) : null}
-    </div>
+    </PageStack></PageShell>
   );
 }
