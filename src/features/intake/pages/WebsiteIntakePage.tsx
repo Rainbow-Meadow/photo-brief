@@ -389,7 +389,7 @@ export default function WebsiteIntakePage() {
       case "choose":
         return (
           <div className="space-y-5">
-            <div className="rounded-[1.5rem] border bg-background/70 p-4">
+            <div className="rounded-none border bg-background p-4">
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <p className="text-sm font-semibold text-foreground">Website Intake is {source.enabled ? "on" : "paused"}</p>
@@ -411,8 +411,8 @@ export default function WebsiteIntakePage() {
                   key={tool.id}
                   type="button"
                   onClick={() => setToolId(tool.id)}
-                  className={`rounded-[1.35rem] border p-4 text-left transition hover:-translate-y-0.5 hover:border-primary/35 hover:bg-primary/5 ${
-                    tool.id === selectedTool.id ? "border-primary/50 bg-primary/10 shadow-sm" : "bg-background/65"
+                  className={`rounded-none border p-4 text-left transition hover:-translate-y-0.5 hover:border-primary/35 hover:bg-primary/5 ${
+                    tool.id === selectedTool.id ? "border-primary/50 bg-primary/10 shadow-sm" : "bg-background"
                   }`}
                 >
                   <span className="block text-sm font-semibold text-foreground">{tool.name}</span>
@@ -426,11 +426,11 @@ export default function WebsiteIntakePage() {
       case "defaults":
         return (
           <div className="grid gap-4 lg:grid-cols-2">
-            <div className="rounded-[1.5rem] border bg-background/70 p-4">
+            <div className="rounded-none border bg-background p-4">
               <Label className="text-sm font-semibold text-foreground">Fallback template</Label>
               <p className="mt-1 text-sm leading-6 text-muted-foreground">Used when no routing rule or confident AI match applies.</p>
               <select
-                className="mt-4 h-12 w-full rounded-2xl border bg-background px-3 text-sm"
+                className="mt-4 h-12 w-full rounded-none border bg-background px-3 text-sm"
                 value={source.defaultGuideId ?? ""}
                 onChange={async (e) => {
                   await updateSource.mutateAsync({ id: source.id, defaultGuideId: e.target.value || null });
@@ -443,7 +443,7 @@ export default function WebsiteIntakePage() {
                 ))}
               </select>
             </div>
-            <div className="rounded-[1.5rem] border bg-background/70 p-4">
+            <div className="rounded-none border bg-background p-4">
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <p className="text-sm font-semibold text-foreground">Send link automatically</p>
@@ -465,7 +465,7 @@ export default function WebsiteIntakePage() {
           <div className="space-y-4">
             <div className="grid gap-2 sm:grid-cols-[130px_1fr]">
               <select
-                className="h-11 rounded-2xl border bg-background px-3 text-sm"
+                className="h-11 rounded-none border bg-background px-3 text-sm"
                 value={newRule.matchType}
                 onChange={(e) => setNewRule((r) => ({ ...r, matchType: e.target.value as IntakeRuleMatchType }))}
               >
@@ -476,10 +476,10 @@ export default function WebsiteIntakePage() {
                 value={newRule.matchValue}
                 onChange={(e) => setNewRule((r) => ({ ...r, matchValue: e.target.value }))}
                 placeholder="e.g. quote, repair, warranty"
-                className="h-11 rounded-2xl bg-background/80"
+                className="h-11 rounded-none bg-background"
               />
               <select
-                className="h-11 rounded-2xl border bg-background px-3 text-sm sm:col-span-2"
+                className="h-11 rounded-none border bg-background px-3 text-sm sm:col-span-2"
                 value={newRule.guideId}
                 onChange={(e) => setNewRule((r) => ({ ...r, guideId: e.target.value }))}
               >
@@ -489,7 +489,7 @@ export default function WebsiteIntakePage() {
                 ))}
               </select>
               <Button
-                className="h-11 rounded-2xl sm:col-span-2"
+                className="h-11 rounded-none sm:col-span-2"
                 disabled={!newRule.matchValue.trim() || !newRule.guideId}
                 onClick={async () => {
                   await createRule.mutateAsync({ ...newRule, priority: rules.length + 1 });
@@ -503,9 +503,9 @@ export default function WebsiteIntakePage() {
 
             <div className="space-y-2">
               {rules.length === 0 ? (
-                <p className="rounded-2xl bg-muted/40 p-3 text-sm text-muted-foreground">No rules yet. AI matching and the fallback template will be used.</p>
+                <p className="rounded-none bg-muted/30 p-3 text-sm text-muted-foreground">No rules yet. AI matching and the fallback template will be used.</p>
               ) : rules.map((rule) => (
-                <div key={rule.id} className="flex items-center justify-between gap-3 rounded-2xl border bg-background/70 p-3">
+                <div key={rule.id} className="flex items-center justify-between gap-3 rounded-none border bg-background p-3">
                   <div>
                     <p className="text-sm font-medium text-foreground">
                       {rule.matchType === "exact" ? "Exactly" : "Contains"} “{rule.matchValue}”
@@ -526,38 +526,38 @@ export default function WebsiteIntakePage() {
       case "connect":
         return (
           <div className="space-y-4">
-            <div className="rounded-[1.5rem] border bg-background/70 p-4">
+            <div className="rounded-none border bg-background p-4">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                 {usesWebhook ? "Webhook URL" : "Hosted intake link"}
               </p>
-              <code className="mt-2 block max-h-44 overflow-auto whitespace-pre-wrap break-all rounded-2xl bg-muted/60 p-3 text-xs leading-5 text-foreground">
+              <code className="mt-2 block max-h-44 overflow-auto whitespace-pre-wrap break-all rounded-none bg-muted/30 p-3 text-xs leading-5 text-foreground">
                 {usesWebhook ? webhook : hostedLink}
               </code>
             </div>
             {usesWebhook ? (
               <div className="grid gap-2 sm:grid-cols-3">
-                <Button className="h-12 rounded-2xl" onClick={() => copyValue(webhook, "Webhook URL copied")}>
+                <Button className="h-12 rounded-none" onClick={() => copyValue(webhook, "Webhook URL copied")}>
                   <Copy className="mr-2 h-4 w-4" /> Copy webhook
                 </Button>
-                <Button className="h-12 rounded-2xl" variant="outline" onClick={() => copyValue(payloadExample, "Example JSON copied")}>
+                <Button className="h-12 rounded-none" variant="outline" onClick={() => copyValue(payloadExample, "Example JSON copied")}>
                   <ClipboardCheck className="mr-2 h-4 w-4" /> Copy JSON
                 </Button>
-                <Button className="h-12 rounded-2xl" variant="secondary" onClick={() => window.open(selectedTool.dashboardUrl, "_blank", "noopener,noreferrer")}>
+                <Button className="h-12 rounded-none" variant="secondary" onClick={() => window.open(selectedTool.dashboardUrl, "_blank", "noopener,noreferrer")}>
                   <ExternalLink className="mr-2 h-4 w-4" /> {selectedTool.dashboardLabel}
                 </Button>
               </div>
             ) : (
               <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-                <Button className="h-12 rounded-2xl" onClick={() => copyValue(selectedTool.buttonText, "Button text copied")}>
+                <Button className="h-12 rounded-none" onClick={() => copyValue(selectedTool.buttonText, "Button text copied")}>
                   <Copy className="mr-2 h-4 w-4" /> Copy text
                 </Button>
-                <Button className="h-12 rounded-2xl" variant="outline" onClick={() => copyValue(hostedLink, "Hosted intake link copied")}>
+                <Button className="h-12 rounded-none" variant="outline" onClick={() => copyValue(hostedLink, "Hosted intake link copied")}>
                   <Link2 className="mr-2 h-4 w-4" /> Copy link
                 </Button>
-                <Button className="h-12 rounded-2xl" variant="secondary" onClick={() => window.open(selectedTool.dashboardUrl, "_blank", "noopener,noreferrer")}>
+                <Button className="h-12 rounded-none" variant="secondary" onClick={() => window.open(selectedTool.dashboardUrl, "_blank", "noopener,noreferrer")}>
                   <MousePointerClick className="mr-2 h-4 w-4" /> {selectedTool.dashboardLabel}
                 </Button>
-                <Button className="h-12 rounded-2xl" variant="outline" onClick={() => window.open(hostedLink, "_blank", "noopener,noreferrer")}>
+                <Button className="h-12 rounded-none" variant="outline" onClick={() => window.open(hostedLink, "_blank", "noopener,noreferrer")}>
                   <ExternalLink className="mr-2 h-4 w-4" /> Open form
                 </Button>
               </div>
@@ -574,14 +574,14 @@ export default function WebsiteIntakePage() {
                   <Input
                     value={fieldMap[field] ?? ""}
                     onChange={(e) => setFieldMap((m) => ({ ...m, [field]: e.target.value }))}
-                    className="h-11 rounded-2xl bg-background/80"
+                    className="h-11 rounded-none bg-background"
                     placeholder={field}
                   />
                 </div>
               ))}
             </div>
             <Button
-              className="h-11 rounded-2xl"
+              className="h-11 rounded-none"
               onClick={async () => {
                 await saveMappings.mutateAsync((Object.keys(FIELD_LABELS) as IntakeField[]).map((field) => ({ photobriefField: field, externalField: fieldMap[field] ?? "" })));
                 toast.success("Field mapping saved");
@@ -595,14 +595,14 @@ export default function WebsiteIntakePage() {
         return (
           <div className="space-y-4">
             <div className="grid gap-2 sm:grid-cols-2">
-              <Input className="h-11 rounded-2xl bg-background/80" value={testPayload.name} onChange={(e) => setTestPayload((p) => ({ ...p, name: e.target.value }))} placeholder="Name" />
-              <Input className="h-11 rounded-2xl bg-background/80" value={testPayload.email} onChange={(e) => setTestPayload((p) => ({ ...p, email: e.target.value }))} placeholder="Email" />
-              <Input className="h-11 rounded-2xl bg-background/80" value={testPayload.request_type} onChange={(e) => setTestPayload((p) => ({ ...p, request_type: e.target.value }))} placeholder="Request type" />
-              <Input className="h-11 rounded-2xl bg-background/80" value={testPayload.phone} onChange={(e) => setTestPayload((p) => ({ ...p, phone: e.target.value }))} placeholder="Phone" />
-              <Textarea className="rounded-2xl bg-background/80 sm:col-span-2" rows={3} value={testPayload.message} onChange={(e) => setTestPayload((p) => ({ ...p, message: e.target.value }))} placeholder="Message" />
+              <Input className="h-11 rounded-none bg-background" value={testPayload.name} onChange={(e) => setTestPayload((p) => ({ ...p, name: e.target.value }))} placeholder="Name" />
+              <Input className="h-11 rounded-none bg-background" value={testPayload.email} onChange={(e) => setTestPayload((p) => ({ ...p, email: e.target.value }))} placeholder="Email" />
+              <Input className="h-11 rounded-none bg-background" value={testPayload.request_type} onChange={(e) => setTestPayload((p) => ({ ...p, request_type: e.target.value }))} placeholder="Request type" />
+              <Input className="h-11 rounded-none bg-background" value={testPayload.phone} onChange={(e) => setTestPayload((p) => ({ ...p, phone: e.target.value }))} placeholder="Phone" />
+              <Textarea className="rounded-none bg-background sm:col-span-2" rows={3} value={testPayload.message} onChange={(e) => setTestPayload((p) => ({ ...p, message: e.target.value }))} placeholder="Message" />
             </div>
             <Button
-              className="h-12 w-full rounded-2xl text-base shadow-glow"
+              className="h-12 w-full rounded-none text-base "
               disabled={sendTest.isPending}
               onClick={async () => {
                 try {
@@ -629,9 +629,9 @@ export default function WebsiteIntakePage() {
             </div>
             <div className="space-y-2">
               {events.length === 0 ? (
-                <p className="rounded-2xl bg-muted/40 p-3 text-sm text-muted-foreground">No website leads yet. Send one test lead before publishing this setup.</p>
+                <p className="rounded-none bg-muted/30 p-3 text-sm text-muted-foreground">No website leads yet. Send one test lead before publishing this setup.</p>
               ) : events.slice(0, 5).map((event) => (
-                <div key={event.id} className="rounded-2xl border bg-background/70 p-3">
+                <div key={event.id} className="rounded-none border bg-background p-3">
                   <div className="flex items-center justify-between gap-2">
                     <p className="text-sm font-medium text-foreground">{event.requestType || "Website lead"}</p>
                     <span className="rounded-full bg-muted px-2 py-1 text-[11px] font-medium text-muted-foreground">{event.status.replace(/_/g, " ")}</span>
@@ -640,7 +640,7 @@ export default function WebsiteIntakePage() {
                 </div>
               ))}
             </div>
-            <Button className="h-12 rounded-2xl" variant="outline" onClick={() => window.open(hostedLink, "_blank", "noopener,noreferrer")}>
+            <Button className="h-12 rounded-none" variant="outline" onClick={() => window.open(hostedLink, "_blank", "noopener,noreferrer")}>
               <ExternalLink className="mr-2 h-4 w-4" /> Open hosted form
             </Button>
           </div>
@@ -653,7 +653,7 @@ export default function WebsiteIntakePage() {
 
 function SummaryPill({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl border bg-background/70 p-4">
+    <div className="rounded-none border bg-background p-4">
       <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">{label}</p>
       <p className="mt-2 text-sm font-semibold text-foreground">{value}</p>
     </div>
