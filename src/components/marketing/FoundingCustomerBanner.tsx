@@ -23,11 +23,11 @@ export function FoundingCustomerBanner() {
           <div>
             <p className="text-sm font-semibold text-foreground">
               {isFull
-                ? "All seats filled — join the waitlist"
-                : `Accepting beta applications — ${seatsRemaining} of ${BETA_TOTAL_PARTNERS} seats remaining`}
+                ? "Room's full — get on the waitlist"
+                : `Founding partner seats open — ${seatsRemaining} of ${BETA_TOTAL_PARTNERS} left`}
             </p>
              <p className="mt-0.5 text-sm text-muted-foreground">
-               Accepted partners get <span className="font-semibold text-foreground">{BETA_DURATION_DAYS} days free (clock starts {BETA_SETUP_BUFFER_DAYS} days after all seats fill), concierge setup, direct input, and tiered post-launch rewards</span>. {MAX_DISCOUNT_LABEL}.
+               You get <span className="font-semibold text-foreground">{BETA_DURATION_DAYS} days free (clock starts {BETA_SETUP_BUFFER_DAYS} days after the last seat fills), concierge setup, a direct line to the team, and a tiered post-launch reward</span>. {MAX_DISCOUNT_LABEL}. Top two never pay again.
              </p>
           </div>
         </div>
@@ -39,7 +39,7 @@ export function FoundingCustomerBanner() {
             to="/#apply?interest=founding-partner"
             onClick={() => trackEvent("cta_click", { location: "founding_banner", label: "apply_founding_partner" })}
           >
-            {isFull ? "Join waitlist" : "Apply now"} <ArrowRight className="ml-1 h-4 w-4" />
+            {isFull ? "Join waitlist" : "Claim a seat"} <ArrowRight className="ml-1 h-4 w-4" />
           </NavLink>
         </Button>
       </div>

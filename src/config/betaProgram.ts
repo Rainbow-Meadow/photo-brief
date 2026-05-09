@@ -20,7 +20,7 @@ export const BETA_SEATS_REMAINING = BETA_TOTAL_PARTNERS - BETA_SEATS_FILLED;
 export const BETA_IS_FULL = BETA_SEATS_FILLED >= BETA_TOTAL_PARTNERS;
 
 /** Human-readable timing explanation for public copy. */
-export const BETA_TIMING_EXPLAINER = `The ${BETA_DURATION_DAYS}-day beta clock starts ${BETA_SETUP_BUFFER_DAYS} days after the final seat is filled — giving every partner time for concierge setup before the clock begins.`;
+export const BETA_TIMING_EXPLAINER = `The ${BETA_DURATION_DAYS}-day clock doesn't start until ${BETA_SETUP_BUFFER_DAYS} days after the last seat fills — so every founding partner gets concierge setup before day one.`;
 
 // ── Reward tiers ─────────────────────────────────────────────────────
 
@@ -73,22 +73,22 @@ export const REWARD_TIERS: RewardTier[] = [
 ];
 
 /** Human-readable summary for public-facing copy. */
-export const MAX_DISCOUNT_LABEL = "Up to 75% off post-launch — based on feedback quality";
+export const MAX_DISCOUNT_LABEL = "Up to 75% off, forever — earned by feedback quality";
 
 // ── Partner benefits & expectations ──────────────────────────────────
 
 export const PARTNER_BENEFITS = [
-  `${BETA_DURATION_DAYS}-day free founding beta access`,
-  "Concierge setup for first templates and workflows",
-  "Direct feedback channel and priority product input",
-  "Early access to future tools",
+  `${BETA_DURATION_DAYS} days free — clock starts after concierge setup`,
+  "White-glove setup of your first templates and workflows",
+  "Direct line to the team — your input shapes the roadmap",
+  "Early access to every tool we ship next",
   MAX_DISCOUNT_LABEL,
 ] as const;
 
 export const PARTNER_EXPECTATIONS = [
-  "Use PhotoBrief on 3–5 real customer workflows",
-  "Share short feedback every two weeks",
-  "Report confusing moments or missing workflow needs",
+  "Run PhotoBrief on 3–5 real customer jobs — not test data",
+  "Drop a short async note every two weeks — chat, email, or in-app",
+  "Flag the moments that confused you or the workflow that's missing",
 ] as const;
 
 // ── Detailed expectations (for the full breakdown section) ───────────
@@ -220,4 +220,4 @@ export const FREE_PRO_FINE_PRINT = [
 
 // ── Confirmation / thank-you copy ────────────────────────────────────
 
-export const CONFIRMATION_SUMMARY = `${BETA_DURATION_DAYS} days free (starts ${BETA_SETUP_BUFFER_DAYS} days after all seats fill) · concierge setup · priority support · direct roadmap input · early access to future tools · up to 75% off post-launch`;
+export const CONFIRMATION_SUMMARY = `${BETA_DURATION_DAYS} days free (clock starts ${BETA_SETUP_BUFFER_DAYS} days after the last seat fills) · concierge setup · priority support · direct line to the roadmap · early access to every next tool · up to 75% off forever`;

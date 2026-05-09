@@ -53,6 +53,7 @@ import { faqItems } from "@/features/help/content/faq";
 import { howItWorksSteps } from "@/components/marketing/HowItWorksSteps";
 import { trackEvent } from "@/lib/analytics";
 import {
+  BETA_DURATION_DAYS,
   BETA_TOTAL_PARTNERS,
 } from "@/config/betaProgram";
 import { useBetaSeats } from "@/hooks/useBetaSeats";
@@ -514,8 +515,8 @@ function BetaProgramSection() {
       <Container width="narrow">
         <SectionIntro
           eyebrow="[ 07 ] Founding partners"
-          title="Twenty-five seats. Sixty days. Founding pricing forever."
-          subtitle="This isn't a waitlist. It's a 25-person room — and we're hiring two co-builders. Every founding partner walks out with a reward."
+          title={`${BETA_TOTAL_PARTNERS} seats. ${BETA_DURATION_DAYS} days. Founding pricing forever.`}
+          subtitle={`This isn't a waitlist. It's a ${BETA_TOTAL_PARTNERS}-person room — and we're hiring two co-builders. Every founding partner walks out with a reward; the top two never pay for PhotoBrief Pro again.`}
         />
         <div className="mt-10">
           <BetaSeatTracker />
@@ -601,7 +602,7 @@ function FinalCta({ isFull }: { isFull: boolean }) {
               <Body size="lg">
                 {isFull
                   ? "Founding seats are full. Join the waitlist and we'll reach out the moment a seat opens."
-                  : `Twenty-five seats. Sixty days. Two free-for-life winners. Founding pricing for the lifetime of your account — never repriced, never rolled back.`}
+                  : `${BETA_TOTAL_PARTNERS} seats. ${BETA_DURATION_DAYS} days. Two free-for-life winners. Founding pricing for the lifetime of your account — never repriced, never rolled back.`}
               </Body>
             </RiseIn>
             <CTAGroup>
