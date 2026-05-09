@@ -110,6 +110,11 @@ import foundingBadgeIllo from "@/assets/scenes/founding-badge-illustration.png";
 import rewardRibbonsIllo from "@/assets/scenes/reward-ribbons-illustration.png";
 import betaNotebookIllo from "@/assets/scenes/beta-notebook-illustration.png";
 import mailboxFlagIllo from "@/assets/scenes/mailbox-flag-illustration.png";
+import researchMagnifierIllo from "@/assets/rmbc/research-magnifier.png";
+import mechanismGearsIllo from "@/assets/rmbc/mechanism-gears.png";
+import briefPacketIllo from "@/assets/rmbc/brief-packet.png";
+import closeHandshakeIllo from "@/assets/rmbc/close-handshake.png";
+import methodOverviewIllo from "@/assets/rmbc/method-overview.png";
 
 /* ── JSON-LD ───────────────────────────────────────────────── */
 
@@ -487,13 +492,13 @@ export default function LandingPage() {
             eyebrow={<><Sparkles className="h-3.5 w-3.5" /> The mechanism</>}
             title={`Watch a vague "I need a quote" turn into a quotable job in 38 seconds.`}
             description={`This is the Reverse-Form Method™ in motion. We read your site → we know your services → we ask only what we need → photos and notes arrive labeled to the right service line. No app for the customer. No follow-ups for your team. Just a packet.`}
-            accent={
-              <TradeAccent
-                src={transformationIllo}
-                alt="Hand-drawn illustration of a crumpled note transforming into a tidy clipped photo packet"
-              />
-            }
-          />
+          accent={
+            <TradeAccent
+              src={mechanismGearsIllo}
+              alt="Hand-drawn illustration of an inverted contact form dropping ordered photo tiles — the Reverse-Form Method"
+            />
+          }
+        />
           <Suspense fallback={<div className="min-h-[400px]" />}>
             <InteractiveHeroBriefAssembly />
           </Suspense>
@@ -815,13 +820,13 @@ function PainPointSection() {
           {/* Left column — artwork + intro copy */}
           <div className="lg:min-w-0 lg:text-left">
             <img
-              src={junkHaulerIllo}
-              alt="Hand-drawn illustration of a junk hauler standing beside an unsorted pile"
+              src={researchMagnifierIllo}
+              alt="Hand-drawn illustration of a magnifier inspecting a website — finding the leak"
               width={1024}
               height={1024}
               loading="lazy"
               decoding="async"
-              className="mx-auto mb-6 w-full max-w-[280px] drop-shadow-[0_22px_36px_hsl(var(--pb-ink-soft)/0.28)] lg:mx-0 lg:max-w-[320px] text-left object-cover scale-150 origin-center lg:origin-left"
+              className="mx-auto mb-6 w-full max-w-[320px] drop-shadow-[0_22px_36px_hsl(var(--pb-ink-soft)/0.28)] lg:mx-0 lg:max-w-[360px]"
             />
             <span className="pb-eyebrow">
               <MessageSquareWarning className="h-3.5 w-3.5" /> The leak
@@ -1359,8 +1364,8 @@ function ComparisonSection({ mode }: { mode: "messy" | "clean" }) {
           description="It's not that PhotoBrief asks for more photos. It asks for the right ones, in the right order, attached to the right service. The back-and-forth that used to take five days now doesn't have to happen at all."
           accent={
             <TradeAccent
-              src={estimatorIllo}
-              alt="Hand-drawn illustration of a damage estimator reviewing a structured photo packet"
+              src={briefPacketIllo}
+              alt="Hand-drawn illustration of a tied lead packet — photos and notes ribboned together"
             />
           }
         />
@@ -1578,8 +1583,8 @@ function WebsiteIntelligenceSection() {
           description="Every service page you've written, every quote button you've placed, every form field you've added — it's a map of the jobs you actually take. We read it, compress it into 2–3 customer choices, and ship a guided intake path live in seven days. Beta partners pay nothing for the build."
           accent={
             <TradeAccent
-              src={plumberIllo}
-              alt="Hand-drawn illustration of a plumber capturing a guided diagnostic photo"
+              src={researchMagnifierIllo}
+              alt="Hand-drawn illustration of a magnifier reading a website — the site scan"
             />
           }
         />
@@ -1849,7 +1854,16 @@ function FinalCta({ isFull }: { isFull: boolean }) {
               </CTAGroup>
             </div>
           </div>
-          <div className="flex justify-center lg:justify-end">
+          <div className="flex flex-col items-center gap-6 lg:items-end">
+            <img
+              src={closeHandshakeIllo}
+              alt="Hand-drawn illustration of a quote sliding into an inbox — the close"
+              width={1024}
+              height={1024}
+              loading="lazy"
+              decoding="async"
+              className="w-full max-w-[360px]"
+            />
             <img
               src={mailboxFlagIllo}
               alt="Hand-drawn illustration of a mailbox with the flag raised — invitation to apply"
@@ -1857,7 +1871,7 @@ function FinalCta({ isFull }: { isFull: boolean }) {
               height={1024}
               loading="lazy"
               decoding="async"
-              className="w-full max-w-[320px]"
+              className="w-full max-w-[180px] opacity-80"
             />
           </div>
         </div>
