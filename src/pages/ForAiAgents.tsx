@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 import { PageMeta } from "@/hooks/seo/usePageMeta";
+import { MarketingHero, MarketingSection } from "@/components/layout/primitives";
 import { buildFaqJsonLd } from "@/hooks/seo/buildFaqJsonLd";
 import { buildHowToJsonLd } from "@/hooks/seo/buildHowToJsonLd";
 import { howItWorksSteps } from "@/components/marketing/HowItWorksSteps";
