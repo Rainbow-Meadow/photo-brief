@@ -1,0 +1,40 @@
+import type { HTMLAttributes, ReactNode } from "react";
+import { cn } from "@/lib/utils";
+
+interface MarketingHeroProps extends HTMLAttributes<HTMLElement> {
+  width?: "default" | "narrow";
+  align?: "start" | "center";
+  children?: ReactNode;
+}
+
+/**
+ * MarketingHero — standardizes hero spacing + container width.
+ * Hero content (copy, illustration, CTAs) is provided as children.
+ */
+export function MarketingHero({
+  width = "default",
+  align = "start",
+  className,
+  children,
+  ...rest
+}: MarketingHeroProps) {
+  return (
+    <section
+      className={cn(
+        "relative isolate overflow-hidden -mt-[4.5rem] pt-[5.5rem] sm:-mt-[5rem] sm:pt-[6rem]",
+        className,
+      )}
+      {...rest}
+    >
+      <div
+        className={cn(
+          width === "narrow" ? "pb-container-narrow" : "pb-container",
+          "pb-section",
+          align === "center" && "text-center",
+        )}
+      >
+        {children}
+      </div>
+    </section>
+  );
+}
