@@ -1,28 +1,41 @@
 ## Goal
+Replace the current hero illustration with one seminal, iconic image that embodies all three beats of the brand promise — **Guide → Capture → Close** — in a single composition.
 
-Replace the generic brief-packet thumbnail in the Before / After section with a **purpose-built pair of comparison illustrations** so the contrast between the chaotic intake form and the guided capture pipeline reads visually, not just through bullet copy.
+## Concept
 
-Right now the section is asymmetric (only the After card has art) and the art it does have is just the same packet used elsewhere on the page — it doesn't depict the comparison.
+**"The Guided Capture"** — one unified kinetic-vector scene reading left → center → right:
 
-## What changes
+```text
+   GUIDE              CAPTURE              CLOSE
+ ───────────         ─────────           ──────────
+  Navy hand          Phone in hand        Folded brief
+  pointing /         framing the          packet sliding
+  spotlight          HVAC unit            into inbox tray
+  beam onto          (live capture        with orange
+  the subject        viewfinder)          checkmark seal
+```
 
-1. **Generate two new 16:9 illustrations** in the same bold flat kinetic vector style (cream / navy / kinetic orange) used across the new landing imagery:
-   - `src/assets/comparison/before-intake-form.png` — a chaotic generic web form: tilted form panel with empty input fields, a broken/cracked photo placeholder icon, three red question-mark bubbles floating around it, navy "missing" X marks. Tells the "photos missing, follow-ups, lead cools" story at a glance.
-   - `src/assets/comparison/after-capture-pipeline.png` — a phone screen showing a guided capture flow: navy phone with three small photo thumbnails stacked on the screen plus a checklist, an orange chevron arrow flowing into a packet icon on the right. Tells the "right angle, single packet, instant quote" story.
+All three beats live in **one continuous composition** — not a triptych with dividers, but a single illustration where the eye travels through the story:
 
-2. **Wire them into `ComparisonSection`** in `src/pages/Landing.tsx`:
-   - Add an image block to the Before card (mirroring the existing After block's structure) using the new before image.
-   - Swap the After card's `briefPacketIllo` for the new `after-capture-pipeline.png`.
-   - Both cards keep the existing `aspect-[16/9]` frame so the layout stays balanced.
+1. **Left third — GUIDE**: A navy hand/finger emerging from frame edge, casting an orange directional beam (think stage spotlight or guidance arrow) onto the subject. Tiny "01" tick mark.
+2. **Center — CAPTURE**: The hero phone (same kinetic vector language as current hero) framing an HVAC condenser inside its viewfinder. Orange burst rays radiate outward — the moment of capture. Tick "02".
+3. **Right third — CLOSE**: A neat brief-packet/folder with orange tab sliding into a simple inbox tray, sealed with an orange checkmark. Tick "03".
 
-3. **No copy, layout, or token changes.** Bullets, headings, colors, and the rest of the page are untouched. `briefPacketIllo` stays in its original RMBC slot.
+A single thin orange arc/ribbon weaves through all three zones, tying them into one gesture (Guide → Capture → Close as one continuous motion, not three separate steps).
 
-## QA
+**Style** (locked to existing kinetic vector system):
+- Cream `#FAF7F2` background, navy `#1B2A4A` solid shapes, orange `#F2A33A` accents
+- Thick navy outlines, flat fills, no gradients/halftones/shadows/photos
+- Poster-art energy, kinetic gestures, FIG. 01 / REVERSE-FORM METHOD™ corner ticks preserved
+- Aspect 3:2 (1536×1024) to match current hero slot
 
-- Inspect both PNGs: cream ground only, navy + orange only (no extra colors), no embedded text, kinetic vector style consistent with the rest of the landing set.
-- Open `/` at 1440 and 390, screenshot the comparison section, confirm the two cards now read as a true visual before/after pair and the Before card no longer feels empty.
+## Implementation
+
+1. Generate `src/assets/landing-hero-illustration.png` (overwrite current hero) at 1536×1024 via `imagegen--generate_image` with a detailed kinetic-vector prompt encoding the three-zone composition above.
+2. No code changes needed — `Landing.tsx` already imports this exact path. Existing `FIG. 01` / `REVERSE-FORM METHOD™` overlay labels stay.
+3. QA: view the generated PNG, confirm all three beats are legible, palette is correct, no embedded text, composition reads left-to-right, and the orange ribbon ties the scene together. Iterate prompt if any beat is missing or muddy.
 
 ## Out of scope
-
-- No changes to bullets, eyebrows, or section copy.
-- No changes elsewhere on the page or to other illustrations.
+- No layout, copy, or token changes in `Landing.tsx`
+- No changes to RMBC, trades, or comparison illustrations
+- No new asset files — overwriting the existing hero path only
