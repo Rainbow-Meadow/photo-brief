@@ -21,7 +21,7 @@ export function MarketingHero({
   return (
     <section
       className={cn(
-        "relative isolate overflow-hidden -mt-[4rem] pt-[4.75rem] sm:-mt-[4.5rem] sm:pt-[5.25rem]",
+        "relative isolate overflow-hidden -mt-[4rem] pt-[4.75rem] sm:-mt-[4.5rem] sm:pt-[5.25rem] bg-[hsl(var(--pb-tier-0))]",
         className,
       )}
       {...rest}
