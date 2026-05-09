@@ -1,75 +1,85 @@
 ## Goal
 
-Reskin every page in the app to match the updated landing's editorial Locomotive-inspired language: Geist Sans + Geist Mono, sharp 1px borders (radius `0` / `0.25rem`), kinetic-orange accent, mono numerals/eyebrows, uppercase-tracked CTAs, paper/alt/dark section tones. The brand rules in memory (cream + navy + amber, BrandMark two-tone) stay intact.
+Use the dark-background BrandMark variant (`tone="dark"` → cream-colored mark + wordmark on `/brand/mark-on-dark.svg`) **only on actually dark surfaces**, the way the homepage does it (`<Section tone="dark">` → FinalCta + the dark footer when `isLanding`). Eliminate three current sources of drift:
 
-## Approach: Full editorial port
+1. A `tone="dark"` BrandMark that sits on a cream surface (invisible).
+2. `tone="auto"` / `tone="color"` used inconsistently — both currently fall through to the light lockup, which makes future intent unreadable.
+3. No contract test, so future pages can re-introduce mismatches.
 
-Promote the landing's ad-hoc `ls-*` schema in `src/pages/landing/schema.css` + `schema.tsx` into a **first-class shared design system** that any page (marketing, app, admin) can compose. Then rewrite each page on top of those primitives instead of the current shadcn-rounded-soft-card look.
+## The homepage pattern (source of truth)
 
-## Phase 1 — Promote the schema (foundation)
+| Surface bg | Lockup tone | Asset | Used in |
+|---|---|---|---|
+| Cream `--pb-paper` (default Section) | `tone="light"` | `mark.svg` + navy/amber wordmark | MarketingLayout header, app sidebar, dashboard header, in-page marks |
+| Dark `<Section tone="dark">` (FinalCta, `pb-footer-dark`) | `tone="dark"` | `mark-on-dark.svg` + cream/amber wordmark | MarketingLayout footer when `isLanding` |
+| Color/illustration backdrop | `tone="light"` (treat as light unless backdrop is demonstrably dark) | light asset | Signup hero, StarterRequestCard, BetaWelcome stacked logo |
 
-1. **Move + rename**: `src/pages/landing/schema.{tsx,css}` → `src/components/editorial/{Section,Container,Eyebrow,Title,Subtitle,Body,Card,Grid,CTA,CTAGroup}.tsx` with the `.ls-*` CSS moved to `src/components/editorial/editorial.css` (imported once from `src/index.css`). Update `Landing.tsx` import path.
-2. **Add app-shell-friendly variants** so primitives work inside `DashboardLayout` (which has its own header):
-   - `Section size="page"` — no top padding, for in-app pages
-   - `Section tone="paper-soft"` — uses cream `--pb-paper` for app surfaces
-   - `Card variant="data"` — denser padding for tables/forms
-   - `Card variant="form"` — wraps form blocks
-3. **Add editorial form primitives**: `EditorialField`, `EditorialInput`, `EditorialSelect`, `EditorialTextarea` — sharp 1px borders, mono labels, kinetic focus ring. These wrap shadcn underneath so validation/`react-hook-form` keeps working.
-4. **Editorial table primitive**: `EditorialTable` (head row mono uppercase, hairline rules, no zebra) for inbox/customers/guides/admin lists.
-5. **Editorial nav chrome**: re-skin `MarketingLayout` header pill and `DashboardLayout` header to use sharp borders, mono labels, kinetic accent on active nav. Re-skin `AppSidebar` items (mono `0X · LABEL` format) and `MobileTabBar` (sharp top border, no soft pill).
-6. **Token reconciliation**: confirm `--accent-kinetic`, `--accent-sage`, `--pb-paper`, `--pb-ink-soft` exist in `src/index.css`; add any missing ones (no new colors, only aliases) so the editorial schema doesn't depend on landing-only vars.
+Rule: `tone` matches the surface the mark physically sits on, not the page's overall theme.
 
-## Phase 2 — Marketing pages (uses MarketingLayout)
+## Findings — current call-site audit
 
-Rewrite to compose the promoted primitives, matching landing rhythm (eyebrow → display title → subtitle → grid of sharp-bordered cards):
+| File:line | Variant | Tone | Surface bg | Verdict |
+|---|---|---|---|---|
+| `src/pages/Landing.tsx:202` | horizontal | `dark` | Cream Hero `<Section>` | **Wrong** — cream ink on cream bg |
+| `src/pages/Signup.tsx:186` | stacked | `color` | Inside white form card on cream | OK render, but `color` is a misleading alias for "light" |
+| `src/pages/BetaWelcome.tsx:158` | stacked | `light` | Cream | OK |
+| `src/pages/IntakeBadge.tsx:53` | horizontal | `forceDark ? "light" : "auto"` | Embeddable badge — bg is host-driven | Replace `"auto"` → explicit `"light"`; comment the inversion |
+| `src/components/layout/MarketingLayout.tsx:63-64` | wordmark | `light` | Cream header | OK |
+| `src/components/layout/MarketingLayout.tsx:89` | mark | `isLanding ? "dark" : "light"` | The mobile sheet trigger sits on the cream header, not on the page hero — `isLanding` is the wrong signal | **Wrong** — should always be `"light"` |
+| `src/components/layout/MarketingLayout.tsx:125` | horizontal | `auto` | Inside cream mobile sheet | Replace `"auto"` → `"light"` |
+| `src/components/layout/MarketingLayout.tsx:171` | horizontal | `isLanding ? "dark" : "light"` | Footer bg flips via `pb-footer-dark` when `isLanding` | **Correct** — this is the canonical pattern |
+| `src/components/layout/DashboardLayout.tsx:55` | mark | `auto` | Cream app shell | Replace `"auto"` → `"light"` |
+| `src/components/layout/AppSidebar.tsx:88-91` | mark/horizontal | `light` | Cream sidebar | OK |
+| `src/components/layout/PublicRequestLayout.tsx:26` | horizontal | `dark` | Need to confirm — header may be cream | Verify against `PublicRequestLayout` header bg; correct to match |
+| `src/components/editorial/EditorialAuthShell.tsx:41` | stacked | `auto` | Cream auth shell | Replace `"auto"` → `"light"` |
+| `src/components/shared/PoweredByBadge.tsx:26` | wordmark | `auto` | Inherits from host page | Replace `"auto"` with a `tone` prop on `PoweredByBadge` so callers pass intent explicitly; default `"light"` |
+| `src/features/workspace/components/StarterRequestCard.tsx:24` | mark | `color` | Cream card | Replace `"color"` → `"light"` |
+| `src/features/integrations/components/ConnectorLogo.tsx:62` | mark | `auto` | Cream | Replace `"auto"` → `"light"` |
 
-- `Pricing.tsx` — Section + Grid of `Card` for tiers; replace `PricingCardGrid` rounded shadcn cards with sharp editorial cards; uppercase CTA on selected tier; mono price numerals.
-- `Auth.tsx`, `Signup.tsx`, `ForgotPassword.tsx`, `ResetPassword.tsx` — narrow Container, single `Card variant="form"` with editorial inputs, mono eyebrow ("[ 01 ] SIGN IN"), kinetic CTA.
-- `Privacy.tsx`, `Terms.tsx` — narrow Container, editorial typography, mono section numerals.
-- `ForAiAgents.tsx` — full editorial port mirroring landing layout.
-- `BetaInvite.tsx`, `BetaWelcome.tsx`, `Unsubscribe.tsx`, `NotFound.tsx` — single-card editorial treatment.
+## Plan
 
-## Phase 3 — Recipient / public flows
+### 1. Tighten `BrandMark` API (`src/components/layout/BrandMark.tsx`)
 
-- `PublicRecipientPage.tsx`, `RecipientConfirmationPage.tsx`, `PublicIntakePage.tsx`, `WebsiteIntakePage.tsx`, `IntakeBadge.tsx` — apply editorial chrome but **preserve mobile capture UX rules** from `mem://design/touch-vs-desktop` (no hover, no blur). Use `Card variant="form"` and editorial inputs; keep `RecipientBrandingContext` overrides intact.
+- Narrow `BrandTone` from `"auto" | "light" | "dark" | "color"` → `"light" | "dark"`.
+- Remove the `auto`/`color` branches (they already collapse to "light"); export a deprecation comment so future PRs don't reintroduce them.
+- Default `tone` stays `"light"` (matches the cream-bg majority case).
 
-## Phase 4 — Dashboard app pages (uses DashboardLayout)
+### 2. Fix the wrong call sites
 
-Re-skin in place; same data, new chrome:
+- `Landing.tsx:202` — change `tone="dark"` → `tone="light"` (the mark sits below the cream illustration card, on cream bg).
+- `MarketingLayout.tsx:89` — drop `isLanding` ternary, always `tone="light"` (mobile menu trigger is in the cream header on every route, including landing).
+- `PublicRequestLayout.tsx:26` — read the header's actual bg; if cream, switch to `tone="light"`. If the layout's header is genuinely dark navy, keep `tone="dark"` and document why.
 
-- `DashboardPage`, `RequestsInboxPage`, `RequestDetailPage`, `CreateRequestPage` (preserve fullscreen wizard), `SubmissionReviewPage`
-- `CustomersPage`, `CustomerDetailPage`
-- `GuideLibraryPage`, `GuideBuilderPage`, `GuideDetailPage`
-- `IntegrationsPage`, `SupportPage`, `BetaGuidePage`
-- Workspace settings: `OnboardingPage`, `BrandSettingsPage`, `MessageTemplatesPage`, `SmsSettingsPage`, `TeamSettingsPage`, `BillingSettingsPage`, `AcceptInvitePage`
+### 3. Replace soft tones with explicit ones (no visual change, just intent)
 
-For each: `PageHeader` becomes editorial (mono eyebrow + display title + hairline rule), tables → `EditorialTable`, forms → editorial fields, metric/empty-state cards → sharp `Card`. Replace `MetricCard`, `EmptyState`, `StarterRequestCard`, `UpgradePromptCard`, `StatusBadge`, `PlanTag`, `ScoreRing`, `ReadinessProgress` chrome with editorial equivalents (logic untouched).
+- `MarketingLayout.tsx:125`, `DashboardLayout.tsx:55`, `EditorialAuthShell.tsx:41`, `ConnectorLogo.tsx:62`: `"auto"` → `"light"`.
+- `Signup.tsx:186`, `StarterRequestCard.tsx:24`: `"color"` → `"light"`.
+- `IntakeBadge.tsx:53`: keep the host-driven inversion logic but spell it out — `tone={forceDark ? "light" : "dark"}` once we confirm which bg the badge sits on (the badge is meant to be embedded on customer sites, so this needs a one-line comment explaining that `forceDark` means "host page is dark, so render the light lockup"). Do not change runtime behaviour — only naming.
 
-## Phase 5 — Admin pages
+### 4. `PoweredByBadge` accepts `tone`
 
-- `AdminBeta`, `AdminCommandCenter`, `AdminInvites`, `AdminAIRerun`, `AdminWebsiteIntelligence` — same chrome treatment; admin pages are dense, so use `Card variant="data"` and `EditorialTable`.
+Add `tone?: BrandTone` (default `"light"`) and forward to `BrandMark`. No call sites currently pass it; existing renders stay light.
 
-## Phase 6 — Shared widgets
+### 5. Contract test (`src/test/brand-mark-contract.test.ts`)
 
-Re-skin so they look correct on every page they appear in:
-- `FeedbackWidget`, `NotificationBell` dropdown, `WorkspaceSwitcher`, `MobileSettingsSheet`, `PoweredByBadge`, `FoundingCustomerBanner`, `PaymentTestModeBanner`, `ChannelPicker`, `TurnstileWidget` wrapper, dialog/sheet/drawer chrome (override shadcn radius to `0.25rem` and 1px borders via component variants — not by editing shadcn primitives).
+Plain string scan over the `src/` tree (same style as `landing-tokens.test.ts`):
 
-## Phase 7 — QA
+- Fail if any file passes `tone="auto"` or `tone="color"` to `BrandMark`.
+- Fail if `BrandMark` is rendered with `tone="dark"` in the same file as `<Section tone="light">` or default `<Section>` without an intervening `<Section tone="dark">` (heuristic: scan adjacent JSX). If the heuristic is too brittle, fall back to a hard allowlist of files permitted to use `tone="dark"` (Landing FinalCta + MarketingLayout footer + PublicRequestLayout if applicable).
+- Fail if a raw `<img src=".../mark-on-dark.svg">` exists outside `BrandMark.tsx`.
 
-1. Run existing tests: `landing-tokens`, `landing-typography`, `landing-visual-contract`, `nav-links`, `route-contract`. Update visual-contract snapshots that asserted landing-only `ls-*` selectors.
-2. Browser walk every top-level route (marketing, dashboard tier accounts from `mem://seed-users`, recipient flow, admin) at mobile + desktop viewports, screenshot, fix layout regressions.
-3. Verify dark mode is **not** reintroduced (memory rule); editorial dark sections use the existing `--pb-ink` palette, not a `.dark` class.
+### 6. Update `landing-visual-contract.test.ts`
+
+Add an assertion: the only `BrandMark` in `Landing.tsx` uses `tone="light"` (since the FinalCta dark section doesn't render a BrandMark, only the hero does, and that one must be light).
+
+### 7. QA
+
+- `bun run test` — confirm the 7 existing suites + the new brand-mark contract test pass.
+- Browser walk: `/`, `/auth`, `/dashboard`, `/r/<token>`, `/badge/intake` at 390px and 1280px — visually confirm BrandMark renders correctly (no invisible cream-on-cream, no navy-on-navy).
+- Update Playwright baselines for any pages where the BrandMark visibly changes.
 
 ## Out of scope
 
-- No business-logic changes, no DB migrations, no copy edits beyond mechanical replacements (e.g., button label casing).
-- BrandMark rendering rules unchanged.
-- Remotion scenes, edge functions, workers — untouched.
-
-## Technical details
-
-- Schema lives in `src/components/editorial/`; barrel export `index.ts`.
-- `editorial.css` imported once from `src/index.css` after Tailwind base/components/utilities so `@layer` precedence holds.
-- shadcn overrides via per-component CVA variants (`variant="editorial"`) — never edit `src/components/ui/*` primitives directly.
-- All colors stay HSL via existing tokens; no new color values introduced.
-- Touch rules from `mem://design/touch-vs-desktop` enforced: editorial card hover gated behind `@media (hover: hover)` (already true in current schema — keep pattern).
+- No changes to BrandMark assets or the wordmark colors.
+- No changes to `PoweredByBadge` placement (only its API).
+- No new `tone` values, no auto-detection from CSS variables.
