@@ -6,7 +6,7 @@ type Spacing = "default" | "tight";
 type Tone = "paper" | "alt" | "dark";
 type Align = "start" | "center";
 
-interface MarketingSectionProps extends HTMLAttributes<HTMLElement> {
+interface MarketingSectionProps extends Omit<HTMLAttributes<HTMLElement>, "title"> {
   width?: Width;
   spacing?: Spacing;
   tone?: Tone;
