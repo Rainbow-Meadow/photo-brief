@@ -1,127 +1,73 @@
-## Locomotive-Inspired UI Reimagination
+# Landing QA — findings + fix plan
 
-A complete visual rewrite of the marketing surface and the authenticated app shell, built in the spirit of Locomotive (locomotive.ca) — kinetic, editorial, image-led, with a reinterpreted palette and orchestrated scroll choreography. We do **not** clone Locomotive; we adopt its design grammar and apply it to PhotoBrief.
+## 1. Blocker: landing page is rendering blank
 
----
+The live preview at `/` is a black canvas. Cause:
 
-### 1. Design language
+- `src/lib/motion/lenis.tsx` does a top-level `import Lenis from "lenis"`.
+- Vite's dep optimizer is returning **504** for `lenis.js` repeatedly (verified across two dev-server restarts).
+- `LenisProvider` wraps the entire `<App>` tree in `src/App.tsx`, so the optimizer failure crashes the whole bundle — every route, not just `/`.
 
-**Aesthetic pillars**
-- Editorial type at hero scale: huge display headings with mixed weights, kinetic letter spacing, and the occasional italic accent. A new variable display face (Inter Tight or Bricolage Grotesque via @fontsource) paired with the existing system stack for body.
-- Kinetic motion as the signature. Smooth scroll, sticky scroll-linked sections, parallax media, marquee strips, magnetic CTAs, masked text reveals on scroll, and a subtle custom cursor on pointer devices.
-- Asymmetric editorial grids (12-col with intentional negative space, dropped baselines, off-grid pull quotes).
-- Image-forward: existing illustrations re-presented inside large bordered "plates" with grain overlay and slow ambient motion instead of decorative cards.
-- Restraint elsewhere — most surfaces are quiet so the kinetic moments land.
+Fix:
+- Convert Lenis to a **dynamic import inside the `useEffect`** (`const { default: Lenis } = await import("lenis")`). Keeps smooth scroll on capable devices, but a failed/late-loaded module can never blank the app.
+- Wrap the init in try/catch and short-circuit on touch / reduced-motion (already done).
+- Add `lenis` to `optimizeDeps.include` in `vite.config.ts` so prebundling is deterministic on cold start.
+- Add a tiny smoke test (`landing-renders.test.tsx`) that mounts `<LandingPage />` inside the providers and asserts the H1 text — guards against regressions where a motion provider takes the page down.
 
-**Reinterpreted palette** (drops cream/navy/amber as the lead tokens; brand wordmark colors stay intact via BrandMark only)
-- `--background` near-black `#0E0E0C` (warm off-black)
-- `--foreground` paper white `#F4F1EA`
-- `--muted` graphite `#1C1C1A`
-- `--accent` single saturated signal `#FF5A1F` (kinetic orange)
-- `--secondary-accent` a quiet sage `#B8C5A6` for tertiary highlights
-- Hairline borders at 8% paper white. No gradients except a single subtle radial behind hero.
+## 2. Typography fit for the service-trade audience
 
-**Typographic system**
-- Display: Bricolage Grotesque variable (700 / 800), tracking -0.04em, line-height 0.92 for hero.
-- UI/body: Inter Tight (existing fallback acceptable).
-- Mono accents (Geist Mono) for section numerals (`[01]`, `[02]`, `[03]`) and timestamps.
+You're right — the current stack reads "design agency portfolio," not "contractor's intake tool." Specifics:
 
-**Motion stack**
-- `lenis` for inertial smooth scroll.
-- `framer-motion` for orchestrated reveals, sticky scenes, marquees, magnetic buttons.
-- `prefers-reduced-motion` short-circuits Lenis + Framer to instant transitions; touch devices skip cursor + parallax (per existing touch-vs-desktop memory).
+- **Bricolage Grotesque 800 + the italic accent on the `.`** is the most "boutique" element. Roofers, HVAC, landscapers don't trust playful italics — they read it as marketing fluff.
+- **Geist Mono** for every eyebrow, numeral, and CTA pushes the page even further into "code-y agency" territory.
+- The two faces together make the page feel like a SaaS-for-designers product, not a tool that books jobs for a plumber.
 
----
+Direction: keep the editorial scale and rhythm Locomotive gave us, swap the *voices* for ones that signal industrial precision and trust. Two options to pick from in step 4 below — both stay free/Google Fonts, no Cloud changes.
 
-### 2. What changes
+Concrete swaps regardless of choice:
+- Drop `.ls-italic-accent` italic on `Close.` — replace with an accent-color period only, no italic.
+- Replace mono in CTAs (`.ls-cta`) with the chosen sans at uppercase + tracking. Keep mono **only** for true numerals (`Fig. 01`, index strip), where it still earns its place as "technical caption."
+- Tighten H1 weight 800 → 700 and letter-spacing -0.05em → -0.025em. 800/-0.05 looks like a fashion magazine; 700/-0.025 looks like a confident product headline.
+- Add `font-feature-settings: "ss01","cv11"` where supported to lean into the cleaner glyph variants.
 
-**Marketing (full reimagination)**
-- `src/pages/Landing.tsx` — rebuilt section-by-section, not patched. New section flow:
-  1. Kinetic hero (vertical "Guide / Capture / Close" stacked display, accent-orange underline that draws on load, subtle parallax illustration plate).
-  2. Sticky scroll mechanism — the five RMBC illustrations become a horizontally pinned scroll story.
-  3. Marquee of trade names + tagline.
-  4. Editorial features grid (asymmetric 12-col, oversized numerals).
-  5. Live brief assembly demo retained but reframed in a dark editorial frame.
-  6. Founding-partner / beta seat tracker as an editorial "ledger" block.
-  7. Pricing teaser → links to Pricing page.
-  8. Final CTA with the existing quick-apply form, restyled.
-- `src/pages/Pricing.tsx`, `src/pages/ForAiAgents.tsx`, `src/pages/Auth.tsx`, `src/pages/Signup.tsx`, `src/pages/BetaInvite.tsx`, `src/pages/BetaWelcome.tsx`, `src/components/layout/MarketingLayout.tsx`, `src/components/layout/PublicRequestLayout.tsx` — re-skinned to the new tokens, new nav (thin top bar, oversized hover labels, sliding underline indicator, mobile drawer with full-bleed type).
+## 3. Other QA items to fix in the same pass
 
-**Dashboard chrome (re-skin, not re-architect)**
-- `src/components/layout/DashboardLayout.tsx`, `AppSidebar.tsx`, `MobileTabBar.tsx`, `NotificationBell.tsx`, `BrandMark.tsx` (variant tweaks only), `PageHeader.tsx` — adopt new tokens, hairline borders, mono numerals on section headers, restrained motion, no glass blur on touch.
-- Feature pages keep their layouts; they inherit the new tokens automatically through `--background`, `--card`, `--border`, etc. No per-page rewrites.
+Found while reading the source — all small, all worth doing now so the reskin of Pricing/ForAiAgents/Auth inherits a clean baseline:
 
-**Tokens & primitives**
-- `src/index.css` — replace the `:root` palette with the new near-monochrome system; keep legacy `--pb-*` aliases mapped to new equivalents so deeply-coupled components don't break. Remove cream-specific gradients. Add new tokens: `--accent-kinetic`, `--surface-paper`, `--rule-hairline`, `--grain-opacity`.
-- `src/pages/landing/schema.css` — rewritten for the new aesthetic (kinetic typography classes, editorial grid, mono numerals). Same `ls-*` API so `schema.tsx` primitives don't change shape.
-- `tailwind.config.ts` — add the new font families, mono numeral utilities, and accent-kinetic color.
+- **Use-cases section** uses `hvacTechIllo` for Plumbers, HVAC, *and* Estimators, and `landscaperIllo` for both Landscapers and Junk haulers. Reads as a stock-photo bug. Use the icon-only treatment for the trades that don't have a dedicated illo, or drop the illustration prop on cards that repeat.
+- **Anchor index strip** lists 6 sections but `#apply` and `#beta-program` are adjacent + redundant — collapse to 5 entries.
+- **`.ls-card:hover` border tint** uses `--accent-kinetic / 0.4`. On the dark canvas the orange-on-graphite hover is fine, but pair it with a 1px translateY(-1px) so the editorial card feels physical, not just recolored.
+- **Hero anchor nav** is `lg:flex` only — on tablet (768–1024) the page jumps from oversized H1 straight to the marquee with no wayfinding. Show the strip from `md:` up.
+- **Section padding** `clamp(5rem, 9vw, 9rem)` is too generous on mobile (5rem top + 5rem bottom on a 375px viewport = ~25% of the fold gone before content). Lower the floor to `3rem` for mobile rhythm.
+- **Marquee** repeats only one row. Locomotive sites typically run two counter-rotating rows for kinesthetic depth — add a second row (reverse direction, ghost variant on the loud words) to earn the band.
+- **`prefers-reduced-motion`**: `RiseIn` and `MagneticCTA` need to short-circuit when reduced-motion is set. Currently they always animate. Add a guard hook (`useReducedMotion` from framer-motion) and render static when true.
+- **Accessibility**: `.ls-marquee-item--ghost` uses `-webkit-text-stroke` only — no Firefox fallback. Add `text-shadow` fallback or `@supports`.
+- **Tests**: rerun `landing-tokens.test.ts` and `landing-visual-contract.test.ts` after the typography swap and update the asserted font-family strings.
 
-**New utility modules**
-- `src/lib/motion/lenis.tsx` — Lenis provider, no-ops under `prefers-reduced-motion` and on touch.
-- `src/components/motion/` — `MagneticCTA`, `MarqueeRow`, `RevealText`, `StickyScrollScene`, `GrainOverlay`, `KineticCursor` (desktop only).
+## 4. Decisions I need from you before writing the fix
 
-**Tests**
-- Update `src/test/landing-tokens.test.ts` and `src/test/landing-visual-contract.test.ts` to assert the new section structure and primitives, not the old.
-- Add a small `src/test/motion-reduced.test.ts` ensuring Lenis + Framer providers respect reduced motion.
+I'll batch these in `ask_questions` after you approve the plan, but here's the shape so you can think ahead:
 
----
+1. **Display + body type pairing** (pick one):
+   - **Geist Sans + Geist Mono** (Vercel) — engineered, neutral, modern. Reads as "serious software." Strongest "trust" signal.
+   - **Inter Tight (display) + Inter (body) + JetBrains Mono** — workhorse, slightly editorial through tight spacing. Most legible at every size.
+   - **IBM Plex Sans + Plex Sans Condensed (display) + Plex Mono** — explicitly industrial; designed for IBM's enterprise tools. Strongest "trade precision" signal.
+   - **Keep Bricolage** but only at 700 and only on H1; everything else moves to Inter. Lightest-touch change.
 
-### 3. Out of scope
+2. **Italic accent treatment**: remove entirely / keep but use a cleaner italic from the chosen family / replace with a colored full-stop only.
 
-- No backend changes. Waitlist edge function, plan gates, RLS, auth flows untouched.
-- No copy rewrites beyond the hero stack. All product names, tagline, plan tier names, beta language preserved.
-- No changes to the in-app feature pages' layouts (Requests, Submissions, Guides, Customers, Settings, Billing, Admin). They inherit new tokens only.
-- BrandMark wordmark colors stay navy + amber (per brand memory). Only surrounding chrome changes.
-- No new content imagery. Existing transparent PNGs in `src/assets/` are reused inside new presentation frames.
+3. **Mono usage**: keep mono on eyebrows + numerals + CTAs / restrict to numerals only / drop mono entirely and use uppercase tracked sans.
 
----
+## Out of scope
 
-### 4. Risks & mitigations
+- No copy rewrites beyond removing the italic accent.
+- No layout restructure of sections — only the type, the use-case duplication, and the motion guards.
+- No changes to dashboard chrome, Pricing, ForAiAgents, Auth — those wait for the planned full reskin, which proceeds *after* this QA closes.
 
-- **Lenis + sticky/native scroll quirks** — gate Lenis to desktop pointer + non-reduced-motion; provide instant fallback. Test the wizard route and any modal that uses `position: fixed`.
-- **Token swap regressions** — keep `--pb-*` legacy aliases pointing at new values for at least one release so deep components don't break visually.
-- **Bundle size** — Lenis (~5kb) + framer-motion (already present?) + Bricolage variable font subset. Subset to Latin and self-host via `@fontsource-variable/bricolage-grotesque`.
-- **Test churn** — landing contract tests will need rewriting; that's expected for a redesign of this scope.
+## Sequence
 
----
-
-### 5. Sequence (single implementation pass)
-
-1. Tokens: rewrite `:root` in `src/index.css` + tailwind font/color additions + legacy `--pb-*` aliases.
-2. Motion infra: add Lenis provider, base motion components, wire into `App.tsx`.
-3. Marketing layout + nav redesign (`MarketingLayout.tsx`).
-4. Landing page rebuild section-by-section.
-5. Pricing + ForAiAgents + Auth/Signup/Beta pages re-skinned.
-6. Dashboard chrome re-skin (`DashboardLayout`, `AppSidebar`, `MobileTabBar`, `PageHeader`).
-7. Update tests.
-8. Visual QA at 1378 desktop, 768 tablet, 390 mobile.
-
-### 6. Files touched (high-level)
-
-```text
-src/index.css                              rewrite :root
-tailwind.config.ts                         fonts, accent-kinetic
-src/pages/landing/schema.css               rewrite
-src/pages/Landing.tsx                      rebuild
-src/pages/Pricing.tsx                      re-skin
-src/pages/ForAiAgents.tsx                  re-skin
-src/pages/Auth.tsx, Signup.tsx             re-skin
-src/pages/BetaInvite.tsx, BetaWelcome.tsx  re-skin
-src/components/layout/MarketingLayout.tsx  rebuild nav
-src/components/layout/PublicRequestLayout.tsx  re-skin
-src/components/layout/DashboardLayout.tsx  re-skin
-src/components/layout/AppSidebar.tsx       re-skin
-src/components/layout/MobileTabBar.tsx     re-skin
-src/components/layout/PageHeader.tsx       re-skin
-src/lib/motion/lenis.tsx                   NEW
-src/components/motion/*.tsx                NEW (6 files)
-src/test/landing-*.test.ts                 update
-src/test/motion-reduced.test.ts            NEW
-mem://design/color-system, brand-system    update notes
-```
-
-### 7. Dependencies to add
-
-- `lenis` (^1.1)
-- `@fontsource-variable/bricolage-grotesque`
-- `framer-motion` (if not already installed — will check at implementation time)
+1. Fix the Lenis blank-screen blocker + add smoke test → verify preview renders.
+2. Ask the 3 decisions above.
+3. Apply the typography swap + the small QA items in section 3.
+4. Re-run tests, screenshot the page at 1440 / 768 / 375, hand back for sign-off.
+5. Then resume the broader reskin of Pricing / ForAiAgents / Auth / dashboard chrome.
