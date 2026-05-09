@@ -1355,8 +1355,8 @@ function ComparisonSection({ mode }: { mode: "messy" | "clean" }) {
     <MarketingSection id="comparison" spacing="tight">
         <SectionIntro
           eyebrow={<><MessageSquareWarning className="h-3.5 w-3.5" /> Before / after</>}
-          title="Generic form vs. guided visual intake."
-          description="The difference is not more photos — it's structured context that lets your team skip the back-and-forth entirely."
+          title="Same customer. Same job. Different intake. Different outcome."
+          description="It's not that PhotoBrief asks for more photos. It asks for the right ones, in the right order, attached to the right service. The back-and-forth that used to take five days now doesn't have to happen at all."
           accent={
             <TradeAccent
               src={estimatorIllo}
