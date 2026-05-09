@@ -1294,12 +1294,12 @@ function WorkflowSection() {
               <Route className="h-3.5 w-3.5" /> How it works
             </span>
             <h2 className="pb-section-title mt-4 max-w-xl text-white">
-              From website visit to actionable lead packet.
+              From a website visit to a packet your team can quote — without typing a single follow-up.
             </h2>
             <p className="pb-copy mt-4 max-w-lg text-base sm:text-lg">
-              PhotoBrief turns your website into a structured intake
-              machine — from first visit to a quote-ready packet your team
-              can act on without follow-ups.
+              Four moves. Roughly 38 seconds for the customer. Zero
+              back-and-forth for your team. This is the Reverse-Form Method™
+              from the inside.
             </p>
             <div className="mt-8 hidden lg:block">
               <img
