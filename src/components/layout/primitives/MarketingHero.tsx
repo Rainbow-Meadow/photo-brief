@@ -29,7 +29,7 @@ export function MarketingHero({
       <div
         className={cn(
           width === "full"
-            ? "w-full pl-[84px]"
+            ? "w-full"
             : width === "narrow"
               ? "pb-container-narrow"
               : "pb-container",
