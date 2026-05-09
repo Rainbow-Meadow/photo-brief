@@ -1,50 +1,28 @@
 ## Goal
 
-Regenerate every landing illustration in **bold flat kinetic vector** style and wire up the three trade cards (Plumbers, Junk haulers, Estimators) that currently have `illo: null` so every slot has an image.
+Replace the generic brief-packet thumbnail in the Before / After section with a **purpose-built pair of comparison illustrations** so the contrast between the chaotic intake form and the guided capture pipeline reads visually, not just through bullet copy.
 
-## Visual recipe
+Right now the section is asymmetric (only the After card has art) and the art it does have is just the same packet used elsewhere on the page — it doesn't depict the comparison.
 
-- **Pure flat vector** — no halftone, no grain, no texture, no gradients, no shadows.
-- **Palette (strict, only these):** cream `#FAF7F2` ground, deep navy `#1B2A4A` primary, kinetic orange `#F2A33A` accent. Optional off-white `#FFFFFF` highlight inside shapes.
-- **Forms:** chunky geometric shapes with thick uniform navy outlines (~6–10px relative to canvas), bold filled silhouettes, minimal interior detail. Poster-art energy: think Locomotive / French serigraph / Modernist trade poster.
-- **Kinetic gestures:** speed lines, motion arcs, registration crosses, off-axis tilt, repeated chevrons — every scene should feel like it is *doing* something.
-- **Composition:** subject anchored off-center on a generous cream field, overlapping orange shape provides energy.
-- **No text** anywhere in the image.
+## What changes
 
-## Image slots (11 total — every slot filled)
+1. **Generate two new 16:9 illustrations** in the same bold flat kinetic vector style (cream / navy / kinetic orange) used across the new landing imagery:
+   - `src/assets/comparison/before-intake-form.png` — a chaotic generic web form: tilted form panel with empty input fields, a broken/cracked photo placeholder icon, three red question-mark bubbles floating around it, navy "missing" X marks. Tells the "photos missing, follow-ups, lead cools" story at a glance.
+   - `src/assets/comparison/after-capture-pipeline.png` — a phone screen showing a guided capture flow: navy phone with three small photo thumbnails stacked on the screen plus a checklist, an orange chevron arrow flowing into a packet icon on the right. Tells the "right angle, single packet, instant quote" story.
 
-Hero (3:2):
-1. `landing-hero-illustration.png` — hand holding a phone framing a worksite, orange burst ring, navy speed lines.
+2. **Wire them into `ComparisonSection`** in `src/pages/Landing.tsx`:
+   - Add an image block to the Before card (mirroring the existing After block's structure) using the new before image.
+   - Swap the After card's `briefPacketIllo` for the new `after-capture-pipeline.png`.
+   - Both cards keep the existing `aspect-[16/9]` frame so the layout stays balanced.
 
-RMBC method (1:1 — square):
-2. `rmbc/research-magnifier.png` — chunky magnifier over a stack of photo rectangles, orange focal dot.
-3. `rmbc/mechanism-gears.png` — interlocking navy gears + a clipboard, orange motion arc.
-4. `rmbc/brief-packet.png` — fanned document folders with orange tabs, photo card peeking out.
-5. `rmbc/method-overview.png` — three connected blocks (camera → doc → handshake) joined by an orange path with arrowheads.
-6. `rmbc/close-handshake.png` *(currently unused — leave file but skip wiring)* handshake with orange checkmark.
+3. **No copy, layout, or token changes.** Bullets, headings, colors, and the rest of the page are untouched. `briefPacketIllo` stays in its original RMBC slot.
 
-Trades (3:4 portrait — used in the use-case grid):
-7. `trades/plumber-illustration.png` — wrench on an elbow pipe, orange leak drop.
-8. `trades/hvac-tech-illustration.png` — outdoor condenser unit, orange airflow chevrons.
-9. `trades/landscaper-illustration.png` — property aerial outline with slope contour lines, orange location pin.
-10. `trades/junk-hauler-illustration.png` — pickup truck loaded with debris silhouette, orange hazard triangle.
-11. `trades/estimator-illustration.png` — 2×2 photo contact-sheet card with orange measurement callout brackets.
+## QA
 
-## Code wiring
-
-In `src/pages/Landing.tsx`:
-- Add three imports: `plumberIllo`, `junkHaulerIllo`, `estimatorIllo` from `@/assets/trades/...`.
-- Replace the three `illo: null` entries in the trades array (lines 385, 388, 389) with the new imports.
-
-No other component changes — RMBC and HVAC/landscaper slots already wire through.
-
-## QA pass
-
-1. Inspect each generated PNG: cream ground, only navy + orange (+ optional white inside shapes), no text, no halftone or grain, kinetic energy present, correct aspect ratio.
-2. Open `/` at 1440 and 390 viewports, screenshot hero + RMBC strip + trades grid, confirm cohesion.
-3. Regenerate any single image that drifts (extra colors, photoreal, embedded text) with a tightened prompt — leave the rest untouched.
+- Inspect both PNGs: cream ground only, navy + orange only (no extra colors), no embedded text, kinetic vector style consistent with the rest of the landing set.
+- Open `/` at 1440 and 390, screenshot the comparison section, confirm the two cards now read as a true visual before/after pair and the Before card no longer feels empty.
 
 ## Out of scope
 
-- No layout, typography, copy, or component structure changes beyond wiring the three new trade imports.
-- No dashboard/Pricing/Auth imagery (next reskin pass).
+- No changes to bullets, eyebrows, or section copy.
+- No changes elsewhere on the page or to other illustrations.
