@@ -92,8 +92,9 @@ export default function ForAiAgentsPage() {
       <ComparisonTable />
 
       {/* API section */}
-      <section id="api" aria-labelledby="api-heading">
-        <div className="pb-container pb-section">
+      <MarketingSection id="api" aria-labelledby="api-heading">
+        <>
+          <div className="mx-auto max-w-2xl text-center">
           <div className="mx-auto max-w-2xl text-center">
             <span className="pb-eyebrow">REST API</span>
             <h2 id="api-heading" className="pb-section-title mt-4 text-white">
