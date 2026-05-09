@@ -1,10 +1,10 @@
 /// <reference types="npm:@types/react@18.3.1" />
 import * as React from 'npm:react@18.3.1'
 import {
-  Body, Container, Head, Heading, Hr, Html, Preview, Section, Text,
+  Body, Container, Head, Heading, Html, Preview, Section, Text,
 } from 'npm:@react-email/components@0.0.22'
 import type { TemplateEntry } from './registry.ts'
-import { BRAND, s, BrandHeader, BrandFooter } from './brand-styles.ts'
+import { s, BrandHeader, BrandFooter, RmbcBlock } from './brand-styles.ts'
 
 interface Props {
   name?: string
@@ -15,52 +15,29 @@ const BetaStalledCheckinEmail = ({ name }: Props) => {
   return (
     <Html lang="en" dir="ltr">
       <Head />
-      <Preview>It's been a little while — just checking in on your PhotoBrief account.</Preview>
+      <Preview>It&apos;s been a little while — checking in on your PhotoBrief account.</Preview>
       <Body style={s.main}>
         <Section style={s.outerPad}>
           <Container style={s.container}>
             <BrandHeader />
             <Section style={s.body}>
-              <Text style={s.eyebrow}>CHECK-IN</Text>
-              <Heading style={s.h1}>{greeting}</Heading>
-              <Text style={s.text}>
-                We noticed it's been a little while since your last activity on
-                PhotoBrief. No pressure — we know things get busy.
-              </Text>
-              <Text style={s.text}>
-                Just wanted to check:
-              </Text>
-              <Section style={s.card}>
-                <Text style={{ ...s.text, fontSize: '14px', margin: '0 0 8px', fontWeight: 600, color: BRAND.colors.primary }}>
-                  Did you hit a snag?
+              <RmbcBlock code="01" label="RESEARCH" first>
+                <Heading style={s.h1}>{greeting}</Heading>
+                <Text style={s.text}>
+                  Your account has been quiet for a stretch. No pressure — we know
+                  the work cycles. We just want to know which of these is true.
                 </Text>
-                <Text style={{ ...s.text, fontSize: '14px', margin: '0 0 16px' }}>
-                  If something didn't work or felt confusing, let us know. That's
-                  exactly what beta is for.
+              </RmbcBlock>
+              <RmbcBlock code="02" label="BRIEF">
+                <Text style={s.listItem}>→&nbsp;&nbsp;HIT A SNAG — TELL US WHAT BROKE</Text>
+                <Text style={s.listItem}>→&nbsp;&nbsp;TIMING IS OFF — SEASON OR BACKLOG</Text>
+                <Text style={s.listItem}>→&nbsp;&nbsp;NEED A DIFFERENT GUIDE FOR YOUR WORKFLOW</Text>
+                <Text style={s.listItem}>→&nbsp;&nbsp;NOT THE RIGHT FIT — WE&apos;LL CLOSE THINGS OUT CLEANLY</Text>
+                <Text style={s.text}>
+                  A one-line reply tells us where you stand. That&apos;s all we
+                  need.
                 </Text>
-                <Text style={{ ...s.text, fontSize: '14px', margin: '0 0 8px', fontWeight: 600, color: BRAND.colors.primary }}>
-                  Timing not right?
-                </Text>
-                <Text style={{ ...s.text, fontSize: '14px', margin: '0 0 16px' }}>
-                  If your workflow is seasonal or you're between jobs, totally fine.
-                  Your account isn't going anywhere.
-                </Text>
-                <Text style={{ ...s.text, fontSize: '14px', margin: '0 0 8px', fontWeight: 600, color: BRAND.colors.primary }}>
-                  Need a different template?
-                </Text>
-                <Text style={{ ...s.text, fontSize: '14px', margin: '0' }}>
-                  If the current setup doesn't match your workflow, we can help you
-                  build one that does.
-                </Text>
-              </Section>
-              <Text style={s.text}>
-                If PhotoBrief isn't the right fit for your business, that's useful
-                feedback too — just let us know and we'll close things out cleanly.
-              </Text>
-              <Hr style={s.hr} />
-              <Text style={s.textSmall}>
-                Either way, a quick reply helps us understand where things stand.
-              </Text>
+              </RmbcBlock>
             </Section>
             <BrandFooter />
           </Container>

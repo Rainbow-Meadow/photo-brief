@@ -1,10 +1,10 @@
 /// <reference types="npm:@types/react@18.3.1" />
 import * as React from 'npm:react@18.3.1'
 import {
-  Body, Button, Container, Head, Heading, Hr, Html, Preview, Section, Text,
+  Body, Container, Head, Heading, Html, Preview, Section, Text,
 } from 'npm:@react-email/components@0.0.22'
 import type { TemplateEntry } from './registry.ts'
-import { BRAND, s, BrandHeader, BrandFooter } from './brand-styles.ts'
+import { s, BrandHeader, BrandFooter, RmbcBlock, CTAButton } from './brand-styles.ts'
 
 interface Props {
   name?: string
@@ -12,56 +12,43 @@ interface Props {
 }
 
 const BetaFirstRequestNudgeEmail = ({ name, dashboardUrl }: Props) => {
-  const greeting = name ? `Ready to send your first PhotoBrief, ${name}?` : 'Ready to send your first PhotoBrief?'
+  const greeting = name ? `Ready for your first send, ${name}?` : 'Ready for your first send?'
   const cta = dashboardUrl || 'https://photobrief.ai/dashboard/requests/new'
   return (
     <Html lang="en" dir="ltr">
       <Head />
-      <Preview>Your account is set up — here's how to send your first photo request in 2 minutes.</Preview>
+      <Preview>Your account is set up — here&apos;s the fastest way to send your first request.</Preview>
       <Body style={s.main}>
         <Section style={s.outerPad}>
           <Container style={s.container}>
             <BrandHeader />
             <Section style={s.body}>
-              <Text style={s.eyebrow}>GETTING STARTED</Text>
-              <Heading style={s.h1}>{greeting}</Heading>
-              <Text style={s.text}>
-                You set up your PhotoBrief account a few days ago — nice. But it looks
-                like you haven't sent your first photo request yet.
-              </Text>
-              <Text style={s.text}>
-                Here's the fastest way to get started:
-              </Text>
-              <Section style={s.card}>
-                <Text style={{ ...s.text, fontSize: '14px', margin: '0 0 6px' }}>
-                  <span style={{ color: BRAND.colors.cta, fontWeight: 700 }}>1.</span> Go to Requests → New request
+              <RmbcBlock code="01" label="RESEARCH" first>
+                <Heading style={s.h1}>{greeting}</Heading>
+                <Text style={s.text}>
+                  Your workspace has been live for a few days, but no PhotoBrief
+                  has gone out yet. The value clicks the moment a real customer
+                  sends photos back.
                 </Text>
-                <Text style={{ ...s.text, fontSize: '14px', margin: '0 0 6px' }}>
-                  <span style={{ color: BRAND.colors.cta, fontWeight: 700 }}>2.</span> Pick a template or use the AI builder to create one
+              </RmbcBlock>
+              <RmbcBlock code="02" label="MECHANISM">
+                <Text style={s.listItem}>[ 01 ]&nbsp;&nbsp;REQUESTS → NEW REQUEST</Text>
+                <Text style={s.listItem}>[ 02 ]&nbsp;&nbsp;PICK A GUIDE OR LET AI BUILD ONE</Text>
+                <Text style={s.listItem}>[ 03 ]&nbsp;&nbsp;ENTER CUSTOMER NAME + EMAIL OR PHONE</Text>
+                <Text style={s.listItem}>[ 04 ]&nbsp;&nbsp;SEND</Text>
+              </RmbcBlock>
+              <RmbcBlock code="03" label="BRIEF">
+                <Text style={s.text}>
+                  Try it on a live job if you can — that&apos;s where the loop
+                  pays off. The whole flow takes about two minutes.
                 </Text>
-                <Text style={{ ...s.text, fontSize: '14px', margin: '0 0 6px' }}>
-                  <span style={{ color: BRAND.colors.cta, fontWeight: 700 }}>3.</span> Enter your customer's name and email or phone
+                <CTAButton href={cta}>Create your first request</CTAButton>
+              </RmbcBlock>
+              <RmbcBlock code="04" label="CLOSE">
+                <Text style={s.textSmall}>
+                  Stuck picking a guide? Reply and we&apos;ll set one up with you.
                 </Text>
-                <Text style={{ ...s.text, fontSize: '14px', margin: '0' }}>
-                  <span style={{ color: BRAND.colors.cta, fontWeight: 700 }}>4.</span> Hit send
-                </Text>
-              </Section>
-              <Text style={s.text}>
-                Your customer gets a guided photo capture link. You get organized,
-                AI-reviewed photos back — no more chasing blurry cell phone pics.
-              </Text>
-              <Text style={s.text}>
-                Try it with a real job if you can — that's where the value clicks.
-                The whole thing takes about 2 minutes.
-              </Text>
-              <Section style={s.ctaWrap}>
-                <Button href={cta} style={s.button}>Create Your First Request</Button>
-              </Section>
-              <Hr style={s.hr} />
-              <Text style={s.textSmall}>
-                If you're stuck or want help picking the right template, just reply.
-                We're here.
-              </Text>
+              </RmbcBlock>
             </Section>
             <BrandFooter />
           </Container>

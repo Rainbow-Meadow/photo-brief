@@ -1,10 +1,10 @@
 /// <reference types="npm:@types/react@18.3.1" />
 import * as React from 'npm:react@18.3.1'
 import {
-  Body, Button, Container, Head, Heading, Html, Link, Preview, Section, Text,
+  Body, Container, Head, Heading, Html, Preview, Section, Text,
 } from 'npm:@react-email/components@0.0.22'
 import type { TemplateEntry } from './registry.ts'
-import { BRAND, s, BrandHeader, BrandFooter } from './brand-styles.ts'
+import { s, BrandHeader, BrandFooter, RmbcBlock, CTAButton, MonoLink } from './brand-styles.ts'
 
 interface Props {
   recipientName?: string
@@ -18,7 +18,7 @@ interface Props {
 const RecipientRequestLinkEmail = ({
   recipientName, businessName, introMessage, link, estimatedMinutes, requestTitle,
 }: Props) => {
-  const greeting = recipientName ? `Hi ${recipientName},` : 'Hi there,'
+  const greeting = recipientName ? `Hi ${recipientName}.` : 'Hi there.'
   const sender = businessName || 'A business'
   const message = introMessage?.trim() || `${sender} needs a few quick photos from you.`
   const cta = link || '#'
@@ -33,20 +33,24 @@ const RecipientRequestLinkEmail = ({
           <Container style={s.container}>
             <BrandHeader />
             <Section style={s.body}>
-              <Heading style={s.h1}>{greeting}</Heading>
-              <Text style={s.text}>{message}</Text>
-              <Text style={s.text}>
-                Tap the button below — it walks you through the shots one at a time
-                and only takes about {eta} minute{eta === 1 ? '' : 's'}. No app or
-                account needed.
-              </Text>
-              <Section style={s.ctaWrap}>
-                <Button href={cta} style={s.button}>Take your photos</Button>
-              </Section>
-              <Text style={s.textSmall}>
-                Or open this link directly:{' '}
-                <Link href={cta} style={s.link}>{cta}</Link>
-              </Text>
+              <RmbcBlock code="01" label="RESEARCH" first>
+                <Heading style={s.h1}>{greeting}</Heading>
+                <Text style={s.text}>{message}</Text>
+                {requestTitle ? (
+                  <Text style={s.meta}>REQUEST · {requestTitle}</Text>
+                ) : null}
+              </RmbcBlock>
+              <RmbcBlock code="02" label="BRIEF">
+                <Text style={s.text}>
+                  Tap below — the guide walks you through each shot one at a time.
+                  No app, no account, about {eta} minute{eta === 1 ? '' : 's'}.
+                </Text>
+                <CTAButton href={cta}>Take your photos</CTAButton>
+                <Text style={s.textSmall}>
+                  Or open this link directly:
+                </Text>
+                <MonoLink href={cta} />
+              </RmbcBlock>
             </Section>
             <BrandFooter extra={`On behalf of ${sender}`} />
           </Container>
@@ -69,7 +73,7 @@ export const template = {
   previewData: {
     recipientName: 'Maria',
     businessName: 'Bright Spark Plumbing',
-    introMessage: 'Hi! Help us help you — a few quick photos.',
+    introMessage: 'A few quick photos so we can scope the work before we arrive.',
     link: 'https://photobrief.ai/r/preview-token',
     estimatedMinutes: 2,
     requestTitle: 'Kitchen leak inspection',
