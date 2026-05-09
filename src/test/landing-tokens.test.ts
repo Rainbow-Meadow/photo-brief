@@ -21,15 +21,11 @@ describe("Landing token hygiene", () => {
     expect(matches, `Found raw hex tailwind values: ${matches?.join(", ")}`).toBeNull();
   });
 
-  it("does not use bg-black or text-black utility classes", () => {
-    // text-white is widely used on dark sections via design tokens — allowed.
-    const offenders = ["bg-black ", "text-black ", "bg-black\"", "text-black\""];
-    for (const token of offenders) {
-      expect(
-        LANDING_SOURCE.includes(token),
-        `Forbidden raw color class: ${token.trim()}`,
-      ).toBe(false);
-    }
+  it("does not use bare text-black or border-black tokens (opacity-modified variants are allowed)", () => {
+    // Bare `text-black` / `border-black` would fight the design tokens. Modal backdrops use
+    // `bg-black` intentionally — allow that one. Opacity variants like `bg-black/35` are fine.
+    expect(/\btext-black(?![/\w-])/.test(LANDING_SOURCE), "Forbidden bare text-black").toBe(false);
+    expect(/\bborder-black(?![/\w-])/.test(LANDING_SOURCE), "Forbidden bare border-black").toBe(false);
   });
 
   it("imports only assets that exist and are referenced at least twice (import + use)", () => {
