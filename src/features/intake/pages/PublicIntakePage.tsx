@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowRight, CheckCircle2, Loader2, LockKeyhole, MessageSquareText, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
@@ -34,6 +33,9 @@ const blank: FormState = {
   message: "",
   address: "",
 };
+
+const inputCls =
+  "h-12 w-full border border-border bg-background px-3 text-sm text-foreground rounded-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--ring))]";
 
 export default function PublicIntakePage() {
   const { token } = useParams();
@@ -99,10 +101,15 @@ export default function PublicIntakePage() {
   if (loading) {
     return (
       <PublicShell>
-        <div className="rounded-[2rem] border bg-card/80 p-8 text-center shadow-sm backdrop-blur">
-          <div className="mx-auto h-10 w-10 animate-pulse rounded-full bg-muted" />
+        <article className="border border-border bg-card p-7 text-center">
+          <p className="inline-flex items-baseline gap-2 font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+            <span className="inline-block h-px w-8 -translate-y-[0.25em] bg-[hsl(var(--accent-kinetic))]" />
+            <span className="text-[hsl(var(--accent-kinetic))]">[ 00 ]</span>
+            <span>Loading</span>
+          </p>
+          <div className="mx-auto mt-5 h-8 w-8 animate-pulse bg-muted" />
           <p className="mt-4 text-sm text-muted-foreground">Opening intake form…</p>
-        </div>
+        </article>
       </PublicShell>
     );
   }
@@ -110,100 +117,155 @@ export default function PublicIntakePage() {
   if (error && !config) {
     return (
       <PublicShell>
-        <div className="rounded-[2rem] border bg-card/80 p-8 text-center shadow-sm backdrop-blur">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
-            <LockKeyhole className="h-5 w-5" />
+        <article className="border border-border bg-card p-7 text-center">
+          <p className="inline-flex items-baseline gap-2 font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+            <span className="inline-block h-px w-8 -translate-y-[0.25em] bg-[hsl(var(--accent-kinetic))]" />
+            <span className="text-[hsl(var(--accent-kinetic))]">[ ER ]</span>
+            <span>Form unavailable</span>
+          </p>
+          <h1 className="mt-5 font-[Geist,Inter,system-ui,sans-serif] text-xl font-semibold tracking-[-0.022em] text-foreground">
+            This intake form is not available
+          </h1>
+          <p className="mt-3 text-sm leading-6 text-muted-foreground">{error}</p>
+          <div className="mx-auto mt-5 flex h-10 w-10 items-center justify-center border border-border text-muted-foreground">
+            <LockKeyhole className="h-4 w-4" />
           </div>
-          <h1 className="mt-4 text-xl font-semibold text-foreground">This intake form is not available</h1>
-          <p className="mt-2 text-sm leading-6 text-muted-foreground">{error}</p>
-          <p className="mt-4 rounded-2xl bg-muted/45 p-3 text-xs leading-5 text-muted-foreground">
+          <p className="mt-5 border-t border-border pt-4 text-xs leading-5 text-muted-foreground">
             The business can still send you a manual PhotoBrief request link if they are not using Website Intake.
           </p>
-        </div>
+        </article>
       </PublicShell>
     );
   }
 
   return (
     <PublicShell>
-      <section className="relative isolate overflow-hidden rounded-[2rem] border border-border/70 bg-card/90 p-5 shadow-[0_30px_90px_-55px_hsl(222_47%_11%/0.55)] backdrop-blur sm:p-7">
-        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-56 bg-ambient-sky opacity-80" />
-        <div className="flex items-center gap-3">
+      <section className="border border-border bg-card p-5 sm:p-7">
+        <div className="flex items-center gap-3 border-b border-border pb-5">
           {config?.logoUrl ? (
-            <img src={config.logoUrl} alt="" className="h-11 w-11 rounded-2xl object-contain bg-background/70 p-1 ring-1 ring-border/60" />
+            <img
+              src={config.logoUrl}
+              alt=""
+              className="h-11 w-11 border border-border bg-background object-contain p-1"
+            />
           ) : (
-            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-              <Sparkles className="h-5 w-5" />
+            <span className="flex h-11 w-11 items-center justify-center border border-border text-[hsl(var(--accent-kinetic))]">
+              <Sparkles className="h-4 w-4" />
             </span>
           )}
-          <div>
-            <p className="text-sm font-medium text-muted-foreground">{config?.businessName}</p>
-            <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">Start your request</h1>
+          <div className="min-w-0">
+            <p className="font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+              {config?.businessName}
+            </p>
+            <h1 className="mt-1 font-[Geist,Inter,system-ui,sans-serif] text-[clamp(1.5rem,3vw,2rem)] font-semibold leading-[1.05] tracking-[-0.022em] text-foreground">
+              Start your request
+            </h1>
           </div>
         </div>
 
-        <p className="mt-5 text-base leading-7 text-muted-foreground">
-          {config?.introMessage}
-        </p>
+        <p className="mt-5 text-base leading-7 text-muted-foreground">{config?.introMessage}</p>
 
         <div className="mt-6 space-y-4">
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Your name">
-              <Input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="Jane Smith" className="h-12 rounded-2xl bg-background/80" />
+              <Input
+                value={form.name}
+                onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                placeholder="Jane Smith"
+                className={inputCls}
+              />
             </Field>
             <Field label="Email">
-              <Input type="email" value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} placeholder="you@example.com" className="h-12 rounded-2xl bg-background/80" />
+              <Input
+                type="email"
+                value={form.email}
+                onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+                placeholder="you@example.com"
+                className={inputCls}
+              />
             </Field>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2">
-            <Field label="Phone optional">
-              <Input value={form.phone} onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))} placeholder="555-0142" className="h-12 rounded-2xl bg-background/80" />
+            <Field label="Phone — optional">
+              <Input
+                value={form.phone}
+                onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
+                placeholder="555-0142"
+                className={inputCls}
+              />
             </Field>
             <Field label="What do you need help with?">
               {config?.requestTypeOptions?.length ? (
                 <select
                   value={form.request_type}
                   onChange={(e) => setForm((f) => ({ ...f, request_type: e.target.value }))}
-                  className="h-12 w-full rounded-2xl border bg-background/80 px-3 text-sm"
+                  className={inputCls}
                 >
                   <option value="">Choose one</option>
                   {config.requestTypeOptions.map((option) => (
-                    <option key={option} value={option}>{option}</option>
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
                   ))}
                   <option value="Other">Other</option>
                 </select>
               ) : (
-                <Input value={form.request_type} onChange={(e) => setForm((f) => ({ ...f, request_type: e.target.value }))} placeholder="Quote, repair, return…" className="h-12 rounded-2xl bg-background/80" />
+                <Input
+                  value={form.request_type}
+                  onChange={(e) => setForm((f) => ({ ...f, request_type: e.target.value }))}
+                  placeholder="Quote, repair, return…"
+                  className={inputCls}
+                />
               )}
             </Field>
           </div>
 
-          <Field label="Address optional">
-            <Input value={form.address} onChange={(e) => setForm((f) => ({ ...f, address: e.target.value }))} placeholder="Service address or location" className="h-12 rounded-2xl bg-background/80" />
+          <Field label="Address — optional">
+            <Input
+              value={form.address}
+              onChange={(e) => setForm((f) => ({ ...f, address: e.target.value }))}
+              placeholder="Service address or location"
+              className={inputCls}
+            />
           </Field>
 
           <Field label="Tell us a little more">
-            <Textarea value={form.message} onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))} placeholder="A short note is enough." rows={4} className="rounded-2xl bg-background/80" />
+            <Textarea
+              value={form.message}
+              onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
+              placeholder="A short note is enough."
+              rows={4}
+              className="w-full rounded-none border border-border bg-background p-3 text-sm text-foreground"
+            />
           </Field>
         </div>
 
-        {error ? <p className="mt-4 rounded-2xl bg-destructive/10 p-3 text-sm text-destructive">{error}</p> : null}
+        {error ? (
+          <p className="mt-4 border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">{error}</p>
+        ) : null}
 
-        <Button size="lg" className="mt-6 h-14 w-full rounded-2xl text-base shadow-glow" disabled={!canSubmit || submitting} onClick={submit}>
-          {submitting ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <MessageSquareText className="mr-2 h-5 w-5" />}
+        <button
+          type="button"
+          onClick={submit}
+          disabled={!canSubmit || submitting}
+          className="mt-6 inline-flex h-14 w-full items-center justify-center gap-2 bg-[hsl(var(--accent-kinetic))] px-6 font-[Geist,Inter,system-ui,sans-serif] text-[0.85rem] font-semibold uppercase tracking-[0.14em] text-[hsl(var(--primary-foreground))] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--ring))]"
+        >
+          {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <MessageSquareText className="h-4 w-4" />}
           {submitting ? "Starting…" : "Start photo request"}
-          {!submitting ? <ArrowRight className="ml-2 h-5 w-5" /> : null}
-        </Button>
+          {!submitting ? <ArrowRight className="h-4 w-4" /> : null}
+        </button>
 
         <div className="mt-4 flex items-start gap-2 text-xs leading-5 text-muted-foreground">
-          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-success" />
+          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[hsl(var(--accent-kinetic))]" />
           After this, you may be asked for a few photos so the business can help faster.
         </div>
       </section>
 
       {!config?.hidePhotobriefBranding ? (
-        <p className="mt-4 text-center text-xs text-muted-foreground">Powered by PhotoBrief</p>
+        <p className="mt-4 text-center font-mono text-[0.7rem] uppercase tracking-[0.18em] text-muted-foreground">
+          Powered by PhotoBrief
+        </p>
       ) : null}
     </PublicShell>
   );
@@ -212,7 +274,9 @@ export default function PublicIntakePage() {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block space-y-1.5">
-      <span className="text-sm font-medium text-foreground">{label}</span>
+      <span className="font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+        {label}
+      </span>
       {children}
     </label>
   );
