@@ -350,26 +350,28 @@ export default function LandingPage() {
               {/* Left — copy */}
               <div className="text-left pl-0">
                 <Eyebrow>
-                  <Sparkles className="h-3.5 w-3.5" /> Accepting beta applications
+                  <Sparkles className="h-3.5 w-3.5" /> Founding Partner Beta · Now reviewing applications
                 </Eyebrow>
 
                 <div className="mt-4 sm:mt-6">
                   <Title level={1}>
-                    Replace weak forms.
+                    Your contact form
                     <br />
-                    Send a guided
+                    is leaking money.
                     <br />
-                    photo brief.
+                    Patch it.
                   </Title>
                 </div>
 
                 <div className="mt-4 sm:mt-6 max-w-xl">
                   <Subtitle>
-                    PhotoBrief scans your website, maps your services, and gives
-                    customers a simple photo-guided path — so your team gets
-                    actionable lead packets instead of vague messages. Built for
-                    landscapers, junk haulers, HVAC and repair techs, plumbers,
-                    and damage estimators.
+                    Stop asking customers <em>"what do you need?"</em> and hoping
+                    they spell it out. PhotoBrief flips the form: we tell them
+                    exactly what to send — guided, in order, from their phone.
+                    The lead packet that lands in your inbox is already
+                    quote-ready. Built for landscapers, junk haulers, HVAC and
+                    repair techs, plumbers, and damage estimators who are tired
+                    of chasing photos.
                   </Subtitle>
                 </div>
 
@@ -383,21 +385,21 @@ export default function LandingPage() {
                         document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" });
                       }}
                     >
-                      {isFull ? "Join the waitlist" : "Apply for the beta"}
+                      {isFull ? "Join the waitlist" : "Claim a founding seat"}
                       <ArrowRight className="h-4 w-4" />
                     </CTA>
                     <CTA variant="quiet" size="lg" onClick={() => setDemoOpen(true)}>
                       <PlayCircle className="h-5 w-5" />
-                      Watch the product spotlight
+                      Watch the 90-second walkthrough
                     </CTA>
                   </CTAGroup>
                 </div>
 
                 <div className="mt-6 sm:mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-medium text-[hsl(var(--pb-ink-muted))] sm:text-sm">
                   {[
-                    "Website scan included",
-                    "Hosted link or embed",
-                    "Lead packets, not form spam",
+                    "Site scan included",
+                    "Live in 7 days",
+                    "You keep every photo",
                   ].map((item) => (
                     <span key={item} className="inline-flex items-center gap-1.5">
                       <span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--pb-violet)/0.55)]" />
