@@ -95,7 +95,7 @@ export function BriefHeader({
           </div>
 
           {/* AI summary */}
-          <div className="glass rounded-2xl px-4 py-3">
+          <div className="glass rounded-[0.25rem] px-4 py-3">
             <p className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-primary">
               <Sparkles className="h-3 w-3" /> AI summary
             </p>
@@ -133,7 +133,7 @@ export function BriefHeader({
 
           {/* Suggested next action — primary CTA */}
           {submission.suggestedNextAction ? (
-            <div className="rounded-2xl border border-primary/30 bg-primary/5 p-3.5">
+            <div className="rounded-[0.25rem] border border-primary/30 bg-primary/5 p-3.5">
               <p className="text-[11px] font-semibold uppercase tracking-wide text-primary">
                 Suggested next action
               </p>

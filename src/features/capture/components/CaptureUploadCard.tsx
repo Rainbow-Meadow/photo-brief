@@ -43,7 +43,7 @@ export function CaptureUploadCard({ step, pending, onCapture, onSkip }: CaptureU
 
       <Button
         size="lg"
-        className="h-14 w-full rounded-2xl text-base shadow-glow"
+        className="h-14 w-full rounded-[0.25rem] text-base"
         disabled={pending}
         onClick={() => cameraRef.current?.click()}
       >
@@ -58,7 +58,7 @@ export function CaptureUploadCard({ step, pending, onCapture, onSkip }: CaptureU
       <Button
         variant="outline"
         size="lg"
-        className="h-12 w-full rounded-2xl bg-background/70"
+        className="h-12 w-full rounded-[0.25rem] bg-background"
         disabled={pending}
         onClick={() => uploadRef.current?.click()}
       >

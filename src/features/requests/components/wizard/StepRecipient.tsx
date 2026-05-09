@@ -35,7 +35,7 @@ export function StepRecipient({ draft, onChange, onNext }: StepRecipientProps) {
             value={draft.recipientName}
             onChange={(e) => set("recipientName", e.target.value)}
             placeholder="e.g. Maria Alvarez"
-            className="h-12 rounded-2xl bg-background/80 text-base"
+            className="h-12 rounded-[0.25rem] bg-background text-base"
             autoFocus
           />
         </div>
@@ -45,7 +45,7 @@ export function StepRecipient({ draft, onChange, onNext }: StepRecipientProps) {
             value={draft.recipientContact}
             onChange={(e) => set("recipientContact", e.target.value)}
             placeholder="email@example.com or 555-0142"
-            className="h-12 rounded-2xl bg-background/80 text-base"
+            className="h-12 rounded-[0.25rem] bg-background text-base"
           />
           <p className="text-xs text-muted-foreground">
             If you enter an email, we'll send the request automatically.
@@ -55,7 +55,7 @@ export function StepRecipient({ draft, onChange, onNext }: StepRecipientProps) {
 
       <Button
         size="lg"
-        className="h-14 w-full rounded-2xl text-base shadow-glow"
+        className="h-14 w-full rounded-[0.25rem] text-base"
         disabled={!canContinue}
         onClick={onNext}
       >

@@ -40,7 +40,7 @@ export function ReviewSummaryCard({ guide, photos, answers, onSubmit, submitting
           {photos.map((p, i) => {
             const step = guide.steps.find((s) => s.id === p.stepId);
             return (
-              <div key={`${p.stepId}-${i}`} className="overflow-hidden rounded-2xl bg-muted shadow-sm ring-1 ring-border/60">
+              <div key={`${p.stepId}-${i}`} className="overflow-hidden rounded-[0.25rem] bg-muted shadow-sm ring-1 ring-border/60">
                 <div className="aspect-square overflow-hidden">
                   <img
                     src={p.previewUrl}
@@ -64,7 +64,7 @@ export function ReviewSummaryCard({ guide, photos, answers, onSubmit, submitting
           </header>
           <ul className="space-y-2">
             {answers.map((a) => (
-              <li key={a.questionId} className="rounded-2xl border bg-background/70 p-4 text-[15px]">
+              <li key={a.questionId} className="rounded-[0.25rem] border bg-background p-4 text-[15px]">
                 <p className="font-medium text-foreground">{a.prompt}</p>
                 <p className="mt-1.5 text-foreground/80">{a.answer}</p>
               </li>
@@ -73,7 +73,7 @@ export function ReviewSummaryCard({ guide, photos, answers, onSubmit, submitting
         </section>
       ) : null}
 
-      <Button size="lg" className="h-14 w-full rounded-2xl text-base shadow-glow" onClick={onSubmit} disabled={submitting}>
+      <Button size="lg" className="h-14 w-full rounded-[0.25rem] text-base" onClick={onSubmit} disabled={submitting}>
         {submitting ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Send className="mr-2 h-5 w-5" />}
         {submitting ? "Sending…" : microcopy.recipient.submit}
       </Button>

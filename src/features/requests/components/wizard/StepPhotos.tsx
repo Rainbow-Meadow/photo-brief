@@ -30,7 +30,7 @@ export function StepPhotos({ draft, onChange, onNext }: StepPhotosProps) {
 
       <Button
         size="lg"
-        className="h-14 w-full rounded-2xl text-base shadow-glow"
+        className="h-14 w-full rounded-[0.25rem] text-base"
         onClick={onNext}
         disabled={draft.steps.length === 0}
       >

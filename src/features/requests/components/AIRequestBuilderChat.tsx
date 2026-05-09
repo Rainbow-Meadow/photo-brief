@@ -74,9 +74,9 @@ export function AIRequestBuilderChat({ messages, isGenerating, onSubmit }: AIReq
 
   return (
     <div className="space-y-4">
-      <section className="overflow-hidden rounded-[1.75rem] border border-border/70 bg-card/90 p-4 shadow-[0_24px_70px_-45px_hsl(222_47%_11%/0.5)] backdrop-blur">
+      <section className="overflow-hidden rounded-[1.75rem] border border-border/70 bg-card p-4 shadow-[0_24px_70px_-45px_hsl(222_47%_11%/0.5)] backdrop-blur">
         <div className="flex items-start gap-3">
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[0.25rem] bg-primary/10 text-primary">
             <Sparkles className="h-5 w-5" />
           </span>
           <div>
@@ -94,7 +94,7 @@ export function AIRequestBuilderChat({ messages, isGenerating, onSubmit }: AIReq
               value={purpose}
               onChange={(e) => setPurpose(e.target.value)}
               placeholder="e.g. junk removal quote"
-              className="h-12 rounded-2xl bg-background/80 text-base"
+              className="h-12 rounded-[0.25rem] bg-background text-base"
               disabled={isGenerating}
             />
             <div className="flex flex-wrap gap-1.5">
@@ -104,7 +104,7 @@ export function AIRequestBuilderChat({ messages, isGenerating, onSubmit }: AIReq
                   type="button"
                   onClick={() => setPurpose(example)}
                   disabled={isGenerating}
-                  className="rounded-full border bg-background/70 px-3 py-1.5 text-xs font-medium text-muted-foreground transition hover:border-primary/40 hover:text-foreground disabled:opacity-50"
+                  className="rounded-full border bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground transition hover:border-primary/40 hover:text-foreground disabled:opacity-50"
                 >
                   {example}
                 </button>
@@ -112,7 +112,7 @@ export function AIRequestBuilderChat({ messages, isGenerating, onSubmit }: AIReq
             </div>
           </div>
 
-          <div className="rounded-2xl bg-muted/40 p-3">
+          <div className="rounded-[0.25rem] bg-muted/40 p-3">
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
                 <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-background text-primary shadow-sm">
@@ -156,7 +156,7 @@ export function AIRequestBuilderChat({ messages, isGenerating, onSubmit }: AIReq
               onChange={(e) => setMustCapture(e.target.value)}
               placeholder={"One per line, optional\nWide photo of the whole area\nClose-up of the issue\nPhoto of the label or model number"}
               rows={4}
-              className="rounded-2xl bg-background/80 text-sm"
+              className="rounded-[0.25rem] bg-background text-sm"
               disabled={isGenerating}
             />
             <p className="text-xs text-muted-foreground">
@@ -173,7 +173,7 @@ export function AIRequestBuilderChat({ messages, isGenerating, onSubmit }: AIReq
               onChange={(e) => setQuestions(e.target.value)}
               placeholder={"One per line, optional\nWhen did this start?\nWhat is the best time to contact you?"}
               rows={3}
-              className="rounded-2xl bg-background/80 text-sm"
+              className="rounded-[0.25rem] bg-background text-sm"
               disabled={isGenerating}
             />
             <p className="text-xs text-muted-foreground">
@@ -181,14 +181,14 @@ export function AIRequestBuilderChat({ messages, isGenerating, onSubmit }: AIReq
             </p>
           </div>
 
-          <details className="rounded-2xl border bg-background/60 p-3">
+          <details className="rounded-[0.25rem] border bg-background/60 p-3">
             <summary className="cursor-pointer text-sm font-medium text-foreground">Add extra context</summary>
             <Textarea
               value={extraContext}
               onChange={(e) => setExtraContext(e.target.value)}
               placeholder="Anything the AI should know, like tone, industry, or what the business needs to decide."
               rows={3}
-              className="mt-3 rounded-2xl bg-card text-sm"
+              className="mt-3 rounded-[0.25rem] bg-card text-sm"
               disabled={isGenerating}
             />
           </details>
@@ -196,7 +196,7 @@ export function AIRequestBuilderChat({ messages, isGenerating, onSubmit }: AIReq
           <Button
             type="button"
             size="lg"
-            className="h-14 w-full rounded-2xl text-base shadow-glow"
+            className="h-14 w-full rounded-[0.25rem] text-base"
             onClick={submit}
             disabled={!ready || isGenerating}
           >
@@ -208,9 +208,9 @@ export function AIRequestBuilderChat({ messages, isGenerating, onSubmit }: AIReq
       </section>
 
       {messages.length > 0 ? (
-        <section className="space-y-2 rounded-[1.5rem] border bg-background/70 p-3">
+        <section className="space-y-2 rounded-[0.25rem] border bg-background p-3">
           {messages.slice(-2).map((m) => (
-            <div key={m.id} className={cn("rounded-2xl p-3 text-sm", m.from === "user" ? "bg-primary/10 text-foreground" : "bg-card text-muted-foreground")}>
+            <div key={m.id} className={cn("rounded-[0.25rem] p-3 text-sm", m.from === "user" ? "bg-primary/10 text-foreground" : "bg-card text-muted-foreground")}>
               {m.pending ? (
                 <span className="flex items-center gap-2">
                   <Loader2 className="h-4 w-4 animate-spin" /> Building your draft…
