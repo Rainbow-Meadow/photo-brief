@@ -148,7 +148,7 @@
     color: hsl(var(--foreground));
     border-color: hsl(var(--foreground) / 0.25);
   }
-  .ls-section--dark .ls-cta-secondary { color: hsl(var(--background)); border-color: hsl(var(--background) / 0.3); }
+  /* dark-section secondary cta override removed */
 
   .ls-cta-quiet {
     background: transparent;
