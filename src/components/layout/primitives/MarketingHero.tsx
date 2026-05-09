@@ -2,7 +2,7 @@ import type { HTMLAttributes, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 interface MarketingHeroProps extends HTMLAttributes<HTMLElement> {
-  width?: "default" | "narrow";
+  width?: "default" | "narrow" | "full";
   align?: "start" | "center";
   children?: ReactNode;
 }
@@ -28,7 +28,11 @@ export function MarketingHero({
     >
       <div
         className={cn(
-          width === "narrow" ? "pb-container-narrow" : "pb-container",
+          width === "full"
+            ? "w-full"
+            : width === "narrow"
+              ? "pb-container-narrow"
+              : "pb-container",
           "pb-section",
           align === "center" && "text-center",
         )}
