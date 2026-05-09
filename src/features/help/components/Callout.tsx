@@ -11,12 +11,12 @@ const styles: Record<Variant, { wrap: string; icon: string; Icon: typeof Lightbu
   },
   warn: {
     wrap: "border-amber-500/30 bg-amber-500/5 text-foreground",
-    icon: "text-amber-600 dark:text-amber-400",
+    icon: "text-amber-600",
     Icon: AlertTriangle,
   },
   success: {
     wrap: "border-emerald-500/30 bg-emerald-500/5 text-foreground",
-    icon: "text-emerald-600 dark:text-emerald-400",
+    icon: "text-emerald-600",
     Icon: CheckCircle2,
   },
 };

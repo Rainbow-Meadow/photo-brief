@@ -75,7 +75,7 @@ function AxisRow({
   onDark: boolean;
 }) {
   return (
-    <li className="flex gap-2 rounded-xl bg-background/55 p-2.5 text-xs dark:bg-white/5">
+    <li className="flex gap-2 rounded-xl bg-background/55 p-2.5 text-xs">
       <Icon className={cn("mt-0.5 h-3.5 w-3.5 shrink-0", onDark ? "text-primary-glow" : "text-primary")} />
       <span>
         <span className={cn("block font-medium", onDark ? "text-white" : "text-foreground")}>{label}</span>
