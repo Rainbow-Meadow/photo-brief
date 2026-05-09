@@ -373,8 +373,8 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
 
   .pb-landing {
     background:
-      radial-gradient(60% 40% at 50% 0%, hsl(var(--pb-lavender) / 0.10), transparent 72%),
-      linear-gradient(180deg, hsl(var(--pb-cream)) 0%, hsl(var(--pb-cream-warm)) 100%);
+      radial-gradient(60% 40% at 50% 0%, hsl(var(--pb-amber) / 0.10), transparent 72%),
+      linear-gradient(180deg, hsl(var(--pb-tier-0)) 0%, hsl(var(--pb-tier-1)) 100%);
     color: hsl(var(--pb-ink-soft));
   }
 
@@ -383,34 +383,42 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
   .pb-landing .pb-section-tight { padding-block: clamp(1.25rem, 2.2vw, 2.25rem); }
   .pb-landing .pb-section-title { font-size: clamp(1.6rem, 3.4vw, 2.6rem); }
 
-  /* ── Editorial / Surveva-style warm paper surface ───────────── */
+  /* ── Tier wrappers — explicit ladder rungs ── */
+  .pb-tier-0 { background: hsl(var(--pb-tier-0)); }
+  .pb-tier-1 { background: hsl(var(--pb-tier-1)); }
+  .pb-tier-2 {
+    background: hsl(var(--pb-tier-2));
+    border-block: 1px solid hsl(var(--pb-paper-edge) / 0.55);
+  }
+
+  /* ── Editorial / Surveva-style soft-navy paper surface ───────────── */
   .pb-paper-surface {
     background:
-      radial-gradient(60% 50% at 80% 0%, hsl(var(--pb-violet) / 0.08), transparent 70%),
-      radial-gradient(40% 35% at 8% 18%, hsl(var(--pb-lavender) / 0.10), transparent 72%),
-      linear-gradient(180deg, hsl(var(--pb-cream)) 0%, hsl(var(--pb-cream-warm)) 100%);
+      radial-gradient(60% 50% at 80% 0%, hsl(var(--pb-amber) / 0.08), transparent 70%),
+      radial-gradient(40% 35% at 8% 18%, hsl(var(--pb-amber-soft, 33 89% 69%) / 0.10), transparent 72%),
+      linear-gradient(180deg, hsl(var(--pb-tier-0)) 0%, hsl(var(--pb-tier-1)) 100%);
     color: hsl(var(--pb-ink-soft));
   }
   .pb-paper-surface .pb-eyebrow {
-    background: hsl(0 0% 100% / 0.6);
-    border-color: hsl(var(--pb-ink-soft) / 0.12);
-    color: hsl(var(--pb-violet));
+    background: hsl(0 0% 100% / 0.7);
+    border-color: hsl(var(--pb-paper-edge) / 0.6);
+    color: hsl(var(--pb-amber));
   }
   .pb-display {
     font-weight: 700;
     letter-spacing: -0.035em;
     line-height: 0.98;
-    color: hsl(var(--pb-violet));
+    color: hsl(var(--pb-amber));
     font-size: clamp(2.5rem, 7.2vw, 6rem);
   }
   .pb-display-ink { color: hsl(var(--pb-ink-soft)); }
   .pb-paper-pill {
-    background: hsl(0 0% 100% / 0.78);
+    background: hsl(220 35% 99% / 0.78);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
-    border: 1px solid hsl(var(--pb-ink-soft) / 0.08);
-    box-shadow: 0 18px 40px -28px hsl(var(--pb-ink-soft) / 0.5);
-    --pb-wordmark-gradient: linear-gradient(135deg, hsl(var(--pb-ink-soft)) 0%, hsl(var(--pb-violet)) 100%);
+    border: 1px solid hsl(var(--pb-paper-edge) / 0.7);
+    box-shadow: 0 18px 40px -28px hsl(var(--pb-ink) / 0.45);
+    --pb-wordmark-gradient: linear-gradient(135deg, hsl(var(--pb-ink-soft)) 0%, hsl(var(--pb-amber)) 100%);
   }
   /* Re-theme dark-on-dark widgets when placed on the paper surface */
   .pb-on-paper { color: hsl(var(--pb-ink-soft)); }
