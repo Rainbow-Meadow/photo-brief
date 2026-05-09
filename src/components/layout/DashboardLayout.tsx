@@ -52,7 +52,7 @@ export function DashboardLayout() {
               </div>
 
               <NavLink to="/dashboard" aria-label="PhotoBrief home" className="flex items-center lg:hidden">
-                <BrandMark variant="mark" tone="light" size={28} eager />
+                <BrandMark variant="mark" tone="dark" size={28} eager />
               </NavLink>
 
               <div className="hidden min-w-0 sm:block">

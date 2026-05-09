@@ -6,7 +6,7 @@ interface PoweredByBadgeProps {
   className?: string;
   /** Size of the wordmark in px. Default 48. */
   size?: number;
-  /** Surface tone the badge sits on. Defaults to "light" (cream surface). */
+  /** Surface tone the badge sits on. Defaults to "dark" — the app shell is dark-themed. */
   tone?: BrandTone;
 }
 
@@ -14,7 +14,7 @@ interface PoweredByBadgeProps {
  * Reusable "Sent securely with PhotoBrief" attribution badge.
  * Used on recipient confirmation, public pages, and other external surfaces.
  */
-export function PoweredByBadge({ className, size = 48, tone = "light" }: PoweredByBadgeProps) {
+export function PoweredByBadge({ className, size = 48, tone = "dark" }: PoweredByBadgeProps) {
   return (
     <div
       className={cn(

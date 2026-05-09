@@ -87,7 +87,7 @@ export function AppSidebar() {
         >
           <BrandMark
             variant={collapsed ? "mark" : "horizontal"}
-            tone="light"
+            tone="dark"
             size={collapsed ? 24 : 30}
             eager
           />

@@ -18,7 +18,7 @@ interface BrandMarkProps {
   className?: string;
   /** Which lockup to render. Defaults to "horizontal". */
   variant?: BrandVariant;
-  /** Surface tone (see BrandTone). Defaults to "light". */
+  /** Surface tone (see BrandTone). Defaults to "dark" — the app shell is dark-themed. */
   tone?: BrandTone;
   /** Visual height in px. Defaults to 28. */
   size?: number;
@@ -114,7 +114,7 @@ function Tagline({ size, tone }: { size: number; tone: BrandTone }) {
 export function BrandMark({
   className,
   variant = "horizontal",
-  tone = "light",
+  tone = "dark",
   size = 28,
   eager,
   showTagline = false,
