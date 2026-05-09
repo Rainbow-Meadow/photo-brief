@@ -1370,7 +1370,7 @@ function ComparisonSection({ mode }: { mode: "messy" | "clean" }) {
           <div className="lg:pr-8 xl:pr-12">
             <div className="flex items-baseline justify-between gap-3 border-b border-[hsl(var(--pb-ink-soft)/0.18)] pb-3">
               <p className="font-serif text-lg italic text-[hsl(var(--pb-ink))] sm:text-xl">
-                {isClean ? "Guided visual intake" : "Generic website form"}
+                {isClean ? "The Reverse-Form Method™" : "The form you're using now"}
               </p>
               <span
                 className={`text-[10px] font-black uppercase tracking-[0.22em] ${
