@@ -179,6 +179,16 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        kinetic: {
+          DEFAULT: "hsl(var(--accent-kinetic))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        sage: {
+          DEFAULT: "hsl(var(--accent-sage))",
+        },
+        paper: {
+          DEFAULT: "hsl(var(--surface-paper))",
+        },
       },
       backgroundImage: {
         "gradient-primary": "var(--gradient-primary)",
