@@ -430,7 +430,7 @@ export default function LandingPage() {
 
               {/* Right — brand mark + hand-drawn illustration */}
               <div className="flex flex-col items-center min-w-0">
-                <div className="mb-4 sm:mb-6 w-full max-w-md sm:max-w-lg lg:max-w-none lg:translate-x-2 flex justify-center">
+                <div className="mb-4 sm:mb-6 w-full max-w-sm sm:max-w-md lg:max-w-lg lg:translate-x-2 flex justify-center">
                   <BrandMark variant="horizontal" size={64} eager className="sm:hidden" />
                   <BrandMark variant="horizontal" size={88} eager className="hidden sm:inline-flex lg:hidden" />
                   <BrandMark variant="horizontal" size={112} eager className="hidden lg:inline-flex" />
@@ -445,7 +445,7 @@ export default function LandingPage() {
                     alt="Hand-drawn illustration of a phone showing a guided photo-request flow"
                     width={1024}
                     height={1024}
-                    className="relative w-full max-w-md drop-shadow-[0_30px_50px_hsl(var(--pb-ink-soft)/0.18)] sm:max-w-lg lg:max-w-none lg:scale-110 lg:translate-x-2"
+                    className="relative w-full max-w-sm drop-shadow-[0_30px_50px_hsl(var(--pb-ink-soft)/0.18)] sm:max-w-md lg:max-w-lg lg:translate-x-2"
                   />
                 </div>
               </div>
