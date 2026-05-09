@@ -91,6 +91,8 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
         <CurrentWorkspaceProvider>
+          <LenisProvider>
+          <GrainOverlay />
           <RouteTracker />
           <InviteAcceptanceGuard>
           <ErrorBoundary>
