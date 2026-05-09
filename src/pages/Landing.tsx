@@ -120,7 +120,7 @@ const SOFTWARE_APP_JSONLD: Record<string, unknown> = {
   applicationCategory: "BusinessApplication",
   operatingSystem: "Web",
   description:
-    "Replace weak website forms with guided visual intake. PhotoBrief scans your website, maps your services, and gives customers a simple photo-guided path so your team gets actionable lead packets instead of vague messages.",
+    "Stop chasing customers for missing photos. PhotoBrief uses the Reverse-Form Method — instead of asking your customer what they need, you tell them exactly what to send. The form follows the job, and a quote-ready lead packet lands in your inbox on the first try.",
   offers: [
     { "@type": "Offer", name: "Free", price: "0", priceCurrency: "USD" },
     { "@type": "Offer", name: "Starter", price: "19", priceCurrency: "USD" },
