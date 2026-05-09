@@ -14,7 +14,7 @@ interface TemplatePickerProps {
 export function TemplatePicker({ guides, selectedGuideId, onSelect }: TemplatePickerProps) {
   if (guides.length === 0) {
     return (
-      <div className="rounded-2xl border border-dashed bg-card/60 p-6 text-center">
+      <div className="rounded-[0.25rem] border border-dashed bg-card/60 p-6 text-center">
         <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
           <Plus className="h-5 w-5" />
         </div>
@@ -41,7 +41,7 @@ export function TemplatePicker({ guides, selectedGuideId, onSelect }: TemplatePi
             type="button"
             onClick={() => onSelect(g)}
             className={cn(
-              "flex flex-col gap-2 rounded-2xl border bg-card p-4 text-left transition hover:shadow-elev-sm",
+              "flex flex-col gap-2 rounded-[0.25rem] border bg-card p-4 text-left transition hover:shadow-elev-sm",
               active ? "border-primary ring-2 ring-primary/30" : "border-border",
             )}
           >

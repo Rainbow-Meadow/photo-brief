@@ -39,7 +39,7 @@ const choices: Array<{
 export function StepHow({ aiUnlocked, onChoose }: StepHowProps) {
   return (
     <div className="flex flex-col items-center">
-      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-[0.25rem] bg-primary/10 text-primary">
         <Sparkles className="h-7 w-7" />
       </div>
       <h1 className="mt-5 text-center text-2xl font-semibold tracking-tight text-foreground">
@@ -60,7 +60,7 @@ export function StepHow({ aiUnlocked, onChoose }: StepHowProps) {
               disabled={locked}
               onClick={() => onChoose(c.id)}
               className={cn(
-                "group flex w-full items-center gap-4 rounded-2xl border bg-card p-5 text-left transition active:scale-[0.98]",
+                "group flex w-full items-center gap-4 rounded-[0.25rem] border bg-card p-5 text-left transition active:scale-[0.98]",
                 locked
                   ? "cursor-not-allowed border-border/50 opacity-60"
                   : "border-border/70 hover:border-primary/40 hover:shadow-elev-sm",

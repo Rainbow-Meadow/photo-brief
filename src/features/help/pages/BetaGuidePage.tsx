@@ -264,7 +264,7 @@ export default function BetaGuidePage() {
 function SectionIntro({ icon, title, body }: { icon: ReactNode; title: string; body: string }) {
   return (
     <div className="space-y-1 rounded-[0.25rem] border bg-card p-4 shadow-sm">
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">{icon} {title}</span>
+      <span className="inline-flex items-center gap-1.5 border border-[hsl(var(--accent-kinetic))] px-2.5 py-1 font-mono text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-[hsl(var(--accent-kinetic))]">{icon} {title}</span>
       <p className="text-sm leading-6 text-muted-foreground">{body}</p>
     </div>
   );
@@ -277,7 +277,7 @@ function WebsiteToolCard({ guide }: { guide: WebsiteToolGuide }) {
         <div className="space-y-4">
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary"><Wrench className="h-3.5 w-3.5" /> {guide.name}</span>
+              <span className="inline-flex items-center gap-1.5 border border-[hsl(var(--accent-kinetic))] px-2.5 py-1 font-mono text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-[hsl(var(--accent-kinetic))]"><Wrench className="h-3.5 w-3.5" /> {guide.name}</span>
               <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground"><Clock3 className="h-3.5 w-3.5" /> {guide.time}</span>
             </div>
             <h3 className="mt-3 text-lg font-semibold leading-tight text-foreground sm:text-xl">{guide.recommendedAction}</h3>

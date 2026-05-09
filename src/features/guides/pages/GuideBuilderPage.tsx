@@ -134,7 +134,7 @@ export default function GuideBuilderPage() {
       <section className="rounded-[0.25rem] border bg-card p-5 shadow-elev-sm sm:p-6">
         <div className="grid gap-5 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
           <div>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+            <span className="inline-flex items-center gap-1.5 border border-[hsl(var(--accent-kinetic))] px-3 py-1 font-mono text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-[hsl(var(--accent-kinetic))]">
               <Sparkles className="h-3.5 w-3.5" /> Additive setup
             </span>
             <h2 className="mt-4 text-xl font-semibold tracking-tight text-foreground">

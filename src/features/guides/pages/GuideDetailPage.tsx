@@ -188,7 +188,7 @@ export default function GuideDetailPage() {
       />
 
       {editing && draft ? (
-        <section className="space-y-4 rounded-2xl border bg-card p-5 shadow-elev-sm">
+        <section className="space-y-4 rounded-[0.25rem] border bg-card p-5 shadow-elev-sm">
           <div className="grid gap-4">
             <div className="space-y-1.5">
               <Label htmlFor="g-name">Template name</Label>
@@ -211,7 +211,7 @@ export default function GuideDetailPage() {
         </section>
       ) : null}
 
-      <section className="space-y-3 rounded-2xl border bg-card p-5 shadow-elev-sm">
+      <section className="space-y-3 rounded-[0.25rem] border bg-card p-5 shadow-elev-sm">
         <header>
           <h2 className="text-sm font-semibold text-foreground">
             Photos to request ({view.steps.length})
@@ -244,7 +244,7 @@ export default function GuideDetailPage() {
         )}
       </section>
 
-      <section className="space-y-3 rounded-2xl border bg-card p-5 shadow-elev-sm">
+      <section className="space-y-3 rounded-[0.25rem] border bg-card p-5 shadow-elev-sm">
         <header>
           <h2 className="text-sm font-semibold text-foreground">
             Questions, if any ({view.questions.length})

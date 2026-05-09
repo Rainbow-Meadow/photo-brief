@@ -37,7 +37,7 @@ export function QuickChecklist({
   const doneCount = items.filter((i) => checked[i.id]).length;
 
   return (
-    <div className="rounded-2xl border bg-card p-5 shadow-sm">
+    <div className="rounded-[0.25rem] border bg-card p-5 shadow-sm">
       <div className="mb-3 flex items-center justify-between">
         <h3 className="text-sm font-semibold text-foreground">{title}</h3>
         <span className="text-xs text-muted-foreground">

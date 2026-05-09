@@ -30,7 +30,7 @@ export function GuideStep({
   className,
 }: GuideStepProps) {
   return (
-    <section className={cn("rounded-2xl border bg-card p-5 shadow-sm sm:p-6", className)}>
+    <section className={cn("rounded-[0.25rem] border bg-card p-5 shadow-sm sm:p-6", className)}>
       <div className="flex items-start gap-3">
         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
           {number}

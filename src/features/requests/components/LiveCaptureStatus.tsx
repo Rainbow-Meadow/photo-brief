@@ -60,7 +60,7 @@ export function LiveCaptureStatus({ requestId }: LiveCaptureStatusProps) {
   );
 
   return (
-    <div className="rounded-2xl border border-[hsl(var(--pb-line))] bg-[hsl(var(--pb-panel)/0.88)] p-4 space-y-4">
+    <div className="rounded-[0.25rem] border border-[hsl(var(--pb-line))] bg-[hsl(var(--pb-panel)/0.88)] p-4 space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">

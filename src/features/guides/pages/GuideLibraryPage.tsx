@@ -63,7 +63,7 @@ export default function GuideLibraryPage() {
         {!canCustomGuides ? <UpgradePromptCard feature="custom_guides" variant="inline" /> : null}
 
         <Surface variant="panel" radius="lg" padding="md">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+          <span className="inline-flex items-center gap-1.5 border border-[hsl(var(--accent-kinetic))] px-3 py-1 font-mono text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-[hsl(var(--accent-kinetic))]">
             <Sparkles className="h-3.5 w-3.5" /> Simple by design
           </span>
           <h2 className="mt-4 text-lg font-semibold tracking-tight text-foreground sm:text-xl">
@@ -122,7 +122,7 @@ export default function GuideLibraryPage() {
           </section>
         ) : (
           <Surface variant="outline" radius="lg" padding="lg" className="border-dashed text-center">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center border border-border text-primary">
               <Plus className="h-6 w-6" />
             </div>
             <h2 className="mt-4 text-lg font-semibold text-foreground">Create your first template</h2>
