@@ -1794,8 +1794,7 @@ function BetaDetailsAccordion({ value, onValueChange }: BetaDetailsAccordionProp
             </AccordionItem>
           </Accordion>
         </div>
-      </div>
-    </section>
+    </MarketingSection>
   );
 }
 
