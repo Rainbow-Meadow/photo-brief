@@ -43,24 +43,34 @@ export default function PublicRecipientPage() {
 
   if (error) {
     return (
-      <div className="flex min-h-[60svh] items-center justify-center">
-        <div className="rounded-[2rem] border bg-card/80 p-6 text-center shadow-elev-sm backdrop-blur">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10 text-destructive">
-            <LockKeyhole className="h-5 w-5" />
+      <div className="flex min-h-[60svh] items-center justify-center px-4">
+        <article className="w-full max-w-md border border-border bg-card p-7 text-center">
+          <p className="inline-flex items-baseline gap-2 font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+            <span className="inline-block h-px w-8 -translate-y-[0.25em] bg-[hsl(var(--accent-kinetic))]" />
+            <span className="text-[hsl(var(--accent-kinetic))]">[ ER ]</span>
+            <span>Link unavailable</span>
+          </p>
+          <h1 className="mt-5 text-xl font-semibold tracking-tight text-foreground">This link is not available</h1>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{error}</p>
+          <div className="mx-auto mt-5 flex h-10 w-10 items-center justify-center border border-border text-muted-foreground">
+            <LockKeyhole className="h-4 w-4" />
           </div>
-          <h1 className="mt-4 text-lg font-semibold text-foreground">This link is not available</h1>
-          <p className="mt-2 text-sm text-muted-foreground">{error}</p>
-        </div>
+        </article>
       </div>
     );
   }
   if (!ctx) {
     return (
-      <div className="flex min-h-[60svh] items-center justify-center">
-        <div className="rounded-[2rem] border bg-card/80 p-6 text-center shadow-elev-sm backdrop-blur">
-          <div className="mx-auto h-10 w-10 animate-pulse rounded-full bg-muted" />
+      <div className="flex min-h-[60svh] items-center justify-center px-4">
+        <article className="w-full max-w-md border border-border bg-card p-7 text-center">
+          <p className="inline-flex items-baseline gap-2 font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+            <span className="inline-block h-px w-8 -translate-y-[0.25em] bg-[hsl(var(--accent-kinetic))]" />
+            <span className="text-[hsl(var(--accent-kinetic))]">[ 00 ]</span>
+            <span>Loading</span>
+          </p>
+          <div className="mx-auto mt-5 h-8 w-8 animate-pulse bg-muted" />
           <p className="mt-4 text-sm text-muted-foreground">Opening your photo request…</p>
-        </div>
+        </article>
       </div>
     );
   }
@@ -308,16 +318,16 @@ function RecipientWorkflow({ ctx, token, navigate }: { ctx: RecipientContext; to
 function ProgressBar({ title, done, total, currentLabel }: { title: string; done: number; total: number; currentLabel: string }) {
   const pct = total === 0 ? 0 : (done / total) * 100;
   return (
-    <div className="sticky top-14 z-20 bg-background/80 px-1 pb-2 pt-3 backdrop-blur-xl">
-      <div className="flex items-center justify-between gap-3 text-xs">
-        <p className="truncate font-medium text-muted-foreground">{currentLabel}</p>
-        <span className="shrink-0 tabular-nums text-muted-foreground">
-          {done}/{total}
+    <div className="touch-blur-reduce sticky top-14 z-20 border-b border-border bg-background/95 px-1 pb-2 pt-3 backdrop-blur-md">
+      <div className="flex items-center justify-between gap-3 font-mono text-[0.7rem] uppercase tracking-[0.18em]">
+        <p className="truncate text-muted-foreground">{currentLabel}</p>
+        <span className="shrink-0 tabular-nums text-[hsl(var(--accent-kinetic))]">
+          [ {String(done).padStart(2, "0")} / {String(total).padStart(2, "0")} ]
         </span>
       </div>
-      <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-border/50">
+      <div className="mt-1.5 h-px w-full bg-border">
         <div
-          className="h-full rounded-full bg-primary transition-all duration-500 ease-out"
+          className="h-px bg-[hsl(var(--accent-kinetic))] transition-all duration-500 ease-out"
           style={{ width: `${pct}%` }}
         />
       </div>
@@ -347,29 +357,34 @@ function WelcomeScreen({
   onStart: () => void;
 }) {
   return (
-    <section className="relative isolate overflow-hidden rounded-[2rem] border border-border/70 bg-card/85 p-6 shadow-[0_30px_80px_-45px_hsl(222_47%_11%/0.45)] backdrop-blur sm:p-8">
-      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-56 bg-ambient-sky opacity-80" />
-      <span className="inline-flex items-center gap-1.5 rounded-full border bg-background/70 px-3 py-1 text-xs font-medium text-muted-foreground shadow-sm">
-        <LockKeyhole className="h-3.5 w-3.5" /> Secure photo request
-      </span>
-      <h1 className="mt-5 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+    <section className="relative border border-border bg-card p-6 sm:p-8">
+      <p className="inline-flex items-baseline gap-2 font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+        <span className="inline-block h-px w-8 -translate-y-[0.25em] bg-[hsl(var(--accent-kinetic))]" />
+        <span className="text-[hsl(var(--accent-kinetic))]">[ 01 ]</span>
+        <span className="inline-flex items-center gap-1.5"><LockKeyhole className="h-3 w-3" /> Secure photo request</span>
+      </p>
+      <h1 className="mt-5 font-[Geist,Inter,system-ui,sans-serif] text-[clamp(1.6rem,4vw,2.4rem)] font-semibold leading-[1.05] tracking-[-0.022em] text-foreground">
         {isResubmit ? "Quick retake request" : `${businessName} needs a few photos`}
       </h1>
       <p className="mt-3 text-[15px] leading-7 text-muted-foreground">
         {introBody || `Follow the steps for ${guideName}. It should take about ${estimatedMinutes} minutes.`}
       </p>
 
-      <div className="mt-6 grid grid-cols-3 gap-2 text-center">
+      <div className="mt-6 grid grid-cols-3 border-t border-border">
         <MiniStat icon={Camera} value={photoCount} label={photoCount === 1 ? "photo" : "photos"} />
         <MiniStat icon={MessageCircleQuestion} value={questionCount} label={questionCount === 1 ? "question" : "questions"} />
         <MiniStat icon={Clock3} value={`~${estimatedMinutes}`} label="min" />
       </div>
 
-      <Button size="lg" className="mt-7 h-14 w-full rounded-2xl text-base shadow-glow" onClick={onStart}>
-        Start <ArrowRight className="ml-2 h-5 w-5" />
-      </Button>
-      <p className="mt-4 text-center text-xs text-muted-foreground">
-        You can review everything before sending.
+      <button
+        type="button"
+        onClick={onStart}
+        className="mt-7 inline-flex h-14 w-full items-center justify-center gap-2 bg-[hsl(var(--accent-kinetic))] px-6 font-[Geist,Inter,system-ui,sans-serif] text-[0.85rem] font-semibold uppercase tracking-[0.14em] text-[hsl(var(--primary-foreground))] transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--ring))]"
+      >
+        Start <ArrowRight className="h-4 w-4" />
+      </button>
+      <p className="mt-4 text-center font-mono text-[0.7rem] uppercase tracking-[0.18em] text-muted-foreground">
+        Review everything before sending
       </p>
     </section>
   );
@@ -377,10 +392,10 @@ function WelcomeScreen({
 
 function MiniStat({ icon: Icon, value, label }: { icon: typeof Camera; value: string | number; label: string }) {
   return (
-    <div className="rounded-2xl bg-background/70 p-3 shadow-sm ring-1 ring-border/60">
-      <Icon className="mx-auto h-4 w-4 text-primary" />
-      <p className="mt-1 text-lg font-semibold text-foreground">{value}</p>
-      <p className="text-[11px] text-muted-foreground">{label}</p>
+    <div className="border-r border-border p-3 text-center last:border-r-0">
+      <Icon className="mx-auto h-3.5 w-3.5 text-[hsl(var(--accent-kinetic))]" />
+      <p className="mt-1 font-mono text-lg font-semibold tabular-nums text-foreground">{value}</p>
+      <p className="font-mono text-[0.65rem] uppercase tracking-[0.16em] text-muted-foreground">{label}</p>
     </div>
   );
 }
@@ -449,7 +464,7 @@ function StepContent({
     return (
       <StepCard>
         <StepHeader step={latestRetake.step} index={guideSteps.findIndex((s) => s.id === latestRetake.step.id) + 1} total={guideSteps.length} />
-        <div className="mt-5 overflow-hidden rounded-3xl bg-muted">
+        <div className="mt-5 overflow-hidden border border-border bg-muted">
           <img src={latestRetake.photo.previewUrl} alt="Submitted" className="max-h-[40svh] w-full object-cover" />
         </div>
         <div className="mt-4">
@@ -466,8 +481,8 @@ function StepContent({
   if (active?.kind === "question") {
     return (
       <StepCard>
-        <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-          <MessageCircleQuestion className="h-5 w-5" />
+        <div className="mb-5 flex h-10 w-10 items-center justify-center border border-border text-[hsl(var(--accent-kinetic))]">
+          <MessageCircleQuestion className="h-4 w-4" />
         </div>
         <QuestionCard question={active.question as ContextQuestion} onAnswer={onAnswer} />
       </StepCard>
@@ -484,7 +499,7 @@ function StepContent({
     <StepCard>
       <StepHeader step={step} index={index} total={guideSteps.length} />
       {photoForStep ? (
-        <div className="mt-5 overflow-hidden rounded-3xl bg-muted">
+        <div className="mt-5 overflow-hidden border border-border bg-muted">
           <img src={photoForStep.previewUrl} alt="Completed" className="max-h-[40svh] w-full object-cover" />
         </div>
       ) : null}
@@ -504,7 +519,7 @@ function StepContent({
 
 function StepCard({ children }: { children: ReactNode }) {
   return (
-    <section className="rounded-[2rem] border border-border/70 bg-card/90 p-5 shadow-[0_30px_80px_-45px_hsl(222_47%_11%/0.45)] backdrop-blur sm:p-6">
+    <section className="border border-border bg-card p-5 sm:p-6">
       {children}
     </section>
   );
@@ -513,10 +528,12 @@ function StepCard({ children }: { children: ReactNode }) {
 function StepHeader({ step, index, total }: { step: GuideStep; index: number; total: number }) {
   return (
     <header>
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-        <Sparkles className="h-3.5 w-3.5" /> Photo {index} of {total}
-      </span>
-      <h2 className="mt-4 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">{step.title}</h2>
+      <p className="inline-flex items-baseline gap-2 font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+        <span className="inline-block h-px w-8 -translate-y-[0.25em] bg-[hsl(var(--accent-kinetic))]" />
+        <span className="text-[hsl(var(--accent-kinetic))]">[ {String(index).padStart(2, "0")} / {String(total).padStart(2, "0")} ]</span>
+        <span className="inline-flex items-center gap-1.5"><Sparkles className="h-3 w-3" /> Photo</span>
+      </p>
+      <h2 className="mt-4 font-[Geist,Inter,system-ui,sans-serif] text-xl font-semibold leading-tight tracking-[-0.022em] text-foreground sm:text-2xl">{step.title}</h2>
       {step.instructions ? <p className="mt-2 text-[15px] leading-7 text-muted-foreground">{step.instructions}</p> : null}
     </header>
   );

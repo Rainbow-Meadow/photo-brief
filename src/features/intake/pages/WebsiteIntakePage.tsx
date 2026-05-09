@@ -293,34 +293,35 @@ export default function WebsiteIntakePage() {
 
   if (isLoading || !source) {
     return (
-      <Surface variant="panel" radius="lg" padding="lg" className="mx-auto max-w-5xl text-center">
-        <div className="mx-auto h-10 w-10 animate-pulse rounded-full bg-muted" />
+      <div className="mx-auto max-w-5xl border border-border bg-card p-7 text-center">
+        <p className="inline-flex items-baseline gap-2 font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+          <span className="inline-block h-px w-8 -translate-y-[0.25em] bg-[hsl(var(--accent-kinetic))]" />
+          <span className="text-[hsl(var(--accent-kinetic))]">[ 00 ]</span>
+          <span>Loading</span>
+        </p>
+        <div className="mx-auto mt-5 h-8 w-8 animate-pulse bg-muted" />
         <p className="mt-4 text-sm text-muted-foreground">Setting up website intake…</p>
-      </Surface>
+      </div>
     );
   }
 
   const intro = (
-    <Surface
-      variant="panel"
-      radius="lg"
-      padding="md"
-      className="relative isolate overflow-hidden"
-    >
-      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-44 bg-ambient-sky opacity-70" />
-      <span className="inline-flex items-center gap-1.5 rounded-full border bg-background/70 px-3 py-1 text-xs font-medium text-muted-foreground shadow-sm">
-        <Globe2 className="h-3.5 w-3.5 text-primary" /> Website Intake setup
-      </span>
+    <Surface variant="panel" radius="lg" padding="md" className="border border-border bg-card">
+      <p className="inline-flex items-baseline gap-2 font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+        <span className="inline-block h-px w-8 -translate-y-[0.25em] bg-[hsl(var(--accent-kinetic))]" />
+        <span className="text-[hsl(var(--accent-kinetic))]">[ WI ]</span>
+        <span className="inline-flex items-center gap-1.5"><Globe2 className="h-3 w-3" /> Website intake setup</span>
+      </p>
       <div className="mt-4 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+          <h1 className="font-[Geist,Inter,system-ui,sans-serif] text-[clamp(1.85rem,3vw,2.75rem)] font-semibold leading-[1.05] tracking-[-0.025em] text-foreground">
             Set up website intake in one guided flow.
           </h1>
-          <p className="mt-2 max-w-2xl text-base leading-7 text-muted-foreground">
+          <p className="mt-3 max-w-2xl text-base leading-7 text-muted-foreground">
             Choose the website path, configure the template behavior, connect the site, and test the result without jumping between separate setup sections.
           </p>
         </div>
-        <div className="flex items-center gap-2 rounded-full border bg-background/70 px-3 py-2 shadow-sm">
+        <div className="flex items-center gap-3 border border-border bg-background px-4 py-3">
           <Switch
             checked={source.enabled}
             onCheckedChange={async (enabled) => {
@@ -328,33 +329,39 @@ export default function WebsiteIntakePage() {
               toast.success(enabled ? "Website intake is on" : "Website intake is paused");
             }}
           />
-          <span className="text-sm font-medium text-foreground">{source.enabled ? "On" : "Paused"}</span>
+          <span className="font-mono text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-foreground">
+            {source.enabled ? "On" : "Paused"}
+          </span>
         </div>
       </div>
     </Surface>
   );
 
   const header = (
-    <div className="flex flex-wrap items-start justify-between gap-4">
-      <div>
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
-          Step {activeStepIndex + 1} of {setupSteps.length}
-        </span>
-        <h3 className="mt-3 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">{activeStep.title}</h3>
+    <div className="flex flex-wrap items-start justify-between gap-4 border-b border-border pb-5">
+      <div className="min-w-0">
+        <p className="inline-flex items-baseline gap-2 font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+          <span className="inline-block h-px w-8 -translate-y-[0.25em] bg-[hsl(var(--accent-kinetic))]" />
+          <span className="text-[hsl(var(--accent-kinetic))]">[ {String(activeStepIndex + 1).padStart(2, "0")} / {String(setupSteps.length).padStart(2, "0")} ]</span>
+          <span>Step</span>
+        </p>
+        <h3 className="mt-3 font-[Geist,Inter,system-ui,sans-serif] text-[clamp(1.5rem,2.4vw,2rem)] font-semibold leading-tight tracking-[-0.022em] text-foreground">
+          {activeStep.title}
+        </h3>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">{activeStep.body}</p>
       </div>
-      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-        <activeStep.icon className="h-5 w-5" />
+      <div className="flex h-11 w-11 items-center justify-center border border-border text-[hsl(var(--accent-kinetic))]">
+        <activeStep.icon className="h-4 w-4" />
       </div>
     </div>
   );
 
   const footer = (
     <>
-      <Button className="h-12 rounded-2xl" variant="outline" onClick={goBack} disabled={activeStepIndex === 0}>
+      <Button className="h-12 rounded-none border border-foreground/30 bg-transparent font-[Geist,Inter,system-ui,sans-serif] text-[0.78rem] font-semibold uppercase tracking-[0.14em] text-foreground hover:bg-foreground hover:text-background" variant="outline" onClick={goBack} disabled={activeStepIndex === 0}>
         <ChevronLeft className="mr-1 h-4 w-4" /> Back
       </Button>
-      <Button className="h-12 rounded-2xl" onClick={goNext} disabled={activeStepIndex === setupSteps.length - 1}>
+      <Button className="h-12 rounded-none bg-[hsl(var(--accent-kinetic))] font-[Geist,Inter,system-ui,sans-serif] text-[0.78rem] font-semibold uppercase tracking-[0.14em] text-[hsl(var(--primary-foreground))] hover:brightness-110" onClick={goNext} disabled={activeStepIndex === setupSteps.length - 1}>
         Next <ChevronRight className="ml-1 h-4 w-4" />
       </Button>
     </>
@@ -382,7 +389,7 @@ export default function WebsiteIntakePage() {
       case "choose":
         return (
           <div className="space-y-5">
-            <div className="rounded-[1.5rem] border bg-background/70 p-4">
+            <div className="rounded-none border bg-background p-4">
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <p className="text-sm font-semibold text-foreground">Website Intake is {source.enabled ? "on" : "paused"}</p>
@@ -404,12 +411,16 @@ export default function WebsiteIntakePage() {
                   key={tool.id}
                   type="button"
                   onClick={() => setToolId(tool.id)}
-                  className={`rounded-[1.35rem] border p-4 text-left transition hover:-translate-y-0.5 hover:border-primary/35 hover:bg-primary/5 ${
-                    tool.id === selectedTool.id ? "border-primary/50 bg-primary/10 shadow-sm" : "bg-background/65"
+                  className={`border p-4 text-left transition ${
+                    tool.id === selectedTool.id
+                      ? "border-[hsl(var(--accent-kinetic))] bg-[hsl(var(--accent-kinetic)/0.06)]"
+                      : "border-border bg-background hover:border-[hsl(var(--accent-kinetic)/0.5)]"
                   }`}
                 >
-                  <span className="block text-sm font-semibold text-foreground">{tool.name}</span>
-                  <span className="mt-1 block text-xs font-medium text-primary">{tool.mode === "webhook" ? "Webhook path" : "Hosted link path"}</span>
+                  <span className="block font-[Geist,Inter,system-ui,sans-serif] text-sm font-semibold text-foreground">{tool.name}</span>
+                  <span className="mt-1 block font-mono text-[0.65rem] uppercase tracking-[0.16em] text-[hsl(var(--accent-kinetic))]">
+                    {tool.mode === "webhook" ? "Webhook path" : "Hosted link path"}
+                  </span>
                   <span className="mt-2 block text-xs leading-5 text-muted-foreground">{tool.bestFor}</span>
                 </button>
               ))}
@@ -419,11 +430,11 @@ export default function WebsiteIntakePage() {
       case "defaults":
         return (
           <div className="grid gap-4 lg:grid-cols-2">
-            <div className="rounded-[1.5rem] border bg-background/70 p-4">
+            <div className="rounded-none border bg-background p-4">
               <Label className="text-sm font-semibold text-foreground">Fallback template</Label>
               <p className="mt-1 text-sm leading-6 text-muted-foreground">Used when no routing rule or confident AI match applies.</p>
               <select
-                className="mt-4 h-12 w-full rounded-2xl border bg-background px-3 text-sm"
+                className="mt-4 h-12 w-full rounded-none border bg-background px-3 text-sm"
                 value={source.defaultGuideId ?? ""}
                 onChange={async (e) => {
                   await updateSource.mutateAsync({ id: source.id, defaultGuideId: e.target.value || null });
@@ -436,7 +447,7 @@ export default function WebsiteIntakePage() {
                 ))}
               </select>
             </div>
-            <div className="rounded-[1.5rem] border bg-background/70 p-4">
+            <div className="rounded-none border bg-background p-4">
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <p className="text-sm font-semibold text-foreground">Send link automatically</p>
@@ -458,7 +469,7 @@ export default function WebsiteIntakePage() {
           <div className="space-y-4">
             <div className="grid gap-2 sm:grid-cols-[130px_1fr]">
               <select
-                className="h-11 rounded-2xl border bg-background px-3 text-sm"
+                className="h-11 rounded-none border bg-background px-3 text-sm"
                 value={newRule.matchType}
                 onChange={(e) => setNewRule((r) => ({ ...r, matchType: e.target.value as IntakeRuleMatchType }))}
               >
@@ -469,10 +480,10 @@ export default function WebsiteIntakePage() {
                 value={newRule.matchValue}
                 onChange={(e) => setNewRule((r) => ({ ...r, matchValue: e.target.value }))}
                 placeholder="e.g. quote, repair, warranty"
-                className="h-11 rounded-2xl bg-background/80"
+                className="h-11 rounded-none bg-background"
               />
               <select
-                className="h-11 rounded-2xl border bg-background px-3 text-sm sm:col-span-2"
+                className="h-11 rounded-none border bg-background px-3 text-sm sm:col-span-2"
                 value={newRule.guideId}
                 onChange={(e) => setNewRule((r) => ({ ...r, guideId: e.target.value }))}
               >
@@ -482,7 +493,7 @@ export default function WebsiteIntakePage() {
                 ))}
               </select>
               <Button
-                className="h-11 rounded-2xl sm:col-span-2"
+                className="h-11 rounded-none sm:col-span-2"
                 disabled={!newRule.matchValue.trim() || !newRule.guideId}
                 onClick={async () => {
                   await createRule.mutateAsync({ ...newRule, priority: rules.length + 1 });
@@ -496,16 +507,16 @@ export default function WebsiteIntakePage() {
 
             <div className="space-y-2">
               {rules.length === 0 ? (
-                <p className="rounded-2xl bg-muted/40 p-3 text-sm text-muted-foreground">No rules yet. AI matching and the fallback template will be used.</p>
+                <p className="rounded-none bg-muted/30 p-3 text-sm text-muted-foreground">No rules yet. AI matching and the fallback template will be used.</p>
               ) : rules.map((rule) => (
-                <div key={rule.id} className="flex items-center justify-between gap-3 rounded-2xl border bg-background/70 p-3">
+                <div key={rule.id} className="flex items-center justify-between gap-3 rounded-none border bg-background p-3">
                   <div>
                     <p className="text-sm font-medium text-foreground">
                       {rule.matchType === "exact" ? "Exactly" : "Contains"} “{rule.matchValue}”
                     </p>
                     <p className="text-xs text-muted-foreground">Send: {guideName(rule.guideId)}</p>
                   </div>
-                  <Button variant="ghost" size="icon" className="rounded-full" onClick={async () => {
+                  <Button variant="ghost" size="icon" className="rounded-none" onClick={async () => {
                     await deleteRule.mutateAsync(rule.id);
                     toast.success("Rule removed");
                   }}>
@@ -519,38 +530,38 @@ export default function WebsiteIntakePage() {
       case "connect":
         return (
           <div className="space-y-4">
-            <div className="rounded-[1.5rem] border bg-background/70 p-4">
+            <div className="rounded-none border bg-background p-4">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                 {usesWebhook ? "Webhook URL" : "Hosted intake link"}
               </p>
-              <code className="mt-2 block max-h-44 overflow-auto whitespace-pre-wrap break-all rounded-2xl bg-muted/60 p-3 text-xs leading-5 text-foreground">
+              <code className="mt-2 block max-h-44 overflow-auto whitespace-pre-wrap break-all rounded-none bg-muted/30 p-3 text-xs leading-5 text-foreground">
                 {usesWebhook ? webhook : hostedLink}
               </code>
             </div>
             {usesWebhook ? (
               <div className="grid gap-2 sm:grid-cols-3">
-                <Button className="h-12 rounded-2xl" onClick={() => copyValue(webhook, "Webhook URL copied")}>
+                <Button className="h-12 rounded-none" onClick={() => copyValue(webhook, "Webhook URL copied")}>
                   <Copy className="mr-2 h-4 w-4" /> Copy webhook
                 </Button>
-                <Button className="h-12 rounded-2xl" variant="outline" onClick={() => copyValue(payloadExample, "Example JSON copied")}>
+                <Button className="h-12 rounded-none" variant="outline" onClick={() => copyValue(payloadExample, "Example JSON copied")}>
                   <ClipboardCheck className="mr-2 h-4 w-4" /> Copy JSON
                 </Button>
-                <Button className="h-12 rounded-2xl" variant="secondary" onClick={() => window.open(selectedTool.dashboardUrl, "_blank", "noopener,noreferrer")}>
+                <Button className="h-12 rounded-none" variant="secondary" onClick={() => window.open(selectedTool.dashboardUrl, "_blank", "noopener,noreferrer")}>
                   <ExternalLink className="mr-2 h-4 w-4" /> {selectedTool.dashboardLabel}
                 </Button>
               </div>
             ) : (
               <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-                <Button className="h-12 rounded-2xl" onClick={() => copyValue(selectedTool.buttonText, "Button text copied")}>
+                <Button className="h-12 rounded-none" onClick={() => copyValue(selectedTool.buttonText, "Button text copied")}>
                   <Copy className="mr-2 h-4 w-4" /> Copy text
                 </Button>
-                <Button className="h-12 rounded-2xl" variant="outline" onClick={() => copyValue(hostedLink, "Hosted intake link copied")}>
+                <Button className="h-12 rounded-none" variant="outline" onClick={() => copyValue(hostedLink, "Hosted intake link copied")}>
                   <Link2 className="mr-2 h-4 w-4" /> Copy link
                 </Button>
-                <Button className="h-12 rounded-2xl" variant="secondary" onClick={() => window.open(selectedTool.dashboardUrl, "_blank", "noopener,noreferrer")}>
+                <Button className="h-12 rounded-none" variant="secondary" onClick={() => window.open(selectedTool.dashboardUrl, "_blank", "noopener,noreferrer")}>
                   <MousePointerClick className="mr-2 h-4 w-4" /> {selectedTool.dashboardLabel}
                 </Button>
-                <Button className="h-12 rounded-2xl" variant="outline" onClick={() => window.open(hostedLink, "_blank", "noopener,noreferrer")}>
+                <Button className="h-12 rounded-none" variant="outline" onClick={() => window.open(hostedLink, "_blank", "noopener,noreferrer")}>
                   <ExternalLink className="mr-2 h-4 w-4" /> Open form
                 </Button>
               </div>
@@ -567,14 +578,14 @@ export default function WebsiteIntakePage() {
                   <Input
                     value={fieldMap[field] ?? ""}
                     onChange={(e) => setFieldMap((m) => ({ ...m, [field]: e.target.value }))}
-                    className="h-11 rounded-2xl bg-background/80"
+                    className="h-11 rounded-none bg-background"
                     placeholder={field}
                   />
                 </div>
               ))}
             </div>
             <Button
-              className="h-11 rounded-2xl"
+              className="h-11 rounded-none"
               onClick={async () => {
                 await saveMappings.mutateAsync((Object.keys(FIELD_LABELS) as IntakeField[]).map((field) => ({ photobriefField: field, externalField: fieldMap[field] ?? "" })));
                 toast.success("Field mapping saved");
@@ -588,14 +599,14 @@ export default function WebsiteIntakePage() {
         return (
           <div className="space-y-4">
             <div className="grid gap-2 sm:grid-cols-2">
-              <Input className="h-11 rounded-2xl bg-background/80" value={testPayload.name} onChange={(e) => setTestPayload((p) => ({ ...p, name: e.target.value }))} placeholder="Name" />
-              <Input className="h-11 rounded-2xl bg-background/80" value={testPayload.email} onChange={(e) => setTestPayload((p) => ({ ...p, email: e.target.value }))} placeholder="Email" />
-              <Input className="h-11 rounded-2xl bg-background/80" value={testPayload.request_type} onChange={(e) => setTestPayload((p) => ({ ...p, request_type: e.target.value }))} placeholder="Request type" />
-              <Input className="h-11 rounded-2xl bg-background/80" value={testPayload.phone} onChange={(e) => setTestPayload((p) => ({ ...p, phone: e.target.value }))} placeholder="Phone" />
-              <Textarea className="rounded-2xl bg-background/80 sm:col-span-2" rows={3} value={testPayload.message} onChange={(e) => setTestPayload((p) => ({ ...p, message: e.target.value }))} placeholder="Message" />
+              <Input className="h-11 rounded-none bg-background" value={testPayload.name} onChange={(e) => setTestPayload((p) => ({ ...p, name: e.target.value }))} placeholder="Name" />
+              <Input className="h-11 rounded-none bg-background" value={testPayload.email} onChange={(e) => setTestPayload((p) => ({ ...p, email: e.target.value }))} placeholder="Email" />
+              <Input className="h-11 rounded-none bg-background" value={testPayload.request_type} onChange={(e) => setTestPayload((p) => ({ ...p, request_type: e.target.value }))} placeholder="Request type" />
+              <Input className="h-11 rounded-none bg-background" value={testPayload.phone} onChange={(e) => setTestPayload((p) => ({ ...p, phone: e.target.value }))} placeholder="Phone" />
+              <Textarea className="rounded-none bg-background sm:col-span-2" rows={3} value={testPayload.message} onChange={(e) => setTestPayload((p) => ({ ...p, message: e.target.value }))} placeholder="Message" />
             </div>
             <Button
-              className="h-12 w-full rounded-2xl text-base shadow-glow"
+              className="h-12 w-full rounded-none text-base "
               disabled={sendTest.isPending}
               onClick={async () => {
                 try {
@@ -622,18 +633,18 @@ export default function WebsiteIntakePage() {
             </div>
             <div className="space-y-2">
               {events.length === 0 ? (
-                <p className="rounded-2xl bg-muted/40 p-3 text-sm text-muted-foreground">No website leads yet. Send one test lead before publishing this setup.</p>
+                <p className="rounded-none bg-muted/30 p-3 text-sm text-muted-foreground">No website leads yet. Send one test lead before publishing this setup.</p>
               ) : events.slice(0, 5).map((event) => (
-                <div key={event.id} className="rounded-2xl border bg-background/70 p-3">
+                <div key={event.id} className="rounded-none border bg-background p-3">
                   <div className="flex items-center justify-between gap-2">
                     <p className="text-sm font-medium text-foreground">{event.requestType || "Website lead"}</p>
-                    <span className="rounded-full bg-muted px-2 py-1 text-[11px] font-medium text-muted-foreground">{event.status.replace(/_/g, " ")}</span>
+                    <span className="bg-muted border border-border px-2 py-1 text-[11px] font-medium text-muted-foreground">{event.status.replace(/_/g, " ")}</span>
                   </div>
                   <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{event.error || event.message || JSON.stringify(event.normalizedCustomer)}</p>
                 </div>
               ))}
             </div>
-            <Button className="h-12 rounded-2xl" variant="outline" onClick={() => window.open(hostedLink, "_blank", "noopener,noreferrer")}>
+            <Button className="h-12 rounded-none" variant="outline" onClick={() => window.open(hostedLink, "_blank", "noopener,noreferrer")}>
               <ExternalLink className="mr-2 h-4 w-4" /> Open hosted form
             </Button>
           </div>
@@ -646,7 +657,7 @@ export default function WebsiteIntakePage() {
 
 function SummaryPill({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl border bg-background/70 p-4">
+    <div className="rounded-none border bg-background p-4">
       <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">{label}</p>
       <p className="mt-2 text-sm font-semibold text-foreground">{value}</p>
     </div>
