@@ -84,7 +84,7 @@ export function MarketingLayout() {
           <NavLink
             to="/"
             aria-label="PhotoBrief.ai home"
-            className="absolute left-3 top-3 flex h-12 items-center sm:left-6 sm:top-4 sm:h-14"
+            className="absolute inset-y-0 left-3 flex items-center sm:left-6"
           >
             <BrandMark variant="mark" tone="light" size={36} eager />
           </NavLink>
