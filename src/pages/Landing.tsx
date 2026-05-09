@@ -807,8 +807,9 @@ function PainPointSection() {
       onTouchEnd={() => { setTimeout(() => setPaused(false), 6000); }}
     >
       <div className="pb-container">
+        {/* Top — artwork/intro + stat/ROI in two columns */}
         <div className="mx-auto max-w-3xl text-center lg:mx-0 lg:grid lg:max-w-none lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:gap-8 lg:text-left">
-          {/* Left column — intro copy + carousel */}
+          {/* Left column — artwork + intro copy */}
           <div className="lg:min-w-0 lg:text-left">
             <img
               src={junkHaulerIllo}
@@ -829,71 +830,6 @@ function PainPointSection() {
               These are real industry numbers. Generic contact forms don't
               just lose information — they lose customers.
             </p>
-
-            {/* Carousel card */}
-            <div className="relative mx-auto mt-5 max-w-2xl sm:mt-6 lg:mx-0">
-              <div className="pb-card relative overflow-hidden p-6 sm:p-8" style={{ minHeight: 260 }}>
-                {painPoints.map((p, i) => {
-                  const PIcon = p.icon;
-                  const isActive = i === active;
-                  return (
-                    <div
-                      key={p.number}
-                      className={`absolute inset-0 p-6 sm:p-8 transition-opacity duration-500 ${isActive ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"}`}
-                      aria-hidden={!isActive}
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-[hsl(var(--pb-ink-soft)/0.18)] bg-[hsl(var(--pb-ink-soft)/0.06)] text-[hsl(var(--pb-lavender))]">
-                          <PIcon className="h-6 w-6" />
-                        </div>
-                        <span className="text-5xl font-extrabold tracking-tight text-[hsl(var(--pb-lavender))] sm:text-6xl">
-                          {p.number}
-                        </span>
-                      </div>
-                      <p className="mt-4 text-lg font-bold tracking-tight text-white sm:text-xl">
-                        {p.label}
-                      </p>
-                      <p className="pb-copy mt-2 text-sm leading-relaxed sm:text-base">
-                        {p.context}
-                      </p>
-                      <a
-                        href={p.citation.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-white/40 transition hover:text-[hsl(var(--pb-lavender))] sm:text-sm"
-                      >
-                        Source: {p.citation.text} ↗
-                      </a>
-                    </div>
-                  );
-                })}
-              </div>
-
-              <button
-                type="button"
-                aria-label="Previous stat"
-                onClick={() => go((active - 1 + painPoints.length) % painPoints.length)}
-                className="absolute left-0 top-0 h-full w-1/4 cursor-w-resize opacity-0"
-              />
-              <button
-                type="button"
-                aria-label="Next stat"
-                onClick={() => go((active + 1) % painPoints.length)}
-                className="absolute right-0 top-0 h-full w-1/4 cursor-e-resize opacity-0"
-              />
-
-              <div className="mt-4 flex items-center justify-center gap-2">
-                {painPoints.map((_, i) => (
-                  <button
-                    key={i}
-                    type="button"
-                    aria-label={`Stat ${i + 1}`}
-                    onClick={() => go(i)}
-                    className={`h-2 rounded-full transition-all duration-300 ${i === active ? "w-6 bg-[hsl(var(--pb-lavender))]" : "w-2 bg-white/20 hover:bg-white/40"}`}
-                  />
-                ))}
-              </div>
-            </div>
           </div>
 
           {/* Right column — 81% stat + ROI calculator */}
@@ -908,6 +844,71 @@ function PainPointSection() {
             <p className="pb-copy max-w-sm text-center text-sm italic sm:text-base mt-[24px]">
               PhotoBrief closes the gap between first contact and quote-ready information.
             </p>
+          </div>
+        </div>
+
+        {/* Bottom — full-width carousel */}
+        <div className="relative mx-auto mt-10 w-full sm:mt-12">
+          <div className="pb-card relative overflow-hidden p-6 sm:p-8" style={{ minHeight: 260 }}>
+            {painPoints.map((p, i) => {
+              const PIcon = p.icon;
+              const isActive = i === active;
+              return (
+                <div
+                  key={p.number}
+                  className={`absolute inset-0 p-6 sm:p-8 transition-opacity duration-500 ${isActive ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"}`}
+                  aria-hidden={!isActive}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-[hsl(var(--pb-ink-soft)/0.18)] bg-[hsl(var(--pb-ink-soft)/0.06)] text-[hsl(var(--pb-lavender))]">
+                      <PIcon className="h-6 w-6" />
+                    </div>
+                    <span className="text-5xl font-extrabold tracking-tight text-[hsl(var(--pb-lavender))] sm:text-6xl">
+                      {p.number}
+                    </span>
+                  </div>
+                  <p className="mt-4 text-lg font-bold tracking-tight text-white sm:text-xl">
+                    {p.label}
+                  </p>
+                  <p className="pb-copy mt-2 text-sm leading-relaxed sm:text-base">
+                    {p.context}
+                  </p>
+                  <a
+                    href={p.citation.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-white/40 transition hover:text-[hsl(var(--pb-lavender))] sm:text-sm"
+                  >
+                    Source: {p.citation.text} ↗
+                  </a>
+                </div>
+              );
+            })}
+          </div>
+
+          <button
+            type="button"
+            aria-label="Previous stat"
+            onClick={() => go((active - 1 + painPoints.length) % painPoints.length)}
+            className="absolute left-0 top-0 h-full w-1/4 cursor-w-resize opacity-0"
+          />
+          <button
+            type="button"
+            aria-label="Next stat"
+            onClick={() => go((active + 1) % painPoints.length)}
+            className="absolute right-0 top-0 h-full w-1/4 cursor-e-resize opacity-0"
+          />
+
+          <div className="mt-4 flex items-center justify-center gap-2">
+            {painPoints.map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                aria-label={`Stat ${i + 1}`}
+                onClick={() => go(i)}
+                className={`h-2 rounded-full transition-all duration-300 ${i === active ? "w-6 bg-[hsl(var(--pb-lavender))]" : "w-2 bg-white/20 hover:bg-white/40"}`}
+              />
+            ))}
           </div>
         </div>
       </div>
