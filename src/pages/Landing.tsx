@@ -60,18 +60,18 @@ import { useBetaSeats } from "@/hooks/useBetaSeats";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
-import heroIllustration from "@/assets/landing-hero-illustration.png";
+import heroIllustration from "@/assets/landing-dark/hero.png";
 import landscaperIllo from "@/assets/trades/landscaper-illustration.png";
 import hvacTechIllo from "@/assets/trades/hvac-tech-illustration.png";
 import plumberIllo from "@/assets/trades/plumber-illustration.png";
 import junkHaulerIllo from "@/assets/trades/junk-hauler-illustration.png";
 import estimatorIllo from "@/assets/trades/estimator-illustration.png";
-import researchMagnifierIllo from "@/assets/rmbc/research-magnifier.png";
-import mechanismGearsIllo from "@/assets/rmbc/mechanism-gears.png";
-import briefPacketIllo from "@/assets/rmbc/brief-packet.png";
-import beforeIntakeFormIllo from "@/assets/comparison/before-intake-form.png";
-import afterCapturePipelineIllo from "@/assets/comparison/after-capture-pipeline.png";
-import methodOverviewIllo from "@/assets/rmbc/method-overview.png";
+import researchMagnifierIllo from "@/assets/landing-dark/research-magnifier.png";
+import mechanismGearsIllo from "@/assets/landing-dark/mechanism-gears.png";
+import briefPacketIllo from "@/assets/landing-dark/brief-packet.png";
+import beforeIntakeFormIllo from "@/assets/landing-dark/before-intake-form.png";
+import afterCapturePipelineIllo from "@/assets/landing-dark/after-capture-pipeline.png";
+import methodOverviewIllo from "@/assets/landing-dark/method-overview.png";
 
 const InteractiveHeroBriefAssembly = lazy(() =>
   import("@/components/marketing/InteractiveHeroBriefAssembly").then((m) => ({
@@ -187,7 +187,7 @@ function Hero() {
           </div>
 
           <RiseIn delay={0.4} className="relative">
-            <div className="relative aspect-[3/2] w-full overflow-hidden border border-border bg-[#FAF7F2]">
+            <div className="relative aspect-[3/2] w-full overflow-hidden">
               <img
                 src={heroIllustration}
                 alt="Customer capturing the photos a contractor actually needs."
@@ -309,11 +309,11 @@ function MechanismSection() {
                   <span className="ls-numeral">{step.n}</span>
                   <span className="ls-numeral text-foreground/40">04</span>
                 </div>
-                <div className="mt-6 aspect-square w-full overflow-hidden border border-border bg-muted">
+                <div className="mt-6 aspect-square w-full overflow-hidden">
                   <img
                     src={step.illo}
                     alt=""
-                    className="h-full w-full object-contain p-6 opacity-90"
+                    className="h-full w-full object-contain"
                     loading="lazy"
                   />
                 </div>
@@ -357,11 +357,11 @@ function ComparisonSection() {
                 </li>
               ))}
             </ul>
-            <div className="mt-6 aspect-[16/9] overflow-hidden border border-border bg-muted">
+            <div className="mt-6 aspect-[16/9] overflow-hidden">
               <img
                 src={beforeIntakeFormIllo}
                 alt="Illustration of a broken intake form with missing photo context"
-                className="h-full w-full object-contain p-4"
+                className="h-full w-full object-contain"
                 loading="lazy"
               />
             </div>
@@ -381,11 +381,11 @@ function ComparisonSection() {
                 </li>
               ))}
             </ul>
-            <div className="mt-6 aspect-[16/9] overflow-hidden border border-border bg-muted">
+            <div className="mt-6 aspect-[16/9] overflow-hidden">
               <img
                 src={afterCapturePipelineIllo}
                 alt="Illustration of a guided phone capture flow turning into a ready brief packet"
-                className="h-full w-full object-contain p-4"
+                className="h-full w-full object-contain"
                 loading="lazy"
               />
             </div>
@@ -449,11 +449,11 @@ function WebsiteIntelligenceSection() {
       <Container>
         <div className="grid gap-12 lg:grid-cols-[1fr_1.4fr] lg:items-center">
           <RiseIn>
-            <div className="aspect-square overflow-hidden border border-border bg-muted">
+            <div className="aspect-square overflow-hidden">
               <img
                 src={researchMagnifierIllo}
                 alt="Website intelligence"
-                className="h-full w-full object-contain p-12"
+                className="h-full w-full object-contain"
                 loading="lazy"
               />
             </div>
