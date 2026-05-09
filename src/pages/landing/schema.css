@@ -74,7 +74,7 @@
     color: hsl(var(--muted-foreground));
     margin: 0;
   }
-  .ls-section--dark .ls-subtitle { color: hsl(var(--background) / 0.78); }
+  /* dark-section subtitle override removed */
 
   /* ── Body copy ──────────────────────────────────────────── */
   .ls-body, .ls-body-md { font-size: 0.95rem; line-height: 1.6; color: hsl(var(--muted-foreground)); margin: 0; }
