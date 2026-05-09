@@ -414,7 +414,7 @@ export default function LandingPage() {
 
                 {/* Built-for trade strip — links to matching use case */}
                 <div className="mt-8 sm:mt-10">
-                  <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[hsl(var(--pb-ink-muted))]">
+                  <p className="font-black uppercase tracking-[0.28em] text-base text-[hsl(var(--pb-ink-muted))]">
                     Built for
                   </p>
                   <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
@@ -424,7 +424,7 @@ export default function LandingPage() {
                         href="#use-cases"
                         className="inline-flex items-center gap-1.5 rounded-full border border-[hsl(var(--pb-ink-soft)/0.18)] bg-[hsl(var(--pb-ink-soft)/0.04)] px-3 py-1.5 text-xs font-bold text-[hsl(var(--pb-ink))] transition hover:border-[hsl(var(--pb-violet)/0.55)] hover:text-[hsl(var(--pb-violet))] sm:text-sm"
                       >
-                        <TIcon className="h-3.5 w-3.5 text-[hsl(var(--pb-violet))]" />
+                        <TIcon className="lucide lucide-trending-down w-[37px] h-[27px] text-[hsl(var(--pb-violet))]" />
                         {name}
                       </a>
                     ))}
@@ -817,7 +817,7 @@ function PainPointSection() {
               height={1024}
               loading="lazy"
               decoding="async"
-              className="mx-auto mb-6 w-full max-w-[280px] drop-shadow-[0_22px_36px_hsl(var(--pb-ink-soft)/0.28)] lg:mx-0 lg:max-w-[320px]"
+              className="mx-auto mb-6 w-full max-w-[280px] drop-shadow-[0_22px_36px_hsl(var(--pb-ink-soft)/0.28)] lg:mx-0 lg:max-w-[320px] text-left object-cover"
             />
             <span className="pb-eyebrow">
               <MessageSquareWarning className="h-3.5 w-3.5" /> The problem
