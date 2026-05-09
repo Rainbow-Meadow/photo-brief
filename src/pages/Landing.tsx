@@ -1339,8 +1339,7 @@ function WorkflowSection() {
             </div>
           </div>
         </div>
-      </div>
-    </section>
+    </MarketingSection>
   );
 }
 
