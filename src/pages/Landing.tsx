@@ -60,18 +60,18 @@ import { useBetaSeats } from "@/hooks/useBetaSeats";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
-import heroIllustration from "@/assets/landing-hero-illustration.png";
+import heroIllustration from "@/assets/landing-dark/hero.png";
 import landscaperIllo from "@/assets/trades/landscaper-illustration.png";
 import hvacTechIllo from "@/assets/trades/hvac-tech-illustration.png";
 import plumberIllo from "@/assets/trades/plumber-illustration.png";
 import junkHaulerIllo from "@/assets/trades/junk-hauler-illustration.png";
 import estimatorIllo from "@/assets/trades/estimator-illustration.png";
-import researchMagnifierIllo from "@/assets/rmbc/research-magnifier.png";
-import mechanismGearsIllo from "@/assets/rmbc/mechanism-gears.png";
-import briefPacketIllo from "@/assets/rmbc/brief-packet.png";
-import beforeIntakeFormIllo from "@/assets/comparison/before-intake-form.png";
-import afterCapturePipelineIllo from "@/assets/comparison/after-capture-pipeline.png";
-import methodOverviewIllo from "@/assets/rmbc/method-overview.png";
+import researchMagnifierIllo from "@/assets/landing-dark/research-magnifier.png";
+import mechanismGearsIllo from "@/assets/landing-dark/mechanism-gears.png";
+import briefPacketIllo from "@/assets/landing-dark/brief-packet.png";
+import beforeIntakeFormIllo from "@/assets/landing-dark/before-intake-form.png";
+import afterCapturePipelineIllo from "@/assets/landing-dark/after-capture-pipeline.png";
+import methodOverviewIllo from "@/assets/landing-dark/method-overview.png";
 
 const InteractiveHeroBriefAssembly = lazy(() =>
   import("@/components/marketing/InteractiveHeroBriefAssembly").then((m) => ({
