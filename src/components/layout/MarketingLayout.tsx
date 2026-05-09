@@ -3,7 +3,6 @@ import { Outlet, NavLink, useLocation } from "react-router-dom";
 import { Menu } from "lucide-react";
 
 import { BrandMark } from "@/components/layout/BrandMark";
-import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import {
   signupCtaTarget,
@@ -83,7 +82,6 @@ export function MarketingLayout() {
 
           {/* CTAs sit outside the pill, on the far right */}
           <div className="absolute right-3 top-3 flex items-center gap-1.5 sm:right-6 sm:top-4">
-            <ThemeToggle hideLabel className="hidden md:inline-flex" />
             <Button
               asChild
               variant="ghost"
@@ -119,7 +117,6 @@ export function MarketingLayout() {
             </SheetTitle>
           </SheetHeader>
           <div className="border-b px-5 py-4">
-            <ThemeToggle className="w-full justify-between" />
           </div>
           <ul className="divide-y">
             {[...marketingLinks, ...legalLinks].map((l) => (

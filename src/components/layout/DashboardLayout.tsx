@@ -8,7 +8,6 @@ import { AppSidebar } from "@/components/layout/AppSidebar";
 import { NotificationBell } from "@/components/layout/NotificationBell";
 import { MobileTabBar } from "@/components/layout/MobileTabBar";
 import { BrandMark } from "@/components/layout/BrandMark";
-import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -82,7 +81,6 @@ export function DashboardLayout() {
                     New request
                   </NavLink>
                 </Button>
-                <ThemeToggle compact />
                 <NotificationBell />
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
