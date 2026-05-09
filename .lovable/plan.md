@@ -1,59 +1,48 @@
-## Deploy uploaded SVG as the small-render brand mark
+## Two-variant new mark, sitewide
 
-The uploaded `Untitled_design_4.svg` is a 1500×1500 wrapper that embeds a high-res PNG via base64. We'll extract that embedded raster (clean source pixels, no SVG bloat) and use it everywhere the small mark renders — the in-app `BrandMark`, the PNG fallback, and all favicon/app-icon sizes.
+The uploaded mark (cream line-art + amber wedge on transparent) is already deployed as the dark-bg variant. We'll generate a navy-recolored version of that exact same artwork for light backgrounds, swap it in everywhere small renders happen, and delete every legacy logo file.
 
-### What gets replaced
+### What gets built
 
-**1. Light-tone mark (used by `BrandMark` everywhere small)**
-- `public/brand/mark.svg` → new SVG that references the extracted PNG (or inlines it once at high res)
-- `public/brand/mark-color.png` → regenerated 1024×1024 from the new source
-- `public/brand/mark-color.webp` and `mark-color-sm.webp` → re-encoded from the new source
-
-No code changes needed in `BrandMark.tsx` — it already loads `/brand/mark.svg` + `/brand/mark-color.png` for `tone="light" | "auto" | "color"`.
-
-**2. Favicons + app icons** (regenerated from the new mark, square padded on cream `#FAF7F2` where appropriate)
-- `public/favicon.ico` (multi-size 16/32/48)
-- `public/favicon.png` (32×32)
-- `public/favicon-16x16.png`
-- `public/icon-192.png`, `public/icon-512.png`
-- `public/apple-touch-icon.png` (180×180)
-- `public/brand/icon-192.png`, `public/brand/icon-512.png`, `public/brand/apple-touch-icon.png`, `public/brand/favicon.ico`
-
-`index.html` and `public/site.webmanifest` already point at all these paths — no edits needed.
-
-**3. Out of scope** (explicitly NOT touched)
-- `public/brand/mark-on-dark.svg` / `mark-on-dark.png` — the existing dark-bg variant stays as-is
-- `public/brand/full-logo.svg` — separate full lockup, not the small mark
-- `public/photobrief-logo.png`, `public/photobrief-mark.png` — legacy, will leave alone unless you say otherwise
-- Email assets, Remotion theme, OG images — separate surfaces
-
-### Technical approach
-
-```text
-1. Copy user-uploads://Untitled_design_4.svg → /tmp/source.svg
-2. Python: parse SVG, extract base64 PNG payload from <image xlink:href="data:image/png;base64,...">
-3. Save as /tmp/mark-source.png (full resolution, transparent if alpha present)
-4. Use Pillow to:
-   - Trim transparent border, recenter on 1024×1024 transparent canvas → mark-color.png
-   - Re-encode as WebP → mark-color.webp + 256px mark-color-sm.webp
-   - Render padded square versions for favicons (16/32/48/180/192/512) on cream background
-5. Wrap the 1024 PNG in a minimal SVG shell → mark.svg (keeps existing <picture> SVG-first behavior crisp on hi-DPI)
-6. Build favicon.ico bundling 16/32/48
-7. QA: open the regenerated files visually and verify no clipping, correct transparency, amber + line art crisp at 16px
-```
-
-### Files touched
-
-Replaced (overwritten):
+**1. New light-bg variant** (auto-recolor cream → navy `#1B2A4A`, keep amber wedge)
 - `public/brand/mark.svg`
-- `public/brand/mark-color.png`
-- `public/brand/mark-color.webp`
-- `public/brand/mark-color-sm.webp`
+- `public/brand/mark-color.png` (1024×1024)
+- `public/brand/mark-color.webp`, `mark-color-sm.webp` (256px)
+
+**2. Favicons + app icons** regenerated from the new navy mark on cream `#FAF7F2`
 - `public/favicon.ico`, `public/favicon.png`, `public/favicon-16x16.png`
 - `public/icon-192.png`, `public/icon-512.png`, `public/apple-touch-icon.png`
 - `public/brand/favicon.ico`, `public/brand/icon-192.png`, `public/brand/icon-512.png`, `public/brand/apple-touch-icon.png`
 
-No source-code edits. No `index.html` / manifest / `BrandMark.tsx` changes.
+**3. Dark-bg variant** — already correct, no changes
+- `public/brand/mark-on-dark.svg`, `public/brand/mark-on-dark.png`
+
+**4. Delete legacy / superseded files** (zero code references confirmed)
+- `public/photobrief-logo.png`
+- `public/photobrief-mark.png`
+- `public/brand/full-logo.svg` (old wordmark lockup — `BrandMark` builds the wordmark from text, never references this file)
+- `public/og-image.png`, `public/og-betalist.png` (old OG share images — confirmed no code reference)
+
+### Technical approach
+
+```text
+1. Load /public/brand/mark-on-dark.png (the new artwork)
+2. Pillow recolor: where alpha>0 AND (R,G,B) is near cream/white,
+   replace with navy #1B2A4A; preserve amber pixels
+3. Save mark-color.png/webp/sm.webp + mark.svg wrapper
+4. Trim → render padded squares for all favicon/app-icon sizes on cream
+5. Bundle multi-size favicon.ico (16/32/48)
+6. Delete the four legacy files via rm
+7. QA: open the regenerated raster previews, then load /, footer (dark),
+   nav (light), and a public request page to confirm both variants render
+```
+
+### Out of scope
+
+- No code edits in `BrandMark.tsx` or callsites — paths stay the same.
+- No changes to `index.html` / `site.webmanifest` (they already point at the regenerated paths).
+- No changes to email assets, Remotion theme, or the wordmark text rendering — only the small mark/icon raster set.
 
 ### Validation
-Visually inspect each regenerated raster at native size, then load `/`, `/pricing`, and a public request page in the preview to confirm the new mark renders in nav, footer, `PoweredByBadge`, and the browser tab favicon.
+
+After regeneration, visually QA `mark-color.png`, `icon-512.png`, and `favicon.png` in the file viewer, then check the running preview at `/` (light nav, dark footer) and `/r/...` (PublicRequestLayout) to confirm both variants render correctly.

@@ -20,8 +20,8 @@ interface BrandMarkProps {
 }
 
 const ALT = "PhotoBrief.ai · Guide · Capture · Close";
-const MARK_SVG_LIGHT = "/brand/mark.svg";
-const MARK_PNG_LIGHT = "/brand/mark-color.png";
+const MARK_SVG_LIGHT = "/brand/mark.svg?v=2";
+const MARK_PNG_LIGHT = "/brand/mark-color.png?v=2";
 const MARK_SVG_DARK = "/brand/mark-on-dark.svg?v=2";
 const MARK_PNG_DARK = "/brand/mark-on-dark.png?v=2";
 const TAGLINE = "Guide · Capture · Close";
