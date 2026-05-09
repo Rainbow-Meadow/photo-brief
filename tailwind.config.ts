@@ -16,12 +16,13 @@ export default {
     extend: {
       fontFamily: {
         display: [
-          '"Bricolage Grotesque"',
+          '"Geist"',
           '"Inter"',
           "system-ui",
           "sans-serif",
         ],
         sans: [
+          '"Geist"',
           '"Inter"',
           "-apple-system",
           "BlinkMacSystemFont",
