@@ -97,7 +97,6 @@ const sectionLinks = [
   { href: "#comparison", label: "Before / after" },
   { href: "#use-cases", label: "Trades" },
   { href: "#website-intelligence", label: "Intelligence" },
-  { href: "#beta-program", label: "Beta" },
   { href: "#apply", label: "Apply" },
 ];
 
@@ -156,8 +155,7 @@ function Hero() {
                 <span className="block">Guide.</span>
                 <span className="block">Capture.</span>
                 <span className="block">
-                  Close
-                  <span className="ls-italic-accent">.</span>
+                  Close<span className="ls-accent-dot">.</span>
                 </span>
               </h1>
             </RiseIn>
@@ -206,7 +204,7 @@ function Hero() {
         </div>
 
         {/* Anchor nav strip */}
-        <div className="mt-20 hidden border-y border-border py-4 lg:flex lg:items-center lg:gap-8">
+        <div className="mt-20 hidden border-y border-border py-4 md:flex md:flex-wrap md:items-center md:gap-x-8 md:gap-y-2">
           <span className="ls-numeral">Index</span>
           {sectionLinks.map((l, i) => (
             <a
@@ -229,15 +227,23 @@ function Hero() {
 
 function MarqueeBand() {
   return (
-    <div className="relative border-y border-border bg-card py-8">
-      <MarqueeRow duration={45}>
+    <div className="relative space-y-3 border-y border-border bg-card py-8">
+      <MarqueeRow duration={45} direction="left">
         <span className="ls-marquee-item">Guide</span>
         <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
         <span className="ls-marquee-item">Capture</span>
         <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
         <span className="ls-marquee-item">Close</span>
         <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
-        <span className="ls-marquee-item ls-italic-accent">photo·brief</span>
+        <span className="ls-marquee-item ls-marquee-item--accent">photo·brief</span>
+        <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
+      </MarqueeRow>
+      <MarqueeRow duration={60} direction="right">
+        <span className="ls-marquee-item ls-marquee-item--ghost">Reverse-Form Method</span>
+        <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
+        <span className="ls-marquee-item">Quote on the first reply</span>
+        <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
+        <span className="ls-marquee-item ls-marquee-item--ghost">No more chasing photos</span>
         <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
       </MarqueeRow>
     </div>
@@ -376,11 +382,11 @@ function ComparisonSection() {
    ───────────────────────────────────────────────────────── */
 
 const useCases = [
-  { icon: Wrench, label: "Plumbers", note: "Leaks, fixtures, access.", illo: hvacTechIllo },
+  { icon: Wrench, label: "Plumbers", note: "Leaks, fixtures, access.", illo: null },
   { icon: Wind, label: "HVAC", note: "Units, vents, electrical.", illo: hvacTechIllo },
   { icon: Leaf, label: "Landscapers", note: "Yard size, slope, access.", illo: landscaperIllo },
-  { icon: Truck, label: "Junk haulers", note: "Pile, driveway, hazards.", illo: landscaperIllo },
-  { icon: Calculator, label: "Estimators", note: "Photo coverage that prices.", illo: hvacTechIllo },
+  { icon: Truck, label: "Junk haulers", note: "Pile, driveway, hazards.", illo: null },
+  { icon: Calculator, label: "Estimators", note: "Photo coverage that prices.", illo: null },
 ];
 
 function UseCasesSection() {
@@ -569,8 +575,8 @@ function FinalCta({ isFull }: { isFull: boolean }) {
             <p className="ls-eyebrow">[ 10 ] One last thing</p>
             <RiseIn>
               <h2 className="ls-h1 mt-6">
-                Ready to{" "}
-                <span className="ls-italic-accent">replace the chase</span>?
+                Ready to replace the chase
+                <span className="ls-accent-dot">?</span>
               </h2>
             </RiseIn>
             <RiseIn delay={0.1}>
