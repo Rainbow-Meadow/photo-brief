@@ -1561,8 +1561,7 @@ function UseCaseSection({ activeStamp }: { activeStamp?: string | null }) {
             );
           })}
         </div>
-      </div>
-    </section>
+    </MarketingSection>
   );
 }
 
