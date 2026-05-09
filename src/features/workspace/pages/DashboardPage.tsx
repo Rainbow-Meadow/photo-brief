@@ -184,28 +184,29 @@ export default function DashboardPage() {
         <div className="grid gap-5 sm:gap-6 lg:grid-cols-3">
           <div className={cn("space-y-5 sm:space-y-6", assistantOpen ? "lg:col-span-2" : "lg:col-span-3")}>
             {/* Primary focus card */}
-            <section className="surface-card-elevated relative isolate overflow-hidden p-5 sm:p-7">
-              <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-56 bg-ambient-sky opacity-75" />
-              <div aria-hidden className="pointer-events-none absolute -right-20 -top-28 -z-10 h-72 w-72 rounded-full bg-primary/10 blur-3xl" />
-              <div className="flex flex-col gap-4">
+            <section className="relative border border-border bg-card p-5 sm:p-7">
+              <div className="flex flex-col gap-5">
                 <div>
-                  <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-muted-foreground">
-                    {primaryFocus.label}
+                  <p className="inline-flex items-baseline gap-2 font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+                    <span className="inline-block h-px w-8 -translate-y-[0.25em] bg-[hsl(var(--accent-kinetic))]" />
+                    <span className="text-[hsl(var(--accent-kinetic))]">[ 01 ]</span>
+                    <span>{primaryFocus.label}</span>
                   </p>
-                  <div className="mt-3 flex items-baseline gap-3">
-                    <span className="text-5xl font-semibold tracking-tight text-foreground tabular-nums">
+                  <div className="mt-4 flex items-baseline gap-4">
+                    <span className="font-[Geist,Inter,system-ui,sans-serif] text-5xl font-semibold leading-none tracking-[-0.025em] text-foreground tabular-nums">
                       {primaryFocus.value}
                     </span>
-                    <span className="max-w-xs text-sm text-muted-foreground">
+                    <span className="max-w-xs text-sm leading-relaxed text-muted-foreground">
                       {primaryFocus.copy}
                     </span>
                   </div>
                 </div>
-                <Button asChild size="lg" className="h-12 w-full gap-1.5 rounded-full px-6 sm:w-auto">
-                  <NavLink to={primaryFocus.href}>
-                    {primaryFocus.cta} <ArrowRight className="h-4 w-4" />
-                  </NavLink>
-                </Button>
+                <NavLink
+                  to={primaryFocus.href}
+                  className="inline-flex h-12 items-center justify-center gap-2 self-start bg-[hsl(var(--accent-kinetic))] px-6 font-[Geist,Inter,system-ui,sans-serif] text-[0.78rem] font-semibold uppercase tracking-[0.14em] text-[hsl(var(--primary-foreground))] transition hover:brightness-110"
+                >
+                  {primaryFocus.cta} <ArrowRight className="h-4 w-4" />
+                </NavLink>
               </div>
             </section>
 
