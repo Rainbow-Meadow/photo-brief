@@ -1679,20 +1679,14 @@ function BetaDetailsAccordion({ value, onValueChange }: BetaDetailsAccordionProp
   const allOpen = ALL_ITEMS.every((id) => value.includes(id));
   return (
     <MarketingSection spacing="tight">
-        <SectionIntro
-          eyebrow={<><FileText className="h-3.5 w-3.5" /> The fine print</>}
-          title="Everything in writing."
-          description="How the program runs, what we ask of partners, and exactly how rewards are decided."
-          accent={
-            <div className="mx-auto w-full max-w-[260px] lg:ml-auto lg:mr-0">
-              <TradeAccent
-                src={betaNotebookIllo}
-                alt="Hand-drawn illustration of an open notebook with a magnifying glass — the fine print"
-              />
-            </div>
-          }
-        />
-        <div className="mx-auto mt-6 max-w-3xl sm:mt-8">
+      <div className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-start lg:gap-12">
+        <div className="lg:min-w-0">
+          <span className="pb-eyebrow"><FileText className="h-3.5 w-3.5" /> The fine print</span>
+          <h2 className="pb-section-title mt-4 text-white">Everything in writing.</h2>
+          <p className="pb-copy mt-4 max-w-xl text-base sm:text-lg">
+            How the program runs, what we ask of partners, and exactly how rewards are decided.
+          </p>
+          <div className="mt-8">
           <div className="flex items-center justify-end border-b border-[hsl(var(--pb-ink-soft)/0.18)] py-3">
             <button
               type="button"
@@ -1790,7 +1784,15 @@ function BetaDetailsAccordion({ value, onValueChange }: BetaDetailsAccordionProp
               </AccordionContent>
             </AccordionItem>
           </Accordion>
+          </div>
         </div>
+        <div className="flex justify-center lg:sticky lg:top-24 lg:justify-end">
+          <TradeAccent
+            src={betaNotebookIllo}
+            alt="Hand-drawn illustration of an open notebook with a magnifying glass — the fine print"
+          />
+        </div>
+      </div>
     </MarketingSection>
   );
 }
