@@ -51,10 +51,7 @@
     text-transform: uppercase;
     line-height: 1;
   }
-  .ls-section--dark .ls-eyebrow {
-    background: hsl(var(--background) / 0.08);
-    color: hsl(var(--background));
-  }
+  /* (ls-section--dark eyebrow override removed — section is now light tier 2) */
 
   /* ── Headings (single sans family) ──────────────────────── */
   .ls-h1, .ls-h2, .ls-h3 {
