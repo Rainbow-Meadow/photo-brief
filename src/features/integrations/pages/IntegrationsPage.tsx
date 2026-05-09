@@ -46,7 +46,7 @@ const stageMeta: Record<IntegrationStage, { label: string; compactLabel: string;
   live: {
     label: "Live",
     compactLabel: "Ready",
-    className: "border-emerald-500/30 bg-emerald-500/10 text-emerald-700",
+    className: "border-emerald-500/30 bg-emerald-500/10 text-emerald-300",
   },
   setup_ready: {
     label: "Scaffolded",
@@ -241,7 +241,7 @@ function ConnectorRow({
           <div className="flex min-w-0 items-center gap-2">
             <h3 className="truncate text-base font-semibold tracking-tight text-foreground sm:text-lg">{integration.name}</h3>
             {connection ? (
-              <Badge variant="outline" className="hidden gap-1 border-emerald-500/30 bg-emerald-500/10 text-emerald-700 sm:inline-flex">
+              <Badge variant="outline" className="hidden gap-1 border-emerald-500/30 bg-emerald-500/10 text-emerald-300 sm:inline-flex">
                 <CheckCircle2 className="h-3 w-3" /> Connected
               </Badge>
             ) : null}
@@ -263,7 +263,7 @@ function ConnectorRow({
         </div>
 
         <div className="flex shrink-0 items-center gap-2">
-          <Badge variant="outline" className={cn("h-8 shrink-0 rounded-full px-3 text-xs", connection ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-700" : stage.className)}>
+          <Badge variant="outline" className={cn("h-8 shrink-0 rounded-full px-3 text-xs", connection ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300" : stage.className)}>
             {connection ? (connection.status === "needs_attention" ? "Attention" : "Connected") : stage.compactLabel}
           </Badge>
           {hasSetupSteps ? (
