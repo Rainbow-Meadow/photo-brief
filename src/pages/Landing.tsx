@@ -347,9 +347,9 @@ export default function LandingPage() {
       <main className="pb-landing pb-on-paper">
         {/* ━━ 1. HERO — editorial / paper ━━━━━━━━━━━━━━━━━━━━━ */}
         <MarketingHero width="full" className="px-4 sm:px-6 lg:px-8">
-          <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
+          <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-12 pl-[84px]">
               {/* Left — copy */}
-              <div className="text-left">
+              <div className="text-left pl-0">
                 <div className="mb-4 sm:mb-6">
                   <BrandMark variant="horizontal" size={80} eager className="sm:hidden" />
                   <BrandMark variant="horizontal" size={112} eager className="hidden sm:inline-flex lg:hidden" />
