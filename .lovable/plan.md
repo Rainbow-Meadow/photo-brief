@@ -1,98 +1,70 @@
-## Goal
+# Backend Health Check
 
-Rebuild the Remotion video to match the dark editorial Field Manual system (cream hairlines on `#0E0E0C`, single amber accent per scene, mono plate codes), and score it with an ElevenLabs voiceover plus subtle SFX.
+A read-mostly audit pass across every backend system, with a small set of targeted fixes for issues already surfaced. No schema changes unless an issue is found.
 
-## Scope
+## What we already know (pre-flight findings)
 
-```text
-remotion/
-  src/
-    theme.ts            ← rewrite tokens (dark shell, no gradients/glow)
-    MainVideo.tsx       ← rewrite: 5 scenes via TransitionSeries, drop old shell
-    Root.tsx            ← update durationInFrames (5 × 180 = 900 @ 30fps = 30s)
-    components/
-      PlateFrame.tsx    ← new: hairline grid + plate code + corner ticks
-      DrawnLine.tsx     ← new: strokeDashoffset animator
-      MonoLabel.tsx     ← new: tracked +160 mono label w/ leader line
-    scenes/
-      SceneResearch.tsx     ← PLT.A.02  magnifier over wireframe
-      SceneMechanism.tsx    ← PLT.A.03  three gears, smallest amber
-      SceneBrief.tsx        ← PLT.A.04  exploded brief packet
-      SceneCapture.tsx      ← PLT.A.01  phone + READY-TO-QUOTE stamp
-      SceneClose.tsx        ← PLT.A.06  hexagon+square interlock + wordmark
-  public/
-    audio/
-      voiceover.mp3     ← generated via ElevenLabs TTS (George - JBFqnCBsd6RMkjVDRZzb)
-      ambient.mp3       ← generated via ElevenLabs Music (low ambient bed)
-      tick.mp3          ← SFX: hairline draw tick (per scene start)
-  scripts/
-    generate-audio.mjs  ← one-off: call ElevenLabs, write to public/audio/
-```
+- **Cloud status**: healthy.
+- **pg_cron**: 2 active jobs (`process-email-queue` every 5s, `photobrief-flag-stale-requests` hourly). URL was just corrected last turn.
+- **pgmq**: all 4 queues empty (auth/transactional + DLQs).
+- **email_send_log**: 10 rows stuck in `pending` from May 6 (when the cron URL was wrong). The queue messages themselves expired and were dropped, but the log rows were never transitioned. Cosmetic but misleading.
+- **Linter**: 16 WARN, 0 ERROR. All public tables have RLS enabled. Warnings are mostly known-safe (SECURITY DEFINER helpers, public storage buckets, search_path).
+- **Secrets**: 15 present; no obvious gaps for the 47 deployed edge functions.
 
-Old files removed: `AmbientBackground.tsx`, `SpotlightPrimitives.tsx`, `DashboardShell.tsx`, all `Scene*.tsx` under the old naming.
+## Audit checklist
 
-## Visual contract (locked, per `field-manual.art-direction.md`)
+### 1. Edge functions wiring
+- Spot-check each of the 47 functions for: presence of `Deno.serve`, CORS handler, JWT verification (where required), and matching `supabase/config.toml` entry.
+- Run `scripts/check-supabase-functions.mjs` (already in the repo) to catch missing entrypoints, broken local imports, and undeclared functions.
+- Smoke-test the high-traffic public functions with `curl` against the deployed URL:
+  - `verify-turnstile`, `live-preview-submission`, `waitlist-submit`, `integration-webhook`, `process-email-queue`, `notify-event`, `payments-webhook`, `handle-email-unsubscribe`.
+- For each, confirm 2xx on a valid request and 4xx (not 5xx) on an empty/invalid request.
 
-- Background: solid `#0E0E0C`, no gradients
-- Lines: cream `#F4F1EA`, 1px hairline + 2.5px contour
-- Accent: amber `#F2A33A`, **once per scene**, on the focal element
-- Type: Fraunces (serif headlines, sparing) + Geist Mono (labels, plate codes, tracked +160, all-caps)
-- Plate code bottom-right per scene (`PLT.A.0X / RFM-METHOD`)
-- Faint 1px construction grid, 35–45% negative space
+### 2. Scheduled jobs
+- Confirm `process-email-queue` cron still points at the correct project URL after the fix.
+- Confirm `photobrief-flag-stale-requests` is firing (sample `usage_events` / `photo_brief_requests` for status transitions in the last 24h).
+- Check the GitHub Actions `process-email-queue` workflow — it duplicates the pg_cron job. Decide whether to keep it as a backup or retire it (it's currently silently competing with cron every 5 minutes).
 
-## Motion system
+### 3. Email pipeline
+- Mark the 10 stale `pending` rows in `email_send_log` as `dlq` with a clear `error_message` ("queue URL misconfigured 2026-05-06; messages expired"). Append-only insert per the email schema rules — not an UPDATE.
+- Send one test transactional email end-to-end (e.g., `waitlist-confirmation` to a test address) and verify it transitions `pending` → `sent` within one cron tick.
+- Verify the vault secret `email_queue_service_role_key` is current (we just refreshed it).
+- Check `auth-email-hook` is the queue-based version (imports `enqueue_email`, not `@lovable.dev/email-js`).
 
-- Default entrance: `springTiming({ config: { damping: 200 }, durationInFrames: 24 })`
-- Subject contour: SVG `strokeDashoffset` 0 → length over 30–45 frames
-- Amber accent reveal: spring with overshoot (damping 14) at scene midpoint
-- Scene transitions: `fade` (12 frames) — never wipe/slide; keeps editorial calm
-- 5 scenes × 180 frames (6s) = 30s total; transitions overlap 12f → ~29.6s
+### 4. Database integrity
+- Re-run the linter and review each WARN to decide keep/fix:
+  - `Function Search Path Mutable` (×2) — pin `set search_path = public` on the two offending functions.
+  - `Extension in Public` — usually `pgmq` or `citext`; document as accepted if so.
+  - `Public Bucket Allows Listing` (×3) — review `brand-assets`, `submission-media`, `marketing-assets`, `email-assets` policies; tighten if any unintentionally allow `LIST`.
+  - `SECURITY DEFINER` executable warnings — confirm each helper (`has_workspace_role`, `is_workspace_member`, `is_platform_admin`, `workspace_has_credits`, `current_credit_balance`, etc.) is intentionally callable.
+- Confirm all 50+ public tables still have RLS enabled (currently: yes).
+- Spot-check the most sensitive tables' policies: `business_workspaces`, `workspace_members`, `submissions`, `request_credit_packs`, `subscriptions`, `platform_admins`, `usage_events`, `credit_ledger`.
 
-## Voice + audio (ElevenLabs)
+### 5. Cloudflare Workers
+- Verify each worker (`router`, `assistant-agent`, `capture-agent`, `beta-onboarding-agent`, `mcp-agent`) has a current `wrangler.toml` and required bindings/secrets.
+- Hit the worker health endpoints if they expose one; otherwise confirm last successful deploy via `.github/workflows/deploy-cloudflare.yml`.
 
-Voice: **George** (`JBFqnCBsd6RMkjVDRZzb`) — calm, editorial baritone.
-Model: `eleven_multilingual_v2`, stability 0.55, similarity 0.78, style 0.35.
+### 6. R2 / storage
+- Confirm R2 secrets resolve (account id, bucket, keys present).
+- List a single test object from `submission-media` via the worker to confirm signed-URL flow still works.
 
-Script (≈28s read at speed 1.0, paced to scene cuts):
+### 7. Connectors & third-party
+- Confirm the connector-managed secrets (ElevenLabs, Firecrawl, Google Drive/Mail/Sheets) still work by hitting one no-op endpoint each (e.g., `website-intelligence` for Firecrawl).
+- Stripe: confirm `payments-webhook` is reachable and `customer-portal` returns a valid session for a test workspace.
 
-```text
-[00.0] Most quotes die in the gap between question and answer.
-[06.0] PhotoBrief closes the gap. Research the job.
-[10.0] Mechanism, captured by the customer in their pocket.
-[15.0] A brief, written for the way you actually quote.
-[20.0] Ready to quote, before you pick up the phone.
-[25.0] PhotoBrief. Guide. Capture. Close.
-```
+### 8. Observability
+- Pull last 24h of `function_edge_logs` for non-2xx responses on every function and triage anything not already explained.
+- Pull last 24h of `auth_logs` for non-info levels (already saw the GoTrue deprecation warnings — those are upstream, no action).
 
-Audio bed: ElevenLabs Music API, prompt
-`"Sparse editorial documentary score, low cello drone, single muted piano note every 4 seconds, no drums, 28 seconds, calm and confident"`, mixed at -18 dB under VO.
+## Deliverable
 
-SFX: a single 0.4s `pencil tick` per scene cut (SFX API), aligned to `Sequence` starts at -10 dB.
-
-Generation flow (one-off, run once and committed):
-
-1. `scripts/generate-audio.mjs` reads `ELEVENLABS_API_KEY` from env, calls TTS → `public/audio/voiceover.mp3`, Music → `ambient.mp3`, SFX → `tick.mp3`.
-2. Run via `bun remotion/scripts/generate-audio.mjs` from `/dev-server`.
-3. Commit the three MP3s under `remotion/public/audio/`.
-4. `MainVideo.tsx` mounts `<Audio src={staticFile('audio/voiceover.mp3')} />`, `<Audio src={staticFile('audio/ambient.mp3')} volume={0.25} />`, and per-scene `<Audio src={staticFile('audio/tick.mp3')} volume={0.4} />` inside each scene's `<Sequence>`.
-
-Note: `ELEVENLABS_API_KEY` is already linked via the **Pb** ElevenLabs connection — no user action needed.
-
-## Render
-
-```bash
-cd remotion && node scripts/render-remotion.mjs
-# outputs /mnt/documents/photobrief-rmbc.mp4
-```
-
-The existing `scripts/render-remotion.mjs` already handles the Nix Chromium quirks; the only change is dropping `muted: true` so the new audio bakes in.
-
-## QA
-
-- `bunx remotion still src/index.ts main /tmp/f-{0,180,360,540,720,890}.png` — one frame per scene mid-point, inspect for: solid bg, single amber accent, plate code legible, no gradient drift.
-- Verify final MP4 file exists under `/mnt/documents/`, length ≈30s, audio present (`ffprobe`).
+A single summary written back to chat with:
+- ✅ items that are healthy (one line each)
+- ⚠️ items that need attention, with exact next-step fixes
+- 🛠️ a tight follow-up edit list for anything actionable (estimated ≤5 items based on the pre-flight)
 
 ## Out of scope
 
-- App UI, email templates, OG images (already aligned in earlier turns).
-- Workflow YAML changes — `render-demo-video.yml` already invokes the same render script.
+- Refactoring working code.
+- Touching `supabase/config.toml` project-level settings, `auth.*` schemas, or any RLS policy that's already correct.
+- Performance tuning (separate request).
