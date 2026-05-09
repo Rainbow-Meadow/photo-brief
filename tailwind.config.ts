@@ -15,12 +15,17 @@ export default {
     },
     extend: {
       fontFamily: {
+        display: [
+          '"Bricolage Grotesque"',
+          '"Inter"',
+          "system-ui",
+          "sans-serif",
+        ],
         sans: [
+          '"Inter"',
           "-apple-system",
           "BlinkMacSystemFont",
           '"SF Pro Text"',
-          '"SF Pro Display"',
-          '"Inter"',
           "system-ui",
           '"Segoe UI"',
           "Roboto",
@@ -34,6 +39,7 @@ export default {
           "sans-serif",
         ],
         mono: [
+          '"Geist Mono"',
           "ui-monospace",
           '"SF Mono"',
           "Menlo",
