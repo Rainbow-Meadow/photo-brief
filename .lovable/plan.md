@@ -1,69 +1,68 @@
-## Concept: "Field Manual"
+## Goal
 
-A unified illustration system styled like plates from a 1960s technical manual, reinterpreted on the dark editorial shell. Every image reads like an engineering diagram of a job-site truth — drawn with hard-edge cream linework on dark navy, small amber callouts, monospace labels, and dimension markers. Bold, striking, never cute.
+Bring `InteractiveHeroBriefAssembly` in line with the locked Field Manual visual contract (cream-on-dark, amber single accent, monospace all-caps labels, 1px hairlines, no glow). Today it still leans on violet/lavender accents, soft white blobs, and rounded glow shadows from the old direction.
 
-### The visual language (locked rules)
+## Scope
 
-Every new image obeys this contract so the set reads as one system:
+Single component: `src/components/marketing/InteractiveHeroBriefAssembly.tsx` (1,197 lines, 12 sub-components). No business-logic changes — phases, capture flow, lead-submit edge function call, and copy stay as-is. UI tokens only.
 
-- **Canvas**: solid `hsl(60 8% 5%)` background (matches `--background`). No drop shadows, no gradients, no glow.
-- **Lines**: cream `#F4F1EA` strokes only, two weights — 1px hairline for grid/dimension/leader lines, 2.5px for the primary subject silhouette.
-- **Accents**: amber `#F2A33A` used **once or twice per image** — to highlight the single most important element (the leak, the gear that turns, the brief that lands). Kinetic orange `#FF5A1F` reserved for true CTAs only, never illustration.
-- **Type**: monospace labels (Geist Mono / IBM Plex Mono), all-caps, tracked +160. Sized 9-11px equivalent. Numbered call-outs ("01", "02") with leader lines, tiny dimension ticks, fictional plate numbers ("PLT.A.04 / RFM-METHOD"), grid coordinates.
-- **Composition**: subject centered or rule-of-thirds, generous whitespace (35-45% of canvas), surrounded by faint grid notation. Think Charles Eames meets a structural blueprint.
-- **No** soft shading, no characters with faces, no isometric cartoons, no skeuomorphic "fun" 3D, no stock-illustration pastels.
+## Edits
 
-### Coverage (what gets remade)
+### 1. Section frame
 
-| Group | Files | Notes |
-|---|---|---|
-| Hero | `hero-new.png` | The marquee plate. Subject: a phone-shaped brief with a photo viewport; amber leader pointing to "READY-TO-QUOTE" stamp. |
-| RMBC method (5) | `research-magnifier`, `mechanism-gears`, `brief-packet`, `method-overview`, `close-handshake` | Each plate diagrams one step of the Reverse-Form Method™. Numbered 01-05 in the corner. |
-| Comparison (2) | `before-intake-form` (chaotic stack of misshapen forms with red Xs in cream/amber) vs `after-capture-pipeline` (ordered pipeline with one amber check) | The two sit side-by-side; layout symmetry is the message. |
-| Trades (5) | `landscaper`, `hvac-tech`, `plumber`, `junk-hauler`, `estimator` | Each is a tool-of-the-trade as a single-subject blueprint plate (pruning shears, manifold gauge set, P-trap, dolly, clipboard). No human figures. |
-| Scenes (5) | `beta-notebook`, `founding-badge`, `mailbox-flag`, `reward-ribbons`, `transformation` | Plate-style: an open notebook with grid pages, a die-stamp medallion, a flag-up mailbox, a ribbon rosette, a before/after split. |
-| Empty states (4) | `no-guides`, `no-keys`, `no-requests`, `no-team` | Smaller footprint; a single object with one amber ⌀ marker — closed book, blank tag, empty inbox tray, lone chair around a table. |
+- Eyebrow `Interactive demo` → monospace all-caps, tracked +160, amber underline rule (matches plate captions).
+- Heading + sub-copy stay, but switch the sub-copy color to `text-foreground/55` and add a small mono plate code (e.g. `PLT.D.01 / FIELD-MANUAL`) above the eyebrow for continuity with the illustration plates.
 
-**Out of this pass**: `junk-removal/*` and `submission/*` are real customer-style photos powering the interactive demo. They stay — the Field Manual style would break the "this is a real intake" illusion. If desired later, we can apply a subtle navy-tint LUT to harmonize them with the dark shell, but no replacement.
+### 2. PhoneMockup chrome
 
-### How we'll roll it out (concept board + 1 sample first)
+- Bezel: replace heavy drop shadow + inset ring with a 1px cream hairline (`border-foreground/15`) and a 2.5px outer contour ring (no blur).
+- Status bar: monospace digits, cream/40.
+- Add a faint 1px construction-grid background behind both phones (same grid asset/style used in plates) inside the section, not inside the bezel.
 
-**Step 1 — Art-direction doc** (this turn): Write `src/assets/field-manual.art-direction.md` capturing the locked rules above, the master prompt template, and per-image prompt seeds for all 22 replacements. This becomes the contract for any future image generated in this system.
+### 3. ConnectionLine + mobile separator
 
-**Step 2 — One pilot image** (this turn): Generate the new `hero-new.png` using `imagegen` at `premium` quality (legible monospace type matters; `fast`/`standard` mangles small text). Save to `src/assets/hero-new-v2.png` so the original stays as backup. Wire it temporarily into `src/pages/Landing.tsx` so you can see it live.
+- Dashed lines → solid cream hairlines.
+- Arrow chip: amber stroke ring instead of violet fill; arrow icon amber.
+- Label "Live sync" → "LIVE SYNC" monospace, tracked +200, cream/45.
+- Mobile separator: same swap (violet → amber, hairline lines).
 
-**Step 3 — Mini concept board** (this turn): Generate three small thumbnail variants of *one* RMBC plate (`mechanism-gears`) at `fast` quality so you can compare composition options side-by-side without burning premium credits.
+### 4. Business (dark) screens
 
-**Step 4 — You review, then I batch the rest** (next turn): Once you green-light the pilot + variant, I generate the remaining 20 images in a single follow-up turn, swap imports, delete the originals (keeping the v2 suffix off the final files), and re-record any Playwright snapshots that include illustrations.
+- Replace every `bg-white/[0.04|0.06]` card with `border border-foreground/10` + transparent fill (hairline boxes, not soft blobs).
+- Section labels (`Recent requests`, `Answers`, `AI summary`) → monospace all-caps, tracked +160, cream/45.
+- "New lead" pulse dot: amber instead of emerald.
+- "Capturing photos…" status row: amber pulse dot + amber mono text (already amber — just tighten to mono + tracking).
+- ROUTING spinner row: cream `Loader2`, mono "ROUTING TO TEMPLATE…".
+- "Active" website-intake pill: amber-on-dark hairline pill, mono caps.
+- BriefCompleteScreen "Ready" badge + "Quote now" button: amber (replace emerald). Keep a single amber accent per visible state — drop the duplicate amber on the photo-grid "OK" chips, switch those to cream `OK` mono.
 
-### Production prompt template (locked)
+### 5. Customer (light) screens
 
-```
-Editorial technical-manual plate, single subject, drawn as cream (#F4F1EA)
-hairline + 2.5px contour lines on a solid dark navy (#0E0E0C) background.
-One amber (#F2A33A) accent applied to [SUBJECT-FOCAL-ELEMENT] only.
-Monospace all-caps labels tracked +160 with leader lines and tiny
-dimension ticks. Plate number "[PLT.X.NN]" in the bottom-right corner.
-Faint 1px construction grid behind subject. 35-45% negative space.
-No drop shadows, no gradients, no character faces, no isometric, no
-photoreal, no soft pastel, no 3D rendering. Subject: [SUBJECT-DESCRIPTION].
-Composition: [LAYOUT]. Aspect ratio: [AR].
-```
+- Customer phone surface stays cream paper (`#F4F1EA`) — that contrast IS the editorial story. Swap interior fills from `bg-black/[0.04]` blobs to 1px ink hairline boxes (`border-foreground/15` on cream).
+- All field labels and section captions → monospace all-caps tracked +160, ink/55.
+- Buttons (Submit request, Continue, Send to ClearPath, etc.): solid ink fill with cream label + a 4px amber accent bar on the left edge (single-accent rule), no rounded glow.
+- `MiniPoweredBy` "Powered by PhotoBrief": replace with the canonical `PoweredByBadge` import in compact/mono mode so it matches every other surface.
 
-### Acceptance criteria for the pilot
+### 6. ClearPath fictional brand
 
-Before declaring step-2 done I'll inspect the rendered hero with `image_tools--zoom_image` and verify:
+Keep ClearPath's teal as-is. The white-label story (their brand stays theirs) reads stronger when ClearPath is visibly NOT amber. Only PhotoBrief chrome (status row, eyebrow, connection line, submit button) goes amber; ClearPath's `Truck` icon, `colorLight` hero panel, and brand mark stay teal.
 
-- Background is the exact dark navy (no halo, no JPEG compression bands).
-- Cream linework holds at 2-pixel min stroke without antialiasing mush.
-- Amber accent appears once and only once.
-- Monospace labels are legible at the size they'll render in the hero.
-- No accidental human figures, faces, or stock-illustration drift.
+### 7. Lead-capture form (post-COMPLETE)
 
-If any check fails I'll regenerate before showing it to you.
+- Card border `border-white/[0.08]` → `border-foreground/15` hairline, no `backdrop-blur`.
+- Email input focus ring: violet → amber.
+- Submit button: violet → amber, mono caps "SEND".
+- "Open your request →" link: amber instead of lavender.
 
 ## Out of scope
 
-- LUT-grading the real demo photos (junk-removal, submission).
-- Animations on the new images (hover effects, parallax) — left to a follow-up if you want motion.
-- Changing the BrandMark assets (already locked in the previous turn).
+- No phase/flow changes, no copy rewrites beyond casing.
+- Junk-removal photos (`wide-garage`, `pile-closeup`, `appliances`, `driveway-access`) stay — they're real customer-style photography, the same exception used in the plate system.
+- No new image assets.
+
+## Verification
+
+1. `bun run build` clean.
+2. Visual snapshot at 440px (current viewport) and 1280px through the preview, walking through all 6 phases.
+3. `bun test src/test/landing-visual-contract.test.ts` and `brand-mark-contract.test.ts` still green.
+4. Quick `rg "pb-violet|pb-lavender|emerald-|teal-" src/components/marketing/InteractiveHeroBriefAssembly.tsx` after the edit — only the intentional ClearPath teal references should remain.
