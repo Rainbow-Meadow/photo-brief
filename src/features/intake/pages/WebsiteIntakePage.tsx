@@ -293,34 +293,35 @@ export default function WebsiteIntakePage() {
 
   if (isLoading || !source) {
     return (
-      <Surface variant="panel" radius="lg" padding="lg" className="mx-auto max-w-5xl text-center">
-        <div className="mx-auto h-10 w-10 animate-pulse rounded-full bg-muted" />
+      <div className="mx-auto max-w-5xl border border-border bg-card p-7 text-center">
+        <p className="inline-flex items-baseline gap-2 font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+          <span className="inline-block h-px w-8 -translate-y-[0.25em] bg-[hsl(var(--accent-kinetic))]" />
+          <span className="text-[hsl(var(--accent-kinetic))]">[ 00 ]</span>
+          <span>Loading</span>
+        </p>
+        <div className="mx-auto mt-5 h-8 w-8 animate-pulse bg-muted" />
         <p className="mt-4 text-sm text-muted-foreground">Setting up website intake…</p>
-      </Surface>
+      </div>
     );
   }
 
   const intro = (
-    <Surface
-      variant="panel"
-      radius="lg"
-      padding="md"
-      className="relative isolate overflow-hidden"
-    >
-      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-44 bg-ambient-sky opacity-70" />
-      <span className="inline-flex items-center gap-1.5 rounded-full border bg-background/70 px-3 py-1 text-xs font-medium text-muted-foreground shadow-sm">
-        <Globe2 className="h-3.5 w-3.5 text-primary" /> Website Intake setup
-      </span>
+    <Surface variant="panel" radius="lg" padding="md" className="border border-border bg-card">
+      <p className="inline-flex items-baseline gap-2 font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+        <span className="inline-block h-px w-8 -translate-y-[0.25em] bg-[hsl(var(--accent-kinetic))]" />
+        <span className="text-[hsl(var(--accent-kinetic))]">[ WI ]</span>
+        <span className="inline-flex items-center gap-1.5"><Globe2 className="h-3 w-3" /> Website intake setup</span>
+      </p>
       <div className="mt-4 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+          <h1 className="font-[Geist,Inter,system-ui,sans-serif] text-[clamp(1.85rem,3vw,2.75rem)] font-semibold leading-[1.05] tracking-[-0.025em] text-foreground">
             Set up website intake in one guided flow.
           </h1>
-          <p className="mt-2 max-w-2xl text-base leading-7 text-muted-foreground">
+          <p className="mt-3 max-w-2xl text-base leading-7 text-muted-foreground">
             Choose the website path, configure the template behavior, connect the site, and test the result without jumping between separate setup sections.
           </p>
         </div>
-        <div className="flex items-center gap-2 rounded-full border bg-background/70 px-3 py-2 shadow-sm">
+        <div className="flex items-center gap-3 border border-border bg-background px-4 py-3">
           <Switch
             checked={source.enabled}
             onCheckedChange={async (enabled) => {
@@ -328,33 +329,39 @@ export default function WebsiteIntakePage() {
               toast.success(enabled ? "Website intake is on" : "Website intake is paused");
             }}
           />
-          <span className="text-sm font-medium text-foreground">{source.enabled ? "On" : "Paused"}</span>
+          <span className="font-mono text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-foreground">
+            {source.enabled ? "On" : "Paused"}
+          </span>
         </div>
       </div>
     </Surface>
   );
 
   const header = (
-    <div className="flex flex-wrap items-start justify-between gap-4">
-      <div>
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
-          Step {activeStepIndex + 1} of {setupSteps.length}
-        </span>
-        <h3 className="mt-3 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">{activeStep.title}</h3>
+    <div className="flex flex-wrap items-start justify-between gap-4 border-b border-border pb-5">
+      <div className="min-w-0">
+        <p className="inline-flex items-baseline gap-2 font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+          <span className="inline-block h-px w-8 -translate-y-[0.25em] bg-[hsl(var(--accent-kinetic))]" />
+          <span className="text-[hsl(var(--accent-kinetic))]">[ {String(activeStepIndex + 1).padStart(2, "0")} / {String(setupSteps.length).padStart(2, "0")} ]</span>
+          <span>Step</span>
+        </p>
+        <h3 className="mt-3 font-[Geist,Inter,system-ui,sans-serif] text-[clamp(1.5rem,2.4vw,2rem)] font-semibold leading-tight tracking-[-0.022em] text-foreground">
+          {activeStep.title}
+        </h3>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">{activeStep.body}</p>
       </div>
-      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-        <activeStep.icon className="h-5 w-5" />
+      <div className="flex h-11 w-11 items-center justify-center border border-border text-[hsl(var(--accent-kinetic))]">
+        <activeStep.icon className="h-4 w-4" />
       </div>
     </div>
   );
 
   const footer = (
     <>
-      <Button className="h-12 rounded-2xl" variant="outline" onClick={goBack} disabled={activeStepIndex === 0}>
+      <Button className="h-12 rounded-none border border-foreground/30 bg-transparent font-[Geist,Inter,system-ui,sans-serif] text-[0.78rem] font-semibold uppercase tracking-[0.14em] text-foreground hover:bg-foreground hover:text-background" variant="outline" onClick={goBack} disabled={activeStepIndex === 0}>
         <ChevronLeft className="mr-1 h-4 w-4" /> Back
       </Button>
-      <Button className="h-12 rounded-2xl" onClick={goNext} disabled={activeStepIndex === setupSteps.length - 1}>
+      <Button className="h-12 rounded-none bg-[hsl(var(--accent-kinetic))] font-[Geist,Inter,system-ui,sans-serif] text-[0.78rem] font-semibold uppercase tracking-[0.14em] text-[hsl(var(--primary-foreground))] hover:brightness-110" onClick={goNext} disabled={activeStepIndex === setupSteps.length - 1}>
         Next <ChevronRight className="ml-1 h-4 w-4" />
       </Button>
     </>
