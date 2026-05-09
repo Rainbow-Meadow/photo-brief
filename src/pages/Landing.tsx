@@ -1684,13 +1684,15 @@ function BetaDetailsAccordion({ value, onValueChange }: BetaDetailsAccordionProp
           title="Everything in writing."
           description="How the program runs, what we ask of partners, and exactly how rewards are decided."
           accent={
-            <TradeAccent
-              src={betaNotebookIllo}
-              alt="Hand-drawn illustration of an open notebook with a magnifying glass — the fine print"
-            />
+            <div className="mx-auto w-full max-w-[260px] lg:ml-auto lg:mr-0">
+              <TradeAccent
+                src={betaNotebookIllo}
+                alt="Hand-drawn illustration of an open notebook with a magnifying glass — the fine print"
+              />
+            </div>
           }
         />
-        <div className="mx-auto mt-10 max-w-3xl sm:mt-10">
+        <div className="mx-auto mt-6 max-w-3xl sm:mt-8">
           <div className="flex items-center justify-end border-b border-[hsl(var(--pb-ink-soft)/0.18)] py-3">
             <button
               type="button"
