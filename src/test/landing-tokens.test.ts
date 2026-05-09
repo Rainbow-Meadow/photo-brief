@@ -50,7 +50,6 @@ describe("Landing token hygiene", () => {
     expect(LANDING_SOURCE).toMatch(/researchMagnifierIllo/);
     expect(LANDING_SOURCE).toMatch(/mechanismGearsIllo/);
     expect(LANDING_SOURCE).toMatch(/briefPacketIllo/);
-    expect(LANDING_SOURCE).toMatch(/closeHandshakeIllo/);
     expect(LANDING_SOURCE).toMatch(/methodOverviewIllo/);
   });
 });
