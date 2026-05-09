@@ -109,8 +109,11 @@ import mailboxFlagIllo from "@/assets/scenes/mailbox-flag-illustration.png";
 import researchMagnifierIllo from "@/assets/rmbc/research-magnifier.png";
 import mechanismGearsIllo from "@/assets/rmbc/mechanism-gears.png";
 import briefPacketIllo from "@/assets/rmbc/brief-packet.png";
-import closeHandshakeIllo from "@/assets/rmbc/close-handshake.png";
 import methodOverviewIllo from "@/assets/rmbc/method-overview.png";
+import { z } from "zod";
+import { Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 
 /* ── JSON-LD ───────────────────────────────────────────────── */
 
@@ -1865,15 +1868,7 @@ function FinalCta({ isFull }: { isFull: boolean }) {
             </div>
           </div>
           <div className="flex flex-col items-center gap-6 lg:items-end">
-            <img
-              src={closeHandshakeIllo}
-              alt="Hand-drawn illustration of a quote sliding into an inbox — the close"
-              width={1024}
-              height={1024}
-              loading="lazy"
-              decoding="async"
-              className="w-full max-w-[360px]"
-            />
+            <FinalCtaQuickApply isFull={isFull} />
             <img
               src={mailboxFlagIllo}
               alt="Hand-drawn illustration of a mailbox with the flag raised — invitation to apply"
@@ -1890,7 +1885,159 @@ function FinalCta({ isFull }: { isFull: boolean }) {
   );
 }
 
-/* ── Helpers ─────────────────────────────────────────────── */
+const quickApplySchema = z.object({
+  name: z.string().trim().min(1, "Name is required").max(80),
+  email: z.string().trim().email("Enter a valid email").max(254),
+  company: z.string().trim().max(120).optional().or(z.literal("")),
+  website_url: z.string().max(0).optional().or(z.literal("")), // honeypot
+});
+
+function FinalCtaQuickApply({ isFull }: { isFull: boolean }) {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [company, setCompany] = useState("");
+  const [trap, setTrap] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [done, setDone] = useState(false);
+  const [errors, setErrors] = useState<{ name?: string; email?: string }>({});
+
+  const submitLabel = isFull ? "Join the waitlist" : "Send my application";
+
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const parsed = quickApplySchema.safeParse({ name, email, company, website_url: trap });
+    if (!parsed.success) {
+      const fieldErrors: typeof errors = {};
+      for (const issue of parsed.error.issues) {
+        const key = issue.path[0];
+        if (key === "name" || key === "email") fieldErrors[key] = issue.message;
+      }
+      setErrors(fieldErrors);
+      return;
+    }
+    setErrors({});
+    if (trap) { setDone(true); return; } // silent drop on honeypot
+    setSubmitting(true);
+    try {
+      const { error } = await supabase.functions.invoke("waitlist-submit", {
+        body: {
+          name: parsed.data.name,
+          email: parsed.data.email,
+          business_name: parsed.data.company || undefined,
+          source: "landing-final-cta",
+          interest: "founding-partner",
+        },
+      });
+      if (error) throw error;
+      trackEvent("landing_final_cta_quick_apply_submit", { has_company: Boolean(parsed.data.company) });
+      setDone(true);
+    } catch (err) {
+      toast({
+        title: "Couldn't submit",
+        description: "Something went wrong. Try again or use the full application above.",
+        variant: "destructive",
+      });
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  if (done) {
+    return (
+      <div className="w-full max-w-[420px] rounded-2xl border border-white/15 bg-white/5 p-6 text-white">
+        <Eyebrow>You're in the queue</Eyebrow>
+        <p className="mt-3 font-serif text-xl italic">Watch your inbox.</p>
+        <p className="mt-2 text-sm text-white/75">
+          We review every application by hand. If you're a fit for one of the {BETA_TOTAL_PARTNERS} founding seats,
+          you'll hear from us within 48 hours.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <form
+      onSubmit={onSubmit}
+      className="w-full max-w-[420px] rounded-2xl border border-white/15 bg-white/5 p-6 backdrop-blur-sm"
+      noValidate
+    >
+      <Eyebrow>{isFull ? "Join the waitlist" : "30-second application"}</Eyebrow>
+      <div className="mt-5 space-y-4">
+        <label className="block">
+          <span className="text-xs font-semibold uppercase tracking-wider text-white/70">Name</span>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            maxLength={80}
+            required
+            autoComplete="name"
+            className="mt-1 w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-white placeholder:text-white/40 focus:border-white/50 focus:outline-none"
+          />
+          {errors.name && <span className="mt-1 block text-xs text-[hsl(var(--pb-amber))]">{errors.name}</span>}
+        </label>
+        <label className="block">
+          <span className="text-xs font-semibold uppercase tracking-wider text-white/70">Work email</span>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            maxLength={254}
+            required
+            autoComplete="email"
+            className="mt-1 w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-white placeholder:text-white/40 focus:border-white/50 focus:outline-none"
+          />
+          {errors.email && <span className="mt-1 block text-xs text-[hsl(var(--pb-amber))]">{errors.email}</span>}
+        </label>
+        <label className="block">
+          <span className="text-xs font-semibold uppercase tracking-wider text-white/70">
+            Company or website <span className="font-normal normal-case text-white/50">(optional)</span>
+          </span>
+          <input
+            type="text"
+            value={company}
+            onChange={(e) => setCompany(e.target.value)}
+            maxLength={120}
+            autoComplete="organization"
+            className="mt-1 w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-white placeholder:text-white/40 focus:border-white/50 focus:outline-none"
+          />
+        </label>
+        {/* honeypot */}
+        <input
+          type="text"
+          tabIndex={-1}
+          aria-hidden="true"
+          autoComplete="off"
+          value={trap}
+          onChange={(e) => setTrap(e.target.value)}
+          className="absolute left-[-9999px] h-0 w-0 opacity-0"
+        />
+      </div>
+      <button
+        type="submit"
+        disabled={submitting}
+        className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[hsl(var(--pb-amber))] px-5 py-3 text-sm font-bold text-[hsl(var(--pb-navy))] shadow-sm transition disabled:opacity-60"
+      >
+        {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4" />}
+        {submitting ? "Sending…" : submitLabel}
+      </button>
+      <p className="mt-3 text-center text-xs text-white/60">
+        Prefer the full 6-min agent?{" "}
+        <a
+          href="#apply"
+          className="underline underline-offset-2 hover:text-white"
+          onClick={(e) => {
+            e.preventDefault();
+            document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" });
+          }}
+        >
+          Open the onboarding agent
+        </a>
+      </p>
+    </form>
+  );
+}
+
 
 function BenefitList({ title, items }: { title: string; items: string[] }) {
   return (

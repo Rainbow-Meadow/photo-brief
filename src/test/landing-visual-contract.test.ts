@@ -86,9 +86,10 @@ describe("Landing visual contract", () => {
     const wiIdx = SRC.indexOf("id=\"website-intelligence\"");
     expect(SRC.slice(wiIdx, wiIdx + 1500)).toMatch(/researchMagnifierIllo/);
 
-    // Final CTA uses closeHandshakeIllo
+    // Final CTA renders the quick-apply form (close-handshake illo replaced).
     const cta = SRC.slice(SRC.indexOf("function FinalCta"));
-    expect(cta).toMatch(/closeHandshakeIllo/);
+    expect(cta).toMatch(/FinalCtaQuickApply/);
+    expect(cta.includes("closeHandshakeIllo")).toBe(false);
   });
 
   it("trade illustrations on Pain Points are sized within the canonical band (≤360px)", () => {
