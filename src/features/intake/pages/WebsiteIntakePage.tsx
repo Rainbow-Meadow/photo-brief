@@ -25,6 +25,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Surface, WizardLayout } from "@/components/layout/primitives";
 import { useCurrentWorkspace } from "@/hooks/useCurrentWorkspace";
 import { useWorkspaceGuides } from "@/hooks/useGuides";
 import {
