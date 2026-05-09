@@ -187,7 +187,7 @@ function Hero() {
           </div>
 
           <RiseIn delay={0.4} className="relative">
-            <div className="relative aspect-[3/2] w-full overflow-hidden border border-border bg-[#FAF7F2]">
+            <div className="relative aspect-[3/2] w-full overflow-hidden">
               <img
                 src={heroIllustration}
                 alt="Customer capturing the photos a contractor actually needs."
@@ -309,11 +309,11 @@ function MechanismSection() {
                   <span className="ls-numeral">{step.n}</span>
                   <span className="ls-numeral text-foreground/40">04</span>
                 </div>
-                <div className="mt-6 aspect-square w-full overflow-hidden border border-border bg-muted">
+                <div className="mt-6 aspect-square w-full overflow-hidden">
                   <img
                     src={step.illo}
                     alt=""
-                    className="h-full w-full object-contain p-6 opacity-90"
+                    className="h-full w-full object-contain"
                     loading="lazy"
                   />
                 </div>
@@ -357,11 +357,11 @@ function ComparisonSection() {
                 </li>
               ))}
             </ul>
-            <div className="mt-6 aspect-[16/9] overflow-hidden border border-border bg-muted">
+            <div className="mt-6 aspect-[16/9] overflow-hidden">
               <img
                 src={beforeIntakeFormIllo}
                 alt="Illustration of a broken intake form with missing photo context"
-                className="h-full w-full object-contain p-4"
+                className="h-full w-full object-contain"
                 loading="lazy"
               />
             </div>
@@ -381,11 +381,11 @@ function ComparisonSection() {
                 </li>
               ))}
             </ul>
-            <div className="mt-6 aspect-[16/9] overflow-hidden border border-border bg-muted">
+            <div className="mt-6 aspect-[16/9] overflow-hidden">
               <img
                 src={afterCapturePipelineIllo}
                 alt="Illustration of a guided phone capture flow turning into a ready brief packet"
-                className="h-full w-full object-contain p-4"
+                className="h-full w-full object-contain"
                 loading="lazy"
               />
             </div>
@@ -449,11 +449,11 @@ function WebsiteIntelligenceSection() {
       <Container>
         <div className="grid gap-12 lg:grid-cols-[1fr_1.4fr] lg:items-center">
           <RiseIn>
-            <div className="aspect-square overflow-hidden border border-border bg-muted">
+            <div className="aspect-square overflow-hidden">
               <img
                 src={researchMagnifierIllo}
                 alt="Website intelligence"
-                className="h-full w-full object-contain p-12"
+                className="h-full w-full object-contain"
                 loading="lazy"
               />
             </div>
