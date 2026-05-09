@@ -1,33 +1,20 @@
-## Problem
-The image-edit model rendered the transparency checkerboard as actual pixels (alternating white + light-gray squares baked into the RGB) instead of producing real alpha. The resulting PNGs are technically RGBA but every "transparent" pixel is opaque white/gray.
+## Goal
+Use the dark-background BrandMark lockup in the landing hero so the mark + wordmark read correctly against the dark hero background.
 
-## Fix
-Post-process each generated file in `src/assets/landing-dark/` with a Python/PIL script that strips the checker by alpha-keying neutral grays:
+## Change
+**`src/pages/Landing.tsx`** (line 202) — set `tone="dark"` on the hero `BrandMark`:
 
-For each pixel:
-- If `R == G == B` (within ±4 tolerance) **and** the value is in the checker range (≥190), set `alpha = 0`.
-- Otherwise leave RGB untouched and force `alpha = 255`.
+```tsx
+<BrandMark
+  variant="horizontal"
+  tone="dark"
+  size={28}
+  className="mt-6 justify-center opacity-80"
+/>
+```
 
-This preserves the cream linework (RGB ≈ 250,247,242 — not neutral gray, G≠B), the navy fills, and the amber accents, while wiping the white/grey checker squares to true transparency. A small alpha feather pass on the resulting edges (1-px box blur on the alpha channel only) prevents jagged edges.
-
-### Files processed (in place)
-- `src/assets/landing-dark/hero.png`
-- `src/assets/landing-dark/before-intake-form.png`
-- `src/assets/landing-dark/after-capture-pipeline.png`
-- `src/assets/landing-dark/research-magnifier.png`
-- `src/assets/landing-dark/mechanism-gears.png`
-- `src/assets/landing-dark/brief-packet.png`
-- `src/assets/landing-dark/method-overview.png`
-
-### QA
-After running, inspect each PNG over a dark background (open via `code--view`). Verify:
-- No checker remnants
-- No halo around cream/navy linework
-- Amber accents intact
-- Edges look clean (no jaggies)
-
-If any image still shows residual gray fringe, tighten the gray tolerance or raise the brightness threshold and re-run that file.
+This swaps `MarkImage` to `/brand/mark-on-dark.svg` and recolors the wordmark `Photo`/`.ai` text to cream (amber `Brief` stays). No other BrandMark instances exist on the landing page, so no other edits are needed.
 
 ## Out of scope
-- No re-generation via the AI image tool (the alpha keying is deterministic and faster).
-- No Landing.tsx changes — paths and wrappers already point at these files.
+- BrandMark usages outside `Landing.tsx` (Auth, Signup, BetaWelcome, etc.) — those screens are on cream backgrounds and should keep their current tone.
+- No changes to BrandMark component, brand assets, or color tokens.
