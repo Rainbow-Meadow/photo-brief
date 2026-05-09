@@ -60,10 +60,10 @@ describe("Landing visual contract (Locomotive editorial)", () => {
     expect(SRC).toMatch(/MagneticCTA/);
   });
 
-  it("never renders <BrandMark tone=\"dark\" /> directly (FinalCta dark Section has no logo; hero mark must be light)", () => {
+  it('renders every <BrandMark> on the dark app shell with tone="dark"', () => {
     const tags = SRC.match(/<BrandMark\b[^>]*?(?:\/>|>)/g) ?? [];
     for (const tag of tags) {
-      expect(tag, `Landing BrandMark must use tone="light": ${tag}`).not.toMatch(/tone="dark"/);
+      expect(tag, `Landing BrandMark must use tone="dark": ${tag}`).toMatch(/tone="dark"/);
     }
   });
 });
