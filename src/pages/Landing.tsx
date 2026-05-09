@@ -62,6 +62,9 @@ import { toast } from "@/hooks/use-toast";
 import heroIllustration from "@/assets/landing-hero-illustration.png";
 import landscaperIllo from "@/assets/trades/landscaper-illustration.png";
 import hvacTechIllo from "@/assets/trades/hvac-tech-illustration.png";
+import plumberIllo from "@/assets/trades/plumber-illustration.png";
+import junkHaulerIllo from "@/assets/trades/junk-hauler-illustration.png";
+import estimatorIllo from "@/assets/trades/estimator-illustration.png";
 import researchMagnifierIllo from "@/assets/rmbc/research-magnifier.png";
 import mechanismGearsIllo from "@/assets/rmbc/mechanism-gears.png";
 import briefPacketIllo from "@/assets/rmbc/brief-packet.png";
@@ -382,11 +385,11 @@ function ComparisonSection() {
    ───────────────────────────────────────────────────────── */
 
 const useCases = [
-  { icon: Wrench, label: "Plumbers", note: "Leaks, fixtures, access.", illo: null },
+  { icon: Wrench, label: "Plumbers", note: "Leaks, fixtures, access.", illo: plumberIllo },
   { icon: Wind, label: "HVAC", note: "Units, vents, electrical.", illo: hvacTechIllo },
   { icon: Leaf, label: "Landscapers", note: "Yard size, slope, access.", illo: landscaperIllo },
-  { icon: Truck, label: "Junk haulers", note: "Pile, driveway, hazards.", illo: null },
-  { icon: Calculator, label: "Estimators", note: "Photo coverage that prices.", illo: null },
+  { icon: Truck, label: "Junk haulers", note: "Pile, driveway, hazards.", illo: junkHaulerIllo },
+  { icon: Calculator, label: "Estimators", note: "Photo coverage that prices.", illo: estimatorIllo },
 ];
 
 function UseCasesSection() {

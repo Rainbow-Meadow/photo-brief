@@ -1,55 +1,50 @@
 ## Goal
 
-Replace every illustration on the landing page with a cohesive set of **risograph-textured collages** that match the new Locomotive-inspired chrome (cream `#FAF7F2` ground, navy `#1B2A4A` ink, kinetic-orange `#F2A33A` accent). Tactile, two-color, photo-cutout + vector marks, visible paper grain and slight mis-registration.
+Regenerate every landing illustration in **bold flat kinetic vector** style and wire up the three trade cards (Plumbers, Junk haulers, Estimators) that currently have `illo: null` so every slot has an image.
 
-## Visual recipe (applied to every image)
+## Visual recipe
 
-- **Substrate:** cream paper ground with subtle grain.
-- **Inks:** navy as primary, kinetic-orange as accent. Treat as a 2-color riso print — overlap zones get a darkened multiply, mis-registration ~2–4px on accent layer.
-- **Content mix:** halftoned photo cutouts of real trade subjects (a hand, a ladder, an HVAC unit, a yard) layered with bold geometric marks (circles, arrows, registration crosses, numerals).
-- **Texture:** heavy grain, ink bleed at edges, tiny dust specks. No drop shadows, no gradients.
-- **Margin:** generous negative space; subject anchored, not centered.
-- **No text inside images** (typography lives in the page).
+- **Pure flat vector** — no halftone, no grain, no texture, no gradients, no shadows.
+- **Palette (strict, only these):** cream `#FAF7F2` ground, deep navy `#1B2A4A` primary, kinetic orange `#F2A33A` accent. Optional off-white `#FFFFFF` highlight inside shapes.
+- **Forms:** chunky geometric shapes with thick uniform navy outlines (~6–10px relative to canvas), bold filled silhouettes, minimal interior detail. Poster-art energy: think Locomotive / French serigraph / Modernist trade poster.
+- **Kinetic gestures:** speed lines, motion arcs, registration crosses, off-axis tilt, repeated chevrons — every scene should feel like it is *doing* something.
+- **Composition:** subject anchored off-center on a generous cream field, overlapping orange shape provides energy.
+- **No text** anywhere in the image.
 
-## Image set & aspect ratios
+## Image slots (11 total — every slot filled)
 
-Hero / featured
-1. `landing-hero-illustration.png` — **3:2** wide. Centerpiece collage: halftone close-up of a service-tech hand framing a phone over a worksite, orange registration ring, navy arrows.
+Hero (3:2):
+1. `landing-hero-illustration.png` — hand holding a phone framing a worksite, orange burst ring, navy speed lines.
 
-RMBC method (square so they sit cleanly in the numbered grid)
-2. `rmbc/research-magnifier.png` — **1:1** magnifier over a halftone photo strip, orange dot of focus.
-3. `rmbc/mechanism-gears.png` — **1:1** interlocking navy gears + photo cutout of a clipboard, orange motion arc.
-4. `rmbc/brief-packet.png` — **1:1** stacked document packet with orange tabs, halftone photo peeking from inside.
-5. `rmbc/method-overview.png` — **1:1** isometric flow diagram (capture → brief → close), orange path line.
-6. `rmbc/close-handshake.png` — **1:1** halftone handshake, orange checkmark stamp.
+RMBC method (1:1 — square):
+2. `rmbc/research-magnifier.png` — chunky magnifier over a stack of photo rectangles, orange focal dot.
+3. `rmbc/mechanism-gears.png` — interlocking navy gears + a clipboard, orange motion arc.
+4. `rmbc/brief-packet.png` — fanned document folders with orange tabs, photo card peeking out.
+5. `rmbc/method-overview.png` — three connected blocks (camera → doc → handshake) joined by an orange path with arrowheads.
+6. `rmbc/close-handshake.png` *(currently unused — leave file but skip wiring)* handshake with orange checkmark.
 
-Trades (portrait so they read as character cards in the use-case grid)
-7. `trades/plumber-illustration.png` — **3:4** wrench + pipe joint photo cutout, orange leak drop.
-8. `trades/hvac-tech-illustration.png` — **3:4** outdoor condenser unit, orange airflow arrows.
-9. `trades/landscaper-illustration.png` — **3:4** halftone lawn + slope contour lines, orange property pin.
-10. `trades/junk-hauler-illustration.png` — **3:4** loaded truck bed silhouette, orange hazard triangle.
-11. `trades/estimator-illustration.png` — **3:4** photo-grid contact sheet with orange measurement callouts.
+Trades (3:4 portrait — used in the use-case grid):
+7. `trades/plumber-illustration.png` — wrench on an elbow pipe, orange leak drop.
+8. `trades/hvac-tech-illustration.png` — outdoor condenser unit, orange airflow chevrons.
+9. `trades/landscaper-illustration.png` — property aerial outline with slope contour lines, orange location pin.
+10. `trades/junk-hauler-illustration.png` — pickup truck loaded with debris silhouette, orange hazard triangle.
+11. `trades/estimator-illustration.png` — 2×2 photo contact-sheet card with orange measurement callout brackets.
 
-Use-case scenes (new — currently the grid reuses HVAC/landscaper; we'll wire one per card)
-- All 5 trades above become the per-card scene; no extra files needed beyond regenerating these five.
+## Code wiring
 
-Total: **11 images regenerated in place**, same paths so no component imports change.
+In `src/pages/Landing.tsx`:
+- Add three imports: `plumberIllo`, `junkHaulerIllo`, `estimatorIllo` from `@/assets/trades/...`.
+- Replace the three `illo: null` entries in the trades array (lines 385, 388, 389) with the new imports.
 
-## Generation approach
+No other component changes — RMBC and HVAC/landscaper slots already wire through.
 
-- Use `imagegen--generate_image` with `model: "premium"` (no text in images, but premium gives us the cleanest halftone + grain control).
-- Shared style preamble appended to every prompt to lock the riso look, palette hexes, grain, and mis-registration.
-- Generate in parallel batches of 3–4.
-- Save directly over existing paths so no code edits are required for imports.
+## QA pass
 
-## QA pass (mandatory before delivery)
-
-1. Open each generated PNG, verify: cream ground, only navy + orange inks, visible grain, no stray colors, no embedded text, correct aspect ratio, subject readable at card size (~280px wide).
-2. Drop the set into the live landing route at 1440 and 390 widths and screenshot to confirm cohesion across hero, RMBC strip, and trades grid.
-3. If any image drifts (extra colors, photoreal slickness, text artifacts), regenerate that single image with a tightened prompt — do not touch the rest.
+1. Inspect each generated PNG: cream ground, only navy + orange (+ optional white inside shapes), no text, no halftone or grain, kinetic energy present, correct aspect ratio.
+2. Open `/` at 1440 and 390 viewports, screenshot hero + RMBC strip + trades grid, confirm cohesion.
+3. Regenerate any single image that drifts (extra colors, photoreal, embedded text) with a tightened prompt — leave the rest untouched.
 
 ## Out of scope
 
-- No layout, typography, or copy changes.
-- No new image slots — only replacing the 11 files already imported.
-- No dashboard / Pricing / Auth imagery (those come in the next reskin pass).
+- No layout, typography, copy, or component structure changes beyond wiring the three new trade imports.
+- No dashboard/Pricing/Auth imagery (next reskin pass).
