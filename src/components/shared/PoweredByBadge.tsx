@@ -27,7 +27,7 @@ export function PoweredByBadge({ className, size = 48, tone = "dark" }: PoweredB
         <span>Sent securely with</span>
         <BrandMark variant="wordmark" tone={tone} size={size} />
       </div>
-      <span className="uppercase tracking-[0.22em] text-[9px] text-brand-navy/60">
+      <span className="uppercase tracking-[0.22em] text-[9px] text-current/60">
         Guide · Capture · Close
       </span>
     </div>

@@ -16,7 +16,7 @@ const styles: Record<Variant, { wrap: string; icon: string; Icon: typeof Lightbu
   },
   success: {
     wrap: "border-emerald-500/30 bg-emerald-500/5 text-foreground",
-    icon: "text-emerald-600",
+    icon: "text-emerald-400",
     Icon: CheckCircle2,
   },
 };
