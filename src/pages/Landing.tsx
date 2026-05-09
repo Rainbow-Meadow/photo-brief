@@ -818,7 +818,7 @@ function PainPointSection() {
               height={1024}
               loading="lazy"
               decoding="async"
-              className="mx-auto mb-6 w-full max-w-[280px] drop-shadow-[0_22px_36px_hsl(var(--pb-ink-soft)/0.28)] lg:mx-0 lg:max-w-[320px] text-left object-cover"
+              className="mx-auto mb-6 w-full max-w-[280px] drop-shadow-[0_22px_36px_hsl(var(--pb-ink-soft)/0.28)] lg:mx-0 lg:max-w-[320px] text-left object-cover scale-150 origin-center lg:origin-left"
             />
             <span className="pb-eyebrow">
               <MessageSquareWarning className="h-3.5 w-3.5" /> The problem
