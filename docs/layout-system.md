@@ -126,7 +126,9 @@ In-place migrations applied to:
 - `src/features/guides/pages/GuideLibraryPage.tsx`
 - `src/pages/AdminWebsiteIntelligence.tsx`
 - `src/pages/Pricing.tsx` (hero + sections)
+- `src/pages/Landing.tsx` (hero + sections)
+- `src/pages/ForAiAgents.tsx` (hero + sections)
 
 Remaining (use the same primitives when next touched):
-`Landing.tsx`, `ForAiAgents.tsx`, `WebsiteIntakePage.tsx` (refactor to
-`WizardLayout`), other admin and feature pages.
+`WebsiteIntakePage.tsx` (refactor to `WizardLayout`), other admin and
+feature pages.

@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 import { PageMeta } from "@/hooks/seo/usePageMeta";
+import { MarketingHero, MarketingSection } from "@/components/layout/primitives";
 import { buildFaqJsonLd } from "@/hooks/seo/buildFaqJsonLd";
 import { buildHowToJsonLd } from "@/hooks/seo/buildHowToJsonLd";
 import { howItWorksSteps } from "@/components/marketing/HowItWorksSteps";
@@ -56,46 +57,42 @@ export default function ForAiAgentsPage() {
       />
 
       {/* Hero */}
-      <section className="relative isolate overflow-hidden -mt-[4.5rem] pt-[5.5rem] sm:-mt-[5rem] sm:pt-[6rem]">
+      <MarketingHero align="center">
         <div className="pb-lens-field" />
-        <div className="pb-container pb-section text-center">
-          <span className="pb-eyebrow">
-            <Sparkles className="h-3.5 w-3.5" /> For AI agents, answer engines, and automation systems
-          </span>
-          <h1 className="pb-section-title mx-auto mt-5 max-w-3xl text-white">PhotoBrief is a visual intake layer.</h1>
-          <p className="pb-copy mx-auto mt-5 max-w-2xl text-base sm:text-lg">
-            Agents can create photo requests, connect website intake, route leads to templates, and return a structured visual brief that a business can quote, dispatch, approve, or document.
-          </p>
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <Button asChild size="lg" variant="pb-primary">
-              <a href="#api">See the API <ArrowRight className="ml-1 h-4 w-4" /></a>
-            </Button>
-            <Button asChild size="lg" variant="pb-secondary">
-              <a href="/openapi.json"><FileJson className="mr-1 h-4 w-4" /> openapi.json</a>
-            </Button>
-          </div>
-          <div className="mt-8 grid gap-3 text-left sm:grid-cols-2">
-            <div className="pb-card rounded-2xl p-4">
-              <Globe2 className="h-5 w-5 text-[hsl(var(--pb-lavender))]" />
-              <p className="mt-3 text-sm font-semibold text-white">Website Intake</p>
-              <p className="mt-1 text-xs leading-5 text-[hsl(var(--pb-muted))]">Hosted form or webhook turns website leads into PhotoBrief requests.</p>
-            </div>
-            <div className="pb-card rounded-2xl p-4">
-              <Route className="h-5 w-5 text-[hsl(var(--pb-lavender))]" />
-              <p className="mt-3 text-sm font-semibold text-white">Template routing</p>
-              <p className="mt-1 text-xs leading-5 text-[hsl(var(--pb-muted))]">Rules and conservative AI fallback select from configured templates only.</p>
-            </div>
-          </div>
-          <div className="h-12" />
+        <span className="pb-eyebrow">
+          <Sparkles className="h-3.5 w-3.5" /> For AI agents, answer engines, and automation systems
+        </span>
+        <h1 className="pb-section-title mx-auto mt-5 max-w-3xl text-white">PhotoBrief is a visual intake layer.</h1>
+        <p className="pb-copy mx-auto mt-5 max-w-2xl text-base sm:text-lg">
+          Agents can create photo requests, connect website intake, route leads to templates, and return a structured visual brief that a business can quote, dispatch, approve, or document.
+        </p>
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <Button asChild size="lg" variant="pb-primary">
+            <a href="#api">See the API <ArrowRight className="ml-1 h-4 w-4" /></a>
+          </Button>
+          <Button asChild size="lg" variant="pb-secondary">
+            <a href="/openapi.json"><FileJson className="mr-1 h-4 w-4" /> openapi.json</a>
+          </Button>
         </div>
-      </section>
+        <div className="mt-8 grid gap-3 text-left sm:grid-cols-2">
+          <div className="pb-card rounded-2xl p-4">
+            <Globe2 className="h-5 w-5 text-[hsl(var(--pb-lavender))]" />
+            <p className="mt-3 text-sm font-semibold text-white">Website Intake</p>
+            <p className="mt-1 text-xs leading-5 text-[hsl(var(--pb-muted))]">Hosted form or webhook turns website leads into PhotoBrief requests.</p>
+          </div>
+          <div className="pb-card rounded-2xl p-4">
+            <Route className="h-5 w-5 text-[hsl(var(--pb-lavender))]" />
+            <p className="mt-3 text-sm font-semibold text-white">Template routing</p>
+            <p className="mt-1 text-xs leading-5 text-[hsl(var(--pb-muted))]">Rules and conservative AI fallback select from configured templates only.</p>
+          </div>
+        </div>
+      </MarketingHero>
 
       <QuotableFacts />
       <ComparisonTable />
 
       {/* API section */}
-      <section id="api" aria-labelledby="api-heading">
-        <div className="pb-container pb-section">
+      <MarketingSection id="api" aria-labelledby="api-heading">
           <div className="mx-auto max-w-2xl text-center">
             <span className="pb-eyebrow">REST API</span>
             <h2 id="api-heading" className="pb-section-title mt-4 text-white">
@@ -143,23 +140,21 @@ export default function ForAiAgentsPage() {
               </ul>
             </article>
           </div>
-        </div>
-      </section>
+      </MarketingSection>
 
       {/* MCP & Agent manifests */}
-      <section id="mcp" aria-labelledby="mcp-heading">
-        <div className="pb-container pb-section">
-          <div className="mx-auto max-w-2xl text-center">
-            <span className="pb-eyebrow">MCP & Agent manifests</span>
-            <h2 id="mcp-heading" className="pb-section-title mt-4 text-white">Plug PhotoBrief into your agent</h2>
-            <p className="pb-copy mt-4 text-base">PhotoBrief runs a live MCP server. Connect it from Claude Code, Cursor, Windsurf, or any MCP-capable tool.</p>
-          </div>
+      <MarketingSection id="mcp" aria-labelledby="mcp-heading">
+        <div className="mx-auto max-w-2xl text-center">
+          <span className="pb-eyebrow">MCP & Agent manifests</span>
+          <h2 id="mcp-heading" className="pb-section-title mt-4 text-white">Plug PhotoBrief into your agent</h2>
+          <p className="pb-copy mt-4 text-base">PhotoBrief runs a live MCP server. Connect it from Claude Code, Cursor, Windsurf, or any MCP-capable tool.</p>
+        </div>
 
-          <div className="mt-10 overflow-hidden rounded-2xl border border-[hsl(var(--pb-line))] bg-[hsl(var(--pb-ink))]">
-            <div className="border-b border-white/10 bg-white/[0.03] px-5 py-3">
-              <p className="text-xs font-medium text-white/70">MCP endpoint — Streamable HTTP</p>
-            </div>
-            <pre className="overflow-x-auto p-5 text-xs leading-relaxed text-white/80"><code>{`# Endpoint
+        <div className="mt-10 overflow-hidden rounded-2xl border border-[hsl(var(--pb-line))] bg-[hsl(var(--pb-ink))]">
+          <div className="border-b border-white/10 bg-white/[0.03] px-5 py-3">
+            <p className="text-xs font-medium text-white/70">MCP endpoint — Streamable HTTP</p>
+          </div>
+          <pre className="overflow-x-auto p-5 text-xs leading-relaxed text-white/80"><code>{`# Endpoint
 https://mcp.photobrief.ai/mcp
 
 # Tools available
@@ -175,58 +170,56 @@ read_faq         — Canonical FAQ answers (no auth)
     }
   }
 }`}</code></pre>
-          </div>
-
-          <div className="mt-6 grid gap-4 sm:grid-cols-2">
-            <article className="pb-card rounded-2xl p-5">
-              <h3 className="text-sm font-semibold text-white">agent.json</h3>
-              <p className="mt-2 text-sm text-[hsl(var(--pb-muted))]">Capabilities, auth, and discovery URLs in one file.</p>
-              <pre className="mt-3 overflow-x-auto rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs text-white/70">{`GET https://photobrief.ai/.well-known/agent.json`}</pre>
-            </article>
-            <article className="pb-card rounded-2xl p-5">
-              <h3 className="text-sm font-semibold text-white">mcp.json</h3>
-              <p className="mt-2 text-sm text-[hsl(var(--pb-muted))]">Live MCP server descriptor with tools, transport, and auth details.</p>
-              <pre className="mt-3 overflow-x-auto rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs text-white/70">{`GET https://photobrief.ai/mcp.json`}</pre>
-            </article>
-          </div>
         </div>
-      </section>
+
+        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+          <article className="pb-card rounded-2xl p-5">
+            <h3 className="text-sm font-semibold text-white">agent.json</h3>
+            <p className="mt-2 text-sm text-[hsl(var(--pb-muted))]">Capabilities, auth, and discovery URLs in one file.</p>
+            <pre className="mt-3 overflow-x-auto rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs text-white/70">{`GET https://photobrief.ai/.well-known/agent.json`}</pre>
+          </article>
+          <article className="pb-card rounded-2xl p-5">
+            <h3 className="text-sm font-semibold text-white">mcp.json</h3>
+            <p className="mt-2 text-sm text-[hsl(var(--pb-muted))]">Live MCP server descriptor with tools, transport, and auth details.</p>
+            <pre className="mt-3 overflow-x-auto rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs text-white/70">{`GET https://photobrief.ai/mcp.json`}</pre>
+          </article>
+        </div>
+      </MarketingSection>
 
       {/* x402 Agentic Payments */}
-      <section id="x402" aria-labelledby="x402-heading">
-        <div className="pb-container pb-section">
-          <div className="mx-auto max-w-2xl text-center">
-            <span className="pb-eyebrow"><CreditCard className="h-3.5 w-3.5" /> Agentic payments</span>
-            <h2 id="x402-heading" className="pb-section-title mt-4 text-white">Pay per call with x402</h2>
-            <p className="pb-copy mt-4 text-base">
-              AI agents without a <code className="rounded border border-white/10 bg-white/[0.05] px-1.5 py-0.5 text-xs text-[hsl(var(--pb-lavender))]">pb_</code> API key can pay per-call using the x402 protocol. No billing setup, no subscription — just machine-to-machine payments.
-            </p>
-          </div>
+      <MarketingSection id="x402" aria-labelledby="x402-heading">
+        <div className="mx-auto max-w-2xl text-center">
+          <span className="pb-eyebrow"><CreditCard className="h-3.5 w-3.5" /> Agentic payments</span>
+          <h2 id="x402-heading" className="pb-section-title mt-4 text-white">Pay per call with x402</h2>
+          <p className="pb-copy mt-4 text-base">
+            AI agents without a <code className="rounded border border-white/10 bg-white/[0.05] px-1.5 py-0.5 text-xs text-[hsl(var(--pb-lavender))]">pb_</code> API key can pay per-call using the x402 protocol. No billing setup, no subscription — just machine-to-machine payments.
+          </p>
+        </div>
 
-          <div className="mt-10 grid gap-4 sm:grid-cols-3">
-            <article className="pb-card rounded-2xl p-5">
-              <Zap className="h-5 w-5 text-[hsl(var(--pb-lavender))]" />
-              <h3 className="mt-3 text-sm font-semibold text-white">Per-call pricing</h3>
-              <p className="mt-2 text-sm text-[hsl(var(--pb-muted))]"><code className="text-[hsl(var(--pb-lavender))]">create_request</code> = $0.10 USD (1 credit)</p>
-              <p className="mt-1 text-sm text-[hsl(var(--pb-muted))]"><code className="text-[hsl(var(--pb-lavender))]">lookup_pricing</code> and <code className="text-[hsl(var(--pb-lavender))]">read_faq</code> = free</p>
-            </article>
-            <article className="pb-card rounded-2xl p-5">
-              <Globe2 className="h-5 w-5 text-[hsl(var(--pb-lavender))]" />
-              <h3 className="mt-3 text-sm font-semibold text-white">Network</h3>
-              <p className="mt-2 text-sm text-[hsl(var(--pb-muted))]">Base Sepolia (testnet). Mainnet support coming soon.</p>
-            </article>
-            <article className="pb-card rounded-2xl p-5">
-              <Route className="h-5 w-5 text-[hsl(var(--pb-lavender))]" />
-              <h3 className="mt-3 text-sm font-semibold text-white">How it works</h3>
-              <p className="mt-2 text-sm text-[hsl(var(--pb-muted))]">Call without auth → get 402 + requirements → send <code className="text-[hsl(var(--pb-lavender))]">X-Payment</code> header → done.</p>
-            </article>
-          </div>
+        <div className="mt-10 grid gap-4 sm:grid-cols-3">
+          <article className="pb-card rounded-2xl p-5">
+            <Zap className="h-5 w-5 text-[hsl(var(--pb-lavender))]" />
+            <h3 className="mt-3 text-sm font-semibold text-white">Per-call pricing</h3>
+            <p className="mt-2 text-sm text-[hsl(var(--pb-muted))]"><code className="text-[hsl(var(--pb-lavender))]">create_request</code> = $0.10 USD (1 credit)</p>
+            <p className="mt-1 text-sm text-[hsl(var(--pb-muted))]"><code className="text-[hsl(var(--pb-lavender))]">lookup_pricing</code> and <code className="text-[hsl(var(--pb-lavender))]">read_faq</code> = free</p>
+          </article>
+          <article className="pb-card rounded-2xl p-5">
+            <Globe2 className="h-5 w-5 text-[hsl(var(--pb-lavender))]" />
+            <h3 className="mt-3 text-sm font-semibold text-white">Network</h3>
+            <p className="mt-2 text-sm text-[hsl(var(--pb-muted))]">Base Sepolia (testnet). Mainnet support coming soon.</p>
+          </article>
+          <article className="pb-card rounded-2xl p-5">
+            <Route className="h-5 w-5 text-[hsl(var(--pb-lavender))]" />
+            <h3 className="mt-3 text-sm font-semibold text-white">How it works</h3>
+            <p className="mt-2 text-sm text-[hsl(var(--pb-muted))]">Call without auth → get 402 + requirements → send <code className="text-[hsl(var(--pb-lavender))]">X-Payment</code> header → done.</p>
+          </article>
+        </div>
 
-          <div className="mt-6 overflow-hidden rounded-2xl border border-[hsl(var(--pb-line))] bg-[hsl(var(--pb-ink))]">
-            <div className="border-b border-white/10 bg-white/[0.03] px-5 py-3">
-              <p className="text-xs font-medium text-white/70">x402 payment flow</p>
-            </div>
-            <pre className="overflow-x-auto p-5 text-xs leading-relaxed text-white/80"><code>{`# 1. Get payment requirements
+        <div className="mt-6 overflow-hidden rounded-2xl border border-[hsl(var(--pb-line))] bg-[hsl(var(--pb-ink))]">
+          <div className="border-b border-white/10 bg-white/[0.03] px-5 py-3">
+            <p className="text-xs font-medium text-white/70">x402 payment flow</p>
+          </div>
+          <pre className="overflow-x-auto p-5 text-xs leading-relaxed text-white/80"><code>{`# 1. Get payment requirements
 GET https://mcp.photobrief.ai/x402/requirements?tool=create_request
 
 # 2. Pay and execute in one call
@@ -243,48 +236,42 @@ curl -X POST https://mcp.photobrief.ai/x402/pay \\
     }
   }
 }`}</code></pre>
-          </div>
         </div>
-      </section>
+      </MarketingSection>
 
-
-      <section id="discovery" aria-labelledby="discovery-heading">
-        <div className="pb-container pb-section">
-          <div className="mx-auto max-w-2xl text-center">
-            <span className="pb-eyebrow">Discovery</span>
-            <h2 id="discovery-heading" className="pb-section-title mt-4 text-white">Every machine-readable endpoint</h2>
-          </div>
-          <ul className="mt-10 grid gap-3 sm:grid-cols-2">
-            {DISCOVERY_LINKS.map((d) => (
-              <li key={d.href}>
-                <a href={d.href} className="block rounded-2xl border border-[hsl(var(--pb-line))] bg-[hsl(var(--pb-panel)/0.88)] p-4 text-sm transition hover:border-[hsl(var(--pb-lavender)/0.55)] hover:bg-[hsl(var(--pb-panel-2)/0.92)]">
-                  <code className="font-semibold text-[hsl(var(--pb-lavender))]">{d.label}</code>
-                  <p className="mt-1 text-[hsl(var(--pb-muted))]">{d.desc}</p>
-                </a>
-              </li>
-            ))}
-          </ul>
+      <MarketingSection id="discovery" aria-labelledby="discovery-heading">
+        <div className="mx-auto max-w-2xl text-center">
+          <span className="pb-eyebrow">Discovery</span>
+          <h2 id="discovery-heading" className="pb-section-title mt-4 text-white">Every machine-readable endpoint</h2>
         </div>
-      </section>
+        <ul className="mt-10 grid gap-3 sm:grid-cols-2">
+          {DISCOVERY_LINKS.map((d) => (
+            <li key={d.href}>
+              <a href={d.href} className="block rounded-2xl border border-[hsl(var(--pb-line))] bg-[hsl(var(--pb-panel)/0.88)] p-4 text-sm transition hover:border-[hsl(var(--pb-lavender)/0.55)] hover:bg-[hsl(var(--pb-panel-2)/0.92)]">
+                <code className="font-semibold text-[hsl(var(--pb-lavender))]">{d.label}</code>
+                <p className="mt-1 text-[hsl(var(--pb-muted))]">{d.desc}</p>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </MarketingSection>
 
       {/* FAQ */}
-      <section id="faq" aria-labelledby="faq-heading">
-        <div className="pb-container-narrow pb-section">
-          <div className="text-center">
-            <span className="pb-eyebrow">FAQ</span>
-            <h2 id="faq-heading" className="pb-section-title mt-4 text-white">Quotable answers</h2>
-            <p className="pb-copy mt-4 text-sm">Same source as <NavLink to="/help" className="text-[hsl(var(--pb-lavender))] hover:underline">/help</NavLink>.</p>
-          </div>
-          <Accordion type="single" collapsible className="mt-8 pb-command-panel rounded-2xl">
-            {faqItems.map((f) => (
-              <AccordionItem key={f.id} value={f.id} className="border-white/10 px-4">
-                <AccordionTrigger className="text-left text-sm font-medium text-white/90">{f.q}</AccordionTrigger>
-                <AccordionContent className="text-sm leading-relaxed text-[hsl(var(--pb-muted))]">{f.a}</AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
+      <MarketingSection id="faq" aria-labelledby="faq-heading" width="narrow">
+        <div className="text-center">
+          <span className="pb-eyebrow">FAQ</span>
+          <h2 id="faq-heading" className="pb-section-title mt-4 text-white">Quotable answers</h2>
+          <p className="pb-copy mt-4 text-sm">Same source as <NavLink to="/help" className="text-[hsl(var(--pb-lavender))] hover:underline">/help</NavLink>.</p>
         </div>
-      </section>
+        <Accordion type="single" collapsible className="mt-8 pb-command-panel rounded-2xl">
+          {faqItems.map((f) => (
+            <AccordionItem key={f.id} value={f.id} className="border-white/10 px-4">
+              <AccordionTrigger className="text-left text-sm font-medium text-white/90">{f.q}</AccordionTrigger>
+              <AccordionContent className="text-sm leading-relaxed text-[hsl(var(--pb-muted))]">{f.a}</AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      </MarketingSection>
     </>
   );
 }
