@@ -17,8 +17,12 @@
     background: hsl(var(--muted));
   }
   .ls-section--dark {
-    background: hsl(var(--pb-night, var(--foreground)));
-    color: hsl(var(--background));
+    background:
+      radial-gradient(60% 50% at 80% 0%, hsl(var(--pb-amber, 33 88% 55%) / 0.18), transparent 70%),
+      radial-gradient(45% 40% at 8% 100%, hsl(var(--pb-lavender, 33 89% 69%) / 0.14), transparent 72%),
+      hsl(var(--pb-tier-2, 220 28% 86%));
+    color: hsl(var(--foreground));
+    border-block: 1px solid hsl(var(--pb-paper-edge, 220 24% 78%) / 0.6);
   }
 
   /* ── Containers ─────────────────────────────────────────── */
@@ -47,10 +51,7 @@
     text-transform: uppercase;
     line-height: 1;
   }
-  .ls-section--dark .ls-eyebrow {
-    background: hsl(var(--background) / 0.08);
-    color: hsl(var(--background));
-  }
+  /* (ls-section--dark eyebrow override removed — section is now light tier 2) */
 
   /* ── Headings (single sans family) ──────────────────────── */
   .ls-h1, .ls-h2, .ls-h3 {
@@ -61,9 +62,7 @@
     color: hsl(var(--foreground));
     margin: 0;
   }
-  .ls-section--dark .ls-h1,
-  .ls-section--dark .ls-h2,
-  .ls-section--dark .ls-h3 { color: hsl(var(--background)); }
+  /* dark-section heading override removed */
 
   .ls-h1 { font-size: clamp(2.25rem, 5.4vw, 4.25rem); line-height: 1.05; letter-spacing: -0.03em; }
   .ls-h2 { font-size: clamp(1.75rem, 3.8vw, 3rem);    line-height: 1.08; }
@@ -75,16 +74,13 @@
     color: hsl(var(--muted-foreground));
     margin: 0;
   }
-  .ls-section--dark .ls-subtitle { color: hsl(var(--background) / 0.78); }
+  /* dark-section subtitle override removed */
 
   /* ── Body copy ──────────────────────────────────────────── */
   .ls-body, .ls-body-md { font-size: 0.95rem; line-height: 1.6; color: hsl(var(--muted-foreground)); margin: 0; }
   .ls-body-lg { font-size: 1.05rem; line-height: 1.6; color: hsl(var(--muted-foreground)); margin: 0; }
   .ls-body-sm { font-size: 0.825rem; line-height: 1.55; color: hsl(var(--muted-foreground)); margin: 0; }
-  .ls-section--dark .ls-body,
-  .ls-section--dark .ls-body-md,
-  .ls-section--dark .ls-body-lg,
-  .ls-section--dark .ls-body-sm { color: hsl(var(--background) / 0.74); }
+  /* dark-section body overrides removed */
 
   /* ── Cards ──────────────────────────────────────────────── */
   .ls-card {
@@ -100,11 +96,7 @@
     border-color: hsl(var(--foreground) / 0.1);
     color: hsl(var(--foreground));
   }
-  .ls-section--dark .ls-card {
-    background: hsl(var(--background) / 0.05);
-    border-color: hsl(var(--background) / 0.12);
-    color: hsl(var(--background));
-  }
+  /* dark-section card override removed — cards stay light on the new tier 2 surface */
 
   /* ── Grid ───────────────────────────────────────────────── */
   .ls-grid { display: grid; gap: 1rem; }
@@ -156,7 +148,7 @@
     color: hsl(var(--foreground));
     border-color: hsl(var(--foreground) / 0.25);
   }
-  .ls-section--dark .ls-cta-secondary { color: hsl(var(--background)); border-color: hsl(var(--background) / 0.3); }
+  /* dark-section secondary cta override removed */
 
   .ls-cta-quiet {
     background: transparent;
@@ -164,7 +156,7 @@
     padding-inline: 0.4rem;
     min-height: 44px;
   }
-  .ls-section--dark .ls-cta-quiet { color: hsl(var(--background)); }
+  /* dark-section quiet cta override removed */
 
   @media (hover: hover) {
     .ls-cta-primary:hover   { transform: translateY(-1px); filter: brightness(1.03); }

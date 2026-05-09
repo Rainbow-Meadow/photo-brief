@@ -166,13 +166,13 @@ export function MarketingLayout() {
         <Outlet />
       </main>
 
-      <footer className={`pb-safe ${isLanding ? "pb-footer-dark pb-dark-island" : ""}`}>
-        <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-8 text-sm text-[hsl(var(--pb-muted))] sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+      <footer className={`pb-safe ${isLanding ? "pb-footer-dark" : ""}`}>
+        <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-8 text-sm text-[hsl(var(--pb-ink-soft))] sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
           <BrandMark
             variant="horizontal"
-            tone={isLanding ? "dark" : "light"}
+            tone="light"
             size={28}
-            className="opacity-80"
+            className="opacity-90"
           />
           <nav
             aria-label="Footer"
@@ -182,13 +182,13 @@ export function MarketingLayout() {
               <NavLink
                 key={l.to}
                 to={l.to}
-                className="hover:text-white transition-colors"
+                className="text-[hsl(var(--pb-ink-soft))] transition-colors hover:text-[hsl(var(--pb-ink))]"
               >
                 {l.label}
               </NavLink>
             ))}
           </nav>
-          <p className="text-xs text-white/36">
+          <p className="text-xs text-[hsl(var(--pb-ink-muted))]">
             © {new Date().getFullYear()} PhotoBrief.ai
           </p>
         </div>

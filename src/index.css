@@ -27,7 +27,7 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
     color-scheme: light;
 
     /* ── Semantic surface + text ── */
-    --background: 39 33% 97%;            /* cream */
+    --background: 220 32% 96%;           /* soft navy paper — tier 0 */
     --foreground: 219 47% 14%;           /* navy ink */
     --card: 0 0% 100%;
     --card-foreground: 219 47% 14%;
@@ -38,11 +38,11 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
     --primary-foreground: 0 0% 100%;
     --primary-glow: 33 89% 69%;          /* amber light */
 
-    --secondary: 36 34% 94%;             /* warm cream surface */
+    --secondary: 220 30% 92%;            /* tier 1 — alt band */
     --secondary-foreground: 219 47% 14%;
 
-    --muted: 39 25% 93%;
-    --muted-foreground: 219 18% 42%;
+    --muted: 220 28% 89%;                /* between tier 1 and tier 2 */
+    --muted-foreground: 219 22% 44%;
 
     --accent: 33 92% 92%;                /* amber wash */
     --accent-foreground: 35 74% 30%;
@@ -56,42 +56,48 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
     --info: 219 47% 20%;
     --info-foreground: 0 0% 100%;
 
-    --border: 32 18% 86%;
-    --input: 32 18% 86%;
+    --border: 220 24% 82%;               /* navy-tinted hairline */
+    --input: 220 24% 82%;
     --ring: 33 88% 55%;
     --radius: 0.75rem;
 
     /* ── Brand identity tokens ── */
     --brand-navy: 219 47% 20%;
-    --brand-navy-foreground: 39 33% 97%;
+    --brand-navy-foreground: 220 32% 96%;
     --brand-amber: 33 88% 55%;
     --brand-amber-light: 33 89% 69%;
     --brand-amber-hover: 35 74% 49%;
-    --brand-cream: 39 33% 97%;
-    --brand-cream-warm: 36 34% 94%;
+    --brand-cream: 220 32% 96%;          /* legacy name → tier 0 */
+    --brand-cream-warm: 220 30% 92%;     /* legacy name → tier 1 */
     --brand-graphite: 219 47% 14%;
-    --brand-paper: 39 33% 97%;
-    --brand-lens: 33 88% 55%;            /* alias → amber */
-    --brand-flash: 33 89% 69%;           /* alias → amber-light */
+    --brand-paper: 220 32% 96%;          /* legacy name → tier 0 */
+    --brand-lens: 33 88% 55%;
+    --brand-flash: 33 89% 69%;
 
-    /* ── Marketing surface tokens (legacy --pb-*, all brand-derived) ── */
+    /* ── Soft navy paper ladder — single source for landing surfaces ── */
+    --pb-tier-0: 220 32% 96%;            /* base paper (lightest) */
+    --pb-tier-1: 220 30% 92%;            /* alt band */
+    --pb-tier-2: 220 28% 86%;            /* feature band (deepest light) */
+    --pb-paper-edge: 220 24% 78%;        /* hairline / divider */
+
+    /* ── Marketing surface tokens (legacy --pb-*, all navy-paper-derived) ── */
     --pb-night: 219 50% 7%;
     --pb-ink: 219 47% 14%;
-    --pb-ink-soft: 219 30% 28%;
-    --pb-ink-muted: 219 18% 42%;
+    --pb-ink-soft: 219 38% 26%;
+    --pb-ink-muted: 219 22% 44%;
     --pb-panel: 0 0% 100%;
-    --pb-panel-2: 36 34% 94%;
-    --pb-line: 32 18% 86%;
-    --pb-line-strong: 32 18% 76%;
-    --pb-paper: 39 33% 97%;
-    --pb-cream: 39 33% 97%;
-    --pb-cream-warm: 36 34% 94%;
-    --pb-muted: 219 18% 42%;
+    --pb-panel-2: 220 30% 92%;
+    --pb-line: 220 24% 82%;
+    --pb-line-strong: 220 24% 72%;
+    --pb-paper: 220 32% 96%;             /* legacy name → tier 0 */
+    --pb-cream: 220 32% 96%;             /* legacy name → tier 0 */
+    --pb-cream-warm: 220 30% 92%;        /* legacy name → tier 1 */
+    --pb-muted: 219 22% 44%;
     --pb-shadow: 219 50% 7%;
     --pb-violet: 33 88% 55%;             /* legacy → amber */
     --pb-lavender: 33 89% 69%;           /* legacy → amber-light */
-    --pb-electric: 219 47% 20%;          /* legacy → navy */
-    --pb-mint: 33 89% 69%;               /* legacy → amber-light */
+    --pb-electric: 219 47% 20%;
+    --pb-mint: 33 89% 69%;
     --pb-wordmark-navy: 219 47% 20%;
     --pb-wordmark-amber: 33 88% 55%;
     --pb-font-serif: "Inter", system-ui, -apple-system, sans-serif;
@@ -367,8 +373,8 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
 
   .pb-landing {
     background:
-      radial-gradient(60% 40% at 50% 0%, hsl(var(--pb-lavender) / 0.10), transparent 72%),
-      linear-gradient(180deg, hsl(var(--pb-cream)) 0%, hsl(var(--pb-cream-warm)) 100%);
+      radial-gradient(60% 40% at 50% 0%, hsl(var(--pb-amber) / 0.10), transparent 72%),
+      linear-gradient(180deg, hsl(var(--pb-tier-0)) 0%, hsl(var(--pb-tier-1)) 100%);
     color: hsl(var(--pb-ink-soft));
   }
 
@@ -377,34 +383,42 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
   .pb-landing .pb-section-tight { padding-block: clamp(1.25rem, 2.2vw, 2.25rem); }
   .pb-landing .pb-section-title { font-size: clamp(1.6rem, 3.4vw, 2.6rem); }
 
-  /* ── Editorial / Surveva-style warm paper surface ───────────── */
+  /* ── Tier wrappers — explicit ladder rungs ── */
+  .pb-tier-0 { background: hsl(var(--pb-tier-0)); }
+  .pb-tier-1 { background: hsl(var(--pb-tier-1)); }
+  .pb-tier-2 {
+    background: hsl(var(--pb-tier-2));
+    border-block: 1px solid hsl(var(--pb-paper-edge) / 0.55);
+  }
+
+  /* ── Editorial / Surveva-style soft-navy paper surface ───────────── */
   .pb-paper-surface {
     background:
-      radial-gradient(60% 50% at 80% 0%, hsl(var(--pb-violet) / 0.08), transparent 70%),
-      radial-gradient(40% 35% at 8% 18%, hsl(var(--pb-lavender) / 0.10), transparent 72%),
-      linear-gradient(180deg, hsl(var(--pb-cream)) 0%, hsl(var(--pb-cream-warm)) 100%);
+      radial-gradient(60% 50% at 80% 0%, hsl(var(--pb-amber) / 0.08), transparent 70%),
+      radial-gradient(40% 35% at 8% 18%, hsl(var(--pb-amber-soft, 33 89% 69%) / 0.10), transparent 72%),
+      linear-gradient(180deg, hsl(var(--pb-tier-0)) 0%, hsl(var(--pb-tier-1)) 100%);
     color: hsl(var(--pb-ink-soft));
   }
   .pb-paper-surface .pb-eyebrow {
-    background: hsl(0 0% 100% / 0.6);
-    border-color: hsl(var(--pb-ink-soft) / 0.12);
-    color: hsl(var(--pb-violet));
+    background: hsl(0 0% 100% / 0.7);
+    border-color: hsl(var(--pb-paper-edge) / 0.6);
+    color: hsl(var(--pb-amber));
   }
   .pb-display {
     font-weight: 700;
     letter-spacing: -0.035em;
     line-height: 0.98;
-    color: hsl(var(--pb-violet));
+    color: hsl(var(--pb-amber));
     font-size: clamp(2.5rem, 7.2vw, 6rem);
   }
   .pb-display-ink { color: hsl(var(--pb-ink-soft)); }
   .pb-paper-pill {
-    background: hsl(0 0% 100% / 0.78);
+    background: hsl(220 35% 99% / 0.78);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
-    border: 1px solid hsl(var(--pb-ink-soft) / 0.08);
-    box-shadow: 0 18px 40px -28px hsl(var(--pb-ink-soft) / 0.5);
-    --pb-wordmark-gradient: linear-gradient(135deg, hsl(var(--pb-ink-soft)) 0%, hsl(var(--pb-violet)) 100%);
+    border: 1px solid hsl(var(--pb-paper-edge) / 0.7);
+    box-shadow: 0 18px 40px -28px hsl(var(--pb-ink) / 0.45);
+    --pb-wordmark-gradient: linear-gradient(135deg, hsl(var(--pb-ink-soft)) 0%, hsl(var(--pb-amber)) 100%);
   }
   /* Re-theme dark-on-dark widgets when placed on the paper surface */
   .pb-on-paper { color: hsl(var(--pb-ink-soft)); }
@@ -526,39 +540,38 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
   .pb-copy { font-size: 0.95rem; line-height: 1.6; color: hsl(var(--muted-foreground)); }
   .pb-container { width: min(100% - 2rem, 1240px); margin-inline: auto; }
   @media (min-width: 640px) { .pb-container { width: min(100% - 3rem, 1240px); } }
-  .pb-section { padding-block: clamp(3rem, 6vw, 5.5rem); position: relative; background: hsl(var(--background)); color: hsl(var(--foreground)); }
-  .pb-section-tight { padding-block: clamp(1.75rem, 3vw, 3rem); position: relative; background: hsl(var(--background)); color: hsl(var(--foreground)); }
-  .pb-section-alt { background: hsl(var(--muted)); color: hsl(var(--foreground)); }
+  .pb-section { padding-block: clamp(3rem, 6vw, 5.5rem); position: relative; background: hsl(var(--pb-tier-0)); color: hsl(var(--foreground)); }
+  .pb-section-tight { padding-block: clamp(1.75rem, 3vw, 3rem); position: relative; background: hsl(var(--pb-tier-0)); color: hsl(var(--foreground)); }
+  .pb-section-alt { background: hsl(var(--pb-tier-1)); color: hsl(var(--foreground)); }
 
-  /* ── Beta zone — cooler lavender-tinted paper for a distinct chapter ── */
+  /* ── Beta zone — soft amber-tinted tier 0 for a distinct chapter ── */
   .pb-beta-zone {
     background:
-      radial-gradient(55% 40% at 12% 0%, hsl(var(--pb-violet) / 0.10), transparent 70%),
-      radial-gradient(45% 35% at 92% 18%, hsl(var(--pb-lavender) / 0.14), transparent 72%),
-      linear-gradient(180deg, hsl(258 32% 95%) 0%, hsl(262 28% 93%) 100%);
-    border-block: 1px solid hsl(var(--pb-violet) / 0.14);
+      radial-gradient(55% 40% at 12% 0%, hsl(var(--pb-amber) / 0.08), transparent 70%),
+      radial-gradient(45% 35% at 92% 18%, hsl(var(--pb-lavender) / 0.10), transparent 72%),
+      hsl(var(--pb-tier-0));
+    border-block: 1px solid hsl(var(--pb-paper-edge) / 0.6);
   }
-  /* Override the generic ivory alt band when nested inside the beta zone — keep contrast but stay in the violet family */
+  /* Reward tiers nested in beta zone — keep ladder rhythm at tier 1 */
   .pb-beta-zone .pb-section-alt {
-    background:
-      linear-gradient(180deg, hsl(258 36% 91%) 0%, hsl(262 32% 89%) 100%);
-    border-block: 1px solid hsl(var(--pb-violet) / 0.18);
+    background: hsl(var(--pb-tier-1));
+    border-block: 1px solid hsl(var(--pb-paper-edge) / 0.5);
   }
 
-  /* ── Final CTA dark island — the one dark zone, brand navy + violet glow ── */
+  /* ── Final CTA — tier 2 light feature band with amber radial behind CTA ── */
   .pb-final-dark {
     background:
-      radial-gradient(60% 50% at 80% 0%, hsl(var(--pb-violet) / 0.28), transparent 70%),
-      radial-gradient(45% 40% at 8% 100%, hsl(var(--pb-lavender) / 0.18), transparent 72%),
-      linear-gradient(180deg, hsl(258 38% 8%) 0%, hsl(258 42% 5%) 100%);
-    border-top: 1px solid hsl(var(--pb-violet) / 0.22);
-    color: white;
+      radial-gradient(60% 50% at 80% 0%, hsl(var(--pb-amber) / 0.18), transparent 70%),
+      radial-gradient(45% 40% at 8% 100%, hsl(var(--pb-lavender) / 0.14), transparent 72%),
+      hsl(var(--pb-tier-2));
+    border-top: 1px solid hsl(var(--pb-paper-edge) / 0.7);
+    color: hsl(var(--pb-ink));
   }
-  /* Footer dark variant — continues the dark surface so the page ends in one piece */
+  /* Footer — deepest light tier, seals the page in the same family */
   .pb-footer-dark {
-    background: linear-gradient(180deg, hsl(258 42% 5%) 0%, hsl(258 46% 4%) 100%);
-    border-top: 1px solid hsl(var(--pb-violet) / 0.18);
-    color: white;
+    background: hsl(var(--pb-tier-2));
+    border-top: 1px solid hsl(var(--pb-paper-edge) / 0.7);
+    color: hsl(var(--pb-ink-soft));
   }
 
   /* ── Active section seams ─────────────────────────────────── */
