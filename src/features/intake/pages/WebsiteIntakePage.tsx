@@ -25,6 +25,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Surface, WizardLayout } from "@/components/layout/primitives";
 import { useCurrentWorkspace } from "@/hooks/useCurrentWorkspace";
 import { useWorkspaceGuides } from "@/hooks/useGuides";
 import {
@@ -292,112 +293,87 @@ export default function WebsiteIntakePage() {
 
   if (isLoading || !source) {
     return (
-      <div className="mx-auto max-w-5xl rounded-[2rem] border bg-card/80 p-8 text-center shadow-sm">
+      <Surface variant="panel" radius="lg" padding="lg" className="mx-auto max-w-5xl text-center">
         <div className="mx-auto h-10 w-10 animate-pulse rounded-full bg-muted" />
         <p className="mt-4 text-sm text-muted-foreground">Setting up website intake…</p>
-      </div>
+      </Surface>
     );
   }
 
-  return (
-    <div className="mx-auto max-w-6xl space-y-6 pb-10">
-      <section className="relative isolate overflow-hidden rounded-[2rem] border border-border/70 bg-card/85 p-5 shadow-[0_30px_90px_-55px_hsl(222_47%_11%/0.55)] backdrop-blur sm:p-7">
-        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-44 bg-ambient-sky opacity-70" />
-        <span className="inline-flex items-center gap-1.5 rounded-full border bg-background/70 px-3 py-1 text-xs font-medium text-muted-foreground shadow-sm">
-          <Globe2 className="h-3.5 w-3.5 text-primary" /> Website Intake setup
+  const intro = (
+    <Surface
+      variant="panel"
+      radius="lg"
+      padding="md"
+      className="relative isolate overflow-hidden"
+    >
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-44 bg-ambient-sky opacity-70" />
+      <span className="inline-flex items-center gap-1.5 rounded-full border bg-background/70 px-3 py-1 text-xs font-medium text-muted-foreground shadow-sm">
+        <Globe2 className="h-3.5 w-3.5 text-primary" /> Website Intake setup
+      </span>
+      <div className="mt-4 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+            Set up website intake in one guided flow.
+          </h1>
+          <p className="mt-2 max-w-2xl text-base leading-7 text-muted-foreground">
+            Choose the website path, configure the template behavior, connect the site, and test the result without jumping between separate setup sections.
+          </p>
+        </div>
+        <div className="flex items-center gap-2 rounded-full border bg-background/70 px-3 py-2 shadow-sm">
+          <Switch
+            checked={source.enabled}
+            onCheckedChange={async (enabled) => {
+              await updateSource.mutateAsync({ id: source.id, enabled });
+              toast.success(enabled ? "Website intake is on" : "Website intake is paused");
+            }}
+          />
+          <span className="text-sm font-medium text-foreground">{source.enabled ? "On" : "Paused"}</span>
+        </div>
+      </div>
+    </Surface>
+  );
+
+  const header = (
+    <div className="flex flex-wrap items-start justify-between gap-4">
+      <div>
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
+          Step {activeStepIndex + 1} of {setupSteps.length}
         </span>
-        <div className="mt-4 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-              Set up website intake in one guided flow.
-            </h1>
-            <p className="mt-2 max-w-2xl text-base leading-7 text-muted-foreground">
-              Choose the website path, configure the template behavior, connect the site, and test the result without jumping between separate setup sections.
-            </p>
-          </div>
-          <div className="flex items-center gap-2 rounded-full border bg-background/70 px-3 py-2 shadow-sm">
-            <Switch
-              checked={source.enabled}
-              onCheckedChange={async (enabled) => {
-                await updateSource.mutateAsync({ id: source.id, enabled });
-                toast.success(enabled ? "Website intake is on" : "Website intake is paused");
-              }}
-            />
-            <span className="text-sm font-medium text-foreground">{source.enabled ? "On" : "Paused"}</span>
-          </div>
-        </div>
-      </section>
+        <h3 className="mt-3 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">{activeStep.title}</h3>
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">{activeStep.body}</p>
+      </div>
+      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+        <activeStep.icon className="h-5 w-5" />
+      </div>
+    </div>
+  );
 
-      <section className="overflow-hidden rounded-[2rem] border border-primary/15 bg-card/90 shadow-[0_30px_90px_-55px_hsl(217_91%_60%/0.45)] backdrop-blur">
-        <div className="grid gap-0 lg:grid-cols-[300px_minmax(0,1fr)]">
-          <aside className="relative isolate border-b border-border/70 bg-gradient-to-br from-primary/12 via-background to-cyan-400/10 p-5 lg:border-b-0 lg:border-r lg:p-6">
-            <div aria-hidden className="absolute -right-24 -top-24 -z-10 h-56 w-56 rounded-full bg-primary/20 blur-3xl" />
-            <span className="inline-flex items-center gap-1.5 rounded-full border bg-background/70 px-3 py-1 text-xs font-medium text-muted-foreground shadow-sm">
-              <Sparkles className="h-3.5 w-3.5 text-primary" /> Guided setup
-            </span>
-            <h2 className="mt-4 text-2xl font-semibold tracking-tight text-foreground">One path. No scavenger hunt.</h2>
-            <p className="mt-2 text-sm leading-6 text-muted-foreground">
-              Complete each step in order. Hosted link is fastest; webhook is only for keeping an existing form.
-            </p>
+  const footer = (
+    <>
+      <Button className="h-12 rounded-2xl" variant="outline" onClick={goBack} disabled={activeStepIndex === 0}>
+        <ChevronLeft className="mr-1 h-4 w-4" /> Back
+      </Button>
+      <Button className="h-12 rounded-2xl" onClick={goNext} disabled={activeStepIndex === setupSteps.length - 1}>
+        Next <ChevronRight className="ml-1 h-4 w-4" />
+      </Button>
+    </>
+  );
 
-            <div className="mt-5 h-2 overflow-hidden rounded-full bg-muted">
-              <div className="h-full rounded-full bg-primary transition-all duration-500" style={{ width: `${progress}%` }} />
-            </div>
-
-            <nav className="mt-5 space-y-2" aria-label="Website Intake setup steps">
-              {setupSteps.map((step, index) => {
-                const Icon = step.icon;
-                const isActive = index === activeStepIndex;
-                const isDone = index < activeStepIndex;
-                return (
-                  <button
-                    key={step.id}
-                    type="button"
-                    onClick={() => setActiveStepIndex(index)}
-                    className={`flex w-full items-center gap-3 rounded-2xl border p-3 text-left transition ${
-                      isActive ? "border-primary/50 bg-primary/10 shadow-sm" : "bg-background/60 hover:border-primary/30"
-                    }`}
-                  >
-                    <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${isDone ? "bg-primary text-primary-foreground" : isActive ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"}`}>
-                      {isDone ? <CheckCircle2 className="h-4 w-4" /> : <Icon className="h-4 w-4" />}
-                    </span>
-                    <span>
-                      <span className="block text-sm font-semibold text-foreground">{step.shortTitle}</span>
-                      <span className="mt-0.5 block text-xs text-muted-foreground">Step {index + 1}</span>
-                    </span>
-                  </button>
-                );
-              })}
-            </nav>
-          </aside>
-
-          <div className="p-5 sm:p-6 lg:p-7">
-            <div className="flex flex-wrap items-start justify-between gap-4">
-              <div>
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
-                  Step {activeStepIndex + 1} of {setupSteps.length}
-                </span>
-                <h3 className="mt-3 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">{activeStep.title}</h3>
-                <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">{activeStep.body}</p>
-              </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                <activeStep.icon className="h-5 w-5" />
-              </div>
-            </div>
-
-            <div className="mt-6">{renderStepContent()}</div>
-
-            <div className="mt-7 flex flex-col-reverse gap-2 border-t pt-5 sm:flex-row sm:items-center sm:justify-between">
-              <Button className="h-12 rounded-2xl" variant="outline" onClick={goBack} disabled={activeStepIndex === 0}>
-                <ChevronLeft className="mr-1 h-4 w-4" /> Back
-              </Button>
-              <Button className="h-12 rounded-2xl" onClick={goNext} disabled={activeStepIndex === setupSteps.length - 1}>
-                Next <ChevronRight className="ml-1 h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
+  return (
+    <div className="mx-auto max-w-6xl pb-10">
+      <WizardLayout
+        steps={setupSteps}
+        currentIndex={activeStepIndex}
+        onStepChange={setActiveStepIndex}
+        intro={intro}
+        railTitle="One path. No scavenger hunt."
+        railDescription="Complete each step in order. Hosted link is fastest; webhook is only for keeping an existing form."
+        header={header}
+        footer={footer}
+      >
+        {renderStepContent()}
+      </WizardLayout>
     </div>
   );
 
