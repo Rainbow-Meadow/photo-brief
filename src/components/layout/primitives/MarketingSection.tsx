@@ -47,12 +47,12 @@ export function MarketingSection({
           <div className={cn("max-w-2xl", align === "center" && "mx-auto text-center")}>
             {eyebrow ? <span className="pb-eyebrow">{eyebrow}</span> : null}
             {title ? (
-              <h2 className={cn("pb-section-title", eyebrow ? "mt-4" : "")}>{title}</h2>
+              <h2 className={cn("pb-section-title", eyebrow ? "mt-3" : "")}>{title}</h2>
             ) : null}
-            {subtitle ? <p className="pb-copy mt-4 text-base sm:text-lg">{subtitle}</p> : null}
+            {subtitle ? <p className="pb-copy mt-3 text-base sm:text-lg">{subtitle}</p> : null}
           </div>
         )}
-        {(eyebrow || title || subtitle) && children ? <div className="mt-10">{children}</div> : children}
+        {(eyebrow || title || subtitle) && children ? <div className="mt-6 sm:mt-8">{children}</div> : children}
       </div>
     </section>
   );
