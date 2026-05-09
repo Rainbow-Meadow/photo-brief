@@ -336,8 +336,8 @@ export default function LandingPage() {
   return (
     <>
       <PageMeta
-        title="PhotoBrief.ai | Visual intake for landscapers, junk haulers, HVAC, plumbers & estimators"
-        description="PhotoBrief replaces weak website forms with guided visual intake — built for landscapers, junk haulers, HVAC and repair techs, plumbers, and damage / return estimators. Scan your site, map your services, and get actionable lead packets instead of vague messages."
+        title="PhotoBrief.ai | Stop chasing customers for photos. Send a guided brief instead."
+        description="The Reverse-Form Method™ for landscapers, junk haulers, HVAC and repair techs, plumbers, and damage estimators. We tell your customer exactly what to send — guided, in order, from their phone — and a quote-ready lead packet lands in your inbox on the first try."
         canonicalPath="/"
         jsonLd={jsonLd}
         breadcrumbs={[{ name: "Home", path: "/" }]}
