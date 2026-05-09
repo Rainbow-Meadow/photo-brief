@@ -1,70 +1,38 @@
-import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import type { LucideIcon } from "lucide-react";
+import { lazy, Suspense, useState, type ReactNode } from "react";
 import { NavLink, useSearchParams } from "react-router-dom";
 import {
   ArrowRight,
-  BadgeCheck,
-  Calculator,
-  Camera,
   CheckCircle2,
-  ClipboardList,
-  Clock,
-  
-  DollarSign,
-  Eye,
-  FileCheck2,
-  FileText,
-  FormInput,
-  Gift,
-  Globe2,
-  ImageOff,
-  Link2,
-  Lock,
-  MapPinned,
-  MessageSquareWarning,
-  PlayCircle,
-  Route,
-  Scan,
-  ShieldCheck,
-  Smartphone,
-  Sparkles,
-  Stamp,
-  TimerReset,
-  TrendingDown,
-  Trophy,
-  Truck,
-  UserCheck,
-  UserX,
-  Users,
-  Wind,
+  Loader2,
+  Camera,
   Wrench,
+  Wind,
   Leaf,
-  Package,
+  Truck,
+  Calculator,
+  Globe2,
+  Eye,
+  Scan,
+  Route,
+  ImageOff,
+  TimerReset,
+  MessageSquareWarning,
 } from "lucide-react";
+import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { PageMeta } from "@/hooks/seo/usePageMeta";
 import { buildHowToJsonLd } from "@/hooks/seo/buildHowToJsonLd";
 import { buildFaqJsonLd } from "@/hooks/seo/buildFaqJsonLd";
 
-import { FreeProEligibilityModal } from "@/components/marketing/FreeProEligibilityModal";
-import { BetaSeatTracker } from "@/components/marketing/BetaSeatTracker";
-import { BetaOnboardingAgentExperience } from "@/components/marketing/BetaOnboardingAgentExperience";
 import { BrandMark } from "@/components/layout/BrandMark";
-import { MarketingHero, MarketingSection } from "@/components/layout/primitives";
+import { BetaSeatTracker } from "@/components/marketing/BetaSeatTracker";
 import {
   Section,
   Container,
@@ -72,48 +40,43 @@ import {
   Title,
   Subtitle,
   Body,
+  Card,
+  Grid,
   CTA,
   CTAGroup,
 } from "@/pages/landing/schema";
+import { MarqueeRow } from "@/components/motion/MarqueeRow";
+import { RiseIn } from "@/components/motion/RiseIn";
+import { MagneticCTA } from "@/components/motion/MagneticCTA";
+
+import { faqItems } from "@/features/help/content/faq";
 import { howItWorksSteps } from "@/components/marketing/HowItWorksSteps";
+import { trackEvent } from "@/lib/analytics";
+import {
+  BETA_TOTAL_PARTNERS,
+} from "@/config/betaProgram";
+import { useBetaSeats } from "@/hooks/useBetaSeats";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
+
+import heroIllustration from "@/assets/landing-hero-illustration.png";
+import landscaperIllo from "@/assets/trades/landscaper-illustration.png";
+import hvacTechIllo from "@/assets/trades/hvac-tech-illustration.png";
+import researchMagnifierIllo from "@/assets/rmbc/research-magnifier.png";
+import mechanismGearsIllo from "@/assets/rmbc/mechanism-gears.png";
+import briefPacketIllo from "@/assets/rmbc/brief-packet.png";
+import methodOverviewIllo from "@/assets/rmbc/method-overview.png";
+
 const InteractiveHeroBriefAssembly = lazy(() =>
   import("@/components/marketing/InteractiveHeroBriefAssembly").then((m) => ({
     default: m.InteractiveHeroBriefAssembly,
   })),
 );
-import { faqItems } from "@/features/help/content/faq";
-import { trackEvent } from "@/lib/analytics";
-import {
-  PARTNER_BENEFITS,
-  PARTNER_EXPECTATIONS,
-  DETAILED_EXPECTATIONS,
-  REWARD_TIERS,
-  REWARD_CRITERIA,
-  SCORING_RUBRIC,
-  BETA_DURATION_DAYS,
-  BETA_TOTAL_PARTNERS,
-  BETA_SETUP_BUFFER_DAYS,
-} from "@/config/betaProgram";
-import { useBetaSeats } from "@/hooks/useBetaSeats";
-import wideGarage from "@/assets/junk-removal/wide-garage.webp";
-import pileCloseup from "@/assets/junk-removal/pile-closeup.webp";
-import appliances from "@/assets/junk-removal/appliances.webp";
-import drivewayAccess from "@/assets/junk-removal/driveway-access.webp";
-import heroIllustration from "@/assets/landing-hero-illustration.png";
-import landscaperIllo from "@/assets/trades/landscaper-illustration.png";
-import hvacTechIllo from "@/assets/trades/hvac-tech-illustration.png";
-import foundingBadgeIllo from "@/assets/scenes/founding-badge-illustration.png";
-import rewardRibbonsIllo from "@/assets/scenes/reward-ribbons-illustration.png";
-import betaNotebookIllo from "@/assets/scenes/beta-notebook-illustration.png";
-
-import researchMagnifierIllo from "@/assets/rmbc/research-magnifier.png";
-import mechanismGearsIllo from "@/assets/rmbc/mechanism-gears.png";
-import briefPacketIllo from "@/assets/rmbc/brief-packet.png";
-import methodOverviewIllo from "@/assets/rmbc/method-overview.png";
-import { z } from "zod";
-import { Loader2 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/hooks/use-toast";
+const BetaOnboardingAgentExperience = lazy(() =>
+  import("@/components/marketing/BetaOnboardingAgentExperience").then((m) => ({
+    default: m.BetaOnboardingAgentExperience,
+  })),
+);
 
 /* ── JSON-LD ───────────────────────────────────────────────── */
 
@@ -124,1752 +87,509 @@ const SOFTWARE_APP_JSONLD: Record<string, unknown> = {
   applicationCategory: "BusinessApplication",
   operatingSystem: "Web",
   description:
-    "Stop chasing customers for missing photos. PhotoBrief uses the Reverse-Form Method — instead of asking your customer what they need, you tell them exactly what to send. The form follows the job, and a quote-ready lead packet lands in your inbox on the first try.",
-  offers: [
-    { "@type": "Offer", name: "Free", price: "0", priceCurrency: "USD" },
-    { "@type": "Offer", name: "Starter", price: "19", priceCurrency: "USD" },
-    { "@type": "Offer", name: "Pro", price: "49", priceCurrency: "USD" },
-    { "@type": "Offer", name: "Team", price: "99", priceCurrency: "USD" },
-    { "@type": "Offer", name: "Business", price: "199", priceCurrency: "USD" },
-  ],
-  featureList: [
-    "Website Intelligence — scan and map intake paths",
-    "Guided customer photo capture — take or upload",
-    "Simple AI photo quality checks",
-    "Actionable lead packets with photos, notes, and context",
-    "Customer profiles and saved templates",
-    "Hosted intake links or embeddable forms",
-    "Template routing rules and webhook integrations",
-  ],
+    "Stop chasing customers for missing photos. PhotoBrief uses the Reverse-Form Method — you tell the customer what to send, and a quote-ready lead packet lands in your inbox on the first try.",
 };
 
-/* ── Section nav anchors ──────────────────────────────────── */
+/* ── Anchors ───────────────────────────────────────────── */
 
 const sectionLinks = [
-  { href: "#workflow", label: "The mechanism" },
+  { href: "#workflow", label: "Mechanism" },
   { href: "#comparison", label: "Before / after" },
-  { href: "#use-cases", label: "Who it's for" },
-  { href: "#website-intelligence", label: "Site scan" },
-  { href: "#beta-program", label: "Founding seats" },
+  { href: "#use-cases", label: "Trades" },
+  { href: "#website-intelligence", label: "Intelligence" },
+  { href: "#beta-program", label: "Beta" },
   { href: "#apply", label: "Apply" },
 ];
 
-/* ── Content arrays ───────────────────────────────────────── */
-
-const loosePhotos = [
-  { src: wideGarage, label: "Wide area", status: "Useful" },
-  { src: pileCloseup, label: "Main pile", status: "Clear" },
-  { src: appliances, label: "Appliance", status: "Flagged" },
-  { src: drivewayAccess, label: "Access", status: "Ready" },
-];
-
-const workflowSteps = [
-  {
-    icon: Scan,
-    eyebrow: "Scan",
-    title: "We read your site like your best estimator would.",
-    body: "Before we ask your customer a single question, we crawl your services, your quote buttons, your forms, and your CTAs. We learn what jobs you actually take, what you charge for, and where the cracks in your current intake are leaking money. No upload. No spreadsheet. We just read.",
-  },
-  {
-    icon: Route,
-    eyebrow: "Map",
-    title: "We compress 27 service pages into 3 customer choices.",
-    body: "Most websites give visitors 14 ways to ask for help. We pick the 2–3 paths that actually drive revenue and attach the exact photo prompts each one needs — the panel access shot, the driveway angle, the nameplate close-up. The customer never sees the complexity. They just see the next button.",
-  },
-  {
-    icon: Camera,
-    eyebrow: "Capture",
-    title: "Your customer takes the right photo, not just any photo.",
-    body: "One prompt at a time. On their phone, no app, no signup. They photograph what your team actually needs to quote — wide shot, scale shot, problem shot, access shot — guided in the order that mirrors how you walk a job. They can't skip. They can't send a blurry blob and call it a day.",
-  },
-  {
-    icon: FileCheck2,
-    eyebrow: "Deliver",
-    title: "Your inbox gets a packet. Not a guessing game.",
-    body: "Every photo labeled. Every note attached to the right service line. Readiness flags up top. By the time you open it, you already know whether to quote it, schedule it, or pass — without typing a single follow-up email. The first reply you send is the price.",
-  },
-];
-
-const messySignals = [
-  "Generic form: name, email, and a 200-character box marked 'tell us about your project.'",
-  "Photos arrive three days later — by text, by email, on the wrong thread.",
-  "No scale. No angle. No clue what you're actually looking at.",
-  "You ask three follow-up questions before you can even start a quote.",
-  "Half the leads die in your inbox while you're chasing the other half.",
-];
-
-const cleanSignals = [
-  "Customer picks the exact service in two taps — no guessing required.",
-  "Required photos requested in order — wide shot, close-up, access, scale.",
-  "Notes stay glued to the right service line, not floating in a thread.",
-  "Readiness flags surface missing info before it ever hits your team.",
-  "Your first reply is the quote — not 'hey, can you send a few photos?'",
-];
-
-const useCases = [
-  {
-    icon: Leaf,
-    title: "Landscapers — quote the yard from the driveway shot",
-    body: "The customer who said 'just need a small cleanup' actually has a half-acre with three dead trees. Guided lot, slope, and access photos surface the real scope before your truck rolls — so you stop quoting blind and stop losing your shirt on $200 jobs that turn into $2,000 days.",
-    stamp: "Landscaping",
-  },
-  {
-    icon: Truck,
-    title: "Junk haulers — price the pile before you leave the shop",
-    body: "Vague 'come haul this' becomes a quoted load — pile shot, appliance shot, driveway access, hazardous flags. You roll with the right truck and the right crew. No second trips. No 'oh, I forgot to mention the piano.' Every $480 driveway hauler stays a $480 driveway hauler.",
-    stamp: "Junk removal",
-  },
-  {
-    icon: Wind,
-    title: "HVAC & repair — show up with the right part the first time",
-    body: "Nameplate. Filter. Breaker. Surrounding access. Captured before the dispatch ticket closes. Your tech rolls with the right capacitor, the right refrigerant, the right model number. The HVAC tech who showed up empty-handed twice last month? That tech doesn't exist anymore.",
-    stamp: "HVAC & repair",
-  },
-  {
-    icon: Wrench,
-    title: "Plumbers — diagnose the leak before the truck rolls",
-    body: "Shutoff location. Leak source. Supply line condition. Captured by the customer in 90 seconds. Now dispatch knows whether it's a 30-minute fitting swap or a half-day repipe — before they assign the job. You stop sending two-hour windows for jobs that need four.",
-    stamp: "Plumbing",
-  },
-  {
-    icon: Package,
-    title: "Damage & return estimators — turn customer photos into evidence",
-    body: "Insurance. Warranty. E-commerce returns. Angles, scale references, and serial number shots arrive in a structured packet your reviewers can adjudicate first pass. No back-and-forth. No 'please resubmit with a measuring tape.' The claim closes in one round.",
-    stamp: "Estimating",
-  },
-];
-
-/** Trades targeted by PhotoBrief — used in the hero strip and SEO copy. */
-const TRADES = [
-  { name: "Landscapers", icon: Leaf, stamp: "Landscaping" },
-  { name: "Junk haulers", icon: Truck, stamp: "Junk removal" },
-  { name: "HVAC & repair", icon: Wind, stamp: "HVAC & repair" },
-  { name: "Plumbers", icon: Wrench, stamp: "Plumbing" },
-];
-
-const trustPoints = [
-  {
-    icon: Link2,
-    title: "Your customer never sees your dashboard",
-    desc: "Secure, expiring upload links. They submit. You receive. Nothing in between.",
-  },
-  {
-    icon: Smartphone,
-    title: "No app. No account. No friction.",
-    desc: "Your customer opens a link, takes the photos, and submits. That's it. If their grandma can text, she can use this.",
-  },
-  {
-    icon: Lock,
-    title: "Your photos never train our models",
-    desc: "Period. Your data is yours. We don't share it, sell it, or feed it to anything.",
-  },
-];
-
-const websiteIntelCards = [
-  {
-    icon: Scan,
-    title: "What we read",
-    body: "Your service pages. Your quote buttons. Your contact forms. The CTAs that work and the ones that quietly leak. We map every place a visitor tries to talk to you — and every place you're missing them.",
-  },
-  {
-    icon: Route,
-    title: "What we map",
-    body: "Twenty-seven service pages compressed into 2–3 customer choices, each with its own photo prompt order. The decisions you've been making in your head for ten years, finally written down — and pointed at your customer.",
-  },
-  {
-    icon: Globe2,
-    title: "What we ship",
-    body: "A hosted intake link or a one-line embed. Drop it on your homepage. Put it behind your quote button. Replace the form that's been costing you. You're live in seven days. Beta partners pay nothing for the build.",
-  },
-];
-
-/* ── Main component ───────────────────────────────────────── */
+/* ─────────────────────────────────────────────────────────
+   The page
+   ───────────────────────────────────────────────────────── */
 
 export default function LandingPage() {
   const [params] = useSearchParams();
-  const ref = params.get("ref") || "";
-  const [demoOpen, setDemoOpen] = useState(false);
-  const [comparisonMode, setComparisonMode] = useState<"messy" | "clean">(
-    "messy",
-  );
-  const [activeUseCaseStamp, setActiveUseCaseStamp] = useState<string | null>(null);
-  const [betaDetailsOpen, setBetaDetailsOpen] = useState<string[]>([]);
+  const showAgent = params.get("agent") === "1";
   const { isFull } = useBetaSeats();
 
-  const utm = useMemo(() => {
-    if (typeof window === "undefined") {
-      return {
-        source: "landing",
-        ref: ref || undefined,
-      };
-    }
-
-    const p = new URLSearchParams(window.location.search);
-    const campaignRef = p.get("ref") || ref || "";
-
-    return {
-      source: "landing",
-      utm_source: p.get("utm_source") || undefined,
-      utm_medium: p.get("utm_medium") || undefined,
-      utm_campaign: p.get("utm_campaign") || undefined,
-      referrer:
-        typeof document !== "undefined"
-          ? document.referrer || undefined
-          : undefined,
-      ref: campaignRef || undefined,
-    };
-  }, [ref]);
-  const applicationSource = ref ? `landing:${ref}` : "landing";
-
-  useEffect(() => {
-    trackEvent("landing_page_view", { ...utm, source: applicationSource });
-  }, [applicationSource, utm]);
-
-  const jsonLd = useMemo(
-    () => [
-      SOFTWARE_APP_JSONLD,
-      buildHowToJsonLd(
-        "Replace weak website forms with guided visual intake",
-        howItWorksSteps,
-      ),
-      buildFaqJsonLd(faqItems),
-    ],
-    [],
+  const heroJsonLd = buildHowToJsonLd(
+    "How PhotoBrief works",
+    howItWorksSteps.map((s) => ({ title: s.title, body: s.body })),
   );
+  const faqJsonLd = buildFaqJsonLd(faqItems);
 
   return (
     <>
       <PageMeta
-        title="PhotoBrief.ai | Stop chasing customers for photos. Send a guided brief instead."
-        description="The Reverse-Form Method™ for landscapers, junk haulers, HVAC and repair techs, plumbers, and damage estimators. We tell your customer exactly what to send — guided, in order, from their phone — and a quote-ready lead packet lands in your inbox on the first try."
+        title="PhotoBrief — Guide · Capture · Close"
+        description="The Reverse-Form Method. Stop chasing customers for missing photos. Tell them exactly what to send, and a quote-ready packet lands in your inbox on the first try."
         canonicalPath="/"
-        jsonLd={jsonLd}
-        breadcrumbs={[{ name: "Home", path: "/" }]}
+        jsonLd={[SOFTWARE_APP_JSONLD, heroJsonLd, faqJsonLd]}
       />
 
-      <main className="pb-landing pb-on-paper">
-        {/* ━━ 1. HERO — editorial / paper ━━━━━━━━━━━━━━━━━━━━━ */}
-        <MarketingHero width="full" className="px-4 sm:px-6 lg:px-8">
-          <div className="grid items-center gap-8 px-0 lg:grid-cols-2 lg:gap-12 lg:pl-20 lg:pr-8">
-              {/* Left — copy */}
-              <div className="text-left pl-0">
-                <Eyebrow>
-                  <Sparkles className="h-3.5 w-3.5" /> Founding Partner Beta · Now reviewing applications
-                </Eyebrow>
-
-                <div className="mt-4 sm:mt-6">
-                  <Title level={1}>
-                    Your contact form
-                    <br />
-                    is leaking money.
-                    <br />
-                    Patch it.
-                  </Title>
-                </div>
-
-                <div className="mt-4 sm:mt-6 max-w-xl">
-                  <Subtitle>
-                    Stop asking customers <em>"what do you need?"</em> and hoping
-                    they spell it out. PhotoBrief flips the form: we tell them
-                    exactly what to send — guided, in order, from their phone.
-                    The lead packet that lands in your inbox is already
-                    quote-ready. Built for landscapers, junk haulers, HVAC and
-                    repair techs, plumbers, and damage estimators who are tired
-                    of chasing photos.
-                  </Subtitle>
-                </div>
-
-                <div className="mt-6 sm:mt-8">
-                  <CTAGroup>
-                    <CTA
-                      variant="primary"
-                      size="lg"
-                      onClick={() => {
-                        trackEvent("cta_click", { location: "hero", label: "primary" });
-                        document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" });
-                      }}
-                    >
-                      {isFull ? "Join the waitlist" : "Claim a founding seat"}
-                      <ArrowRight className="h-4 w-4" />
-                    </CTA>
-                    <CTA variant="quiet" size="lg" onClick={() => setDemoOpen(true)}>
-                      <PlayCircle className="h-5 w-5" />
-                      Watch the 90-second walkthrough
-                    </CTA>
-                  </CTAGroup>
-                </div>
-
-                <div className="mt-6 sm:mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-medium text-[hsl(var(--pb-ink-muted))] sm:text-sm">
-                  {[
-                    "Site scan included",
-                    "Live in 7 days",
-                    "You keep every photo",
-                  ].map((item) => (
-                    <span key={item} className="inline-flex items-center gap-1.5">
-                      <span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--pb-violet)/0.55)]" />
-                      {item}
-                    </span>
-                  ))}
-                </div>
-
-                {/* Built-for trade strip — links to matching use case */}
-                <div className="mt-8 sm:mt-10">
-                  <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[hsl(var(--pb-ink-muted))]">
-                    Built for
-                  </p>
-                  <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
-                    {TRADES.map(({ name, icon: TIcon }) => (
-                      <a
-                        key={name}
-                        href="#use-cases"
-                        className="inline-flex items-center gap-1.5 rounded-full border border-[hsl(var(--pb-ink-soft)/0.18)] bg-[hsl(var(--pb-ink-soft)/0.04)] px-3 py-1.5 text-xs font-bold text-[hsl(var(--pb-ink))] transition hover:border-[hsl(var(--pb-violet)/0.55)] hover:text-[hsl(var(--pb-violet))] sm:text-sm"
-                      >
-                        <TIcon className="h-4 w-4 text-[hsl(var(--pb-violet))]" />
-                        {name}
-                      </a>
-                    ))}
-                  </div>
-                </div>
-
-                <BetaSeatTracker className="pb-on-paper mt-8 max-w-sm sm:mt-10" />
-              </div>
-
-              {/* Right — brand mark + hand-drawn illustration */}
-              <div className="flex flex-col items-center min-w-0">
-                <div className="mb-4 sm:mb-6 w-full max-w-sm sm:max-w-md lg:max-w-lg lg:translate-x-2 flex justify-center">
-                  <BrandMark variant="horizontal" size={64} eager className="sm:hidden" />
-                  <BrandMark variant="horizontal" size={88} eager className="hidden sm:inline-flex lg:hidden" />
-                  <BrandMark variant="horizontal" size={112} eager className="hidden lg:inline-flex" />
-                </div>
-                <div className="relative flex w-full justify-center">
-                  <div
-                    aria-hidden
-                    className="pointer-events-none absolute inset-0 -z-10 mx-auto max-w-xl rounded-full bg-[hsl(var(--pb-lavender)/0.22)] blur-[110px]"
-                  />
-                  <img
-                    src={heroIllustration}
-                    alt="Hand-drawn illustration of a phone showing a guided photo-request flow"
-                    width={1024}
-                    height={1024}
-                    className="relative w-full max-w-sm drop-shadow-[0_30px_50px_hsl(var(--pb-ink-soft)/0.18)] sm:max-w-md lg:max-w-lg lg:translate-x-2"
-                  />
-                </div>
-              </div>
-            </div>
-        </MarketingHero>
-
-        {/* ━━ TICKER 1 — Industry signals ━━━━━━━━━━━━━━━━━━━ */}
-        <TickerBar
-          tone="paper"
-          items={[
-            "81% bail before they hit submit",
-            "Your competitor replied in 22 minutes — you took 4.2 hours",
-            "60% of estimates die without a single follow-up",
-            "$1 in = $36 back when intake actually works",
-            "Most teams stop following up after the first try",
-          ]}
-        />
-
-        {/* ━━ 2. PAIN POINTS + ROI — ivory alt ━━━━━━━━━━━━━━ */}
-        <div className="pb-section-alt">
-          <PainPointSection />
-        </div>
-
-        {/* ━━ SEAM A — Chapter marker (Problem → Solution) ━━━━ */}
-        <ChapterMarker
-          stamp="Chapter II · The mechanism"
-          words={[
-            ["form-first", "job-first"],
-            ["chasing photos", "receiving briefs"],
-            ["five-day thread", "one round trip"],
-          ]}
-        />
-
-        <MarketingSection>
-          <SectionIntro
-            className="mb-6 sm:mb-8"
-            eyebrow={<><Sparkles className="h-3.5 w-3.5" /> The mechanism</>}
-            title={`Watch a vague "I need a quote" turn into a quotable job in 38 seconds.`}
-            description={`This is the Reverse-Form Method™ in motion. We read your site → we know your services → we ask only what we need → photos and notes arrive labeled to the right service line. No app for the customer. No follow-ups for your team. Just a packet.`}
-          accent={
-            <TradeAccent
-              src={mechanismGearsIllo}
-              alt="Hand-drawn illustration of an inverted contact form dropping ordered photo tiles — the Reverse-Form Method"
-            />
-          }
-        />
-          <figure className="mx-auto mt-8 max-w-3xl sm:mt-10">
-            <img
-              src={methodOverviewIllo}
-              alt="Four-panel hand-drawn diagram of the Reverse-Form Method — research, mechanism, brief, close"
-              width={1920}
-              height={576}
-              loading="lazy"
-              decoding="async"
-              className="w-full rounded-2xl border border-[hsl(var(--pb-ink-soft)/0.18)]"
-            />
-            <figcaption className="pb-copy mt-3 text-center text-xs italic sm:text-sm">
-              Research · Mechanism · Brief · Close — the four moves of the Reverse-Form Method™.
-            </figcaption>
-          </figure>
-          <Suspense fallback={<div className="min-h-[400px]" />}>
-            <InteractiveHeroBriefAssembly />
-          </Suspense>
-        </MarketingSection>
-
-        {/* ━━ 4. STICKY SECTION NAV ━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-        <SectionNav tone="paper" />
-
-        {/* ━━ 5. HOW IT WORKS — tier 2 anchor ━━━━━━━━━━━━━━━━━ */}
-        <div className="pb-tier-2">
-          <WorkflowSection />
-        </div>
-
-        {/* ━━ SEAM B — Comparison toggle promoted to seam ━━━━━ */}
-        <ComparisonSeam mode={comparisonMode} onModeChange={setComparisonMode} />
-
-        {/* ━━ 6. BEFORE / AFTER — ivory alt ━━━━━━━━━━━━━━━━━━ */}
-        <div className="pb-section-alt">
-          <ComparisonSection mode={comparisonMode} />
-        </div>
-
-        {/* ━━ TICKER 2 — Product signals ━━━━━━━━━━━━━━━━━━━━━━ */}
-        <TickerBar tone="paper" items={["Site scan included", "Hosted link or one-line embed", "No app for your customer — ever", "AI catches blurry shots before you do", "Lead packets, not form spam"]} direction="right" />
-
-        {/* ━━ SEAM C — Use case chip filter ━━━━━━━━━━━━━━━━━━ */}
-        <UseCaseChipRow active={activeUseCaseStamp} onChange={setActiveUseCaseStamp} />
-
-        {/* ━━ 7. USE CASES ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-        <UseCaseSection activeStamp={activeUseCaseStamp} />
-
-        {/* ━━ 8. WEBSITE INTELLIGENCE — ivory alt ━━━━━━━━━━━━━ */}
-        <div className="pb-section-alt">
-          <WebsiteIntelligenceSection />
-        </div>
-
-        {/* ━━ SEAM D — Beta crossover ticker ━━━━━━━━━━━━━━━━━ */}
-        <TickerBar
-          tone="paper"
-          items={[
-            `Only ${BETA_TOTAL_PARTNERS} founding seats — ever`,
-            "2 partners win Free Pro for Life",
-            "Concierge build in 7 days",
-            `${BETA_DURATION_DAYS}-day clock starts when the last seat fills`,
-            "Every partner walks out with a reward",
-          ]}
-        />
-
-        {/* ━━ BETA ZONE — distinct lavender-tinted chapter ━━━━━━ */}
-        <div className="pb-beta-zone">
-          {/* Founding partner narrative + apply agent */}
-          <FoundingPartnerBetaSection isFull={isFull} />
-
-          {/* Reward tiers — ivory alt emphasis (within beta zone) */}
-          <div className="pb-section-alt">
-            <RewardTiersSection />
-          </div>
-
-          {/* Details — collapsed disclosure with master toggle seam */}
-          <BetaDetailsAccordion value={betaDetailsOpen} onValueChange={setBetaDetailsOpen} />
-        </div>
-
-        {/* ━━ FINAL CTA — schema-driven dark section ━━━━━━━━━ */}
-        <FinalCta isFull={isFull} />
-      </main>
-
-      <Dialog open={demoOpen} onOpenChange={setDemoOpen}>
-        <DialogContent className="max-w-5xl overflow-hidden border-0 bg-black p-0 sm:rounded-2xl">
-          <VisuallyHidden>
-            <DialogTitle>PhotoBrief product spotlight</DialogTitle>
-            <DialogDescription>
-              A product demo and founding partner beta overview showing the
-              guided visual intake workflow, customer capture, lead packets,
-              partner benefits, and reward tiers.
-            </DialogDescription>
-          </VisuallyHidden>
-          <video
-            key={demoOpen ? "open" : "closed"}
-            src="/marketing/photobrief-spotlight.mp4"
-            controls
-            autoPlay
-            playsInline
-            className="h-auto w-full"
-          />
-        </DialogContent>
-      </Dialog>
+      <Hero />
+      <MarqueeBand />
+      <MechanismSection />
+      <ComparisonSection />
+      <UseCasesSection />
+      <WebsiteIntelligenceSection />
+      <LiveDemoSection />
+      <BetaProgramSection />
+      <ApplySection showAgent={showAgent} />
+      <FaqSection />
+      <FinalCta isFull={isFull} />
     </>
   );
 }
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   ROI Calculator
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+/* ─────────────────────────────────────────────────────────
+   Hero — kinetic editorial stack
+   ───────────────────────────────────────────────────────── */
 
-const ABANDONMENT_RATE = 0.81;
-const RESPONSE_IMPROVEMENT_FACTOR = 0.30; // 30% more leads recovered with faster response
-const FORM_RECOVERY_FACTOR = 0.25; // 25% of abandoned forms recovered with guided intake
-
-function RoiCalculatorSection() {
-  const [open, setOpen] = useState(false);
-  const calcRef = useRef<HTMLDivElement>(null);
-  const [monthlyVisitors, setMonthlyVisitors] = useState(500);
-  const [avgJobValue, setAvgJobValue] = useState(2000);
-  const [currentConversion, setCurrentConversion] = useState(3);
-
-  const currentLeads = Math.round(monthlyVisitors * (currentConversion / 100));
-  const abandonedVisitors = Math.round(monthlyVisitors * ABANDONMENT_RATE * (currentConversion > 0 ? 1 : 0));
-  const recoveredFromForm = Math.round(abandonedVisitors * FORM_RECOVERY_FACTOR);
-  const recoveredFromSpeed = Math.round(currentLeads * RESPONSE_IMPROVEMENT_FACTOR);
-  const totalRecovered = recoveredFromForm + recoveredFromSpeed;
-  const monthlyRevenue = totalRecovered * avgJobValue;
-  const annualRevenue = monthlyRevenue * 12;
-
-  function formatDollars(n: number) {
-    if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(1)}M`;
-    if (n >= 1_000) return `$${(n / 1_000).toFixed(0)}K`;
-    return `$${n.toLocaleString()}`;
-  }
-
+function Hero() {
   return (
-    <section className="w-full" ref={calcRef}>
-      <div className="mx-auto w-full max-w-sm">
-        <button
-          type="button"
-          onClick={() => {
-            setOpen((p) => !p);
-            if (!open) setTimeout(() => calcRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
-          }}
-          className="group mx-auto flex w-full max-w-sm flex-col items-center gap-3 rounded-[1.5rem] border border-[hsl(var(--pb-lavender)/0.25)] bg-gradient-to-r from-[hsl(var(--pb-violet)/0.10)] via-[hsl(var(--pb-ink))] to-[hsl(var(--pb-lavender)/0.06)] p-5 transition hover:border-[hsl(var(--pb-lavender)/0.4)] sm:p-6 text-left pt-[24px] mt-[24px]"
-        >
-          <div className="flex items-center gap-4">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[hsl(var(--pb-lavender)/0.12)]">
-              <Calculator className="h-6 w-6 text-[hsl(var(--pb-lavender))]" />
-            </div>
-            <div>
-              <p className="text-base font-bold tracking-tight text-white sm:text-lg">
-                Want to see what the leak is costing you?
+    <Section>
+      <Container>
+        <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr] lg:items-end">
+          <div>
+            <p className="ls-eyebrow">[ 01 ] Visual intake, redesigned</p>
+            <RiseIn delay={0.05}>
+              <h1 className="ls-h1 ls-display-stack mt-6">
+                <span className="block">Guide.</span>
+                <span className="block">Capture.</span>
+                <span className="block">
+                  Close
+                  <span className="ls-italic-accent">.</span>
+                </span>
+              </h1>
+            </RiseIn>
+            <RiseIn delay={0.25}>
+              <p className="ls-subtitle mt-8 max-w-[40ch]">
+                Stop chasing customers for missing photos. Tell them exactly what to send,
+                and a quote-ready lead packet lands in your inbox — on the first try.
               </p>
-              <p className="pb-copy mt-0.5 text-xs sm:text-sm">
-                Drop in three numbers. We'll show you the leads — and the dollars — your form is quietly walking out the door with.
-              </p>
-            </div>
+            </RiseIn>
+            <RiseIn delay={0.35}>
+              <CTAGroup>
+                <MagneticCTA
+                  href="#apply"
+                  className="ls-cta ls-cta--lg ls-cta-primary mt-10"
+                  onClick={() => trackEvent("landing_hero_cta_apply")}
+                >
+                  Apply for founding seat <ArrowRight className="h-4 w-4" />
+                </MagneticCTA>
+                <a href="#workflow" className="ls-cta ls-cta--lg ls-cta-quiet mt-10">
+                  See the mechanism →
+                </a>
+              </CTAGroup>
+            </RiseIn>
           </div>
-          <span className={`hidden shrink-0 rounded-full border border-[hsl(var(--pb-lavender)/0.3)] px-4 py-2 text-xs font-bold text-[hsl(var(--pb-lavender))] transition group-hover:bg-[hsl(var(--pb-lavender)/0.1)] sm:inline-flex ${open ? "rotate-90" : ""}`}>
-            {open ? "Close ×" : "Calculate →"}
-          </span>
-        </button>
 
-        {/* Smooth expand */}
-        <div
-          className="mx-auto max-w-4xl overflow-hidden transition-all duration-500 ease-in-out"
-          style={{
-            display: "grid",
-            gridTemplateRows: open ? "1fr" : "0fr",
-          }}
-        >
-          <div className="min-h-0">
-            <div className="pt-6 sm:pt-8">
-              <div className="pb-command-panel grid gap-6 p-5 sm:p-6 lg:grid-cols-[1fr_1fr] lg:gap-8 lg:p-8">
-                <div className="relative z-10 grid gap-5">
-                  <RoiSlider label="Monthly website visitors" value={monthlyVisitors} onChange={setMonthlyVisitors} min={100} max={10000} step={100} format={(v) => v.toLocaleString()} />
-                  <RoiSlider label="Average job value" value={avgJobValue} onChange={setAvgJobValue} min={100} max={25000} step={100} format={(v) => `$${v.toLocaleString()}`} />
-                  <RoiSlider label="Current form conversion rate" value={currentConversion} onChange={setCurrentConversion} min={1} max={15} step={0.5} format={(v) => `${v}%`} />
-                </div>
-                <div className="relative z-10 grid gap-3 sm:gap-4">
-                  <div className="rounded-[1.25rem] border border-white/10 bg-white/[0.04] p-4">
-                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-white/45">
-                      <UserCheck className="h-3.5 w-3.5" /> What you're catching today
-                    </div>
-                    <p className="mt-2 text-3xl font-black tracking-tight text-white sm:text-4xl">{currentLeads}</p>
-                  </div>
-                  <div className="rounded-[1.25rem] border border-[hsl(var(--pb-lavender)/0.3)] bg-[hsl(var(--pb-lavender)/0.06)] p-4">
-                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-[hsl(var(--pb-lavender))]">
-                      <ArrowRight className="h-3.5 w-3.5" /> What you're leaving on the table
-                    </div>
-                    <p className="mt-2 text-3xl font-black tracking-tight text-[hsl(var(--pb-lavender))] sm:text-4xl">
-                      +{totalRecovered}<span className="text-lg font-bold text-white/50"> /mo</span>
-                    </p>
-                    <p className="pb-copy mt-1 text-xs">{recoveredFromForm} the form lost · {recoveredFromSpeed} speed lost</p>
-                  </div>
-                  <div className="rounded-[1.25rem] border border-[hsl(var(--pb-violet)/0.3)] bg-[hsl(var(--pb-violet)/0.06)] p-4">
-                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-[hsl(var(--pb-violet))]">
-                      <DollarSign className="h-3.5 w-3.5" /> What that's worth in a year
-                    </div>
-                    <p className="mt-2 text-3xl font-black tracking-tight text-[hsl(var(--pb-violet))] sm:text-4xl">{formatDollars(annualRevenue)}</p>
-                    <p className="pb-copy mt-1 text-xs">{formatDollars(monthlyRevenue)}/mo × 12 · {totalRecovered} jobs you would've never seen, at {`$${avgJobValue.toLocaleString()}`} a piece</p>
-                  </div>
-                </div>
+          <RiseIn delay={0.4} className="relative">
+            <div className="relative aspect-[4/5] w-full overflow-hidden border border-border bg-muted">
+              <img
+                src={heroIllustration}
+                alt="Customer capturing the photos a contractor actually needs."
+                className="h-full w-full object-cover opacity-90"
+                loading="eager"
+              />
+              <div className="absolute inset-x-0 bottom-0 flex items-center justify-between p-4 text-[10px] uppercase tracking-[0.2em] text-foreground/80 mix-blend-difference">
+                <span className="font-mono">Fig. 01</span>
+                <span className="font-mono">Reverse-Form Method™</span>
               </div>
-              <p className="pb-copy mx-auto mt-4 max-w-xl text-center text-[0.65rem] italic sm:text-xs">
-                Estimates use 81% form abandonment (Numen Technology), 25% intake recovery rate,
-                and 30% speed-to-lead improvement (MIT Lead Response Study). Your results will vary.
-              </p>
             </div>
-          </div>
+            <BrandMark
+              variant="horizontal"
+              tone="auto"
+              size={28}
+              className="mt-6 justify-center opacity-80"
+            />
+          </RiseIn>
         </div>
-      </div>
-    </section>
+
+        {/* Anchor nav strip */}
+        <div className="mt-20 hidden border-y border-border py-4 lg:flex lg:items-center lg:gap-8">
+          <span className="ls-numeral">Index</span>
+          {sectionLinks.map((l, i) => (
+            <a
+              key={l.href}
+              href={l.href}
+              className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground transition-colors hover:text-foreground"
+            >
+              {String(i + 1).padStart(2, "0")} · {l.label}
+            </a>
+          ))}
+        </div>
+      </Container>
+    </Section>
   );
 }
 
-function RoiSlider({
-  label,
-  value,
-  onChange,
-  min,
-  max,
-  step,
-  format,
-}: {
-  label: string;
-  value: number;
-  onChange: (v: number) => void;
-  min: number;
-  max: number;
-  step: number;
-  format: (v: number) => string;
-}) {
+/* ─────────────────────────────────────────────────────────
+   Marquee band — kinetic word strip
+   ───────────────────────────────────────────────────────── */
+
+function MarqueeBand() {
   return (
-    <div>
-      <div className="flex items-center justify-between gap-3">
-        <label className="text-sm font-semibold text-white">{label}</label>
-        <span className="text-sm font-black tabular-nums text-[hsl(var(--pb-lavender))]">
-          {format(value)}
-        </span>
-      </div>
-      <input
-        type="range"
-        min={min}
-        max={max}
-        step={step}
-        value={value}
-        onChange={(e) => onChange(Number(e.target.value))}
-        className="mt-2 h-2 w-full cursor-pointer appearance-none rounded-full bg-white/10 accent-[hsl(var(--pb-lavender))] [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[hsl(var(--pb-lavender))] [&::-webkit-slider-thumb]:shadow-lg"
-      />
+    <div className="relative border-y border-border bg-card py-8">
+      <MarqueeRow duration={45}>
+        <span className="ls-marquee-item">Guide</span>
+        <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
+        <span className="ls-marquee-item">Capture</span>
+        <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
+        <span className="ls-marquee-item">Close</span>
+        <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
+        <span className="ls-marquee-item ls-italic-accent">photo·brief</span>
+        <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
+      </MarqueeRow>
     </div>
   );
 }
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   Sub-components
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-const painPoints = [
+/* ─────────────────────────────────────────────────────────
+   Mechanism — 4-step Reverse-Form Method
+   ───────────────────────────────────────────────────────── */
+
+const workflowSteps = [
   {
-    icon: FormInput,
-    number: "81%",
-    label: "of your website visitors quit before they hit submit",
-    context:
-      "Four out of every five ready-to-buy customers walk off your lot before you even know they were there. Not because your prices are wrong. Because your form asked them to think.",
-    citation: { text: "Numen Technology — Form Optimization Study", url: "https://www.numentechnology.co.uk/blog/contact-form-optimization-conversion-rates" },
+    n: "01",
+    title: "Research",
+    body: "We map the job type, the trade, and the photo coverage your estimators need to quote without a callback.",
+    illo: researchMagnifierIllo,
   },
   {
-    icon: Clock,
-    number: "4.2 hrs",
-    label: "your average reply time — your competitor took 22 minutes",
-    context:
-      "Reply in under five minutes and you convert at 100× the rate. Reply in four hours and the customer has already booked the other guy. They don't tell you. They just stop replying.",
-    citation: { text: "MIT Lead Response Management Study", url: "https://www.drivenresults.co/learn/b/lead-response-time-statistics-2025" },
+    n: "02",
+    title: "Mechanism",
+    body: "A guided, step-by-step capture flow. Customers tap, the camera opens at the right angle, the right shot lands.",
+    illo: mechanismGearsIllo,
   },
   {
-    icon: MessageSquareWarning,
-    number: "5+",
-    label: "follow-ups it takes to close — most teams stop at 1",
-    context:
-      "Every job that needs a photo you don't have, a question you forgot to ask, or a detail you have to chase — that's a follow-up. Five of those between you and a closed quote. Most teams give up after one.",
-    citation: { text: "MarketingSherpa / RivetOps", url: "https://www.rivetops.io/how-many-follow-ups-to-close-a-job" },
+    n: "03",
+    title: "Brief",
+    body: "Photos, notes and context arrive as a single packet — formatted for your CRM, your estimators, and your inbox.",
+    illo: briefPacketIllo,
   },
   {
-    icon: TrendingDown,
-    number: "78%",
-    label: "of buyers go with whoever responds first",
-    context:
-      "Speed is the entire game. If your intake doesn't hand your team a quotable lead on first contact, the faster competitor wins — and you spent your marketing budget warming up someone else's customer.",
-    citation: { text: "InsideSales.com / MIT Study", url: "https://www.rapportagent.com/benchmarks/" },
-  },
-  {
-    icon: UserX,
-    number: "60%",
-    label: "of estimates die without a single follow-up",
-    context:
-      "More than half the quotes you'd send never get sent. The lead goes cold in someone's inbox while they're chasing the photo, the address, the model number. Money on the floor.",
-    citation: { text: "HomeAdvisor / US Tech Automations", url: "https://ustechautomations.com/resources/blog/home-service-estimate-follow-up-automation-case-study" },
+    n: "04",
+    title: "Close",
+    body: "Your team quotes on the first reply. Customers feel heard. Jobs move forward.",
+    illo: methodOverviewIllo,
   },
 ];
 
-function PainPointSection() {
-  const [active, setActive] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const sectionRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (paused) return;
-    const id = setInterval(() => {
-      setActive((prev) => (prev + 1) % painPoints.length);
-    }, 5000);
-    return () => clearInterval(id);
-  }, [paused]);
-
-  const go = useCallback((i: number) => {
-    setActive(i);
-    setPaused(true);
-    setTimeout(() => setPaused(false), 8000);
-  }, []);
-
-  const point = painPoints[active];
-  const Icon = point.icon;
-
+function MechanismSection() {
   return (
-    <section
-      className="pb-section"
-      ref={sectionRef}
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      onTouchStart={() => setPaused(true)}
-      onTouchEnd={() => { setTimeout(() => setPaused(false), 6000); }}
-    >
-      <div className="pb-container">
-        {/* Top — artwork/intro + stat/ROI in two columns */}
-        <div className="mx-auto max-w-3xl text-center lg:mx-0 lg:grid lg:max-w-none lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:gap-8 lg:text-left">
-          {/* Left column — artwork + intro copy */}
-          <div className="lg:min-w-0 lg:text-left">
-            <img
-              src={researchMagnifierIllo}
-              alt="Hand-drawn illustration of a magnifier inspecting a website — finding the leak"
-              width={1024}
-              height={1024}
-              loading="lazy"
-              decoding="async"
-              className="mx-auto mb-6 w-full max-w-[320px] drop-shadow-[0_22px_36px_hsl(var(--pb-ink-soft)/0.28)] lg:mx-0 lg:max-w-[360px]"
-            />
-            <span className="pb-eyebrow">
-              <MessageSquareWarning className="h-3.5 w-3.5" /> The leak
-            </span>
-            <h2 className="pb-section-title mt-4 text-white">
-              Your contact form is bleeding revenue. You just can't see it.
-            </h2>
-            <p className="pb-copy mx-auto mt-4 max-w-2xl text-base sm:text-lg lg:mx-0 lg:max-w-xl">
-              For a contractor doing 500 site visits a month, a generic form
-              quietly walks off with somewhere between $40,000 and $200,000 in
-              annual revenue. Not because the leads are bad. Because the form
-              never let them tell you what they actually needed. These are the
-              numbers nobody's pricing in.
-            </p>
-          </div>
-
-          {/* Right column — 81% stat + ROI calculator */}
-          <div className="mt-6 flex flex-col items-center gap-4 lg:mt-0 lg:items-center lg:justify-center">
-            <StatAccent
-              icon={TrendingDown}
-              value="81%"
-              label="of website forms get abandoned mid-submit. That's four out of every five ready-to-buy customers walking off your lot before you ever knew they were there."
-              tone="lavender"
-            />
-            <RoiCalculatorSection />
-            <p className="pb-copy max-w-sm text-center text-sm italic sm:text-base mt-[24px]">
-              This is the leak. The Reverse-Form Method™ is how you patch it.
-            </p>
-          </div>
-        </div>
-
-        {/* Bottom — full-width carousel */}
-        <div className="relative mx-auto mt-10 w-full sm:mt-12">
-          <div className="pb-card relative overflow-hidden p-6 sm:p-8" style={{ minHeight: 260 }}>
-            {painPoints.map((p, i) => {
-              const PIcon = p.icon;
-              const isActive = i === active;
-              return (
-                <div
-                  key={p.number}
-                  className={`absolute inset-0 p-6 sm:p-8 transition-opacity duration-500 ${isActive ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"}`}
-                  aria-hidden={!isActive}
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-[hsl(var(--pb-ink-soft)/0.18)] bg-[hsl(var(--pb-ink-soft)/0.06)] text-[hsl(var(--pb-lavender))]">
-                      <PIcon className="h-6 w-6" />
-                    </div>
-                    <span className="text-5xl font-extrabold tracking-tight text-[hsl(var(--pb-lavender))] sm:text-6xl">
-                      {p.number}
-                    </span>
-                  </div>
-                  <p className="mt-4 text-lg font-bold tracking-tight text-white sm:text-xl">
-                    {p.label}
-                  </p>
-                  <p className="pb-copy mt-2 text-sm leading-relaxed sm:text-base">
-                    {p.context}
-                  </p>
-                  <a
-                    href={p.citation.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-white/40 transition hover:text-[hsl(var(--pb-lavender))] sm:text-sm"
-                  >
-                    Source: {p.citation.text} ↗
-                  </a>
-                </div>
-              );
-            })}
-          </div>
-
-          <button
-            type="button"
-            aria-label="Previous stat"
-            onClick={() => go((active - 1 + painPoints.length) % painPoints.length)}
-            className="absolute left-0 top-0 h-full w-1/4 cursor-w-resize opacity-0"
-          />
-          <button
-            type="button"
-            aria-label="Next stat"
-            onClick={() => go((active + 1) % painPoints.length)}
-            className="absolute right-0 top-0 h-full w-1/4 cursor-e-resize opacity-0"
-          />
-
-          <div className="mt-4 flex items-center justify-center gap-2">
-            {painPoints.map((_, i) => (
-              <button
-                key={i}
-                type="button"
-                aria-label={`Stat ${i + 1}`}
-                onClick={() => go(i)}
-                className={`h-2 rounded-full transition-all duration-300 ${i === active ? "w-6 bg-[hsl(var(--pb-lavender))]" : "w-2 bg-white/20 hover:bg-white/40"}`}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ── Ticker bar ─────────────────────────────────────────── */
-
-function TickerBar({
-  items,
-  direction = "left",
-  tone = "dark",
-}: {
-  items: string[];
-  direction?: "left" | "right";
-  tone?: "dark" | "paper";
-}) {
-  const content = items.map((t) => t.toUpperCase()).join("  ·  ");
-  const doubled = `${content}  ·  ${content}  ·  `;
-  const wrapClass =
-    tone === "paper"
-      ? "pb-ticker-paper overflow-hidden py-2.5"
-      : "overflow-hidden border-y border-white/[0.06] bg-white/[0.015] py-2.5";
-  const textClass =
-    tone === "paper"
-      ? "pb-ticker-text whitespace-nowrap text-[0.6rem] font-bold tracking-[0.2em] sm:text-xs"
-      : "whitespace-nowrap text-[0.6rem] font-bold tracking-[0.2em] text-white/25 sm:text-xs";
-  return (
-    <div className={wrapClass} aria-hidden>
-      <div
-        className={textClass}
-        style={{
-          animation: `marquee ${items.length * 5}s linear infinite`,
-          animationDirection: direction === "right" ? "reverse" : "normal",
-        }}
-      >
-        {doubled}
-      </div>
-    </div>
-  );
-}
-
-function FoundingPartnerBetaSection({ isFull }: { isFull: boolean }) {
-  return (
-    <MarketingSection id="beta-program">
+    <Section id="workflow" tone="alt">
+      <Container>
         <SectionIntro
-          eyebrow={<><Stamp className="h-3.5 w-3.5" /> Founding Partner Beta · Now reviewing applications</>}
-          title={
-            <>
-              This isn't a waitlist. It's a{" "}
-              <span className="not-italic font-semibold bg-gradient-to-r from-[hsl(var(--pb-lavender))] to-[hsl(var(--pb-violet))] bg-clip-text text-transparent">
-                30-person room.
-              </span>
-            </>
-          }
-          description="Visual intake is workflow-specific. Every trade prices a job differently, photographs a job differently, walks a job differently. The only way to build something that fits is to build it next to the people running the work. Thirty founding partners. Two of them never pay for Pro again. Every one walks out with a tier reward and a working intake their old form couldn't touch. We're not looking for testers. We're looking for co-builders."
-          accent={
-            <TradeAccent
-              src={foundingBadgeIllo}
-              alt="Hand-drawn illustration of three numbered ribbon badges pinned to a corkboard"
-            />
-          }
+          eyebrow="[ 02 ] The mechanism"
+          title="A method, not a form."
+          subtitle="The Reverse-Form Method™. Four moves that replace the back-and-forth of intake with a guided capture pipeline."
         />
-
-        <div className="mt-10 grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:gap-14 sm:mt-10">
-          {/* LEFT — narrative detail */}
-          <div className="lg:pr-2">
-            {/* Seat tracker */}
-            <div>
-              <BetaSeatTracker className="w-full max-w-sm" />
-            </div>
-
-            {/* Reward callout */}
-            <div className="mt-7 rounded-xl border border-[hsl(var(--pb-lavender)/0.35)] bg-[hsl(var(--pb-lavender)/0.06)] p-5 sm:p-6">
-              <div className="flex items-start gap-4">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[hsl(var(--pb-lavender)/0.4)] bg-[hsl(var(--pb-lavender)/0.1)]">
-                  <Trophy className="h-4.5 w-4.5 text-[hsl(var(--pb-lavender))]" />
-                </span>
-                <div className="min-w-0">
-                  <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[hsl(var(--pb-lavender))]">
-                    The grand prize
-                  </p>
-                  <p className="mt-1.5 font-serif text-lg italic leading-snug text-white sm:text-xl">
-                    The 2 partners who teach us the most get{" "}
-                    <span className="not-italic font-semibold">Free Pro for Life</span>.
-                    The other {BETA_TOTAL_PARTNERS - 2}? Every one walks out with a reward tier they earned.
-                  </p>
-                  <FreeProEligibilityModal>
-                    {(open) => (
-                      <button
-                        type="button"
-                        onClick={open}
-                        className="mt-2 text-xs font-semibold text-[hsl(var(--pb-lavender))] underline decoration-[hsl(var(--pb-lavender)/0.4)] underline-offset-2 transition hover:text-white hover:decoration-white/60"
-                      >
-                        Terms &amp; eligibility →
-                      </button>
-                    )}
-                  </FreeProEligibilityModal>
+        <Grid cols={4} gap="md">
+          {workflowSteps.map((step, i) => (
+            <RiseIn key={step.n} delay={i * 0.06}>
+              <Card>
+                <div className="flex items-baseline justify-between">
+                  <span className="ls-numeral">{step.n}</span>
+                  <span className="ls-numeral text-foreground/40">04</span>
                 </div>
-              </div>
-            </div>
-
-            {/* Trust strip */}
-            <div className="mt-8 grid gap-5 sm:grid-cols-3 sm:gap-x-6 sm:gap-y-0">
-              {trustPoints.map(({ icon: Icon, title, desc }) => (
-                <div key={title} className="border-t border-[hsl(var(--pb-ink-soft)/0.18)] pt-3.5">
-                  <Icon className="h-4 w-4 text-[hsl(var(--pb-violet))]" />
-                  <p className="mt-2 font-serif text-sm italic leading-snug text-[hsl(var(--pb-ink))]">
-                    {title}
-                  </p>
-                  <p className="pb-copy mt-1 text-[11px] leading-[1.45]">{desc}</p>
+                <div className="mt-6 aspect-square w-full overflow-hidden border border-border bg-muted">
+                  <img
+                    src={step.illo}
+                    alt=""
+                    className="h-full w-full object-contain p-6 opacity-90"
+                    loading="lazy"
+                  />
                 </div>
-              ))}
-            </div>
-          </div>
-
-          {/* RIGHT — apply agent */}
-          <div id="apply" className="scroll-mt-8 lg:sticky lg:top-6 lg:self-start">
-            <BetaOnboardingAgentExperience
-              source="landing"
-              title={isFull ? "Join the waitlist" : "Apply for a founding seat"}
-              description={`Tell us about your site and how leads come in today. Our onboarding agent qualifies the fit, sketches your first 2–3 intake paths on the spot, and submits your application for one of ${BETA_TOTAL_PARTNERS} founding seats. Takes about 6 minutes.`}
-            />
-          </div>
-        </div>
-    </MarketingSection>
-  );
-}
-
-/**
- * ChapterMarker — animated seam with a chapter stamp + rotating word pair.
- * Replaces the old passive ChapterDivider hairline.
- */
-function ChapterMarker({
-  stamp,
-  words,
-}: {
-  stamp: string;
-  words: ReadonlyArray<readonly [string, string]>;
-}) {
-  const [idx, setIdx] = useState(0);
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce || words.length <= 1) return;
-    const t = window.setInterval(() => setIdx((i) => (i + 1) % words.length), 2400);
-    return () => window.clearInterval(t);
-  }, [words.length]);
-  const [a, b] = words[idx];
-  return (
-    <div className="pb-container">
-      <div className="pb-chapter-marker">
-        <span className="pb-chapter-marker-stamp">{stamp}</span>
-        <span className="pb-chapter-marker-rule" aria-hidden />
-        <span className="pb-chapter-marker-words" aria-live="polite">
-          <span key={`a-${idx}`} className="pb-chapter-marker-word">{a}</span>
-          <span className="pb-chapter-marker-arrow">→</span>
-          <span key={`b-${idx}`} className="pb-chapter-marker-word pb-chapter-marker-word-b">{b}</span>
-        </span>
-      </div>
-    </div>
-  );
-}
-
-/** ComparisonSeam — promotes the Before / PhotoBrief toggle into the seam between Workflow and Comparison. */
-function ComparisonSeam({
-  mode,
-  onModeChange,
-}: {
-  mode: "messy" | "clean";
-  onModeChange: (mode: "messy" | "clean") => void;
-}) {
-  return (
-    <div className="pb-seam-bar">
-      <div className="pb-container">
-        <div className="flex flex-col items-center justify-between gap-3 py-4 sm:flex-row sm:py-5">
-          <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[hsl(var(--pb-violet))]">
-            See the difference
-          </p>
-          <div className="pb-seam-toggle" role="tablist" aria-label="Comparison mode">
-            {[
-              { id: "messy", label: "Before" },
-              { id: "clean", label: "PhotoBrief" },
-            ].map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                role="tab"
-                aria-selected={mode === item.id}
-                data-active={mode === item.id}
-                onClick={() => onModeChange(item.id as "messy" | "clean")}
-              >
-                {item.label}
-              </button>
-            ))}
-          </div>
-          <p className="hidden text-[10px] font-black uppercase tracking-[0.28em] text-[hsl(var(--pb-ink-muted))] sm:block">
-            Toggle to compare
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/** UseCaseChipRow — quick-filter pills that highlight a matching use case card. */
-function UseCaseChipRow({
-  active,
-  onChange,
-}: {
-  active: string | null;
-  onChange: (stamp: string | null) => void;
-}) {
-  const stamps = useCases.map((u) => u.stamp);
-  return (
-    <div className="border-b border-[hsl(var(--pb-ink-soft)/0.14)]">
-      <div className="pb-container">
-        <div className="pb-chip-row" role="tablist" aria-label="Filter use cases">
-          <button
-            type="button"
-            data-active={active === null}
-            onClick={() => onChange(null)}
-            className="pb-chip"
-          >
-            All
-          </button>
-          {stamps.map((stamp) => (
-            <button
-              key={stamp}
-              type="button"
-              data-active={active === stamp}
-              onClick={() => onChange(active === stamp ? null : stamp)}
-              className="pb-chip"
-            >
-              {stamp}
-            </button>
+                <h3 className="ls-h3 mt-6">{step.title}</h3>
+                <Body size="sm">{step.body}</Body>
+              </Card>
+            </RiseIn>
           ))}
-        </div>
-      </div>
-    </div>
+        </Grid>
+      </Container>
+    </Section>
   );
 }
 
-/**
- * Two-column section intro.
- * Mobile/tablet: stacked centered. Desktop (lg+): copy left, accent right.
- */
-/** Trade illustration accent — drops into a SectionIntro `accent` slot. */
-function TradeAccent({ src, alt }: { src: string; alt: string }) {
+/* ─────────────────────────────────────────────────────────
+   Comparison — before / after
+   ───────────────────────────────────────────────────────── */
+
+function ComparisonSection() {
   return (
-    <img
-      src={src}
-      alt={alt}
-      width={1024}
-      height={1024}
-      loading="lazy"
-      decoding="async"
-      className="w-full max-w-[420px] drop-shadow-[0_22px_36px_hsl(var(--pb-ink-soft)/0.28)]"
-    />
-  );
-}
-
-function SectionIntro({
-  eyebrow,
-  title,
-  description,
-  accent,
-  className,
-}: {
-  eyebrow: ReactNode;
-  title: ReactNode;
-  description?: ReactNode;
-  accent?: ReactNode;
-  className?: string;
-}) {
-  if (!accent) {
-    return (
-      <div className={`mx-auto max-w-3xl text-center lg:max-w-5xl ${className ?? ""}`}>
-        <span className="pb-eyebrow">{eyebrow}</span>
-        <h2 className="pb-section-title mt-4 text-white">{title}</h2>
-        {description ? (
-          <p className="pb-copy mx-auto mt-4 max-w-2xl text-base sm:text-lg">{description}</p>
-        ) : null}
-      </div>
-    );
-  }
-
-  return (
-    <div
-      className={`mx-auto max-w-3xl text-center lg:mx-0 lg:grid lg:max-w-none lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:gap-12 lg:text-left ${className ?? ""}`}
-    >
-      <div className="lg:min-w-0">
-        <span className="pb-eyebrow">{eyebrow}</span>
-        <h2 className="pb-section-title mt-4 text-white">{title}</h2>
-        {description ? (
-          <p className="pb-copy mx-auto mt-4 max-w-2xl text-base sm:text-lg lg:mx-0 lg:max-w-xl">
-            {description}
-          </p>
-        ) : null}
-      </div>
-      <div className="mt-8 flex justify-center lg:mt-0 lg:justify-end text-center">{accent}</div>
-    </div>
-  );
-}
-
-/** Compact stat tile used as a SectionIntro accent. */
-function StatAccent({
-  value,
-  label,
-  icon: Icon,
-}: {
-  value: ReactNode;
-  label: ReactNode;
-  icon?: LucideIcon;
-  /** Kept for backward-compat; ignored — single violet accent system. */
-  tone?: "lavender" | "mint" | "amber";
-}) {
-  return (
-    <div className="w-full max-w-sm text-left">
-      <div className="flex items-center gap-2 text-[hsl(var(--pb-violet))]">
-        {Icon ? <Icon className="h-4 w-4" /> : null}
-        <span className="text-[10px] font-black uppercase tracking-[0.28em]">
-          By the numbers
-        </span>
-      </div>
-      <div className="mt-3 border-t-2 border-[hsl(var(--pb-violet)/0.45)] pt-4">
-        <div className="font-serif text-5xl italic leading-none tracking-tight text-[hsl(var(--pb-violet))] sm:text-6xl">
-          {value}
-        </div>
-        <p className="pb-copy mt-3 max-w-xs text-sm leading-snug">{label}</p>
-      </div>
-    </div>
-  );
-}
-
-
-function SectionNav({ tone = "dark" }: { tone?: "dark" | "paper" }) {
-  const isPaper = tone === "paper";
-  return (
-    <nav
-      aria-label="Landing page sections"
-      className={
-        isPaper
-          ? "sticky top-[4.5rem] z-30 border-y border-[hsl(var(--pb-ink-soft)/0.10)] bg-[hsl(var(--pb-cream)/0.85)] backdrop-blur-xl"
-          : "sticky top-[4.5rem] z-30 border-y border-white/10 bg-[hsl(var(--pb-cream)/0.86)] backdrop-blur-xl"
-      }
-    >
-      <div className="pb-container flex justify-start gap-1.5 overflow-x-auto py-2 sm:gap-2 sm:py-3 sm:justify-center">
-        {sectionLinks.map((item) => (
-          <a
-            key={item.href}
-            href={item.href}
-            onClick={() =>
-              trackEvent("landing_jump_nav_click", { target: item.href })
-            }
-            className={
-              isPaper
-                ? "min-w-max rounded-full border border-transparent px-3 py-1.5 text-xs font-semibold text-[hsl(var(--pb-ink-muted))] transition hover:border-[hsl(var(--pb-violet)/0.25)] hover:bg-[hsl(var(--pb-violet)/0.06)] hover:text-[hsl(var(--pb-violet))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--pb-violet))] sm:px-4 sm:py-2 sm:text-sm"
-                : "min-w-max rounded-full border border-transparent px-3 py-1.5 text-xs font-semibold text-white/62 transition hover:border-white/14 hover:bg-white/7 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--pb-lavender))] sm:px-4 sm:py-2 sm:text-sm"
-            }
-          >
-            {item.label}
-          </a>
-        ))}
-      </div>
-    </nav>
-  );
-}
-
-function WorkflowSection() {
-  return (
-    <MarketingSection id="workflow">
-        <div className="grid gap-8 lg:grid-cols-[0.7fr_1.3fr] lg:items-center lg:gap-10">
-          <div>
-            <span className="pb-eyebrow">
-              <Route className="h-3.5 w-3.5" /> How it works
-            </span>
-            <h2 className="pb-section-title mt-4 max-w-xl text-white">
-              From a website visit to a packet your team can quote — without typing a single follow-up.
-            </h2>
-            <p className="pb-copy mt-4 max-w-lg text-base sm:text-lg">
-              Four moves. Roughly 38 seconds for the customer. Zero
-              back-and-forth for your team. This is the Reverse-Form Method™
-              from the inside.
-            </p>
-            <div className="mt-8 hidden lg:block">
-              <img
-                src={hvacTechIllo}
-                alt="Hand-drawn illustration of an HVAC technician working through a structured intake checklist"
-                width={1024}
-                height={1024}
-                loading="lazy"
-                decoding="async"
-                className="w-full max-w-[420px] drop-shadow-[0_24px_40px_hsl(var(--pb-ink-soft)/0.28)]"
-              />
-            </div>
-          </div>
-          <div className="relative">
-            <div className="absolute left-6 top-8 hidden h-[calc(100%-4rem)] w-px bg-gradient-to-b from-[hsl(var(--pb-lavender))] via-[hsl(var(--pb-violet))] to-transparent md:block" />
-            <div className="grid gap-3 sm:gap-4">
-              {workflowSteps.map((step, index) => {
-                const Icon = step.icon;
-                return (
-                  <article
-                    key={step.title}
-                    className="pb-card relative grid gap-3 p-4 sm:gap-4 sm:p-5 md:grid-cols-[4rem_1fr] md:p-6"
-                  >
-                    <div className="relative z-10 flex h-12 w-12 items-center justify-center rounded-2xl border border-[hsl(var(--pb-ink-soft)/0.18)] bg-[hsl(var(--pb-ink-soft)/0.06)] text-[hsl(var(--pb-lavender))] sm:h-14 sm:w-14">
-                      <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
-                    </div>
-                    <div>
-                      <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[hsl(var(--pb-lavender))]">
-                        0{index + 1} · {step.eyebrow}
-                      </p>
-                      <h3 className="mt-1.5 text-xl font-semibold tracking-tight text-white sm:mt-2 sm:text-2xl">
-                        {step.title}
-                      </h3>
-                      <p className="pb-copy mt-1.5 max-w-2xl text-sm sm:mt-2 sm:text-base">
-                        {step.body}
-                      </p>
-                    </div>
-                  </article>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-    </MarketingSection>
-  );
-}
-
-function ComparisonSection({ mode }: { mode: "messy" | "clean" }) {
-  const isClean = mode === "clean";
-  const signals = isClean ? cleanSignals : messySignals;
-
-  return (
-    <MarketingSection id="comparison" spacing="tight">
+    <Section id="comparison">
+      <Container>
         <SectionIntro
-          eyebrow={<><MessageSquareWarning className="h-3.5 w-3.5" /> Before / after</>}
-          title="Same customer. Same job. Different intake. Different outcome."
-          description="It's not that PhotoBrief asks for more photos. It asks for the right ones, in the right order, attached to the right service. The back-and-forth that used to take five days now doesn't have to happen at all."
-          accent={
-            <TradeAccent
-              src={briefPacketIllo}
-              alt="Hand-drawn illustration of a tied lead packet — photos and notes ribboned together"
-            />
-          }
+          eyebrow="[ 03 ] Before / after"
+          title="The intake your customers feel."
+          subtitle="A mute form versus a guided sequence. Same five minutes, two different futures for the lead."
         />
-
-        {/* Editorial spread — two columns separated by a hairline rule */}
-        <div className="mt-8 grid gap-6 sm:mt-10 sm:gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-stretch lg:gap-0 lg:divide-x lg:divide-[hsl(var(--pb-ink-soft)/0.18)]">
-          <div className="lg:pr-8 xl:pr-12">
-            <div className="flex items-baseline justify-between gap-3 border-b border-[hsl(var(--pb-ink-soft)/0.18)] pb-3">
-              <p className="font-serif text-lg italic text-[hsl(var(--pb-ink))] sm:text-xl">
-                {isClean ? "The Reverse-Form Method™" : "The form you're using now"}
-              </p>
-              <span
-                className={`text-[10px] font-black uppercase tracking-[0.22em] ${
-                  isClean
-                    ? "text-[hsl(var(--pb-violet))]"
-                    : "text-[hsl(var(--pb-violet))]"
-                }`}
-              >
-                {isClean ? "Actionable" : "Vague"}
-              </span>
-            </div>
-            <ol className="mt-5 space-y-4">
-              {signals.map((signal, index) => (
-                <li
-                  key={signal}
-                  className="flex items-start gap-4 border-b border-[hsl(var(--pb-ink-soft)/0.10)] pb-4 last:border-0"
-                >
-                  <span
-                    className={`mt-0.5 font-serif text-2xl leading-none ${
-                      isClean
-                        ? "text-[hsl(var(--pb-violet))]"
-                        : "text-[hsl(var(--pb-violet))]"
-                    }`}
-                  >
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <p className="text-sm text-[hsl(var(--pb-ink-soft))] sm:text-base">
-                    {signal}
-                  </p>
-                </li>
-              ))}
-            </ol>
-          </div>
-
-          <div className="relative min-h-[320px] overflow-hidden sm:min-h-[420px] lg:pl-8 xl:pl-12">
-            <div className="absolute inset-0 opacity-15">
-              <div className="pb-lens-field" />
-            </div>
-            {isClean ? <CleanPacketVisual /> : <MessyThreadVisual />}
-          </div>
-        </div>
-    </MarketingSection>
-  );
-}
-
-function MessyThreadVisual() {
-  const items = [
-    {
-      text: "I'd like a quote for my project",
-      x: "left-4",
-      y: "top-8",
-      rot: "-rotate-2",
-    },
-    { text: "Can you send some photos?", x: "right-6", y: "top-24", rot: "rotate-3" },
-    {
-      text: "Here's one from my camera roll",
-      x: "left-10",
-      y: "top-44",
-      rot: "rotate-2",
-    },
-    {
-      text: "Which service was this for?",
-      x: "right-10",
-      y: "bottom-12",
-      rot: "-rotate-3",
-    },
-  ];
-  return (
-    <div className="relative z-10 h-full min-h-[280px] sm:min-h-[380px]">
-      {items.map((item) => (
-        <div
-          key={item.text}
-          className={`absolute ${item.x} ${item.y} ${item.rot} max-w-[12rem] rounded-2xl border border-white/10 bg-black/35 p-3 shadow-2xl sm:max-w-[15rem] sm:rounded-3xl sm:p-4`}
-        >
-          <p className="text-xs font-semibold text-white/74 sm:text-sm">
-            {item.text}
-          </p>
-        </div>
-      ))}
-      <figure className="pb-photo-frame absolute bottom-16 left-4 w-28 -rotate-6 opacity-80 sm:bottom-20 sm:left-8 sm:w-36">
-        <img
-          src={appliances}
-          alt="Loose customer photo without context"
-          className="h-20 w-full object-cover sm:h-28"
-          width={300}
-          height={300}
-          loading="lazy"
-          sizes="(min-width:640px) 144px, 112px"
-        />
-      </figure>
-      <figure className="pb-photo-frame absolute bottom-24 right-6 w-28 rotate-6 opacity-70 sm:bottom-28 sm:right-12 sm:w-36">
-        <img
-          src={drivewayAccess}
-          alt="Another loose customer photo without context"
-          className="h-20 w-full object-cover sm:h-28"
-          width={300}
-          height={300}
-          loading="lazy"
-          sizes="(min-width:640px) 144px, 112px"
-        />
-      </figure>
-    </div>
-  );
-}
-
-function CleanPacketVisual() {
-  return (
-    <div className="relative z-10 mx-auto max-w-md rounded-[1.65rem] bg-[hsl(var(--pb-paper))] p-5 text-[hsl(var(--pb-ink))] shadow-[0_30px_80px_-45px_hsl(var(--pb-shadow))]">
-      <div className="flex items-center justify-between gap-4">
-        <div>
-          <p className="text-xs font-black uppercase tracking-[0.18em] text-black/42">
-            Lead packet
-          </p>
-          <h3 className="mt-1 text-2xl font-black tracking-tight">
-            Quote review
-          </h3>
-        </div>
-        <span className="pb-stamp rounded-full px-3 py-1">Actionable</span>
-      </div>
-      <div className="mt-5 grid grid-cols-4 gap-2">
-        {loosePhotos.map((photo) => (
-          <img
-            key={photo.label}
-            src={photo.src}
-            alt={`${photo.label} organized in a lead packet`}
-            className="h-16 rounded-xl object-cover"
-            loading="lazy"
-            width={300}
-            height={300}
-            sizes="80px"
-          />
-        ))}
-      </div>
-      <div className="mt-5 space-y-2 text-sm font-semibold text-black/64">
-        <p className="rounded-2xl bg-black/[0.055] p-3">
-          Required photos complete: 4 of 4
-        </p>
-        <p className="rounded-2xl bg-black/[0.055] p-3">
-          Customer notes attached to the right service
-        </p>
-        <p className="rounded-2xl bg-black/[0.055] p-3">
-          Next action: review and send estimate
-        </p>
-      </div>
-    </div>
-  );
-}
-
-function UseCaseSection({ activeStamp }: { activeStamp?: string | null }) {
-  return (
-    <MarketingSection id="use-cases">
-        <SectionIntro
-          eyebrow={<><ClipboardList className="h-3.5 w-3.5" /> Use cases</>}
-          title="If a missing photo can stall your next move — this is built for you."
-          description="Landscapers quoting blind. Junk haulers rolling the wrong truck. HVAC techs missing the part. Plumbers showing up to a four-hour job with a two-hour window. Estimators chasing the same claim through three rounds of email. PhotoBrief structures the intake so your team has every shot, every detail, every dollar of context — on the first pass."
-          accent={
-            <TradeAccent
-              src={landscaperIllo}
-              alt="Hand-drawn illustration of a landscaper sending a yard photo from a phone"
-            />
-          }
-        />
-        {/* Editorial index — numbered entries divided by hairlines */}
-        <div className="mt-8 flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory sm:mt-10 md:grid md:grid-cols-2 md:gap-x-10 md:gap-y-0 md:overflow-visible md:pb-0 lg:grid-cols-3 xl:grid-cols-5">
-          {useCases.map((item, index) => {
-            const Icon = item.icon;
-            const isActive = activeStamp === item.stamp;
-            const isDim = activeStamp != null && !isActive;
-            return (
-              <article
-                key={item.title}
-                data-usecase-card
-                data-active={isActive || undefined}
-                data-dim={isDim || undefined}
-                className="w-[78vw] max-w-[300px] shrink-0 snap-start border-t border-[hsl(var(--pb-ink-soft)/0.18)] pt-5 md:w-auto md:max-w-none md:min-w-0 md:pt-6"
-              >
-                {/* image moved to section anchor */}
-                <div className="flex items-baseline justify-between gap-3">
-                  <span className="font-serif text-2xl leading-none text-[hsl(var(--pb-violet))] sm:text-3xl">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <Icon className="h-5 w-5 text-[hsl(var(--pb-ink-muted))]" />
-                </div>
-                <p className="mt-4 text-[10px] font-black uppercase tracking-[0.22em] text-[hsl(var(--pb-ink-muted))]">
-                  {item.stamp}
-                </p>
-                <h3 className="mt-2 font-serif text-xl italic leading-tight text-[hsl(var(--pb-ink))] sm:text-2xl">
-                  {item.title}
-                </h3>
-                <p className="mt-3 leading-6 text-[hsl(var(--pb-ink-soft))] text-lg">{item.body}</p>
-              </article>
-            );
-          })}
-        </div>
-    </MarketingSection>
-  );
-}
-
-function WebsiteIntelligenceSection() {
-  return (
-    <MarketingSection id="website-intelligence">
-        <SectionIntro
-          eyebrow={<><Globe2 className="h-3.5 w-3.5" /> Website Intelligence</>}
-          title="Your website is already telling us how to fix it."
-          description="Every service page you've written, every quote button you've placed, every form field you've added — it's a map of the jobs you actually take. We read it, compress it into 2–3 customer choices, and ship a guided intake path live in seven days. Beta partners pay nothing for the build."
-          accent={
-            <TradeAccent
-              src={researchMagnifierIllo}
-              alt="Hand-drawn illustration of a magnifier reading a website — the site scan"
-            />
-          }
-        />
-
-        <div className="mt-8 grid gap-6 sm:mt-10 md:grid-cols-3 md:gap-x-10 md:gap-y-0">
-          {websiteIntelCards.map((card, index) => {
-            const Icon = card.icon;
-            return (
-              <article
-                key={card.title}
-                className="border-t border-white/12 pt-5 md:pt-6"
-              >
-                <div className="flex items-baseline justify-between gap-3">
-                  <span className="font-serif text-2xl leading-none text-[hsl(var(--pb-lavender))] sm:text-3xl">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <Icon className="h-5 w-5 text-white/40" />
-                </div>
-                <h3 className="mt-3 font-serif text-xl italic leading-tight text-white sm:text-2xl">
-                  {card.title}
-                </h3>
-                <p className="pb-copy mt-3 text-sm leading-6">{card.body}</p>
-              </article>
-            );
-          })}
-        </div>
-    </MarketingSection>
-  );
-}
-
-function RewardTiersSection() {
-  return (
-    <MarketingSection spacing="tight">
-        <SectionIntro
-          eyebrow={<><Gift className="h-3.5 w-3.5" /> Reward tiers</>}
-          title="Every founding partner walks out with something."
-          description="No participation trophies. Your tier is earned by the quality of the feedback you give us — the calls you flag, the workflows you walk us through, the things you tell us we got wrong. We track engagement internally so you never have to write a report."
-          accent={
-            <TradeAccent
-              src={rewardRibbonsIllo}
-              alt="Hand-drawn illustration of layered award rosette ribbons"
-            />
-          }
-        />
-        <div className="mx-auto mt-10 max-w-3xl sm:mt-10">
-          <div className="grid border-t border-[hsl(var(--pb-ink-soft)/0.18)]">
-            {REWARD_TIERS.map((tier) => {
-              const isTopTier = tier.duration === "free-pro";
-              return (
-                <div
-                  key={tier.label}
-                  className="flex items-center justify-between gap-3 border-b border-[hsl(var(--pb-ink-soft)/0.18)] py-3.5"
-                >
-                  <div className="flex items-center gap-3">
-                    {isTopTier ? (
-                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[hsl(var(--pb-lavender))] to-[hsl(var(--pb-violet))]">
-                        <Trophy className="h-3.5 w-3.5 text-white" />
-                      </span>
-                    ) : (
-                      <span className="font-serif text-lg leading-none text-[hsl(var(--pb-lavender))] sm:text-xl">
-                        {String(tier.count).padStart(2, "0")}
-                      </span>
-                    )}
-                    <span
-                      className={`text-sm font-semibold sm:text-base ${isTopTier ? "text-[hsl(var(--pb-lavender))]" : "text-white"}`}
-                    >
-                      {tier.label}
-                    </span>
-                  </div>
-                  <span className="text-xs font-bold text-[hsl(var(--pb-violet))] sm:text-sm">
-                    {tier.shortDescription}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="mt-6 border-l-2 border-[hsl(var(--pb-lavender)/0.4)] pl-4">
-            <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[hsl(var(--pb-lavender))]">
-              What drives your tier placement
-            </p>
-            <ul className="mt-2 grid gap-1.5">
-              {REWARD_CRITERIA.map((criterion) => (
-                <li
-                  key={criterion}
-                  className="flex items-start gap-2 text-xs text-white/70 sm:text-sm"
-                >
-                  <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[hsl(var(--pb-violet)/0.7)]" />
-                  <span>{criterion}</span>
+        <div className="grid gap-6 lg:grid-cols-2">
+          <Card>
+            <span className="ls-numeral text-destructive">Before · status quo</span>
+            <h3 className="ls-h3 mt-3">Generic intake form</h3>
+            <ul className="mt-6 space-y-3 text-sm">
+              {[
+                { icon: ImageOff, text: "Photos missing or wrong angle." },
+                { icon: MessageSquareWarning, text: "Three follow-ups before a quote." },
+                { icon: TimerReset, text: "Lead cools while you chase context." },
+              ].map(({ icon: Icon, text }) => (
+                <li key={text} className="flex gap-3 text-muted-foreground">
+                  <Icon className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
+                  <span>{text}</span>
                 </li>
               ))}
             </ul>
-          </div>
+          </Card>
+          <Card elevated>
+            <span className="ls-numeral text-[hsl(var(--accent-kinetic))]">After · PhotoBrief</span>
+            <h3 className="ls-h3 mt-3">A guided capture pipeline</h3>
+            <ul className="mt-6 space-y-3 text-sm">
+              {[
+                "Right angle, right lighting, right context — every time.",
+                "A single packet hits your inbox: photos, notes, location.",
+                "Your estimator quotes on the first reply.",
+              ].map((text) => (
+                <li key={text} className="flex gap-3 text-muted-foreground">
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[hsl(var(--accent-kinetic))]" />
+                  <span>{text}</span>
+                </li>
+              ))}
+            </ul>
+            <div className="mt-6 aspect-[16/9] overflow-hidden border border-border bg-muted">
+              <img
+                src={briefPacketIllo}
+                alt="Brief packet preview"
+                className="h-full w-full object-contain p-4"
+                loading="lazy"
+              />
+            </div>
+          </Card>
         </div>
-    </MarketingSection>
+      </Container>
+    </Section>
   );
 }
 
-type BetaDetailsAccordionProps = {
-  value: string[];
-  onValueChange: (value: string[]) => void;
-};
+/* ─────────────────────────────────────────────────────────
+   Use cases — trade illustrations
+   ───────────────────────────────────────────────────────── */
 
-function BetaDetailsAccordion({ value, onValueChange }: BetaDetailsAccordionProps) {
-  const ALL_ITEMS = ["expectations", "scoring"];
-  const allOpen = ALL_ITEMS.every((id) => value.includes(id));
+const useCases = [
+  { icon: Wrench, label: "Plumbers", note: "Leaks, fixtures, access.", illo: hvacTechIllo },
+  { icon: Wind, label: "HVAC", note: "Units, vents, electrical.", illo: hvacTechIllo },
+  { icon: Leaf, label: "Landscapers", note: "Yard size, slope, access.", illo: landscaperIllo },
+  { icon: Truck, label: "Junk haulers", note: "Pile, driveway, hazards.", illo: landscaperIllo },
+  { icon: Calculator, label: "Estimators", note: "Photo coverage that prices.", illo: hvacTechIllo },
+];
+
+function UseCasesSection() {
   return (
-    <MarketingSection spacing="tight">
-      <div className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-start lg:gap-12">
-        <div className="lg:min-w-0">
-          <span className="pb-eyebrow"><FileText className="h-3.5 w-3.5" /> Everything in writing</span>
-          <h2 className="pb-section-title mt-4 text-white">Because that's what founding partners deserve.</h2>
-          <p className="pb-copy mt-4 max-w-xl text-base sm:text-lg">
-            How the program runs. What we'll ask of you. Exactly how rewards are decided. No surprises, no asterisks, no fine-print games.
-          </p>
-          <div className="mt-8">
-          <div className="flex items-center justify-end border-b border-[hsl(var(--pb-ink-soft)/0.18)] py-3">
-            <button
-              type="button"
-              className="pb-master-toggle"
-              onClick={() => onValueChange(allOpen ? [] : ALL_ITEMS)}
-              aria-expanded={allOpen}
-            >
-              {allOpen ? "Hide details ↑" : "Show all details ↓"}
-            </button>
-          </div>
-          <Accordion type="multiple" value={value} onValueChange={onValueChange} className="grid">
-            <AccordionItem value="expectations" className="border-b border-[hsl(var(--pb-ink-soft)/0.18)]">
-              <AccordionTrigger className="py-5 text-left text-sm font-bold text-white hover:no-underline sm:text-base [&>svg]:text-[hsl(var(--pb-lavender))]">
-                <span className="flex items-center gap-3">
-                  <Users className="h-4 w-4 text-[hsl(var(--pb-lavender))]" />
-                  What it means to be a founding beta partner
-                </span>
-              </AccordionTrigger>
-              <AccordionContent className="pb-6">
-                <p className="pb-copy mb-5 text-sm">
-                  We're accepting {BETA_TOTAL_PARTNERS} businesses. The{" "}
-                  {BETA_DURATION_DAYS}-day beta clock starts {BETA_SETUP_BUFFER_DAYS}{" "}
-                  days after the final seat is filled, giving every partner time for
-                  concierge setup.
-                </p>
-                <div className="mb-6 grid gap-6 sm:grid-cols-2">
-                  <BenefitList title="Beta partners get" items={[...PARTNER_BENEFITS]} />
-                  <BenefitList title="We ask for" items={[...PARTNER_EXPECTATIONS]} />
-                </div>
-                <ol className="grid gap-5">
-                  {DETAILED_EXPECTATIONS.map((exp, i) => (
-                    <li key={i} className="flex gap-4 border-t border-[hsl(var(--pb-ink-soft)/0.18)] pt-4 first:border-0 first:pt-0">
-                      <span className="font-serif text-xl leading-none text-[hsl(var(--pb-lavender))] sm:text-2xl">
-                        {String(i + 1).padStart(2, "0")}
-                      </span>
-                      <div>
-                        <p className="font-serif text-base italic text-white sm:text-lg">
-                          {exp.title}
-                        </p>
-                        <p className="pb-copy mt-1 text-xs leading-5 sm:text-sm">
-                          {exp.description}
-                        </p>
-                      </div>
-                    </li>
-                  ))}
-                </ol>
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="scoring" className="border-b border-[hsl(var(--pb-ink-soft)/0.18)]">
-              <AccordionTrigger className="py-5 text-left text-sm font-bold text-white hover:no-underline sm:text-base [&>svg]:text-[hsl(var(--pb-lavender))]">
-                <span className="flex items-center gap-3">
-                  <Trophy className="h-4 w-4 text-[hsl(var(--pb-lavender))]" />
-                  Scoring rubric — how we pick the top 2
-                </span>
-              </AccordionTrigger>
-              <AccordionContent className="pb-6">
-                <p className="pb-copy mb-5 text-sm">
-                  There's no secret formula — just four dimensions we weight
-                  equally-ish. Here's exactly what we look at.
-                </p>
-                <div className="grid">
-                  {SCORING_RUBRIC.map((dim, idx) => (
-                    <div
-                      key={dim.label}
-                      className={`py-5 ${idx > 0 ? "border-t border-[hsl(var(--pb-ink-soft)/0.18)]" : ""}`}
-                    >
-                      <div className="flex flex-wrap items-baseline justify-between gap-3">
-                        <h3 className="font-serif text-lg italic text-white sm:text-xl">
-                          {dim.label}
-                        </h3>
-                        <span className="text-[10px] font-black uppercase tracking-[0.22em] text-[hsl(var(--pb-lavender))]">
-                          {dim.weight}
-                        </span>
-                      </div>
-                      <p className="pb-copy mt-2 text-xs leading-relaxed sm:text-sm">
-                        {dim.description}
-                      </p>
-                      <div className="mt-3 border-l-2 border-[hsl(var(--pb-ink-soft)/0.18)] pl-3">
-                        <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/40">
-                          Examples of great feedback
-                        </p>
-                        {dim.examples.map((ex, i) => (
-                          <p
-                            key={i}
-                            className="mt-1 text-xs italic leading-relaxed text-white/60"
-                          >
-                            {ex}
-                          </p>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-          </div>
+    <Section id="use-cases" tone="alt">
+      <Container>
+        <SectionIntro
+          eyebrow="[ 04 ] Trades"
+          title="Built around the work."
+          subtitle="Coverage templates per trade. Mute customer? Doesn't matter. The form does the talking."
+        />
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          {useCases.map((u, i) => (
+            <RiseIn key={u.label} delay={i * 0.05}>
+              <Card>
+                <u.icon className="h-6 w-6 text-[hsl(var(--accent-kinetic))]" />
+                <h3 className="ls-h3 mt-4">{u.label}</h3>
+                <Body size="sm">{u.note}</Body>
+              </Card>
+            </RiseIn>
+          ))}
         </div>
-        <div className="flex justify-center lg:sticky lg:top-24 lg:justify-end">
-          <TradeAccent
-            src={betaNotebookIllo}
-            alt="Hand-drawn illustration of an open notebook with a magnifying glass — the fine print"
-          />
-        </div>
-      </div>
-    </MarketingSection>
+      </Container>
+    </Section>
   );
 }
+
+/* ─────────────────────────────────────────────────────────
+   Website Intelligence
+   ───────────────────────────────────────────────────────── */
+
+const websiteIntelCards = [
+  { icon: Scan, title: "Scan",    text: "We crawl the site, score the intake paths, and find the leaks." },
+  { icon: Route, title: "Route",  text: "Templates routed to forms, embeds, or your existing webhook." },
+  { icon: Eye,   title: "Observe", text: "Every submission tracked end-to-end with photo coverage scoring." },
+];
+
+function WebsiteIntelligenceSection() {
+  return (
+    <Section id="website-intelligence">
+      <Container>
+        <div className="grid gap-12 lg:grid-cols-[1fr_1.4fr] lg:items-center">
+          <RiseIn>
+            <div className="aspect-square overflow-hidden border border-border bg-muted">
+              <img
+                src={researchMagnifierIllo}
+                alt="Website intelligence"
+                className="h-full w-full object-contain p-12"
+                loading="lazy"
+              />
+            </div>
+          </RiseIn>
+          <div>
+            <SectionIntro
+              eyebrow="[ 05 ] Website intelligence"
+              title="Read the site. Route the lead."
+              subtitle="An automation layer that turns your existing website into a PhotoBrief intake funnel."
+            />
+            <Grid cols={3} gap="md">
+              {websiteIntelCards.map((c, i) => (
+                <RiseIn key={c.title} delay={i * 0.05}>
+                  <Card>
+                    <c.icon className="h-5 w-5 text-[hsl(var(--accent-kinetic))]" />
+                    <h3 className="ls-h3 mt-3">{c.title}</h3>
+                    <Body size="sm">{c.text}</Body>
+                  </Card>
+                </RiseIn>
+              ))}
+            </Grid>
+          </div>
+        </div>
+      </Container>
+    </Section>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────
+   Live demo
+   ───────────────────────────────────────────────────────── */
+
+function LiveDemoSection() {
+  return (
+    <Section tone="alt">
+      <Container>
+        <SectionIntro
+          eyebrow="[ 06 ] Live"
+          title="Watch a brief assemble itself."
+          subtitle="Hit the steps. The packet builds in real time."
+        />
+        <div className="border border-border bg-background p-2 sm:p-4">
+          <Suspense fallback={<div className="flex h-96 items-center justify-center text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin" /></div>}>
+            <InteractiveHeroBriefAssembly />
+          </Suspense>
+        </div>
+      </Container>
+    </Section>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────
+   Beta program
+   ───────────────────────────────────────────────────────── */
+
+function BetaProgramSection() {
+  return (
+    <Section id="beta-program">
+      <Container width="narrow">
+        <SectionIntro
+          eyebrow="[ 07 ] Founding partners"
+          title="A program, not a launch list."
+          subtitle={`Twenty-five small businesses. Sixty days of close work. Founding pricing forever.`}
+        />
+        <div className="mt-10">
+          <BetaSeatTracker />
+        </div>
+      </Container>
+    </Section>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────
+   Apply — onboarding agent
+   ───────────────────────────────────────────────────────── */
+
+function ApplySection({ showAgent: _showAgent }: { showAgent: boolean }) {
+  return (
+    <Section id="apply" tone="alt">
+      <Container>
+        <SectionIntro
+          eyebrow="[ 08 ] Apply"
+          title="Six minutes with the onboarding agent."
+          subtitle="Tell us about the work. We'll tell you within 48 hours if there's a founding seat with your name on it."
+        />
+        <div className="border border-border bg-background p-2 sm:p-4">
+          <Suspense fallback={<div className="flex h-96 items-center justify-center text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin" /></div>}>
+            <BetaOnboardingAgentExperience />
+          </Suspense>
+        </div>
+      </Container>
+    </Section>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────
+   FAQ
+   ───────────────────────────────────────────────────────── */
+
+function FaqSection() {
+  return (
+    <Section>
+      <Container width="narrow">
+        <SectionIntro
+          eyebrow="[ 09 ] FAQ"
+          title="Frequently. Honestly."
+        />
+        <Accordion type="single" collapsible className="mt-10 border-t border-border">
+          {faqItems.slice(0, 8).map((item, i) => (
+            <AccordionItem key={item.q} value={`q-${i}`} className="border-b border-border py-2">
+              <AccordionTrigger className="text-left font-display text-lg font-medium tracking-tight hover:no-underline">
+                <span className="flex w-full items-baseline gap-4">
+                  <span className="ls-numeral shrink-0">{String(i + 1).padStart(2, "0")}</span>
+                  <span>{item.q}</span>
+                </span>
+              </AccordionTrigger>
+              <AccordionContent className="pl-12 text-muted-foreground">
+                {item.a}
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      </Container>
+    </Section>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────
+   Final CTA + quick apply form
+   ───────────────────────────────────────────────────────── */
 
 function FinalCta({ isFull }: { isFull: boolean }) {
   return (
     <Section tone="dark">
       <Container>
-        <div className="grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-16">
+        <div className="grid gap-12 lg:grid-cols-[1.3fr_1fr] lg:items-end">
           <div>
-            <Eyebrow>One last thing</Eyebrow>
-            <div className="mt-6">
-              <Title level={2}>
-                30 seats. 60 days. Two free-for-life winners. Pick up the pen.
-              </Title>
-            </div>
-            <div className="mt-6 max-w-md">
+            <p className="ls-eyebrow">[ 10 ] One last thing</p>
+            <RiseIn>
+              <h2 className="ls-h1 mt-6">
+                Ready to{" "}
+                <span className="ls-italic-accent">replace the chase</span>?
+              </h2>
+            </RiseIn>
+            <RiseIn delay={0.1}>
               <Body size="lg">
-                You're applying for one of {BETA_TOTAL_PARTNERS} founding seats in
-                the only intake program built next to the trades that actually
-                run the work. It costs you nothing. You walk away with a guided
-                intake your old form couldn't touch — and a real shot at never
-                paying for Pro again. The seats fill the way they always do:
-                quietly, then all at once. Don't be the person who emailed us
-                the day after.
+                {isFull
+                  ? "Founding seats are full. Join the waitlist and we'll reach out the moment a seat opens."
+                  : `Twenty-five seats. Sixty days. Founding pricing for the lifetime of your account.`}
               </Body>
-            </div>
-            <div className="mt-7">
-              <CTAGroup>
-                <CTA
-                  variant="primary"
-                  size="lg"
-                  onClick={() =>
-                    document
-                      .getElementById("apply")
-                      ?.scrollIntoView({ behavior: "smooth" })
-                  }
-                >
-                  {isFull ? "Join the waitlist" : "Send my application"}
-                  <ArrowRight className="h-4 w-4" />
-                </CTA>
-                <CTA variant="secondary" size="lg" href="/pricing">
-                  See plans
-                </CTA>
-              </CTAGroup>
-            </div>
+            </RiseIn>
+            <CTAGroup>
+              <CTA href="#apply" variant="primary" size="lg">
+                {isFull ? "Join waitlist" : "Open the agent"}
+              </CTA>
+              <CTA href="/pricing" variant="secondary" size="lg">
+                See pricing
+              </CTA>
+            </CTAGroup>
           </div>
-          <div className="flex flex-col items-center gap-6 lg:items-end">
-            <FinalCtaQuickApply isFull={isFull} />
-          </div>
+          <FinalCtaQuickApply isFull={isFull} />
         </div>
       </Container>
     </Section>
@@ -1907,7 +627,7 @@ function FinalCtaQuickApply({ isFull }: { isFull: boolean }) {
       return;
     }
     setErrors({});
-    if (trap) { setDone(true); return; } // silent drop on honeypot
+    if (trap) { setDone(true); return; }
     setSubmitting(true);
     try {
       const { error } = await supabase.functions.invoke("waitlist-submit", {
@@ -1925,7 +645,7 @@ function FinalCtaQuickApply({ isFull }: { isFull: boolean }) {
     } catch (err) {
       toast({
         title: "Couldn't submit",
-        description: "Something went wrong. Try again or use the full application above.",
+        description: "Something went wrong. Try again or use the full agent above.",
         variant: "destructive",
       });
     } finally {
@@ -1935,13 +655,13 @@ function FinalCtaQuickApply({ isFull }: { isFull: boolean }) {
 
   if (done) {
     return (
-      <div className="w-full max-w-[420px] rounded-2xl border border-white/15 bg-white/5 p-6 text-white">
-        <Eyebrow>You're in the queue</Eyebrow>
-        <p className="mt-3 font-serif text-xl italic">Watch your inbox.</p>
-        <p className="mt-2 text-sm text-white/75">
-          We review every application by hand. If you're a fit for one of the {BETA_TOTAL_PARTNERS} founding seats,
-          you'll hear from us within 48 hours.
-        </p>
+      <div className="border border-border bg-card p-8">
+        <p className="ls-eyebrow">[ ✓ ] You're in the queue</p>
+        <p className="ls-h3 mt-4">Watch your inbox.</p>
+        <Body>
+          We review every application by hand. If you fit one of the {BETA_TOTAL_PARTNERS} founding seats,
+          you'll hear back within 48 hours.
+        </Body>
       </div>
     );
   }
@@ -1949,13 +669,15 @@ function FinalCtaQuickApply({ isFull }: { isFull: boolean }) {
   return (
     <form
       onSubmit={onSubmit}
-      className="w-full max-w-[420px] rounded-2xl border border-white/15 bg-white/5 p-6 backdrop-blur-sm"
+      className="border border-border bg-card p-6 sm:p-8"
       noValidate
     >
-      <Eyebrow>{isFull ? "Join the waitlist" : "30-second application"}</Eyebrow>
-      <div className="mt-5 space-y-4">
-        <label className="block">
-          <span className="text-xs font-semibold uppercase tracking-wider text-white/70">Name</span>
+      <p className="ls-eyebrow">{isFull ? "Waitlist" : "30-second application"}</p>
+      <div className="mt-6 space-y-5">
+        <FormField
+          label="Name"
+          error={errors.name}
+        >
           <input
             type="text"
             value={name}
@@ -1963,12 +685,10 @@ function FinalCtaQuickApply({ isFull }: { isFull: boolean }) {
             maxLength={80}
             required
             autoComplete="name"
-            className="mt-1 w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-white placeholder:text-white/40 focus:border-white/50 focus:outline-none"
+            className="w-full border-0 border-b border-border bg-transparent py-2 text-foreground outline-none transition-colors focus:border-[hsl(var(--accent-kinetic))]"
           />
-          {errors.name && <span className="mt-1 block text-xs text-[hsl(var(--pb-amber))]">{errors.name}</span>}
-        </label>
-        <label className="block">
-          <span className="text-xs font-semibold uppercase tracking-wider text-white/70">Work email</span>
+        </FormField>
+        <FormField label="Work email" error={errors.email}>
           <input
             type="email"
             value={email}
@@ -1976,24 +696,19 @@ function FinalCtaQuickApply({ isFull }: { isFull: boolean }) {
             maxLength={254}
             required
             autoComplete="email"
-            className="mt-1 w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-white placeholder:text-white/40 focus:border-white/50 focus:outline-none"
+            className="w-full border-0 border-b border-border bg-transparent py-2 text-foreground outline-none transition-colors focus:border-[hsl(var(--accent-kinetic))]"
           />
-          {errors.email && <span className="mt-1 block text-xs text-[hsl(var(--pb-amber))]">{errors.email}</span>}
-        </label>
-        <label className="block">
-          <span className="text-xs font-semibold uppercase tracking-wider text-white/70">
-            Company or website <span className="font-normal normal-case text-white/50">(optional)</span>
-          </span>
+        </FormField>
+        <FormField label="Company or website" hint="optional">
           <input
             type="text"
             value={company}
             onChange={(e) => setCompany(e.target.value)}
             maxLength={120}
             autoComplete="organization"
-            className="mt-1 w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-white placeholder:text-white/40 focus:border-white/50 focus:outline-none"
+            className="w-full border-0 border-b border-border bg-transparent py-2 text-foreground outline-none transition-colors focus:border-[hsl(var(--accent-kinetic))]"
           />
-        </label>
-        {/* honeypot */}
+        </FormField>
         <input
           type="text"
           tabIndex={-1}
@@ -2004,19 +719,21 @@ function FinalCtaQuickApply({ isFull }: { isFull: boolean }) {
           className="absolute left-[-9999px] h-0 w-0 opacity-0"
         />
       </div>
-      <button
-        type="submit"
-        disabled={submitting}
-        className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[hsl(var(--pb-amber))] px-5 py-3 text-sm font-bold text-[hsl(var(--pb-navy))] shadow-sm transition disabled:opacity-60"
-      >
-        {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4" />}
-        {submitting ? "Sending…" : submitLabel}
-      </button>
-      <p className="mt-3 text-center text-xs text-white/60">
+      <CTAGroup>
+        <button
+          type="submit"
+          disabled={submitting}
+          className="ls-cta ls-cta--lg ls-cta-primary mt-8 w-full disabled:opacity-60"
+        >
+          {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4" />}
+          {submitting ? "Sending…" : submitLabel}
+        </button>
+      </CTAGroup>
+      <p className="mt-5 text-center text-xs text-muted-foreground">
         Prefer the full 6-min agent?{" "}
         <a
           href="#apply"
-          className="underline underline-offset-2 hover:text-white"
+          className="text-foreground underline-offset-4 hover:underline"
           onClick={(e) => {
             e.preventDefault();
             document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" });
@@ -2029,24 +746,55 @@ function FinalCtaQuickApply({ isFull }: { isFull: boolean }) {
   );
 }
 
+/* ─────────────────────────────────────────────────────────
+   Helpers
+   ───────────────────────────────────────────────────────── */
 
-function BenefitList({ title, items }: { title: string; items: string[] }) {
+function SectionIntro({
+  eyebrow,
+  title,
+  subtitle,
+}: {
+  eyebrow: string;
+  title: ReactNode;
+  subtitle?: ReactNode;
+}) {
   return (
-    <div className="border-t border-white/12 pt-5">
-      <h3 className="font-serif text-lg italic text-white sm:text-xl">
-        {title}
-      </h3>
-      <ul className="mt-4 grid gap-3">
-        {items.map((item) => (
-          <li
-            key={item}
-            className="flex gap-3 text-sm leading-6 text-white/76"
-          >
-            <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-[hsl(var(--pb-violet))]" />
-            <span>{item}</span>
-          </li>
-        ))}
-      </ul>
+    <div className="mb-14 max-w-3xl">
+      <p className="ls-eyebrow">{eyebrow}</p>
+      <RiseIn>
+        <Title level={2}>
+          <span className="mt-5 block">{title}</span>
+        </Title>
+      </RiseIn>
+      {subtitle && (
+        <RiseIn delay={0.08}>
+          <Subtitle>{subtitle}</Subtitle>
+        </RiseIn>
+      )}
     </div>
+  );
+}
+
+function FormField({
+  label,
+  hint,
+  error,
+  children,
+}: {
+  label: string;
+  hint?: string;
+  error?: string;
+  children: ReactNode;
+}) {
+  return (
+    <label className="block">
+      <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+        {label}
+        {hint && <span className="ml-2 normal-case tracking-normal text-muted-foreground/60">({hint})</span>}
+      </span>
+      <div className="mt-2">{children}</div>
+      {error && <span className="mt-1 block text-xs text-[hsl(var(--accent-kinetic))]">{error}</span>}
+    </label>
   );
 }

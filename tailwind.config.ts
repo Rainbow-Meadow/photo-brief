@@ -15,12 +15,17 @@ export default {
     },
     extend: {
       fontFamily: {
+        display: [
+          '"Bricolage Grotesque"',
+          '"Inter"',
+          "system-ui",
+          "sans-serif",
+        ],
         sans: [
+          '"Inter"',
           "-apple-system",
           "BlinkMacSystemFont",
           '"SF Pro Text"',
-          '"SF Pro Display"',
-          '"Inter"',
           "system-ui",
           '"Segoe UI"',
           "Roboto",
@@ -34,6 +39,7 @@ export default {
           "sans-serif",
         ],
         mono: [
+          '"Geist Mono"',
           "ui-monospace",
           '"SF Mono"',
           "Menlo",
@@ -173,6 +179,16 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        kinetic: {
+          DEFAULT: "hsl(var(--accent-kinetic))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        sage: {
+          DEFAULT: "hsl(var(--accent-sage))",
+        },
+        paper: {
+          DEFAULT: "hsl(var(--surface-paper))",
+        },
       },
       backgroundImage: {
         "gradient-primary": "var(--gradient-primary)",
@@ -206,6 +222,9 @@ export default {
         "fade-in": { from: { opacity: "0", transform: "translateY(4px)" }, to: { opacity: "1", transform: "translateY(0)" } },
         "lift-in": { from: { opacity: "0", transform: "translateY(8px)" }, to: { opacity: "1", transform: "translateY(0)" } },
         "bubble-in": { from: { opacity: "0", transform: "translateY(6px) scale(.98)" }, to: { opacity: "1", transform: "translateY(0) scale(1)" } },
+        "marquee-x": { from: { transform: "translate3d(0,0,0)" }, to: { transform: "translate3d(-50%,0,0)" } },
+        "underline-draw": { from: { transform: "scaleX(0)" }, to: { transform: "scaleX(1)" } },
+        "rise-in": { from: { opacity: "0", transform: "translateY(120%)" }, to: { opacity: "1", transform: "translateY(0)" } },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -213,6 +232,9 @@ export default {
         "fade-in": "fade-in 0.3s ease-out",
         "lift-in": "lift-in 0.36s cubic-bezier(0.32,0.72,0,1) both",
         "bubble-in": "bubble-in 0.24s cubic-bezier(0.32,0.72,0,1) both",
+        "marquee-x": "marquee-x 40s linear infinite",
+        "underline-draw": "underline-draw 0.9s cubic-bezier(0.215,0.610,0.355,1) 0.3s both",
+        "rise-in": "rise-in 0.8s cubic-bezier(0.215,0.610,0.355,1) both",
       },
     },
   },

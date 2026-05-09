@@ -7,6 +7,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 import { AuthProvider } from "@/hooks/useAuth";
+import { LenisProvider } from "@/lib/motion/lenis";
+import { GrainOverlay } from "@/components/motion/GrainOverlay";
 
 import { CurrentWorkspaceProvider } from "@/hooks/useCurrentWorkspace";
 import { MarketingLayout } from "@/components/layout/MarketingLayout";
@@ -89,6 +91,8 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
         <CurrentWorkspaceProvider>
+          <LenisProvider>
+          <GrainOverlay />
           <RouteTracker />
           <InviteAcceptanceGuard>
           <ErrorBoundary>
@@ -239,6 +243,7 @@ const App = () => (
           </Suspense>
           </ErrorBoundary>
           </InviteAcceptanceGuard>
+          </LenisProvider>
         </CurrentWorkspaceProvider>
         </AuthProvider>
       </BrowserRouter>
