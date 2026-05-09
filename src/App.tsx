@@ -7,7 +7,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 import { AuthProvider } from "@/hooks/useAuth";
-import { ThemeProvider } from "@/components/theme/ThemeProvider";
+
 import { CurrentWorkspaceProvider } from "@/hooks/useCurrentWorkspace";
 import { MarketingLayout } from "@/components/layout/MarketingLayout";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
