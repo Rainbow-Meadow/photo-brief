@@ -516,7 +516,7 @@ export default function WebsiteIntakePage() {
                     </p>
                     <p className="text-xs text-muted-foreground">Send: {guideName(rule.guideId)}</p>
                   </div>
-                  <Button variant="ghost" size="icon" className="rounded-full" onClick={async () => {
+                  <Button variant="ghost" size="icon" className="rounded-none" onClick={async () => {
                     await deleteRule.mutateAsync(rule.id);
                     toast.success("Rule removed");
                   }}>
@@ -638,7 +638,7 @@ export default function WebsiteIntakePage() {
                 <div key={event.id} className="rounded-none border bg-background p-3">
                   <div className="flex items-center justify-between gap-2">
                     <p className="text-sm font-medium text-foreground">{event.requestType || "Website lead"}</p>
-                    <span className="rounded-full bg-muted px-2 py-1 text-[11px] font-medium text-muted-foreground">{event.status.replace(/_/g, " ")}</span>
+                    <span className="bg-muted border border-border px-2 py-1 text-[11px] font-medium text-muted-foreground">{event.status.replace(/_/g, " ")}</span>
                   </div>
                   <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{event.error || event.message || JSON.stringify(event.normalizedCustomer)}</p>
                 </div>
