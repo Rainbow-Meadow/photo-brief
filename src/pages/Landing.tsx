@@ -92,7 +92,7 @@ const SOFTWARE_APP_JSONLD: Record<string, unknown> = {
   applicationCategory: "BusinessApplication",
   operatingSystem: "Web",
   description:
-    "Stop chasing customers for missing photos. PhotoBrief uses the Reverse-Form Method — you tell the customer what to send, and a quote-ready lead packet lands in your inbox on the first try.",
+    "Your contact form is leaking money. PhotoBrief's Reverse-Form Method™ tells customers exactly what to send — and a quote-ready lead packet lands in your inbox on the first try. No chasing. No callbacks. No vague 'I need a quote'.",
 };
 
 /* ── Anchors ───────────────────────────────────────────── */
@@ -123,8 +123,8 @@ export default function LandingPage() {
   return (
     <>
       <PageMeta
-        title="PhotoBrief — Guide · Capture · Close"
-        description="The Reverse-Form Method. Stop chasing customers for missing photos. Tell them exactly what to send, and a quote-ready packet lands in your inbox on the first try."
+        title="PhotoBrief — Stop the leak. Quote on the first reply."
+        description="Your contact form is leaking money. PhotoBrief's Reverse-Form Method™ tells customers exactly what to send — and a quote-ready lead packet lands in your inbox on the first try. No chasing. No callbacks."
         canonicalPath="/"
         jsonLd={[SOFTWARE_APP_JSONLD, heroJsonLd, faqJsonLd]}
       />
@@ -154,7 +154,7 @@ function Hero() {
       <Container>
         <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
           <div>
-            <p className="ls-eyebrow">[ 01 ] Visual intake, redesigned</p>
+            <p className="ls-eyebrow">[ 01 ] The Reverse-Form Method™</p>
             <RiseIn delay={0.05}>
               <h1 className="ls-h1 ls-display-stack mt-6">
                 <span className="block">Guide.</span>
@@ -165,9 +165,8 @@ function Hero() {
               </h1>
             </RiseIn>
             <RiseIn delay={0.25}>
-              <p className="ls-subtitle mt-8 max-w-[40ch]">
-                Stop chasing customers for missing photos. Tell them exactly what to send,
-                and a quote-ready lead packet lands in your inbox — on the first try.
+              <p className="ls-subtitle mt-8 max-w-[44ch]">
+                Your contact form is leaking money. The Reverse-Form Method™ patches it — <em>you</em> tell customers exactly what to send, in the order an estimator needs it, and a quote-ready packet lands in your inbox on the first try.
               </p>
             </RiseIn>
             <RiseIn delay={0.35}>
@@ -177,7 +176,7 @@ function Hero() {
                   className="ls-cta ls-cta--lg ls-cta-primary mt-10"
                   onClick={() => trackEvent("landing_hero_cta_apply")}
                 >
-                  Apply for founding seat <ArrowRight className="h-4 w-4" />
+                  Claim a founding seat <ArrowRight className="h-4 w-4" />
                 </MagneticCTA>
                 <a href="#workflow" className="ls-cta ls-cta--lg ls-cta-quiet mt-10">
                   See the mechanism →
@@ -244,11 +243,17 @@ function MarqueeBand() {
         <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
       </MarqueeRow>
       <MarqueeRow duration={60} direction="right">
-        <span className="ls-marquee-item ls-marquee-item--ghost">Reverse-Form Method</span>
+        <span className="ls-marquee-item">81% bail before they hit submit</span>
         <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
-        <span className="ls-marquee-item">Quote on the first reply</span>
+        <span className="ls-marquee-item ls-marquee-item--ghost">78% buy from whoever responds first</span>
         <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
-        <span className="ls-marquee-item ls-marquee-item--ghost">No more chasing photos</span>
+        <span className="ls-marquee-item">4.2 hr avg lead response time</span>
+        <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
+        <span className="ls-marquee-item ls-marquee-item--ghost">60% of estimates never followed up</span>
+        <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
+        <span className="ls-marquee-item">5+ follow-ups to close — most stop at 1</span>
+        <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
+        <span className="ls-marquee-item ls-marquee-item--accent">Reverse-Form Method™</span>
         <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
       </MarqueeRow>
     </div>
@@ -263,25 +268,25 @@ const workflowSteps = [
   {
     n: "01",
     title: "Research",
-    body: "We map the job type, the trade, and the photo coverage your estimators need to quote without a callback.",
+    body: "We scan your site, your trade, and the photos your estimators actually need. The ones that kill callbacks.",
     illo: researchMagnifierIllo,
   },
   {
     n: "02",
     title: "Mechanism",
-    body: "A guided, step-by-step capture flow. Customers tap, the camera opens at the right angle, the right shot lands.",
+    body: "The customer taps a link. The camera opens at the right angle. The right shot lands. No app, no login, no thinking.",
     illo: mechanismGearsIllo,
   },
   {
     n: "03",
     title: "Brief",
-    body: "Photos, notes and context arrive as a single packet — formatted for your CRM, your estimators, and your inbox.",
+    body: "Photos, notes, and address arrive as one packet — formatted for your inbox, your CRM, and the person writing the quote.",
     illo: briefPacketIllo,
   },
   {
     n: "04",
     title: "Close",
-    body: "Your team quotes on the first reply. Customers feel heard. Jobs move forward.",
+    body: "Your team quotes on the first reply. The lead doesn't cool. The job moves.",
     illo: methodOverviewIllo,
   },
 ];
@@ -292,8 +297,8 @@ function MechanismSection() {
       <Container>
         <SectionIntro
           eyebrow="[ 02 ] The mechanism"
-          title="A method, not a form."
-          subtitle="The Reverse-Form Method™. Four moves that replace the back-and-forth of intake with a guided capture pipeline."
+          title="Stop asking. Start telling."
+          subtitle={`The Reverse-Form Method™. Four moves that turn "I need a quote" into a quotable job in 38 seconds.`}
         />
         <Grid cols={4} gap="md">
           {workflowSteps.map((step, i) => (
@@ -332,8 +337,8 @@ function ComparisonSection() {
       <Container>
         <SectionIntro
           eyebrow="[ 03 ] Before / after"
-          title="The intake your customers feel."
-          subtitle="A mute form versus a guided sequence. Same five minutes, two different futures for the lead."
+          title="The intake your customers feel — and the one your estimator doesn't curse at."
+          subtitle="Same five minutes. Two different futures for the lead. One ends in a quote."
         />
         <div className="grid gap-6 lg:grid-cols-2">
           <Card>
@@ -341,9 +346,9 @@ function ComparisonSection() {
             <h3 className="ls-h3 mt-3">Generic intake form</h3>
             <ul className="mt-6 space-y-3 text-sm">
               {[
-                { icon: ImageOff, text: "Photos missing or wrong angle." },
-                { icon: MessageSquareWarning, text: "Three follow-ups before a quote." },
-                { icon: TimerReset, text: "Lead cools while you chase context." },
+                { icon: ImageOff, text: "Photos missing or shot from across the yard." },
+                { icon: MessageSquareWarning, text: "Three follow-ups before anyone can price it." },
+                { icon: TimerReset, text: "The lead cools while you chase context." },
               ].map(({ icon: Icon, text }) => (
                 <li key={text} className="flex gap-3 text-muted-foreground">
                   <Icon className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
@@ -365,9 +370,9 @@ function ComparisonSection() {
             <h3 className="ls-h3 mt-3">A guided capture pipeline</h3>
             <ul className="mt-6 space-y-3 text-sm">
               {[
-                "Right angle, right lighting, right context — every time.",
-                "A single packet hits your inbox: photos, notes, location.",
-                "Your estimator quotes on the first reply.",
+                "Right angle. Right lighting. Right context — every single time.",
+                "One packet hits your inbox: photos, notes, location, scope.",
+                "Your estimator quotes on the first reply. The job moves.",
               ].map((text) => (
                 <li key={text} className="flex gap-3 text-muted-foreground">
                   <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[hsl(var(--accent-kinetic))]" />
@@ -395,11 +400,11 @@ function ComparisonSection() {
    ───────────────────────────────────────────────────────── */
 
 const useCases = [
-  { icon: Wrench, label: "Plumbers", note: "Leaks, fixtures, access.", illo: plumberIllo },
-  { icon: Wind, label: "HVAC", note: "Units, vents, electrical.", illo: hvacTechIllo },
-  { icon: Leaf, label: "Landscapers", note: "Yard size, slope, access.", illo: landscaperIllo },
-  { icon: Truck, label: "Junk haulers", note: "Pile, driveway, hazards.", illo: junkHaulerIllo },
-  { icon: Calculator, label: "Estimators", note: "Photo coverage that prices.", illo: estimatorIllo },
+  { icon: Wrench, label: "Plumbers", note: "Under-sink, shut-off, the exact leak — captured in order.", illo: plumberIllo },
+  { icon: Wind, label: "HVAC", note: "Outdoor unit, indoor air-handler, breaker panel — one tap each.", illo: hvacTechIllo },
+  { icon: Leaf, label: "Landscapers", note: "Front yard, back yard, slope, side-gate access — drone-free.", illo: landscaperIllo },
+  { icon: Truck, label: "Junk haulers", note: "The pile, the path, the hazards — before the truck rolls.", illo: junkHaulerIllo },
+  { icon: Calculator, label: "Estimators", note: "Photo coverage that actually prices the job.", illo: estimatorIllo },
 ];
 
 function UseCasesSection() {
@@ -408,7 +413,7 @@ function UseCasesSection() {
       <Container>
         <SectionIntro
           eyebrow="[ 04 ] Trades"
-          title="Built around the work."
+          title="Built around the work, not the form."
           subtitle="Coverage templates per trade. Mute customer? Doesn't matter. The form does the talking."
         />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
@@ -432,9 +437,9 @@ function UseCasesSection() {
    ───────────────────────────────────────────────────────── */
 
 const websiteIntelCards = [
-  { icon: Scan, title: "Scan",    text: "We crawl the site, score the intake paths, and find the leaks." },
-  { icon: Route, title: "Route",  text: "Templates routed to forms, embeds, or your existing webhook." },
-  { icon: Eye,   title: "Observe", text: "Every submission tracked end-to-end with photo coverage scoring." },
+  { icon: Scan, title: "Scan",    text: "We crawl your site, score every intake path, and find where leads bleed out." },
+  { icon: Route, title: "Route",  text: "Templates routed to your existing forms, embeds, or webhook — no rebuild." },
+  { icon: Eye,   title: "Observe", text: "Every submission tracked end-to-end with photo-coverage scoring." },
 ];
 
 function WebsiteIntelligenceSection() {
@@ -455,8 +460,8 @@ function WebsiteIntelligenceSection() {
           <div>
             <SectionIntro
               eyebrow="[ 05 ] Website intelligence"
-              title="Read the site. Route the lead."
-              subtitle="An automation layer that turns your existing website into a PhotoBrief intake funnel."
+              title="Your site is already telling us how to fix it."
+              subtitle="An automation layer that turns the intake you already own into a Reverse-Form pipeline."
             />
             <Grid cols={3} gap="md">
               {websiteIntelCards.map((c, i) => (
@@ -486,7 +491,7 @@ function LiveDemoSection() {
       <Container>
         <SectionIntro
           eyebrow="[ 06 ] Live"
-          title="Watch a brief assemble itself."
+          title={`Watch a vague "I need a quote" turn into a quotable job in 38 seconds.`}
           subtitle="Hit the steps. The packet builds in real time."
         />
         <div className="border border-border bg-background p-2 sm:p-4">
@@ -509,8 +514,8 @@ function BetaProgramSection() {
       <Container width="narrow">
         <SectionIntro
           eyebrow="[ 07 ] Founding partners"
-          title="A program, not a launch list."
-          subtitle={`Twenty-five small businesses. Sixty days of close work. Founding pricing forever.`}
+          title="Twenty-five seats. Sixty days. Founding pricing forever."
+          subtitle="This isn't a waitlist. It's a 25-person room — and we're hiring two co-builders. Every founding partner walks out with a reward."
         />
         <div className="mt-10">
           <BetaSeatTracker />
@@ -531,7 +536,7 @@ function ApplySection({ showAgent: _showAgent }: { showAgent: boolean }) {
         <SectionIntro
           eyebrow="[ 08 ] Apply"
           title="Six minutes with the onboarding agent."
-          subtitle="Tell us about the work. We'll tell you within 48 hours if there's a founding seat with your name on it."
+          subtitle="Tell us about the work. If a founding seat has your name on it, you'll hear back within 48 hours."
         />
         <div className="border border-border bg-background p-2 sm:p-4">
           <Suspense fallback={<div className="flex h-96 items-center justify-center text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin" /></div>}>
@@ -585,7 +590,7 @@ function FinalCta({ isFull }: { isFull: boolean }) {
       <Container>
         <div className="grid gap-12 lg:grid-cols-[1.3fr_1fr] lg:items-end">
           <div>
-            <p className="ls-eyebrow">[ 10 ] One last thing</p>
+            <p className="ls-eyebrow">[ 10 ] Pick up the pen</p>
             <RiseIn>
               <h2 className="ls-h1 mt-6">
                 Ready to replace the chase
@@ -596,7 +601,7 @@ function FinalCta({ isFull }: { isFull: boolean }) {
               <Body size="lg">
                 {isFull
                   ? "Founding seats are full. Join the waitlist and we'll reach out the moment a seat opens."
-                  : `Twenty-five seats. Sixty days. Founding pricing for the lifetime of your account.`}
+                  : `Twenty-five seats. Sixty days. Two free-for-life winners. Founding pricing for the lifetime of your account — never repriced, never rolled back.`}
               </Body>
             </RiseIn>
             <CTAGroup>
@@ -691,7 +696,7 @@ function FinalCtaQuickApply({ isFull }: { isFull: boolean }) {
       className="border border-border bg-card p-6 sm:p-8"
       noValidate
     >
-      <p className="ls-eyebrow">{isFull ? "Waitlist" : "30-second application"}</p>
+      <p className="ls-eyebrow">{isFull ? "Waitlist" : "Thirty seconds to a founding seat"}</p>
       <div className="mt-6 space-y-5">
         <FormField
           label="Name"
