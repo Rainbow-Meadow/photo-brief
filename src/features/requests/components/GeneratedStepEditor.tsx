@@ -63,7 +63,7 @@ export function GeneratedStepEditor({ steps, onChange, compact = false }: Genera
         const isExpanded = expanded[s.id] ?? idx === steps.length - 1;
         const type = SHOT_TYPES.find((t) => t.value === s.shotType) ?? SHOT_TYPES[0];
         return (
-          <div key={s.id} className="rounded-2xl border bg-background p-4 shadow-sm">
+          <div key={s.id} className="rounded-[0.25rem] border bg-background p-4 shadow-sm">
             <div className="flex items-start gap-3">
               <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
                 {idx + 1}

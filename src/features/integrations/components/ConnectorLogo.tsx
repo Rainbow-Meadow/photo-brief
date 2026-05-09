@@ -42,7 +42,7 @@ export function ConnectorLogo({ integrationKey, name, fallbackIcon: FallbackIcon
   return (
     <span
       className={cn(
-        "flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl border shadow-sm sm:h-16 sm:w-16",
+        "flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-[0.25rem] border shadow-sm sm:h-16 sm:w-16",
         showBrandLogo ? logo.bg ?? "bg-white" : "bg-primary/10 text-primary",
         planned && "opacity-70 grayscale",
         className,

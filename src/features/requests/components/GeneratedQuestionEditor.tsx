@@ -69,7 +69,7 @@ export function GeneratedQuestionEditor({ questions, onChange }: GeneratedQuesti
         const isExpanded = expanded[q.id] ?? idx === questions.length - 1;
         const type = INPUT_TYPES.find((t) => t.value === q.inputType)?.label ?? "Short answer";
         return (
-          <div key={q.id} className="rounded-2xl border bg-background p-4 shadow-sm">
+          <div key={q.id} className="rounded-[0.25rem] border bg-background p-4 shadow-sm">
             <div className="flex items-start gap-3">
               <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-muted-foreground">
                 Q{idx + 1}

@@ -47,7 +47,7 @@ export function AIFeedbackMessage({ photo, verdict }: AIFeedbackMessageProps) {
   const issue = photo.checks.find((c) => c.severity !== "pass" && c.message.trim().length > 0);
 
   return (
-    <div className={cn("rounded-2xl p-4", bg)}>
+    <div className={cn("rounded-[0.25rem] p-4", bg)}>
       <div className={cn("flex items-center gap-2 text-[15px] font-semibold", tone)}>
         <Icon className="h-5 w-5" /> {label}
       </div>

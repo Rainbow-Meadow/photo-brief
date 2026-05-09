@@ -400,7 +400,7 @@ function PlanAxis({
   value: string;
 }) {
   return (
-    <div className="flex gap-2 rounded-xl bg-background/70 p-3 text-xs">
+    <div className="flex gap-2 rounded-xl bg-background p-3 text-xs">
       <Icon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
       <span>
         <span className="block font-medium text-foreground">{label}</span>

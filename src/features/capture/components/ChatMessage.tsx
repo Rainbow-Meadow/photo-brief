@@ -49,7 +49,7 @@ export function ChatMessage({ from, children, className, bare }: ChatMessageProp
       </span>
       <div
         className={cn(
-          "max-w-[85%] rounded-2xl",
+          "max-w-[85%] rounded-[0.25rem]",
           isUser
             ? "rounded-tr-sm bubble-user"
             : "rounded-tl-sm bubble-assistant text-foreground",

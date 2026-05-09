@@ -19,7 +19,7 @@ export function RetakeDecisionCard({ photo, step, onRetake, onUseAnyway }: Retak
   const Icon = serious ? XCircle : AlertTriangle;
 
   return (
-    <div className="space-y-5 rounded-2xl border bg-background/70 p-5">
+    <div className="space-y-5 rounded-[0.25rem] border bg-background p-5">
       <div className="flex gap-3">
         <span className={serious ? "text-destructive" : "text-warning"}>
           <Icon className="h-5 w-5" />
@@ -40,14 +40,14 @@ export function RetakeDecisionCard({ photo, step, onRetake, onUseAnyway }: Retak
       </div>
 
       <div className="grid gap-3">
-        <Button size="lg" className="h-12 gap-1.5 rounded-2xl text-base" onClick={onRetake}>
+        <Button size="lg" className="h-12 gap-1.5 rounded-[0.25rem] text-base" onClick={onRetake}>
           <RefreshCw className="h-4 w-4" />
           {serious ? "Retake photo" : "Take a clearer photo"}
         </Button>
         <Button
           size="lg"
           variant={serious ? "outline" : "secondary"}
-          className="h-12 gap-1.5 rounded-2xl text-base"
+          className="h-12 gap-1.5 rounded-[0.25rem] text-base"
           onClick={() => onUseAnyway(photo)}
         >
           {serious ? "Use it anyway" : "Keep this photo"}

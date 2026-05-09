@@ -69,7 +69,7 @@ export function TicketThread({ ticketId, isAdmin }: Props) {
             <div
               key={m.id}
               className={cn(
-                "max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed",
+                "max-w-[85%] rounded-[0.25rem] px-3.5 py-2.5 text-sm leading-relaxed",
                 isMine
                   ? "ml-auto bg-primary text-primary-foreground"
                   : "bg-muted text-foreground",
