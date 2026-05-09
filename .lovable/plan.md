@@ -1,60 +1,90 @@
-## Audit results
 
-I walked every public page outside the dashboard and intake/recipient flows. Most are already on-brand from the earlier passes. Three pages still carry the old "cosmic" landing skin (lavender/violet/mint, `rounded-2xl`/`rounded-full`, glass panels) and one auth-adjacent page still uses the pre-editorial `GlassPanel`.
+# Email Pipeline Redesign — Field Manual + RMBC
 
-### Already on the Field Manual style (no changes)
-- `pages/Landing.tsx`, `pages/Pricing.tsx`, `pages/Privacy.tsx`, `pages/Terms.tsx`, `pages/Unsubscribe.tsx`, `pages/NotFound.tsx`, `pages/IntakeBadge.tsx`
-- Auth set: `Auth.tsx`, `ForgotPassword.tsx`, `ResetPassword.tsx` (already use `EditorialAuthShell`)
-- All capture/recipient surfaces (refactored in the previous turn)
+Translate the editorial system used across the app into an inbox-safe email language, and rewrite every template's copy into RMBC-aligned sections (Research → Mechanism → Brief → Close). Pipeline plumbing (queue, suppression, idempotency, registry contract) stays intact — only presentation, brand tokens, and content change.
 
-### Pages to refactor
+## 1. New email design system (`brand-styles.ts`)
 
-**1. `src/pages/ForAiAgents.tsx`**
-- Replace every `pb-card rounded-2xl` with `border border-border bg-card` (square 1px hairline).
-- Eyebrows → existing editorial pattern: hairline + `[ XX ]` amber numeral + label (drop `pb-eyebrow`).
-- Headings → `text-foreground` + `tracking-tight`; drop `pb-section-title`/`text-white`.
-- Body copy → `text-muted-foreground`; drop `pb-copy`.
-- Inline `<code>` chips → mono cream-on-card border (`border-border bg-background text-foreground`); drop the lavender chip color, keep amber only for accents.
-- Code blocks (cURL/JS/Python tabs, MCP, x402) → `border border-border bg-card`, mono numerals on the header row, amber underscore on the active tab; drop `pb-ink`/`pb-line` token use here.
-- Discovery list → hairline tiles with mono link labels and an amber chevron on hover; drop lavender hover tint.
-- FAQ accordion → match the Pricing FAQ pattern (`border border-border bg-card px-4 sm:px-6`, no `pb-command-panel`).
-- Hero button row keeps current `Button` variants but switches to the Pricing/Landing CTA: amber primary + `border-border` secondary, both squared with `rounded-[0.25rem]` and uppercase tracked label.
-- Drop the `pb-lens-field` cosmic gradient background — Field Manual hero uses just the editorial canvas.
+Replace the cream/rounded-card system with a white-canvas Field Manual variant:
 
-**2. `src/pages/BetaWelcome.tsx`** (largest piece)
-Confirmation state (`done === true`):
-- Drop the violet blur halo and `pb-lens-field`; use a clean `EditorialAuthShell`-style frame with mono `[ OK ]` plate.
-- "We've got everything we need" success icon → square hairline box with amber check (matching the recipient confirmation pattern).
-- "What happens now" card → hairline `border border-border bg-card`; numerals become mono `01`/`02`/`03` plates instead of lavender circles.
+- **Canvas**: `#FFFFFF` body, no outer cream wash, single 1px hairline frame in `rgba(20,20,18,0.12)`. No border-radius (or `2px` max), no box-shadow.
+- **Type**: body in the existing system stack, **labels/eyebrows/plate codes in `ui-monospace, "SF Mono", Menlo, Consolas, monospace`** at 11px, `letter-spacing: 0.18em`, uppercase.
+- **Color tokens**:
+  - `ink` `#141412` (body headings)
+  - `body` `#3A3A36` (paragraph)
+  - `muted` `#7A7A72` (meta)
+  - `rule` `rgba(20,20,18,0.12)` (hairlines)
+  - `accent` `#F2A33A` (the only color accent — used for plate codes, CTA fill, focus underlines)
+  - `accentInk` `#1A1208` (text on amber CTA)
+- **Header**: hairline-bottom band; two-tone `Photo` (ink) + `Brief` (amber) wordmark rendered as styled text (no logo image required, but keep `Img` fallback). Tagline `GUIDE · CAPTURE · CLOSE` in mono 10px under it.
+- **Components exported from `brand-styles.ts`**:
+  - `BrandHeader` — wordmark + tagline + hairline rule
+  - `BrandFooter` — mono meta line + tagline
+  - `PlateCode({ code, label })` → `[ 02 ] RESEARCH` style mono row used to open every RMBC block
+  - `RuleBlock({ code, label, children })` — wraps a section with a top hairline, plate code, then content
+  - `Eyebrow`, `H1`, `Body`, `Meta`, `MonoLink`, `CTAButton` (squared 2px, amber fill)
+  - `Divider` (1px hairline, 24px vertical margin)
+- Style objects renamed and re-exported as `s` so existing template imports keep working; legacy keys aliased so build doesn't break mid-migration.
 
-Form state:
-- Hero "You're in." block: drop violet blur + `pb-lens-field` + `pb-hero-title`; use the Pricing hero pattern (mono `[ 00 ]` eyebrow, large `text-foreground` headline, muted subheading).
-- Benefits grid: hairline cards with mono index plates and amber icons (same pattern as Pricing's beta-offer grid).
-- "How it works" timeline: hairline column with mono `01`–`05` numerals and a 1px amber connector line; drop the lavender ring/circle treatment.
-- Form section: convert section subheadings (Business basics / Brand & identity / Photo workflow / First template ideas) to mono all-caps tracked plates, drop `pb-card` wrappers in favor of hairline groups.
-- Inputs: drop `inputClass` (white/12 glass) → use the editorial input style already in `PublicIntakePage`: `h-12 rounded-none border border-border bg-background text-foreground` with amber focus ring (`outline-[hsl(var(--ring))]`). Same pattern for `<select>` and `<Textarea>`.
-- Required marker `*`: amber instead of lavender.
-- Submit CTA → amber primary with mono uppercase tracked label, square corners (`rounded-[0.25rem]`).
-- Inline mailto links → amber `text-[hsl(var(--accent-kinetic))]`.
+## 2. RMBC content model
 
-**3. `src/pages/Signup.tsx`** (invite acceptance)
-- Replace the three `GlassPanel variant="modal"` blocks with an `EditorialAuthShell` frame for each state (`loading`, `invalid`, `valid`).
-  - `loading` → numeral `00`, eyebrow "Verifying invite", spinner + muted line.
-  - `invalid` → numeral `ER`, eyebrow "Invite not accepted", reason title/body, two stacked CTAs (amber primary "Apply for beta", outline "Sign in").
-  - `valid` → numeral `01`, eyebrow "Invite verified", title "Create your workspace", subline showing the locked email; form below.
-- Drop the `rounded-full bg-destructive/10` icon circle → use a square hairline box with the amber alert glyph (`AlertTriangle`).
-- Drop the `bg-ambient-mesh` overlay; the shell's `bg-ambient-sky` band is sufficient and matches the rest of the editorial auth set.
-- Form inputs already use the shadcn `Input`; align the email-locked field to `bg-muted/40` is fine, but switch the helper text to mono tracked muted (matches the rest of the shell).
-- Replace the `<Label>` markup with the same compact mono uppercase label style used by `BetaWelcome`/`PublicIntakePage` for visual consistency across auth-adjacent forms.
+Each template gets restructured into the subset of RMBC blocks that fit its purpose. Block names map to plate codes:
 
-### Out of scope
-- No copy changes beyond casing required by the editorial style.
-- No business logic, no route changes, no schema changes.
-- Marketing primitives (`MarketingHero`, `MarketingSection`, `pb-eyebrow` etc.) keep working — we just stop using the legacy classes inline on these three pages.
-- `EditorialAuthShell` is reused as-is; if the Signup loading/invalid states need a tighter footer, we'll add an optional `tone` prop only if necessary (will avoid if possible).
+```text
+[ 01 ] RESEARCH    — context / what triggered this email
+[ 02 ] MECHANISM   — what the system / business is doing now
+[ 03 ] BRIEF       — what the recipient needs to do (or knows next)
+[ 04 ] CLOSE       — signoff, expectations, escape hatch
+```
 
-### Verification
+Templates that are pure acknowledgements (e.g. waitlist confirmation) may use only RESEARCH + CLOSE. Operational ones (request link, reminder) use BRIEF as the dominant block with the CTA inside it. Voice: declarative, present-tense, no exclamation marks, no emojis, sentence case in body, all-caps mono only in plate codes/labels.
+
+## 3. Per-template rewrites
+
+All 14 transactional + 6 auth templates are rewritten. Each retains its current `template` export shape, props interface, `displayName`, and `previewData` keys (no registry or send-function changes required).
+
+**Transactional**
+1. `customer-submission-confirmation` — RESEARCH (photos received for "{requestTitle}") · CLOSE (no action needed, business will follow up).
+2. `submission-received` (business-side) — RESEARCH (new submission from {customer}) · BRIEF (review link CTA) · CLOSE.
+3. `business-request-ready` — MECHANISM (request packaged) · BRIEF (open brief CTA) · CLOSE.
+4. `recipient-request-link` — RESEARCH (who/what) · BRIEF (open link CTA, expiry meta) · CLOSE.
+5. `recipient-reminder` — RESEARCH (still waiting on…) · BRIEF (CTA + expiry).
+6. `workspace-welcome` — RESEARCH (workspace ready) · MECHANISM (3 mono numbered next-steps) · BRIEF (open dashboard) · CLOSE.
+7. `founding-partner-welcome` — RESEARCH · MECHANISM (what founding tier includes) · BRIEF · CLOSE.
+8. `waitlist-confirmation` — RESEARCH · CLOSE.
+9. `waitlist-admin-notification` — RESEARCH (new entry) · MECHANISM (queue position) · CLOSE.
+10. `beta-first-request-nudge` — RESEARCH (no first request yet) · BRIEF (CTA).
+11. `beta-stalled-checkin` — RESEARCH · BRIEF (async reply CTA).
+12. `beta-feedback-checkin` — RESEARCH · BRIEF (3 mono prompt questions, reply via email).
+13. `beta-testimonial-request` — RESEARCH · BRIEF (link + reply).
+14. `beta-graduation` — RESEARCH (60-day clock complete) · MECHANISM (what changes) · BRIEF (next step) · CLOSE.
+
+**Auth (`_shared/email-templates/`)** — `signup`, `magic-link`, `recovery`, `invite`, `email-change`, `reauthentication` get the same shell, RESEARCH (one line of context) + BRIEF (CTA + raw URL fallback in mono) + CLOSE (ignore-if-not-you line). Each adopts `brand-styles.ts` instead of inline style constants.
+
+## 4. Pipeline touch-ups (presentation only)
+
+- `auth-email-hook/index.ts`: no logic change. Only update the import surface so auth templates use `brand-styles.ts` consistently. JWT, queue, retry, idempotency untouched.
+- `send-transactional-email/index.ts`: unchanged. Subjects can be tightened in each template's `subject` field (sentence case, no emoji). Suppression check, system unsubscribe footer injection, queue enqueue all preserved.
+- `registry.ts`: unchanged structure; `previewData` updated to RMBC-friendly samples.
+
+## 5. Out of scope
+
+- No DB, RLS, queue, cron, or webhook changes.
+- No new templates, no marketing emails.
+- No changes to send-side logic, idempotency keys, suppression, or unsubscribe flow.
+- The system unsubscribe footer remains system-managed.
+
+## 6. Verification
+
 - `bun run build` clean.
-- Run `bunx vitest run` — all 47 contract tests should still pass (no token, brand-mark, or landing-typography changes expected).
-- Visual walk in the preview at 440px and 1280px for `/for-ai-agents`, `/welcome`, `/signup?token=...` (invalid token branch is the easiest to land on visually).
-- Post-edit `rg "pb-card|pb-eyebrow|pb-section-title|pb-lavender|pb-mint|pb-violet|rounded-2xl|GlassPanel" src/pages/ForAiAgents.tsx src/pages/BetaWelcome.tsx src/pages/Signup.tsx` should return zero hits.
+- Render every template via the existing preview path (`previewData`) and visually inspect each at 600px and 360px widths — confirm hairlines, mono plate codes, amber-only accent, white canvas, no rounded cards, no emoji.
+- Deploy `auth-email-hook`, `send-transactional-email`, `process-email-queue` after edits.
+- Spot-send one transactional (`customer-submission-confirmation`) and one auth (`signup`) to a test inbox via existing flows; confirm `email_send_log` row + rendered output.
+
+## Technical notes
+
+- All color values stay literal hex/rgba in inline styles (email clients ignore CSS vars).
+- Body background MUST remain `#FFFFFF` per Lovable email rule.
+- Wordmark rendered as styled `<Text>` spans inside the header `Section`; logo `Img` kept as a 28px mark to the left for clients that strip styles.
+- Plate code component renders as `<Text style={mono}>[ 02 ]&nbsp;&nbsp;RESEARCH</Text>` followed by a 1px top-rule on the wrapping section — Outlook-safe (no flex, no grid).
+- Buttons: `border-radius: 2px`, amber fill, dark ink text, 14px mono uppercase label, full width on mobile via `min-width: 200px`.
