@@ -41,11 +41,7 @@ export function DashboardLayout() {
   return (
     <RequireAuth>
       <SidebarProvider>
-        <div className="app-shell relative flex min-h-screen w-full overflow-hidden bg-systemBackground-grouped">
-          {/* Subtle Apple-style ambient — desktop only */}
-          {isDesktop && (
-            <div aria-hidden className="pointer-events-none fixed -right-40 top-24 h-96 w-96 rounded-full bg-system-blue/5 blur-3xl" />
-          )}
+        <div className="app-shell relative flex min-h-screen w-full overflow-hidden bg-background">
 
           <div className="hidden lg:block">
             <AppSidebar />
@@ -68,35 +64,37 @@ export function DashboardLayout() {
                 <p className="text-[11px] text-muted-foreground">Visual intake workspace</p>
               </div>
 
-              <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
-                <Button asChild size="sm" variant="outline" className="hidden gap-1.5 rounded-full bg-background/70 md:inline-flex">
-                  <NavLink to="/intake">
-                    <Globe2 className="h-4 w-4" />
-                    Website Intake
-                  </NavLink>
-                </Button>
-                <Button asChild size="sm" className="hidden gap-1.5 rounded-full sm:inline-flex">
-                  <NavLink to="/requests/new">
-                    <Plus className="h-4 w-4" />
-                    New request
-                  </NavLink>
-                </Button>
+              <div className="ml-auto flex items-center gap-2">
+                <NavLink
+                  to="/intake"
+                  className="hidden h-9 items-center gap-2 border border-foreground/30 px-3 font-[Geist,Inter,system-ui,sans-serif] text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-foreground transition hover:bg-foreground hover:text-background md:inline-flex"
+                >
+                  <Globe2 className="h-3.5 w-3.5" />
+                  Website Intake
+                </NavLink>
+                <NavLink
+                  to="/requests/new"
+                  className="hidden h-9 items-center gap-2 bg-[hsl(var(--accent-kinetic))] px-3 font-[Geist,Inter,system-ui,sans-serif] text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-[hsl(var(--primary-foreground))] transition hover:brightness-110 sm:inline-flex"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  New request
+                </NavLink>
                 <NotificationBell />
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <button
                       type="button"
                       aria-label="Account menu"
-                      className="rounded-full outline-none ring-offset-background transition hover:scale-[1.03] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                      className="outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                     >
-                      <Avatar className="h-9 w-9 border border-border/70 shadow-sm">
-                        <AvatarFallback className="bg-primary text-xs font-medium text-primary-foreground">
+                      <Avatar className="h-9 w-9 rounded-none border border-border">
+                        <AvatarFallback className="rounded-none bg-foreground text-xs font-medium text-background">
                           {initial}
                         </AvatarFallback>
                       </Avatar>
                     </button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56 rounded-2xl">
+                  <DropdownMenuContent align="end" className="w-56 rounded-none border border-border">
                     <DropdownMenuLabel className="font-normal">
                       <p className="text-xs text-muted-foreground">Signed in as</p>
                       <p className="truncate text-sm font-medium text-foreground">{email ?? "-"}</p>
