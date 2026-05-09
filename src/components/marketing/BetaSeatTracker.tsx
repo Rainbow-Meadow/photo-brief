@@ -17,12 +17,12 @@ export function BetaSeatTracker({ variant = "default", className = "" }: BetaSea
         <div className="flex items-center justify-center gap-2">
           <Lock className="h-4 w-4 text-amber-400" />
           <span className="text-sm font-bold text-amber-300">
-            All {BETA_TOTAL_PARTNERS} seats filled
+            Room's full — all {BETA_TOTAL_PARTNERS} founding seats taken
           </span>
         </div>
         {variant === "default" && (
           <p className="mt-1.5 text-xs text-amber-300/70">
-            Join the waitlist to be notified when a seat opens or a future cohort is announced.
+            Get on the waitlist. The moment a seat opens — or the next cohort drops — you hear first.
           </p>
         )}
       </div>
@@ -56,7 +56,7 @@ export function BetaSeatTracker({ variant = "default", className = "" }: BetaSea
       {/* Subtext */}
       {variant === "default" && (
         <p className="mt-2 text-[11px] font-medium text-white/45">
-          Each application is reviewed for workflow fit before acceptance
+          Every application read by hand. We're picking workflow fit, not vanity metrics.
         </p>
       )}
     </div>

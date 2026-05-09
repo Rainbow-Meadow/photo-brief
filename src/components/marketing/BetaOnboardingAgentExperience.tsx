@@ -85,9 +85,9 @@ function campaignContext(baseSource: string) {
 
 export function BetaOnboardingAgentExperience({
   source = "landing",
-  eyebrow = "Apply with the beta agent",
-  title = "Apply for the Founding Partner Beta",
-  description = `The onboarding agent asks the right questions, recommends your first PhotoBrief workflow, and submits your application for one of ${BETA_TOTAL_PARTNERS} founding partner seats.`,
+  eyebrow = "Six-minute beta agent",
+  title = "Earn one of the founding seats.",
+  description = `The agent asks the questions a static form never would, recommends your first Reverse-Form workflow, and sends your application straight to the team. Six minutes. ${BETA_TOTAL_PARTNERS} seats. Two will never pay for Pro again.`,
   showSeatTracker = true,
   className = "",
 }: BetaOnboardingAgentExperienceProps) {
@@ -237,8 +237,7 @@ export function BetaOnboardingAgentExperience({
             {!state ? (
               <div className="mt-6 grid gap-4">
                 <p className="pb-copy text-sm">
-                  Start with your email and business name. The agent qualifies the
-                  workflow instead of making you fill out a static form.
+                  Drop your email and business name. The agent qualifies the workflow on the spot — no static form, no homework.
                 </p>
                 <Input
                   value={seed.email}
@@ -330,7 +329,7 @@ export function BetaOnboardingAgentExperience({
                   <div className="border-l-2 border-[hsl(var(--pb-violet)/0.5)] pl-4">
                     <div className="flex items-center gap-2 font-serif text-base italic text-white sm:text-lg">
                       <CheckCircle2 className="h-4 w-4 text-[hsl(var(--pb-violet))]" />
-                      The agent has enough to recommend your beta path.
+                      The agent has your shape. Ready to send it to the team.
                     </div>
                     <Button
                       className="mt-4"
@@ -339,7 +338,7 @@ export function BetaOnboardingAgentExperience({
                       disabled={loading || state.saved}
                     >
                       {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                      {state.saved ? "Application submitted" : "Submit agent-built application"}
+                      {state.saved ? "Application in" : "Send my application"}
                     </Button>
                   </div>
                 )}
