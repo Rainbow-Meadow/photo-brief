@@ -105,7 +105,7 @@ import hvacTechIllo from "@/assets/trades/hvac-tech-illustration.png";
 import foundingBadgeIllo from "@/assets/scenes/founding-badge-illustration.png";
 import rewardRibbonsIllo from "@/assets/scenes/reward-ribbons-illustration.png";
 import betaNotebookIllo from "@/assets/scenes/beta-notebook-illustration.png";
-import mailboxFlagIllo from "@/assets/scenes/mailbox-flag-illustration.png";
+
 import researchMagnifierIllo from "@/assets/rmbc/research-magnifier.png";
 import mechanismGearsIllo from "@/assets/rmbc/mechanism-gears.png";
 import briefPacketIllo from "@/assets/rmbc/brief-packet.png";
@@ -1869,15 +1869,6 @@ function FinalCta({ isFull }: { isFull: boolean }) {
           </div>
           <div className="flex flex-col items-center gap-6 lg:items-end">
             <FinalCtaQuickApply isFull={isFull} />
-            <img
-              src={mailboxFlagIllo}
-              alt="Hand-drawn illustration of a mailbox with the flag raised — invitation to apply"
-              width={1024}
-              height={1024}
-              loading="lazy"
-              decoding="async"
-              className="w-full max-w-[180px] opacity-80"
-            />
           </div>
         </div>
       </Container>
