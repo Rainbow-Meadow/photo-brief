@@ -458,11 +458,11 @@ export default function LandingPage() {
         <TickerBar
           tone="paper"
           items={[
-            "81% of forms abandoned before submit",
-            "78% buy from whoever responds first",
-            "4.2 hr avg lead response time",
-            "60% of estimates never followed up",
-            "5+ follow-ups to close — most stop at 1",
+            "81% bail before they hit submit",
+            "Your competitor replied in 22 minutes — you took 4.2 hours",
+            "60% of estimates die without a single follow-up",
+            "$1 in = $36 back when intake actually works",
+            "Most teams stop following up after the first try",
           ]}
         />
 
