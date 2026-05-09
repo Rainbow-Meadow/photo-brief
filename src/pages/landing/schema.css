@@ -62,9 +62,7 @@
     color: hsl(var(--foreground));
     margin: 0;
   }
-  .ls-section--dark .ls-h1,
-  .ls-section--dark .ls-h2,
-  .ls-section--dark .ls-h3 { color: hsl(var(--background)); }
+  /* dark-section heading override removed */
 
   .ls-h1 { font-size: clamp(2.25rem, 5.4vw, 4.25rem); line-height: 1.05; letter-spacing: -0.03em; }
   .ls-h2 { font-size: clamp(1.75rem, 3.8vw, 3rem);    line-height: 1.08; }
