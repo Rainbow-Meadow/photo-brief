@@ -60,8 +60,8 @@ export function MarketingLayout() {
               aria-label="PhotoBrief.ai"
               className="flex items-center px-2 sm:px-3"
             >
-              <BrandMark variant="wordmark" tone="light" size={22} eager className="sm:hidden" />
-              <BrandMark variant="wordmark" tone="light" size={26} eager className="hidden sm:block" />
+              <BrandMark variant="wordmark" tone={isLanding ? "dark" : "light"} size={22} eager className="sm:hidden" />
+              <BrandMark variant="wordmark" tone={isLanding ? "dark" : "light"} size={26} eager className="hidden sm:block" />
             </NavLink>
 
             {/* Right links (desktop) */}
@@ -86,7 +86,7 @@ export function MarketingLayout() {
             aria-label="PhotoBrief.ai home"
             className="absolute inset-y-0 left-3 flex items-center sm:left-6"
           >
-            <BrandMark variant="mark" tone="light" size={36} eager />
+            <BrandMark variant="mark" tone={isLanding ? "dark" : "light"} size={36} eager />
           </NavLink>
 
           {/* CTAs sit outside the pill, on the far right */}
