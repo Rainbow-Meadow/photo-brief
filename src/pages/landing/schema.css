@@ -80,10 +80,7 @@
   .ls-body, .ls-body-md { font-size: 0.95rem; line-height: 1.6; color: hsl(var(--muted-foreground)); margin: 0; }
   .ls-body-lg { font-size: 1.05rem; line-height: 1.6; color: hsl(var(--muted-foreground)); margin: 0; }
   .ls-body-sm { font-size: 0.825rem; line-height: 1.55; color: hsl(var(--muted-foreground)); margin: 0; }
-  .ls-section--dark .ls-body,
-  .ls-section--dark .ls-body-md,
-  .ls-section--dark .ls-body-lg,
-  .ls-section--dark .ls-body-sm { color: hsl(var(--background) / 0.74); }
+  /* dark-section body overrides removed */
 
   /* ── Cards ──────────────────────────────────────────────── */
   .ls-card {
