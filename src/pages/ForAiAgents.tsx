@@ -238,43 +238,40 @@ curl -X POST https://mcp.photobrief.ai/x402/pay \\
 }`}</code></pre>
         </div>
       </MarketingSection>
-      <section id="discovery" aria-labelledby="discovery-heading">
-        <div className="pb-container pb-section">
-          <div className="mx-auto max-w-2xl text-center">
-            <span className="pb-eyebrow">Discovery</span>
-            <h2 id="discovery-heading" className="pb-section-title mt-4 text-white">Every machine-readable endpoint</h2>
-          </div>
-          <ul className="mt-10 grid gap-3 sm:grid-cols-2">
-            {DISCOVERY_LINKS.map((d) => (
-              <li key={d.href}>
-                <a href={d.href} className="block rounded-2xl border border-[hsl(var(--pb-line))] bg-[hsl(var(--pb-panel)/0.88)] p-4 text-sm transition hover:border-[hsl(var(--pb-lavender)/0.55)] hover:bg-[hsl(var(--pb-panel-2)/0.92)]">
-                  <code className="font-semibold text-[hsl(var(--pb-lavender))]">{d.label}</code>
-                  <p className="mt-1 text-[hsl(var(--pb-muted))]">{d.desc}</p>
-                </a>
-              </li>
-            ))}
-          </ul>
+
+      <MarketingSection id="discovery" aria-labelledby="discovery-heading">
+        <div className="mx-auto max-w-2xl text-center">
+          <span className="pb-eyebrow">Discovery</span>
+          <h2 id="discovery-heading" className="pb-section-title mt-4 text-white">Every machine-readable endpoint</h2>
         </div>
-      </section>
+        <ul className="mt-10 grid gap-3 sm:grid-cols-2">
+          {DISCOVERY_LINKS.map((d) => (
+            <li key={d.href}>
+              <a href={d.href} className="block rounded-2xl border border-[hsl(var(--pb-line))] bg-[hsl(var(--pb-panel)/0.88)] p-4 text-sm transition hover:border-[hsl(var(--pb-lavender)/0.55)] hover:bg-[hsl(var(--pb-panel-2)/0.92)]">
+                <code className="font-semibold text-[hsl(var(--pb-lavender))]">{d.label}</code>
+                <p className="mt-1 text-[hsl(var(--pb-muted))]">{d.desc}</p>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </MarketingSection>
 
       {/* FAQ */}
-      <section id="faq" aria-labelledby="faq-heading">
-        <div className="pb-container-narrow pb-section">
-          <div className="text-center">
-            <span className="pb-eyebrow">FAQ</span>
-            <h2 id="faq-heading" className="pb-section-title mt-4 text-white">Quotable answers</h2>
-            <p className="pb-copy mt-4 text-sm">Same source as <NavLink to="/help" className="text-[hsl(var(--pb-lavender))] hover:underline">/help</NavLink>.</p>
-          </div>
-          <Accordion type="single" collapsible className="mt-8 pb-command-panel rounded-2xl">
-            {faqItems.map((f) => (
-              <AccordionItem key={f.id} value={f.id} className="border-white/10 px-4">
-                <AccordionTrigger className="text-left text-sm font-medium text-white/90">{f.q}</AccordionTrigger>
-                <AccordionContent className="text-sm leading-relaxed text-[hsl(var(--pb-muted))]">{f.a}</AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
+      <MarketingSection id="faq" aria-labelledby="faq-heading" width="narrow">
+        <div className="text-center">
+          <span className="pb-eyebrow">FAQ</span>
+          <h2 id="faq-heading" className="pb-section-title mt-4 text-white">Quotable answers</h2>
+          <p className="pb-copy mt-4 text-sm">Same source as <NavLink to="/help" className="text-[hsl(var(--pb-lavender))] hover:underline">/help</NavLink>.</p>
         </div>
-      </section>
+        <Accordion type="single" collapsible className="mt-8 pb-command-panel rounded-2xl">
+          {faqItems.map((f) => (
+            <AccordionItem key={f.id} value={f.id} className="border-white/10 px-4">
+              <AccordionTrigger className="text-left text-sm font-medium text-white/90">{f.q}</AccordionTrigger>
+              <AccordionContent className="text-sm leading-relaxed text-[hsl(var(--pb-muted))]">{f.a}</AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      </MarketingSection>
     </>
   );
 }
