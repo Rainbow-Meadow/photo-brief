@@ -1036,8 +1036,8 @@ function FoundingPartnerBetaSection({ isFull }: { isFull: boolean }) {
           <div id="apply" className="scroll-mt-8 lg:sticky lg:top-6 lg:self-start">
             <BetaOnboardingAgentExperience
               source="landing"
-              title={isFull ? "Join the waitlist" : "Apply for the Founding Partner Beta"}
-              description={`Share your website and intake context. The onboarding agent qualifies your workflow, recommends your first intake paths, and submits your application for one of ${BETA_TOTAL_PARTNERS} founding partner seats.`}
+              title={isFull ? "Join the waitlist" : "Apply for a founding seat"}
+              description={`Tell us about your site and how leads come in today. Our onboarding agent qualifies the fit, sketches your first 2–3 intake paths on the spot, and submits your application for one of ${BETA_TOTAL_PARTNERS} founding seats. Takes about 6 minutes.`}
             />
           </div>
         </div>
