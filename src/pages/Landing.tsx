@@ -1784,7 +1784,15 @@ function BetaDetailsAccordion({ value, onValueChange }: BetaDetailsAccordionProp
               </AccordionContent>
             </AccordionItem>
           </Accordion>
+          </div>
         </div>
+        <div className="flex justify-center lg:sticky lg:top-24 lg:justify-end">
+          <TradeAccent
+            src={betaNotebookIllo}
+            alt="Hand-drawn illustration of an open notebook with a magnifying glass — the fine print"
+          />
+        </div>
+      </div>
     </MarketingSection>
   );
 }
