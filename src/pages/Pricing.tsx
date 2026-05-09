@@ -10,6 +10,7 @@ import { BETA_DURATION_DAYS, MAX_DISCOUNT_LABEL } from "@/config/betaProgram";
 import { Button } from "@/components/ui/button";
 import { signupCtaTarget, signupCtaLabel } from "@/config/access";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { MarketingSection, MarketingHero } from "@/components/layout/primitives";
 
 const pricingAxes = [
   { icon: Camera, label: "Photos", copy: "Plans scale by submitted customer photos. Simple jobs stay simple; bigger jobs use more photos." },
@@ -55,37 +56,35 @@ export default function PricingPage() {
       />
 
       {/* Hero */}
-      <section className="relative isolate overflow-hidden -mt-[4.5rem] pt-[5.5rem] sm:-mt-[5rem] sm:pt-[6rem]">
+      <MarketingHero align="center">
         <div className="pb-lens-field" />
-        <div className="pb-container pb-section text-center">
-          <span className="pb-eyebrow"><Sparkles className="h-3.5 w-3.5" /> Founding Partner Beta Pricing</span>
-          <h1 className="pb-section-title mx-auto mt-4 max-w-3xl text-white">Apply now. Lock in launch-year savings if accepted.</h1>
-          <p className="pb-copy mx-auto mt-5 max-w-2xl text-base sm:text-xl">
-            PhotoBrief.ai is invite-only while we onboard founding partners. Accepted beta businesses get {BETA_DURATION_DAYS} days free, concierge setup, direct support, and tiered post-launch rewards — up to 75% off or free Pro for life.
-          </p>
-          <p className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-[hsl(var(--pb-mint)/0.4)] bg-[hsl(var(--pb-mint)/0.08)] px-3 py-1 text-sm font-medium text-[hsl(var(--pb-mint))]">
-            <ShieldCheck className="h-4 w-4" /> First-pass follow-up photos do not consume credits.
-          </p>
-          <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <Button asChild size="xl" variant="pb-primary">
-              <NavLink to={signupCtaTarget()}>
-                {signupCtaLabel()} <ArrowRight className="ml-1 h-4 w-4" />
-              </NavLink>
-            </Button>
-            <Button asChild size="xl" variant="pb-secondary">
-              <NavLink to="/#beta-program">View beta program</NavLink>
-            </Button>
-          </div>
+        <span className="pb-eyebrow"><Sparkles className="h-3.5 w-3.5" /> Founding Partner Beta Pricing</span>
+        <h1 className="pb-section-title mx-auto mt-4 max-w-3xl text-white">Apply now. Lock in launch-year savings if accepted.</h1>
+        <p className="pb-copy mx-auto mt-5 max-w-2xl text-base sm:text-xl">
+          PhotoBrief.ai is invite-only while we onboard founding partners. Accepted beta businesses get {BETA_DURATION_DAYS} days free, concierge setup, direct support, and tiered post-launch rewards — up to 75% off or free Pro for life.
+        </p>
+        <p className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-[hsl(var(--pb-mint)/0.4)] bg-[hsl(var(--pb-mint)/0.08)] px-3 py-1 text-sm font-medium text-[hsl(var(--pb-mint))]">
+          <ShieldCheck className="h-4 w-4" /> First-pass follow-up photos do not consume credits.
+        </p>
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
+          <Button asChild size="xl" variant="pb-primary">
+            <NavLink to={signupCtaTarget()}>
+              {signupCtaLabel()} <ArrowRight className="ml-1 h-4 w-4" />
+            </NavLink>
+          </Button>
+          <Button asChild size="xl" variant="pb-secondary">
+            <NavLink to="/#beta-program">View beta program</NavLink>
+          </Button>
         </div>
-      </section>
+      </MarketingHero>
 
       {/* Beta offer cards */}
-      <section className="pb-section-tight">
-        <div className="pb-container grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <MarketingSection spacing="tight">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {betaOffer.map((item) => {
             const Icon = item.icon;
             return (
-              <div key={item.label} className="pb-card rounded-[1.75rem] p-5">
+              <div key={item.label} className="pb-card rounded-2xl p-5">
                 <span className="flex h-11 w-11 items-center justify-center rounded-2xl border border-[hsl(var(--pb-line-strong))] bg-[hsl(var(--pb-ink))] text-[hsl(var(--pb-lavender))]">
                   <Icon className="h-5 w-5" />
                 </span>
@@ -95,15 +94,15 @@ export default function PricingPage() {
             );
           })}
         </div>
-      </section>
+      </MarketingSection>
 
       {/* Intake modes */}
-      <section className="pb-section-tight">
-        <div className="pb-container grid gap-4 md:grid-cols-2">
+      <MarketingSection spacing="tight">
+        <div className="grid gap-4 md:grid-cols-2">
           {intakeModes.map((mode) => {
             const Icon = mode.icon;
             return (
-              <article key={mode.title} className="pb-card rounded-[2rem] p-6">
+              <article key={mode.title} className="pb-card rounded-2xl p-6">
                 <span className="pb-eyebrow">
                   <Icon className="h-3.5 w-3.5" /> {mode.title}
                 </span>
@@ -113,21 +112,18 @@ export default function PricingPage() {
             );
           })}
         </div>
-      </section>
+      </MarketingSection>
 
       {/* Pricing cards */}
-      <section className="pb-section">
-        <div className="pb-container-narrow pb-8 text-center">
-          <span className="pb-eyebrow">Public launch plans</span>
-          <h2 className="pb-section-title mt-4 text-white">
-            These are the planned tiers after beta.
-          </h2>
-          <p className="pb-copy mt-3 text-sm sm:text-base">
-            During beta, pricing is handled through the Founding Partner program. Apply now if you want early access and launch-year savings.
-          </p>
-        </div>
+      <MarketingSection
+        width="narrow"
+        align="center"
+        eyebrow="Public launch plans"
+        title="These are the planned tiers after beta."
+        subtitle="During beta, pricing is handled through the Founding Partner program. Apply now if you want early access and launch-year savings."
+      >
         <PricingCardGrid />
-      </section>
+      </MarketingSection>
 
       {/* FAQ */}
       <section className="pb-section">
