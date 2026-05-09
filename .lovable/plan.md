@@ -1,76 +1,92 @@
-## Goal
+# Standardize Layout Schema
 
-Every container, section wrapper, headline, paragraph, and button on the landing page renders through **one immutable schema**. No ad-hoc Tailwind for color, font family, font size, spacing, or button styling inside `Landing.tsx`. The schema is the only way to compose marketing UI.
+A repo-wide layout standardization pass. **No visual redesign, no copy rewrite, no route or behavior changes.** Only layout primitives + page wrappers are touched.
 
-## What ships
+## 1. New shared layout primitives
 
-### 1. New schema module
+Create a single module `src/components/layout/primitives/` with focused files:
 
-`src/pages/landing/schema.tsx` — a small, frozen set of React primitives. Components only accept structural props (children, `as`, `id`, `tone`); they do **not** accept `className` overrides. Visual variance is opt-in via a fixed `variant` enum.
+- `PageShell.tsx` — authenticated app pages. Props: `width: "default" | "narrow" | "reading" | "full"` (max-w-7xl / 5xl / 3xl / none), handles horizontal padding + bottom safe-area for mobile tab bar.
+- `PageStack.tsx` — vertical rhythm between page modules. Props: `gap: "default" | "compact" | "relaxed"`.
+- `PageSection.tsx` — in-app section wrapper. Props: `variant: "default" | "card" | "elevated" | "muted" | "split"`.
+- `Surface.tsx` — replaces ad-hoc `rounded-[2rem] bg-card/85 border shadow-[...] backdrop-blur` combos. Props: `variant: "panel" | "elevated" | "muted" | "outline"`, `radius: "default" | "lg" | "pill"`, `padding: "none" | "sm" | "md" | "lg"`.
+- `ResponsiveGrid.tsx` — props: `cols: "1-2" | "1-3" | "1-4" | "sidebar" | "aside"`, `gap: "default" | "compact"`.
+- `MarketingSection.tsx` — wraps `pb-section` / `pb-section-tight` with a `width: "default" | "narrow"` and optional `heading` slot for `eyebrow/title/subtitle`.
+- `MarketingHero.tsx` — thin wrapper that standardizes hero spacing + width; content slots remain flexible. Used only where it cleanly simplifies.
+- `WizardLayout.tsx` — `{ steps, currentStep, footer, progress }` slots. Renders left rail on desktop, stacked stepper on mobile, main panel + sticky footer actions.
 
-Primitives:
+Reuse existing `PageHeader` and `EmptyState` (already standardized — just confirm props cover icon/title/description/primary/secondary actions; small additive tweak only if missing).
 
-```text
-<Section tone="paper" | "dark" | "alt"  size="default" | "tight">
-<Container width="default" | "narrow">
-<Eyebrow>
-<Title level={1|2|3}>      // h1/h2/h3, single sans family
-<Subtitle>                  // lead paragraph under Title
-<Body size="sm" | "md" | "lg">
-<Card tone="paper" | "dark" elevated?>
-<Grid cols={1|2|3|4} gap="sm" | "md">
-<CTA variant="primary" | "secondary" | "quiet" size="md" | "lg" to=…>
-<CTAGroup>                  // flex wrap with consistent gap
-```
+All primitives consume tokens from `src/design-system/desktop/desktop.tokens.ts` + mobile tokens via `usePlatformSchema()` where it matters; default values come from semantic Tailwind classes already in the project.
 
-Rules baked in:
-- Typography: one sans family for everything (drop the italic serif `pb-section-title` look). Sizes are fixed clamp() ramps — H1, H2, H3, Subtitle, Body-lg/md/sm — no per-instance overrides.
-- Color: every primitive resolves color from the section `tone` only. `tone="paper"` uses cream + ink tokens; `tone="dark"` uses navy + cream-on-dark; `tone="alt"` is a subtle tinted band.
-- Spacing: `Section` owns vertical rhythm (one `default`, one `tight`). Inner spacing inside `Container` is fixed.
-- Buttons: `CTA` is the only way to render a marketing button. Three variants exactly: **primary** (solid amber on navy text), **secondary** (outlined navy/cream), **quiet** (text link with arrow). Touch behavior follows existing `.pb-btn-platform` rules (44px min, no hover on touch).
+Barrel: `src/components/layout/primitives/index.ts`.
 
-### 2. Schema CSS
+## 2. Layout CSS additions
 
-`src/pages/landing/schema.css` — a single `@layer components` block with the *only* class set the schema renders: `.ls-section`, `.ls-section--dark`, `.ls-section--alt`, `.ls-section--tight`, `.ls-container`, `.ls-container--narrow`, `.ls-eyebrow`, `.ls-h1/h2/h3`, `.ls-subtitle`, `.ls-body-{sm,md,lg}`, `.ls-card`, `.ls-card--dark`, `.ls-grid-{1,2,3,4}`, `.ls-cta-primary`, `.ls-cta-secondary`, `.ls-cta-quiet`, `.ls-cta-group`. Imported once from `src/index.css`.
+Add a small `@layer components` block in `src/index.css` for semantic utilities used by the primitives:
 
-All values pull from the existing two-palette tokens already defined in `src/index.css` (navy, amber, cream, ink). No new colors introduced.
+- `.app-shell-padding` — `px-3 sm:px-6 lg:px-10`
+- `.app-shell-bottom-safe` — `pb-24 lg:pb-10` + `env(safe-area-inset-bottom)`
+- `.stack-default` / `.stack-compact` / `.stack-relaxed` — vertical gaps
+- `.surface-panel` / `.surface-elevated` / `.surface-muted` / `.surface-outline`
+- `.radius-panel` / `.radius-lg` / `.radius-pill`
 
-### 3. Rebuild `src/pages/Landing.tsx`
+These wrap existing token values; no new colors.
 
-Keep every existing section and its content (hero, ROI calculator, beta program, workflow, comparison, use cases, website intelligence, FAQ, final CTA, etc.) — only the wrappers and presentational elements change.
+## 3. Page migrations (in place, no new files)
 
-For each section:
-- Outer `<section className="pb-section …">` → `<Section tone=… size=…>`
-- Inner `.pb-container` div → `<Container>`
-- `<span className="pb-eyebrow">` → `<Eyebrow>`
-- `<h1 className="pb-display">`, `<h2 className="pb-section-title">`, `<h3 …>` → `<Title level=…>`
-- Lead `<p className="pb-copy …text-lg">` → `<Subtitle>`
-- Body `<p className="pb-copy …">` → `<Body size=…>`
-- `<div className="pb-card …">` → `<Card>`
-- All `<Button variant="pb-primary|pb-secondary|pb-ghost">` → `<CTA variant="primary|secondary|quiet">`
-- Per-instance `text-white`, `text-[hsl…]`, font-serif italic, custom font sizes, custom paddings → **deleted**. Tone is inherited from the parent `Section`.
+For each page below: replace ad-hoc wrappers with primitives. Keep all content, SEO, JSON-LD, anchors, hooks, behavior identical.
 
-Rich/interactive children (`InteractiveHeroBriefAssembly`, `BetaSeatTracker`, ROI sliders, comparison table, FAQ accordion, lucide icons) are kept as-is and rendered inside the new primitives.
+**App pages** (wrap with `PageShell` + `PageHeader` + `PageStack` + `Surface`/`PageSection`):
+- `src/features/workspace/pages/DashboardPage.tsx`
+- `src/features/requests/pages/RequestsInboxPage.tsx`
+- `src/features/guides/pages/GuideLibraryPage.tsx`
+- `src/pages/AdminWebsiteIntelligence.tsx`
 
-### 4. Cleanup
+Note: `DashboardLayout` already provides outer shell + padding. `PageShell` here is the *inner* page constraint (max-width + stack); it composes with the layout, doesn't duplicate it. `DashboardLayout`'s current `<main>` keeps the outer chrome — the inner `mx-auto max-w-7xl` is replaced by `PageShell`.
 
-After Landing.tsx no longer references them, remove from `src/index.css`:
-- `.pb-section`, `.pb-section-tight`, `.pb-section-alt`, `.pb-container`, `.pb-container-narrow`, `.pb-eyebrow`, `.pb-copy`, `.pb-card`, `.pb-display`, `.pb-section-title`, the long `.pb-on-paper .pb-dark-island .text-white\/N` ladder.
+**Marketing pages** (wrap sections with `MarketingSection`):
+- `src/pages/Landing.tsx` — re-wrap each existing section using `MarketingSection`. Preserve the schema primitives already added (`Section`/`Container`/etc. in `src/pages/landing/schema.tsx`) — `MarketingSection` will become the canonical wrapper and the landing-local `Section` re-exports from it (or is removed in favor of it; will pick whichever is smaller-diff after re-reading `Landing.tsx`).
+- `src/pages/Pricing.tsx`
+- `src/pages/ForAiAgents.tsx`
 
-Keep: `.pb-landing` (page-level background), `.pb-paper-pill` / `.pb-paper-link` (used by `MarketingLayout` header), `.pb-footer-dark` (footer), `.pb-btn-platform` (still backs `CTA`).
+**Wizard:**
+- `src/features/intake/pages/WebsiteIntakePage.tsx` — refactor to `WizardLayout`. All step components, source toggles, hosted link/webhook logic, routing rules, field mapping, test lead, review remain unchanged — only the outer scaffold changes.
 
-Other pages that still import the old classes (Pricing, Privacy, Terms, ForAiAgents, etc.) are **out of scope** for this request — they keep working because we only delete classes Landing exclusively used. Anything shared with another page stays.
+## 4. Cleanup
 
-### 5. Verification
+- Remove now-dead per-page `mx-auto max-w-*`, repeated `rounded-[2rem]`, custom shadows, one-off section padding **only inside the migrated pages**.
+- Do **not** touch unrelated pages, feature components, agents, services, edge functions, workers, or routes.
+- Keep landing schema (`src/pages/landing/schema.tsx`) — either reframe it as a thin re-export of the new primitives, or keep as-is if its API already matches. Decide after re-reading.
 
-- Visit `/` at 440px and 1440px: every section renders, hero shows the single full logo, CTAs are clickable and styled, no missing styles, no console errors, no 404s.
-- `rg "pb-section|pb-card|pb-eyebrow|pb-copy|pb-display|pb-section-title|font-serif|text-white\\/" src/pages/Landing.tsx` returns **zero matches**.
-- `rg "className=" src/pages/Landing.tsx` shows only structural utility classes (flex/grid layout) on non-schema wrappers — never color, font, or button classes.
-- Build passes; no TypeScript errors.
+## 5. Docs
 
-## Out of scope
+Create `docs/layout-system.md` covering:
+- Primitive catalog with one-line purpose each
+- Standard widths (app default/narrow/reading; marketing default/narrow)
+- Standard spacing (app gaps, marketing section/tight)
+- Radius scale
+- Marketing vs app rules
+- Mobile behavior (bottom-tab safe area, single-column default, no hover effects)
+- ✅ Allowed vs ❌ discouraged code snippets
 
-- Header (`MarketingLayout`) and footer styling.
-- `BrandMark`, `PoweredByBadge`, `BetaSeatTracker`, `InteractiveHeroBriefAssembly` internals.
-- Other marketing pages (Pricing, ForAiAgents, etc.).
-- Color tokens — the two-palette system in `src/index.css` is already the single source of truth and is not changed.
+## 6. Validation
+
+Run `bunx vitest run` for tests, rely on the harness for typecheck/lint/build. Fix regressions until clean. Do not run manual builds.
+
+## Out of scope (explicit)
+
+- No new landing page or LandingV2.
+- No copy edits.
+- No route changes.
+- No router/Cloudflare/deployment file edits.
+- No DB, auth, agent, or service changes.
+- No design-token color changes.
+- No aggressive sweep across every component — only the listed pages.
+
+## Technical notes
+
+- Primitives are pure presentational React + Tailwind; no new deps.
+- `usePlatformSchema()` is read inside `PageShell` and `WizardLayout` only where mobile vs desktop branching is meaningful (e.g., wizard rail vs stacked stepper). Other primitives stay CSS-only for SSR-safety.
+- All class composition via existing `cn()` from `src/lib/utils.ts`.
+- No changes to `src/integrations/supabase/*`, `supabase/config.toml`, or `tailwind.config.ts` unless a new semantic utility requires it (none expected).

@@ -4,6 +4,7 @@ import { useSearchParams } from "react-router-dom";
 import { Plus, Send, Eye, Bell, MoreHorizontal, Archive, Trash2, UserPlus, X } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { PageShell, PageStack } from "@/components/layout/primitives";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { ReadinessScoreBadge } from "@/components/shared/ReadinessScoreBadge";
 import { Button } from "@/components/ui/button";
@@ -181,7 +182,7 @@ export default function RequestsInboxPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <PageShell><PageStack>
       <PageHeader
         title="Requests"
         description="Every link you've sent and every brief you've received."
@@ -532,6 +533,6 @@ export default function RequestsInboxPage() {
           </table>
         </div>
       </div>
-    </div>
+    </PageStack></PageShell>
   );
 }

@@ -13,6 +13,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { PageShell, PageStack } from "@/components/layout/primitives";
 import { MetricCard } from "@/components/shared/MetricCard";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { ReadinessScoreBadge } from "@/components/shared/ReadinessScoreBadge";
@@ -158,7 +159,7 @@ export default function DashboardPage() {
         };
 
   return (
-    <div className="space-y-5 sm:space-y-7">
+    <PageShell><PageStack>
       <PageHeader
         title={isEmpty ? "Welcome to PhotoBrief" : "Today"}
         description={isEmpty ? "Send your first request and get a PhotoBrief back in minutes." : "A quiet overview of what needs attention."}
@@ -297,7 +298,7 @@ export default function DashboardPage() {
           <AssistantPanel open onClose={() => setAssistantOpen(false)} />
         </SheetContent>
       </Sheet>
-    </div>
+    </PageStack></PageShell>
   );
 }
 

@@ -1406,6 +1406,17 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
   }
 }
 
+/* ── Layout schema utilities ── Used by src/components/layout/primitives.
+   Do not author these in feature components — compose primitives instead. */
+@layer components {
+  .app-shell-bottom-safe {
+    padding-bottom: calc(6rem + env(safe-area-inset-bottom));
+  }
+  @media (min-width: 1024px) {
+    .app-shell-bottom-safe { padding-bottom: 2.5rem; }
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .tap-apple, .list-row-apple, .segmented-apple > button { transition: none !important; }
   .tap-apple:active { transform: none !important; }
