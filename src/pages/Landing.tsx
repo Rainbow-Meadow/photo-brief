@@ -64,6 +64,7 @@ import { FreeProEligibilityModal } from "@/components/marketing/FreeProEligibili
 import { BetaSeatTracker } from "@/components/marketing/BetaSeatTracker";
 import { BetaOnboardingAgentExperience } from "@/components/marketing/BetaOnboardingAgentExperience";
 import { BrandMark } from "@/components/layout/BrandMark";
+import { MarketingHero, MarketingSection } from "@/components/layout/primitives";
 import {
   Section,
   Container,
