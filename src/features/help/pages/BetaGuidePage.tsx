@@ -134,13 +134,14 @@ export default function BetaGuidePage() {
           { name: "Help", path: "/help" },
         ]}
       />
-      <header className="relative isolate overflow-hidden rounded-[0.25rem] border border-border/70 bg-card p-6 shadow-[0_30px_90px_-55px_hsl(222_47%_11%/0.55)] backdrop-blur sm:p-10">
-        
+      <header className="relative border border-border bg-card p-6 sm:p-10">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-3">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.08] bg-white/[0.04] px-3 py-1 text-xs font-medium text-muted-foreground">
-              <Rocket className="h-3.5 w-3.5 text-primary" /> Simple setup guide
-            </span>
+            <p className="inline-flex items-baseline gap-2 font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+              <span className="inline-block h-px w-8 -translate-y-[0.25em] bg-[hsl(var(--accent-kinetic))]" />
+              <span className="text-[hsl(var(--accent-kinetic))]">[ HG ]</span>
+              <span className="inline-flex items-center gap-1.5"><Rocket className="h-3 w-3" /> Simple setup guide</span>
+            </p>
             <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
               Set up PhotoBrief without overthinking it.
             </h1>
