@@ -27,6 +27,39 @@ const DISCOVERY_LINKS = [
   { href: "/sitemap.xml", label: "/sitemap.xml", desc: "Sitemap." },
 ];
 
+const eyebrowCls =
+  "inline-flex items-baseline gap-2 font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground";
+const accentCodeCls = "text-[hsl(var(--accent-kinetic))]";
+const codeChipCls =
+  "rounded-none border border-border bg-background px-1.5 py-0.5 font-mono text-[0.7rem] text-foreground";
+const inlineCodeCls = "font-mono text-[hsl(var(--accent-kinetic))]";
+
+function Eyebrow({ code, children }: { code: string; children: React.ReactNode }) {
+  return (
+    <p className={eyebrowCls}>
+      <span className="inline-block h-px w-8 -translate-y-[0.25em] bg-[hsl(var(--accent-kinetic))]" />
+      <span className={accentCodeCls}>[ {code} ]</span>
+      <span className="inline-flex items-center gap-1.5">{children}</span>
+    </p>
+  );
+}
+
+function CodeBlock({ label, code }: { label: string; code: string }) {
+  return (
+    <div className="overflow-hidden border border-border bg-card">
+      <div className="border-b border-border bg-background/40 px-5 py-3">
+        <p className="font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+          <span className={`${accentCodeCls} mr-2`}>[ // ]</span>
+          {label}
+        </p>
+      </div>
+      <pre className="overflow-x-auto p-5 font-mono text-xs leading-relaxed text-foreground/85">
+        <code>{code}</code>
+      </pre>
+    </div>
+  );
+}
+
 export default function ForAiAgentsPage() {
   const [lang, setLang] = useState<ApiExampleLang>("curl");
 
@@ -58,32 +91,43 @@ export default function ForAiAgentsPage() {
 
       {/* Hero */}
       <MarketingHero align="center">
-        <div className="pb-lens-field" />
-        <span className="pb-eyebrow">
+        <Eyebrow code="00">
           <Sparkles className="h-3.5 w-3.5" /> For AI agents, answer engines, and automation systems
-        </span>
-        <h1 className="pb-section-title mx-auto mt-5 max-w-3xl text-white">PhotoBrief is a visual intake layer.</h1>
-        <p className="pb-copy mx-auto mt-5 max-w-2xl text-base sm:text-lg">
+        </Eyebrow>
+        <h1 className="mx-auto mt-5 max-w-3xl text-[clamp(2.5rem,6vw,4.5rem)] font-semibold leading-[1.02] tracking-[-0.025em] text-foreground">
+          PhotoBrief is a visual intake layer.
+        </h1>
+        <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
           Agents can create photo requests, connect website intake, route leads to templates, and return a structured visual brief that a business can quote, dispatch, approve, or document.
         </p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-          <Button asChild size="lg" variant="pb-primary">
+          <Button asChild size="xl" className="rounded-[0.25rem] uppercase tracking-[0.14em]">
             <a href="#api">See the API <ArrowRight className="ml-1 h-4 w-4" /></a>
           </Button>
-          <Button asChild size="lg" variant="pb-secondary">
+          <Button asChild size="xl" variant="outline" className="rounded-[0.25rem] border-border uppercase tracking-[0.14em]">
             <a href="/openapi.json"><FileJson className="mr-1 h-4 w-4" /> openapi.json</a>
           </Button>
         </div>
-        <div className="mt-8 grid gap-3 text-left sm:grid-cols-2">
-          <div className="pb-card rounded-2xl p-4">
-            <Globe2 className="h-5 w-5 text-[hsl(var(--pb-lavender))]" />
-            <p className="mt-3 text-sm font-semibold text-white">Website Intake</p>
-            <p className="mt-1 text-xs leading-5 text-[hsl(var(--pb-muted))]">Hosted form or webhook turns website leads into PhotoBrief requests.</p>
+        <div className="mt-10 grid gap-3 text-left sm:grid-cols-2">
+          <div className="border border-border bg-card p-5">
+            <div className="flex items-center justify-between">
+              <span className="font-mono text-[0.65rem] font-medium uppercase tracking-[0.18em] text-[hsl(var(--accent-kinetic))]">[ 01 ]</span>
+              <span className="flex h-9 w-9 items-center justify-center border border-border bg-background text-[hsl(var(--accent-kinetic))]">
+                <Globe2 className="h-4 w-4" />
+              </span>
+            </div>
+            <p className="mt-5 text-sm font-semibold text-foreground">Website Intake</p>
+            <p className="mt-2 text-xs leading-5 text-muted-foreground">Hosted form or webhook turns website leads into PhotoBrief requests.</p>
           </div>
-          <div className="pb-card rounded-2xl p-4">
-            <Route className="h-5 w-5 text-[hsl(var(--pb-lavender))]" />
-            <p className="mt-3 text-sm font-semibold text-white">Template routing</p>
-            <p className="mt-1 text-xs leading-5 text-[hsl(var(--pb-muted))]">Rules and conservative AI fallback select from configured templates only.</p>
+          <div className="border border-border bg-card p-5">
+            <div className="flex items-center justify-between">
+              <span className="font-mono text-[0.65rem] font-medium uppercase tracking-[0.18em] text-[hsl(var(--accent-kinetic))]">[ 02 ]</span>
+              <span className="flex h-9 w-9 items-center justify-center border border-border bg-background text-[hsl(var(--accent-kinetic))]">
+                <Route className="h-4 w-4" />
+              </span>
+            </div>
+            <p className="mt-5 text-sm font-semibold text-foreground">Template routing</p>
+            <p className="mt-2 text-xs leading-5 text-muted-foreground">Rules and conservative AI fallback select from configured templates only.</p>
           </div>
         </div>
       </MarketingHero>
@@ -93,68 +137,90 @@ export default function ForAiAgentsPage() {
 
       {/* API section */}
       <MarketingSection id="api" aria-labelledby="api-heading">
-          <div className="mx-auto max-w-2xl text-center">
-            <span className="pb-eyebrow">REST API</span>
-            <h2 id="api-heading" className="pb-section-title mt-4 text-white">
-              Create a photo request
-            </h2>
-            <p className="pb-copy mt-4 text-base">
-              <code className="rounded border border-white/10 bg-white/[0.05] px-1.5 py-0.5 text-xs text-[hsl(var(--pb-lavender))]">POST {API_BASE_URL}/api-create-request</code>{" "}
-              — authenticate with a workspace API key on supported plans.
-            </p>
-          </div>
+        <div className="mx-auto max-w-2xl text-center">
+          <Eyebrow code="03"><Terminal className="h-3.5 w-3.5" /> REST API</Eyebrow>
+          <h2 id="api-heading" className="mt-5 text-[clamp(2rem,4vw,3rem)] font-semibold tracking-tight text-foreground">
+            Create a photo request
+          </h2>
+          <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+            <code className={codeChipCls}>POST {API_BASE_URL}/api-create-request</code>{" "}
+            — authenticate with a workspace API key on supported plans.
+          </p>
+        </div>
 
-          <div className="mt-10 overflow-hidden rounded-2xl border border-[hsl(var(--pb-line))] bg-[hsl(var(--pb-ink))]">
-            <Tabs value={lang} onValueChange={(v) => setLang(v as ApiExampleLang)}>
-              <TabsList className="w-full justify-start rounded-none border-b border-white/10 bg-white/[0.03] px-2">
-                <TabsTrigger value="curl" className="gap-1.5 text-white/70 data-[state=active]:text-white"><Terminal className="h-3.5 w-3.5" /> cURL</TabsTrigger>
-                <TabsTrigger value="javascript" className="gap-1.5 text-white/70 data-[state=active]:text-white"><Code2 className="h-3.5 w-3.5" /> JavaScript</TabsTrigger>
-                <TabsTrigger value="python" className="gap-1.5 text-white/70 data-[state=active]:text-white"><Code2 className="h-3.5 w-3.5" /> Python</TabsTrigger>
-              </TabsList>
-              {(Object.keys(API_EXAMPLES) as ApiExampleLang[]).map((l) => (
-                <TabsContent key={l} value={l} className="m-0">
-                  <pre className="overflow-x-auto p-5 text-xs leading-relaxed text-white/80"><code>{API_EXAMPLES[l]}</code></pre>
-                </TabsContent>
-              ))}
-            </Tabs>
-          </div>
+        <div className="mt-10 overflow-hidden border border-border bg-card">
+          <Tabs value={lang} onValueChange={(v) => setLang(v as ApiExampleLang)}>
+            <TabsList className="w-full justify-start rounded-none border-b border-border bg-background/40 p-0">
+              <TabsTrigger
+                value="curl"
+                className="gap-1.5 rounded-none border-r border-border px-4 py-3 font-mono text-[0.7rem] uppercase tracking-[0.16em] text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-[hsl(var(--accent-kinetic))]"
+              >
+                <Terminal className="h-3.5 w-3.5" /> cURL
+              </TabsTrigger>
+              <TabsTrigger
+                value="javascript"
+                className="gap-1.5 rounded-none border-r border-border px-4 py-3 font-mono text-[0.7rem] uppercase tracking-[0.16em] text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-[hsl(var(--accent-kinetic))]"
+              >
+                <Code2 className="h-3.5 w-3.5" /> JavaScript
+              </TabsTrigger>
+              <TabsTrigger
+                value="python"
+                className="gap-1.5 rounded-none border-r border-border px-4 py-3 font-mono text-[0.7rem] uppercase tracking-[0.16em] text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-[hsl(var(--accent-kinetic))]"
+              >
+                <Code2 className="h-3.5 w-3.5" /> Python
+              </TabsTrigger>
+            </TabsList>
+            {(Object.keys(API_EXAMPLES) as ApiExampleLang[]).map((l) => (
+              <TabsContent key={l} value={l} className="m-0">
+                <pre className="overflow-x-auto p-5 font-mono text-xs leading-relaxed text-foreground/85"><code>{API_EXAMPLES[l]}</code></pre>
+              </TabsContent>
+            ))}
+          </Tabs>
+        </div>
 
-          <div className="mt-6 grid gap-3 sm:grid-cols-2">
-            <article className="pb-card rounded-2xl p-5 text-sm">
-              <h3 className="font-semibold text-white">Successful response</h3>
-              <pre className="mt-3 overflow-x-auto rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs text-white/70">
+        <div className="mt-6 grid gap-3 sm:grid-cols-2">
+          <article className="border border-border bg-card p-5">
+            <p className="font-mono text-[0.65rem] font-medium uppercase tracking-[0.18em] text-[hsl(var(--accent-kinetic))]">[ 200 ]</p>
+            <h3 className="mt-2 text-sm font-semibold text-foreground">Successful response</h3>
+            <pre className="mt-3 overflow-x-auto border border-border bg-background p-3 font-mono text-xs text-foreground/80">
 {`{
   "request_id": "uuid",
   "token": "abc123",
   "recipient_url": "https://photobrief.ai/r/abc123"
 }`}
-              </pre>
-              <p className="mt-3 text-[hsl(var(--pb-muted))]">Forward <code className="text-[hsl(var(--pb-lavender))]">recipient_url</code> to the customer, or use Website Intake to send automatically.</p>
-            </article>
-            <article className="pb-card rounded-2xl p-5 text-sm">
-              <h3 className="font-semibold text-white">Required fields</h3>
-              <ul className="mt-3 space-y-1.5 text-[hsl(var(--pb-muted))]">
-                <li className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-[hsl(var(--pb-mint))]" /><span><code className="text-[hsl(var(--pb-lavender))]">recipient_name</code> — display name</span></li>
-                <li className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-[hsl(var(--pb-mint))]" /><span><code className="text-[hsl(var(--pb-lavender))]">recipient_email</code> <em>or</em> <code className="text-[hsl(var(--pb-lavender))]">recipient_phone</code></span></li>
-                <li className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-[hsl(var(--pb-mint))]" /><span>Bearer token in <code className="text-[hsl(var(--pb-lavender))]">Authorization</code></span></li>
-              </ul>
-            </article>
-          </div>
+            </pre>
+            <p className="mt-3 text-sm leading-6 text-muted-foreground">
+              Forward <code className={inlineCodeCls}>recipient_url</code> to the customer, or use Website Intake to send automatically.
+            </p>
+          </article>
+          <article className="border border-border bg-card p-5">
+            <p className="font-mono text-[0.65rem] font-medium uppercase tracking-[0.18em] text-[hsl(var(--accent-kinetic))]">[ REQ ]</p>
+            <h3 className="mt-2 text-sm font-semibold text-foreground">Required fields</h3>
+            <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+              <li className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-[hsl(var(--accent-kinetic))]" /><span><code className={inlineCodeCls}>recipient_name</code> — display name</span></li>
+              <li className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-[hsl(var(--accent-kinetic))]" /><span><code className={inlineCodeCls}>recipient_email</code> <em>or</em> <code className={inlineCodeCls}>recipient_phone</code></span></li>
+              <li className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-[hsl(var(--accent-kinetic))]" /><span>Bearer token in <code className={inlineCodeCls}>Authorization</code></span></li>
+            </ul>
+          </article>
+        </div>
       </MarketingSection>
 
       {/* MCP & Agent manifests */}
       <MarketingSection id="mcp" aria-labelledby="mcp-heading">
         <div className="mx-auto max-w-2xl text-center">
-          <span className="pb-eyebrow">MCP & Agent manifests</span>
-          <h2 id="mcp-heading" className="pb-section-title mt-4 text-white">Plug PhotoBrief into your agent</h2>
-          <p className="pb-copy mt-4 text-base">PhotoBrief runs a live MCP server. Connect it from Claude Code, Cursor, Windsurf, or any MCP-capable tool.</p>
+          <Eyebrow code="04"><Code2 className="h-3.5 w-3.5" /> MCP & Agent manifests</Eyebrow>
+          <h2 id="mcp-heading" className="mt-5 text-[clamp(2rem,4vw,3rem)] font-semibold tracking-tight text-foreground">
+            Plug PhotoBrief into your agent
+          </h2>
+          <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+            PhotoBrief runs a live MCP server. Connect it from Claude Code, Cursor, Windsurf, or any MCP-capable tool.
+          </p>
         </div>
 
-        <div className="mt-10 overflow-hidden rounded-2xl border border-[hsl(var(--pb-line))] bg-[hsl(var(--pb-ink))]">
-          <div className="border-b border-white/10 bg-white/[0.03] px-5 py-3">
-            <p className="text-xs font-medium text-white/70">MCP endpoint — Streamable HTTP</p>
-          </div>
-          <pre className="overflow-x-auto p-5 text-xs leading-relaxed text-white/80"><code>{`# Endpoint
+        <div className="mt-10">
+          <CodeBlock
+            label="MCP endpoint — Streamable HTTP"
+            code={`# Endpoint
 https://mcp.photobrief.ai/mcp
 
 # Tools available
@@ -169,19 +235,22 @@ read_faq         — Canonical FAQ answers (no auth)
       "url": "https://mcp.photobrief.ai/mcp"
     }
   }
-}`}</code></pre>
+}`}
+          />
         </div>
 
-        <div className="mt-6 grid gap-4 sm:grid-cols-2">
-          <article className="pb-card rounded-2xl p-5">
-            <h3 className="text-sm font-semibold text-white">agent.json</h3>
-            <p className="mt-2 text-sm text-[hsl(var(--pb-muted))]">Capabilities, auth, and discovery URLs in one file.</p>
-            <pre className="mt-3 overflow-x-auto rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs text-white/70">{`GET https://photobrief.ai/.well-known/agent.json`}</pre>
+        <div className="mt-6 grid gap-3 sm:grid-cols-2">
+          <article className="border border-border bg-card p-5">
+            <p className="font-mono text-[0.65rem] font-medium uppercase tracking-[0.18em] text-[hsl(var(--accent-kinetic))]">[ MAN ]</p>
+            <h3 className="mt-2 text-sm font-semibold text-foreground">agent.json</h3>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">Capabilities, auth, and discovery URLs in one file.</p>
+            <pre className="mt-3 overflow-x-auto border border-border bg-background p-3 font-mono text-xs text-foreground/80">{`GET https://photobrief.ai/.well-known/agent.json`}</pre>
           </article>
-          <article className="pb-card rounded-2xl p-5">
-            <h3 className="text-sm font-semibold text-white">mcp.json</h3>
-            <p className="mt-2 text-sm text-[hsl(var(--pb-muted))]">Live MCP server descriptor with tools, transport, and auth details.</p>
-            <pre className="mt-3 overflow-x-auto rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs text-white/70">{`GET https://photobrief.ai/mcp.json`}</pre>
+          <article className="border border-border bg-card p-5">
+            <p className="font-mono text-[0.65rem] font-medium uppercase tracking-[0.18em] text-[hsl(var(--accent-kinetic))]">[ MCP ]</p>
+            <h3 className="mt-2 text-sm font-semibold text-foreground">mcp.json</h3>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">Live MCP server descriptor with tools, transport, and auth details.</p>
+            <pre className="mt-3 overflow-x-auto border border-border bg-background p-3 font-mono text-xs text-foreground/80">{`GET https://photobrief.ai/mcp.json`}</pre>
           </article>
         </div>
       </MarketingSection>
@@ -189,37 +258,38 @@ read_faq         — Canonical FAQ answers (no auth)
       {/* x402 Agentic Payments */}
       <MarketingSection id="x402" aria-labelledby="x402-heading">
         <div className="mx-auto max-w-2xl text-center">
-          <span className="pb-eyebrow"><CreditCard className="h-3.5 w-3.5" /> Agentic payments</span>
-          <h2 id="x402-heading" className="pb-section-title mt-4 text-white">Pay per call with x402</h2>
-          <p className="pb-copy mt-4 text-base">
-            AI agents without a <code className="rounded border border-white/10 bg-white/[0.05] px-1.5 py-0.5 text-xs text-[hsl(var(--pb-lavender))]">pb_</code> API key can pay per-call using the x402 protocol. No billing setup, no subscription — just machine-to-machine payments.
+          <Eyebrow code="05"><CreditCard className="h-3.5 w-3.5" /> Agentic payments</Eyebrow>
+          <h2 id="x402-heading" className="mt-5 text-[clamp(2rem,4vw,3rem)] font-semibold tracking-tight text-foreground">
+            Pay per call with x402
+          </h2>
+          <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+            AI agents without a <code className={codeChipCls}>pb_</code> API key can pay per-call using the x402 protocol. No billing setup, no subscription — just machine-to-machine payments.
           </p>
         </div>
 
-        <div className="mt-10 grid gap-4 sm:grid-cols-3">
-          <article className="pb-card rounded-2xl p-5">
-            <Zap className="h-5 w-5 text-[hsl(var(--pb-lavender))]" />
-            <h3 className="mt-3 text-sm font-semibold text-white">Per-call pricing</h3>
-            <p className="mt-2 text-sm text-[hsl(var(--pb-muted))]"><code className="text-[hsl(var(--pb-lavender))]">create_request</code> = $0.10 USD (1 credit)</p>
-            <p className="mt-1 text-sm text-[hsl(var(--pb-muted))]"><code className="text-[hsl(var(--pb-lavender))]">lookup_pricing</code> and <code className="text-[hsl(var(--pb-lavender))]">read_faq</code> = free</p>
-          </article>
-          <article className="pb-card rounded-2xl p-5">
-            <Globe2 className="h-5 w-5 text-[hsl(var(--pb-lavender))]" />
-            <h3 className="mt-3 text-sm font-semibold text-white">Network</h3>
-            <p className="mt-2 text-sm text-[hsl(var(--pb-muted))]">Base Sepolia (testnet). Mainnet support coming soon.</p>
-          </article>
-          <article className="pb-card rounded-2xl p-5">
-            <Route className="h-5 w-5 text-[hsl(var(--pb-lavender))]" />
-            <h3 className="mt-3 text-sm font-semibold text-white">How it works</h3>
-            <p className="mt-2 text-sm text-[hsl(var(--pb-muted))]">Call without auth → get 402 + requirements → send <code className="text-[hsl(var(--pb-lavender))]">X-Payment</code> header → done.</p>
-          </article>
+        <div className="mt-10 grid gap-3 sm:grid-cols-3">
+          {[
+            { code: "01", icon: Zap, title: "Per-call pricing", body: <><code className={inlineCodeCls}>create_request</code> = $0.10 USD (1 credit). <code className={inlineCodeCls}>lookup_pricing</code> and <code className={inlineCodeCls}>read_faq</code> = free.</> },
+            { code: "02", icon: Globe2, title: "Network", body: "Base Sepolia (testnet). Mainnet support coming soon." },
+            { code: "03", icon: Route, title: "How it works", body: <>Call without auth → get 402 + requirements → send <code className={inlineCodeCls}>X-Payment</code> header → done.</> },
+          ].map(({ code, icon: Icon, title, body }) => (
+            <article key={code} className="border border-border bg-card p-5">
+              <div className="flex items-center justify-between">
+                <span className="font-mono text-[0.65rem] font-medium uppercase tracking-[0.18em] text-[hsl(var(--accent-kinetic))]">[ {code} ]</span>
+                <span className="flex h-9 w-9 items-center justify-center border border-border bg-background text-[hsl(var(--accent-kinetic))]">
+                  <Icon className="h-4 w-4" />
+                </span>
+              </div>
+              <h3 className="mt-5 text-sm font-semibold text-foreground">{title}</h3>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">{body}</p>
+            </article>
+          ))}
         </div>
 
-        <div className="mt-6 overflow-hidden rounded-2xl border border-[hsl(var(--pb-line))] bg-[hsl(var(--pb-ink))]">
-          <div className="border-b border-white/10 bg-white/[0.03] px-5 py-3">
-            <p className="text-xs font-medium text-white/70">x402 payment flow</p>
-          </div>
-          <pre className="overflow-x-auto p-5 text-xs leading-relaxed text-white/80"><code>{`# 1. Get payment requirements
+        <div className="mt-6">
+          <CodeBlock
+            label="x402 payment flow"
+            code={`# 1. Get payment requirements
 GET https://mcp.photobrief.ai/x402/requirements?tool=create_request
 
 # 2. Pay and execute in one call
@@ -235,21 +305,30 @@ curl -X POST https://mcp.photobrief.ai/x402/pay \\
       "url": "https://mcp.photobrief.ai/mcp"
     }
   }
-}`}</code></pre>
+}`}
+          />
         </div>
       </MarketingSection>
 
       <MarketingSection id="discovery" aria-labelledby="discovery-heading">
         <div className="mx-auto max-w-2xl text-center">
-          <span className="pb-eyebrow">Discovery</span>
-          <h2 id="discovery-heading" className="pb-section-title mt-4 text-white">Every machine-readable endpoint</h2>
+          <Eyebrow code="06">Discovery</Eyebrow>
+          <h2 id="discovery-heading" className="mt-5 text-[clamp(2rem,4vw,3rem)] font-semibold tracking-tight text-foreground">
+            Every machine-readable endpoint
+          </h2>
         </div>
         <ul className="mt-10 grid gap-3 sm:grid-cols-2">
           {DISCOVERY_LINKS.map((d) => (
             <li key={d.href}>
-              <a href={d.href} className="block rounded-2xl border border-[hsl(var(--pb-line))] bg-[hsl(var(--pb-panel)/0.88)] p-4 text-sm transition hover:border-[hsl(var(--pb-lavender)/0.55)] hover:bg-[hsl(var(--pb-panel-2)/0.92)]">
-                <code className="font-semibold text-[hsl(var(--pb-lavender))]">{d.label}</code>
-                <p className="mt-1 text-[hsl(var(--pb-muted))]">{d.desc}</p>
+              <a
+                href={d.href}
+                className="group flex items-start justify-between gap-3 border border-border bg-card p-4 text-sm transition hover:border-[hsl(var(--accent-kinetic))]"
+              >
+                <div className="min-w-0">
+                  <code className="font-mono text-[0.78rem] font-semibold text-foreground">{d.label}</code>
+                  <p className="mt-1 text-muted-foreground">{d.desc}</p>
+                </div>
+                <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground transition group-hover:text-[hsl(var(--accent-kinetic))]" />
               </a>
             </li>
           ))}
@@ -259,15 +338,19 @@ curl -X POST https://mcp.photobrief.ai/x402/pay \\
       {/* FAQ */}
       <MarketingSection id="faq" aria-labelledby="faq-heading" width="narrow">
         <div className="text-center">
-          <span className="pb-eyebrow">FAQ</span>
-          <h2 id="faq-heading" className="pb-section-title mt-4 text-white">Quotable answers</h2>
-          <p className="pb-copy mt-4 text-sm">Same source as <NavLink to="/help" className="text-[hsl(var(--pb-lavender))] hover:underline">/help</NavLink>.</p>
+          <Eyebrow code="99">FAQ</Eyebrow>
+          <h2 id="faq-heading" className="mt-5 text-[clamp(2rem,4vw,3rem)] font-semibold tracking-tight text-foreground">
+            Quotable answers
+          </h2>
+          <p className="mt-4 text-sm text-muted-foreground">
+            Same source as <NavLink to="/help" className="text-[hsl(var(--accent-kinetic))] hover:underline">/help</NavLink>.
+          </p>
         </div>
-        <Accordion type="single" collapsible className="mt-8 pb-command-panel rounded-2xl">
+        <Accordion type="single" collapsible className="mt-8 border border-border bg-card px-4 sm:px-6">
           {faqItems.map((f) => (
-            <AccordionItem key={f.id} value={f.id} className="border-white/10 px-4">
-              <AccordionTrigger className="text-left text-sm font-medium text-white/90">{f.q}</AccordionTrigger>
-              <AccordionContent className="text-sm leading-relaxed text-[hsl(var(--pb-muted))]">{f.a}</AccordionContent>
+            <AccordionItem key={f.id} value={f.id} className="border-border">
+              <AccordionTrigger className="text-left text-foreground">{f.q}</AccordionTrigger>
+              <AccordionContent className="text-muted-foreground">{f.a}</AccordionContent>
             </AccordionItem>
           ))}
         </Accordion>

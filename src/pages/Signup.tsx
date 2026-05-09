@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
 import { Navigate, NavLink, useNavigate, useSearchParams } from "react-router-dom";
-import { AlertTriangle, CheckCircle2, Loader2 } from "lucide-react";
+import { AlertTriangle, Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { GlassPanel } from "@/components/ui/glass-panel";
-import { BrandMark } from "@/components/layout/BrandMark";
+import { EditorialAuthShell } from "@/components/editorial/EditorialAuthShell";
 import { SEOHead } from "@/components/seo/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
@@ -39,6 +37,17 @@ const reasonCopy: Record<string, { title: string; body: string }> = {
     body: "If that wasn't you, please contact support. Otherwise, sign in below.",
   },
 };
+
+const fieldLabelCls =
+  "block font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground";
+const fieldHintCls =
+  "mt-1 font-mono text-[0.65rem] uppercase tracking-[0.16em] text-muted-foreground";
+const inputCls =
+  "mt-2 h-12 rounded-none border border-border bg-background px-3 text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--ring))]";
+const primaryBtn =
+  "inline-flex h-12 w-full items-center justify-center gap-2 bg-[hsl(var(--accent-kinetic))] px-5 font-[Geist,Inter,system-ui,sans-serif] text-[0.78rem] font-semibold uppercase tracking-[0.14em] text-[hsl(var(--primary-foreground))] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--ring))]";
+const outlineBtn =
+  "inline-flex h-12 w-full items-center justify-center gap-2 border border-border bg-background px-5 font-[Geist,Inter,system-ui,sans-serif] text-[0.78rem] font-semibold uppercase tracking-[0.14em] text-foreground transition hover:bg-foreground hover:text-background";
 
 export default function SignupPage() {
   const [params] = useSearchParams();
@@ -129,7 +138,6 @@ export default function SignupPage() {
         },
       });
       if (error) throw error;
-      // Mark invite accepted (works whether or not email confirm is required).
       await finalizeAcceptance();
       trackEvent("signup_completed", { method: "email" });
       toast({
@@ -150,7 +158,6 @@ export default function SignupPage() {
 
   async function handleOAuth(provider: "google" | "apple") {
     if (state.kind !== "valid" || !token) return;
-    // Stash the token so we can finalize acceptance after the OAuth round-trip.
     sessionStorage.setItem("pendingBetaInviteToken", token);
     sessionStorage.setItem("pendingBetaInviteEmail", state.email);
     setSubmitting(true);
@@ -171,144 +178,128 @@ export default function SignupPage() {
     }
   }
 
-  return (
-    <div className="relative isolate overflow-hidden">
-      <SEOHead
-        title="Create your PhotoBrief account"
-        description="Accept your beta invite and create your PhotoBrief workspace."
-        canonicalPath="/signup"
-      />
-      <div className="pointer-events-none absolute inset-0 -z-10 bg-ambient-mesh" aria-hidden />
-      <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[60vh] bg-ambient-sky" aria-hidden />
+  const seo = (
+    <SEOHead
+      title="Create your PhotoBrief account"
+      description="Accept your beta invite and create your PhotoBrief workspace."
+      canonicalPath="/signup"
+    />
+  );
 
-      <div className="mx-auto flex w-full max-w-md flex-col px-4 py-16">
-        <div className="mb-6 flex justify-center animate-brand-entrance">
-          <BrandMark variant="stacked" tone="dark" size={96} eager />
+  if (state.kind === "loading") {
+    return (
+      <>
+        {seo}
+        <EditorialAuthShell numeral="00" eyebrow="Verifying invite" title="Checking your invite…">
+          <div className="flex items-center gap-3 text-sm text-muted-foreground">
+            <Loader2 className="h-4 w-4 animate-spin text-[hsl(var(--accent-kinetic))]" />
+            One moment while we verify the link.
+          </div>
+        </EditorialAuthShell>
+      </>
+    );
+  }
+
+  if (state.kind === "invalid") {
+    const copy = reasonCopy[state.reason] ?? {
+      title: "We couldn't verify that invite",
+      body: "Please double-check the link, or apply for beta access below.",
+    };
+    return (
+      <>
+        {seo}
+        <EditorialAuthShell numeral="ER" eyebrow="Invite not accepted" title={copy.title} description={copy.body}>
+          <span className="mb-6 flex h-12 w-12 items-center justify-center border border-[hsl(var(--accent-kinetic))] text-[hsl(var(--accent-kinetic))]">
+            <AlertTriangle className="h-5 w-5" />
+          </span>
+          <div className="flex flex-col gap-2.5">
+            <NavLink to="/#apply" className={primaryBtn}>Apply for beta</NavLink>
+            <NavLink to="/auth" className={outlineBtn}>I already have an account — sign in</NavLink>
+          </div>
+        </EditorialAuthShell>
+      </>
+    );
+  }
+
+  return (
+    <>
+      {seo}
+      <EditorialAuthShell
+        numeral="01"
+        eyebrow="Invite verified"
+        title="Create your workspace"
+        description={
+          <>
+            Setting up an account for{" "}
+            <span className="font-medium text-foreground">{state.email}</span>.
+          </>
+        }
+      >
+        <form onSubmit={handleEmailSignup} className="grid gap-5">
+          <div>
+            <label htmlFor="email" className={fieldLabelCls}>Email</label>
+            <Input id="email" value={state.email} readOnly className={`${inputCls} bg-muted/40`} />
+            <p className={fieldHintCls}>Locked to your invite</p>
+          </div>
+          <div>
+            <label htmlFor="name" className={fieldLabelCls}>Your name</label>
+            <Input
+              id="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              autoComplete="name"
+              required
+              className={inputCls}
+            />
+          </div>
+          <div>
+            <label htmlFor="password" className={fieldLabelCls}>Password</label>
+            <Input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="new-password"
+              minLength={8}
+              required
+              className={inputCls}
+            />
+            <p className={fieldHintCls}>At least 8 characters</p>
+          </div>
+          <TurnstileWidget
+            onVerify={(t) => setTurnstileToken(t)}
+            onExpire={() => setTurnstileToken(null)}
+            onError={() => setTurnstileToken(null)}
+            action="invite-signup"
+            className="flex justify-center"
+          />
+          <button type="submit" disabled={submitting} className={primaryBtn}>
+            {submitting ? "Creating account…" : "Create account"}
+          </button>
+        </form>
+
+        <div className="my-6 flex items-center gap-3 font-mono text-[0.65rem] uppercase tracking-[0.18em] text-muted-foreground">
+          <span className="h-px flex-1 bg-border" />
+          or continue with
+          <span className="h-px flex-1 bg-border" />
         </div>
 
-        {state.kind === "loading" && (
-          <GlassPanel variant="modal" elevation="lg" className="p-8 text-center">
-            <Loader2 className="mx-auto h-6 w-6 animate-spin text-muted-foreground" />
-            <p className="mt-3 text-sm text-muted-foreground">Checking your invite…</p>
-          </GlassPanel>
-        )}
+        <div className="grid gap-2.5">
+          <button type="button" onClick={() => handleOAuth("google")} disabled={submitting} className={outlineBtn}>
+            Continue with Google
+          </button>
+          <button type="button" onClick={() => handleOAuth("apple")} disabled={submitting} className={outlineBtn}>
+            Continue with Apple
+          </button>
+        </div>
 
-        {state.kind === "invalid" && (
-          <GlassPanel variant="modal" elevation="lg" className="p-8 text-center">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10 text-destructive">
-              <AlertTriangle className="h-6 w-6" />
-            </div>
-            <h1 className="mt-4 text-xl font-semibold">
-              {reasonCopy[state.reason]?.title ?? "We couldn't verify that invite"}
-            </h1>
-            <p className="mt-2 text-sm text-muted-foreground">
-              {reasonCopy[state.reason]?.body ??
-                "Please double-check the link, or apply for beta access below."}
-            </p>
-            <div className="mt-6 flex flex-col gap-2">
-              <Button asChild>
-                <NavLink to="/#apply">Apply for beta</NavLink>
-              </Button>
-              <Button asChild variant="ghost">
-                <NavLink to="/auth">I already have an account — sign in</NavLink>
-              </Button>
-            </div>
-          </GlassPanel>
-        )}
-
-        {state.kind === "valid" && (
-          <GlassPanel variant="modal" elevation="lg" className="p-7">
-            <div className="flex items-center gap-2 text-sm text-primary">
-              <CheckCircle2 className="h-4 w-4" />
-              You're invited to the beta
-            </div>
-            <h1 className="mt-2 text-2xl font-semibold tracking-tight">
-              Create your workspace
-            </h1>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Setting up an account for{" "}
-              <span className="font-medium text-foreground">{state.email}</span>.
-            </p>
-
-            <form onSubmit={handleEmailSignup} className="mt-6 grid gap-4">
-              <div>
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" value={state.email} readOnly className="mt-1.5 bg-muted/40" />
-                <p className="mt-1 text-xs text-muted-foreground">
-                  Your invite is locked to this email.
-                </p>
-              </div>
-              <div>
-                <Label htmlFor="name">Your name</Label>
-                <Input
-                  id="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  autoComplete="name"
-                  className="mt-1.5"
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  autoComplete="new-password"
-                  minLength={8}
-                  className="mt-1.5"
-                  required
-                />
-                <p className="mt-1 text-xs text-muted-foreground">At least 8 characters.</p>
-              </div>
-              <TurnstileWidget
-                onVerify={(t) => setTurnstileToken(t)}
-                onExpire={() => setTurnstileToken(null)}
-                onError={() => setTurnstileToken(null)}
-                action="invite-signup"
-                className="flex justify-center"
-              />
-              <Button type="submit" disabled={submitting} size="lg">
-                {submitting ? "Creating account…" : "Create account"}
-              </Button>
-            </form>
-
-            <div className="my-5 flex items-center gap-3 text-xs text-muted-foreground">
-              <span className="h-px flex-1 bg-border" />
-              or continue with
-              <span className="h-px flex-1 bg-border" />
-            </div>
-
-            <div className="grid gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => handleOAuth("google")}
-                disabled={submitting}
-              >
-                Continue with Google
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => handleOAuth("apple")}
-                disabled={submitting}
-              >
-                Continue with Apple
-              </Button>
-            </div>
-
-            <p className="mt-6 text-center text-xs text-muted-foreground">
-              Already have an account?{" "}
-              <NavLink to="/auth" className="font-medium text-primary hover:underline">
-                Sign in
-              </NavLink>
-            </p>
-          </GlassPanel>
-        )}
-      </div>
-    </div>
+        <p className="mt-6 text-center font-mono text-[0.7rem] uppercase tracking-[0.16em] text-muted-foreground">
+          Already have an account?{" "}
+          <NavLink to="/auth" className="text-[hsl(var(--accent-kinetic))] hover:underline">
+            Sign in
+          </NavLink>
+        </p>
+      </EditorialAuthShell>
+    </>
   );
 }
