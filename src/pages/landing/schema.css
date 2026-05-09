@@ -17,8 +17,12 @@
     background: hsl(var(--muted));
   }
   .ls-section--dark {
-    background: hsl(var(--pb-night, var(--foreground)));
-    color: hsl(var(--background));
+    background:
+      radial-gradient(60% 50% at 80% 0%, hsl(var(--pb-amber, 33 88% 55%) / 0.18), transparent 70%),
+      radial-gradient(45% 40% at 8% 100%, hsl(var(--pb-lavender, 33 89% 69%) / 0.14), transparent 72%),
+      hsl(var(--pb-tier-2, 220 28% 86%));
+    color: hsl(var(--foreground));
+    border-block: 1px solid hsl(var(--pb-paper-edge, 220 24% 78%) / 0.6);
   }
 
   /* ── Containers ─────────────────────────────────────────── */
