@@ -253,88 +253,88 @@ function BusinessIdleScreen({
   const showProgress = phase === "CAPTURING" || phase === "CUSTOMER_REVIEW" || phase === "QUESTIONS";
 
   return (
-    <div className="flex min-h-[420px] flex-col">
+    <div className="flex min-h-[420px] flex-col text-[#F4F1EA]">
       {/* ClearPath dashboard header */}
       <div className="mb-4 mt-1">
         <div className="flex items-center gap-2">
           <div
-            className="flex h-9 w-9 items-center justify-center rounded-xl"
-            style={{ backgroundColor: "rgba(13,148,136,0.15)" }}
+            className="flex h-9 w-9 items-center justify-center border border-[#F4F1EA]/15"
+            style={{ backgroundColor: "rgba(13,148,136,0.12)" }}
           >
-            <Truck className="h-4.5 w-4.5" style={{ color: BRAND.color }} />
+            <Truck className="h-4 w-4" style={{ color: BRAND.color }} />
           </div>
           <div>
-            <p className="text-[13px] font-bold text-white/80">{BRAND.short}</p>
-            <p className="text-[9px] text-white/35">{BRAND.tagline}</p>
+            <p className="text-[13px] font-bold text-[#F4F1EA]/85">{BRAND.short}</p>
+            <p className="font-mono text-[9px] uppercase tracking-[0.22em] text-[#F4F1EA]/35">{BRAND.tagline}</p>
           </div>
         </div>
       </div>
 
       {/* Requests section */}
-      <div className="rounded-xl bg-white/[0.04] p-3">
-        <p className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.14em] text-white/35">
+      <div className="border border-[#F4F1EA]/10 p-3">
+        <p className="flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-[#F4F1EA]/45">
           <LayoutList className="h-3 w-3" /> Recent requests
         </p>
 
         {!showNotif ? (
           <div className="mt-4 flex flex-col items-center py-6 text-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/[0.04]">
-              <ClipboardList className="h-5 w-5 text-white/15" />
+            <div className="flex h-12 w-12 items-center justify-center border border-[#F4F1EA]/15">
+              <ClipboardList className="h-5 w-5 text-[#F4F1EA]/25" />
             </div>
-            <p className="mt-2 text-[11px] text-white/25">No new requests</p>
-            <p className="mt-0.5 text-[9px] text-white/15">
+            <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.2em] text-[#F4F1EA]/35">No new requests</p>
+            <p className="mt-0.5 text-[9px] text-[#F4F1EA]/25">
               Requests from your website will appear here
             </p>
           </div>
         ) : (
           <div className="mt-2 space-y-2">
             {/* New lead notification */}
-            <div className="rounded-xl bg-white/[0.06] p-3 ring-1 ring-white/[0.06]">
+            <div className="border border-[#F4F1EA]/15 p-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="relative">
-                    <Bell className="h-3.5 w-3.5 text-white/40" />
-                    <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-emerald-400" />
+                    <Bell className="h-3.5 w-3.5 text-[#F4F1EA]/55" />
+                    <span className="absolute -right-0.5 -top-0.5 h-2 w-2 bg-[#F2A33A]" />
                   </div>
-                  <span className="text-[11px] font-semibold text-white/70">
+                  <span className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-[#F4F1EA]/75">
                     New lead
                   </span>
                 </div>
-                <span className="text-[9px] text-white/30">Just now</span>
+                <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-[#F4F1EA]/35">Just now</span>
               </div>
               <div className="mt-2 space-y-1">
-                <div className="flex items-center gap-1.5 text-[10px] text-white/45">
+                <div className="flex items-center gap-1.5 text-[10px] text-[#F4F1EA]/55">
                   <User className="h-2.5 w-2.5" /> Sarah Johnson
                 </div>
-                <div className="flex items-center gap-1.5 text-[10px] text-white/45">
+                <div className="flex items-center gap-1.5 text-[10px] text-[#F4F1EA]/55">
                   <Package className="h-2.5 w-2.5" /> Garage cleanout
                 </div>
-                <div className="flex items-center gap-1.5 text-[10px] text-white/45">
+                <div className="flex items-center gap-1.5 text-[10px] text-[#F4F1EA]/55">
                   <Globe className="h-2.5 w-2.5" /> Website intake
                 </div>
               </div>
 
               {/* Progress indicator */}
               {showProgress && (
-                <div className="mt-3 flex items-center gap-2 rounded-lg bg-white/[0.04] px-2.5 py-2">
+                <div className="mt-3 flex items-center gap-2 border border-[#F2A33A]/40 px-2.5 py-2">
                   <span className="relative flex h-2 w-2">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75" />
-                    <span className="relative inline-flex h-2 w-2 rounded-full bg-amber-400" />
+                    <span className="absolute inline-flex h-full w-full animate-ping bg-[#F2A33A] opacity-75" />
+                    <span className="relative inline-flex h-2 w-2 bg-[#F2A33A]" />
                   </span>
-                  <span className="text-[10px] font-semibold text-amber-400/80">
+                  <span className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-[#F2A33A]">
                     {phase === "QUESTIONS"
                       ? "Answering questions…"
                       : phase === "CUSTOMER_REVIEW"
                         ? "Reviewing photos…"
-                        : `Capturing photos… ${capturedCount}/${photos.length}`}
+                        : `Capturing… ${capturedCount}/${photos.length}`}
                   </span>
                 </div>
               )}
 
               {phase === "ROUTING" && (
-                <div className="mt-3 flex items-center gap-2 rounded-lg bg-white/[0.04] px-2.5 py-2">
-                  <Loader2 className="h-3 w-3 animate-spin text-white/30" />
-                  <span className="text-[10px] text-white/40">
+                <div className="mt-3 flex items-center gap-2 border border-[#F4F1EA]/15 px-2.5 py-2">
+                  <Loader2 className="h-3 w-3 animate-spin text-[#F4F1EA]/55" />
+                  <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#F4F1EA]/55">
                     Routing to template…
                   </span>
                 </div>
@@ -345,21 +345,21 @@ function BusinessIdleScreen({
       </div>
 
       {/* No action needed hint */}
-      <div className="mt-3 rounded-xl bg-white/[0.03] p-3 text-center">
-        <p className="text-[10px] text-white/20">
+      <div className="mt-3 border border-[#F4F1EA]/10 p-3 text-center">
+        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#F4F1EA]/35">
           {showNotif
-            ? "No action needed — the customer is completing their brief."
-            : "Your website intake is live and waiting for leads."}
+            ? "No action needed — customer is completing their brief"
+            : "Website intake live · awaiting leads"}
         </p>
       </div>
 
       {/* Website intake status */}
-      <div className="mt-3 flex items-center justify-between rounded-xl bg-white/[0.04] px-3 py-2.5">
-        <span className="flex items-center gap-2 text-[10px] text-white/35">
+      <div className="mt-3 flex items-center justify-between border border-[#F4F1EA]/10 px-3 py-2.5">
+        <span className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-[#F4F1EA]/55">
           <Globe className="h-3 w-3" /> Website intake
         </span>
-        <span className="flex items-center gap-1 rounded-full bg-emerald-500/15 px-2 py-0.5 text-[9px] font-bold text-emerald-400">
-          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+        <span className="flex items-center gap-1 border border-[#F2A33A]/50 px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.22em] text-[#F2A33A]">
+          <span className="h-1.5 w-1.5 bg-[#F2A33A]" />
           Active
         </span>
       </div>
@@ -370,40 +370,40 @@ function BusinessIdleScreen({
 /** Business phone — completed brief (phase COMPLETE) */
 function BriefCompleteScreen() {
   return (
-    <>
+    <div className="text-[#F4F1EA]">
       <div className="mb-3 mt-1 flex items-center justify-between">
         <div>
-          <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-white/35">
+          <span className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-[#F4F1EA]/45">
             {BRAND.short}
           </span>
-          <h3 className="mt-0.5 text-[15px] font-bold tracking-tight text-white/90">
+          <h3 className="mt-0.5 text-[15px] font-bold tracking-tight text-[#F4F1EA]/90">
             Brief complete
           </h3>
         </div>
-        <span className="rounded-full bg-emerald-500/15 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-400">
+        <span className="border border-[#F2A33A]/60 px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-[#F2A33A]">
           Ready
         </span>
       </div>
 
       {/* Customer info */}
-      <div className="mb-2 rounded-xl bg-white/[0.04] p-2.5">
+      <div className="mb-2 border border-[#F4F1EA]/10 p-2.5">
         <div className="flex items-center gap-2">
-          <User className="h-3 w-3 text-white/30" />
-          <span className="text-[11px] font-semibold text-white/60">Sarah Johnson</span>
-          <span className="ml-auto text-[9px] text-white/25">via website</span>
+          <User className="h-3 w-3 text-[#F4F1EA]/45" />
+          <span className="text-[11px] font-semibold text-[#F4F1EA]/70">Sarah Johnson</span>
+          <span className="ml-auto font-mono text-[9px] uppercase tracking-[0.2em] text-[#F4F1EA]/35">via website</span>
         </div>
       </div>
 
       {/* Customer answers */}
-      <div className="mb-2 rounded-xl bg-white/[0.04] p-3">
-        <p className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/35">
+      <div className="mb-2 border border-[#F4F1EA]/10 p-3">
+        <p className="flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-[#F4F1EA]/45">
           <MessageSquareText className="h-3 w-3" /> Answers
         </p>
         <div className="mt-2 space-y-1.5">
           {CUSTOMER_ANSWERS.map((qa) => (
-            <div key={qa.q} className="flex items-start justify-between gap-2 rounded-lg bg-white/[0.03] px-2.5 py-1.5">
-              <span className="text-[10px] text-white/40">{qa.q}</span>
-              <span className="text-[10px] font-semibold text-white/65 text-right shrink-0">{qa.a}</span>
+            <div key={qa.q} className="flex items-start justify-between gap-2 border border-[#F4F1EA]/8 px-2.5 py-1.5">
+              <span className="text-[10px] text-[#F4F1EA]/45">{qa.q}</span>
+              <span className="text-[10px] font-semibold text-[#F4F1EA]/75 text-right shrink-0">{qa.a}</span>
             </div>
           ))}
         </div>
@@ -414,7 +414,7 @@ function BriefCompleteScreen() {
         {photos.map((photo) => (
           <div
             key={photo.id}
-            className="relative overflow-hidden rounded-xl ring-1 ring-white/[0.08]"
+            className="relative overflow-hidden border border-[#F4F1EA]/15"
           >
             <img
               src={photo.src}
@@ -422,12 +422,11 @@ function BriefCompleteScreen() {
               className="h-[60px] w-full object-cover"
               width={300} height={300} loading="lazy" sizes="150px"
             />
-            <div className="flex items-center justify-between bg-black/50 px-2 py-1">
-              <span className="text-[9px] font-semibold text-white/70">
+            <div className="flex items-center justify-between bg-black/55 px-2 py-1">
+              <span className="font-mono text-[9px] font-semibold uppercase tracking-[0.18em] text-[#F4F1EA]/75">
                 {photo.label}
               </span>
-              <span className="flex items-center gap-0.5 text-[8px] font-bold text-emerald-400">
-                <ShieldCheck className="h-2 w-2" />
+              <span className="font-mono text-[9px] font-bold uppercase tracking-[0.22em] text-[#F4F1EA]/70">
                 OK
               </span>
             </div>
@@ -436,23 +435,23 @@ function BriefCompleteScreen() {
       </div>
 
       {/* AI Summary */}
-      <div className="mt-2 rounded-xl bg-white/[0.04] p-3">
-        <p className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white/35">
+      <div className="mt-2 border border-[#F4F1EA]/10 p-3">
+        <p className="flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-[#F4F1EA]/45">
           <ScanLine className="h-3 w-3" /> AI summary
         </p>
-        <p className="mt-2 text-[11px] leading-[1.6] text-white/55">
+        <p className="mt-2 text-[11px] leading-[1.6] text-[#F4F1EA]/65">
           Garage cleanout — furniture, appliances, and boxes. Medium volume, ground-level access. All photos verified. Appliance may need separate handling.
         </p>
       </div>
 
       <button
         type="button"
-        className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500/20 px-4 py-2.5 text-[12px] font-bold text-emerald-400 transition-all"
+        className="mt-2 flex w-full items-center justify-center gap-2 border border-[#F2A33A] bg-[#F2A33A] px-4 py-2.5 font-mono text-[11px] font-bold uppercase tracking-[0.24em] text-[#0E0E0C]"
         disabled
       >
         <CheckCircle2 className="h-3.5 w-3.5" /> Quote now
       </button>
-    </>
+    </div>
   );
 }
 
