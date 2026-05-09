@@ -170,7 +170,7 @@ export function MarketingLayout() {
         <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-8 text-sm text-[hsl(var(--pb-ink-soft))] sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
           <BrandMark
             variant="horizontal"
-            tone="light"
+            tone={isLanding ? "dark" : "light"}
             size={28}
             className="opacity-90"
           />
