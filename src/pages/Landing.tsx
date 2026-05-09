@@ -120,7 +120,8 @@ export default function LandingPage() {
     <>
       <PageMeta
         title="PhotoBrief — Guide · Capture · Close"
-        description="The Reverse-Form Method. Stop chasing customers for missing photos. Tell them exactly what to send, and a quote-ready lead packet lands in your inbox on the first try."
+        description="The Reverse-Form Method. Stop chasing customers for missing photos. Tell them exactly what to send, and a quote-ready packet lands in your inbox on the first try."
+        canonicalPath="/"
         jsonLd={[SOFTWARE_APP_JSONLD, heroJsonLd, faqJsonLd]}
       />
 
