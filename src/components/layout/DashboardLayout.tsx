@@ -7,7 +7,7 @@ import { AppSidebar } from "@/components/layout/AppSidebar";
 import { NotificationBell } from "@/components/layout/NotificationBell";
 import { MobileTabBar } from "@/components/layout/MobileTabBar";
 import { BrandMark } from "@/components/layout/BrandMark";
-import { Button } from "@/components/ui/button";
+
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -46,7 +46,7 @@ export function DashboardLayout() {
           </div>
 
           <div className="relative flex min-w-0 flex-1 flex-col">
-            <header className="material-chrome sticky top-0 z-30 flex h-16 items-center gap-3 rounded-none border-0 px-3 pt-safe hairline-apple-b sm:px-5">
+            <header className="touch-blur-reduce sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-border bg-card px-3 pt-safe sm:px-5">
               <div className="hidden lg:block">
                 <SidebarTrigger />
               </div>
