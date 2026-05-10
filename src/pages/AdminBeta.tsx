@@ -35,6 +35,7 @@ import {
 } from "@/components/ui/sheet";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { Section, Container, Stack } from "@/design-system/schema";
 import { GlassPanel } from "@/components/ui/glass-panel";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
@@ -388,7 +389,7 @@ export default function AdminBetaPage() {
 
   // ------ Render ------
   return (
-    <div className="container max-w-7xl py-8">
+    <Section density="page"><Container><Stack>
       <PageHeader
         eyebrow="Platform admin"
         title="Beta program"
@@ -768,7 +769,7 @@ export default function AdminBetaPage() {
           )}
         </SheetContent>
       </Sheet>
-    </div>
+    </Stack></Container></Section>
   );
 }
 
