@@ -23,6 +23,7 @@ import { EmptyState } from "@/components/shared/EmptyState";
 import noGuidesIllustration from "@/assets/empty-states/no-guides.png";
 import { GeneratedStepEditor } from "@/features/requests/components/GeneratedStepEditor";
 import { GeneratedQuestionEditor } from "@/features/requests/components/GeneratedQuestionEditor";
+import { Section, Container, Stack } from "@/design-system/schema";
 
 import { useGuideAsync } from "@/hooks/useGuides";
 import { useCurrentWorkspace } from "@/hooks/useCurrentWorkspace";
@@ -124,8 +125,11 @@ export default function GuideDetailPage() {
   const view = editing && draft ? draft : fromGuide(guide);
 
   return (
-    <div className="space-y-6 pb-12">
-      <PageHeader
+    <Section density="page">
+      <Container>
+        <Stack>
+          <div className="pb-12 space-y-6">
+            <PageHeader
         backTo={{ label: "Templates", href: "/guides" }}
         title={view.name}
         description={view.description || `${view.steps.length} photo prompts · ${view.questions.length} questions`}
@@ -288,6 +292,9 @@ export default function GuideDetailPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+          </div>
+        </Stack>
+      </Container>
+    </Section>
   );
 }

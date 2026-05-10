@@ -25,7 +25,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { Surface, WizardLayout } from "@/components/layout/primitives";
+import { Section, Container, Card, Wizard } from "@/design-system/schema";
 import { useCurrentWorkspace } from "@/hooks/useCurrentWorkspace";
 import { useWorkspaceGuides } from "@/hooks/useGuides";
 import {
@@ -306,7 +306,7 @@ export default function WebsiteIntakePage() {
   }
 
   const intro = (
-    <Surface variant="panel" radius="lg" padding="md" className="border border-border bg-card">
+    <Card variant="muted" padding="md">
       <p className="inline-flex items-baseline gap-2 font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
         <span className="inline-block h-px w-8 -translate-y-[0.25em] bg-[hsl(var(--accent-kinetic))]" />
         <span className="text-[hsl(var(--accent-kinetic))]">[ WI ]</span>
@@ -334,7 +334,7 @@ export default function WebsiteIntakePage() {
           </span>
         </div>
       </div>
-    </Surface>
+    </Card>
   );
 
   const header = (
@@ -368,20 +368,22 @@ export default function WebsiteIntakePage() {
   );
 
   return (
-    <div className="mx-auto max-w-6xl pb-10">
-      <WizardLayout
-        steps={setupSteps}
-        currentIndex={activeStepIndex}
-        onStepChange={setActiveStepIndex}
-        intro={intro}
-        railTitle="One path. No scavenger hunt."
-        railDescription="Complete each step in order. Hosted link is fastest; webhook is only for keeping an existing form."
-        header={header}
-        footer={footer}
-      >
-        {renderStepContent()}
-      </WizardLayout>
-    </div>
+    <Section density="page">
+      <Container>
+        <Wizard
+          steps={setupSteps}
+          currentIndex={activeStepIndex}
+          onStepChange={setActiveStepIndex}
+          intro={intro}
+          railTitle="One path. No scavenger hunt."
+          railDescription="Complete each step in order. Hosted link is fastest; webhook is only for keeping an existing form."
+          header={header}
+          footer={footer}
+        >
+          {renderStepContent()}
+        </Wizard>
+      </Container>
+    </Section>
   );
 
   function renderStepContent(): ReactNode {
