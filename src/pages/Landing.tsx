@@ -329,7 +329,7 @@ function FinalCta({ isFull }: { isFull: boolean }) {
                 : `${BETA_TOTAL_PARTNERS} seats. ${BETA_DURATION_DAYS} days. Founding pricing for the lifetime of your account.`}
             </Body>
           </RiseIn>
-          <CTAGroup>
+          <CTAGroup align="center">
             <CTA href="/beta" variant="primary" size="lg">
               {isFull ? "Join waitlist" : "Apply for the beta"} <ArrowRight className="h-4 w-4" />
             </CTA>
