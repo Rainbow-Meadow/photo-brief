@@ -238,7 +238,7 @@ function Hero() {
 
 function MarqueeBand() {
   return (
-    <div className="relative space-y-3 border-y border-border bg-card py-8">
+    <div className="relative space-y-4 border-y border-border bg-card py-8">
       <MarqueeRow duration={45} direction="left">
         <span className="ls-marquee-item">Guide</span>
         <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
@@ -260,7 +260,25 @@ function MarqueeBand() {
         <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
         <span className="ls-marquee-item">5+ follow-ups to close — most stop at 1</span>
         <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
+        <span className="ls-marquee-item">1 in 4 jobs lost to a missing photo</span>
+        <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
+        <span className="ls-marquee-item ls-marquee-item--ghost">$1,200 avg revisit cost when the brief is wrong</span>
+        <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
+        <span className="ls-marquee-item">Most quotes go out 2+ days late</span>
+        <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
         <span className="ls-marquee-item ls-marquee-item--accent">Reverse-Form Method™</span>
+        <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
+      </MarqueeRow>
+      <MarqueeRow duration={75} direction="left">
+        <span className="ls-marquee-item">63% of homeowners ghost after the first quote</span>
+        <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
+        <span className="ls-marquee-item ls-marquee-item--ghost">Only 12% of contractors send a recap after the visit</span>
+        <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
+        <span className="ls-marquee-item">Site visits add 45 min per lead — most are avoidable</span>
+        <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
+        <span className="ls-marquee-item ls-marquee-item--ghost">92% of buyers expect a reply same-day</span>
+        <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
+        <span className="ls-marquee-item ls-marquee-item--accent">1 packet · 1 inbox · 0 back-and-forth</span>
         <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
       </MarqueeRow>
     </div>
