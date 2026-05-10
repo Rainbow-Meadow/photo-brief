@@ -341,9 +341,10 @@ export default function BetaWelcomePage() {
         </Section>
 
         {/* CONCIERGE INTAKE FORM */}
-        <section id="setup" className="scroll-mt-8 px-4 pb-20 pt-12 sm:pt-16">
-          <div className="mx-auto max-w-xl">
-            <article className="border border-border bg-card p-5 sm:p-7 lg:p-9">
+        <Section id="setup" size="tight">
+          <Container width="reading">
+            <div className="mx-auto max-w-xl">
+            <Card variant="paper" padding="lg">
               <Eyebrow code="03">Concierge setup</Eyebrow>
               <h2 className="mt-5 text-[clamp(1.4rem,2.5vw,2rem)] font-semibold tracking-tight text-foreground">
                 Tell us about your business
