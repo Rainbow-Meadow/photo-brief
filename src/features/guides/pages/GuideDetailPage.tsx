@@ -292,6 +292,9 @@ export default function GuideDetailPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+          </div>
+        </Stack>
+      </Container>
+    </Section>
   );
 }
