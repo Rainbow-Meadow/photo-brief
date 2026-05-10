@@ -34,6 +34,7 @@ const BetaWelcomePage = lazy(() => import("@/pages/BetaWelcome"));
 const PrivacyPage = lazy(() => import("@/pages/Privacy"));
 const TermsPage = lazy(() => import("@/pages/Terms"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
+const DemoPage = lazy(() => import("@/pages/Demo"));
 const PublicRecipientPage = lazy(() => import("@/features/capture/pages/PublicRecipientPage"));
 const RecipientConfirmationPage = lazy(() => import("@/features/capture/pages/RecipientConfirmationPage"));
 const PublicIntakePage = lazy(() => import("@/features/intake/pages/PublicIntakePage"));
@@ -110,6 +111,7 @@ const App = () => (
             <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/unsubscribe" element={<UnsubscribePage />} />
             <Route path="/help" element={<BetaGuidePage />} />
+            <Route path="/demo" element={<DemoPage />} />
             
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/beta-invite/:token" element={<BetaInvitePage />} />
