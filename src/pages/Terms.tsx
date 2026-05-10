@@ -96,7 +96,7 @@ export default function TermsPage() {
         breadcrumbs={[{ name: "Home", path: "/" }, { name: "Terms of Service", path: "/terms" }]}
       />
 
-      <section className="pb-container-narrow pb-section">
+      <Section><Container width="narrow">
         <p className="inline-flex items-baseline gap-2 font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
           <span className="inline-block h-px w-8 -translate-y-[0.25em] bg-[hsl(var(--accent-kinetic))]" />
           <span className="text-[hsl(var(--accent-kinetic))]">[ 00 ]</span>
@@ -111,9 +111,9 @@ export default function TermsPage() {
         <p className="mt-4 font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground">
           Last updated: {updatedAt}
         </p>
-      </section>
+      </Container></Section>
 
-      <section className="pb-container-narrow pb-section">
+      <Section size="tight"><Container width="narrow">
         <div className="space-y-4">
           {sections.map((section, i) => (
             <article key={section.title} className="border border-border bg-card p-6 sm:p-8">
@@ -143,7 +143,7 @@ export default function TermsPage() {
             </p>
           </article>
         </div>
-      </section>
+      </Container></Section>
     </>
   );
 }
