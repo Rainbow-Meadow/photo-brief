@@ -189,17 +189,19 @@ export default function BetaWelcomePage() {
             <div className="mb-8 flex justify-center">
               <BrandMark variant="stacked" tone="dark" size={72} eager />
             </div>
-            <article className="border border-border bg-card p-7 text-center">
-              <Eyebrow code="OK">Founding Partner Beta</Eyebrow>
-              <span className="mx-auto mt-6 flex h-14 w-14 items-center justify-center border border-[hsl(var(--accent-kinetic))] text-[hsl(var(--accent-kinetic))]">
-                <CheckCircle2 className="h-7 w-7" />
-              </span>
-              <h1 className="mt-5 text-[clamp(1.6rem,3vw,2rem)] font-semibold leading-[1.05] tracking-[-0.022em] text-foreground">
-                We've got everything we need
-              </h1>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                Your concierge setup is in the queue. We'll configure your account and reach out via email or chat to walk you through everything — usually within 48 hours.
-              </p>
+            <Card variant="paper" padding="lg">
+              <div className="text-center">
+                <Eyebrow code="OK">Founding Partner Beta</Eyebrow>
+                <span className="mx-auto mt-6 flex h-14 w-14 items-center justify-center border border-[hsl(var(--accent-kinetic))] text-[hsl(var(--accent-kinetic))]">
+                  <CheckCircle2 className="h-7 w-7" />
+                </span>
+                <h1 className="mt-5 text-[clamp(1.6rem,3vw,2rem)] font-semibold leading-[1.05] tracking-[-0.022em] text-foreground">
+                  We've got everything we need
+                </h1>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                  Your concierge setup is in the queue. We'll configure your account and reach out via email or chat to walk you through everything — usually within 48 hours.
+                </p>
+              </div>
 
               <div className="mt-7 border-t border-border pt-6 text-left">
                 <p className={sectionLabelCls}>What happens now</p>
@@ -220,13 +222,13 @@ export default function BetaWelcomePage() {
                 </ol>
               </div>
 
-              <p className="mt-6 border-t border-border pt-5 font-mono text-[0.7rem] uppercase tracking-[0.18em] text-muted-foreground">
+              <p className="mt-6 border-t border-border pt-5 text-center font-mono text-[0.7rem] uppercase tracking-[0.18em] text-muted-foreground">
                 Questions?{" "}
                 <a href="mailto:hello@photobrief.ai" className="text-[hsl(var(--accent-kinetic))] hover:underline">
                   hello@photobrief.ai
                 </a>
               </p>
-            </article>
+            </Card>
           </div>
         </main>
       </>
