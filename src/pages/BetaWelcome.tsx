@@ -312,8 +312,8 @@ export default function BetaWelcomePage() {
         </Section>
 
         {/* TIMELINE */}
-        <section className="px-4 py-12 sm:py-16">
-          <div className="mx-auto max-w-2xl">
+        <Section size="tight">
+          <Container width="reading">
             <div className="text-center">
               <Eyebrow code="02">How it works</Eyebrow>
               <h2 className="mt-5 text-[clamp(1.6rem,3vw,2.25rem)] font-semibold tracking-tight text-foreground">
@@ -337,8 +337,8 @@ export default function BetaWelcomePage() {
                 </li>
               ))}
             </ol>
-          </div>
-        </section>
+          </Container>
+        </Section>
 
         {/* CONCIERGE INTAKE FORM */}
         <section id="setup" className="scroll-mt-8 px-4 pb-20 pt-12 sm:pt-16">
