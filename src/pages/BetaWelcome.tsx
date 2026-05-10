@@ -16,6 +16,7 @@ import {
 
 import { SEOHead } from "@/components/seo/SEOHead";
 import { BrandMark } from "@/components/layout/BrandMark";
+import { Section, Container, Card } from "@/design-system/schema";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
@@ -188,17 +189,19 @@ export default function BetaWelcomePage() {
             <div className="mb-8 flex justify-center">
               <BrandMark variant="stacked" tone="dark" size={72} eager />
             </div>
-            <article className="border border-border bg-card p-7 text-center">
-              <Eyebrow code="OK">Founding Partner Beta</Eyebrow>
-              <span className="mx-auto mt-6 flex h-14 w-14 items-center justify-center border border-[hsl(var(--accent-kinetic))] text-[hsl(var(--accent-kinetic))]">
-                <CheckCircle2 className="h-7 w-7" />
-              </span>
-              <h1 className="mt-5 text-[clamp(1.6rem,3vw,2rem)] font-semibold leading-[1.05] tracking-[-0.022em] text-foreground">
-                We've got everything we need
-              </h1>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                Your concierge setup is in the queue. We'll configure your account and reach out via email or chat to walk you through everything — usually within 48 hours.
-              </p>
+            <Card variant="paper" padding="lg">
+              <div className="text-center">
+                <Eyebrow code="OK">Founding Partner Beta</Eyebrow>
+                <span className="mx-auto mt-6 flex h-14 w-14 items-center justify-center border border-[hsl(var(--accent-kinetic))] text-[hsl(var(--accent-kinetic))]">
+                  <CheckCircle2 className="h-7 w-7" />
+                </span>
+                <h1 className="mt-5 text-[clamp(1.6rem,3vw,2rem)] font-semibold leading-[1.05] tracking-[-0.022em] text-foreground">
+                  We've got everything we need
+                </h1>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                  Your concierge setup is in the queue. We'll configure your account and reach out via email or chat to walk you through everything — usually within 48 hours.
+                </p>
+              </div>
 
               <div className="mt-7 border-t border-border pt-6 text-left">
                 <p className={sectionLabelCls}>What happens now</p>
@@ -219,13 +222,13 @@ export default function BetaWelcomePage() {
                 </ol>
               </div>
 
-              <p className="mt-6 border-t border-border pt-5 font-mono text-[0.7rem] uppercase tracking-[0.18em] text-muted-foreground">
+              <p className="mt-6 border-t border-border pt-5 text-center font-mono text-[0.7rem] uppercase tracking-[0.18em] text-muted-foreground">
                 Questions?{" "}
                 <a href="mailto:hello@photobrief.ai" className="text-[hsl(var(--accent-kinetic))] hover:underline">
                   hello@photobrief.ai
                 </a>
               </p>
-            </article>
+            </Card>
           </div>
         </main>
       </>
@@ -245,8 +248,9 @@ export default function BetaWelcomePage() {
         <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[60vh] bg-ambient-sky" aria-hidden />
 
         {/* HERO */}
-        <section className="px-4 pb-10 pt-12 sm:pt-20">
-          <div className="mx-auto max-w-2xl text-center">
+        <Section size="tight">
+          <Container width="reading">
+            <div className="text-center">
             <div className="mb-6 flex justify-center">
               <BrandMark variant="stacked" tone="dark" size={72} eager />
             </div>
@@ -276,12 +280,13 @@ export default function BetaWelcomePage() {
             >
               Let's set up your account <ArrowRight className="h-4 w-4" />
             </button>
-          </div>
-        </section>
+            </div>
+          </Container>
+        </Section>
 
         {/* BENEFITS */}
-        <section className="px-4 py-12 sm:py-16">
-          <div className="mx-auto max-w-2xl">
+        <Section size="tight">
+          <Container width="reading">
             <div className="text-center">
               <Eyebrow code="01">What's included</Eyebrow>
               <h2 className="mt-5 text-[clamp(1.6rem,3vw,2.25rem)] font-semibold tracking-tight text-foreground">
@@ -290,7 +295,7 @@ export default function BetaWelcomePage() {
             </div>
             <div className="mt-8 grid gap-3 sm:grid-cols-2">
               {benefits.map(({ icon: Icon, text }, i) => (
-                <div key={text} className="border border-border bg-card p-5">
+                <Card key={text} variant="paper" padding="md">
                   <div className="flex items-center justify-between">
                     <span className="font-mono text-[0.65rem] font-medium uppercase tracking-[0.18em] text-[hsl(var(--accent-kinetic))]">
                       [ {String(i + 1).padStart(2, "0")} ]
@@ -300,15 +305,15 @@ export default function BetaWelcomePage() {
                     </span>
                   </div>
                   <p className="mt-4 text-sm leading-snug text-foreground">{text}</p>
-                </div>
+                </Card>
               ))}
             </div>
-          </div>
-        </section>
+          </Container>
+        </Section>
 
         {/* TIMELINE */}
-        <section className="px-4 py-12 sm:py-16">
-          <div className="mx-auto max-w-2xl">
+        <Section size="tight">
+          <Container width="reading">
             <div className="text-center">
               <Eyebrow code="02">How it works</Eyebrow>
               <h2 className="mt-5 text-[clamp(1.6rem,3vw,2.25rem)] font-semibold tracking-tight text-foreground">
@@ -332,13 +337,14 @@ export default function BetaWelcomePage() {
                 </li>
               ))}
             </ol>
-          </div>
-        </section>
+          </Container>
+        </Section>
 
         {/* CONCIERGE INTAKE FORM */}
-        <section id="setup" className="scroll-mt-8 px-4 pb-20 pt-12 sm:pt-16">
-          <div className="mx-auto max-w-xl">
-            <article className="border border-border bg-card p-5 sm:p-7 lg:p-9">
+        <Section id="setup" size="tight">
+          <Container width="reading">
+            <div className="mx-auto max-w-xl">
+            <Card variant="paper" padding="lg">
               <Eyebrow code="03">Concierge setup</Eyebrow>
               <h2 className="mt-5 text-[clamp(1.4rem,2.5vw,2rem)] font-semibold tracking-tight text-foreground">
                 Tell us about your business
@@ -481,9 +487,10 @@ export default function BetaWelcomePage() {
                   </a>
                 </p>
               </form>
-            </article>
-          </div>
-        </section>
+            </Card>
+            </div>
+          </Container>
+        </Section>
       </main>
     </>
   );
