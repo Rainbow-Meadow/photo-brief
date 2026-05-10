@@ -504,6 +504,6 @@ export default function AdminInvitesPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </Stack></Container></Section>
   );
 }
