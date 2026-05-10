@@ -1,6 +1,7 @@
 import { Mail, ShieldCheck } from "lucide-react";
 
 import { PageMeta } from "@/hooks/seo/usePageMeta";
+import { Section, Container } from "@/design-system/schema";
 
 const updatedAt = "January 2026";
 
