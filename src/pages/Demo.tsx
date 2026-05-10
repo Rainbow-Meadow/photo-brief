@@ -48,7 +48,7 @@ export default function DemoPage() {
           <div className="space-y-3 text-center">
             <p className="ls-eyebrow">[ Live demo ]</p>
             <RiseIn>
-              <h1 className="ls-h1 mt-6">
+              <h1 className="ls-h2 mt-6">
                 See exactly what your customers
                 <br />would experience<span className="ls-accent-dot">.</span>
               </h1>
