@@ -1,0 +1,266 @@
+/**
+ * Landing schema — editorial Locomotive-inspired presentation layer,
+ * tuned for the service-trade audience: Geist sans for trust + clarity,
+ * Geist Mono retained only for technical captions (numerals, eyebrows).
+ */
+
+/* ── Sections ───────────────────────────────────────────── */
+.ls-section {
+  position: relative;
+  padding-block: clamp(3rem, 9vw, 9rem);
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+.ls-section--tight { padding-block: clamp(2rem, 4vw, 4rem); }
+.ls-section--alt {
+  background: hsl(var(--card));
+  border-block: 1px solid hsl(var(--border));
+}
+.ls-section--dark {
+  background:
+    radial-gradient(60% 50% at 90% 10%, hsl(var(--accent-kinetic) / 0.18), transparent 70%),
+    radial-gradient(45% 40% at 8% 100%, hsl(var(--accent-sage) / 0.10), transparent 72%),
+    hsl(60 8% 3%);
+  color: hsl(var(--foreground));
+  border-block: 1px solid hsl(var(--border));
+}
+
+/* ── Containers ─────────────────────────────────────────── */
+.ls-container {
+  width: min(100% - 2rem, 1320px);
+  margin-inline: auto;
+}
+.ls-container--narrow { width: min(100% - 2rem, 880px); margin-inline: auto; }
+@media (min-width: 640px) {
+  .ls-container { width: min(100% - 3rem, 1320px); }
+  .ls-container--narrow { width: min(100% - 3rem, 880px); }
+}
+
+/* ── Eyebrow — Geist Mono (numeric caption voice) ───────── */
+.ls-eyebrow {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  padding: 0;
+  font-family: "Geist Mono", ui-monospace, monospace;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  line-height: 1;
+  color: hsl(var(--muted-foreground));
+}
+.ls-eyebrow::before {
+  content: "";
+  width: 2.4rem;
+  height: 1px;
+  background: hsl(var(--accent-kinetic));
+  display: inline-block;
+  transform: translateY(-0.25em);
+}
+
+/* ── Headings — Geist Sans, engineered display voice ───── */
+.ls-h1, .ls-h2, .ls-h3 {
+  font-family: "Geist", "Inter", system-ui, sans-serif;
+  font-style: normal;
+  letter-spacing: -0.025em;
+  color: hsl(var(--foreground));
+  margin: 0;
+  font-feature-settings: "ss01", "cv11";
+}
+
+.ls-h1 {
+  font-size: clamp(2.75rem, 8.5vw, 7.25rem);
+  line-height: 0.96;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+.ls-h2 {
+  font-size: clamp(2rem, 5vw, 4rem);
+  line-height: 1.02;
+  font-weight: 700;
+  letter-spacing: -0.022em;
+}
+.ls-h3 {
+  font-size: clamp(1.35rem, 2.2vw, 1.85rem);
+  line-height: 1.18;
+  font-weight: 600;
+  letter-spacing: -0.018em;
+}
+
+.ls-subtitle {
+  font-family: "Geist", "Inter", system-ui, sans-serif;
+  font-size: clamp(1.05rem, 1.1vw + 0.85rem, 1.3rem);
+  line-height: 1.5;
+  color: hsl(var(--muted-foreground));
+  margin: 0;
+  max-width: 60ch;
+  font-weight: 400;
+}
+
+/* ── Body copy ──────────────────────────────────────────── */
+.ls-body, .ls-body-md { font-size: 0.95rem; line-height: 1.65; color: hsl(var(--muted-foreground)); margin: 0; }
+.ls-body-lg { font-size: 1.1rem; line-height: 1.6; color: hsl(var(--muted-foreground)); margin: 0; }
+.ls-body-sm { font-size: 0.825rem; line-height: 1.55; color: hsl(var(--muted-foreground)); margin: 0; }
+
+/* ── Cards (editorial plates) ───────────────────────────── */
+.ls-card {
+  position: relative;
+  border-radius: 0.25rem;
+  background: hsl(var(--card));
+  color: hsl(var(--card-foreground));
+  border: 1px solid hsl(var(--border));
+  padding: clamp(1.5rem, 2.5vw, 2.25rem);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition:
+    border-color 300ms var(--ease-locomotive, cubic-bezier(.215,.61,.355,1)),
+    transform 300ms var(--ease-locomotive, cubic-bezier(.215,.61,.355,1));
+}
+@media (hover: hover) {
+  .ls-card:hover {
+    border-color: hsl(var(--accent-kinetic) / 0.4);
+    transform: translateY(-1px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ls-card:hover { transform: none; }
+}
+.ls-card--elevated {
+  box-shadow: 0 30px 60px -30px hsl(60 8% 0% / 0.7);
+}
+.ls-card--dark {
+  background: hsl(60 8% 3%);
+  border-color: hsl(var(--border));
+  color: hsl(var(--foreground));
+}
+
+/* ── Grid — editorial 12-col bias ───────────────────────── */
+.ls-grid { display: grid; gap: 1.25rem; }
+.ls-grid--md { gap: 1.5rem; }
+.ls-grid--lg { gap: 2rem; }
+.ls-grid-1 { grid-template-columns: 1fr; }
+.ls-grid-2 { grid-template-columns: 1fr; }
+.ls-grid-3 { grid-template-columns: 1fr; }
+.ls-grid-4 { grid-template-columns: 1fr; }
+@media (min-width: 640px) {
+  .ls-grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ls-grid-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ls-grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 960px) {
+  .ls-grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .ls-grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+/* ── CTAs — uppercase tracked Geist sans (was mono) ─────── */
+.ls-cta-group { display: flex; flex-wrap: wrap; gap: 0.85rem; align-items: center; }
+
+.ls-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  border-radius: 0;
+  font-family: "Geist", "Inter", system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  line-height: 1;
+  transition: background 280ms var(--ease-locomotive, cubic-bezier(.215,.61,.355,1)),
+              color 280ms var(--ease-locomotive, cubic-bezier(.215,.61,.355,1)),
+              border-color 280ms var(--ease-locomotive, cubic-bezier(.215,.61,.355,1));
+  text-decoration: none;
+  cursor: pointer;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+}
+.ls-cta:focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: 3px; }
+
+.ls-cta--md { padding: 1rem 1.45rem; min-height: 48px; }
+.ls-cta--lg { padding: 1.35rem 1.95rem; font-size: 0.85rem; min-height: 60px; }
+
+.ls-cta-primary {
+  background: hsl(var(--accent-kinetic));
+  color: hsl(var(--primary-foreground));
+}
+.ls-cta-secondary {
+  background: transparent;
+  color: hsl(var(--foreground));
+  border-color: hsl(var(--foreground) / 0.3);
+}
+.ls-cta-quiet {
+  background: transparent;
+  color: hsl(var(--foreground));
+  padding-inline: 0.4rem;
+  min-height: 44px;
+  letter-spacing: 0.12em;
+}
+
+@media (hover: hover) {
+  .ls-cta-primary:hover   { background: hsl(var(--foreground)); color: hsl(var(--background)); }
+  .ls-cta-secondary:hover { background: hsl(var(--foreground)); color: hsl(var(--background)); border-color: hsl(var(--foreground)); }
+  .ls-cta-quiet:hover     { color: hsl(var(--accent-kinetic)); }
+}
+@media (hover: none) {
+  .ls-cta:active { opacity: 0.85; }
+}
+
+/* ── Editorial extras ──────────────────────────────────── */
+.ls-numeral {
+  font-family: "Geist Mono", ui-monospace, monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: hsl(var(--muted-foreground));
+  font-variant-numeric: tabular-nums;
+}
+.ls-rule {
+  display: block;
+  height: 1px;
+  width: 100%;
+  background: hsl(var(--foreground) / 0.12);
+}
+.ls-display-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.ls-display-stack > * + * { margin-top: -0.05em; }
+
+/* Accent period — replaces the old italic flourish.
+   Just a kinetic-orange dot, no italic, no boutique-design feel. */
+.ls-accent-dot {
+  font-family: inherit;
+  font-style: normal;
+  font-weight: inherit;
+  color: hsl(var(--accent-kinetic));
+}
+
+/* ── Marquee — Geist display, paper foreground ──────────── */
+.ls-marquee-item {
+  font-family: "Geist", "Inter", system-ui, sans-serif;
+  font-size: clamp(2rem, 5vw, 3.75rem);
+  font-weight: 700;
+  letter-spacing: -0.022em;
+  padding-inline: 1.5rem;
+  color: hsl(var(--foreground));
+  white-space: nowrap;
+}
+.ls-marquee-item--accent {
+  color: hsl(var(--accent-kinetic));
+}
+.ls-marquee-item--ghost {
+  /* Firefox-safe fallback: faint inline color, then stroke-only on supporting browsers. */
+  color: hsl(var(--foreground) / 0.18);
+}
+@supports (-webkit-text-stroke: 1px currentColor) {
+  .ls-marquee-item--ghost {
+    color: transparent;
+    -webkit-text-stroke: 1px hsl(var(--foreground) / 0.5);
+  }
+}
