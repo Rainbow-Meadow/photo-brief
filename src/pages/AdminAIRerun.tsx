@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Loader2, Play, Sparkles, Copy, Check, AlertTriangle } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { Section, Container, Stack } from "@/design-system/schema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -107,7 +108,7 @@ export default function AdminAIRerunPage() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl space-y-6 p-6">
+    <Section density="page"><Container><Stack>
       <PageHeader
         eyebrow="Platform admin"
         title="AI rerun & escalation diff"
