@@ -18,6 +18,8 @@ const corsHeaders = {
 }
 
 const APP_BASE_URL = 'https://photobrief.ai'
+const DEMO_WORKSPACE_ID = Deno.env.get('DEMO_WORKSPACE_ID') ?? ''
+const FOUNDER_NOTIFY_EMAIL = Deno.env.get('FOUNDER_NOTIFY_EMAIL') ?? ''
 
 function json(data: unknown, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -77,13 +79,56 @@ Deno.serve(async (req) => {
       // Fetch submission + request + guide
       const { data: sub } = await supabase
         .from('submissions')
-        .select('id, workspace_id, request_id, submitter_name, photo_brief_requests(id, guide_id, recipient_email, recipient_name, photo_guides(name))')
+        .select('id, workspace_id, request_id, submitter_name, photo_brief_requests(id, guide_id, recipient_email, recipient_name, is_demo, photo_guides(name))')
         .eq('id', body.submission_id)
         .maybeSingle()
       if (!sub) return json({ ok: true, skipped: 'no_submission' })
 
       const req = (sub as any).photo_brief_requests
       const guideName = req?.photo_guides?.name ?? null
+
+      // ── DEMO BRANCH ──
+      // For demo-workspace requests, suppress all owner notifications and just
+      // email the brief to the visitor + the founder.
+      if (req?.is_demo || (DEMO_WORKSPACE_ID && sub.workspace_id === DEMO_WORKSPACE_ID)) {
+        const { data: steps } = await supabase
+          .from('guide_steps')
+          .select('title, instruction, order_index')
+          .eq('guide_id', req?.guide_id)
+          .order('order_index', { ascending: true })
+
+        const brief = {
+          title: guideName ?? 'Your sample PhotoBrief',
+          introMessage: undefined as string | undefined,
+          steps: (steps ?? []).map((st: any) => ({
+            title: st.title ?? 'Photo',
+            instruction: st.instruction ?? '',
+          })),
+        }
+        const reviewUrl = `${APP_BASE_URL}/r/${(sub as any).request_id ? '' : ''}` // visitor doesn't need a dashboard link
+        const visitorEmail = req?.recipient_email
+        const visitorName = req?.recipient_name ?? sub.submitter_name ?? undefined
+        const serviceType = guideName ?? 'your service'
+
+        if (visitorEmail) {
+          await send('demo-brief-delivery', visitorEmail, `demo-visitor-${sub.id}`, {
+            visitorName,
+            serviceType,
+            brief,
+            ctaUrl: `${APP_BASE_URL}/signup`,
+          })
+        }
+        if (FOUNDER_NOTIFY_EMAIL) {
+          await send('demo-brief-delivery', FOUNDER_NOTIFY_EMAIL, `demo-founder-${sub.id}`, {
+            visitorName: `${visitorName ?? 'visitor'} <${visitorEmail ?? 'no-email'}>`,
+            serviceType,
+            brief,
+            isFounderCopy: true,
+          })
+        }
+        return json({ ok: true, demo: true })
+      }
+
 
       // Photo count (best-effort)
       const { count: photoCount } = await supabase
