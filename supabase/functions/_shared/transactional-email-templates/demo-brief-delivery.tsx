@@ -59,7 +59,7 @@ const DemoBriefDeliveryEmail = ({
                   <Text style={s.text}>
                     Want PhotoBrief sending real briefs like this for your customers? Spin up a workspace in 60 seconds.
                   </Text>
-                  <Button href={ctaUrl ?? 'https://photobrief.ai/signup'} style={s.cta}>
+                  <Button href={ctaUrl ?? 'https://photobrief.ai/signup'} style={s.button}>
                     Start free
                   </Button>
                 </RmbcBlock>
