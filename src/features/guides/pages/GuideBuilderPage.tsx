@@ -238,6 +238,9 @@ export default function GuideBuilderPage() {
           {save.isPending ? "Saving…" : "Save template"}
         </Button>
       </div>
-    </div>
+          </div>
+        </Stack>
+      </Container>
+    </Section>
   );
 }
