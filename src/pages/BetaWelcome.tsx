@@ -248,8 +248,9 @@ export default function BetaWelcomePage() {
         <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[60vh] bg-ambient-sky" aria-hidden />
 
         {/* HERO */}
-        <section className="px-4 pb-10 pt-12 sm:pt-20">
-          <div className="mx-auto max-w-2xl text-center">
+        <Section size="tight">
+          <Container width="reading">
+            <div className="text-center">
             <div className="mb-6 flex justify-center">
               <BrandMark variant="stacked" tone="dark" size={72} eager />
             </div>
@@ -279,8 +280,9 @@ export default function BetaWelcomePage() {
             >
               Let's set up your account <ArrowRight className="h-4 w-4" />
             </button>
-          </div>
-        </section>
+            </div>
+          </Container>
+        </Section>
 
         {/* BENEFITS */}
         <section className="px-4 py-12 sm:py-16">
