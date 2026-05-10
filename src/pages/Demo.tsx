@@ -4,6 +4,7 @@ import { ArrowRight, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Section, Container, CTA, CTAGroup } from "@/design-system/schema";
 import { SectionIntro } from "@/components/marketing/SectionIntro";
+import { FinalCtaSection } from "@/components/marketing/FinalCtaSection";
 import { UseCasesGrid } from "@/components/marketing/UseCasesGrid";
 import { PageMeta } from "@/hooks/seo/usePageMeta";
 import { RiseIn } from "@/components/motion/RiseIn";
