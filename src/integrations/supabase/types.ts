@@ -2004,6 +2004,7 @@ export type Database = {
           due_date: string | null
           guide_id: string | null
           id: string
+          is_demo: boolean
           last_reminder_at: string | null
           recipient_email: string | null
           recipient_name: string | null
@@ -2022,6 +2023,7 @@ export type Database = {
           due_date?: string | null
           guide_id?: string | null
           id?: string
+          is_demo?: boolean
           last_reminder_at?: string | null
           recipient_email?: string | null
           recipient_name?: string | null
@@ -2040,6 +2042,7 @@ export type Database = {
           due_date?: string | null
           guide_id?: string | null
           id?: string
+          is_demo?: boolean
           last_reminder_at?: string | null
           recipient_email?: string | null
           recipient_name?: string | null
