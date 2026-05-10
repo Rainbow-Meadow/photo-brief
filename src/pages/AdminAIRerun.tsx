@@ -211,7 +211,7 @@ export default function AdminAIRerunPage() {
           compareTo={baseline.data}
         />
       </div>
-    </div>
+    </Stack></Container></Section>
   );
 }
 
