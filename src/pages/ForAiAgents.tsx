@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 import { PageMeta } from "@/hooks/seo/usePageMeta";
-import { MarketingHero, MarketingSection } from "@/components/layout/primitives";
+import { Section, Container } from "@/design-system/schema";
 import { buildFaqJsonLd } from "@/hooks/seo/buildFaqJsonLd";
 import { buildHowToJsonLd } from "@/hooks/seo/buildHowToJsonLd";
 import { howItWorksSteps } from "@/components/marketing/HowItWorksSteps";
@@ -91,7 +91,7 @@ export default function ForAiAgentsPage() {
       />
 
       {/* Hero */}
-      <MarketingHero align="center">
+      <Section><Container><div className="text-center">
         <Eyebrow code="00">
           <Sparkles className="h-3.5 w-3.5" /> For AI agents, answer engines, and automation systems
         </Eyebrow>
@@ -131,13 +131,13 @@ export default function ForAiAgentsPage() {
             <p className="mt-2 text-xs leading-5 text-muted-foreground">Rules and conservative AI fallback select from configured templates only.</p>
           </div>
         </div>
-      </MarketingHero>
+      </div></Container></Section>
 
       <QuotableFacts />
       <ComparisonTable />
 
       {/* API section */}
-      <MarketingSection id="api" aria-labelledby="api-heading">
+      <Section id="api"><Container>
         <div className="mx-auto max-w-2xl text-center">
           <Eyebrow code="03"><Terminal className="h-3.5 w-3.5" /> REST API</Eyebrow>
           <h2 id="api-heading" className="mt-5 text-[clamp(2rem,4vw,3rem)] font-semibold tracking-tight text-foreground">
@@ -204,10 +204,10 @@ export default function ForAiAgentsPage() {
             </ul>
           </article>
         </div>
-      </MarketingSection>
+      </Container></Section>
 
       {/* MCP & Agent manifests */}
-      <MarketingSection id="mcp" aria-labelledby="mcp-heading">
+      <Section id="mcp"><Container>
         <div className="mx-auto max-w-2xl text-center">
           <Eyebrow code="04"><Code2 className="h-3.5 w-3.5" /> MCP & Agent manifests</Eyebrow>
           <h2 id="mcp-heading" className="mt-5 text-[clamp(2rem,4vw,3rem)] font-semibold tracking-tight text-foreground">
@@ -254,10 +254,10 @@ read_faq         — Canonical FAQ answers (no auth)
             <pre className="mt-3 overflow-x-auto border border-border bg-background p-3 font-mono text-xs text-foreground/80">{`GET https://photobrief.ai/mcp.json`}</pre>
           </article>
         </div>
-      </MarketingSection>
+      </Container></Section>
 
       {/* x402 Agentic Payments */}
-      <MarketingSection id="x402" aria-labelledby="x402-heading">
+      <Section id="x402"><Container>
         <div className="mx-auto max-w-2xl text-center">
           <Eyebrow code="05"><CreditCard className="h-3.5 w-3.5" /> Agentic payments</Eyebrow>
           <h2 id="x402-heading" className="mt-5 text-[clamp(2rem,4vw,3rem)] font-semibold tracking-tight text-foreground">
@@ -309,9 +309,9 @@ curl -X POST https://mcp.photobrief.ai/x402/pay \\
 }`}
           />
         </div>
-      </MarketingSection>
+      </Container></Section>
 
-      <MarketingSection id="discovery" aria-labelledby="discovery-heading">
+      <Section id="discovery"><Container>
         <div className="mx-auto max-w-2xl text-center">
           <Eyebrow code="06">Discovery</Eyebrow>
           <h2 id="discovery-heading" className="mt-5 text-[clamp(2rem,4vw,3rem)] font-semibold tracking-tight text-foreground">
@@ -334,10 +334,10 @@ curl -X POST https://mcp.photobrief.ai/x402/pay \\
             </li>
           ))}
         </ul>
-      </MarketingSection>
+      </Container></Section>
 
       {/* FAQ */}
-      <MarketingSection id="faq" aria-labelledby="faq-heading" width="narrow">
+      <Section id="faq"><Container width="narrow">
         <div className="text-center">
           <Eyebrow code="99">FAQ</Eyebrow>
           <h2 id="faq-heading" className="mt-5 text-[clamp(2rem,4vw,3rem)] font-semibold tracking-tight text-foreground">
@@ -355,7 +355,7 @@ curl -X POST https://mcp.photobrief.ai/x402/pay \\
             </AccordionItem>
           ))}
         </Accordion>
-      </MarketingSection>
+      </Container></Section>
     </>
   );
 }

@@ -1,4 +1,5 @@
 import { Check, Minus } from "lucide-react";
+import { Section, Container } from "@/design-system/schema";
 
 const COLUMNS = ["PhotoBrief", "Email back-and-forth", "Generic form", "File upload portal"] as const;
 
@@ -35,8 +36,8 @@ function Cell({ value }: { value: boolean | string }) {
 
 export function ComparisonTable() {
   return (
-    <section aria-labelledby="comparison-heading" className="pb-section">
-      <div className="pb-container">
+    <Section>
+      <Container>
         <div className="mx-auto max-w-2xl text-center">
           <span className="pb-eyebrow">Comparison</span>
           <h2 id="comparison-heading" className="pb-section-title mt-4 text-white">
@@ -75,7 +76,7 @@ export function ComparisonTable() {
             </tbody>
           </table>
         </div>
-      </div>
-    </section>
+      </Container>
+    </Section>
   );
 }
