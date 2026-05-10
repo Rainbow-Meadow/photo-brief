@@ -60,7 +60,6 @@ import { useBetaSeats } from "@/hooks/useBetaSeats";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
-import heroIllustration from "@/assets/hero-new.png";
 import landscaperIllo from "@/assets/trades/landscaper-illustration.png";
 import hvacTechIllo from "@/assets/trades/hvac-tech-illustration.png";
 import plumberIllo from "@/assets/trades/plumber-illustration.png";
@@ -190,7 +189,7 @@ function Hero() {
             <div className="relative aspect-video w-full overflow-hidden border border-border bg-[hsl(var(--pb-paper))]">
               <video
                 src="/marketing/photobrief-demo.mp4"
-                poster={heroIllustration}
+                poster="/marketing/photobrief-demo-poster.jpg"
                 className="h-full w-full object-cover"
                 autoPlay
                 muted
