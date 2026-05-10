@@ -298,6 +298,39 @@ const workflowSteps = [
   },
 ];
 
+/* ─────────────────────────────────────────────────────────
+   Demo video — 30-second product spotlight
+   ───────────────────────────────────────────────────────── */
+
+function DemoVideoSection() {
+  return (
+    <Section id="demo-video">
+      <Container>
+        <SectionIntro
+          eyebrow="[ ▶ ] 30-second demo"
+          title="See the Reverse-Form Method™ in motion."
+          subtitle="Guide. Capture. Close. Thirty seconds, end to end."
+        />
+        <RiseIn delay={0.1}>
+          <div className="relative aspect-video w-full overflow-hidden border border-border bg-black shadow-[0_30px_80px_-45px_hsl(0_0%_0%/0.55)]">
+            <video
+              src="/marketing/photobrief-demo.mp4"
+              poster={heroIllustration}
+              controls
+              playsInline
+              preload="metadata"
+              className="h-full w-full object-cover"
+              onPlay={() => trackEvent("landing_demo_video_play")}
+            >
+              Your browser does not support embedded video.
+            </video>
+          </div>
+        </RiseIn>
+      </Container>
+    </Section>
+  );
+}
+
 function MechanismSection() {
   return (
     <Section id="workflow" tone="alt">
