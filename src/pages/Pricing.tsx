@@ -8,7 +8,7 @@ import { faqItems } from "@/features/help/content/faq";
 import { BETA_DURATION_DAYS, MAX_DISCOUNT_LABEL } from "@/config/betaProgram";
 
 import { Button } from "@/components/ui/button";
-import { signupCtaTarget, signupCtaLabel } from "@/config/access";
+
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { MarketingSection, MarketingHero } from "@/components/layout/primitives";
 
@@ -74,12 +74,12 @@ export default function PricingPage() {
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <Button asChild size="xl" className="rounded-[0.25rem] uppercase tracking-[0.14em]">
-            <NavLink to={signupCtaTarget()}>
-              {signupCtaLabel()} <ArrowRight className="ml-1 h-4 w-4" />
+            <NavLink to="/beta">
+              Apply for the beta <ArrowRight className="ml-1 h-4 w-4" />
             </NavLink>
           </Button>
           <Button asChild size="xl" variant="outline" className="rounded-[0.25rem] border-border uppercase tracking-[0.14em]">
-            <NavLink to="/#beta-program">View beta program</NavLink>
+            <NavLink to="/demo">See the live demo</NavLink>
           </Button>
         </div>
       </MarketingHero>
@@ -167,8 +167,8 @@ export default function PricingPage() {
                 Get early access, hands-on setup, feature influence, and first-year savings in exchange for using PhotoBrief in real workflows and sharing honest feedback.
               </p>
               <Button asChild size="xl" className="mt-2 rounded-[0.25rem] uppercase tracking-[0.14em]">
-                <NavLink to={signupCtaTarget()}>
-                  {signupCtaLabel()} <ArrowRight className="ml-1 h-4 w-4" />
+                <NavLink to="/beta">
+                  Apply for the beta <ArrowRight className="ml-1 h-4 w-4" />
                 </NavLink>
               </Button>
             </div>

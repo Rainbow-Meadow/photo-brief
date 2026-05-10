@@ -1,136 +1,115 @@
-# Plan: Public PhotoBrief Demo — Conversational Reverse Form
 
-## The hook
-A visitor lands on the demo, types *"I'm a plumber and customers send me photos of leaking faucets"*, the AI asks 1–2 quick clarifying questions, then drops them straight into a **plumbing-specific guided photo capture** that ends with a real, branded brief emailed to both the visitor and you.
+## Goal
 
-This is the reverse-form experience — but the visitor IS the business owner, and they walk through what their own customer would experience.
+Reshape the marketing site into four focused pages and a tight homepage:
 
-## Heads-up on "ephemeral, no DB"
-Real photo capture + AI brief generation needs `requests`, `submissions`, `submission_media`, and R2 storage. To honor the "ephemeral" intent without rebuilding the pipeline:
-- Everything lives in a hidden **Demo workspace** invisible to your normal inbox.
-- Rows are tagged `is_demo = true` and **auto-purged after 24h** (rows + R2 objects).
-- Effectively ephemeral, zero new pipeline code.
-
-## The conversational discovery (the new part)
-
-Reuses the existing `aiService.generateGuideFromPrompt` (already used in `CreateRequestPage` for the AI request builder) but flips the prompt direction.
-
-```text
-Visitor lands on /demo
-   ↓
-Step 1 — "What kind of service do you provide?"
-   Free text + chips: Plumbing · Roofing · HVAC · Auto repair · Property mgmt · Other
-   ↓
-Step 2 — "What does a typical photo request look like for you?"
-   e.g. "Leaking faucet under the kitchen sink"
-   ↓
-Step 3 — AI asks ONE clarifying follow-up if useful
-   e.g. "Do you usually need to see the shut-off valve too?"
-   (Skip if confidence is high)
-   ↓
-Step 4 — "Last thing — your name and email so we can send you the finished brief"
-   ↓
-   AI generates a tailored guide draft (title, intro message, 3–6 photo steps with
-   specific prompts, e.g. "Wide shot of the faucet base", "Close-up of the drip
-   point", "The shut-off valve under the sink")
-   ↓
-   Backend: create demo request with that guide → redirect to /r/<token>
-   ↓
-Step 5 — Visitor walks through the actual recipient capture flow against
-   their own custom brief. Takes/uploads 1–3 sample photos.
-   ↓
-Step 6 — Submit → existing AI analysis runs → confirmation page shows the
-   finished brief preview ("Here's what your customer would have sent you")
-   ↓
-Emails fire to (a) visitor and (b) FOUNDER_NOTIFY_EMAIL with the brief PDF link
+```
+/           Compact highlight page → links to the others
+/demo       Full live-demo experience (Reverse-Form Method shown live)
+/beta       Full Founding Partner Beta page (program + apply agent)
+/pricing    Full pricing page (already exists, light cleanup only)
 ```
 
-## Routes & entry points
+## New site map
 
-1. **`/demo`** — full-bleed marketing page with PB navy/amber branding. Hero pitch + the conversational form embedded.
-2. **Landing page embed** — section after `InteractiveHeroBriefAssembly` titled *"Try it on your own business"* with a single CTA → `/demo` (we don't try to fit a multi-step chat inline; the landing card is a teaser).
+| Route | Purpose | Primary CTA |
+|---|---|---|
+| `/` | 1-screen story + signposts to deeper pages | "Try the demo" / "Apply for beta" |
+| `/demo` | Show, don't tell — live brief assembly + "build my sample brief" tool | "Apply for the beta" |
+| `/beta` | Full founding-partner pitch, seat tracker, onboarding agent, quick-apply form | "Open the agent" |
+| `/pricing` | Already full — minor tweaks for cross-linking | "Apply for beta" |
 
-## Backend pieces
+Header nav becomes: **Demo · Beta · Pricing · Help**.
 
-### One-time migration
-- Create `PhotoBrief Demo` workspace owned by your founder account.
-- Add `is_demo BOOLEAN DEFAULT FALSE` column on `requests`.
-- Cron job `demo-cleanup` (hourly): purge demo-workspace requests > 24h old + cascade media in R2.
+## `/` — Compact highlight page
 
-### New edge function: `demo-discovery`
-Single endpoint that powers the conversational flow:
-- `POST /demo-discovery` with `{ step, history, serviceType, scenario, name, email }`
-- Wraps the existing `aiService.generateGuideFromPrompt` logic but seeded with a system prompt: *"You're helping a service business design the perfect photo intake template for their own customers. Their service is X. Their typical request is Y. Generate a guide draft."*
-- Returns either `{ nextQuestion: "..." }` or `{ ready: true, draft: RequestDraft }`.
-- When `ready`, server-side: creates a demo guide + demo request in the Demo workspace, returns `{ requestLink: '/r/<token>', requestId }`.
-- Turnstile-protected on the final step.
+Keep it short — the homepage's job is to orient and route, not to convert in isolation.
 
-### New edge function: `demo-cleanup` (hourly cron)
-- Deletes demo-workspace requests > 24h old, cascading submissions/media + R2 objects.
+Sections, in order:
+1. **Hero** — Tagline (Guide · Capture · Close), 2-sentence pitch, two CTAs: `Try the live demo →` and `Apply for the beta →`. Hero illustration stays.
+2. **Marquee band** — kinetic stat strip (kept as-is).
+3. **Mechanism (4 cards)** — the Reverse-Form Method in 4 steps. No deep content; teaser only.
+4. **Before / after** — two-card comparison (kept, condensed copy).
+5. **Three-up signpost row** — three large cards linking to `/demo`, `/beta`, `/pricing` with one-line value prop each.
+6. **Compact FAQ** — 4 items max (was 8). "See all answers" link to `/help`.
+7. **Footer CTA** — single-line: "Ready to replace the chase? → Apply".
 
-### Reuse existing
-- `PublicRecipientPage` for the capture experience (no changes besides a branding flag).
-- `ai-analyze-media` + `ai-summarize-submission` for brief generation (already triggered by submit).
-- `notify-event` — add a demo branch: when `workspace_id === DEMO_WORKSPACE_ID`, suppress normal owner notifications and instead send the new `demo-brief-delivery` email to BOTH the visitor and `FOUNDER_NOTIFY_EMAIL`.
+Removed from `/`: Use Cases (trades), Website Intelligence, Live Demo embed, Beta Program section, full Apply agent, long FAQ, FinalCtaQuickApply form. All content survives — it just moves to its proper page.
 
-### Secrets
-- `FOUNDER_NOTIFY_EMAIL` — your inbox.
-- `DEMO_WORKSPACE_ID` — populated after migration.
+## `/demo` — Full demo page
 
-### New transactional email template: `demo-brief-delivery`
-- Subject: *"Your sample PhotoBrief is ready — [service type]"*.
-- Body: brief summary, photo thumbnails (24h signed URLs), the AI's analysis, CTA *"Want this for your business? Start free trial."*
+Currently `/demo` is only the conversational reverse-form discovery widget. Expand into a full marketing page that *is* the demo.
 
-## Frontend pieces
+Sections:
+1. **Hero** — "See exactly what your customers experience." CTA scrolls to live tool.
+2. **Live brief assembly** — `<InteractiveHeroBriefAssembly />` (moved from landing's LiveDemoSection).
+3. **Build-my-own widget** — existing `DemoDiscoveryChat` flow already on the page.
+4. **Use cases / trades grid** — moved from landing.
+5. **Footer CTA** — "Like what you saw? → Apply for the beta".
 
-### `src/pages/Demo.tsx`
-- `MarketingLayout`, full PB branding.
-- Hero copy: *"See exactly what your customers would experience — built for your business in 60 seconds."*
-- New `<DemoDiscoveryChat>` component (chat-style UI, mirrors `AIRequestBuilderChat` styling but inverted: assistant asks the questions, visitor answers).
-- Uses `aiService`-style streaming if available, otherwise simple request/response.
-- On `ready`, redirects to `/r/<token>`.
+## `/beta` — New full Beta page
 
-### `<DemoDiscoveryChat>` component
-- Local state machine: `service → scenario → [optional clarifier] → contact → generating → ready`.
-- Calls `demo-discovery` between steps.
-- Shows a live preview pane on desktop ("Building your brief…") that gradually reveals the guide steps as the AI generates them.
+New file `src/pages/Beta.tsx`. Pulls together the founding-partner content currently scattered across the landing page.
 
-### Landing embed
-- New section in `Landing.tsx` after the existing interactive hero.
-- Title + 2-line pitch + single button `/demo`.
-- Optional: 1 typed-out example showing what the AI generates ("Plumber → 4-step leak inspection brief").
+Sections:
+1. **Hero** — "20 seats. 60 days. Founding pricing forever." (uses BETA_TOTAL_PARTNERS / BETA_DURATION_DAYS).
+2. **BetaSeatTracker** — moved from landing.
+3. **What you get** — bullets pulled from `Pricing.tsx`'s `betaOffer` array (concierge setup, direct support, tiered rewards).
+4. **Onboarding agent** — `<BetaOnboardingAgentExperience />` (moved from landing's ApplySection). This is the long-form apply flow.
+5. **Quick-apply form** — `FinalCtaQuickApply` extracted from Landing.tsx into its own file (see refactor below) and rendered here as a fallback.
+6. **FAQ** — 4-6 beta-specific items filtered from `faqItems`.
 
-### Capture-flow demo branding
-- Add `forceDemoBranding` flag to `RecipientBrandingContext` set when the loaded request's workspace is `DEMO_WORKSPACE_ID`.
-- Forces full BrandMark + tagline header, adds a small "DEMO" pill in the corner so visitors know it's a sandbox, keeps `PoweredByBadge`.
+## `/pricing` — Light touches only
 
-## Anti-abuse
-- Turnstile on the final discovery step (before request creation).
-- Rate-limit `demo-discovery` per IP (10/hour) inside the edge function.
-- 24h cleanup caps storage exposure.
-- `notify-event` short-circuits all integrations / SMS / webhooks for demo-workspace requests.
+- Add a "See the live demo →" link in the hero alongside the existing apply CTA.
+- Cross-link the beta-program block to `/beta` instead of inlining the apply agent.
+
+## Routing & nav
+
+- `src/App.tsx`: register `<Route path="/beta" element={<BetaPage />} />` with lazy import. Demo route already exists.
+- `src/config/marketingNav.ts`:
+  ```ts
+  marketingLinks = [
+    { to: "/demo", label: "Demo" },
+    { to: "/beta", label: "Beta" },
+    { to: "/pricing", label: "Pricing" },
+    { to: "/help", label: "Help" },
+  ];
+  ```
+- All on-page anchor links currently pointing to `#apply`, `#beta-program`, `#workflow` etc. on `/` are remapped to the new page routes (e.g. `Claim a founding seat` → `/beta`).
+- Add 301-style client redirects (in-component): if a request hits `/?apply=1` or any old hash, scroll behavior still works on the homepage but the canonical link surface points to the new pages.
+
+## Refactor extraction
+
+To keep the new pages clean without duplicating logic, extract these from `Landing.tsx` into reusable pieces:
+
+- `src/components/marketing/MechanismGrid.tsx` — the 4-step grid (used on `/` and `/demo`).
+- `src/components/marketing/UseCasesGrid.tsx` — trades grid (moves to `/demo`).
+- `src/components/marketing/BetaQuickApplyForm.tsx` — `FinalCtaQuickApply` + its zod schema (used on `/beta` and `/`'s footer CTA).
+- `src/components/marketing/SectionIntro.tsx` — small helper, currently inline.
+
+No business logic changes — pure reorg of presentation code.
+
+## SEO
+
+Each new/expanded page gets its own `<PageMeta>`:
+- `/` — title shortened to "PhotoBrief — Guide. Capture. Close."
+- `/demo` — already set, keep.
+- `/beta` — new title "Founding Partner Beta | PhotoBrief".
+- Update `public/sitemap.xml` to include `/demo` and `/beta`.
 
 ## Out of scope
-- No login on the demo flow.
-- No persistence beyond 24h.
-- No SMS, no integration triggers, no real owner notifications.
-- No saving the generated guide to the visitor's account (we don't have one — it's a marketing demo).
+
+- No backend, edge function, schema, or auth changes.
+- No design-system or token changes.
+- No copy rewrite beyond what's needed for the shorter homepage hero/signposts.
+- Mobile tab bar / dashboard nav untouched.
 
 ## Implementation order
-1. Migration: Demo workspace + `is_demo` column + `demo-cleanup` cron.
-2. Add secrets (`FOUNDER_NOTIFY_EMAIL`, `DEMO_WORKSPACE_ID`).
-3. `demo-discovery` edge function (reusing AI guide-generation logic).
-4. `demo-cleanup` edge function.
-5. `demo-brief-delivery` email template + registry entry.
-6. `notify-event` demo-workspace branch.
-7. `<DemoDiscoveryChat>` component + `/demo` page.
-8. Landing embed.
-9. Capture-flow `forceDemoBranding` flag.
-10. End-to-end smoke test (plumber, roofer, HVAC scenarios) and verify cleanup.
 
-## Why this works as marketing
-- Visitor types something specific to *their* business → instant personalization.
-- They feel the conversational intelligence (the same engine powering the real product).
-- They experience the recipient side (which is the magic moment competitors don't have).
-- They get a polished brief in their inbox they can show to a partner/customer.
-- You see every demo submission in real time — instant qualified-lead pipeline.
+1. Extract shared marketing components (`MechanismGrid`, `UseCasesGrid`, `BetaQuickApplyForm`, `SectionIntro`).
+2. Create `src/pages/Beta.tsx`.
+3. Expand `src/pages/Demo.tsx` with the full-page sections.
+4. Slim `src/pages/Landing.tsx` to the 7-section highlight version.
+5. Add `/beta` route + update `marketingNav.ts`.
+6. Update `Pricing.tsx` cross-links + sitemap.
