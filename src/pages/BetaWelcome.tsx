@@ -16,6 +16,7 @@ import {
 
 import { SEOHead } from "@/components/seo/SEOHead";
 import { BrandMark } from "@/components/layout/BrandMark";
+import { Section, Container, Card } from "@/design-system/schema";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
