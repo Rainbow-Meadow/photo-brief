@@ -1,4 +1,5 @@
 import { Camera, ClipboardList, Link2, Sparkles } from "lucide-react";
+import { Section, Container } from "@/design-system/schema";
 
 export const howItWorksSteps = [
   {
@@ -25,8 +26,8 @@ export const howItWorksSteps = [
 
 export function HowItWorksSteps() {
   return (
-    <section id="how-it-works" className="pb-section">
-      <div className="pb-container">
+    <Section tone="dark" id="how-it-works">
+      <Container>
         <div className="mx-auto max-w-3xl text-center">
           <span className="pb-eyebrow">How it works</span>
           <h2 className="pb-section-title mt-4 text-white">
