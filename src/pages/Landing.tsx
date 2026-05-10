@@ -179,8 +179,12 @@ function Hero() {
                 >
                   Claim a founding seat <ArrowRight className="h-4 w-4" />
                 </MagneticCTA>
-                <a href="#workflow" className="ls-cta ls-cta--lg ls-cta-quiet mt-10">
-                  See the mechanism →
+                <a
+                  href="#demo-video"
+                  className="ls-cta ls-cta--lg ls-cta-quiet mt-10"
+                  onClick={() => trackEvent("landing_hero_cta_watch_demo")}
+                >
+                  Watch the 30-sec demo →
                 </a>
               </CTAGroup>
             </RiseIn>
