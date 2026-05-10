@@ -99,6 +99,7 @@ const SOFTWARE_APP_JSONLD: Record<string, unknown> = {
 /* ── Anchors ───────────────────────────────────────────── */
 
 const sectionLinks = [
+  { href: "#demo-video", label: "Demo" },
   { href: "#workflow", label: "Mechanism" },
   { href: "#comparison", label: "Before / after" },
   { href: "#use-cases", label: "Trades" },
