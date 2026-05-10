@@ -20,6 +20,8 @@ export const routePaths = [
   "/reset-password",
   "/unsubscribe",
   "/help",
+  "/demo",
+  "/beta",
   "/signup",
   "/beta-invite/:token",
   "/welcome",
