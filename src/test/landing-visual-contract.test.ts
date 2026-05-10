@@ -40,7 +40,7 @@ describe("Landing visual contract (Locomotive editorial)", () => {
   it("signpost section renders exactly three doors", () => {
     const arr = SRC.match(/const signposts = \[([\s\S]*?)\n\];/);
     expect(arr).not.toBeNull();
-    const count = (arr![1].match(/^\s {2}{/gm) ?? []).length;
+    const count = (arr![1].match(/\bto:\s*"/g) ?? []).length;
     expect(count).toBe(3);
   });
 
