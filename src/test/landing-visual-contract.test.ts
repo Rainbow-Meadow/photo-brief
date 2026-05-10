@@ -6,24 +6,22 @@ const LANDING_PATH = resolve(__dirname, "../pages/Landing.tsx");
 const SRC = readFileSync(LANDING_PATH, "utf8");
 
 describe("Landing visual contract (Locomotive editorial)", () => {
-  it("contains the documented section anchors", () => {
-    for (const id of [
-      'id="workflow"',
-      'id="comparison"',
-      'id="use-cases"',
-      'id="website-intelligence"',
-      'id="beta-program"',
-      'id="apply"',
-    ]) {
-      expect(SRC.includes(id), `Section ${id} missing.`).toBe(true);
-    }
+  it("anchors the workflow/mechanism section", () => {
+    expect(SRC).toMatch(/id="workflow"/);
   });
 
-  it("anchor index strip lists exactly 5 entries (beta-program is its own section but excluded from the strip)", () => {
-    const arr = SRC.match(/const sectionLinks = \[([\s\S]*?)\n\];/);
-    expect(arr).not.toBeNull();
-    const count = (arr![1].match(/^\s*{/gm) ?? []).length;
-    expect(count).toBe(5);
+  it("composes the page from the documented section components", () => {
+    for (const fn of [
+      "function Hero",
+      "function MarqueeBand",
+      "function MechanismSection",
+      "function ComparisonSection",
+      "function SignpostSection",
+      "function FaqSection",
+      "function FinalCta",
+    ]) {
+      expect(SRC, `Missing section component: ${fn}`).toContain(fn);
+    }
   });
 
   it("uses Section tone='dark' only on the final CTA section", () => {
@@ -32,25 +30,17 @@ describe("Landing visual contract (Locomotive editorial)", () => {
     expect(dark.length).toBe(1);
   });
 
-  it("renders the FinalCta with quick-apply form via CTA primitives", () => {
+  it("renders the FinalCta with CTA primitives", () => {
     expect(SRC).toMatch(/function FinalCta\b/);
-    expect(SRC).toMatch(/FinalCtaQuickApply/);
     const cta = SRC.slice(SRC.indexOf("function FinalCta"));
     expect(cta).toMatch(/<CTAGroup/);
     expect(cta).toMatch(/<CTA[\s>]/);
   });
 
-  it("workflow renders exactly four steps", () => {
-    const arr = SRC.match(/const workflowSteps = \[([\s\S]*?)\n\];/);
+  it("signpost section renders exactly three doors", () => {
+    const arr = SRC.match(/const signposts = \[([\s\S]*?)\n\];/);
     expect(arr).not.toBeNull();
-    const count = (arr![1].match(/^\s*{/gm) ?? []).length;
-    expect(count).toBe(4);
-  });
-
-  it("website intelligence renders exactly three cards", () => {
-    const arr = SRC.match(/const websiteIntelCards = \[([\s\S]*?)\n\];/);
-    expect(arr).not.toBeNull();
-    const count = (arr![1].match(/^\s*{/gm) ?? []).length;
+    const count = (arr![1].match(/^\s {2}{/gm) ?? []).length;
     expect(count).toBe(3);
   });
 
