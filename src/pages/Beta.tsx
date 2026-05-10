@@ -54,7 +54,7 @@ export default function BetaPage() {
                 This isn't a waitlist. It's a {BETA_TOTAL_PARTNERS}-person room, and we're hiring two co-builders. Every founding partner walks out with a reward; the top two never pay for PhotoBrief Pro again.
               </p>
             </RiseIn>
-            <CTAGroup>
+            <CTAGroup align="center">
               <CTA href="#agent" variant="primary" size="lg">
                 {isFull ? "Join waitlist" : "Open the agent"}
               </CTA>
@@ -150,7 +150,7 @@ export default function BetaPage() {
                 <span className="ls-accent-dot">?</span>
               </h2>
             </RiseIn>
-            <CTAGroup>
+            <CTAGroup align="center">
               <CTA href="#agent" variant="primary" size="lg">
                 {isFull ? "Join waitlist" : "Open the agent"} <ArrowRight className="h-4 w-4" />
               </CTA>

@@ -59,7 +59,7 @@ export default function DemoPage() {
                 tailored to your own business and we'll email you the finished result.
               </p>
             </RiseIn>
-            <CTAGroup>
+            <CTAGroup align="center">
               <CTA href="#build-yours" variant="primary" size="lg">
                 Build my sample brief <ArrowRight className="h-4 w-4" />
               </CTA>
@@ -124,7 +124,7 @@ export default function DemoPage() {
                 Lock in founding pricing<span className="ls-accent-dot">.</span>
               </h2>
             </RiseIn>
-            <CTAGroup>
+            <CTAGroup align="center">
               <CTA href="/beta" variant="primary" size="lg">
                 Apply for the beta <ArrowRight className="h-4 w-4" />
               </CTA>
