@@ -1,9 +1,18 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Loader2 } from "lucide-react";
+import { lazy, Suspense, useState } from "react";
+import { useNavigate, NavLink } from "react-router-dom";
+import { ArrowRight, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { Section, Container } from "@/pages/landing/schema";
+import { Section, Container, CTA, CTAGroup } from "@/pages/landing/schema";
+import { SectionIntro } from "@/components/marketing/SectionIntro";
+import { UseCasesGrid } from "@/components/marketing/UseCasesGrid";
 import { PageMeta } from "@/hooks/seo/usePageMeta";
+import { RiseIn } from "@/components/motion/RiseIn";
+
+const InteractiveHeroBriefAssembly = lazy(() =>
+  import("@/components/marketing/InteractiveHeroBriefAssembly").then((m) => ({
+    default: m.InteractiveHeroBriefAssembly,
+  })),
+);
 
 type Stage = "service" | "scenario" | "clarify" | "contact" | "generating";
 
@@ -25,6 +34,114 @@ const SERVICE_CHIPS = [
 ];
 
 export default function DemoPage() {
+  return (
+    <>
+      <PageMeta
+        title="Try PhotoBrief on your own business — 60-second demo"
+        description="Watch the Reverse-Form Method™ build a brief in real time, then generate one tailored to your own business. No signup."
+        canonicalPath="/demo"
+      />
+
+      {/* Hero */}
+      <Section>
+        <Container width="narrow">
+          <div className="space-y-3 text-center">
+            <p className="ls-eyebrow">[ Live demo ]</p>
+            <RiseIn>
+              <h1 className="ls-h1 mt-6">
+                See exactly what your customers
+                <br />would experience<span className="ls-accent-dot">.</span>
+              </h1>
+            </RiseIn>
+            <RiseIn delay={0.1}>
+              <p className="ls-subtitle mx-auto mt-8 max-w-xl">
+                Watch the Reverse-Form Method™ assemble a brief in real time. Then build one
+                tailored to your own business and we'll email you the finished result.
+              </p>
+            </RiseIn>
+            <CTAGroup>
+              <CTA href="#build-yours" variant="primary" size="lg">
+                Build my sample brief <ArrowRight className="h-4 w-4" />
+              </CTA>
+              <CTA href="#assembly" variant="secondary" size="lg">
+                Watch the assembly
+              </CTA>
+            </CTAGroup>
+          </div>
+        </Container>
+      </Section>
+
+      {/* Live brief assembly */}
+      <Section id="assembly" tone="alt">
+        <Container>
+          <SectionIntro
+            eyebrow="[ Watch ]"
+            title={`A vague "I need a quote" → quotable job in 38 seconds.`}
+            subtitle="Hit the steps. The packet builds in real time."
+          />
+          <div className="border border-border bg-background p-2 sm:p-4">
+            <Suspense fallback={<div className="flex h-96 items-center justify-center text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin" /></div>}>
+              <InteractiveHeroBriefAssembly />
+            </Suspense>
+          </div>
+        </Container>
+      </Section>
+
+      {/* Build-your-own */}
+      <Section id="build-yours">
+        <Container width="narrow">
+          <SectionIntro
+            eyebrow="[ Try it ]"
+            title="Now build the brief for your business."
+            subtitle="A plumber types &ldquo;leaking faucet.&rdquo; A roofer types &ldquo;missing shingles.&rdquo; PhotoBrief builds the brief in 60 seconds and emails it to you."
+          />
+          <DemoDiscoveryChat />
+          <p className="mt-6 text-center text-xs text-muted-foreground">
+            Demo briefs are auto-deleted after 24 hours.
+          </p>
+        </Container>
+      </Section>
+
+      {/* Trades */}
+      <Section tone="alt">
+        <Container>
+          <SectionIntro
+            eyebrow="[ Built per trade ]"
+            title="Coverage templates per trade."
+            subtitle="Mute customer? Doesn't matter. The form does the talking."
+          />
+          <UseCasesGrid />
+        </Container>
+      </Section>
+
+      {/* Footer CTA */}
+      <Section tone="dark">
+        <Container>
+          <div className="text-center">
+            <p className="ls-eyebrow">[ Like what you saw? ]</p>
+            <RiseIn>
+              <h2 className="ls-h1 mt-6">
+                Lock in founding pricing<span className="ls-accent-dot">.</span>
+              </h2>
+            </RiseIn>
+            <CTAGroup>
+              <CTA href="/beta" variant="primary" size="lg">
+                Apply for the beta <ArrowRight className="h-4 w-4" />
+              </CTA>
+              <CTA href="/pricing" variant="secondary" size="lg">
+                See pricing
+              </CTA>
+            </CTAGroup>
+          </div>
+        </Container>
+      </Section>
+    </>
+  );
+}
+
+/* ───────────── Discovery chat ───────────── */
+
+function DemoDiscoveryChat() {
   const navigate = useNavigate();
   const [stage, setStage] = useState<Stage>("service");
   const [serviceType, setServiceType] = useState("");
@@ -56,20 +173,9 @@ export default function DemoPage() {
       const res = data as any;
       if (res?.error) throw new Error(res.error);
 
-      if (res.status === "clarify") {
-        setClarifyingQuestion(res.clarifyingQuestion);
-        setStage("clarify");
-        return;
-      }
-      if (res.status === "draft") {
-        setDraft(res.draft);
-        setStage("contact");
-        return;
-      }
-      if (res.status === "ready" && res.requestLink) {
-        navigate(res.requestLink);
-        return;
-      }
+      if (res.status === "clarify") { setClarifyingQuestion(res.clarifyingQuestion); setStage("clarify"); return; }
+      if (res.status === "draft") { setDraft(res.draft); setStage("contact"); return; }
+      if (res.status === "ready" && res.requestLink) { navigate(res.requestLink); return; }
       throw new Error("Unexpected response");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong. Try again.");
@@ -80,174 +186,107 @@ export default function DemoPage() {
   }
 
   return (
-    <>
-      <PageMeta
-        title="Try PhotoBrief on your own business — 60-second demo"
-        description="Tell PhotoBrief what you do. We'll build the perfect customer photo brief and send it to you. No signup."
-        canonicalPath="/demo"
-      />
-      <Section>
-        <Container width="narrow">
-          <div className="space-y-3 text-center">
-            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-accent">[ Live demo ]</p>
-            <h1 className="text-3xl font-semibold leading-tight text-foreground sm:text-4xl">
-              See exactly what your customers would experience.
-            </h1>
-            <p className="mx-auto max-w-xl text-base text-muted-foreground">
-              Tell PhotoBrief what you do. In 60 seconds we'll build the brief your customers
-              would walk through, then email the finished result to you.
-            </p>
+    <div className="border border-border bg-background/40 p-6 sm:p-8">
+      {error ? (
+        <div className="mb-4 border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">{error}</div>
+      ) : null}
+
+      {stage === "service" && (
+        <StepBlock eyebrow="Step 1 of 3" title="What kind of service do you provide?">
+          <input
+            autoFocus value={serviceType} onChange={(e) => setServiceType(e.target.value)}
+            placeholder="e.g. Residential plumbing"
+            className="w-full border border-border bg-background px-4 py-3 text-base text-foreground outline-none focus:border-accent"
+          />
+          <div className="mt-3 flex flex-wrap gap-2">
+            {SERVICE_CHIPS.map((c) => (
+              <button
+                key={c} type="button" onClick={() => setServiceType(c)}
+                className="border border-border bg-background px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground hover:border-accent hover:text-foreground"
+              >
+                {c}
+              </button>
+            ))}
           </div>
+          <PrimaryButton disabled={!serviceType.trim()} onClick={() => setStage("scenario")}>Continue →</PrimaryButton>
+        </StepBlock>
+      )}
 
-          <div className="mt-10 border border-border bg-background/40 p-6 sm:p-8">
-            {error ? (
-              <div className="mb-4 border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-                {error}
-              </div>
-            ) : null}
+      {stage === "scenario" && (
+        <StepBlock
+          eyebrow="Step 2 of 3"
+          title="What does a typical photo request look like for you?"
+          hint={`Example: "Customer says they have a leaking faucet and we need photos to quote it."`}
+        >
+          <textarea
+            autoFocus value={scenario} onChange={(e) => setScenario(e.target.value)} rows={4}
+            placeholder="Describe a real situation you handle..."
+            className="w-full border border-border bg-background px-4 py-3 text-base text-foreground outline-none focus:border-accent"
+          />
+          <PrimaryButton disabled={!scenario.trim() || busy} onClick={() => callDiscovery()}>
+            {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : "Continue →"}
+          </PrimaryButton>
+        </StepBlock>
+      )}
 
-            {stage === "service" && (
-              <StepBlock
-                eyebrow="Step 1 of 3"
-                title="What kind of service do you provide?"
-              >
-                <input
-                  autoFocus
-                  value={serviceType}
-                  onChange={(e) => setServiceType(e.target.value)}
-                  placeholder="e.g. Residential plumbing"
-                  className="w-full border border-border bg-background px-4 py-3 text-base text-foreground outline-none focus:border-accent"
-                />
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {SERVICE_CHIPS.map((c) => (
-                    <button
-                      key={c}
-                      type="button"
-                      onClick={() => setServiceType(c)}
-                      className="border border-border bg-background px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground hover:border-accent hover:text-foreground"
-                    >
-                      {c}
-                    </button>
-                  ))}
-                </div>
-                <PrimaryButton
-                  disabled={!serviceType.trim()}
-                  onClick={() => setStage("scenario")}
-                >
-                  Continue →
-                </PrimaryButton>
-              </StepBlock>
-            )}
+      {stage === "clarify" && clarifyingQuestion && (
+        <StepBlock eyebrow="One quick clarifier" title={clarifyingQuestion}>
+          <input
+            autoFocus value={clarifierAnswer} onChange={(e) => setClarifierAnswer(e.target.value)}
+            placeholder="Your answer"
+            className="w-full border border-border bg-background px-4 py-3 text-base text-foreground outline-none focus:border-accent"
+          />
+          <PrimaryButton disabled={!clarifierAnswer.trim() || busy} onClick={() => callDiscovery()}>
+            {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : "Build my brief →"}
+          </PrimaryButton>
+        </StepBlock>
+      )}
 
-            {stage === "scenario" && (
-              <StepBlock
-                eyebrow="Step 2 of 3"
-                title="What does a typical photo request look like for you?"
-                hint={`Example: "Customer says they have a leaking faucet and we need photos to quote it."`}
-              >
-                <textarea
-                  autoFocus
-                  value={scenario}
-                  onChange={(e) => setScenario(e.target.value)}
-                  rows={4}
-                  placeholder="Describe a real situation you handle..."
-                  className="w-full border border-border bg-background px-4 py-3 text-base text-foreground outline-none focus:border-accent"
-                />
-                <PrimaryButton
-                  disabled={!scenario.trim() || busy}
-                  onClick={() => callDiscovery()}
-                >
-                  {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : "Continue →"}
-                </PrimaryButton>
-              </StepBlock>
-            )}
+      {stage === "contact" && (
+        <StepBlock
+          eyebrow="Step 3 of 3"
+          title="Where should we send the finished brief?"
+          hint="We'll email you the result after you walk through the capture flow. No signup, no spam."
+        >
+          {draft && (
+            <div className="mb-4 border border-border bg-background/60 p-4">
+              <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Your brief</p>
+              <p className="mt-2 text-base font-semibold text-foreground">{draft.title}</p>
+              <ul className="mt-3 space-y-1.5 text-sm text-muted-foreground">
+                {draft.steps.map((s, i) => (
+                  <li key={i}>
+                    <span className="text-foreground">{i + 1}. {s.title}</span>
+                    <span className="text-muted-foreground"> — {s.instruction}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          <input
+            autoFocus value={visitorName} onChange={(e) => setVisitorName(e.target.value)} placeholder="Your name"
+            className="mb-3 w-full border border-border bg-background px-4 py-3 text-base text-foreground outline-none focus:border-accent"
+          />
+          <input
+            type="email" value={visitorEmail} onChange={(e) => setVisitorEmail(e.target.value)} placeholder="you@business.com"
+            className="w-full border border-border bg-background px-4 py-3 text-base text-foreground outline-none focus:border-accent"
+          />
+          <PrimaryButton
+            disabled={!visitorEmail.trim() || !visitorName.trim() || busy}
+            onClick={() => { setStage("generating"); callDiscovery({ finalize: true }); }}
+          >
+            {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : "Walk through my brief →"}
+          </PrimaryButton>
+        </StepBlock>
+      )}
 
-            {stage === "clarify" && clarifyingQuestion && (
-              <StepBlock
-                eyebrow="One quick clarifier"
-                title={clarifyingQuestion}
-              >
-                <input
-                  autoFocus
-                  value={clarifierAnswer}
-                  onChange={(e) => setClarifierAnswer(e.target.value)}
-                  placeholder="Your answer"
-                  className="w-full border border-border bg-background px-4 py-3 text-base text-foreground outline-none focus:border-accent"
-                />
-                <PrimaryButton
-                  disabled={!clarifierAnswer.trim() || busy}
-                  onClick={() => callDiscovery()}
-                >
-                  {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : "Build my brief →"}
-                </PrimaryButton>
-              </StepBlock>
-            )}
-
-            {stage === "contact" && (
-              <StepBlock
-                eyebrow="Step 3 of 3"
-                title="Where should we send the finished brief?"
-                hint="We'll email you the result after you walk through the capture flow. No signup, no spam."
-              >
-                {draft && (
-                  <div className="mb-4 border border-border bg-background/60 p-4">
-                    <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-                      Your brief
-                    </p>
-                    <p className="mt-2 text-base font-semibold text-foreground">{draft.title}</p>
-                    <ul className="mt-3 space-y-1.5 text-sm text-muted-foreground">
-                      {draft.steps.map((s, i) => (
-                        <li key={i}>
-                          <span className="text-foreground">{i + 1}. {s.title}</span>
-                          <span className="text-muted-foreground"> — {s.instruction}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                <input
-                  autoFocus
-                  value={visitorName}
-                  onChange={(e) => setVisitorName(e.target.value)}
-                  placeholder="Your name"
-                  className="mb-3 w-full border border-border bg-background px-4 py-3 text-base text-foreground outline-none focus:border-accent"
-                />
-                <input
-                  type="email"
-                  value={visitorEmail}
-                  onChange={(e) => setVisitorEmail(e.target.value)}
-                  placeholder="you@business.com"
-                  className="w-full border border-border bg-background px-4 py-3 text-base text-foreground outline-none focus:border-accent"
-                />
-                <PrimaryButton
-                  disabled={!visitorEmail.trim() || !visitorName.trim() || busy}
-                  onClick={() => {
-                    setStage("generating");
-                    callDiscovery({ finalize: true });
-                  }}
-                >
-                  {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : "Walk through my brief →"}
-                </PrimaryButton>
-              </StepBlock>
-            )}
-
-            {stage === "generating" && (
-              <div className="flex flex-col items-center gap-4 py-12 text-center">
-                <Loader2 className="h-6 w-6 animate-spin text-accent" />
-                <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
-                  Building your brief
-                </p>
-                <p className="text-sm text-muted-foreground">Redirecting you to the customer view…</p>
-              </div>
-            )}
-          </div>
-
-          <p className="mt-6 text-center text-xs text-muted-foreground">
-            Demo briefs are auto-deleted after 24 hours.
-          </p>
-        </Container>
-      </Section>
-    </>
+      {stage === "generating" && (
+        <div className="flex flex-col items-center gap-4 py-12 text-center">
+          <Loader2 className="h-6 w-6 animate-spin text-accent" />
+          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground">Building your brief</p>
+          <p className="text-sm text-muted-foreground">Redirecting you to the customer view…</p>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -271,9 +310,7 @@ function PrimaryButton({
 }: { disabled?: boolean; onClick: () => void; children: React.ReactNode }) {
   return (
     <button
-      type="button"
-      disabled={disabled}
-      onClick={onClick}
+      type="button" disabled={disabled} onClick={onClick}
       className="mt-5 inline-flex min-h-11 items-center justify-center gap-2 rounded-sm border border-accent bg-accent px-6 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] text-accent-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
     >
       {children}
