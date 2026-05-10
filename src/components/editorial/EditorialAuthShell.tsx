@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { NavLink } from "react-router-dom";
 import { BrandMark } from "@/components/layout/BrandMark";
-import { cn } from "@/lib/utils";
+import { Card } from "@/design-system/schema";
 
 interface EditorialAuthShellProps {
   numeral: string;
@@ -10,12 +10,14 @@ interface EditorialAuthShellProps {
   description?: ReactNode;
   children: ReactNode;
   footer?: ReactNode;
+  /** @deprecated retained for source compatibility; ignored by schema Card. */
   className?: string;
 }
 
 /**
- * Shared editorial frame for auth-style pages (sign-in, sign-up, password reset,
- * unsubscribe, beta welcome). Sharp 1px card on the warm off-black canvas.
+ * Shared editorial frame for auth-style pages (sign-in, sign-up, password reset).
+ * Sharp 1px paper Card on the warm off-black canvas, composed from the
+ * design-system schema primitives.
  */
 export function EditorialAuthShell({
   numeral,
@@ -24,7 +26,6 @@ export function EditorialAuthShell({
   description,
   children,
   footer,
-  className,
 }: EditorialAuthShellProps) {
   return (
     <div className="relative isolate flex min-h-[100vh] flex-col overflow-hidden bg-background">
@@ -40,12 +41,7 @@ export function EditorialAuthShell({
         >
           <BrandMark variant="stacked" tone="dark" size={64} eager />
         </NavLink>
-        <article
-          className={cn(
-            "relative border border-border bg-card p-7",
-            className,
-          )}
-        >
+        <Card variant="paper" padding="lg">
           <p className="inline-flex items-baseline gap-2 font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
             <span className="inline-block h-px w-8 -translate-y-[0.25em] bg-[hsl(var(--accent-kinetic))]" />
             <span className="text-[hsl(var(--accent-kinetic))]">[ {numeral} ]</span>
@@ -60,7 +56,7 @@ export function EditorialAuthShell({
             </p>
           ) : null}
           <div className="mt-7">{children}</div>
-        </article>
+        </Card>
         {footer ? (
           <div className="mt-6 text-center text-sm text-muted-foreground">
             {footer}
