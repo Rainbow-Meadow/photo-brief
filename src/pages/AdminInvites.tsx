@@ -24,6 +24,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { Section, Container, Stack } from "@/design-system/schema";
 import { GlassPanel } from "@/components/ui/glass-panel";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
@@ -206,7 +207,7 @@ export default function AdminInvitesPage() {
   }
 
   return (
-    <div className="container max-w-6xl py-8">
+    <Section density="page"><Container><Stack>
       <PageHeader
         eyebrow="Platform admin"
         title="Beta invites & waitlist"
