@@ -45,9 +45,13 @@ Deno.serve(async (req) => {
     if (subIds.length > 0 && R2_ACCOUNT_ID && R2_KEY && R2_SECRET && R2_BUCKET) {
       const { data: media } = await admin
         .from("captured_media")
-        .select("storage_key")
+        .select("original_storage_key, processed_storage_key, preview_storage_key, thumbnail_storage_key")
         .in("submission_id", subIds);
-      const keys = (media ?? []).map((m: any) => m.storage_key).filter(Boolean);
+      const keys = Array.from(new Set(
+        (media ?? []).flatMap((m: any) => [
+          m.original_storage_key, m.processed_storage_key, m.preview_storage_key, m.thumbnail_storage_key,
+        ]).filter(Boolean),
+      ));
       if (keys.length > 0) {
         const aws = new AwsClient({ accessKeyId: R2_KEY, secretAccessKey: R2_SECRET, service: "s3", region: "auto" });
         for (const k of keys) {
