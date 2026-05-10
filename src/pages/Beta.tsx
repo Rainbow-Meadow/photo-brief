@@ -5,6 +5,7 @@ import { ArrowRight, Loader2, Clock3, HeartHandshake, MessageSquareText, Sparkle
 import { PageMeta } from "@/hooks/seo/usePageMeta";
 import { Section, Container, Card, Grid, Body, CTA, CTAGroup } from "@/design-system/schema";
 import { SectionIntro } from "@/components/marketing/SectionIntro";
+import { FinalCtaSection } from "@/components/marketing/FinalCtaSection";
 import { BetaSeatTracker } from "@/components/marketing/BetaSeatTracker";
 import { BetaQuickApplyForm } from "@/components/marketing/BetaQuickApplyForm";
 import { RiseIn } from "@/components/motion/RiseIn";
@@ -140,27 +141,20 @@ export default function BetaPage() {
         </Container>
       </Section>
 
-      <Section tone="dark">
-        <Container>
-          <div className="text-center">
-            <p className="ls-eyebrow">[ Pick up the pen ]</p>
-            <RiseIn>
-              <h2 className="ls-h1 mt-6">
-                Ready to replace the chase
-                <span className="ls-accent-dot">?</span>
-              </h2>
-            </RiseIn>
-            <CTAGroup align="center">
-              <CTA href="#agent" variant="primary" size="lg">
-                {isFull ? "Join waitlist" : "Open the agent"} <ArrowRight className="h-4 w-4" />
-              </CTA>
-              <CTA href="/pricing" variant="secondary" size="lg">
-                See pricing
-              </CTA>
-            </CTAGroup>
-          </div>
-        </Container>
-      </Section>
+      <FinalCtaSection
+        eyebrow="Pick up the pen"
+        title="Ready to replace the chase"
+        punctuation="?"
+        primary={{
+          href: "#agent",
+          label: (
+            <>
+              {isFull ? "Join waitlist" : "Open the agent"} <ArrowRight className="h-4 w-4" />
+            </>
+          ),
+        }}
+        secondary={{ href: "/pricing", label: "See pricing" }}
+      />
     </>
   );
 }
