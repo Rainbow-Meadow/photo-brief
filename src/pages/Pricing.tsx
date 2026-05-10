@@ -8,7 +8,7 @@ import { faqItems } from "@/features/help/content/faq";
 import { BETA_DURATION_DAYS, MAX_DISCOUNT_LABEL } from "@/config/betaProgram";
 
 import { Button } from "@/components/ui/button";
-import { signupCtaTarget, signupCtaLabel } from "@/config/access";
+
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { MarketingSection, MarketingHero } from "@/components/layout/primitives";
 
