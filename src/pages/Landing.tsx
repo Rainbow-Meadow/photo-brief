@@ -99,7 +99,6 @@ const SOFTWARE_APP_JSONLD: Record<string, unknown> = {
 /* ── Anchors ───────────────────────────────────────────── */
 
 const sectionLinks = [
-  { href: "#demo-video", label: "Demo" },
   { href: "#workflow", label: "Mechanism" },
   { href: "#comparison", label: "Before / after" },
   { href: "#use-cases", label: "Trades" },
@@ -133,7 +132,6 @@ export default function LandingPage() {
 
       <Hero />
       <MarqueeBand />
-      <DemoVideoSection />
       <MechanismSection />
       <ComparisonSection />
       <UseCasesSection />
@@ -181,12 +179,8 @@ function Hero() {
                 >
                   Claim a founding seat <ArrowRight className="h-4 w-4" />
                 </MagneticCTA>
-                <a
-                  href="#demo-video"
-                  className="ls-cta ls-cta--lg ls-cta-quiet mt-10"
-                  onClick={() => trackEvent("landing_hero_cta_watch_demo")}
-                >
-                  Watch the 30-sec demo →
+                <a href="#workflow" className="ls-cta ls-cta--lg ls-cta-quiet mt-10">
+                  See the mechanism →
                 </a>
               </CTAGroup>
             </RiseIn>
@@ -238,7 +232,7 @@ function Hero() {
 
 function MarqueeBand() {
   return (
-    <div className="relative space-y-4 border-y border-border bg-card py-8">
+    <div className="relative space-y-3 border-y border-border bg-card py-8">
       <MarqueeRow duration={45} direction="left">
         <span className="ls-marquee-item">Guide</span>
         <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
@@ -260,25 +254,7 @@ function MarqueeBand() {
         <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
         <span className="ls-marquee-item">5+ follow-ups to close — most stop at 1</span>
         <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
-        <span className="ls-marquee-item">1 in 4 jobs lost to a missing photo</span>
-        <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
-        <span className="ls-marquee-item ls-marquee-item--ghost">$1,200 avg revisit cost when the brief is wrong</span>
-        <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
-        <span className="ls-marquee-item">Most quotes go out 2+ days late</span>
-        <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
         <span className="ls-marquee-item ls-marquee-item--accent">Reverse-Form Method™</span>
-        <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
-      </MarqueeRow>
-      <MarqueeRow duration={75} direction="left">
-        <span className="ls-marquee-item">63% of homeowners ghost after the first quote</span>
-        <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
-        <span className="ls-marquee-item ls-marquee-item--ghost">Only 12% of contractors send a recap after the visit</span>
-        <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
-        <span className="ls-marquee-item">Site visits add 45 min per lead — most are avoidable</span>
-        <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
-        <span className="ls-marquee-item ls-marquee-item--ghost">92% of buyers expect a reply same-day</span>
-        <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
-        <span className="ls-marquee-item ls-marquee-item--accent">1 packet · 1 inbox · 0 back-and-forth</span>
         <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
       </MarqueeRow>
     </div>
@@ -315,39 +291,6 @@ const workflowSteps = [
     illo: methodOverviewIllo,
   },
 ];
-
-/* ─────────────────────────────────────────────────────────
-   Demo video — 30-second product spotlight
-   ───────────────────────────────────────────────────────── */
-
-function DemoVideoSection() {
-  return (
-    <Section id="demo-video">
-      <Container>
-        <SectionIntro
-          eyebrow="[ ▶ ] 30-second demo"
-          title="See the Reverse-Form Method™ in motion."
-          subtitle="Guide. Capture. Close. Thirty seconds, end to end."
-        />
-        <RiseIn delay={0.1}>
-          <div className="relative aspect-video w-full overflow-hidden border border-border bg-black shadow-[0_30px_80px_-45px_hsl(0_0%_0%/0.55)]">
-            <video
-              src="/marketing/photobrief-demo.mp4"
-              poster={heroIllustration}
-              controls
-              playsInline
-              preload="metadata"
-              className="h-full w-full object-cover"
-              onPlay={() => trackEvent("landing_demo_video_play")}
-            >
-              Your browser does not support embedded video.
-            </video>
-          </div>
-        </RiseIn>
-      </Container>
-    </Section>
-  );
-}
 
 function MechanismSection() {
   return (

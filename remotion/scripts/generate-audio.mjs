@@ -17,16 +17,12 @@ if (!KEY) {
 
 const VOICE_GEORGE = "JBFqnCBsd6RMkjVDRZzb";
 
-// RMBC copywriting framework: Research → Mechanism → Benefits → Close.
-// Pacing target: ~32 seconds at conversational delivery.
 const SCRIPT = [
-  // 01 RESEARCH — the problem
-  "Every contact form leaks. A name, an email, and 'I need a quote.' No photos. No address. No scope. So you call back. They don't pick up. The quote dies.",
-  // 02 MECHANISM — the Reverse-Form Method
-  "PhotoBrief reverses the form. You tell the customer what to send. The camera opens at the right angle, on the right shot. No app. No login. No thinking.",
-  // 03 BENEFITS — what changes
-  "A quote-ready packet lands in your inbox on the first reply. Photos in order. Address geocoded. Notes attached. No chasing. No callbacks.",
-  // 04 CLOSE — brand
+  "Most quotes die in the gap between question and answer.",
+  "PhotoBrief closes the gap. Research the job.",
+  "Mechanism — captured by the customer, in their pocket.",
+  "A brief, written for the way you actually quote.",
+  "Ready to quote, before you pick up the phone.",
   "PhotoBrief. Guide. Capture. Close.",
 ].join(" ... ");
 
@@ -47,11 +43,11 @@ async function tts() {
         text: SCRIPT,
         model_id: "eleven_multilingual_v2",
         voice_settings: {
-          stability: 0.45,
+          stability: 0.55,
           similarity_boost: 0.78,
-          style: 0.4,
+          style: 0.35,
           use_speaker_boost: true,
-          speed: 0.97,
+          speed: 0.95,
         },
       }),
     },
@@ -67,8 +63,8 @@ async function music() {
     headers: { "xi-api-key": KEY, "Content-Type": "application/json" },
     body: JSON.stringify({
       prompt:
-        "Sparse editorial documentary score, 33 seconds. Low cello drone. A single piano note every eight seconds, marking a scene change. Soft mallet percussion, no drums, no swells. Calm, confident, restrained. Field manual aesthetic.",
-      music_length_ms: 33000,
+        "Sparse editorial documentary score. Low cello drone, single muted piano note every four seconds, soft mallet percussion, no drums. Calm, confident, restrained. Field manual aesthetic.",
+      music_length_ms: 32000,
     }),
   });
   if (!r.ok) throw new Error(`Music ${r.status}: ${await r.text()}`);

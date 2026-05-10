@@ -1,139 +1,98 @@
 import React from "react";
-import { AbsoluteFill, Img, useCurrentFrame, interpolate, spring, useVideoConfig, staticFile } from "remotion";
+import { AbsoluteFill, useCurrentFrame, interpolate, spring, useVideoConfig } from "remotion";
 import { PlateFrame } from "../components/PlateFrame";
 import { DrawnPath } from "../components/DrawnLine";
-import { COLORS, FONT } from "../theme";
+import { COLORS, FONT, STROKE } from "../theme";
 
 /**
- * PLT.A.04 — CLOSE (RMBC · 4/4)
- * Brand close. Mark draws on first, wordmark slides in beside it,
- * tagline stamps below, then a long held still on the full lockup.
+ * PLT.A.06 — CLOSE
+ * Hexagon and square interlocking like a key + lock. Amber on the connection
+ * point. Closing wordmark + tagline.
  */
 export const SceneClose: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // Mark fade-in (using the official BrandMark PNG sourced from /brand)
-  const markIn = spring({ frame: frame - 10, fps, config: { damping: 16, stiffness: 110 } });
-  const markOpacity = interpolate(markIn, [0, 1], [0, 1]);
-  const markScale = interpolate(markIn, [0, 1], [0.85, 1]);
+  // hexagon and square slide together
+  const drift = spring({ frame, fps, config: { damping: 200 }, durationInFrames: 50 });
+  const offset = interpolate(drift, [0, 1], [220, 0]);
 
-  // Wordmark reveal
-  const wm = interpolate(frame, [40, 80], [0, 1], { extrapolateRight: "clamp" });
-  const wmX = interpolate(frame, [40, 80], [40, 0], { extrapolateRight: "clamp" });
+  // amber connection dot pulses in at midpoint
+  const dot = spring({ frame: frame - 60, fps, config: { damping: 12, stiffness: 130 } });
+  const dotOpacity = interpolate(dot, [0, 1], [0, 1]);
+  const dotScale = interpolate(dot, [0, 1], [0.4, 1]);
 
-  // Tagline reveal (after wordmark)
-  const tagOpacity = interpolate(frame, [80, 110], [0, 1], { extrapolateRight: "clamp" });
-  const tagY = interpolate(frame, [80, 110], [12, 0], { extrapolateRight: "clamp" });
+  // wordmark reveal late
+  const wm = interpolate(frame, [80, 120], [0, 1], { extrapolateRight: "clamp" });
+  const wmY = interpolate(frame, [80, 120], [12, 0], { extrapolateRight: "clamp" });
 
-  // Underline ribbon
-  const ribbon = interpolate(frame, [70, 100], [0, 1], { extrapolateRight: "clamp" });
+  // hexagon path centered at origin, "radius" 160
+  const r = 160;
+  const hex = Array.from({ length: 6 }, (_, i) => {
+    const a = (Math.PI / 3) * i - Math.PI / 2;
+    return `${(Math.cos(a) * r).toFixed(2)},${(Math.sin(a) * r).toFixed(2)}`;
+  }).join(" ");
 
   return (
-    <PlateFrame plate="PLT.A.04" label="RMBC / 04 · CLOSE">
+    <PlateFrame plate="PLT.A.06" label="RFM-METHOD / CLOSE">
       <AbsoluteFill>
-        {/* lockup row */}
+        <svg width={1920} height={1080} style={{ position: "absolute", inset: 0 }}>
+          {/* hexagon (left) */}
+          <g transform={`translate(${800 - offset}, 460)`}>
+            <polygon points={hex} fill="none" stroke={COLORS.ink} strokeWidth={STROKE.contour} />
+          </g>
+
+          {/* square (right) — rotated diamond */}
+          <g transform={`translate(${1120 + offset}, 460) rotate(45)`}>
+            <rect x={-130} y={-130} width={260} height={260} fill="none" stroke={COLORS.ink} strokeWidth={STROKE.contour} />
+          </g>
+
+          {/* connection dot at center, between them */}
+          <g transform="translate(960, 460)" opacity={dotOpacity} style={{ transformOrigin: "center" }}>
+            <circle r={36 * dotScale} fill={COLORS.amber} />
+            <circle r={56 * dotScale} fill="none" stroke={COLORS.amber} strokeWidth={1} opacity={0.5} />
+          </g>
+
+          {/* hairline frame for close caption */}
+          <DrawnPath d="M 700 760 L 1220 760" delay={70} duration={20} strokeWidth={1} stroke={COLORS.inkFaint} />
+        </svg>
+
+        {/* wordmark */}
         <div
           style={{
             position: "absolute",
-            inset: 0,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 40,
+            left: 0,
+            right: 0,
+            top: 760,
+            textAlign: "center",
+            opacity: wm,
+            transform: `translateY(${wmY}px)`,
+            fontFamily: FONT.display,
+            fontSize: 84,
+            letterSpacing: "-0.02em",
+            color: COLORS.ink,
+            fontWeight: 500,
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: 36 }}>
-            {/* Mark */}
-            <div
-              style={{
-                opacity: markOpacity,
-                transform: `scale(${markScale})`,
-                transformOrigin: "center",
-              }}
-            >
-              <Img
-                src={staticFile("brand/mark-on-dark.png")}
-                style={{ width: 180, height: 180, objectFit: "contain" }}
-              />
-            </div>
-
-            {/* Wordmark */}
-            <div
-              style={{
-                opacity: wm,
-                transform: `translateX(${wmX}px)`,
-                fontFamily: "Inter, system-ui, sans-serif",
-                fontWeight: 800,
-                fontSize: 148,
-                letterSpacing: "-0.05em",
-                lineHeight: 1,
-                color: COLORS.ink,
-                whiteSpace: "nowrap",
-              }}
-            >
-              <span style={{ color: COLORS.ink }}>Photo</span>
-              <span style={{ color: COLORS.amber }}>Brief</span>
-              <span
-                style={{
-                  color: "rgba(244, 241, 234, 0.7)",
-                  fontWeight: 600,
-                  fontSize: 92,
-                  marginLeft: 8,
-                  letterSpacing: "-0.02em",
-                }}
-              >
-                .ai
-              </span>
-            </div>
-          </div>
-
-          {/* tagline */}
-          <div
-            style={{
-              opacity: tagOpacity,
-              transform: `translateY(${tagY}px)`,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: 18,
-            }}
-          >
-            <svg width={520} height={4}>
-              <line
-                x1={0}
-                y1={2}
-                x2={520 * ribbon}
-                y2={2}
-                stroke={COLORS.amber}
-                strokeWidth={2}
-              />
-            </svg>
-            <div
-              style={{
-                fontFamily: FONT.mono,
-                fontSize: 22,
-                letterSpacing: "0.48em",
-                color: COLORS.ink,
-                textTransform: "uppercase",
-              }}
-            >
-              Guide · Capture · Close
-            </div>
-          </div>
+          Photo<span style={{ color: COLORS.amber }}>Brief</span>
         </div>
-
-        {/* mono coda — CTA whisper bottom-right of the plate */}
-        <svg width={1920} height={1080} style={{ position: "absolute", inset: 0 }}>
-          <DrawnPath
-            d="M 700 880 L 1220 880"
-            delay={120}
-            duration={24}
-            strokeWidth={1}
-            stroke={COLORS.inkFaint}
-          />
-        </svg>
+        <div
+          style={{
+            position: "absolute",
+            left: 0,
+            right: 0,
+            top: 880,
+            textAlign: "center",
+            opacity: wm,
+            fontFamily: FONT.mono,
+            fontSize: 18,
+            letterSpacing: "0.42em",
+            color: COLORS.inkDim,
+            textTransform: "uppercase",
+          }}
+        >
+          Guide · Capture · Close
+        </div>
       </AbsoluteFill>
     </PlateFrame>
   );
