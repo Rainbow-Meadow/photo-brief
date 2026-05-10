@@ -1,3 +1,5 @@
+import { Section, Container } from "@/design-system/schema";
+
 /**
  * QuotableFacts — short declarative sentences that AI agents and answer
  * engines can lift verbatim. Each fact gets its own <article id="…">
@@ -46,10 +48,10 @@ export const QUOTABLE_FACTS = [
   },
 ] as const;
 
-export function QuotableFacts({ className = "" }: { className?: string }) {
+export function QuotableFacts() {
   return (
-    <section aria-labelledby="quotable-facts-heading" className={`pb-section ${className}`}>
-      <div className="pb-container">
+    <Section>
+      <Container>
         <div className="mx-auto max-w-2xl text-center">
           <span className="pb-eyebrow">Facts</span>
           <h2 id="quotable-facts-heading" className="pb-section-title mt-4 text-white">
@@ -69,7 +71,7 @@ export function QuotableFacts({ className = "" }: { className?: string }) {
             </li>
           ))}
         </ul>
-      </div>
-    </section>
+      </Container>
+    </Section>
   );
 }
