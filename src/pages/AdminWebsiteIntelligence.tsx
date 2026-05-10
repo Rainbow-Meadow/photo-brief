@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Bot, ExternalLink, Globe2, Loader2, RefreshCw, Route, ScanSearch, Sparkles } from "lucide-react";
 
 import { PageHeader } from "@/components/layout/PageHeader";
-import { PageShell, PageStack, ResponsiveGrid } from "@/components/layout/primitives";
+import { Section, Container, Stack, Grid } from "@/design-system/schema";
 import { GlassPanel } from "@/components/ui/glass-panel";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -165,7 +165,7 @@ export default function AdminWebsiteIntelligencePage() {
   }
 
   return (
-    <PageShell><PageStack>
+    <Section density="page"><Container><Stack>
       <PageHeader
         eyebrow="Platform admin"
         title="Website intelligence"
@@ -178,7 +178,7 @@ export default function AdminWebsiteIntelligencePage() {
         }
       />
 
-      <ResponsiveGrid cols="1-2" className="lg:grid-cols-[0.9fr_1.1fr]">
+      <Grid cols={2}>
         <GlassPanel variant="card" className="p-5">
           <div className="flex items-center gap-2">
             <ScanSearch className="h-5 w-5 text-primary" />
@@ -268,7 +268,7 @@ export default function AdminWebsiteIntelligencePage() {
             </Table>
           </div>
         </GlassPanel>
-      </ResponsiveGrid>
+      </Grid>
 
       {result ? (
         <div className="mt-6 grid gap-5 lg:grid-cols-3">
@@ -350,6 +350,6 @@ export default function AdminWebsiteIntelligencePage() {
           </GlassPanel>
         </div>
       ) : null}
-    </PageStack></PageShell>
+    </Stack></Container></Section>
   );
 }
