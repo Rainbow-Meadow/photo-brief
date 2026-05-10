@@ -187,12 +187,17 @@ function Hero() {
           </div>
 
           <RiseIn delay={0.4} className="relative">
-            <div className="relative aspect-[3/2] w-full overflow-hidden border border-border bg-[hsl(var(--pb-paper))]">
-              <img
-                src={heroIllustration}
-                alt="Customer capturing the photos a contractor actually needs."
-                className="h-full w-full object-contain"
-                loading="eager"
+            <div className="relative aspect-video w-full overflow-hidden border border-border bg-[hsl(var(--pb-paper))]">
+              <video
+                src="/marketing/photobrief-demo.mp4"
+                poster={heroIllustration}
+                className="h-full w-full object-cover"
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                aria-label="PhotoBrief product demo: Guide, Capture, Close."
               />
               <div className="absolute inset-x-0 bottom-0 flex items-center justify-between p-4 text-[10px] uppercase tracking-[0.2em] text-foreground/80 mix-blend-difference">
                 <span className="font-mono">Fig. 01</span>
