@@ -1,50 +1,12 @@
-import { lazy, Suspense, useState, type ReactNode } from "react";
-import { NavLink, useSearchParams } from "react-router-dom";
-import {
-  ArrowRight,
-  CheckCircle2,
-  Loader2,
-  Camera,
-  Wrench,
-  Wind,
-  Leaf,
-  Truck,
-  Calculator,
-  Globe2,
-  Eye,
-  Scan,
-  Route,
-  ImageOff,
-  TimerReset,
-  MessageSquareWarning,
-} from "lucide-react";
-import { z } from "zod";
+import { NavLink } from "react-router-dom";
+import { ArrowRight, CheckCircle2, ImageOff, MessageSquareWarning, TimerReset, PlayCircle, Rocket, Tags } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { PageMeta } from "@/hooks/seo/usePageMeta";
 import { buildHowToJsonLd } from "@/hooks/seo/buildHowToJsonLd";
 import { buildFaqJsonLd } from "@/hooks/seo/buildFaqJsonLd";
 
 import { BrandMark } from "@/components/layout/BrandMark";
-import { BetaSeatTracker } from "@/components/marketing/BetaSeatTracker";
-import {
-  Section,
-  Container,
-  Eyebrow,
-  Title,
-  Subtitle,
-  Body,
-  Card,
-  Grid,
-  CTA,
-  CTAGroup,
-} from "@/pages/landing/schema";
+import { Section, Container, Card, Body, CTA, CTAGroup } from "@/pages/landing/schema";
 import { MarqueeRow } from "@/components/motion/MarqueeRow";
 import { RiseIn } from "@/components/motion/RiseIn";
 import { MagneticCTA } from "@/components/motion/MagneticCTA";
@@ -52,39 +14,16 @@ import { MagneticCTA } from "@/components/motion/MagneticCTA";
 import { faqItems } from "@/features/help/content/faq";
 import { howItWorksSteps } from "@/components/marketing/HowItWorksSteps";
 import { trackEvent } from "@/lib/analytics";
-import {
-  BETA_DURATION_DAYS,
-  BETA_TOTAL_PARTNERS,
-} from "@/config/betaProgram";
+import { BETA_DURATION_DAYS, BETA_TOTAL_PARTNERS } from "@/config/betaProgram";
 import { useBetaSeats } from "@/hooks/useBetaSeats";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/hooks/use-toast";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+
+import { SectionIntro } from "@/components/marketing/SectionIntro";
+import { MechanismGrid } from "@/components/marketing/MechanismGrid";
 
 import heroIllustration from "@/assets/hero-new.png";
-import landscaperIllo from "@/assets/trades/landscaper-illustration.png";
-import hvacTechIllo from "@/assets/trades/hvac-tech-illustration.png";
-import plumberIllo from "@/assets/trades/plumber-illustration.png";
-import junkHaulerIllo from "@/assets/trades/junk-hauler-illustration.png";
-import estimatorIllo from "@/assets/trades/estimator-illustration.png";
-import researchMagnifierIllo from "@/assets/rmbc/research-magnifier.png";
-import mechanismGearsIllo from "@/assets/rmbc/mechanism-gears.png";
-import briefPacketIllo from "@/assets/rmbc/brief-packet.png";
 import beforeIntakeFormIllo from "@/assets/comparison/before-intake-form.png";
 import afterCapturePipelineIllo from "@/assets/comparison/after-capture-pipeline.png";
-import methodOverviewIllo from "@/assets/rmbc/method-overview.png";
-
-const InteractiveHeroBriefAssembly = lazy(() =>
-  import("@/components/marketing/InteractiveHeroBriefAssembly").then((m) => ({
-    default: m.InteractiveHeroBriefAssembly,
-  })),
-);
-const BetaOnboardingAgentExperience = lazy(() =>
-  import("@/components/marketing/BetaOnboardingAgentExperience").then((m) => ({
-    default: m.BetaOnboardingAgentExperience,
-  })),
-);
-
-/* ── JSON-LD ───────────────────────────────────────────────── */
 
 const SOFTWARE_APP_JSONLD: Record<string, unknown> = {
   "@context": "https://schema.org",
@@ -93,26 +32,10 @@ const SOFTWARE_APP_JSONLD: Record<string, unknown> = {
   applicationCategory: "BusinessApplication",
   operatingSystem: "Web",
   description:
-    "Your contact form is leaking money. PhotoBrief's Reverse-Form Method™ tells customers exactly what to send — and a quote-ready lead packet lands in your inbox on the first try. No chasing. No callbacks. No vague 'I need a quote'.",
+    "Your contact form is leaking money. PhotoBrief's Reverse-Form Method™ tells customers exactly what to send — and a quote-ready lead packet lands in your inbox on the first try.",
 };
 
-/* ── Anchors ───────────────────────────────────────────── */
-
-const sectionLinks = [
-  { href: "#workflow", label: "Mechanism" },
-  { href: "#comparison", label: "Before / after" },
-  { href: "#use-cases", label: "Trades" },
-  { href: "#website-intelligence", label: "Intelligence" },
-  { href: "#apply", label: "Apply" },
-];
-
-/* ─────────────────────────────────────────────────────────
-   The page
-   ───────────────────────────────────────────────────────── */
-
 export default function LandingPage() {
-  const [params] = useSearchParams();
-  const showAgent = params.get("agent") === "1";
   const { isFull } = useBetaSeats();
 
   const heroJsonLd = buildHowToJsonLd(
@@ -124,8 +47,8 @@ export default function LandingPage() {
   return (
     <>
       <PageMeta
-        title="PhotoBrief — Stop the leak. Quote on the first reply."
-        description="Your contact form is leaking money. PhotoBrief's Reverse-Form Method™ tells customers exactly what to send — and a quote-ready lead packet lands in your inbox on the first try. No chasing. No callbacks."
+        title="PhotoBrief — Guide. Capture. Close."
+        description="Stop chasing customers for the right photo. PhotoBrief's Reverse-Form Method™ delivers a quote-ready lead packet on the first try."
         canonicalPath="/"
         jsonLd={[SOFTWARE_APP_JSONLD, heroJsonLd, faqJsonLd]}
       />
@@ -134,21 +57,14 @@ export default function LandingPage() {
       <MarqueeBand />
       <MechanismSection />
       <ComparisonSection />
-      <UseCasesSection />
-      <WebsiteIntelligenceSection />
-      <LiveDemoSection />
-      <BetaProgramSection />
-      <ApplySection showAgent={showAgent} />
+      <SignpostSection />
       <FaqSection />
       <FinalCta isFull={isFull} />
     </>
   );
 }
 
-/* ─────────────────────────────────────────────────────────
-   Hero — kinetic editorial stack
-   ───────────────────────────────────────────────────────── */
-
+/* ── Hero ── */
 function Hero() {
   return (
     <Section>
@@ -167,21 +83,21 @@ function Hero() {
             </RiseIn>
             <RiseIn delay={0.25}>
               <p className="ls-subtitle mt-8 max-w-[44ch]">
-                Your contact form is leaking money. The Reverse-Form Method™ patches it — <em>you</em> tell customers exactly what to send, in the order an estimator needs it, and a quote-ready packet lands in your inbox on the first try.
+                Your contact form is leaking money. The Reverse-Form Method™ patches it — <em>you</em> tell customers exactly what to send, and a quote-ready packet lands in your inbox on the first try.
               </p>
             </RiseIn>
             <RiseIn delay={0.35}>
               <CTAGroup>
                 <MagneticCTA
-                  href="#apply"
+                  href="/demo"
                   className="ls-cta ls-cta--lg ls-cta-primary mt-10"
-                  onClick={() => trackEvent("landing_hero_cta_apply")}
+                  onClick={() => trackEvent("landing_hero_cta_demo")}
                 >
-                  Claim a founding seat <ArrowRight className="h-4 w-4" />
+                  Try the live demo <ArrowRight className="h-4 w-4" />
                 </MagneticCTA>
-                <a href="#workflow" className="ls-cta ls-cta--lg ls-cta-quiet mt-10">
-                  See the mechanism →
-                </a>
+                <NavLink to="/beta" className="ls-cta ls-cta--lg ls-cta-quiet mt-10">
+                  Apply for the beta →
+                </NavLink>
               </CTAGroup>
             </RiseIn>
           </div>
@@ -199,37 +115,15 @@ function Hero() {
                 <span className="font-mono">Reverse-Form Method™</span>
               </div>
             </div>
-            <BrandMark
-              variant="horizontal"
-              tone="dark"
-              size={28}
-              className="mt-6 justify-center opacity-80"
-            />
+            <BrandMark variant="horizontal" tone="dark" size={28} className="mt-6 justify-center opacity-80" />
           </RiseIn>
-        </div>
-
-        {/* Anchor nav strip */}
-        <div className="mt-20 hidden border-y border-border py-4 md:flex md:flex-wrap md:items-center md:gap-x-8 md:gap-y-2">
-          <span className="ls-numeral">Index</span>
-          {sectionLinks.map((l, i) => (
-            <a
-              key={l.href}
-              href={l.href}
-              className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground transition-colors hover:text-foreground"
-            >
-              {String(i + 1).padStart(2, "0")} · {l.label}
-            </a>
-          ))}
         </div>
       </Container>
     </Section>
   );
 }
 
-/* ─────────────────────────────────────────────────────────
-   Marquee band — kinetic word strip
-   ───────────────────────────────────────────────────────── */
-
+/* ── Marquee ── */
 function MarqueeBand() {
   return (
     <div className="relative space-y-3 border-y border-border bg-card py-8">
@@ -250,10 +144,6 @@ function MarqueeBand() {
         <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
         <span className="ls-marquee-item">4.2 hr avg lead response time</span>
         <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
-        <span className="ls-marquee-item ls-marquee-item--ghost">60% of estimates never followed up</span>
-        <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
-        <span className="ls-marquee-item">5+ follow-ups to close — most stop at 1</span>
-        <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
         <span className="ls-marquee-item ls-marquee-item--accent">Reverse-Form Method™</span>
         <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
       </MarqueeRow>
@@ -261,37 +151,7 @@ function MarqueeBand() {
   );
 }
 
-/* ─────────────────────────────────────────────────────────
-   Mechanism — 4-step Reverse-Form Method
-   ───────────────────────────────────────────────────────── */
-
-const workflowSteps = [
-  {
-    n: "01",
-    title: "Research",
-    body: "We scan your site, your trade, and the photos your estimators actually need. The ones that kill callbacks.",
-    illo: researchMagnifierIllo,
-  },
-  {
-    n: "02",
-    title: "Mechanism",
-    body: "The customer taps a link. The camera opens at the right angle. The right shot lands. No app, no login, no thinking.",
-    illo: mechanismGearsIllo,
-  },
-  {
-    n: "03",
-    title: "Brief",
-    body: "Photos, notes, and address arrive as one packet — formatted for your inbox, your CRM, and the person writing the quote.",
-    illo: briefPacketIllo,
-  },
-  {
-    n: "04",
-    title: "Close",
-    body: "Your team quotes on the first reply. The lead doesn't cool. The job moves.",
-    illo: methodOverviewIllo,
-  },
-];
-
+/* ── Mechanism teaser ── */
 function MechanismSection() {
   return (
     <Section id="workflow" tone="alt">
@@ -301,45 +161,21 @@ function MechanismSection() {
           title="Stop asking. Start telling."
           subtitle={`The Reverse-Form Method™. Four moves that turn "I need a quote" into a quotable job in 38 seconds.`}
         />
-        <Grid cols={4} gap="md">
-          {workflowSteps.map((step, i) => (
-            <RiseIn key={step.n} delay={i * 0.06}>
-              <Card>
-                <div className="flex items-baseline justify-between">
-                  <span className="ls-numeral">{step.n}</span>
-                  <span className="ls-numeral text-foreground/40">04</span>
-                </div>
-                <div className="mt-6 aspect-square w-full overflow-hidden border border-border bg-muted">
-                  <img
-                    src={step.illo}
-                    alt=""
-                    className="h-full w-full object-contain p-6 opacity-90"
-                    loading="lazy"
-                  />
-                </div>
-                <h3 className="ls-h3 mt-6">{step.title}</h3>
-                <Body size="sm">{step.body}</Body>
-              </Card>
-            </RiseIn>
-          ))}
-        </Grid>
+        <MechanismGrid />
       </Container>
     </Section>
   );
 }
 
-/* ─────────────────────────────────────────────────────────
-   Comparison — before / after
-   ───────────────────────────────────────────────────────── */
-
+/* ── Before / after ── */
 function ComparisonSection() {
   return (
-    <Section id="comparison">
+    <Section>
       <Container>
         <SectionIntro
           eyebrow="[ 03 ] Before / after"
           title="The intake your customers feel — and the one your estimator doesn't curse at."
-          subtitle="Same five minutes. Two different futures for the lead. One ends in a quote."
+          subtitle="Same five minutes. Two different futures for the lead."
         />
         <div className="grid gap-6 lg:grid-cols-2">
           <Card>
@@ -358,12 +194,8 @@ function ComparisonSection() {
               ))}
             </ul>
             <div className="mt-6 aspect-[16/9] overflow-hidden border border-border bg-muted">
-              <img
-                src={beforeIntakeFormIllo}
-                alt="Illustration of a broken intake form with missing photo context"
-                className="h-full w-full object-contain p-4"
-                loading="lazy"
-              />
+              <img src={beforeIntakeFormIllo} alt="Broken intake form with missing photo context"
+                className="h-full w-full object-contain p-4" loading="lazy" />
             </div>
           </Card>
           <Card elevated>
@@ -382,12 +214,8 @@ function ComparisonSection() {
               ))}
             </ul>
             <div className="mt-6 aspect-[16/9] overflow-hidden border border-border bg-muted">
-              <img
-                src={afterCapturePipelineIllo}
-                alt="Illustration of a guided phone capture flow turning into a ready brief packet"
-                className="h-full w-full object-contain p-4"
-                loading="lazy"
-              />
+              <img src={afterCapturePipelineIllo} alt="Guided phone capture flow turning into a brief packet"
+                className="h-full w-full object-contain p-4" loading="lazy" />
             </div>
           </Card>
         </div>
@@ -396,35 +224,53 @@ function ComparisonSection() {
   );
 }
 
-/* ─────────────────────────────────────────────────────────
-   Use cases — trade illustrations
-   ───────────────────────────────────────────────────────── */
-
-const useCases = [
-  { icon: Wrench, label: "Plumbers", note: "Under-sink, shut-off, the exact leak — captured in order.", illo: plumberIllo },
-  { icon: Wind, label: "HVAC", note: "Outdoor unit, indoor air-handler, breaker panel — one tap each.", illo: hvacTechIllo },
-  { icon: Leaf, label: "Landscapers", note: "Front yard, back yard, slope, side-gate access — drone-free.", illo: landscaperIllo },
-  { icon: Truck, label: "Junk haulers", note: "The pile, the path, the hazards — before the truck rolls.", illo: junkHaulerIllo },
-  { icon: Calculator, label: "Estimators", note: "Photo coverage that actually prices the job.", illo: estimatorIllo },
+/* ── Signpost — three doors ── */
+const signposts = [
+  {
+    to: "/demo",
+    icon: PlayCircle,
+    eyebrow: "Demo",
+    title: "See it work on your business.",
+    body: "Watch a brief assemble live, then build one tailored to your trade in 60 seconds.",
+    cta: "Try the live demo",
+  },
+  {
+    to: "/beta",
+    icon: Rocket,
+    eyebrow: "Beta",
+    title: `${BETA_TOTAL_PARTNERS} founding seats. ${BETA_DURATION_DAYS} days.`,
+    body: "Concierge setup, direct line to the team, lifetime founding pricing for accepted partners.",
+    cta: "Apply for the beta",
+  },
+  {
+    to: "/pricing",
+    icon: Tags,
+    eyebrow: "Pricing",
+    title: "Plans that scale with the work.",
+    body: "Free, Starter, Pro, Team, Business — see what's included and what unlocks at each tier.",
+    cta: "See pricing",
+  },
 ];
 
-function UseCasesSection() {
+function SignpostSection() {
   return (
-    <Section id="use-cases" tone="alt">
+    <Section tone="alt">
       <Container>
-        <SectionIntro
-          eyebrow="[ 04 ] Trades"
-          title="Built around the work, not the form."
-          subtitle="Coverage templates per trade. Mute customer? Doesn't matter. The form does the talking."
-        />
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-          {useCases.map((u, i) => (
-            <RiseIn key={u.label} delay={i * 0.05}>
-              <Card>
-                <u.icon className="h-6 w-6 text-[hsl(var(--accent-kinetic))]" />
-                <h3 className="ls-h3 mt-4">{u.label}</h3>
-                <Body size="sm">{u.note}</Body>
-              </Card>
+        <SectionIntro eyebrow="[ 04 ] Where to next ]" title="Pick a door." />
+        <div className="grid gap-6 md:grid-cols-3">
+          {signposts.map((s, i) => (
+            <RiseIn key={s.to} delay={i * 0.06}>
+              <NavLink to={s.to} className="group block h-full">
+                <Card>
+                  <s.icon className="h-7 w-7 text-[hsl(var(--accent-kinetic))]" />
+                  <p className="ls-eyebrow mt-4">{s.eyebrow}</p>
+                  <h3 className="ls-h3 mt-2">{s.title}</h3>
+                  <Body size="sm">{s.body}</Body>
+                  <span className="mt-6 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.18em] text-foreground transition group-hover:text-[hsl(var(--accent-kinetic))]">
+                    {s.cta} <ArrowRight className="h-4 w-4" />
+                  </span>
+                </Card>
+              </NavLink>
             </RiseIn>
           ))}
         </div>
@@ -433,148 +279,14 @@ function UseCasesSection() {
   );
 }
 
-/* ─────────────────────────────────────────────────────────
-   Website Intelligence
-   ───────────────────────────────────────────────────────── */
-
-const websiteIntelCards = [
-  { icon: Scan, title: "Scan",    text: "We crawl your site, score every intake path, and find where leads bleed out." },
-  { icon: Route, title: "Route",  text: "Templates routed to your existing forms, embeds, or webhook — no rebuild." },
-  { icon: Eye,   title: "Observe", text: "Every submission tracked end-to-end with photo-coverage scoring." },
-];
-
-function WebsiteIntelligenceSection() {
-  return (
-    <Section id="website-intelligence">
-      <Container>
-        <div className="grid gap-12 lg:grid-cols-[1fr_1.4fr] lg:items-center">
-          <RiseIn>
-            <div className="aspect-square overflow-hidden border border-border bg-muted">
-              <img
-                src={researchMagnifierIllo}
-                alt="Website intelligence"
-                className="h-full w-full object-contain p-12"
-                loading="lazy"
-              />
-            </div>
-          </RiseIn>
-          <div>
-            <SectionIntro
-              eyebrow="[ 05 ] Website intelligence"
-              title="Your site is already telling us how to fix it."
-              subtitle="An automation layer that turns the intake you already own into a Reverse-Form pipeline."
-            />
-            <Grid cols={3} gap="md">
-              {websiteIntelCards.map((c, i) => (
-                <RiseIn key={c.title} delay={i * 0.05}>
-                  <Card>
-                    <c.icon className="h-5 w-5 text-[hsl(var(--accent-kinetic))]" />
-                    <h3 className="ls-h3 mt-3">{c.title}</h3>
-                    <Body size="sm">{c.text}</Body>
-                  </Card>
-                </RiseIn>
-              ))}
-            </Grid>
-          </div>
-        </div>
-      </Container>
-    </Section>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────
-   Live demo
-   ───────────────────────────────────────────────────────── */
-
-function LiveDemoSection() {
-  return (
-    <Section tone="alt">
-      <Container>
-        <SectionIntro
-          eyebrow="[ 06 ] Live"
-          title={`Watch a vague "I need a quote" turn into a quotable job in 38 seconds.`}
-          subtitle="Hit the steps. The packet builds in real time."
-        />
-        <div className="border border-border bg-background p-2 sm:p-4">
-          <Suspense fallback={<div className="flex h-96 items-center justify-center text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin" /></div>}>
-            <InteractiveHeroBriefAssembly />
-          </Suspense>
-        </div>
-        <div className="mt-10 flex flex-col items-center gap-4 border border-border bg-background/40 p-6 text-center sm:flex-row sm:justify-between sm:text-left">
-          <div>
-            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Try it on your own business</p>
-            <p className="mt-2 text-base text-foreground">A plumber types "leaking faucet". A roofer types "missing shingles". PhotoBrief builds the brief in 60 seconds and emails it to you.</p>
-          </div>
-          <a
-            href="/demo"
-            className="inline-flex shrink-0 items-center justify-center rounded-sm border border-accent bg-accent px-5 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] text-accent-foreground transition hover:opacity-90"
-          >
-            Build my sample brief →
-          </a>
-        </div>
-      </Container>
-    </Section>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────
-   Beta program
-   ───────────────────────────────────────────────────────── */
-
-function BetaProgramSection() {
-  return (
-    <Section id="beta-program">
-      <Container width="narrow">
-        <SectionIntro
-          eyebrow="[ 07 ] Founding partners"
-          title={`${BETA_TOTAL_PARTNERS} seats. ${BETA_DURATION_DAYS} days. Founding pricing forever.`}
-          subtitle={`This isn't a waitlist. It's a ${BETA_TOTAL_PARTNERS}-person room — and we're hiring two co-builders. Every founding partner walks out with a reward; the top two never pay for PhotoBrief Pro again.`}
-        />
-        <div className="mt-10">
-          <BetaSeatTracker />
-        </div>
-      </Container>
-    </Section>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────
-   Apply — onboarding agent
-   ───────────────────────────────────────────────────────── */
-
-function ApplySection({ showAgent: _showAgent }: { showAgent: boolean }) {
-  return (
-    <Section id="apply" tone="alt">
-      <Container>
-        <SectionIntro
-          eyebrow="[ 08 ] Apply"
-          title="Six minutes with the onboarding agent."
-          subtitle="Tell us about the work. If a founding seat has your name on it, you'll hear back within 48 hours."
-        />
-        <div className="border border-border bg-background p-2 sm:p-4">
-          <Suspense fallback={<div className="flex h-96 items-center justify-center text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin" /></div>}>
-            <BetaOnboardingAgentExperience />
-          </Suspense>
-        </div>
-      </Container>
-    </Section>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────
-   FAQ
-   ───────────────────────────────────────────────────────── */
-
+/* ── Compact FAQ ── */
 function FaqSection() {
   return (
     <Section>
       <Container width="narrow">
-        <SectionIntro
-          eyebrow="[ 09 ] FAQ"
-          title="Frequently. Honestly."
-        />
+        <SectionIntro eyebrow="[ 05 ] FAQ" title="Frequently. Honestly." />
         <Accordion type="single" collapsible className="mt-10 border-t border-border">
-          {faqItems.slice(0, 8).map((item, i) => (
+          {faqItems.slice(0, 4).map((item, i) => (
             <AccordionItem key={item.q} value={`q-${i}`} className="border-b border-border py-2">
               <AccordionTrigger className="text-left font-display text-lg font-medium tracking-tight hover:no-underline">
                 <span className="flex w-full items-baseline gap-4">
@@ -582,256 +294,51 @@ function FaqSection() {
                   <span>{item.q}</span>
                 </span>
               </AccordionTrigger>
-              <AccordionContent className="pl-12 text-muted-foreground">
-                {item.a}
-              </AccordionContent>
+              <AccordionContent className="pl-12 text-muted-foreground">{item.a}</AccordionContent>
             </AccordionItem>
           ))}
         </Accordion>
+        <p className="mt-8 text-center text-sm text-muted-foreground">
+          More questions?{" "}
+          <NavLink to="/help" className="text-foreground underline-offset-4 hover:underline">
+            Read the full help center →
+          </NavLink>
+        </p>
       </Container>
     </Section>
   );
 }
 
-/* ─────────────────────────────────────────────────────────
-   Final CTA + quick apply form
-   ───────────────────────────────────────────────────────── */
-
+/* ── Final CTA ── */
 function FinalCta({ isFull }: { isFull: boolean }) {
   return (
     <Section tone="dark">
       <Container>
-        <div className="grid gap-12 lg:grid-cols-[1.3fr_1fr] lg:items-end">
-          <div>
-            <p className="ls-eyebrow">[ 10 ] Pick up the pen</p>
-            <RiseIn>
-              <h2 className="ls-h1 mt-6">
-                Ready to replace the chase
-                <span className="ls-accent-dot">?</span>
-              </h2>
-            </RiseIn>
-            <RiseIn delay={0.1}>
-              <Body size="lg">
-                {isFull
-                  ? "Founding seats are full. Join the waitlist and we'll reach out the moment a seat opens."
-                  : `${BETA_TOTAL_PARTNERS} seats. ${BETA_DURATION_DAYS} days. Two free-for-life winners. Founding pricing for the lifetime of your account — never repriced, never rolled back.`}
-              </Body>
-            </RiseIn>
-            <CTAGroup>
-              <CTA href="#apply" variant="primary" size="lg">
-                {isFull ? "Join waitlist" : "Open the agent"}
-              </CTA>
-              <CTA href="/pricing" variant="secondary" size="lg">
-                See pricing
-              </CTA>
-            </CTAGroup>
-          </div>
-          <FinalCtaQuickApply isFull={isFull} />
+        <div className="text-center">
+          <p className="ls-eyebrow">[ 06 ] Pick up the pen ]</p>
+          <RiseIn>
+            <h2 className="ls-h1 mt-6">
+              Ready to replace the chase
+              <span className="ls-accent-dot">?</span>
+            </h2>
+          </RiseIn>
+          <RiseIn delay={0.1}>
+            <Body size="lg">
+              {isFull
+                ? "Founding seats are full. Join the waitlist and we'll reach out the moment a seat opens."
+                : `${BETA_TOTAL_PARTNERS} seats. ${BETA_DURATION_DAYS} days. Founding pricing for the lifetime of your account.`}
+            </Body>
+          </RiseIn>
+          <CTAGroup>
+            <CTA href="/beta" variant="primary" size="lg">
+              {isFull ? "Join waitlist" : "Apply for the beta"} <ArrowRight className="h-4 w-4" />
+            </CTA>
+            <CTA href="/demo" variant="secondary" size="lg">
+              See the live demo
+            </CTA>
+          </CTAGroup>
         </div>
       </Container>
     </Section>
-  );
-}
-
-const quickApplySchema = z.object({
-  name: z.string().trim().min(1, "Name is required").max(80),
-  email: z.string().trim().email("Enter a valid email").max(254),
-  company: z.string().trim().max(120).optional().or(z.literal("")),
-  website_url: z.string().max(0).optional().or(z.literal("")), // honeypot
-});
-
-function FinalCtaQuickApply({ isFull }: { isFull: boolean }) {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [company, setCompany] = useState("");
-  const [trap, setTrap] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  const [done, setDone] = useState(false);
-  const [errors, setErrors] = useState<{ name?: string; email?: string }>({});
-
-  const submitLabel = isFull ? "Join the waitlist" : "Send my application";
-
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    const parsed = quickApplySchema.safeParse({ name, email, company, website_url: trap });
-    if (!parsed.success) {
-      const fieldErrors: typeof errors = {};
-      for (const issue of parsed.error.issues) {
-        const key = issue.path[0];
-        if (key === "name" || key === "email") fieldErrors[key] = issue.message;
-      }
-      setErrors(fieldErrors);
-      return;
-    }
-    setErrors({});
-    if (trap) { setDone(true); return; }
-    setSubmitting(true);
-    try {
-      const { error } = await supabase.functions.invoke("waitlist-submit", {
-        body: {
-          name: parsed.data.name,
-          email: parsed.data.email,
-          business_name: parsed.data.company || undefined,
-          source: "landing-final-cta",
-          interest: "founding-partner",
-        },
-      });
-      if (error) throw error;
-      trackEvent("landing_final_cta_quick_apply_submit", { has_company: Boolean(parsed.data.company) });
-      setDone(true);
-    } catch (err) {
-      toast({
-        title: "Couldn't submit",
-        description: "Something went wrong. Try again or use the full agent above.",
-        variant: "destructive",
-      });
-    } finally {
-      setSubmitting(false);
-    }
-  }
-
-  if (done) {
-    return (
-      <div className="border border-border bg-card p-8">
-        <p className="ls-eyebrow">[ ✓ ] You're in the queue</p>
-        <p className="ls-h3 mt-4">Watch your inbox.</p>
-        <Body>
-          We review every application by hand. If you fit one of the {BETA_TOTAL_PARTNERS} founding seats,
-          you'll hear back within 48 hours.
-        </Body>
-      </div>
-    );
-  }
-
-  return (
-    <form
-      onSubmit={onSubmit}
-      className="border border-border bg-card p-6 sm:p-8"
-      noValidate
-    >
-      <p className="ls-eyebrow">{isFull ? "Waitlist" : "Thirty seconds to a founding seat"}</p>
-      <div className="mt-6 space-y-5">
-        <FormField
-          label="Name"
-          error={errors.name}
-        >
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            maxLength={80}
-            required
-            autoComplete="name"
-            className="w-full border-0 border-b border-border bg-transparent py-2 text-foreground outline-none transition-colors focus:border-[hsl(var(--accent-kinetic))]"
-          />
-        </FormField>
-        <FormField label="Work email" error={errors.email}>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            maxLength={254}
-            required
-            autoComplete="email"
-            className="w-full border-0 border-b border-border bg-transparent py-2 text-foreground outline-none transition-colors focus:border-[hsl(var(--accent-kinetic))]"
-          />
-        </FormField>
-        <FormField label="Company or website" hint="optional">
-          <input
-            type="text"
-            value={company}
-            onChange={(e) => setCompany(e.target.value)}
-            maxLength={120}
-            autoComplete="organization"
-            className="w-full border-0 border-b border-border bg-transparent py-2 text-foreground outline-none transition-colors focus:border-[hsl(var(--accent-kinetic))]"
-          />
-        </FormField>
-        <input
-          type="text"
-          tabIndex={-1}
-          aria-hidden="true"
-          autoComplete="off"
-          value={trap}
-          onChange={(e) => setTrap(e.target.value)}
-          className="absolute left-[-9999px] h-0 w-0 opacity-0"
-        />
-      </div>
-      <CTAGroup>
-        <button
-          type="submit"
-          disabled={submitting}
-          className="ls-cta ls-cta--lg ls-cta-primary mt-8 w-full disabled:opacity-60"
-        >
-          {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4" />}
-          {submitting ? "Sending…" : submitLabel}
-        </button>
-      </CTAGroup>
-      <p className="mt-5 text-center text-xs text-muted-foreground">
-        Prefer the full 6-min agent?{" "}
-        <a
-          href="#apply"
-          className="text-foreground underline-offset-4 hover:underline"
-          onClick={(e) => {
-            e.preventDefault();
-            document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" });
-          }}
-        >
-          Open the onboarding agent
-        </a>
-      </p>
-    </form>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────
-   Helpers
-   ───────────────────────────────────────────────────────── */
-
-function SectionIntro({
-  eyebrow,
-  title,
-  subtitle,
-}: {
-  eyebrow: string;
-  title: ReactNode;
-  subtitle?: ReactNode;
-}) {
-  return (
-    <div className="mb-14 max-w-3xl">
-      <p className="ls-eyebrow">{eyebrow}</p>
-      <RiseIn>
-        <Title level={2}>
-          <span className="mt-5 block">{title}</span>
-        </Title>
-      </RiseIn>
-      {subtitle && (
-        <RiseIn delay={0.08}>
-          <Subtitle>{subtitle}</Subtitle>
-        </RiseIn>
-      )}
-    </div>
-  );
-}
-
-function FormField({
-  label,
-  hint,
-  error,
-  children,
-}: {
-  label: string;
-  hint?: string;
-  error?: string;
-  children: ReactNode;
-}) {
-  return (
-    <label className="block">
-      <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-        {label}
-        {hint && <span className="ml-2 normal-case tracking-normal text-muted-foreground/60">({hint})</span>}
-      </span>
-      <div className="mt-2">{children}</div>
-      {error && <span className="mt-1 block text-xs text-[hsl(var(--accent-kinetic))]">{error}</span>}
-    </label>
   );
 }
