@@ -337,7 +337,7 @@ curl -X POST https://mcp.photobrief.ai/x402/pay \\
       </Container></Section>
 
       {/* FAQ */}
-      <Section id="faw"><Container width="narrow">
+      <Section id="faq"><Container width="narrow">
         <div className="text-center">
           <Eyebrow code="99">FAQ</Eyebrow>
           <h2 id="faq-heading" className="mt-5 text-[clamp(2rem,4vw,3rem)] font-semibold tracking-tight text-foreground">
