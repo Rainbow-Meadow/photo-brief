@@ -455,7 +455,7 @@ export default function AdminCommandCenter() {
           )}
         </TabsContent>
       </Tabs>
-    </div>
+    </div></Stack></Container></Section>
   );
 }
 
