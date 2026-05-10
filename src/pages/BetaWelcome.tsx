@@ -285,8 +285,8 @@ export default function BetaWelcomePage() {
         </Section>
 
         {/* BENEFITS */}
-        <section className="px-4 py-12 sm:py-16">
-          <div className="mx-auto max-w-2xl">
+        <Section size="tight">
+          <Container width="reading">
             <div className="text-center">
               <Eyebrow code="01">What's included</Eyebrow>
               <h2 className="mt-5 text-[clamp(1.6rem,3vw,2.25rem)] font-semibold tracking-tight text-foreground">
@@ -295,7 +295,7 @@ export default function BetaWelcomePage() {
             </div>
             <div className="mt-8 grid gap-3 sm:grid-cols-2">
               {benefits.map(({ icon: Icon, text }, i) => (
-                <div key={text} className="border border-border bg-card p-5">
+                <Card key={text} variant="paper" padding="md">
                   <div className="flex items-center justify-between">
                     <span className="font-mono text-[0.65rem] font-medium uppercase tracking-[0.18em] text-[hsl(var(--accent-kinetic))]">
                       [ {String(i + 1).padStart(2, "0")} ]
@@ -305,11 +305,11 @@ export default function BetaWelcomePage() {
                     </span>
                   </div>
                   <p className="mt-4 text-sm leading-snug text-foreground">{text}</p>
-                </div>
+                </Card>
               ))}
             </div>
-          </div>
-        </section>
+          </Container>
+        </Section>
 
         {/* TIMELINE */}
         <section className="px-4 py-12 sm:py-16">
