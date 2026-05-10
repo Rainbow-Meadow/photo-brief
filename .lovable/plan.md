@@ -1,70 +1,136 @@
-# Backend Health Check
+# Plan: Public PhotoBrief Demo — Conversational Reverse Form
 
-A read-mostly audit pass across every backend system, with a small set of targeted fixes for issues already surfaced. No schema changes unless an issue is found.
+## The hook
+A visitor lands on the demo, types *"I'm a plumber and customers send me photos of leaking faucets"*, the AI asks 1–2 quick clarifying questions, then drops them straight into a **plumbing-specific guided photo capture** that ends with a real, branded brief emailed to both the visitor and you.
 
-## What we already know (pre-flight findings)
+This is the reverse-form experience — but the visitor IS the business owner, and they walk through what their own customer would experience.
 
-- **Cloud status**: healthy.
-- **pg_cron**: 2 active jobs (`process-email-queue` every 5s, `photobrief-flag-stale-requests` hourly). URL was just corrected last turn.
-- **pgmq**: all 4 queues empty (auth/transactional + DLQs).
-- **email_send_log**: 10 rows stuck in `pending` from May 6 (when the cron URL was wrong). The queue messages themselves expired and were dropped, but the log rows were never transitioned. Cosmetic but misleading.
-- **Linter**: 16 WARN, 0 ERROR. All public tables have RLS enabled. Warnings are mostly known-safe (SECURITY DEFINER helpers, public storage buckets, search_path).
-- **Secrets**: 15 present; no obvious gaps for the 47 deployed edge functions.
+## Heads-up on "ephemeral, no DB"
+Real photo capture + AI brief generation needs `requests`, `submissions`, `submission_media`, and R2 storage. To honor the "ephemeral" intent without rebuilding the pipeline:
+- Everything lives in a hidden **Demo workspace** invisible to your normal inbox.
+- Rows are tagged `is_demo = true` and **auto-purged after 24h** (rows + R2 objects).
+- Effectively ephemeral, zero new pipeline code.
 
-## Audit checklist
+## The conversational discovery (the new part)
 
-### 1. Edge functions wiring
-- Spot-check each of the 47 functions for: presence of `Deno.serve`, CORS handler, JWT verification (where required), and matching `supabase/config.toml` entry.
-- Run `scripts/check-supabase-functions.mjs` (already in the repo) to catch missing entrypoints, broken local imports, and undeclared functions.
-- Smoke-test the high-traffic public functions with `curl` against the deployed URL:
-  - `verify-turnstile`, `live-preview-submission`, `waitlist-submit`, `integration-webhook`, `process-email-queue`, `notify-event`, `payments-webhook`, `handle-email-unsubscribe`.
-- For each, confirm 2xx on a valid request and 4xx (not 5xx) on an empty/invalid request.
+Reuses the existing `aiService.generateGuideFromPrompt` (already used in `CreateRequestPage` for the AI request builder) but flips the prompt direction.
 
-### 2. Scheduled jobs
-- Confirm `process-email-queue` cron still points at the correct project URL after the fix.
-- Confirm `photobrief-flag-stale-requests` is firing (sample `usage_events` / `photo_brief_requests` for status transitions in the last 24h).
-- Check the GitHub Actions `process-email-queue` workflow — it duplicates the pg_cron job. Decide whether to keep it as a backup or retire it (it's currently silently competing with cron every 5 minutes).
+```text
+Visitor lands on /demo
+   ↓
+Step 1 — "What kind of service do you provide?"
+   Free text + chips: Plumbing · Roofing · HVAC · Auto repair · Property mgmt · Other
+   ↓
+Step 2 — "What does a typical photo request look like for you?"
+   e.g. "Leaking faucet under the kitchen sink"
+   ↓
+Step 3 — AI asks ONE clarifying follow-up if useful
+   e.g. "Do you usually need to see the shut-off valve too?"
+   (Skip if confidence is high)
+   ↓
+Step 4 — "Last thing — your name and email so we can send you the finished brief"
+   ↓
+   AI generates a tailored guide draft (title, intro message, 3–6 photo steps with
+   specific prompts, e.g. "Wide shot of the faucet base", "Close-up of the drip
+   point", "The shut-off valve under the sink")
+   ↓
+   Backend: create demo request with that guide → redirect to /r/<token>
+   ↓
+Step 5 — Visitor walks through the actual recipient capture flow against
+   their own custom brief. Takes/uploads 1–3 sample photos.
+   ↓
+Step 6 — Submit → existing AI analysis runs → confirmation page shows the
+   finished brief preview ("Here's what your customer would have sent you")
+   ↓
+Emails fire to (a) visitor and (b) FOUNDER_NOTIFY_EMAIL with the brief PDF link
+```
 
-### 3. Email pipeline
-- Mark the 10 stale `pending` rows in `email_send_log` as `dlq` with a clear `error_message` ("queue URL misconfigured 2026-05-06; messages expired"). Append-only insert per the email schema rules — not an UPDATE.
-- Send one test transactional email end-to-end (e.g., `waitlist-confirmation` to a test address) and verify it transitions `pending` → `sent` within one cron tick.
-- Verify the vault secret `email_queue_service_role_key` is current (we just refreshed it).
-- Check `auth-email-hook` is the queue-based version (imports `enqueue_email`, not `@lovable.dev/email-js`).
+## Routes & entry points
 
-### 4. Database integrity
-- Re-run the linter and review each WARN to decide keep/fix:
-  - `Function Search Path Mutable` (×2) — pin `set search_path = public` on the two offending functions.
-  - `Extension in Public` — usually `pgmq` or `citext`; document as accepted if so.
-  - `Public Bucket Allows Listing` (×3) — review `brand-assets`, `submission-media`, `marketing-assets`, `email-assets` policies; tighten if any unintentionally allow `LIST`.
-  - `SECURITY DEFINER` executable warnings — confirm each helper (`has_workspace_role`, `is_workspace_member`, `is_platform_admin`, `workspace_has_credits`, `current_credit_balance`, etc.) is intentionally callable.
-- Confirm all 50+ public tables still have RLS enabled (currently: yes).
-- Spot-check the most sensitive tables' policies: `business_workspaces`, `workspace_members`, `submissions`, `request_credit_packs`, `subscriptions`, `platform_admins`, `usage_events`, `credit_ledger`.
+1. **`/demo`** — full-bleed marketing page with PB navy/amber branding. Hero pitch + the conversational form embedded.
+2. **Landing page embed** — section after `InteractiveHeroBriefAssembly` titled *"Try it on your own business"* with a single CTA → `/demo` (we don't try to fit a multi-step chat inline; the landing card is a teaser).
 
-### 5. Cloudflare Workers
-- Verify each worker (`router`, `assistant-agent`, `capture-agent`, `beta-onboarding-agent`, `mcp-agent`) has a current `wrangler.toml` and required bindings/secrets.
-- Hit the worker health endpoints if they expose one; otherwise confirm last successful deploy via `.github/workflows/deploy-cloudflare.yml`.
+## Backend pieces
 
-### 6. R2 / storage
-- Confirm R2 secrets resolve (account id, bucket, keys present).
-- List a single test object from `submission-media` via the worker to confirm signed-URL flow still works.
+### One-time migration
+- Create `PhotoBrief Demo` workspace owned by your founder account.
+- Add `is_demo BOOLEAN DEFAULT FALSE` column on `requests`.
+- Cron job `demo-cleanup` (hourly): purge demo-workspace requests > 24h old + cascade media in R2.
 
-### 7. Connectors & third-party
-- Confirm the connector-managed secrets (ElevenLabs, Firecrawl, Google Drive/Mail/Sheets) still work by hitting one no-op endpoint each (e.g., `website-intelligence` for Firecrawl).
-- Stripe: confirm `payments-webhook` is reachable and `customer-portal` returns a valid session for a test workspace.
+### New edge function: `demo-discovery`
+Single endpoint that powers the conversational flow:
+- `POST /demo-discovery` with `{ step, history, serviceType, scenario, name, email }`
+- Wraps the existing `aiService.generateGuideFromPrompt` logic but seeded with a system prompt: *"You're helping a service business design the perfect photo intake template for their own customers. Their service is X. Their typical request is Y. Generate a guide draft."*
+- Returns either `{ nextQuestion: "..." }` or `{ ready: true, draft: RequestDraft }`.
+- When `ready`, server-side: creates a demo guide + demo request in the Demo workspace, returns `{ requestLink: '/r/<token>', requestId }`.
+- Turnstile-protected on the final step.
 
-### 8. Observability
-- Pull last 24h of `function_edge_logs` for non-2xx responses on every function and triage anything not already explained.
-- Pull last 24h of `auth_logs` for non-info levels (already saw the GoTrue deprecation warnings — those are upstream, no action).
+### New edge function: `demo-cleanup` (hourly cron)
+- Deletes demo-workspace requests > 24h old, cascading submissions/media + R2 objects.
 
-## Deliverable
+### Reuse existing
+- `PublicRecipientPage` for the capture experience (no changes besides a branding flag).
+- `ai-analyze-media` + `ai-summarize-submission` for brief generation (already triggered by submit).
+- `notify-event` — add a demo branch: when `workspace_id === DEMO_WORKSPACE_ID`, suppress normal owner notifications and instead send the new `demo-brief-delivery` email to BOTH the visitor and `FOUNDER_NOTIFY_EMAIL`.
 
-A single summary written back to chat with:
-- ✅ items that are healthy (one line each)
-- ⚠️ items that need attention, with exact next-step fixes
-- 🛠️ a tight follow-up edit list for anything actionable (estimated ≤5 items based on the pre-flight)
+### Secrets
+- `FOUNDER_NOTIFY_EMAIL` — your inbox.
+- `DEMO_WORKSPACE_ID` — populated after migration.
+
+### New transactional email template: `demo-brief-delivery`
+- Subject: *"Your sample PhotoBrief is ready — [service type]"*.
+- Body: brief summary, photo thumbnails (24h signed URLs), the AI's analysis, CTA *"Want this for your business? Start free trial."*
+
+## Frontend pieces
+
+### `src/pages/Demo.tsx`
+- `MarketingLayout`, full PB branding.
+- Hero copy: *"See exactly what your customers would experience — built for your business in 60 seconds."*
+- New `<DemoDiscoveryChat>` component (chat-style UI, mirrors `AIRequestBuilderChat` styling but inverted: assistant asks the questions, visitor answers).
+- Uses `aiService`-style streaming if available, otherwise simple request/response.
+- On `ready`, redirects to `/r/<token>`.
+
+### `<DemoDiscoveryChat>` component
+- Local state machine: `service → scenario → [optional clarifier] → contact → generating → ready`.
+- Calls `demo-discovery` between steps.
+- Shows a live preview pane on desktop ("Building your brief…") that gradually reveals the guide steps as the AI generates them.
+
+### Landing embed
+- New section in `Landing.tsx` after the existing interactive hero.
+- Title + 2-line pitch + single button `/demo`.
+- Optional: 1 typed-out example showing what the AI generates ("Plumber → 4-step leak inspection brief").
+
+### Capture-flow demo branding
+- Add `forceDemoBranding` flag to `RecipientBrandingContext` set when the loaded request's workspace is `DEMO_WORKSPACE_ID`.
+- Forces full BrandMark + tagline header, adds a small "DEMO" pill in the corner so visitors know it's a sandbox, keeps `PoweredByBadge`.
+
+## Anti-abuse
+- Turnstile on the final discovery step (before request creation).
+- Rate-limit `demo-discovery` per IP (10/hour) inside the edge function.
+- 24h cleanup caps storage exposure.
+- `notify-event` short-circuits all integrations / SMS / webhooks for demo-workspace requests.
 
 ## Out of scope
+- No login on the demo flow.
+- No persistence beyond 24h.
+- No SMS, no integration triggers, no real owner notifications.
+- No saving the generated guide to the visitor's account (we don't have one — it's a marketing demo).
 
-- Refactoring working code.
-- Touching `supabase/config.toml` project-level settings, `auth.*` schemas, or any RLS policy that's already correct.
-- Performance tuning (separate request).
+## Implementation order
+1. Migration: Demo workspace + `is_demo` column + `demo-cleanup` cron.
+2. Add secrets (`FOUNDER_NOTIFY_EMAIL`, `DEMO_WORKSPACE_ID`).
+3. `demo-discovery` edge function (reusing AI guide-generation logic).
+4. `demo-cleanup` edge function.
+5. `demo-brief-delivery` email template + registry entry.
+6. `notify-event` demo-workspace branch.
+7. `<DemoDiscoveryChat>` component + `/demo` page.
+8. Landing embed.
+9. Capture-flow `forceDemoBranding` flag.
+10. End-to-end smoke test (plumber, roofer, HVAC scenarios) and verify cleanup.
+
+## Why this works as marketing
+- Visitor types something specific to *their* business → instant personalization.
+- They feel the conversational intelligence (the same engine powering the real product).
+- They experience the recipient side (which is the magic moment competitors don't have).
+- They get a polished brief in their inbox they can show to a partner/customer.
+- You see every demo submission in real time — instant qualified-lead pipeline.
