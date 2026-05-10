@@ -1,115 +1,110 @@
 
-## Goal
+# One schema for every page
 
-Reshape the marketing site into four focused pages and a tight homepage:
+Today three layout systems coexist:
 
+```text
+ls-*  schema      → Landing, Demo, Beta, marketing components       (editorial)
+pb-*  + Marketing → Pricing, ForAiAgents, Privacy, Terms, helpers   (legacy)
+PageShell/Section → every in-app page (Dashboard, Inbox, Guides…)   (app)
 ```
-/           Compact highlight page → links to the others
-/demo       Full live-demo experience (Reverse-Form Method shown live)
-/beta       Full Founding Partner Beta page (program + apply agent)
-/pricing    Full pricing page (already exists, light cleanup only)
+
+We promote `ls-*` into the single schema and delete the other two.
+
+---
+
+## 1. Extend the schema
+
+Move `src/pages/landing/schema.{tsx,css}` → `src/design-system/schema.{tsx,css}` (it is no longer landing-only). Update the three landing-* test files and their imports accordingly.
+
+Add what the schema is missing for in-app use, keeping the existing API stable so today's Landing/Demo/Beta keep working:
+
+- **`Section`** — add `density="marketing" | "page"` (default `marketing`). `page` collapses vertical padding to `clamp(1.25rem, 3vw, 2.5rem)` so app screens don't feel airy.
+- **`Container`** — extend `width` to `"default" | "narrow" | "reading" | "full"` (1320 / 880 / 720 / 100%).
+- **`Stack`** *(new)* — vertical rhythm primitive, `gap="compact" | "default" | "relaxed"`. Replaces `PageStack`.
+- **`Card`** — add `variant="paper" | "dark" | "muted" | "outline"` and `padding="none" | "sm" | "md" | "lg"`. Covers every `Surface` use today.
+- **`Grid`** — keep `cols={1|2|3|4}`, add `cols="sidebar"` (280 + 1fr) and `cols="aside"` (1fr + 320). Covers every `ResponsiveGrid` use.
+- **`SectionHeader`** *(new)* — heading + description + right-aligned `actions` slot, used inside `Section` for in-app modules ("Customers" + "Add customer" button). Replaces `PageSection`'s heading block.
+- **`Wizard`** *(new)* — multi-step setup chrome ported from `WizardLayout` (only `WebsiteIntakePage` uses it).
+- **`Prose`** *(new)* — single-column reading container with type ramp tuned for legal/help copy. Replaces ad-hoc `pb-copy` blocks in Privacy/Terms.
+
+Defaults remain marketing-leaning so Landing/Demo/Beta render unchanged. App pages opt in with `<Section density="page">`.
+
+---
+
+## 2. Migrate every page
+
+Roughly 35 pages, in three batches so each batch is shippable and testable on its own:
+
+**Batch A — finish marketing/legal**
+`Pricing`, `ForAiAgents`, `Privacy`, `Terms`, `Auth`, `Signup`, `ForgotPassword`, `ResetPassword`, `BetaInvite`, `BetaWelcome`, `Unsubscribe`, `NotFound`, `IntakeBadge` (keep `tone="light"` brand-mark contract).
+
+Marketing helpers in the same batch: `HowItWorksSteps`, `ComparisonTable`, `QuotableFacts`, `BetaOnboardingAgentExperience`, `FreeProEligibilityModal` (drop pb-* class names → `Card`/`Body`/`Grid`).
+
+**Batch B — workspace + customer-facing app**
+`DashboardPage`, `BrandSettingsPage`, `SmsSettingsPage`, `TeamSettingsPage`, `MessageTemplatesPage`, `OnboardingPage`, `AcceptInvitePage`, `BillingSettingsPage`, `CustomersPage`, `CustomerDetailPage`, `RequestsInboxPage`, `RequestDetailPage`, `CreateRequestPage`, `SubmissionReviewPage`, `IntegrationsPage`, `SupportPage`, `BetaGuidePage`, `PublicRecipientPage`, `RecipientConfirmationPage`, `PublicIntakePage`.
+
+**Batch C — guides, intake wizard, admin**
+`GuideLibraryPage`, `GuideBuilderPage`, `GuideDetailPage`, `WebsiteIntakePage` (uses new `Wizard`), `AdminBeta`, `AdminInvites`, `AdminCommandCenter`, `AdminAIRerun`, `AdminWebsiteIntelligence`.
+
+Migration recipe per page:
+
+```text
+<PageShell><PageStack><PageSection heading=…>     →
+<Section density="page"><Container><Stack><SectionHeader title=…>
+
+<Surface variant="panel">                          →  <Card variant="muted">
+<ResponsiveGrid cols="1-3">                        →  <Grid cols={3}>
+<MarketingSection eyebrow title subtitle>          →  <Section><Container><SectionHeader …>
+<MarketingHero align="center">                     →  <Section><Container width="narrow"><div text-center>
 ```
 
-## New site map
+---
 
-| Route | Purpose | Primary CTA |
-|---|---|---|
-| `/` | 1-screen story + signposts to deeper pages | "Try the demo" / "Apply for beta" |
-| `/demo` | Show, don't tell — live brief assembly + "build my sample brief" tool | "Apply for the beta" |
-| `/beta` | Full founding-partner pitch, seat tracker, onboarding agent, quick-apply form | "Open the agent" |
-| `/pricing` | Already full — minor tweaks for cross-linking | "Apply for beta" |
+## 3. Delete the legacy systems
 
-Header nav becomes: **Demo · Beta · Pricing · Help**.
+After Batch C lands and visual regression is green:
 
-## `/` — Compact highlight page
+- Remove the entire `src/components/layout/primitives/` folder (all 8 files + barrel).
+- Strip these CSS rules from `src/index.css`: `.pb-section`, `.pb-section-tight`, `.pb-section-alt`, `.pb-section-title`, `.pb-container`, `.pb-container-narrow`, `.pb-eyebrow`, `.pb-copy`, `.pb-hero-title`, `.pb-display`, `.pb-paper-surface`, `.pb-on-paper`, `.pb-on-dark`.
+- **Keep**: `--pb-*` color tokens, the `.pb-landing` gradient class, `.pb-paper-pill` / `.pb-paper-link` (used by `MarketingLayout` nav chrome — out of scope).
+- Add a contract test `src/test/schema-contract.test.ts` that fails CI if any source file imports from `@/components/layout/primitives` or uses the deleted pb-* class names.
 
-Keep it short — the homepage's job is to orient and route, not to convert in isolation.
+---
 
-Sections, in order:
-1. **Hero** — Tagline (Guide · Capture · Close), 2-sentence pitch, two CTAs: `Try the live demo →` and `Apply for the beta →`. Hero illustration stays.
-2. **Marquee band** — kinetic stat strip (kept as-is).
-3. **Mechanism (4 cards)** — the Reverse-Form Method in 4 steps. No deep content; teaser only.
-4. **Before / after** — two-card comparison (kept, condensed copy).
-5. **Three-up signpost row** — three large cards linking to `/demo`, `/beta`, `/pricing` with one-line value prop each.
-6. **Compact FAQ** — 4 items max (was 8). "See all answers" link to `/help`.
-7. **Footer CTA** — single-line: "Ready to replace the chase? → Apply".
+## 4. Out of scope
 
-Removed from `/`: Use Cases (trades), Website Intelligence, Live Demo embed, Beta Program section, full Apply agent, long FAQ, FinalCtaQuickApply form. All content survives — it just moves to its proper page.
+- DB, auth, plan gating, edge functions.
+- Brand color tokens (`--pb-paper`, `--pb-ink`, accent amber etc.) — preserved exactly.
+- `MarketingLayout` header pill, `DashboardLayout`, `AppSidebar`, `MobileTabBar` — these are *layout chrome*, not page schema.
+- `BrandMark` contract (`tone="dark"` everywhere except `IntakeBadge`).
+- Copy and information architecture — purely a presentation refactor.
 
-## `/demo` — Full demo page
+---
 
-Currently `/demo` is only the conversational reverse-form discovery widget. Expand into a full marketing page that *is* the demo.
+## 5. Verification
 
-Sections:
-1. **Hero** — "See exactly what your customers experience." CTA scrolls to live tool.
-2. **Live brief assembly** — `<InteractiveHeroBriefAssembly />` (moved from landing's LiveDemoSection).
-3. **Build-my-own widget** — existing `DemoDiscoveryChat` flow already on the page.
-4. **Use cases / trades grid** — moved from landing.
-5. **Footer CTA** — "Like what you saw? → Apply for the beta".
+- Per batch: visual diff a representative page at desktop + mobile, run `vitest` (esp. landing-* + new schema-contract test), run `playwright` visual suite.
+- Spot-check: Landing hero unchanged, Pricing pricing-cards unchanged, Dashboard density unchanged, WebsiteIntake wizard nav unchanged.
+- Final: `rg "pb-section|pb-container|MarketingSection|PageShell|PageSection|PageStack|Surface\\b|ResponsiveGrid|WizardLayout" src` returns nothing.
 
-## `/beta` — New full Beta page
+---
 
-New file `src/pages/Beta.tsx`. Pulls together the founding-partner content currently scattered across the landing page.
+## 6. Risks & mitigations
 
-Sections:
-1. **Hero** — "20 seats. 60 days. Founding pricing forever." (uses BETA_TOTAL_PARTNERS / BETA_DURATION_DAYS).
-2. **BetaSeatTracker** — moved from landing.
-3. **What you get** — bullets pulled from `Pricing.tsx`'s `betaOffer` array (concierge setup, direct support, tiered rewards).
-4. **Onboarding agent** — `<BetaOnboardingAgentExperience />` (moved from landing's ApplySection). This is the long-form apply flow.
-5. **Quick-apply form** — `FinalCtaQuickApply` extracted from Landing.tsx into its own file (see refactor below) and rendered here as a fallback.
-6. **FAQ** — 4-6 beta-specific items filtered from `faqItems`.
+| Risk | Mitigation |
+|---|---|
+| In-app pages suddenly feel airy | `density="page"` is required on app `<Section>`; defaults preserve marketing look. |
+| Surface visual regressions on Dashboard widgets | `Card variant="muted"` reproduces `Surface variant="panel"` 1:1 in CSS. |
+| Wizard step nav drift | Port `WizardLayout` markup verbatim under new name; only the import path changes. |
+| Hidden pb-* usage in inline class strings | Final ripgrep + contract test catches them before the legacy CSS is removed. |
 
-## `/pricing` — Light touches only
+---
 
-- Add a "See the live demo →" link in the hero alongside the existing apply CTA.
-- Cross-link the beta-program block to `/beta` instead of inlining the apply agent.
+## Technical details
 
-## Routing & nav
-
-- `src/App.tsx`: register `<Route path="/beta" element={<BetaPage />} />` with lazy import. Demo route already exists.
-- `src/config/marketingNav.ts`:
-  ```ts
-  marketingLinks = [
-    { to: "/demo", label: "Demo" },
-    { to: "/beta", label: "Beta" },
-    { to: "/pricing", label: "Pricing" },
-    { to: "/help", label: "Help" },
-  ];
-  ```
-- All on-page anchor links currently pointing to `#apply`, `#beta-program`, `#workflow` etc. on `/` are remapped to the new page routes (e.g. `Claim a founding seat` → `/beta`).
-- Add 301-style client redirects (in-component): if a request hits `/?apply=1` or any old hash, scroll behavior still works on the homepage but the canonical link surface points to the new pages.
-
-## Refactor extraction
-
-To keep the new pages clean without duplicating logic, extract these from `Landing.tsx` into reusable pieces:
-
-- `src/components/marketing/MechanismGrid.tsx` — the 4-step grid (used on `/` and `/demo`).
-- `src/components/marketing/UseCasesGrid.tsx` — trades grid (moves to `/demo`).
-- `src/components/marketing/BetaQuickApplyForm.tsx` — `FinalCtaQuickApply` + its zod schema (used on `/beta` and `/`'s footer CTA).
-- `src/components/marketing/SectionIntro.tsx` — small helper, currently inline.
-
-No business logic changes — pure reorg of presentation code.
-
-## SEO
-
-Each new/expanded page gets its own `<PageMeta>`:
-- `/` — title shortened to "PhotoBrief — Guide. Capture. Close."
-- `/demo` — already set, keep.
-- `/beta` — new title "Founding Partner Beta | PhotoBrief".
-- Update `public/sitemap.xml` to include `/demo` and `/beta`.
-
-## Out of scope
-
-- No backend, edge function, schema, or auth changes.
-- No design-system or token changes.
-- No copy rewrite beyond what's needed for the shorter homepage hero/signposts.
-- Mobile tab bar / dashboard nav untouched.
-
-## Implementation order
-
-1. Extract shared marketing components (`MechanismGrid`, `UseCasesGrid`, `BetaQuickApplyForm`, `SectionIntro`).
-2. Create `src/pages/Beta.tsx`.
-3. Expand `src/pages/Demo.tsx` with the full-page sections.
-4. Slim `src/pages/Landing.tsx` to the 7-section highlight version.
-5. Add `/beta` route + update `marketingNav.ts`.
-6. Update `Pricing.tsx` cross-links + sitemap.
+- New schema location: `src/design-system/schema.tsx` + `schema.css`. The existing `src/design-system/` already holds tokens, so the schema lives next to them.
+- `Section` density implementation: a single CSS modifier `.ls-section--page { padding-block: clamp(1.25rem, 3vw, 2.5rem); }`; no JS changes beyond the prop.
+- `SectionHeader` is markup-only (eyebrow + h2/h3 + subtitle + actions row) — reuses existing `ls-eyebrow`, `ls-h2`, `ls-subtitle` classes; no new CSS.
+- `Wizard` keeps `WizardLayout`'s public API (`steps`, `currentStep`, `onStepChange`, `children`) so the only change in `WebsiteIntakePage` is the import.
+- Batches A/B/C are independently mergeable — the legacy primitives stay alive until the deletion step at the end of Batch C.
