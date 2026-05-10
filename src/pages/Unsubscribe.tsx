@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/design-system/schema";
 
 type State =
   | { status: "loading" }
