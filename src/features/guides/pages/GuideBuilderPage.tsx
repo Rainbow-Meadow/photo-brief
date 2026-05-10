@@ -118,6 +118,7 @@ export default function GuideBuilderPage() {
       <Container>
         <Stack>
           <div className="pb-28 sm:pb-12 space-y-6">
+            <PageHeader
         title="New template"
         description="Start with one photo. Add more only if the request needs them."
         actions={
