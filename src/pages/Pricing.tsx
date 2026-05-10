@@ -10,7 +10,7 @@ import { BETA_DURATION_DAYS, MAX_DISCOUNT_LABEL } from "@/config/betaProgram";
 import { Button } from "@/components/ui/button";
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { MarketingSection, MarketingHero } from "@/components/layout/primitives";
+import { Section, Container, SectionHeader } from "@/design-system/schema";
 
 const pricingAxes = [
   { icon: Camera, label: "Photos", copy: "Plans scale by submitted customer photos. Simple jobs stay simple; bigger jobs use more photos." },
