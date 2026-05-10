@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { GeneratedStepEditor } from "@/features/requests/components/GeneratedStepEditor";
 import { GeneratedQuestionEditor } from "@/features/requests/components/GeneratedQuestionEditor";
 import { UpgradePromptCard } from "@/components/shared/UpgradePromptCard";
+import { Section, Container, Stack, Card } from "@/design-system/schema";
 
 import { guidesService } from "@/services/guidesService";
 import { useCurrentWorkspace } from "@/hooks/useCurrentWorkspace";
@@ -93,24 +94,30 @@ export default function GuideBuilderPage() {
 
   if (!canCustom) {
     return (
-      <div className="space-y-6">
-        <PageHeader
-          title="New template"
-          description="Custom templates are available on Pro and higher plans."
-          actions={
-            <Button variant="ghost" size="sm" onClick={() => navigate("/guides")} className="gap-1.5">
-              <ArrowLeft className="h-4 w-4" /> Back
-            </Button>
-          }
-        />
-        <UpgradePromptCard feature="custom_guides" variant="inline" />
-      </div>
+      <Section density="page">
+        <Container>
+          <Stack>
+            <PageHeader
+              title="New template"
+              description="Custom templates are available on Pro and higher plans."
+              actions={
+                <Button variant="ghost" size="sm" onClick={() => navigate("/guides")} className="gap-1.5">
+                  <ArrowLeft className="h-4 w-4" /> Back
+                </Button>
+              }
+            />
+            <UpgradePromptCard feature="custom_guides" variant="inline" />
+          </Stack>
+        </Container>
+      </Section>
     );
   }
 
   return (
-    <div className="space-y-6 pb-28 sm:pb-12">
-      <PageHeader
+    <Section density="page">
+      <Container>
+        <Stack>
+          <div className="pb-28 sm:pb-12 space-y-6">
         title="New template"
         description="Start with one photo. Add more only if the request needs them."
         actions={
