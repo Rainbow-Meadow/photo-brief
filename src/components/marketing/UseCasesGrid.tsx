@@ -1,6 +1,6 @@
 import { Wrench, Wind, Leaf, Truck, Calculator } from "lucide-react";
 import { RiseIn } from "@/components/motion/RiseIn";
-import { Card, Body } from "@/pages/landing/schema";
+import { Card, Body } from "@/design-system/schema";
 
 import landscaperIllo from "@/assets/trades/landscaper-illustration.png";
 import hvacTechIllo from "@/assets/trades/hvac-tech-illustration.png";

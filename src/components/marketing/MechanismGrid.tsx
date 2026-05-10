@@ -1,5 +1,5 @@
 import { RiseIn } from "@/components/motion/RiseIn";
-import { Card, Grid, Body } from "@/pages/landing/schema";
+import { Card, Grid, Body } from "@/design-system/schema";
 
 import researchMagnifierIllo from "@/assets/rmbc/research-magnifier.png";
 import mechanismGearsIllo from "@/assets/rmbc/mechanism-gears.png";

@@ -2,7 +2,7 @@ import { lazy, Suspense, useState } from "react";
 import { useNavigate, NavLink } from "react-router-dom";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { Section, Container, CTA, CTAGroup } from "@/pages/landing/schema";
+import { Section, Container, CTA, CTAGroup } from "@/design-system/schema";
 import { SectionIntro } from "@/components/marketing/SectionIntro";
 import { UseCasesGrid } from "@/components/marketing/UseCasesGrid";
 import { PageMeta } from "@/hooks/seo/usePageMeta";

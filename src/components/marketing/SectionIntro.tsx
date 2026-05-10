@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { RiseIn } from "@/components/motion/RiseIn";
-import { Title, Subtitle } from "@/pages/landing/schema";
+import { Title, Subtitle } from "@/design-system/schema";
 
 interface Props {
   eyebrow: string;
