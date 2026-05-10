@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
-const SCHEMA = readFileSync(resolve(__dirname, "../pages/landing/schema.css"), "utf8");
+const SCHEMA = readFileSync(resolve(__dirname, "../design-system/schema.css"), "utf8");
 const LANDING = readFileSync(resolve(__dirname, "../pages/Landing.tsx"), "utf8");
 
 describe("Landing typography contract (Geist + service-trade trust)", () => {

@@ -2,7 +2,7 @@ import { useState, type ReactNode } from "react";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { z } from "zod";
 
-import { CTAGroup, Body } from "@/pages/landing/schema";
+import { CTAGroup, Body } from "@/design-system/schema";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { trackEvent } from "@/lib/analytics";

@@ -19,4 +19,4 @@ export {
   CTA,
   CTAGroup,
   type CTAProps,
-} from "@/pages/landing/schema";
+} from "@/design-system/schema";

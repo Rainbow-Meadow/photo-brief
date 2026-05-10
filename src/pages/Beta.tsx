@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import { ArrowRight, Loader2, Clock3, HeartHandshake, MessageSquareText, Sparkles } from "lucide-react";
 
 import { PageMeta } from "@/hooks/seo/usePageMeta";
-import { Section, Container, Card, Grid, Body, CTA, CTAGroup } from "@/pages/landing/schema";
+import { Section, Container, Card, Grid, Body, CTA, CTAGroup } from "@/design-system/schema";
 import { SectionIntro } from "@/components/marketing/SectionIntro";
 import { BetaSeatTracker } from "@/components/marketing/BetaSeatTracker";
 import { BetaQuickApplyForm } from "@/components/marketing/BetaQuickApplyForm";
