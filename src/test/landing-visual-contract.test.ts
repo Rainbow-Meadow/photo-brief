@@ -24,17 +24,18 @@ describe("Landing visual contract (Locomotive editorial)", () => {
     }
   });
 
-  it("uses Section tone='dark' only on the final CTA section", () => {
-    // Match `<Section ... tone="dark"`, not unrelated props (e.g. <BrandMark tone="dark" />).
+  it("uses the standardized FinalCtaSection (no inline Section tone='dark')", () => {
+    // FinalCtaSection encapsulates the dark-tone Section, so Landing should not declare its own.
     const dark = SRC.match(/<Section\b[^>]*tone="dark"/g) ?? [];
-    expect(dark.length).toBe(1);
+    expect(dark.length).toBe(0);
+    expect(SRC).toMatch(/FinalCtaSection/);
   });
 
-  it("renders the FinalCta with CTA primitives", () => {
+  it("renders the FinalCta via the standardized FinalCtaSection primitive", () => {
     expect(SRC).toMatch(/function FinalCta\b/);
     const cta = SRC.slice(SRC.indexOf("function FinalCta"));
-    expect(cta).toMatch(/<CTAGroup/);
-    expect(cta).toMatch(/<CTA[\s>]/);
+    expect(cta).toMatch(/<FinalCtaSection\b/);
+    expect(cta).toMatch(/primary=\{/);
   });
 
   it("signpost section renders exactly three doors", () => {
