@@ -28,10 +28,9 @@ describe("Landing token hygiene", () => {
     }
   });
 
-  it("includes the RMBC illustrations used by the editorial layout", () => {
-    expect(SRC).toMatch(/researchMagnifierIllo/);
-    expect(SRC).toMatch(/mechanismGearsIllo/);
-    expect(SRC).toMatch(/briefPacketIllo/);
-    expect(SRC).toMatch(/methodOverviewIllo/);
+  it("includes the editorial illustrations used by the hero and comparison", () => {
+    expect(SRC).toMatch(/heroIllustration/);
+    expect(SRC).toMatch(/beforeIntakeFormIllo/);
+    expect(SRC).toMatch(/afterCapturePipelineIllo/);
   });
 });
