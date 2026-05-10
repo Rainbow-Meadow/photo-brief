@@ -132,6 +132,7 @@ export default function LandingPage() {
 
       <Hero />
       <MarqueeBand />
+      <DemoVideoSection />
       <MechanismSection />
       <ComparisonSection />
       <UseCasesSection />
