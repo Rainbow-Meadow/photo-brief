@@ -500,6 +500,18 @@ function LiveDemoSection() {
             <InteractiveHeroBriefAssembly />
           </Suspense>
         </div>
+        <div className="mt-10 flex flex-col items-center gap-4 border border-border bg-background/40 p-6 text-center sm:flex-row sm:justify-between sm:text-left">
+          <div>
+            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Try it on your own business</p>
+            <p className="mt-2 text-base text-foreground">A plumber types "leaking faucet". A roofer types "missing shingles". PhotoBrief builds the brief in 60 seconds and emails it to you.</p>
+          </div>
+          <a
+            href="/demo"
+            className="inline-flex shrink-0 items-center justify-center rounded-sm border border-accent bg-accent px-5 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] text-accent-foreground transition hover:opacity-90"
+          >
+            Build my sample brief →
+          </a>
+        </div>
       </Container>
     </Section>
   );
