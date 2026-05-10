@@ -44,7 +44,7 @@ export default function BetaPage() {
           <div className="text-center">
             <p className="ls-eyebrow">[ Founding Partners ]</p>
             <RiseIn>
-              <h1 className="ls-h1 mt-6">
+              <h1 className="ls-h2 mt-6">
                 {BETA_TOTAL_PARTNERS} seats. {BETA_DURATION_DAYS} days.
                 <br />Founding pricing<span className="ls-accent-dot"> </span>forever.
               </h1>
