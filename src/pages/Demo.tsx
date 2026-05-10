@@ -115,26 +115,19 @@ export default function DemoPage() {
       </Section>
 
       {/* Footer CTA */}
-      <Section tone="dark">
-        <Container>
-          <div className="text-center">
-            <p className="ls-eyebrow">[ Like what you saw? ]</p>
-            <RiseIn>
-              <h2 className="ls-h1 mt-6">
-                Lock in founding pricing<span className="ls-accent-dot">.</span>
-              </h2>
-            </RiseIn>
-            <CTAGroup align="center">
-              <CTA href="/beta" variant="primary" size="lg">
-                Apply for the beta <ArrowRight className="h-4 w-4" />
-              </CTA>
-              <CTA href="/pricing" variant="secondary" size="lg">
-                See pricing
-              </CTA>
-            </CTAGroup>
-          </div>
-        </Container>
-      </Section>
+      <FinalCtaSection
+        eyebrow="Like what you saw?"
+        title="Lock in founding pricing"
+        primary={{
+          href: "/beta",
+          label: (
+            <>
+              Apply for the beta <ArrowRight className="h-4 w-4" />
+            </>
+          ),
+        }}
+        secondary={{ href: "/pricing", label: "See pricing" }}
+      />
     </>
   );
 }
