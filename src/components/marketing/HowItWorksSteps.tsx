@@ -53,7 +53,7 @@ export function HowItWorksSteps() {
             </article>
           ))}
         </div>
-      </div>
-    </section>
+      </Container>
+    </Section>
   );
 }
