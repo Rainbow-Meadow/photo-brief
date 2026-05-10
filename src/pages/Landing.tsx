@@ -312,33 +312,24 @@ function FaqSection() {
 /* ── Final CTA ── */
 function FinalCta({ isFull }: { isFull: boolean }) {
   return (
-    <Section tone="dark">
-      <Container>
-        <div className="text-center">
-          <p className="ls-eyebrow">[ 06 ] Pick up the pen ]</p>
-          <RiseIn>
-            <h2 className="ls-h1 mt-6">
-              Ready to replace the chase
-              <span className="ls-accent-dot">?</span>
-            </h2>
-          </RiseIn>
-          <RiseIn delay={0.1}>
-            <Body size="lg">
-              {isFull
-                ? "Founding seats are full. Join the waitlist and we'll reach out the moment a seat opens."
-                : `${BETA_TOTAL_PARTNERS} seats. ${BETA_DURATION_DAYS} days. Founding pricing for the lifetime of your account.`}
-            </Body>
-          </RiseIn>
-          <CTAGroup align="center">
-            <CTA href="/beta" variant="primary" size="lg">
-              {isFull ? "Join waitlist" : "Apply for the beta"} <ArrowRight className="h-4 w-4" />
-            </CTA>
-            <CTA href="/demo" variant="secondary" size="lg">
-              See the live demo
-            </CTA>
-          </CTAGroup>
-        </div>
-      </Container>
-    </Section>
+    <FinalCtaSection
+      eyebrow="06 ] Pick up the pen"
+      title="Ready to replace the chase"
+      punctuation="?"
+      body={
+        isFull
+          ? "Founding seats are full. Join the waitlist and we'll reach out the moment a seat opens."
+          : `${BETA_TOTAL_PARTNERS} seats. ${BETA_DURATION_DAYS} days. Founding pricing for the lifetime of your account.`
+      }
+      primary={{
+        href: "/beta",
+        label: (
+          <>
+            {isFull ? "Join waitlist" : "Apply for the beta"} <ArrowRight className="h-4 w-4" />
+          </>
+        ),
+      }}
+      secondary={{ href: "/demo", label: "See the live demo" }}
+    />
   );
 }
