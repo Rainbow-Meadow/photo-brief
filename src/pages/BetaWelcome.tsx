@@ -487,9 +487,10 @@ export default function BetaWelcomePage() {
                   </a>
                 </p>
               </form>
-            </article>
-          </div>
-        </section>
+            </Card>
+            </div>
+          </Container>
+        </Section>
       </main>
     </>
   );
