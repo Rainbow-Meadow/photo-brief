@@ -99,6 +99,7 @@ const SOFTWARE_APP_JSONLD: Record<string, unknown> = {
 /* ── Anchors ───────────────────────────────────────────── */
 
 const sectionLinks = [
+  { href: "#demo-video", label: "Demo" },
   { href: "#workflow", label: "Mechanism" },
   { href: "#comparison", label: "Before / after" },
   { href: "#use-cases", label: "Trades" },
@@ -132,6 +133,7 @@ export default function LandingPage() {
 
       <Hero />
       <MarqueeBand />
+      <DemoVideoSection />
       <MechanismSection />
       <ComparisonSection />
       <UseCasesSection />
@@ -179,8 +181,12 @@ function Hero() {
                 >
                   Claim a founding seat <ArrowRight className="h-4 w-4" />
                 </MagneticCTA>
-                <a href="#workflow" className="ls-cta ls-cta--lg ls-cta-quiet mt-10">
-                  See the mechanism →
+                <a
+                  href="#demo-video"
+                  className="ls-cta ls-cta--lg ls-cta-quiet mt-10"
+                  onClick={() => trackEvent("landing_hero_cta_watch_demo")}
+                >
+                  Watch the 30-sec demo →
                 </a>
               </CTAGroup>
             </RiseIn>
@@ -291,6 +297,39 @@ const workflowSteps = [
     illo: methodOverviewIllo,
   },
 ];
+
+/* ─────────────────────────────────────────────────────────
+   Demo video — 30-second product spotlight
+   ───────────────────────────────────────────────────────── */
+
+function DemoVideoSection() {
+  return (
+    <Section id="demo-video">
+      <Container>
+        <SectionIntro
+          eyebrow="[ ▶ ] 30-second demo"
+          title="See the Reverse-Form Method™ in motion."
+          subtitle="Guide. Capture. Close. Thirty seconds, end to end."
+        />
+        <RiseIn delay={0.1}>
+          <div className="relative aspect-video w-full overflow-hidden border border-border bg-black shadow-[0_30px_80px_-45px_hsl(0_0%_0%/0.55)]">
+            <video
+              src="/marketing/photobrief-demo.mp4"
+              poster={heroIllustration}
+              controls
+              playsInline
+              preload="metadata"
+              className="h-full w-full object-cover"
+              onPlay={() => trackEvent("landing_demo_video_play")}
+            >
+              Your browser does not support embedded video.
+            </video>
+          </div>
+        </RiseIn>
+      </Container>
+    </Section>
+  );
+}
 
 function MechanismSection() {
   return (
