@@ -87,7 +87,8 @@ export default function UnsubscribePage() {
         className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[60vh] bg-ambient-sky"
         aria-hidden
       />
-      <div className="w-full max-w-md border border-border bg-card p-7">
+      <div className="w-full max-w-md">
+        <Card variant="paper" padding="lg">
         <p className="inline-flex items-baseline gap-2 font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
           <span className="inline-block h-px w-8 -translate-y-[0.25em] bg-[hsl(var(--accent-kinetic))]" />
           <span className="text-[hsl(var(--accent-kinetic))]">[ 00 ]</span>
@@ -134,6 +135,7 @@ export default function UnsubscribePage() {
             <span>{state.message}</span>
           </div>
         ) : null}
+        </Card>
       </div>
     </main>
   );
