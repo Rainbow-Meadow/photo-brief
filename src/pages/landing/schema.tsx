@@ -118,8 +118,20 @@ export function Grid({ cols = 3, gap = "md", children }: GridProps) {
   );
 }
 
-export function CTAGroup({ children }: { children: ReactNode }) {
-  return <div className="ls-cta-group">{children}</div>;
+export function CTAGroup({
+  children,
+  align = "start",
+}: {
+  children: ReactNode;
+  align?: "start" | "center";
+}) {
+  return (
+    <div
+      className={`ls-cta-group ${align === "center" ? "justify-center" : ""}`}
+    >
+      {children}
+    </div>
+  );
 }
 
 type CTAVariant = "primary" | "secondary" | "quiet";
