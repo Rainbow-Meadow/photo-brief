@@ -20,6 +20,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 
 import { SectionIntro } from "@/components/marketing/SectionIntro";
 import { MechanismGrid } from "@/components/marketing/MechanismGrid";
+import { FinalCtaSection } from "@/components/marketing/FinalCtaSection";
 
 import heroIllustration from "@/assets/hero-new.png";
 import beforeIntakeFormIllo from "@/assets/comparison/before-intake-form.png";
