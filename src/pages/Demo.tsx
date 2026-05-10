@@ -84,7 +84,6 @@ export default function DemoPage() {
       <PageMeta
         title="Try PhotoBrief on your own business — 60-second demo"
         description="Tell PhotoBrief what you do. We'll build the perfect customer photo brief and send it to you. No signup."
-        canonical="https://photobrief.ai/demo"
       />
       <Section>
         <Container width="narrow">
