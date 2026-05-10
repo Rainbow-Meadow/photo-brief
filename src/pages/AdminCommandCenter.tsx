@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { Section, Container, Stack } from "@/design-system/schema";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -291,7 +292,7 @@ export default function AdminCommandCenter() {
   // Main dashboard
   // -----------------------------------------------------------------------
   return (
-    <div className="space-y-4 p-4">
+    <Section density="page"><Container><Stack><div className="space-y-4">
       <div className="flex items-center justify-between">
         <PageHeader
           title="Command Center"
