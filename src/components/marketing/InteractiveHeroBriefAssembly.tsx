@@ -1072,7 +1072,7 @@ export function InteractiveHeroBriefAssembly() {
       </div>
 
       {/* Dual phone layout */}
-      <div className="flex flex-col items-center justify-center gap-6 lg:flex-row lg:items-start lg:gap-4">
+      <div className="flex flex-col-reverse items-center justify-center gap-6 lg:flex-row lg:items-start lg:gap-4">
         {/* Business phone */}
         <PhoneMockup label="Your phone" sublabel="business side" variant="dark">
           {businessContent}
