@@ -110,8 +110,8 @@ function Hero() {
               <BeforeAfterSlider
                 before={heroBeforeImg}
                 after={heroAfterImg}
-                beforeAlt="Contractor's phone showing a vague text-message lead with a blurry roof photo."
-                afterAlt="Same contractor's phone showing a quote-ready PhotoBrief packet with address, scope, and a clear roof photo."
+                beforeAlt="Cedar & Sons receives a vague text-message lead with a blurry far-away roof photo."
+                afterAlt="Cedar & Sons sees a quote-ready PhotoBrief packet — address, scope, and a clear roof photo."
                 onFirstInteract={() => trackEvent("landing_hero_before_after_drag")}
               />
               <BrandMark variant="horizontal" tone="dark" size={28} className="mt-6 justify-center opacity-80" />

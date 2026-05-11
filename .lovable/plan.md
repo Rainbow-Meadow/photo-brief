@@ -1,29 +1,36 @@
 ## Goal
 
-Reframe the hero before/after to a **portrait, full-bleed phone-in-hand** shot so the phone screen dominates the frame.
+Reframe the hero before/after around the recurring **Cedar & Sons** roofing story so it ties into the rest of the site (MechanismGrid, Pricing, ComparisonSection all reference Cedar).
+
+## Story
+
+Cedar & Sons (the contractor) just got a new roofing lead from a homeowner.
+
+- **Before** — Phone shows a vague iMessage from an unknown number to Cedar & Sons: tiny blurry far-away roof photo + "hey can you quote this? thx". No address, no scope. Same cluttered truck-cab bokeh.
+- **After** — Same phone, same hand. Now showing the **Cedar & Sons app** Job Brief packet:
+  - Header bar: small "Cedar & Sons" wordmark + "Job Brief"
+  - Crisp close-up shingle damage photo
+  - Address: 142 Cedar Lane
+  - Scope: Replace 12 sq damaged shingles
+  - Customer: J. Martinez
+  - Green "Ready to quote" pill
 
 ## Steps
 
-1. **Regenerate the hero pair** in portrait 3:4 (1152×1536), tightly cropped:
-   - `src/assets/hero/hero-before-messy-intake.jpg` — phone held in hand, framed edge-to-edge top-to-bottom; phone screen fills ~85% of the frame; on-screen content = messy SMS thread (blurry far roof photo, "hey can you quote this? thx", no address). Minimal background bokeh.
-   - `src/assets/hero/hero-after-photobrief-packet.jpg` — identical hand position, phone position, lighting, and crop; on-screen content = clean Job Brief packet (close-up shingle damage photo, Address: 142 Cedar Lane, Scope: Replace 12 sq damaged shingles, Customer: J. Martinez, "Ready to quote" badge).
-   - Lock framing language in both prompts so the slider wipe stays continuous.
+1. **Regenerate the two hero images** (portrait 3:4, 1152×1536, premium tier), keeping identical hand/phone/lighting/crop:
+   - `src/assets/hero/hero-before-messy-intake.jpg` — same messy iMessage, but explicitly addressed to a "Cedar & Sons Roofing" contact (header of the SMS thread reads "Cedar & Sons Roofing"), reinforcing the recipient.
+   - `src/assets/hero/hero-after-photobrief-packet.jpg` — Job Brief screen with a small "Cedar & Sons" wordmark in the top status bar/header, plus the structured fields above.
 
-2. **Update `BeforeAfterSlider`**:
-   - Switch the container from `aspect-[3/2]` to `aspect-[3/4]`.
-   - Change `<img>` from `object-cover` (fine) — keep, but ensure no horizontal cropping artifacts at the new ratio.
-   - Move the Fig. 01 / Reverse-Form Method™ caption strip out of the image (it currently overlays bottom inside the frame and would compete with the phone). Render it below the slider instead, in the same mono micro style.
+2. **Update alt text + caption** in `src/pages/Landing.tsx` to reference Cedar & Sons:
+   - beforeAlt: "Cedar & Sons receives a vague text-message lead with a blurry roof photo."
+   - afterAlt: "Cedar & Sons sees a quote-ready PhotoBrief packet — address, scope, and a clear roof photo."
 
-3. **Update `Landing.tsx` Hero layout**:
-   - The hero is a 2-column `lg:grid-cols-2` with `lg:items-center`. A tall portrait will dominate height. Constrain the slider's max width on large screens (e.g. `max-w-[420px] mx-auto lg:ml-auto lg:mr-0`) so it stays tasteful next to the headline column.
-   - Keep `RiseIn` wrapper, BrandMark below.
+3. **No structural changes** to `BeforeAfterSlider`, layout, or other sections. Caption strip stays "Fig. 01 · Reverse-Form Method™".
 
 ## Out of scope
-- No copy or CTA changes.
-- No changes to other sections, mobile nav, or other pages.
-- Old `hero-cedar-split-horizontal.png` stays unused for now (already removed from imports).
+- No copy/CTA changes in surrounding hero text.
+- No edits to MechanismGrid, Pricing, or Comparison illustrations.
 
 ## Files
 - **Regenerate**: `src/assets/hero/hero-before-messy-intake.jpg`, `src/assets/hero/hero-after-photobrief-packet.jpg`
-- **Edit**: `src/components/marketing/BeforeAfterSlider.tsx` (aspect ratio + caption position)
-- **Edit**: `src/pages/Landing.tsx` (max-width wrapper around slider, caption rendering)
+- **Edit**: `src/pages/Landing.tsx` (alt text only)
