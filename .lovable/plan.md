@@ -1,41 +1,44 @@
 ## Goal
+GA4 Realtime currently shows no hits on photobrief.ai. Keep the existing lazy gtag loader and fallback measurement ID `G-GJCZPQ3WJ9`, but harden the loader so a `page_view` reliably reaches GA on every real visit, and verify with the browser tool.
 
-Add 2 photorealistic images to each of the 4 public pages that currently lack imagery: Pricing, ForAiAgents, Beta, Help. 8 images total.
+## Findings from `src/lib/analytics.ts`
 
-## Image generation (premium model, 1536×1024 unless noted)
+1. **Listener-removal bug.** `removeListeners()` calls `removeEventListener(eventName, loadGoogleTag)`, but the function actually registered is `loadAndCleanup`. Result: interaction listeners are never detached. Harmless but a real bug.
+2. **Idle fallback is 5s.** `requestIdleCallback(loadAndCleanup, { timeout: 5000 })` means a quick bounce visitor (closes tab in <5s with no interaction) never loads gtag.js, so Realtime under-counts. We can keep the perf-friendly lazy approach but lower the safety net to ~1500 ms.
+3. **`page_view` is queued before script load — that part is fine.** `initAnalytics()` pushes `js`, `config`, and `page_view` into `dataLayer`; gtag.js drains the queue when it loads, so no events are lost as long as the script eventually loads.
+4. **Order of operations in `trackPageView`.** It calls `initAnalytics()` (which only registers loaders) then immediately pushes `page_view`. Without an interaction or idle tick the script is never fetched. Tightening the timeout (item 2) covers this.
+5. **No hardcoded snippet in `index.html`** — intentional and consistent with "keep lazy".
+6. **Sanitizer + `send_page_view: false` config** — both correct, no change needed.
 
-**Pricing — `src/assets/pricing/`**
-1. `pricing-cedar-owner-laptop.png` — Cedar & Sons owner at a desk reviewing the assembled brief on a laptop, with a small "Pro · Founding" plan badge visible in the app chrome. Warm office light, real photograph feel.
-2. `pricing-multi-trade-fan.png` — Four phones fanned out on a clean off-white surface, each showing a brief packet for a different trade (tree care, plumbing, HVAC, junk removal). Top-down editorial shot, soft shadows.
+## Verification (read-only, before editing)
 
-**ForAiAgents — `src/assets/agents/`**
-1. `agents-terminal-curl.png` — Photorealistic laptop screen showing a developer terminal: a `curl` POST to `https://api.photobrief.ai/v1/briefs/...` and a clean JSON response with `brief_id`, `photos[]`, `address`, `scope`. Dark IDE theme, monospace, very legible.
-2. `agents-mcp-chat.png` — Phone or laptop screen showing an AI agent chat (Claude/ChatGPT-style UI, no real branding) calling a PhotoBrief MCP tool — tool call card "photobrief.get_brief({id})" with the rendered brief result inline.
+Use the browser tool to load `https://photobrief.ai` and `https://photo-brief.lovable.app` and inspect:
+- network for `googletagmanager.com/gtag/js?id=G-GJCZPQ3WJ9`
+- network for `google-analytics.com/g/collect?...&en=page_view&...`
+- console for any GA-related errors
+- confirm `window.dataLayer` is populated and `window.__photobriefGa4Initialized === true`
 
-**Beta — `src/assets/beta/`**
-1. `beta-concierge-call.png` — Editorial photo of a partner on a video call with the PhotoBrief team during concierge setup; phone on the desk shows the in-app onboarding checklist; warm, real, no fabricated faces front-and-center (over-the-shoulder framing).
-2. `beta-feedback-thread.png` — Photorealistic phone screenshot of the in-app feedback chat: a partner message "Briefs are landing in 38 sec, but can we tag urgency?" and a team reply "Shipping tonight — added an Urgent flag, you'll see it in v0.4." Clean chat UI, soft shadow.
+If `/g/collect` fires after the patch but Realtime is still empty, the measurement ID likely points to a property the user no longer owns — surface that explicitly so the user can confirm/replace the ID.
 
-**Help — `src/assets/help/`**
-1. `help-quickstart-clipboard.png` — Top-down editorial shot of a printed quick-start checklist on a clipboard ("1. Build your first guide · 2. Send a test brief · 3. Review the result"), next to a phone open to the PhotoBrief dashboard. Warm desk surface, pen.
-2. `help-support-chat.png` — Photorealistic phone screenshot of an in-app help/support thread between a user and PhotoBrief support, with a clear question and a helpful, dated reply.
+## Changes
 
-## Wiring
+### `src/lib/analytics.ts`
+- Fix `removeListeners` to reference `loadAndCleanup` (the function actually registered) so listeners detach correctly after first load.
+- Lower idle/timeout fallback from `5000` to `1500` ms; keep `requestIdleCallback` with `setTimeout` fallback.
+- Add a short comment block explaining the loader contract for future maintainers.
+- No change to: measurement ID source, fallback ID, `sanitizePath`, event names, conversion helpers, `RouteTracker` integration.
 
-For each page, add a single `<Section>` (or insert into an existing one) that renders the two images with `Container`, semantic alt text, `loading="lazy"`, and a short caption. Pattern reuses the editorial card frame already used in `MechanismGrid` (border, off-white background, hairline inset).
+### Nothing else
+- `index.html` — unchanged (no eager snippet; user chose lazy).
+- `RouteTracker.tsx` — unchanged.
+- `App.tsx` — unchanged.
+- `scripts/prerender.mjs` — unchanged (still blocks gtag during prerender, correct).
+- Env / docs — `docs/analytics-ga4.md` already documents the env var and fallback.
 
-- `src/pages/Pricing.tsx` — insert a 2-up image row between the hero and the `pricingAxes` band (around line 90).
-- `src/pages/ForAiAgents.tsx` — insert one image inside the API section (around line 207, before close) and one inside the MCP section (around line 257).
-- `src/pages/Beta.tsx` — insert a 2-up image row inside the existing alt-tone Section around line 73 (concierge image) and the agent Section around line 107 (feedback thread).
-- `src/features/help/pages/BetaGuidePage.tsx` — read the file, then insert a 2-up row near the page intro.
+## Post-change verification
+After edits, reload `https://photo-brief.lovable.app` in the browser tool, wait ~2 s, and confirm that:
+- `gtag/js?id=G-GJCZPQ3WJ9` request returns 200
+- a `g/collect` hit with `en=page_view` and a sanitized `dl=` (no UUID/token) is sent
+- no console errors
 
-## QA
-
-- After generation, view each image; regenerate any with broken UI text or off-brand visuals.
-- Confirm every page renders the new images at desktop and at the current 440px mobile viewport (no overflow, no overlapping captions).
-
-## Out of scope
-
-- Trade illustrations in `UseCasesGrid.tsx` (still imported but not rendered — separate question).
-- Legal/auth utility pages (Privacy, Terms, Auth, Signup, Forgot/Reset, Unsubscribe).
-- Demo page (already has photographic content via the brief-assembly component and the Cedar mechanism grid).
+Report the outcome plus a one-line note on what to check on the GA side: in **GA4 Admin → Data Streams**, confirm the web stream measurement ID matches `G-GJCZPQ3WJ9` and Enhanced Measurement is on. If the ID is wrong, set `VITE_GA4_MEASUREMENT_ID` in Lovable project settings (no code change required).

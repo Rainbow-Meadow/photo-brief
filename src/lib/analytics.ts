@@ -80,13 +80,15 @@ export function initAnalytics() {
     anonymize_ip: true,
   });
 
+  // Loader contract: gtag.js is fetched on the first user interaction OR after
+  // a short idle window — whichever comes first. Any `event` calls made before
+  // the script loads are queued safely on `dataLayer` and drained by gtag.js
+  // on load, so no `page_view` or conversion is lost. Keep the idle fallback
+  // short enough that quick-bounce visitors still register in GA Realtime.
   const events = ["pointerdown", "keydown", "touchstart", "scroll"] as const;
-  const removeListeners = () => {
-    events.forEach((eventName) => window.removeEventListener(eventName, loadGoogleTag));
-  };
   const loadAndCleanup = () => {
     loadGoogleTag();
-    removeListeners();
+    events.forEach((eventName) => window.removeEventListener(eventName, loadAndCleanup));
   };
 
   events.forEach((eventName) => {
@@ -94,9 +96,9 @@ export function initAnalytics() {
   });
 
   if ("requestIdleCallback" in window) {
-    window.requestIdleCallback(loadAndCleanup, { timeout: 5000 });
+    window.requestIdleCallback(loadAndCleanup, { timeout: 1500 });
   } else {
-    setTimeout(loadAndCleanup, 5000);
+    setTimeout(loadAndCleanup, 1500);
   }
 }
 
