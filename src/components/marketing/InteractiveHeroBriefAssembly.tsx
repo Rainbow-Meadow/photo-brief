@@ -583,16 +583,22 @@ function CustomerRoutingScreen({ onDone }: { onDone: () => void }) {
 /** Phase 3 — Customer answers context questions */
 function CustomerQuestionsScreen({ onContinue }: { onContinue: () => void }) {
   const [selected, setSelected] = useState({
-    items: new Set(["furniture", "appliances", "boxes"]),
-    volume: "medium",
-    stairs: "no",
+    items: new Set(["leaning"]),
+    height: "mid",
+    stump: "yes",
   });
 
   const itemChips = [
-    { id: "furniture", label: "Furniture", icon: Sofa },
-    { id: "appliances", label: "Appliances", icon: Refrigerator },
-    { id: "boxes", label: "Boxes", icon: Package },
-    { id: "yard", label: "Yard waste", icon: TreePine },
+    { id: "leaning", label: "Leaning", icon: TreePine },
+    { id: "dead", label: "Dead / dying", icon: AlertTriangle },
+    { id: "storm", label: "Storm damage", icon: AlertTriangle },
+    { id: "overhang", label: "Limbs over house", icon: Sofa },
+  ];
+
+  const heightOptions = [
+    { id: "low", label: "Under 20 ft" },
+    { id: "mid", label: "20–40 ft" },
+    { id: "tall", label: "40+ ft" },
   ];
 
   return (
@@ -612,9 +618,9 @@ function CustomerQuestionsScreen({ onContinue }: { onContinue: () => void }) {
         This helps {BRAND.short} prepare an accurate quote.
       </p>
 
-      {/* Q1 — What needs removing */}
+      {/* Q1 — What's the issue */}
       <div className="mb-3">
-        <p className="mb-1.5 text-[11px] font-semibold text-black/60">What needs removing?</p>
+        <p className="mb-1.5 text-[11px] font-semibold text-black/60">What's the issue?</p>
         <div className="flex flex-wrap gap-1.5">
           {itemChips.map((chip) => {
             const active = selected.items.has(chip.id);
@@ -642,43 +648,43 @@ function CustomerQuestionsScreen({ onContinue }: { onContinue: () => void }) {
         </div>
       </div>
 
-      {/* Q2 — Volume */}
+      {/* Q2 — Height */}
       <div className="mb-3">
-        <p className="mb-1.5 text-[11px] font-semibold text-black/60">Approximate volume?</p>
+        <p className="mb-1.5 text-[11px] font-semibold text-black/60">Tree height (approx)?</p>
         <div className="flex gap-1.5">
-          {["small", "medium", "large"].map((v) => (
+          {heightOptions.map((opt) => (
             <button
-              key={v}
+              key={opt.id}
               type="button"
-              onClick={() => setSelected({ ...selected, volume: v })}
-              className={`flex-1 rounded-xl py-2 text-[11px] font-medium capitalize transition-all ${
-                selected.volume === v
+              onClick={() => setSelected({ ...selected, height: opt.id })}
+              className={`flex-1 rounded-xl py-2 text-[11px] font-medium transition-all ${
+                selected.height === opt.id
                   ? "text-white"
                   : "border border-black/15 text-black/55"
               }`}
-              style={selected.volume === v ? { backgroundColor: BRAND.color } : undefined}
+              style={selected.height === opt.id ? { backgroundColor: BRAND.color } : undefined}
             >
-              {v}
+              {opt.label}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Q3 — Stairs */}
+      {/* Q3 — Stump grinding */}
       <div className="mb-4">
-        <p className="mb-1.5 text-[11px] font-semibold text-black/60">Any stairs or tight access?</p>
+        <p className="mb-1.5 text-[11px] font-semibold text-black/60">Stump grinding needed?</p>
         <div className="flex gap-1.5">
           {["yes", "no"].map((v) => (
             <button
               key={v}
               type="button"
-              onClick={() => setSelected({ ...selected, stairs: v })}
+              onClick={() => setSelected({ ...selected, stump: v })}
               className={`flex-1 rounded-xl py-2 text-[11px] font-medium capitalize transition-all ${
-                selected.stairs === v
+                selected.stump === v
                   ? "text-white"
                   : "border border-black/15 text-black/55"
               }`}
-              style={selected.stairs === v ? { backgroundColor: BRAND.color } : undefined}
+              style={selected.stump === v ? { backgroundColor: BRAND.color } : undefined}
             >
               {v}
             </button>
