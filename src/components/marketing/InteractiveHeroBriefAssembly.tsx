@@ -28,10 +28,10 @@ import {
   TreePine,
   LayoutList,
 } from "lucide-react";
-import wideGarage from "@/assets/junk-removal/wide-garage.webp";
-import pileCloseup from "@/assets/junk-removal/pile-closeup.webp";
-import appliances from "@/assets/junk-removal/appliances.webp";
-import drivewayAccess from "@/assets/junk-removal/driveway-access.webp";
+import leaningOakWide from "@/assets/tree-care/leaning-oak-wide.jpg";
+import oakTrunkCloseup from "@/assets/tree-care/oak-trunk-closeup.jpg";
+import houseElevation from "@/assets/tree-care/house-elevation.jpg";
+import drivewayAccess from "@/assets/tree-care/driveway-access.jpg";
 
 const SESSION_KEY = "pb-session";
 
@@ -40,59 +40,59 @@ const BLURRY_INDEX = 1;
 
 /* ── Fake brand ── */
 const BRAND = {
-  name: "ClearPath Junk Removal",
-  short: "ClearPath",
-  tagline: "We haul it all.",
-  color: "#0d9488",        // teal-600
-  colorLight: "#ccfbf1",   // teal-50
-  colorMid: "#5eead4",     // teal-300
-  colorRing: "rgba(13,148,136,0.25)",
+  name: "Cedar & Sons Tree Care",
+  short: "Cedar & Sons",
+  tagline: "Tree care done right.",
+  color: "#15803d",        // green-700
+  colorLight: "#dcfce7",   // green-100
+  colorMid: "#86efac",     // green-300
+  colorRing: "rgba(21,128,61,0.25)",
 };
 
 const photos = [
   {
-    id: "wide-area",
-    src: wideGarage,
-    label: "Wide area",
-    prompt: "Stand back and capture the full area",
+    id: "leaning-oak",
+    src: leaningOakWide,
+    label: "Wide shot",
+    prompt: "Stand back and capture the whole tree with the house",
     status: "Verified",
-    note: "Room context captured",
+    note: "Lean angle and house context visible",
     good: true,
   },
   {
-    id: "main-pile",
-    src: pileCloseup,
-    label: "Main pile",
-    prompt: "Get closer to show the main pile",
+    id: "trunk",
+    src: oakTrunkCloseup,
+    label: "Trunk base",
+    prompt: "Get a closeup of the trunk base and any exposed roots",
     status: "Verified",
-    note: "Amount and scale visible",
+    note: "Trunk diameter and root flare visible",
     good: true,
   },
   {
-    id: "appliance",
-    src: appliances,
-    label: "Appliance",
-    prompt: "Photograph any appliances separately",
+    id: "house",
+    src: houseElevation,
+    label: "Over the roof",
+    prompt: "Show branches that hang over the roofline",
     status: "Needs review",
-    note: "Appliance handling likely needed",
+    note: "Branches close to roof — confirm clearance",
     good: false,
   },
   {
     id: "access",
     src: drivewayAccess,
     label: "Access",
-    prompt: "Show the access path to the area",
+    prompt: "Show the driveway so we can bring the truck and chipper",
     status: "Verified",
-    note: "Ground-level access shown",
+    note: "Ground-level driveway access shown",
     good: true,
   },
 ];
 
 /** Customer answers (used in questions + final brief) */
 const CUSTOMER_ANSWERS = [
-  { q: "What needs removing?", a: "Furniture, Appliances, Boxes" },
-  { q: "Approximate volume?", a: "Medium (half garage)" },
-  { q: "Stairs or tight access?", a: "No" },
+  { q: "What's the issue?", a: "Leaning oak after storm" },
+  { q: "Tree height (approx)?", a: "40–50 ft" },
+  { q: "Stump grinding needed?", a: "Yes" },
 ];
 
 type Phase =
