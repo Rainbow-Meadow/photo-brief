@@ -1,44 +1,42 @@
 ## Goal
-GA4 Realtime currently shows no hits on photobrief.ai. Keep the existing lazy gtag loader and fallback measurement ID `G-GJCZPQ3WJ9`, but harden the loader so a `page_view` reliably reaches GA on every real visit, and verify with the browser tool.
 
-## Findings from `src/lib/analytics.ts`
+Replace the static hero illustration on `/` (Landing) with an interactive **before/after slider**, using a newly generated photoreal pair (messy intake vs. quote-ready PhotoBrief packet).
 
-1. **Listener-removal bug.** `removeListeners()` calls `removeEventListener(eventName, loadGoogleTag)`, but the function actually registered is `loadAndCleanup`. Result: interaction listeners are never detached. Harmless but a real bug.
-2. **Idle fallback is 5s.** `requestIdleCallback(loadAndCleanup, { timeout: 5000 })` means a quick bounce visitor (closes tab in <5s with no interaction) never loads gtag.js, so Realtime under-counts. We can keep the perf-friendly lazy approach but lower the safety net to ~1500 ms.
-3. **`page_view` is queued before script load — that part is fine.** `initAnalytics()` pushes `js`, `config`, and `page_view` into `dataLayer`; gtag.js drains the queue when it loads, so no events are lost as long as the script eventually loads.
-4. **Order of operations in `trackPageView`.** It calls `initAnalytics()` (which only registers loaders) then immediately pushes `page_view`. Without an interaction or idle tick the script is never fetched. Tightening the timeout (item 2) covers this.
-5. **No hardcoded snippet in `index.html`** — intentional and consistent with "keep lazy".
-6. **Sanitizer + `send_page_view: false` config** — both correct, no change needed.
+## Steps
 
-## Verification (read-only, before editing)
+1. **Generate two new photoreal hero images** (3:2, 1536×1024) into `src/assets/hero/`:
+   - `hero-before-messy-intake.jpg` — Contractor's phone showing a chaotic text/email thread: blurry far-away photo of a roof, vague "can you quote this?" message, no address, no scope. Realistic phone-in-hand shot, natural daylight, slight desk clutter.
+   - `hero-after-photobrief-packet.jpg` — Same contractor's phone showing a clean PhotoBrief packet: crisp close-up roof photo, address, scope notes, customer name, "Ready to quote" badge. Same framing/lighting so the slider reveal feels continuous.
+   - Constraint: identical camera angle, lighting, and phone position so the wipe transition reads cleanly.
 
-Use the browser tool to load `https://photobrief.ai` and `https://photo-brief.lovable.app` and inspect:
-- network for `googletagmanager.com/gtag/js?id=G-GJCZPQ3WJ9`
-- network for `google-analytics.com/g/collect?...&en=page_view&...`
-- console for any GA-related errors
-- confirm `window.dataLayer` is populated and `window.__photobriefGa4Initialized === true`
+2. **Build `BeforeAfterSlider` component** at `src/components/marketing/BeforeAfterSlider.tsx`:
+   - Two stacked `<img>` layers inside an aspect-[3/2] frame (matches current hero box).
+   - Top image clipped via `clip-path: inset(0 X% 0 0)` driven by a `position` state (0–100).
+   - Draggable vertical handle (pointer events: down/move/up, also touch). Keyboard a11y: focusable handle, ←/→ adjust by 5%, Home/End jump to 0/100.
+   - "Before" / "After" pill labels in opposite corners.
+   - Respects `prefers-reduced-motion` (no idle nudge animation; still draggable).
+   - Touch-friendly: large hit area on handle, no hover-only affordances (per touch-vs-desktop memory).
+   - Uses semantic tokens only (border, background, accent-kinetic for handle).
 
-If `/g/collect` fires after the patch but Realtime is still empty, the measurement ID likely points to a property the user no longer owns — surface that explicitly so the user can confirm/replace the ID.
+3. **Wire into `src/pages/Landing.tsx` Hero**:
+   - Remove `heroIllustration` import and the current `<img>` block inside the `RiseIn` on the right column.
+   - Replace with `<BeforeAfterSlider before={...} after={...} beforeAlt="..." afterAlt="..." />` keeping the surrounding `RiseIn`, Fig. 01 caption strip, and BrandMark below.
+   - Keep the `aspect-[3/2]` frame, border, and caption overlay styling.
 
-## Changes
+4. **Analytics**: fire `trackEvent("landing_hero_before_after_drag")` once per session on first drag (debounced) so we can see engagement.
 
-### `src/lib/analytics.ts`
-- Fix `removeListeners` to reference `loadAndCleanup` (the function actually registered) so listeners detach correctly after first load.
-- Lower idle/timeout fallback from `5000` to `1500` ms; keep `requestIdleCallback` with `setTimeout` fallback.
-- Add a short comment block explaining the loader contract for future maintainers.
-- No change to: measurement ID source, fallback ID, `sanitizePath`, event names, conversion helpers, `RouteTracker` integration.
+## Out of scope
+- No changes to comparison section further down the page (still uses existing before/after illustrations).
+- No copy changes in the hero.
+- No changes to mobile nav, footer, or other pages.
 
-### Nothing else
-- `index.html` — unchanged (no eager snippet; user chose lazy).
-- `RouteTracker.tsx` — unchanged.
-- `App.tsx` — unchanged.
-- `scripts/prerender.mjs` — unchanged (still blocks gtag during prerender, correct).
-- Env / docs — `docs/analytics-ga4.md` already documents the env var and fallback.
+## Technical notes
+- Slider uses `clip-path` (not two-canvas) to keep DOM simple and SSR/prerender-safe — both `<img>` tags ship in markup, so the prerender script captures them.
+- `loading="eager"` + `fetchpriority="high"` on the "after" image (LCP candidate); "before" can be `eager` too since both render in viewport.
+- Generated with `imagegen` premium tier for photoreal phone/screen detail, then QA'd as instructed.
+- No new deps; pure React + Tailwind.
 
-## Post-change verification
-After edits, reload `https://photo-brief.lovable.app` in the browser tool, wait ~2 s, and confirm that:
-- `gtag/js?id=G-GJCZPQ3WJ9` request returns 200
-- a `g/collect` hit with `en=page_view` and a sanitized `dl=` (no UUID/token) is sent
-- no console errors
-
-Report the outcome plus a one-line note on what to check on the GA side: in **GA4 Admin → Data Streams**, confirm the web stream measurement ID matches `G-GJCZPQ3WJ9` and Enhanced Measurement is on. If the ID is wrong, set `VITE_GA4_MEASUREMENT_ID` in Lovable project settings (no code change required).
+## Files
+- **Add**: `src/assets/hero/hero-before-messy-intake.jpg`, `src/assets/hero/hero-after-photobrief-packet.jpg`, `src/components/marketing/BeforeAfterSlider.tsx`
+- **Edit**: `src/pages/Landing.tsx` (Hero function only)
+- **Possibly delete later**: old `hero-cedar-split-horizontal.png` if no other importers (will check before removing)
