@@ -40,9 +40,22 @@ export function FinalCtaSection({
         <div className="text-center">
           <p className="ls-eyebrow">[ {eyebrow} ]</p>
           <RiseIn>
-            <h2 className="ls-h1 mt-6">
-              {title}
-              <span className="ls-accent-dot">{punctuation}</span>
+            <h2 className="ls-h1 mt-6 text-balance">
+              {(() => {
+                const trimmed = title.trimEnd();
+                const lastSpace = trimmed.lastIndexOf(" ");
+                const head = lastSpace === -1 ? "" : trimmed.slice(0, lastSpace + 1);
+                const tail = lastSpace === -1 ? trimmed : trimmed.slice(lastSpace + 1);
+                return (
+                  <>
+                    {head}
+                    <span className="whitespace-nowrap">
+                      {tail}
+                      <span className="ls-accent-dot">{punctuation}</span>
+                    </span>
+                  </>
+                );
+              })()}
             </h2>
           </RiseIn>
           {body ? (
