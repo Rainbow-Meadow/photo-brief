@@ -84,75 +84,74 @@ export function BeforeAfterSlider({
   }, [initial]);
 
   return (
-    <div
-      ref={containerRef}
-      className={cn(
-        "relative aspect-[3/2] w-full overflow-hidden border border-border bg-[hsl(var(--pb-paper))] select-none touch-none",
-        className,
-      )}
-      onPointerDown={onPointerDown}
-      onPointerMove={onPointerMove}
-      onPointerUp={onPointerUp}
-      onPointerCancel={onPointerUp}
-    >
-      {/* After image (base layer) */}
-      <img
-        src={after}
-        alt={afterAlt}
-        className="absolute inset-0 h-full w-full object-cover"
-        loading="eager"
-        // @ts-expect-error - fetchpriority is valid HTML attribute
-        fetchpriority="high"
-        width={1536}
-        height={1024}
-        draggable={false}
-      />
-      {/* Before image (clipped overlay) */}
-      <img
-        src={before}
-        alt={beforeAlt}
-        className="absolute inset-0 h-full w-full object-cover"
-        style={{ clipPath: `inset(0 ${100 - position}% 0 0)` }}
-        loading="eager"
-        width={1536}
-        height={1024}
-        draggable={false}
-      />
-
-      {/* Labels */}
-      <span className="pointer-events-none absolute left-3 top-3 rounded-full bg-background/80 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-foreground backdrop-blur-sm">
-        {beforeLabel}
-      </span>
-      <span className="pointer-events-none absolute right-3 top-3 rounded-full bg-background/80 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-[hsl(var(--accent-kinetic))] backdrop-blur-sm">
-        {afterLabel}
-      </span>
-
-      {/* Divider line */}
+    <div className={cn("w-full", className)}>
       <div
-        className="pointer-events-none absolute inset-y-0 w-px bg-[hsl(var(--accent-kinetic))]"
-        style={{ left: `${position}%`, transform: "translateX(-0.5px)" }}
-      />
-
-      {/* Handle */}
-      <button
-        type="button"
-        role="slider"
-        aria-label="Drag to compare before and after"
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-valuenow={Math.round(position)}
-        onKeyDown={onKeyDown}
-        className="absolute top-1/2 z-10 flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 cursor-ew-resize items-center justify-center rounded-full border border-[hsl(var(--accent-kinetic))] bg-background shadow-lg outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent-kinetic))]"
-        style={{ left: `${position}%` }}
+        ref={containerRef}
+        className="relative aspect-[3/4] w-full overflow-hidden border border-border bg-[hsl(var(--pb-paper))] select-none touch-none"
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
       >
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-foreground">
-          <polyline points="9 6 3 12 9 18" />
-          <polyline points="15 6 21 12 15 18" />
-        </svg>
-      </button>
+        {/* After image (base layer) */}
+        <img
+          src={after}
+          alt={afterAlt}
+          className="absolute inset-0 h-full w-full object-cover"
+          loading="eager"
+          // @ts-expect-error - fetchpriority is valid HTML attribute
+          fetchpriority="high"
+          width={1152}
+          height={1536}
+          draggable={false}
+        />
+        {/* Before image (clipped overlay) */}
+        <img
+          src={before}
+          alt={beforeAlt}
+          className="absolute inset-0 h-full w-full object-cover"
+          style={{ clipPath: `inset(0 ${100 - position}% 0 0)` }}
+          loading="eager"
+          width={1152}
+          height={1536}
+          draggable={false}
+        />
 
-      {/* Fig caption strip */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-between p-4 text-[10px] uppercase tracking-[0.2em] text-foreground/80 mix-blend-difference">
+        {/* Labels */}
+        <span className="pointer-events-none absolute left-3 top-3 rounded-full bg-background/80 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-foreground backdrop-blur-sm">
+          {beforeLabel}
+        </span>
+        <span className="pointer-events-none absolute right-3 top-3 rounded-full bg-background/80 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-[hsl(var(--accent-kinetic))] backdrop-blur-sm">
+          {afterLabel}
+        </span>
+
+        {/* Divider line */}
+        <div
+          className="pointer-events-none absolute inset-y-0 w-px bg-[hsl(var(--accent-kinetic))]"
+          style={{ left: `${position}%`, transform: "translateX(-0.5px)" }}
+        />
+
+        {/* Handle */}
+        <button
+          type="button"
+          role="slider"
+          aria-label="Drag to compare before and after"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={Math.round(position)}
+          onKeyDown={onKeyDown}
+          className="absolute top-1/2 z-10 flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 cursor-ew-resize items-center justify-center rounded-full border border-[hsl(var(--accent-kinetic))] bg-background shadow-lg outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent-kinetic))]"
+          style={{ left: `${position}%` }}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-foreground">
+            <polyline points="9 6 3 12 9 18" />
+            <polyline points="15 6 21 12 15 18" />
+          </svg>
+        </button>
+      </div>
+
+      {/* Caption strip below the frame */}
+      <div className="mt-3 flex items-center justify-between text-[10px] uppercase tracking-[0.2em] text-foreground/70">
         <span className="font-mono">Fig. 01</span>
         <span className="font-mono">Reverse-Form Method™</span>
       </div>
