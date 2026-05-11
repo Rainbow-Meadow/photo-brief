@@ -6,11 +6,15 @@ import { PageMeta } from "@/hooks/seo/usePageMeta";
 import { buildFaqJsonLd } from "@/hooks/seo/buildFaqJsonLd";
 import { faqItems } from "@/features/help/content/faq";
 import { BETA_DURATION_DAYS, MAX_DISCOUNT_LABEL } from "@/config/betaProgram";
+import { PublicPhotoPair } from "@/components/marketing/PublicPhotoPair";
 
 import { Button } from "@/components/ui/button";
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Section, Container, SectionHeader } from "@/design-system/schema";
+
+import pricingCedarOwnerLaptop from "@/assets/pricing/pricing-cedar-owner-laptop.png";
+import pricingMultiTradeFan from "@/assets/pricing/pricing-multi-trade-fan.png";
 
 const pricingAxes = [
   { icon: Camera, label: "Photos", copy: "Plans scale by submitted customer photos. Simple jobs stay simple; bigger jobs use more photos." },
