@@ -13,8 +13,12 @@ import { buildHowToJsonLd } from "@/hooks/seo/buildHowToJsonLd";
 import { howItWorksSteps } from "@/components/marketing/HowItWorksSteps";
 import { QuotableFacts } from "@/components/marketing/QuotableFacts";
 import { ComparisonTable } from "@/components/marketing/ComparisonTable";
+import { PublicPhotoPair } from "@/components/marketing/PublicPhotoPair";
 import { faqItems } from "@/features/help/content/faq";
 import { API_BASE_URL, API_EXAMPLES, type ApiExampleLang } from "@/config/apiExamples";
+
+import agentsTerminalCurl from "@/assets/agents/agents-terminal-curl.png";
+import agentsMcpChat from "@/assets/agents/agents-mcp-chat.png";
 
 const DISCOVERY_LINKS = [
   { href: "/llms.txt", label: "/llms.txt", desc: "Short markdown brief for LLMs." },
@@ -204,6 +208,22 @@ export default function ForAiAgentsPage() {
             </ul>
           </article>
         </div>
+
+        <PublicPhotoPair
+          className="mt-8"
+          items={[
+            {
+              src: agentsTerminalCurl,
+              alt: "Developer terminal showing a curl request to the PhotoBrief API and a JSON brief response.",
+              caption: "A direct API call returns a brief payload your automation can route immediately.",
+            },
+            {
+              src: agentsMcpChat,
+              alt: "AI agent chat interface using the PhotoBrief MCP tool to fetch a brief and draft a quote.",
+              caption: "The same lead can also be pulled by an agent through MCP and turned into a quote draft in one move.",
+            },
+          ]}
+        />
       </Container></Section>
 
       {/* MCP & Agent manifests */}

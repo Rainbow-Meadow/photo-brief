@@ -15,6 +15,7 @@ import { GuideStep } from "@/features/help/components/GuideStep";
 import { GuideTOC, type TocItem } from "@/features/help/components/GuideTOC";
 import { QuickChecklist } from "@/features/help/components/QuickChecklist";
 import { Callout } from "@/features/help/components/Callout";
+import { PublicPhotoPair } from "@/components/marketing/PublicPhotoPair";
 import { PageMeta } from "@/hooks/seo/usePageMeta";
 import { buildFaqJsonLd } from "@/hooks/seo/buildFaqJsonLd";
 
@@ -23,6 +24,9 @@ import { businessSteps, businessChecklist } from "@/features/help/content/busine
 import { recipientSteps } from "@/features/help/content/recipient";
 import { faqItems } from "@/features/help/content/faq";
 import { websiteToolChecklist, websiteToolGuides, type WebsiteToolGuide } from "@/features/help/content/websiteTools";
+
+import helpQuickstartClipboard from "@/assets/help/help-quickstart-clipboard.png";
+import helpSupportChat from "@/assets/help/help-support-chat.png";
 
 const intakeSteps = [
   {
@@ -165,6 +169,23 @@ export default function BetaGuidePage() {
       </header>
 
       <div className="grid gap-6 lg:grid-cols-[220px_minmax(0,1fr)]">
+        <div className="lg:col-span-2">
+          <PublicPhotoPair
+            items={[
+              {
+                src: helpQuickstartClipboard,
+                alt: "Printed PhotoBrief quick-start checklist on a clipboard beside a phone open to the dashboard.",
+                caption: "The shortest path still fits on one page: build a guide, send a test brief, review the result.",
+              },
+              {
+                src: helpSupportChat,
+                alt: "Phone showing a support chat where PhotoBrief explains how to add a second photo step to a guide.",
+                caption: "When somebody gets stuck, the answer lives inside the product with the exact next step.",
+              },
+            ]}
+          />
+        </div>
+
         <aside className="hidden lg:block">
           <div className="sticky top-20">
             <GuideTOC items={tocItems} activeId={tabToHash[tab].slice(1)} />

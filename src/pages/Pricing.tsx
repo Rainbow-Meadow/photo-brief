@@ -6,11 +6,15 @@ import { PageMeta } from "@/hooks/seo/usePageMeta";
 import { buildFaqJsonLd } from "@/hooks/seo/buildFaqJsonLd";
 import { faqItems } from "@/features/help/content/faq";
 import { BETA_DURATION_DAYS, MAX_DISCOUNT_LABEL } from "@/config/betaProgram";
+import { PublicPhotoPair } from "@/components/marketing/PublicPhotoPair";
 
 import { Button } from "@/components/ui/button";
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Section, Container, SectionHeader } from "@/design-system/schema";
+
+import pricingCedarOwnerLaptop from "@/assets/pricing/pricing-cedar-owner-laptop.png";
+import pricingMultiTradeFan from "@/assets/pricing/pricing-multi-trade-fan.png";
 
 const pricingAxes = [
   { icon: Camera, label: "Photos", copy: "Plans scale by submitted customer photos. Simple jobs stay simple; bigger jobs use more photos." },
@@ -85,6 +89,25 @@ export default function PricingPage() {
               </Button>
             </div>
           </div>
+        </Container>
+      </Section>
+
+      <Section size="tight">
+        <Container>
+          <PublicPhotoPair
+            items={[
+              {
+                src: pricingCedarOwnerLaptop,
+                alt: "Cedar & Sons owner reviewing a lead brief on a laptop with a Pro Founding badge visible.",
+                caption: "A founding partner sees the full packet before anyone has to ask for a second photo.",
+              },
+              {
+                src: pricingMultiTradeFan,
+                alt: "Four phones showing new-lead brief packets for tree care, HVAC, plumbing, and junk removal.",
+                caption: "The same workflow scales across trades — from tree care to plumbing, HVAC, and junk removal.",
+              },
+            ]}
+          />
         </Container>
       </Section>
 
