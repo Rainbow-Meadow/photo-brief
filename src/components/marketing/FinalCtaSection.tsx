@@ -63,16 +63,18 @@ export function FinalCtaSection({
               <Body size="lg">{body}</Body>
             </RiseIn>
           ) : null}
-          <CTAGroup align="center">
-            <CTA href={primary.href} variant={primary.variant ?? "primary"} size="lg">
-              {primary.label}
-            </CTA>
-            {secondary ? (
-              <CTA href={secondary.href} variant={secondary.variant ?? "secondary"} size="lg">
-                {secondary.label}
+          <div className="mt-8 sm:mt-10">
+            <CTAGroup align="center">
+              <CTA href={primary.href} variant={primary.variant ?? "primary"} size="lg">
+                {primary.label}
               </CTA>
-            ) : null}
-          </CTAGroup>
+              {secondary ? (
+                <CTA href={secondary.href} variant={secondary.variant ?? "secondary"} size="lg">
+                  {secondary.label}
+                </CTA>
+              ) : null}
+            </CTAGroup>
+          </div>
         </div>
       </Container>
     </Section>
