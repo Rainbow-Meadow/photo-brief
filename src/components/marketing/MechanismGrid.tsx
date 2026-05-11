@@ -1,10 +1,10 @@
 import { RiseIn } from "@/components/motion/RiseIn";
 import { Card, Grid, Body } from "@/design-system/schema";
 
-import researchMagnifierIllo from "@/assets/rmbc/research-magnifier.png";
-import mechanismGearsIllo from "@/assets/rmbc/mechanism-gears.png";
-import briefPacketIllo from "@/assets/rmbc/brief-packet.png";
-import methodOverviewIllo from "@/assets/rmbc/method-overview.png";
+import researchMagnifierIllo from "@/assets/rmbc/cedar/01-research-website-analysis.png";
+import mechanismGearsIllo from "@/assets/rmbc/cedar/02-capture-phone-viewfinder.png";
+import briefPacketIllo from "@/assets/rmbc/cedar/03-brief-packet.png";
+import methodOverviewIllo from "@/assets/rmbc/cedar/04-close-gmail-quote.png";
 
 export const workflowSteps = [
   {
@@ -47,8 +47,10 @@ export function MechanismGrid() {
               <img
                 src={step.illo}
                 alt=""
-                className="h-full w-full object-contain p-6 opacity-90"
+                className="h-full w-full object-cover"
                 loading="lazy"
+                width={1024}
+                height={1024}
               />
             </div>
             <h3 className="ls-h3 mt-6">{step.title}</h3>
