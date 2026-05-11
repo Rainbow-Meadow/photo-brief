@@ -22,7 +22,7 @@ import { SectionIntro } from "@/components/marketing/SectionIntro";
 import { MechanismGrid } from "@/components/marketing/MechanismGrid";
 import { FinalCtaSection } from "@/components/marketing/FinalCtaSection";
 
-import heroIllustration from "@/assets/hero-cedar-split.png";
+import heroIllustration from "@/assets/hero-cedar-split-horizontal.png";
 import beforeIntakeFormIllo from "@/assets/comparison/before-cedar-intake.png";
 import afterCapturePipelineIllo from "@/assets/comparison/after-cedar-brief.png";
 
