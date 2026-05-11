@@ -106,12 +106,12 @@ function Hero() {
           </div>
 
           <RiseIn delay={0.4} className="relative">
-            <div className="mx-auto w-full max-w-[380px] lg:ml-auto lg:mr-0">
+            <div className="mx-auto w-full max-w-[640px] lg:ml-auto lg:mr-0">
               <BeforeAfterSlider
                 before={heroBeforeImg}
                 after={heroAfterImg}
-                beforeAlt="Cedar & Sons inbox showing a website-form email — name, email, phone, vague description. No photo, no address."
-                afterAlt="Cedar & Sons PhotoBrief packet — four crisp tree-removal photos, customer notes, address with map, and scope."
+                beforeAlt="Laptop showing a 3-day Gmail back-and-forth between Cedar & Sons and a homeowner — six messages, still no quote sent."
+                afterAlt="Laptop showing a clean two-message Gmail thread — PhotoBrief packet at 9:14 AM, Cedar & Sons quote reply at 9:31 AM."
                 onFirstInteract={() => trackEvent("landing_hero_before_after_drag")}
               />
               <BrandMark variant="horizontal" tone="dark" size={28} className="mt-6 justify-center opacity-80" />
