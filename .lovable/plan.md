@@ -1,42 +1,29 @@
 ## Goal
 
-Replace the static hero illustration on `/` (Landing) with an interactive **before/after slider**, using a newly generated photoreal pair (messy intake vs. quote-ready PhotoBrief packet).
+Reframe the hero before/after to a **portrait, full-bleed phone-in-hand** shot so the phone screen dominates the frame.
 
 ## Steps
 
-1. **Generate two new photoreal hero images** (3:2, 1536×1024) into `src/assets/hero/`:
-   - `hero-before-messy-intake.jpg` — Contractor's phone showing a chaotic text/email thread: blurry far-away photo of a roof, vague "can you quote this?" message, no address, no scope. Realistic phone-in-hand shot, natural daylight, slight desk clutter.
-   - `hero-after-photobrief-packet.jpg` — Same contractor's phone showing a clean PhotoBrief packet: crisp close-up roof photo, address, scope notes, customer name, "Ready to quote" badge. Same framing/lighting so the slider reveal feels continuous.
-   - Constraint: identical camera angle, lighting, and phone position so the wipe transition reads cleanly.
+1. **Regenerate the hero pair** in portrait 3:4 (1152×1536), tightly cropped:
+   - `src/assets/hero/hero-before-messy-intake.jpg` — phone held in hand, framed edge-to-edge top-to-bottom; phone screen fills ~85% of the frame; on-screen content = messy SMS thread (blurry far roof photo, "hey can you quote this? thx", no address). Minimal background bokeh.
+   - `src/assets/hero/hero-after-photobrief-packet.jpg` — identical hand position, phone position, lighting, and crop; on-screen content = clean Job Brief packet (close-up shingle damage photo, Address: 142 Cedar Lane, Scope: Replace 12 sq damaged shingles, Customer: J. Martinez, "Ready to quote" badge).
+   - Lock framing language in both prompts so the slider wipe stays continuous.
 
-2. **Build `BeforeAfterSlider` component** at `src/components/marketing/BeforeAfterSlider.tsx`:
-   - Two stacked `<img>` layers inside an aspect-[3/2] frame (matches current hero box).
-   - Top image clipped via `clip-path: inset(0 X% 0 0)` driven by a `position` state (0–100).
-   - Draggable vertical handle (pointer events: down/move/up, also touch). Keyboard a11y: focusable handle, ←/→ adjust by 5%, Home/End jump to 0/100.
-   - "Before" / "After" pill labels in opposite corners.
-   - Respects `prefers-reduced-motion` (no idle nudge animation; still draggable).
-   - Touch-friendly: large hit area on handle, no hover-only affordances (per touch-vs-desktop memory).
-   - Uses semantic tokens only (border, background, accent-kinetic for handle).
+2. **Update `BeforeAfterSlider`**:
+   - Switch the container from `aspect-[3/2]` to `aspect-[3/4]`.
+   - Change `<img>` from `object-cover` (fine) — keep, but ensure no horizontal cropping artifacts at the new ratio.
+   - Move the Fig. 01 / Reverse-Form Method™ caption strip out of the image (it currently overlays bottom inside the frame and would compete with the phone). Render it below the slider instead, in the same mono micro style.
 
-3. **Wire into `src/pages/Landing.tsx` Hero**:
-   - Remove `heroIllustration` import and the current `<img>` block inside the `RiseIn` on the right column.
-   - Replace with `<BeforeAfterSlider before={...} after={...} beforeAlt="..." afterAlt="..." />` keeping the surrounding `RiseIn`, Fig. 01 caption strip, and BrandMark below.
-   - Keep the `aspect-[3/2]` frame, border, and caption overlay styling.
-
-4. **Analytics**: fire `trackEvent("landing_hero_before_after_drag")` once per session on first drag (debounced) so we can see engagement.
+3. **Update `Landing.tsx` Hero layout**:
+   - The hero is a 2-column `lg:grid-cols-2` with `lg:items-center`. A tall portrait will dominate height. Constrain the slider's max width on large screens (e.g. `max-w-[420px] mx-auto lg:ml-auto lg:mr-0`) so it stays tasteful next to the headline column.
+   - Keep `RiseIn` wrapper, BrandMark below.
 
 ## Out of scope
-- No changes to comparison section further down the page (still uses existing before/after illustrations).
-- No copy changes in the hero.
-- No changes to mobile nav, footer, or other pages.
-
-## Technical notes
-- Slider uses `clip-path` (not two-canvas) to keep DOM simple and SSR/prerender-safe — both `<img>` tags ship in markup, so the prerender script captures them.
-- `loading="eager"` + `fetchpriority="high"` on the "after" image (LCP candidate); "before" can be `eager` too since both render in viewport.
-- Generated with `imagegen` premium tier for photoreal phone/screen detail, then QA'd as instructed.
-- No new deps; pure React + Tailwind.
+- No copy or CTA changes.
+- No changes to other sections, mobile nav, or other pages.
+- Old `hero-cedar-split-horizontal.png` stays unused for now (already removed from imports).
 
 ## Files
-- **Add**: `src/assets/hero/hero-before-messy-intake.jpg`, `src/assets/hero/hero-after-photobrief-packet.jpg`, `src/components/marketing/BeforeAfterSlider.tsx`
-- **Edit**: `src/pages/Landing.tsx` (Hero function only)
-- **Possibly delete later**: old `hero-cedar-split-horizontal.png` if no other importers (will check before removing)
+- **Regenerate**: `src/assets/hero/hero-before-messy-intake.jpg`, `src/assets/hero/hero-after-photobrief-packet.jpg`
+- **Edit**: `src/components/marketing/BeforeAfterSlider.tsx` (aspect ratio + caption position)
+- **Edit**: `src/pages/Landing.tsx` (max-width wrapper around slider, caption rendering)
