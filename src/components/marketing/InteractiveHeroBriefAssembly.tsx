@@ -16,15 +16,13 @@ import {
   AlertTriangle,
   User,
   Smartphone,
-  Truck,
+  
   MessageSquareText,
   Globe,
   Bell,
   Loader2,
   MapPin,
-  Package,
   Sofa,
-  Refrigerator,
   TreePine,
   LayoutList,
 } from "lucide-react";
