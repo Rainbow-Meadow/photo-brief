@@ -6,6 +6,7 @@ import { PageMeta } from "@/hooks/seo/usePageMeta";
 import { Section, Container, Card, Grid, Body, CTA, CTAGroup } from "@/design-system/schema";
 import { SectionIntro } from "@/components/marketing/SectionIntro";
 import { FinalCtaSection } from "@/components/marketing/FinalCtaSection";
+import { PublicPhotoPair } from "@/components/marketing/PublicPhotoPair";
 import { BetaSeatTracker } from "@/components/marketing/BetaSeatTracker";
 import { BetaQuickApplyForm } from "@/components/marketing/BetaQuickApplyForm";
 import { RiseIn } from "@/components/motion/RiseIn";
@@ -14,6 +15,9 @@ import { BETA_DURATION_DAYS, BETA_TOTAL_PARTNERS, MAX_DISCOUNT_LABEL } from "@/c
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { faqItems } from "@/features/help/content/faq";
+
+import betaConciergeCall from "@/assets/beta/beta-concierge-call.png";
+import betaFeedbackThread from "@/assets/beta/beta-feedback-thread.png";
 
 const BetaOnboardingAgentExperience = lazy(() =>
   import("@/components/marketing/BetaOnboardingAgentExperience").then((m) => ({
