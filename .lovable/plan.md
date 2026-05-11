@@ -1,46 +1,35 @@
-## Goal
+## Hero before/after — laptop email threads, contrast on thread length
 
-Update the hero before/after to show the **email-from-the-bad-form** (Before) and the **rich PhotoBrief packet** (After), both on a phone, in the Cedar & Sons Tree Care story.
+Both sides become **MacBook screenshots of Gmail**. The contrast is now about *how many emails it takes to get to dispatch*.
 
-## Story
+### Before — laptop, long messy back-and-forth (6 messages, no dispatch yet)
 
-A storm hit overnight. A homeowner submitted Cedar & Sons' website contact form. The contractor opens their inbox in the truck.
+MacBook (space gray) on a light desk. Gmail web UI open to a thread titled **"Re: New quote request"** with a collapsed stack of 6 messages. Top message expanded, others collapsed with sender + snippet + timestamp visible.
 
-- **Before** — Phone Mail/Gmail inbox open to a single message:
-  - From: website@cedarandsonstreecare.com
-  - Subject: New quote request
-  - Body (form fields):
-    - Name: Jamie Smith
-    - Email: jamie.s@example.com
-    - Phone: (781) 555-0198
-    - Describe your project: "Big tree out front looks bad after the storm, can you come look?"
-  - **No photo attached. No address.**
-- **After** — Phone showing the PhotoBrief "Cedar & Sons Tree Care — New Lead" packet, modeled on the user's uploaded reference (IMG_3616):
-  - Header: "Cedar & Sons Tree Care — New Lead", subtitle "23 Maple St · Submitted 9:14 AM"
-  - 2×2 grid of 4 crisp photos: leaning oak (wide), trunk close-up showing storm damage, house elevation with tree in frame, driveway access shot
-  - Customer notes block: "Storm last night — tree leaning toward house, want it gone ASAP"
-  - Address line: "23 Maple St, Northborough, MA 01532" with a small map snippet pin
-  - Scope: "Removal + stump grind, residential, access via driveway"
+1. **Jamie Smith → Cedar & Sons** (Mon 8:42 AM) — website form: name, email, phone, "Big tree out front looks bad after the storm, can you come look?" *No address. No photo.*
+2. **Cedar & Sons → Jamie** (Mon 11:20 AM) — "Thanks for reaching out. Can you share the address and a couple photos?"
+3. **Jamie → Cedar & Sons** (Tue 7:55 AM) — "23 Maple St. I'll try to grab a photo later."
+4. **Cedar & Sons → Jamie** (Tue 4:10 PM) — "Any photos yet? Hard to scope without seeing it."
+5. **Jamie → Cedar & Sons** (Wed 9:02 AM) — one blurry phone photo, "Hope this helps."
+6. **Cedar & Sons → Jamie** (Wed 2:30 PM, expanded) — "Need a wider shot showing the lean and the house, plus driveway access. Can we come Friday?"
 
-Same hand, same phone, same truck-cab bokeh, identical framing — slider wipe stays continuous.
+Empty attachment row on the open message. Visibly stale — three days in, still no quote sent.
+
+### After — laptop, two clean emails, dispatched same morning
+
+Same MacBook framing. Gmail thread **"New lead — 23 Maple St (leaning oak)"**, exactly 2 messages, both from today:
+
+1. **PhotoBrief `<briefs@photobrief.ai>`** (9:14 AM) — "A homeowner requested a quote for the tree at 23 Maple St." 4-photo strip (leaning oak, trunk, house elevation, driveway). "Scope: removal + stump grind."
+2. **Cedar & Sons Tree Care** with green Cedar & Sons avatar (9:31 AM) — "Hi, Thanks for the opportunity. Here's our quote for 23 Maple St:" pricing table Tree removal $1,450 / Stump grinding $390 / **Total $1,840**. "Available Thursday 8am. Reply YES to confirm. — Marcus, Cedar & Sons"
+
+Visibly resolved — 17 minutes from lead to quote.
 
 ## Steps
 
-1. **Regenerate the two hero images** (premium imagegen, portrait 3:4, 1152×1536):
-   - `src/assets/hero/hero-before-messy-intake.jpg` — phone showing the inbox email above (Apple Mail or generic mobile mail UI), no photo attached.
-   - `src/assets/hero/hero-after-photobrief-packet.jpg` — phone showing the rich brief packet matching IMG_3616, with the four labeled blocks. Use uploaded `user-uploads://IMG_3616.png` as a visual reference passed to `imagegen--edit_image` to keep layout fidelity.
-   - QA both at zoom (`image_tools--zoom_image`) to confirm legibility of From/Subject and the four photo tiles.
-
-2. **Update alt text** in `src/pages/Landing.tsx`:
-   - beforeAlt: "Cedar & Sons inbox email from a website form — no photos, no address."
-   - afterAlt: "Cedar & Sons PhotoBrief packet — four photos, customer notes, address with map, scope."
-
-3. **No structural changes** to slider, layout, or other sections.
-
-## Out of scope
-- No copy/CTA changes in surrounding hero text.
-- No edits to MechanismGrid, Pricing, or Comparison sections.
+1. Regenerate `src/assets/hero/hero-before-messy-intake.jpg` (premium imagegen, 3:2, 1536×1024) — laptop + Gmail with 6-message stale back-and-forth as described.
+2. Regenerate `src/assets/hero/hero-after-photobrief-packet.jpg` (premium imagegen, 3:2, 1536×1024) — laptop + Gmail with the 2-message PhotoBrief → Cedar & Sons quote thread, modeled on `IMG_3618.jpeg`.
+3. `Landing.tsx`: update alt text (lines 113–114) to reflect the new story; widen slider container from `max-w-[380px]` to `max-w-[640px]` so landscape laptop frames read clearly. No other layout changes.
 
 ## Files
-- **Regenerate**: `src/assets/hero/hero-before-messy-intake.jpg`, `src/assets/hero/hero-after-photobrief-packet.jpg`
-- **Edit**: `src/pages/Landing.tsx` (alt text only)
+- Regenerate: 2 hero images
+- Edit: `src/pages/Landing.tsx` (alt text + max-width)
