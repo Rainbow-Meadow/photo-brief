@@ -22,7 +22,7 @@ import {
   Bell,
   Loader2,
   MapPin,
-  Sofa,
+  
   TreePine,
   LayoutList,
 } from "lucide-react";
@@ -590,7 +590,7 @@ function CustomerQuestionsScreen({ onContinue }: { onContinue: () => void }) {
     { id: "leaning", label: "Leaning", icon: TreePine },
     { id: "dead", label: "Dead / dying", icon: AlertTriangle },
     { id: "storm", label: "Storm damage", icon: AlertTriangle },
-    { id: "overhang", label: "Limbs over house", icon: Sofa },
+    { id: "overhang", label: "Limbs over house", icon: AlertTriangle },
   ];
 
   const heightOptions = [
