@@ -169,6 +169,23 @@ export default function BetaGuidePage() {
       </header>
 
       <div className="grid gap-6 lg:grid-cols-[220px_minmax(0,1fr)]">
+        <div className="lg:col-span-2">
+          <PublicPhotoPair
+            items={[
+              {
+                src: helpQuickstartClipboard,
+                alt: "Printed PhotoBrief quick-start checklist on a clipboard beside a phone open to the dashboard.",
+                caption: "The shortest path still fits on one page: build a guide, send a test brief, review the result.",
+              },
+              {
+                src: helpSupportChat,
+                alt: "Phone showing a support chat where PhotoBrief explains how to add a second photo step to a guide.",
+                caption: "When somebody gets stuck, the answer lives inside the product with the exact next step.",
+              },
+            ]}
+          />
+        </div>
+
         <aside className="hidden lg:block">
           <div className="sticky top-20">
             <GuideTOC items={tocItems} activeId={tabToHash[tab].slice(1)} />
