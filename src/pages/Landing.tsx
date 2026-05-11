@@ -22,9 +22,11 @@ import { SectionIntro } from "@/components/marketing/SectionIntro";
 import { MechanismGrid } from "@/components/marketing/MechanismGrid";
 import { FinalCtaSection } from "@/components/marketing/FinalCtaSection";
 
-import heroIllustration from "@/assets/hero-cedar-split-horizontal.png";
+import heroBeforeImg from "@/assets/hero/hero-before-messy-intake.jpg";
+import heroAfterImg from "@/assets/hero/hero-after-photobrief-packet.jpg";
 import beforeIntakeFormIllo from "@/assets/comparison/before-cedar-intake.png";
 import afterCapturePipelineIllo from "@/assets/comparison/after-cedar-brief.png";
+import { BeforeAfterSlider } from "@/components/marketing/BeforeAfterSlider";
 
 const SOFTWARE_APP_JSONLD: Record<string, unknown> = {
   "@context": "https://schema.org",
