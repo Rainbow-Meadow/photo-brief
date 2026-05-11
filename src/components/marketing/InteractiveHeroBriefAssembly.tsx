@@ -215,7 +215,7 @@ function MiniPoweredBy() {
   );
 }
 
-/* ── ClearPath brand header (for customer screens) ── */
+/* ── Cedar & Sons brand header (for customer screens) ── */
 function ClearPathHeader({ compact }: { compact?: boolean }) {
   return (
     <div className={`flex items-center gap-2 ${compact ? "" : "mb-3"}`}>
@@ -223,7 +223,7 @@ function ClearPathHeader({ compact }: { compact?: boolean }) {
         className="flex h-8 w-8 items-center justify-center rounded-lg"
         style={{ backgroundColor: BRAND.colorLight }}
       >
-        <Truck className="h-4 w-4" style={{ color: BRAND.color }} />
+        <TreePine className="h-4 w-4" style={{ color: BRAND.color }} />
       </div>
       <div className="min-w-0">
         <p className="text-[12px] font-bold text-black/80">{BRAND.short}</p>
@@ -257,9 +257,9 @@ function BusinessIdleScreen({
         <div className="flex items-center gap-2">
           <div
             className="flex h-9 w-9 items-center justify-center border border-[#F4F1EA]/15"
-            style={{ backgroundColor: "rgba(13,148,136,0.12)" }}
+            style={{ backgroundColor: "rgba(21,128,61,0.16)" }}
           >
-            <Truck className="h-4 w-4" style={{ color: BRAND.color }} />
+            <TreePine className="h-4 w-4" style={{ color: BRAND.colorMid }} />
           </div>
           <div>
             <p className="text-[13px] font-bold text-[#F4F1EA]/85">{BRAND.short}</p>
@@ -302,10 +302,10 @@ function BusinessIdleScreen({
               </div>
               <div className="mt-2 space-y-1">
                 <div className="flex items-center gap-1.5 text-[10px] text-[#F4F1EA]/55">
-                  <User className="h-2.5 w-2.5" /> Sarah Johnson
+                  <User className="h-2.5 w-2.5" /> Jamie Smith
                 </div>
                 <div className="flex items-center gap-1.5 text-[10px] text-[#F4F1EA]/55">
-                  <Package className="h-2.5 w-2.5" /> Garage cleanout
+                  <TreePine className="h-2.5 w-2.5" /> Leaning oak — 23 Maple St
                 </div>
                 <div className="flex items-center gap-1.5 text-[10px] text-[#F4F1EA]/55">
                   <Globe className="h-2.5 w-2.5" /> Website intake
