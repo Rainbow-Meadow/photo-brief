@@ -16,22 +16,20 @@ import {
   AlertTriangle,
   User,
   Smartphone,
-  Truck,
+  
   MessageSquareText,
   Globe,
   Bell,
   Loader2,
   MapPin,
-  Package,
-  Sofa,
-  Refrigerator,
+  
   TreePine,
   LayoutList,
 } from "lucide-react";
-import wideGarage from "@/assets/junk-removal/wide-garage.webp";
-import pileCloseup from "@/assets/junk-removal/pile-closeup.webp";
-import appliances from "@/assets/junk-removal/appliances.webp";
-import drivewayAccess from "@/assets/junk-removal/driveway-access.webp";
+import leaningOakWide from "@/assets/tree-care/leaning-oak-wide.jpg";
+import oakTrunkCloseup from "@/assets/tree-care/oak-trunk-closeup.jpg";
+import houseElevation from "@/assets/tree-care/house-elevation.jpg";
+import drivewayAccess from "@/assets/tree-care/driveway-access.jpg";
 
 const SESSION_KEY = "pb-session";
 
@@ -40,59 +38,59 @@ const BLURRY_INDEX = 1;
 
 /* ── Fake brand ── */
 const BRAND = {
-  name: "ClearPath Junk Removal",
-  short: "ClearPath",
-  tagline: "We haul it all.",
-  color: "#0d9488",        // teal-600
-  colorLight: "#ccfbf1",   // teal-50
-  colorMid: "#5eead4",     // teal-300
-  colorRing: "rgba(13,148,136,0.25)",
+  name: "Cedar & Sons Tree Care",
+  short: "Cedar & Sons",
+  tagline: "Tree care done right.",
+  color: "#15803d",        // green-700
+  colorLight: "#dcfce7",   // green-100
+  colorMid: "#86efac",     // green-300
+  colorRing: "rgba(21,128,61,0.25)",
 };
 
 const photos = [
   {
-    id: "wide-area",
-    src: wideGarage,
-    label: "Wide area",
-    prompt: "Stand back and capture the full area",
+    id: "leaning-oak",
+    src: leaningOakWide,
+    label: "Wide shot",
+    prompt: "Stand back and capture the whole tree with the house",
     status: "Verified",
-    note: "Room context captured",
+    note: "Lean angle and house context visible",
     good: true,
   },
   {
-    id: "main-pile",
-    src: pileCloseup,
-    label: "Main pile",
-    prompt: "Get closer to show the main pile",
+    id: "trunk",
+    src: oakTrunkCloseup,
+    label: "Trunk base",
+    prompt: "Get a closeup of the trunk base and any exposed roots",
     status: "Verified",
-    note: "Amount and scale visible",
+    note: "Trunk diameter and root flare visible",
     good: true,
   },
   {
-    id: "appliance",
-    src: appliances,
-    label: "Appliance",
-    prompt: "Photograph any appliances separately",
+    id: "house",
+    src: houseElevation,
+    label: "Over the roof",
+    prompt: "Show branches that hang over the roofline",
     status: "Needs review",
-    note: "Appliance handling likely needed",
+    note: "Branches close to roof — confirm clearance",
     good: false,
   },
   {
     id: "access",
     src: drivewayAccess,
     label: "Access",
-    prompt: "Show the access path to the area",
+    prompt: "Show the driveway so we can bring the truck and chipper",
     status: "Verified",
-    note: "Ground-level access shown",
+    note: "Ground-level driveway access shown",
     good: true,
   },
 ];
 
 /** Customer answers (used in questions + final brief) */
 const CUSTOMER_ANSWERS = [
-  { q: "What needs removing?", a: "Furniture, Appliances, Boxes" },
-  { q: "Approximate volume?", a: "Medium (half garage)" },
-  { q: "Stairs or tight access?", a: "No" },
+  { q: "What's the issue?", a: "Leaning oak after storm" },
+  { q: "Tree height (approx)?", a: "40–50 ft" },
+  { q: "Stump grinding needed?", a: "Yes" },
 ];
 
 type Phase =
@@ -215,7 +213,7 @@ function MiniPoweredBy() {
   );
 }
 
-/* ── ClearPath brand header (for customer screens) ── */
+/* ── Cedar & Sons brand header (for customer screens) ── */
 function ClearPathHeader({ compact }: { compact?: boolean }) {
   return (
     <div className={`flex items-center gap-2 ${compact ? "" : "mb-3"}`}>
@@ -223,7 +221,7 @@ function ClearPathHeader({ compact }: { compact?: boolean }) {
         className="flex h-8 w-8 items-center justify-center rounded-lg"
         style={{ backgroundColor: BRAND.colorLight }}
       >
-        <Truck className="h-4 w-4" style={{ color: BRAND.color }} />
+        <TreePine className="h-4 w-4" style={{ color: BRAND.color }} />
       </div>
       <div className="min-w-0">
         <p className="text-[12px] font-bold text-black/80">{BRAND.short}</p>
@@ -257,9 +255,9 @@ function BusinessIdleScreen({
         <div className="flex items-center gap-2">
           <div
             className="flex h-9 w-9 items-center justify-center border border-[#F4F1EA]/15"
-            style={{ backgroundColor: "rgba(13,148,136,0.12)" }}
+            style={{ backgroundColor: "rgba(21,128,61,0.16)" }}
           >
-            <Truck className="h-4 w-4" style={{ color: BRAND.color }} />
+            <TreePine className="h-4 w-4" style={{ color: BRAND.colorMid }} />
           </div>
           <div>
             <p className="text-[13px] font-bold text-[#F4F1EA]/85">{BRAND.short}</p>
@@ -302,10 +300,10 @@ function BusinessIdleScreen({
               </div>
               <div className="mt-2 space-y-1">
                 <div className="flex items-center gap-1.5 text-[10px] text-[#F4F1EA]/55">
-                  <User className="h-2.5 w-2.5" /> Sarah Johnson
+                  <User className="h-2.5 w-2.5" /> Jamie Smith
                 </div>
                 <div className="flex items-center gap-1.5 text-[10px] text-[#F4F1EA]/55">
-                  <Package className="h-2.5 w-2.5" /> Garage cleanout
+                  <TreePine className="h-2.5 w-2.5" /> Leaning oak — 23 Maple St
                 </div>
                 <div className="flex items-center gap-1.5 text-[10px] text-[#F4F1EA]/55">
                   <Globe className="h-2.5 w-2.5" /> Website intake
@@ -387,7 +385,7 @@ function BriefCompleteScreen() {
       <div className="mb-2 border border-[#F4F1EA]/10 p-2.5">
         <div className="flex items-center gap-2">
           <User className="h-3 w-3 text-[#F4F1EA]/45" />
-          <span className="text-[11px] font-semibold text-[#F4F1EA]/70">Sarah Johnson</span>
+          <span className="text-[11px] font-semibold text-[#F4F1EA]/70">Jamie Smith · 23 Maple St</span>
           <span className="ml-auto font-mono text-[9px] uppercase tracking-[0.2em] text-[#F4F1EA]/35">via website</span>
         </div>
       </div>
@@ -438,7 +436,31 @@ function BriefCompleteScreen() {
           <ScanLine className="h-3 w-3" /> AI summary
         </p>
         <p className="mt-2 text-[11px] leading-[1.6] text-[#F4F1EA]/65">
-          Garage cleanout — furniture, appliances, and boxes. Medium volume, ground-level access. All photos verified. Appliance may need separate handling.
+          Leaning oak at 23 Maple St — removal + stump grind. ~40 ft, ground-level driveway access. All photos verified. Confirm proximity to roofline before crew dispatch.
+        </p>
+      </div>
+
+      {/* Suggested quote */}
+      <div className="mt-2 border border-[#F4F1EA]/10 p-3">
+        <p className="flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-[#F4F1EA]/45">
+          <ClipboardList className="h-3 w-3" /> Suggested quote
+        </p>
+        <div className="mt-2 space-y-1">
+          <div className="flex items-center justify-between text-[11px]">
+            <span className="text-[#F4F1EA]/60">Tree removal</span>
+            <span className="font-semibold text-[#F4F1EA]/85">$1,450</span>
+          </div>
+          <div className="flex items-center justify-between text-[11px]">
+            <span className="text-[#F4F1EA]/60">Stump grinding</span>
+            <span className="font-semibold text-[#F4F1EA]/85">$390</span>
+          </div>
+          <div className="mt-1 flex items-center justify-between border-t border-[#F4F1EA]/10 pt-1.5 text-[11px]">
+            <span className="font-mono uppercase tracking-[0.18em] text-[#F2A33A]">Total</span>
+            <span className="font-bold text-[#F2A33A]">$1,840</span>
+          </div>
+        </div>
+        <p className="mt-2 font-mono text-[9px] uppercase tracking-[0.2em] text-[#F4F1EA]/40">
+          Available Thursday 8am
         </p>
       </div>
 
@@ -447,7 +469,7 @@ function BriefCompleteScreen() {
         className="mt-2 flex w-full items-center justify-center gap-2 border border-[#F2A33A] bg-[#F2A33A] px-4 py-2.5 font-mono text-[11px] font-bold uppercase tracking-[0.24em] text-[#0E0E0C]"
         disabled
       >
-        <CheckCircle2 className="h-3.5 w-3.5" /> Quote now
+        <CheckCircle2 className="h-3.5 w-3.5" /> Send quote
       </button>
     </div>
   );
@@ -464,7 +486,7 @@ function CustomerRequestScreen({ onSubmit }: { onSubmit: () => void }) {
       {/* Fake website header */}
       <div className="mb-3 mt-1 flex items-center justify-between">
         <ClearPathHeader />
-        <span className="text-[9px] text-black/25">clearpathjunk.com</span>
+        <span className="text-[9px] text-black/25">cedarandsonstreecare.com</span>
       </div>
 
       {/* Hero area */}
@@ -472,12 +494,12 @@ function CustomerRequestScreen({ onSubmit }: { onSubmit: () => void }) {
         className="mb-4 rounded-xl p-4 text-center"
         style={{ backgroundColor: BRAND.colorLight }}
       >
-        <Truck className="mx-auto h-7 w-7" style={{ color: BRAND.color }} />
+        <TreePine className="mx-auto h-7 w-7" style={{ color: BRAND.color }} />
         <p className="mt-2 text-[14px] font-bold" style={{ color: BRAND.color }}>
           Get a free quote
         </p>
         <p className="mt-0.5 text-[10px] text-black/40">
-          Tell us what you need hauled — we'll get back to you fast.
+          Tell us about the tree — we'll get back to you fast.
         </p>
       </div>
 
@@ -485,22 +507,22 @@ function CustomerRequestScreen({ onSubmit }: { onSubmit: () => void }) {
       <div className="space-y-2">
         <div className="flex items-center gap-2 border border-black/15 px-3 py-2.5">
           <User className="h-3.5 w-3.5 shrink-0 text-black/25" />
-          <span className="text-[12px] text-black/55">Sarah Johnson</span>
+          <span className="text-[12px] text-black/55">Jamie Smith</span>
         </div>
         <div className="flex items-center gap-2 border border-black/15 px-3 py-2.5">
           <MapPin className="h-3.5 w-3.5 shrink-0 text-black/25" />
-          <span className="text-[12px] text-black/55">742 Evergreen Terrace</span>
+          <span className="text-[12px] text-black/55">23 Maple St</span>
         </div>
         <div className="flex items-center justify-between border border-black/15 px-3 py-2.5">
           <span className="flex items-center gap-2 text-[12px] text-black/55">
-            <Package className="h-3.5 w-3.5 shrink-0 text-black/25" />
-            Garage cleanout
+            <TreePine className="h-3.5 w-3.5 shrink-0 text-black/25" />
+            Tree removal
           </span>
           <ChevronRight className="h-3.5 w-3.5 text-black/20" />
         </div>
         <div className="border border-black/15 px-3 py-2.5">
           <p className="text-[12px] text-black/40 leading-[1.5]">
-            Need the garage cleared before we move. Lots of old furniture and a broken fridge…
+            Big tree out front looks bad after the storm — can you come look?
           </p>
         </div>
       </div>
@@ -512,7 +534,7 @@ function CustomerRequestScreen({ onSubmit }: { onSubmit: () => void }) {
         className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-[13px] font-bold text-white transition-all hover:brightness-110 active:scale-[0.98]"
         style={{ backgroundColor: BRAND.color }}
       >
-        <Send className="h-4 w-4" /> Request service
+        <Send className="h-4 w-4" /> Request a quote
       </button>
       <MiniPoweredBy />
     </div>
@@ -559,16 +581,22 @@ function CustomerRoutingScreen({ onDone }: { onDone: () => void }) {
 /** Phase 3 — Customer answers context questions */
 function CustomerQuestionsScreen({ onContinue }: { onContinue: () => void }) {
   const [selected, setSelected] = useState({
-    items: new Set(["furniture", "appliances", "boxes"]),
-    volume: "medium",
-    stairs: "no",
+    items: new Set(["leaning"]),
+    height: "mid",
+    stump: "yes",
   });
 
   const itemChips = [
-    { id: "furniture", label: "Furniture", icon: Sofa },
-    { id: "appliances", label: "Appliances", icon: Refrigerator },
-    { id: "boxes", label: "Boxes", icon: Package },
-    { id: "yard", label: "Yard waste", icon: TreePine },
+    { id: "leaning", label: "Leaning", icon: TreePine },
+    { id: "dead", label: "Dead / dying", icon: AlertTriangle },
+    { id: "storm", label: "Storm damage", icon: AlertTriangle },
+    { id: "overhang", label: "Limbs over house", icon: AlertTriangle },
+  ];
+
+  const heightOptions = [
+    { id: "low", label: "Under 20 ft" },
+    { id: "mid", label: "20–40 ft" },
+    { id: "tall", label: "40+ ft" },
   ];
 
   return (
@@ -588,9 +616,9 @@ function CustomerQuestionsScreen({ onContinue }: { onContinue: () => void }) {
         This helps {BRAND.short} prepare an accurate quote.
       </p>
 
-      {/* Q1 — What needs removing */}
+      {/* Q1 — What's the issue */}
       <div className="mb-3">
-        <p className="mb-1.5 text-[11px] font-semibold text-black/60">What needs removing?</p>
+        <p className="mb-1.5 text-[11px] font-semibold text-black/60">What's the issue?</p>
         <div className="flex flex-wrap gap-1.5">
           {itemChips.map((chip) => {
             const active = selected.items.has(chip.id);
@@ -618,43 +646,43 @@ function CustomerQuestionsScreen({ onContinue }: { onContinue: () => void }) {
         </div>
       </div>
 
-      {/* Q2 — Volume */}
+      {/* Q2 — Height */}
       <div className="mb-3">
-        <p className="mb-1.5 text-[11px] font-semibold text-black/60">Approximate volume?</p>
+        <p className="mb-1.5 text-[11px] font-semibold text-black/60">Tree height (approx)?</p>
         <div className="flex gap-1.5">
-          {["small", "medium", "large"].map((v) => (
+          {heightOptions.map((opt) => (
             <button
-              key={v}
+              key={opt.id}
               type="button"
-              onClick={() => setSelected({ ...selected, volume: v })}
-              className={`flex-1 rounded-xl py-2 text-[11px] font-medium capitalize transition-all ${
-                selected.volume === v
+              onClick={() => setSelected({ ...selected, height: opt.id })}
+              className={`flex-1 rounded-xl py-2 text-[11px] font-medium transition-all ${
+                selected.height === opt.id
                   ? "text-white"
                   : "border border-black/15 text-black/55"
               }`}
-              style={selected.volume === v ? { backgroundColor: BRAND.color } : undefined}
+              style={selected.height === opt.id ? { backgroundColor: BRAND.color } : undefined}
             >
-              {v}
+              {opt.label}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Q3 — Stairs */}
+      {/* Q3 — Stump grinding */}
       <div className="mb-4">
-        <p className="mb-1.5 text-[11px] font-semibold text-black/60">Any stairs or tight access?</p>
+        <p className="mb-1.5 text-[11px] font-semibold text-black/60">Stump grinding needed?</p>
         <div className="flex gap-1.5">
           {["yes", "no"].map((v) => (
             <button
               key={v}
               type="button"
-              onClick={() => setSelected({ ...selected, stairs: v })}
+              onClick={() => setSelected({ ...selected, stump: v })}
               className={`flex-1 rounded-xl py-2 text-[11px] font-medium capitalize transition-all ${
-                selected.stairs === v
+                selected.stump === v
                   ? "text-white"
                   : "border border-black/15 text-black/55"
               }`}
-              style={selected.stairs === v ? { backgroundColor: BRAND.color } : undefined}
+              style={selected.stump === v ? { backgroundColor: BRAND.color } : undefined}
             >
               {v}
             </button>
