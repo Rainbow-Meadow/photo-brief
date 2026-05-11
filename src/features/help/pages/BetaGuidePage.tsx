@@ -15,6 +15,7 @@ import { GuideStep } from "@/features/help/components/GuideStep";
 import { GuideTOC, type TocItem } from "@/features/help/components/GuideTOC";
 import { QuickChecklist } from "@/features/help/components/QuickChecklist";
 import { Callout } from "@/features/help/components/Callout";
+import { PublicPhotoPair } from "@/components/marketing/PublicPhotoPair";
 import { PageMeta } from "@/hooks/seo/usePageMeta";
 import { buildFaqJsonLd } from "@/hooks/seo/buildFaqJsonLd";
 
@@ -23,6 +24,9 @@ import { businessSteps, businessChecklist } from "@/features/help/content/busine
 import { recipientSteps } from "@/features/help/content/recipient";
 import { faqItems } from "@/features/help/content/faq";
 import { websiteToolChecklist, websiteToolGuides, type WebsiteToolGuide } from "@/features/help/content/websiteTools";
+
+import helpQuickstartClipboard from "@/assets/help/help-quickstart-clipboard.png";
+import helpSupportChat from "@/assets/help/help-support-chat.png";
 
 const intakeSteps = [
   {
