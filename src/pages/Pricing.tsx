@@ -92,6 +92,25 @@ export default function PricingPage() {
         </Container>
       </Section>
 
+      <Section size="tight">
+        <Container>
+          <PublicPhotoPair
+            items={[
+              {
+                src: pricingCedarOwnerLaptop,
+                alt: "Cedar & Sons owner reviewing a lead brief on a laptop with a Pro Founding badge visible.",
+                caption: "A founding partner sees the full packet before anyone has to ask for a second photo.",
+              },
+              {
+                src: pricingMultiTradeFan,
+                alt: "Four phones showing new-lead brief packets for tree care, HVAC, plumbing, and junk removal.",
+                caption: "The same workflow scales across trades — from tree care to plumbing, HVAC, and junk removal.",
+              },
+            ]}
+          />
+        </Container>
+      </Section>
+
       {/* Beta offer cards */}
       <Section size="tight">
         <Container>
