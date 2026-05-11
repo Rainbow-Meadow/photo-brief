@@ -488,7 +488,7 @@ function CustomerRequestScreen({ onSubmit }: { onSubmit: () => void }) {
       {/* Fake website header */}
       <div className="mb-3 mt-1 flex items-center justify-between">
         <ClearPathHeader />
-        <span className="text-[9px] text-black/25">clearpathjunk.com</span>
+        <span className="text-[9px] text-black/25">cedarandsonstreecare.com</span>
       </div>
 
       {/* Hero area */}
@@ -496,12 +496,12 @@ function CustomerRequestScreen({ onSubmit }: { onSubmit: () => void }) {
         className="mb-4 rounded-xl p-4 text-center"
         style={{ backgroundColor: BRAND.colorLight }}
       >
-        <Truck className="mx-auto h-7 w-7" style={{ color: BRAND.color }} />
+        <TreePine className="mx-auto h-7 w-7" style={{ color: BRAND.color }} />
         <p className="mt-2 text-[14px] font-bold" style={{ color: BRAND.color }}>
           Get a free quote
         </p>
         <p className="mt-0.5 text-[10px] text-black/40">
-          Tell us what you need hauled — we'll get back to you fast.
+          Tell us about the tree — we'll get back to you fast.
         </p>
       </div>
 
@@ -509,22 +509,22 @@ function CustomerRequestScreen({ onSubmit }: { onSubmit: () => void }) {
       <div className="space-y-2">
         <div className="flex items-center gap-2 border border-black/15 px-3 py-2.5">
           <User className="h-3.5 w-3.5 shrink-0 text-black/25" />
-          <span className="text-[12px] text-black/55">Sarah Johnson</span>
+          <span className="text-[12px] text-black/55">Jamie Smith</span>
         </div>
         <div className="flex items-center gap-2 border border-black/15 px-3 py-2.5">
           <MapPin className="h-3.5 w-3.5 shrink-0 text-black/25" />
-          <span className="text-[12px] text-black/55">742 Evergreen Terrace</span>
+          <span className="text-[12px] text-black/55">23 Maple St</span>
         </div>
         <div className="flex items-center justify-between border border-black/15 px-3 py-2.5">
           <span className="flex items-center gap-2 text-[12px] text-black/55">
-            <Package className="h-3.5 w-3.5 shrink-0 text-black/25" />
-            Garage cleanout
+            <TreePine className="h-3.5 w-3.5 shrink-0 text-black/25" />
+            Tree removal
           </span>
           <ChevronRight className="h-3.5 w-3.5 text-black/20" />
         </div>
         <div className="border border-black/15 px-3 py-2.5">
           <p className="text-[12px] text-black/40 leading-[1.5]">
-            Need the garage cleared before we move. Lots of old furniture and a broken fridge…
+            Big tree out front looks bad after the storm — can you come look?
           </p>
         </div>
       </div>
@@ -536,7 +536,7 @@ function CustomerRequestScreen({ onSubmit }: { onSubmit: () => void }) {
         className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-[13px] font-bold text-white transition-all hover:brightness-110 active:scale-[0.98]"
         style={{ backgroundColor: BRAND.color }}
       >
-        <Send className="h-4 w-4" /> Request service
+        <Send className="h-4 w-4" /> Request a quote
       </button>
       <MiniPoweredBy />
     </div>
