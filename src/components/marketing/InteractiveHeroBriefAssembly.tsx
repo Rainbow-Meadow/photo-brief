@@ -387,7 +387,7 @@ function BriefCompleteScreen() {
       <div className="mb-2 border border-[#F4F1EA]/10 p-2.5">
         <div className="flex items-center gap-2">
           <User className="h-3 w-3 text-[#F4F1EA]/45" />
-          <span className="text-[11px] font-semibold text-[#F4F1EA]/70">Sarah Johnson</span>
+          <span className="text-[11px] font-semibold text-[#F4F1EA]/70">Jamie Smith · 23 Maple St</span>
           <span className="ml-auto font-mono text-[9px] uppercase tracking-[0.2em] text-[#F4F1EA]/35">via website</span>
         </div>
       </div>
@@ -438,7 +438,31 @@ function BriefCompleteScreen() {
           <ScanLine className="h-3 w-3" /> AI summary
         </p>
         <p className="mt-2 text-[11px] leading-[1.6] text-[#F4F1EA]/65">
-          Garage cleanout — furniture, appliances, and boxes. Medium volume, ground-level access. All photos verified. Appliance may need separate handling.
+          Leaning oak at 23 Maple St — removal + stump grind. ~40 ft, ground-level driveway access. All photos verified. Confirm proximity to roofline before crew dispatch.
+        </p>
+      </div>
+
+      {/* Suggested quote */}
+      <div className="mt-2 border border-[#F4F1EA]/10 p-3">
+        <p className="flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-[#F4F1EA]/45">
+          <ClipboardList className="h-3 w-3" /> Suggested quote
+        </p>
+        <div className="mt-2 space-y-1">
+          <div className="flex items-center justify-between text-[11px]">
+            <span className="text-[#F4F1EA]/60">Tree removal</span>
+            <span className="font-semibold text-[#F4F1EA]/85">$1,450</span>
+          </div>
+          <div className="flex items-center justify-between text-[11px]">
+            <span className="text-[#F4F1EA]/60">Stump grinding</span>
+            <span className="font-semibold text-[#F4F1EA]/85">$390</span>
+          </div>
+          <div className="mt-1 flex items-center justify-between border-t border-[#F4F1EA]/10 pt-1.5 text-[11px]">
+            <span className="font-mono uppercase tracking-[0.18em] text-[#F2A33A]">Total</span>
+            <span className="font-bold text-[#F2A33A]">$1,840</span>
+          </div>
+        </div>
+        <p className="mt-2 font-mono text-[9px] uppercase tracking-[0.2em] text-[#F4F1EA]/40">
+          Available Thursday 8am
         </p>
       </div>
 
@@ -447,7 +471,7 @@ function BriefCompleteScreen() {
         className="mt-2 flex w-full items-center justify-center gap-2 border border-[#F2A33A] bg-[#F2A33A] px-4 py-2.5 font-mono text-[11px] font-bold uppercase tracking-[0.24em] text-[#0E0E0C]"
         disabled
       >
-        <CheckCircle2 className="h-3.5 w-3.5" /> Quote now
+        <CheckCircle2 className="h-3.5 w-3.5" /> Send quote
       </button>
     </div>
   );
