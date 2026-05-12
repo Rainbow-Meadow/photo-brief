@@ -83,3 +83,31 @@ Auth (`auth.*`), every table with RLS, all plpgsql triggers/functions, `pgmq` (u
 3. Step 2 (AE telemetry) — 1 PR, dual-write only, no UI change until the dashboard query is swapped.
 4. Step 3 (DO capture sessions) — larger PR, behind a feature flag (`capture_agent_do`) per workspace.
 5. Step 5 (Queues) — only after the above are stable for 2+ weeks.
+
+---
+
+## Implementation status (2026-05-12)
+
+**Step 1 — Hyperdrive: ✅ shipped**
+- Hyperdrive config created: `cea7652fc3924714826c43a4090de08a` → `aws-1-us-east-1.pooler.supabase.com:6543`, caching `max_age=60s`, `swr=30s`.
+- `HYPERDRIVE` binding added to: `assistant-agent`, `capture-agent`, `beta-onboarding-agent`, `mcp-agent` wrangler.toml.
+- `workers/_shared/db.ts`, `ae.ts`, `kv-bundle.ts` scaffolded.
+- `postgres@3.4.4` added to `assistant-agent` + `capture-agent` package.json.
+- KV namespace `f7d82555b5894d6cb44d7139b718d8c2` (`photobrief-recipient-bundles`) created and bound to `router`, `assistant-agent`, `capture-agent` for Step 4.
+- AE dataset `pb_usage_events` bound (auto-created on first write) on `assistant-agent` + `capture-agent` for Step 2.
+- ⚠️ Hyperdrive currently authenticates as `sandbox_exec.<ref>` (the value of `SUPABASE_DB_URL`). If that user is rotated, update the Hyperdrive origin via `PATCH /accounts/{acct}/hyperdrive/configs/cea7652fc3924714826c43a4090de08a`.
+
+**Step 2 — Analytics Engine: 🟡 bindings only**
+Bindings live; still TODO: `recordUsage()` call sites, the `analytics-aggregate` proxy edge function, and migrating the admin command center chart query.
+
+**Step 3 — Durable Object capture sessions: 🟡 binding stubbed**
+`CAPTURE_SESSION` DO binding + v2 migration declared in `capture-agent/wrangler.toml`. Class implementation, worker routes, and frontend `useCaptureAgent` swap are pending.
+
+**Step 4 — KV recipient bundle cache: 🟡 namespace ready**
+KV namespace bound to all relevant workers. Worker route + frontend swap + invalidation hooks are pending.
+
+**Step 5 — Cloudflare Queues for email: ⏸ deferred** per plan, only after Steps 1–4 are stable.
+
+**Cross-cutting:** secret-manifest entries, `cloudflare-control-plane-status` smoke probe, and the `docs/hybrid-hosting.md` "Data plane split" section are pending.
+
+The current PR-shaped diff is safe to deploy: it only adds bindings + shared helpers, no call sites changed yet, so behavior is unchanged until Steps 2–4 are wired up in follow-up turns.
