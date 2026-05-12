@@ -59,14 +59,14 @@ export function FinalCtaSection({
         <div className="relative grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-16">
           {/* Headline left */}
           <div className="lg:col-span-7">
+            <p className="ls-eyebrow">[ {eyebrow} ]</p>
             <RiseIn>
-              <h2 className="ls-h1 text-balance">{renderTitle()}</h2>
+              <h2 className="ls-h1 mt-6 text-balance">{renderTitle()}</h2>
             </RiseIn>
           </div>
 
-          {/* Eyebrow + body + CTAs right */}
+          {/* Body + CTAs right */}
           <div className="lg:col-span-5 lg:pl-4">
-            <p className="ls-eyebrow">[ {eyebrow} ]</p>
             {body ? (
               <RiseIn delay={0.1}>
                 <Body size="lg">{body}</Body>
