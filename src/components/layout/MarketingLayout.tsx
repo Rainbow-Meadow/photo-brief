@@ -35,7 +35,7 @@ export function MarketingLayout() {
 
 
   return (
-    <div className="pb-landing flex min-h-screen flex-col">
+    <div className="pb-landing min-h-screen">
       <div className="sticky top-0 z-40 px-3 pt-3 sm:px-6 sm:pt-4 pt-safe">
         <div className="relative mx-auto flex w-full max-w-7xl items-center justify-center">
           {/* Centered floating pill: links | LOGO | links */}
