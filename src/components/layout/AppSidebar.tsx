@@ -44,7 +44,7 @@ const mainItems = [
   { title: "Requests", url: "/requests", icon: Inbox },
   { title: "Customers", url: "/customers", icon: Users },
   { title: "Guides", url: "/guides", icon: BookOpen },
-  { title: "Website Intake", url: "/intake", icon: Globe2, feature: "website_intake" as const, exact: true },
+  { title: "Smart Intake", url: "/intake", icon: Globe2, feature: "website_intake" as const, exact: true },
   { title: "Intake Briefs", url: "/intake/briefs", icon: FileText, feature: "website_intake" as const },
 ];
 
