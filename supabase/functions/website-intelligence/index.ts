@@ -11,6 +11,11 @@ const MAX_HTML_CHARS = 80_000;
 const REQUEST_TIMEOUT_MS = 8_000;
 const AGENT = "PhotoBriefWebsiteInspector/0.1";
 
+type PhotoPolicy = "not_needed" | "optional" | "recommended" | "required";
+type ReadinessGoal = "ready_to_quote" | "ready_to_dispatch" | "ready_for_callback" | "needs_review" | "needs_more_info" | "needs_photos";
+
+type SupabaseAdmin = ReturnType<typeof createClient>;
+
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
@@ -207,6 +212,37 @@ function inferServices(pages: Array<{ url: string; title: string | null; h1: str
   return Array.from(map.values());
 }
 
+function suggestPhotoPolicy(templateType: string, keywords: string[]): { policy: PhotoPolicy; reason: string; readinessGoal: ReadinessGoal } {
+  const hay = `${templateType} ${keywords.join(" ")}`.toLowerCase();
+  if (/warranty|claim|damage|defect|return|broken|crack|leak/.test(hay)) {
+    return { policy: "required", reason: "Visible condition or proof is usually needed before this can be reviewed.", readinessGoal: "needs_photos" };
+  }
+  if (/repair|service|maintenance|estimate|quote|install|project|volume|size|area|access/.test(hay)) {
+    return { policy: "recommended", reason: "Photos can reduce follow-up and help the team judge scope faster.", readinessGoal: "ready_to_quote" };
+  }
+  if (/product|catalog|question|general/.test(hay)) {
+    return { policy: "optional", reason: "Photos may help with context, but the request can usually be reviewed without them.", readinessGoal: "ready_for_callback" };
+  }
+  return { policy: "not_needed", reason: "This route can start as a simple customer inquiry without visual context.", readinessGoal: "ready_for_callback" };
+}
+
+function suggestedQuestions(templateType: string) {
+  const base = [
+    { id: "contact_name", prompt: "What is your name?", type: "short_text", required: true, sortOrder: 0 },
+    { id: "contact_method", prompt: "What is the best email or phone number to reach you?", type: "short_text", required: true, sortOrder: 1 },
+  ];
+  if (templateType === "quote_estimate") {
+    return [...base, { id: "project_details", prompt: "What are you hoping to get quoted?", type: "long_text", required: true, sortOrder: 2 }, { id: "location", prompt: "Where would the work happen?", type: "address", required: false, sortOrder: 3 }];
+  }
+  if (templateType === "service_repair") {
+    return [...base, { id: "issue_details", prompt: "What needs service or repair?", type: "long_text", required: true, sortOrder: 2 }, { id: "urgency", prompt: "How soon do you need help?", type: "single_select", required: false, sortOrder: 3, options: [{ label: "Today", value: "today" }, { label: "This week", value: "this_week" }, { label: "Flexible", value: "flexible" }] }];
+  }
+  if (templateType === "warranty_damage") {
+    return [...base, { id: "problem_details", prompt: "What happened or what are you noticing?", type: "long_text", required: true, sortOrder: 2 }, { id: "product_or_order", prompt: "Do you have a product, order, serial, or model number?", type: "short_text", required: false, sortOrder: 3 }];
+  }
+  return [...base, { id: "message", prompt: "How can we help?", type: "long_text", required: true, sortOrder: 2 }];
+}
+
 function buildPlan(services: ReturnType<typeof inferServices>, forms: Array<Record<string, unknown>>) {
   const buckets = new Map<string, typeof services>();
   for (const service of services) buckets.set(service.template, [...(buckets.get(service.template) ?? []), service]);
@@ -215,13 +251,29 @@ function buildPlan(services: ReturnType<typeof inferServices>, forms: Array<Reco
   const labels: Record<string, string> = { quote_estimate: "Get a quote or estimate", service_repair: "Request service or repair", warranty_damage: "Report damage or warranty issue", product_inquiry: "Ask about a product", general_intake: "Something else" };
   const rules = types.map((type, index) => {
     const group = buckets.get(type) ?? [];
-    return { label: labels[type] ?? "General request", customer_description: "Collects the details, context photos, and identifiers needed to make this lead actionable.", match_keywords: Array.from(new Set(group.flatMap((s) => [s.name, s.category, s.intent, ...s.keywords]))).slice(0, 20), template_type: type, sort_order: index, is_fallback: index === types.length - 1, service_names: group.map((s) => s.name).slice(0, 8) };
+    const keywords = Array.from(new Set(group.flatMap((s) => [s.name, s.category, s.intent, ...s.keywords]))).slice(0, 20);
+    const photo = suggestPhotoPolicy(type, keywords);
+    return {
+      label: labels[type] ?? "General request",
+      customer_description: photo.policy === "not_needed"
+        ? "Collects the basic details needed for a fast follow-up."
+        : "Collects the details needed to make this request actionable.",
+      match_keywords: keywords,
+      template_type: type,
+      sort_order: index,
+      is_fallback: index === types.length - 1,
+      service_names: group.map((s) => s.name).slice(0, 8),
+      photo_policy: photo.policy,
+      photo_policy_reason: photo.reason,
+      readiness_goal: photo.readinessGoal,
+      questions: suggestedQuestions(type),
+    };
   });
   const weakForms = forms.filter((f) => Number(f.quality_score ?? 0) < 60 && f.inferred_purpose !== "newsletter");
-  return { rules, summary: `Found ${services.length} likely service/product signals and ${forms.length} form(s). Recommended ${rules.length} simple intake path(s).`, install: weakForms.length ? "Replace or augment the weakest existing website form with a PhotoBrief hosted intake link first." : "Add a PhotoBrief hosted intake link beside existing CTAs first, then evaluate form replacement after beta data." };
+  return { rules, summary: `Found ${services.length} likely service/product signals and ${forms.length} form(s). Recommended ${rules.length} smart intake path(s).`, install: weakForms.length ? "Replace or augment the weakest existing website form with a PhotoBrief hosted intake link first." : "Add a PhotoBrief hosted intake link beside existing CTAs first, then evaluate form replacement after beta data." };
 }
 
-async function requirePlatformAdmin(req: Request) {
+async function authenticate(req: Request) {
   const authHeader = req.headers.get("Authorization");
   if (!authHeader?.startsWith("Bearer ")) return { error: json({ error: "unauthorized" }, 401) };
   const userClient = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!, { global: { headers: { Authorization: authHeader } } });
@@ -229,16 +281,28 @@ async function requirePlatformAdmin(req: Request) {
   if (userErr || !user) return { error: json({ error: "unauthorized" }, 401) };
   const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
   const { data: adminRow } = await admin.from("platform_admins").select("user_id").eq("user_id", user.id).maybeSingle();
-  if (!adminRow) return { error: json({ error: "forbidden" }, 403) };
-  return { admin, userId: user.id };
+  return { admin, userId: user.id, isPlatformAdmin: Boolean(adminRow) };
+}
+
+async function authorizeScan(admin: SupabaseAdmin, userId: string, isPlatformAdmin: boolean, workspaceId: string | null) {
+  if (isPlatformAdmin) return true;
+  if (!workspaceId) return false;
+  const { data: member } = await admin
+    .from("workspace_members")
+    .select("workspace_id")
+    .eq("workspace_id", workspaceId)
+    .eq("user_id", userId)
+    .eq("status", "active")
+    .maybeSingle();
+  return Boolean(member);
 }
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
-  const guard = await requirePlatformAdmin(req);
-  if (guard.error) return guard.error;
-  const admin = guard.admin;
+  const actor = await authenticate(req);
+  if (actor.error) return actor.error;
+  const admin = actor.admin;
   let body: Record<string, unknown>;
   try { body = await req.json(); } catch { return json({ error: "invalid_json" }, 400); }
   if ((clean(body.action, 80) ?? "scan_website") !== "scan_website") return json({ error: "unknown_action" }, 400);
@@ -246,11 +310,13 @@ Deno.serve(async (req) => {
   if (!rootUrl) return json({ error: "invalid_website_url" }, 400);
   const betaApplicationId = clean(body.beta_application_id, 80);
   const workspaceId = clean(body.workspace_id, 80);
+  const allowed = await authorizeScan(admin, actor.userId, actor.isPlatformAdmin, workspaceId);
+  if (!allowed) return json({ error: "forbidden" }, 403);
   const root = new URL(rootUrl);
 
-  const { data: profile, error: profileError } = await admin.from("business_intake_profiles").insert({ workspace_id: workspaceId, beta_application_id: betaApplicationId, website_url: rootUrl, status: "reviewing", install_mode: "hosted_link", primary_goal: "replace_or_augment_website_form", metadata: { source: "admin_scan" } }).select("id").single();
+  const { data: profile, error: profileError } = await admin.from("business_intake_profiles").insert({ workspace_id: workspaceId, beta_application_id: betaApplicationId, website_url: rootUrl, status: "reviewing", install_mode: "hosted_link", primary_goal: "replace_or_augment_website_form", metadata: { source: actor.isPlatformAdmin ? "admin_scan" : "workspace_scan" } }).select("id").single();
   if (profileError || !profile) return json({ error: "profile_insert_failed" }, 500);
-  const { data: job, error: jobError } = await admin.from("website_scan_jobs").insert({ workspace_id: workspaceId, beta_application_id: betaApplicationId, profile_id: profile.id, root_url: rootUrl, status: "running", scan_type: "manual", started_at: new Date().toISOString(), created_by: guard.userId }).select("id").single();
+  const { data: job, error: jobError } = await admin.from("website_scan_jobs").insert({ workspace_id: workspaceId, beta_application_id: betaApplicationId, profile_id: profile.id, root_url: rootUrl, status: "running", scan_type: "manual", started_at: new Date().toISOString(), created_by: actor.userId }).select("id").single();
   if (jobError || !job) return json({ error: "scan_job_insert_failed" }, 500);
 
   try {
@@ -280,11 +346,11 @@ Deno.serve(async (req) => {
     const serviceRows = services.map((s) => ({ workspace_id: workspaceId, beta_application_id: betaApplicationId, profile_id: profile.id, scan_job_id: job.id, source_url: s.source_url, name: s.name, description: s.description, category: s.category, keywords: s.keywords, customer_intent: s.intent, recommended_template_type: s.template, confidence_score: s.confidence, status: "proposed" }));
     const { data: insertedServices } = serviceRows.length ? await admin.from("service_catalog_items").insert(serviceRows).select("id, recommended_template_type") : { data: [] };
     const plan = buildPlan(services, formRows);
-    const { data: blueprint, error: blueprintError } = await admin.from("intake_blueprints").insert({ workspace_id: workspaceId, beta_application_id: betaApplicationId, profile_id: profile.id, source_scan_job_id: job.id, status: "draft", routing_question: "What do you need help with?", summary: plan.summary, install_recommendation: plan.install, customer_experience: { recommended_paths: plan.rules }, lead_packet_plan: { include_customer_contact: true, include_matched_service: true, include_photos_by_step: true, include_missing_info: true, include_recommended_next_action: true } }).select("id").single();
+    const { data: blueprint, error: blueprintError } = await admin.from("intake_blueprints").insert({ workspace_id: workspaceId, beta_application_id: betaApplicationId, profile_id: profile.id, source_scan_job_id: job.id, status: "draft", routing_question: "What do you need help with?", summary: plan.summary, install_recommendation: plan.install, customer_experience: { recommended_paths: plan.rules }, lead_packet_plan: { include_customer_contact: true, include_matched_service: true, include_photos_by_policy: true, include_missing_info: true, include_recommended_next_action: true } }).select("id").single();
     if (blueprintError || !blueprint) throw blueprintError ?? new Error("blueprint insert failed");
     const serviceIdsByType = new Map<string, string[]>();
     for (const s of (insertedServices ?? []) as Array<{ id: string; recommended_template_type: string }>) serviceIdsByType.set(s.recommended_template_type, [...(serviceIdsByType.get(s.recommended_template_type) ?? []), s.id]);
-    if (plan.rules.length) await admin.from("intake_routing_rules").insert(plan.rules.map((r) => ({ workspace_id: workspaceId, beta_application_id: betaApplicationId, blueprint_id: blueprint.id, label: r.label, customer_description: r.customer_description, match_keywords: r.match_keywords, service_catalog_item_ids: serviceIdsByType.get(r.template_type) ?? [], template_type: r.template_type, sort_order: r.sort_order, is_fallback: r.is_fallback })));
+    if (plan.rules.length) await admin.from("intake_routing_rules").insert(plan.rules.map((r) => ({ workspace_id: workspaceId, beta_application_id: betaApplicationId, blueprint_id: blueprint.id, label: r.label, customer_description: r.customer_description, match_keywords: r.match_keywords, service_catalog_item_ids: serviceIdsByType.get(r.template_type) ?? [], template_type: r.template_type, sort_order: r.sort_order, is_fallback: r.is_fallback, photo_policy: r.photo_policy, photo_policy_reason: r.photo_policy_reason, readiness_goal: r.readiness_goal, questions: r.questions })));
     await admin.from("website_change_events").insert([...pageRows.slice(0, 8).map((p) => ({ workspace_id: workspaceId, beta_application_id: betaApplicationId, scan_job_id: job.id, change_type: "new_page", subject_url: String(p.url), after: { title: p.title, page_type: p.page_type }, recommendation: "Review this page for service and intake routing opportunities." })), ...services.slice(0, 8).map((s) => ({ workspace_id: workspaceId, beta_application_id: betaApplicationId, scan_job_id: job.id, change_type: "new_service", subject_url: s.source_url, after: { name: s.name, template_type: s.template, confidence: s.confidence }, recommendation: `Consider routing ${s.name} into ${s.template.replace(/_/g, " ")}.` }))]);
     await admin.from("website_scan_jobs").update({ status: "completed", completed_at: new Date().toISOString(), pages_scanned_count: pageRows.length, forms_detected_count: formRows.length, services_detected_count: services.length }).eq("id", job.id);
     await admin.from("business_intake_profiles").update({ latest_scan_job_id: job.id, approved_blueprint_id: blueprint.id, routing_question: "What do you need help with?", status: "reviewing" }).eq("id", profile.id);
