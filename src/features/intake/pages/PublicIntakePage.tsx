@@ -5,8 +5,7 @@ import { ArrowRight, CheckCircle2, Loader2, LockKeyhole, MessageSquareText, Spar
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
-
-type PhotoPolicy = "not_needed" | "optional" | "recommended" | "required";
+import { photoPolicyShort, photoPolicySentence, type PhotoPolicy } from "@/features/intake/lib/photoPolicy";
 
 interface SmartIntakeRoute {
   id: string;
