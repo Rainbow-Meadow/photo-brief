@@ -65,6 +65,8 @@ const GuideDetailPage = lazy(() => import("@/features/guides/pages/GuideDetailPa
 const CustomersPage = lazy(() => import("@/features/customers/pages/CustomersPage"));
 const CustomerDetailPage = lazy(() => import("@/features/customers/pages/CustomerDetailPage"));
 const WebsiteIntakePage = lazy(() => import("@/features/intake/pages/WebsiteIntakePage"));
+const IntakeBriefsPage = lazy(() => import("@/features/intake/pages/IntakeBriefsPage"));
+const IntakeBriefDetailPage = lazy(() => import("@/features/intake/pages/IntakeBriefDetailPage"));
 const AcceptInvitePage = lazy(() => import("@/features/workspace/pages/AcceptInvitePage"));
 const BetaGuidePage = lazy(() => import("@/features/help/pages/BetaGuidePage"));
 const AdminInvitesPage = lazy(() => import("@/pages/AdminInvites"));
@@ -172,6 +174,30 @@ const App = () => (
                   ]}
                 >
                   <WebsiteIntakePage />
+                </FeatureGate>
+              }
+            />
+            <Route
+              path="/intake/briefs"
+              element={
+                <FeatureGate
+                  feature="website_intake"
+                  title="Website Intake unlocks on Pro."
+                  description="Smart Intake briefs are available with Website Intake."
+                >
+                  <IntakeBriefsPage />
+                </FeatureGate>
+              }
+            />
+            <Route
+              path="/intake/briefs/:id"
+              element={
+                <FeatureGate
+                  feature="website_intake"
+                  title="Website Intake unlocks on Pro."
+                  description="Smart Intake briefs are available with Website Intake."
+                >
+                  <IntakeBriefDetailPage />
                 </FeatureGate>
               }
             />
