@@ -57,6 +57,8 @@ export function Slide({
   className = "",
   width = "default",
   align = "center",
+  style,
+  ...rest
 }: SlideProps) {
   return (
     <div
@@ -64,6 +66,8 @@ export function Slide({
       data-pb-slide
       data-pb-label={label ?? anchor ?? ""}
       className={`pb-slide ${toneMap[tone]} ${scroll ? "pb-slide--scroll" : ""} ${className}`}
+      style={style}
+      {...rest}
     >
       <div
         className={`pb-slide-inner ${widthMap[width]}`}
