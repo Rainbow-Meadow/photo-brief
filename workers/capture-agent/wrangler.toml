@@ -36,6 +36,12 @@ id      = "cea7652fc3924714826c43a4090de08a"
 binding = "AE_USAGE"
 dataset = "pb_usage_events"
 
+# Workers AI binding (env.AI.run). Available for opt-in capture-time
+# guardrails (llama-guard) and live ASR (whisper / deepgram-flux). See
+# docs/cloudflare-workers-ai-catalog.md.
+[ai]
+binding = "AI"
+
 # Recipient bundle cache (read path).
 [[kv_namespaces]]
 binding = "RECIPIENT_BUNDLES"
