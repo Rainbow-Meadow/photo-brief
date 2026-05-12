@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { photoPolicyShort, photoPolicySentence, type PhotoPolicy } from "@/features/intake/lib/photoPolicy";
+import { IntakeAttachmentUploader } from "@/features/intake/components/IntakeAttachmentUploader";
 
 interface SmartIntakeRoute {
   id: string;
@@ -45,6 +46,7 @@ interface FormState {
 interface SubmittedIntake {
   briefId?: string;
   sessionId?: string;
+  sessionToken?: string;
   readinessStatus?: string;
   photoPolicy?: PhotoPolicy;
   nextAction?: string | null;
@@ -128,6 +130,7 @@ export default function PublicIntakePage() {
         setSubmitted({
           briefId: data.briefId,
           sessionId: data.sessionId,
+          sessionToken: data.sessionToken,
           readinessStatus: data.readiness_status,
           photoPolicy: data.photo_policy,
           nextAction: data.next_action,
@@ -215,6 +218,18 @@ export default function PublicIntakePage() {
               </dd>
             </div>
           </dl>
+
+          {submitted.sessionId &&
+          submitted.briefId &&
+          submitted.sessionToken &&
+          (submitted.photoPolicy === "optional" || submitted.photoPolicy === "recommended") ? (
+            <IntakeAttachmentUploader
+              intakeSessionId={submitted.sessionId}
+              intakeBriefId={submitted.briefId}
+              sessionToken={submitted.sessionToken}
+              photoPolicy={submitted.photoPolicy}
+            />
+          ) : null}
 
           <p className="mx-auto mt-6 max-w-sm text-xs leading-5 text-muted-foreground">
             You can close this page. If anything is needed, the business will reach out using the contact details you provided.
