@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
-import { getTokenClient } from "@/integrations/supabase/tokenClient";
+
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { ArrowRight, Camera, CheckCircle2, Clock3, LockKeyhole, MessageCircleQuestion, Sparkles } from "lucide-react";
