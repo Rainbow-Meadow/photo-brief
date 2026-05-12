@@ -7,6 +7,25 @@ import { STANDARD_PHOTO_ISSUE_TYPES } from "@/config/photoAssessment";
 import { guidesService } from "@/services/guidesService";
 import type { PhotoGuide } from "@/types/photobrief";
 
+export interface RecipientLoadDiagnostics {
+  token?: string;
+  requestId?: string | null;
+  workspaceId?: string | null;
+  workspaceName?: string | null;
+  guideIdPresent?: boolean;
+  guideLoaded?: boolean;
+  status?: string | null;
+}
+
+export class RecipientLoadError extends Error {
+  diagnostics: RecipientLoadDiagnostics;
+  constructor(code: string, diagnostics: RecipientLoadDiagnostics = {}) {
+    super(code);
+    this.name = "RecipientLoadError";
+    this.diagnostics = diagnostics;
+  }
+}
+
 export interface ResubmitItem {
   /** captured_media row id of the rejected shot (will be marked resubmitted). */
   rejectedMediaId: string;
@@ -74,18 +93,25 @@ export async function loadRecipientContext(
 
   const client = getTokenClient(token);
 
+  const tokenSuffix = token.slice(-6);
   const { data: req } = await client
     .from("photo_brief_requests")
-    .select("id, workspace_id, guide_id, recipient_name")
+    .select("id, workspace_id, guide_id, recipient_name, status")
     .eq("token", token)
     .maybeSingle();
 
   if (!req) {
-    throw new Error("LINK_NOT_FOUND");
+    throw new RecipientLoadError("PB-404", { token: tokenSuffix });
   }
 
   if (!req.guide_id) {
-    throw new Error("LINK_NOT_READY");
+    throw new RecipientLoadError("PB-425", {
+      token: tokenSuffix,
+      requestId: req.id,
+      workspaceId: req.workspace_id,
+      guideIdPresent: false,
+      status: req.status ?? null,
+    });
   }
 
   const [{ data: ws }, { data: brand }, guide] = await Promise.all([
@@ -103,7 +129,15 @@ export async function loadRecipientContext(
   ]);
 
   if (!guide) {
-    throw new Error("LINK_NOT_READY");
+    throw new RecipientLoadError("PB-425", {
+      token: tokenSuffix,
+      requestId: req.id,
+      workspaceId: req.workspace_id,
+      workspaceName: ws?.name ?? null,
+      guideIdPresent: true,
+      guideLoaded: false,
+      status: req.status ?? null,
+    });
   }
 
   const firstName = (req.recipient_name ?? "").split(" ")[0] || "there";
