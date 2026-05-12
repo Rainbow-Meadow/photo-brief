@@ -16,6 +16,9 @@ verify_jwt = false
 [functions.website-intelligence]
 verify_jwt = true
 
+[functions.website-intake]
+verify_jwt = false
+
 [functions.run-migration]
 verify_jwt = true
 
