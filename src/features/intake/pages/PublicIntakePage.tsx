@@ -314,12 +314,18 @@ export default function PublicIntakePage() {
           </div>
 
           {selectedRoute ? (
-            <div className="border border-border bg-background p-3 text-sm leading-6 text-muted-foreground">
-              {selectedRoute.description ? <p>{selectedRoute.description}</p> : null}
-              <p className="mt-1">
-                Photos are <span className="font-medium text-foreground">{photoPolicyLabel(selectedRoute.photoPolicy)}</span>
-                {selectedRoute.photoPolicyReason ? ` — ${selectedRoute.photoPolicyReason}` : "."}
-              </p>
+            <div className="border border-border bg-background p-4">
+              {selectedRoute.description ? (
+                <p className="text-sm leading-6 text-foreground">{selectedRoute.description}</p>
+              ) : null}
+              <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-border pt-3">
+                <span className="inline-flex items-center border border-border bg-card px-2 py-1 font-mono text-[0.6rem] font-semibold uppercase tracking-[0.16em] text-foreground">
+                  Photos · {photoPolicyShort(selectedRoute.photoPolicy)}
+                </span>
+                <span className="text-xs leading-5 text-muted-foreground">
+                  {selectedRoute.photoPolicyReason ?? photoPolicySentence(selectedRoute.photoPolicy) + "."}
+                </span>
+              </div>
             </div>
           ) : null}
 
