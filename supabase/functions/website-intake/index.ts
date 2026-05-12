@@ -185,7 +185,7 @@ Deno.serve(async (req) => {
           matched_route_label: route?.label ?? null,
         },
       })
-      .select("id")
+      .select("id, public_session_token")
       .single();
     if (sessionErr || !session) throw sessionErr ?? new Error("intake session insert failed");
 
