@@ -17,7 +17,11 @@ import { resolveRecipientError, classifySubmitError } from "@/lib/errorCodes";
 import { DiagnosticsPanel } from "@/components/shared/DiagnosticsPanel";
 import { useChatFlow } from "@/hooks/useChatFlow";
 import { r2MediaService } from "@/services/r2MediaService";
-import { submissionsService } from "@/services/submissionsService";
+import {
+  submissionsService,
+  RecipientSubmitResponseSchema,
+  InvalidSubmitResponseError,
+} from "@/services/submissionsService";
 import { conversions, trackEvent } from "@/lib/analytics";
 import { pushCaptureEvent } from "@/services/captureAgentService";
 import type { CapturedPhoto, ChatMessage } from "@/types/chat";
