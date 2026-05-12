@@ -97,11 +97,16 @@ Auth (`auth.*`), every table with RLS, all plpgsql triggers/functions, `pgmq` (u
 - AE dataset `pb_usage_events` bound (auto-created on first write) on `assistant-agent` + `capture-agent` for Step 2.
 - ⚠️ Hyperdrive currently authenticates as `sandbox_exec.<ref>` (the value of `SUPABASE_DB_URL`). If that user is rotated, update the Hyperdrive origin via `PATCH /accounts/{acct}/hyperdrive/configs/cea7652fc3924714826c43a4090de08a`.
 
-**Step 2 — Analytics Engine: 🟡 bindings only**
-Bindings live; still TODO: `recordUsage()` call sites, the `analytics-aggregate` proxy edge function, and migrating the admin command center chart query.
+**Step 2 — Analytics Engine: ✅ shipped (worker deploy pending)**
+- `recordUsage()` helper wired. AE-mirror dual-write added in `supabase/functions/_shared/creditUsage.ts` → fires fire-and-forget POST to `https://assistant.photobrief.ai/telemetry/usage` (service-role auth) right after `log_credit_usage`.
+- New worker route `POST /telemetry/usage` (service-role) writes to `AE_USAGE`. New `POST /telemetry/aggregate` proxies the Cloudflare AE SQL API (requires `CLOUDFLARE_ACCOUNT_ID` + `CLOUDFLARE_API_TOKEN` in worker env — TODO add via secrets store).
+- Edge function `analytics-aggregate` deployed: platform-admin gated proxy that browser code can call (`supabase.functions.invoke("analytics-aggregate", { body: { query } })`). Browser never sees the Cloudflare token.
+- TODO: migrate the admin command center workspace-usage chart to call `analytics-aggregate` instead of `usage_events` Postgres scans.
 
-**Step 3 — Durable Object capture sessions: 🟡 binding stubbed**
-`CAPTURE_SESSION` DO binding + v2 migration declared in `capture-agent/wrangler.toml`. Class implementation, worker routes, and frontend `useCaptureAgent` swap are pending.
+**Step 3 — Durable Object capture sessions: ✅ shipped (frontend opt-in pending)**
+- `CaptureSession` DO class implemented in `workers/capture-agent/src/index.ts`. Storage-backed key/value buffer keyed by request token. Routes: `GET/POST /capture/:token/state`, `POST /capture/:token/submit`, `POST /capture/:token/clear`. 24h alarm-driven TTL.
+- Service-role secret bound on capture-agent for future Postgres flush paths.
+- New client helper `src/services/captureSessionService.ts` exposes `loadDraft`, `patchDraft`, `clearDraft`, `markSubmitted`. Designed to be wired into `useCaptureAgent` / `useChatFlow` behind a `capture_agent_do` flag in a follow-up turn (final submit continues to use existing edge functions so credit logging fires exactly once).
 
 **Step 4 — KV recipient bundle cache: ✅ shipped (worker deploy pending)**
 - Worker route `GET /recipient/:token/bundle` and `POST /recipient/:token/invalidate` added to `assistant-agent` (`workers/assistant-agent/src/index.ts`).

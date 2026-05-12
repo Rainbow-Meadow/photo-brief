@@ -61,4 +61,41 @@ export async function logCreditUsage(args: {
     _source: args.source ?? "usage",
   });
   if (error) console.error("log_credit_usage failed", error);
+
+  // Step 2: best-effort mirror into Cloudflare Analytics Engine via the
+  // assistant-agent worker. Failures are silently ignored — Postgres remains
+  // the system of record for billing math.
+  mirrorUsageToAE({
+    workspace_id: args.workspaceId,
+    event_type: args.eventType,
+    related_id: args.relatedId ?? null,
+    credit_cost: args.credits ?? null,
+    metadata: args.metadata,
+  }).catch(() => {});
+}
+
+const ASSISTANT_AGENT_URL =
+  Deno.env.get("ASSISTANT_AGENT_URL") ?? "https://assistant.photobrief.ai";
+
+async function mirrorUsageToAE(point: {
+  workspace_id: string;
+  event_type: string;
+  related_id?: string | null;
+  credit_cost?: number | null;
+  metadata?: Record<string, unknown>;
+}): Promise<void> {
+  if (!SERVICE_ROLE) return;
+  try {
+    await fetch(`${ASSISTANT_AGENT_URL}/telemetry/usage`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${SERVICE_ROLE}`,
+      },
+      body: JSON.stringify(point),
+      signal: AbortSignal.timeout(2000),
+    });
+  } catch {
+    // Telemetry must never block; swallow.
+  }
 }

@@ -23,7 +23,9 @@ import { Agent, type Connection } from "agents";
 
 interface Env {
   CAPTURE_AGENT: DurableObjectNamespace;
+  CAPTURE_SESSION: DurableObjectNamespace;
   SUPABASE_URL: string;
+  SUPABASE_SERVICE_ROLE_KEY?: string;
   SITE_URL: string;
 }
 
@@ -277,6 +279,73 @@ export class CaptureAgent extends Agent<Env, CaptureState> {
   }
 }
 
+/* ── CaptureSession DO (Step 3) ────────────────────────────────────── */
+/**
+ * Per-recipient ephemeral state buffer for the capture wizard.
+ * Keyed by request token. Holds draft answers, current step, transient
+ * AI check results — anything that today would round-trip to Postgres
+ * on every keystroke. Final submit calls the existing edge function so
+ * RLS + triggers + credit logging fire exactly once.
+ *
+ * TTL: 24h alarm clears the state if abandoned.
+ */
+export class CaptureSession {
+  state: DurableObjectState;
+  env: Env;
+
+  constructor(state: DurableObjectState, env: Env) {
+    this.state = state;
+    this.env = env;
+  }
+
+  async fetch(request: Request): Promise<Response> {
+    const url = new URL(request.url);
+    const op = url.pathname; // /state | /submit | /clear
+
+    if (op === "/state" && request.method === "GET") {
+      const data = (await this.state.storage.get("draft")) ?? null;
+      const updatedAt = (await this.state.storage.get("updated_at")) ?? null;
+      return json({ ok: true, draft: data, updated_at: updatedAt });
+    }
+
+    if (op === "/state" && request.method === "POST") {
+      let patch: Record<string, unknown>;
+      try {
+        patch = (await request.json()) as Record<string, unknown>;
+      } catch {
+        return json({ error: "invalid_json" }, 400);
+      }
+      const current =
+        ((await this.state.storage.get("draft")) as Record<string, unknown> | undefined) ?? {};
+      const next = { ...current, ...patch };
+      const now = new Date().toISOString();
+      await this.state.storage.put("draft", next);
+      await this.state.storage.put("updated_at", now);
+      // Re-arm 24h TTL alarm.
+      await this.state.storage.setAlarm(Date.now() + 24 * 60 * 60 * 1000);
+      return json({ ok: true, draft: next, updated_at: now });
+    }
+
+    if (op === "/submit" && request.method === "POST") {
+      // Frontend has finalized via the standard submit flow; clear buffer.
+      await this.state.storage.deleteAll();
+      return json({ ok: true, cleared: true });
+    }
+
+    if (op === "/clear" && request.method === "POST") {
+      await this.state.storage.deleteAll();
+      return json({ ok: true, cleared: true });
+    }
+
+    return json({ error: "not_found" }, 404);
+  }
+
+  async alarm(): Promise<void> {
+    // 24h of no activity: discard the draft buffer.
+    await this.state.storage.deleteAll();
+  }
+}
+
 /* ── Worker entrypoint (routes to DOs) ─────────────────────────────── */
 
 interface ConnectionContext {
@@ -288,40 +357,61 @@ export default {
     const url = new URL(request.url);
     const path = url.pathname;
 
+    if (request.method === "OPTIONS") {
+      return new Response(null, {
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Headers": "authorization, content-type",
+          "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+        },
+      });
+    }
+
     // Health check
     if (path === "/" || path === "/health") {
       return json({
         ok: true,
         name: "PhotoBrief Capture Agent",
-        version: "1.0.0",
+        version: "1.1.0",
       });
     }
 
-    // Extract request ID from path: /event/:requestId, /ws/:requestId, /status/:requestId
+    // CaptureSession DO routes (Step 3): /capture/:token/{state,submit,clear}
+    const captureMatch = path.match(/^\/capture\/([A-Za-z0-9_-]{8,})\/(state|submit|clear)$/);
+    if (captureMatch) {
+      const [, token, op] = captureMatch;
+      const id = env.CAPTURE_SESSION.idFromName(token);
+      const stub = env.CAPTURE_SESSION.get(id);
+      const doUrl = new URL(request.url);
+      doUrl.pathname = `/${op}`;
+      return stub.fetch(
+        new Request(doUrl.toString(), {
+          method: request.method,
+          headers: request.headers,
+          body: request.body,
+        }),
+      );
+    }
+
+    // Existing CaptureAgent routes: /event/:requestId, /ws/:requestId, /status/:requestId
     const match = path.match(/^\/(event|ws|status)\/([a-f0-9-]+)$/i);
     if (!match) {
-      return json({ error: "Invalid path. Use /event/:requestId, /ws/:requestId, or /status/:requestId" }, 404);
+      return json({ error: "Invalid path. Use /event|ws|status/:requestId or /capture/:token/{state,submit,clear}" }, 404);
     }
 
     const [, action, requestId] = match;
-
-    // Get or create the DO for this request
     const id = env.CAPTURE_AGENT.idFromName(requestId);
     const stub = env.CAPTURE_AGENT.get(id);
 
     if (action === "ws") {
-      // WebSocket upgrade
       if (request.headers.get("Upgrade") !== "websocket") {
         return json({ error: "Expected WebSocket upgrade" }, 426);
       }
-      // Forward to the DO — it handles WebSocket via Agent base class
       return stub.fetch(request);
     }
 
-    // Rewrite path for the DO's onRequest handler
     const doUrl = new URL(request.url);
     doUrl.pathname = `/${action}`;
-
     return stub.fetch(
       new Request(doUrl.toString(), {
         method: request.method,

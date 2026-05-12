@@ -23,6 +23,7 @@ import {
   writeRecipientBundle,
   type KvNamespace,
 } from "../../_shared/kv-bundle";
+import { recordUsage, type AnalyticsEngineBinding } from "../../_shared/ae";
 
 /* ── Types ─────────────────────────────────────────────────────────── */
 
@@ -32,6 +33,9 @@ interface Env {
   SUPABASE_SERVICE_ROLE_KEY?: string;
   SITE_URL: string;
   RECIPIENT_BUNDLES?: KvNamespace;
+  AE_USAGE?: AnalyticsEngineBinding;
+  CLOUDFLARE_ACCOUNT_ID?: string;
+  CLOUDFLARE_API_TOKEN?: string;
 }
 
 interface WorkspaceStats {
@@ -423,18 +427,26 @@ export default {
     }
 
     // Public recipient bundle cache (Step 4: KV-cached request+brand+guide).
-    // GET  /recipient/:token/bundle      → JSON bundle (KV hit or assemble+store)
-    // POST /recipient/:token/invalidate  → drop the cache entry (service-role only)
     const recipientMatch = path.match(/^\/recipient\/([A-Za-z0-9_-]{8,})\/(bundle|invalidate)$/);
     if (recipientMatch) {
       const [, token, op] = recipientMatch;
       return handleRecipientBundle(request, env, token, op as "bundle" | "invalidate");
     }
 
+    // Step 2: Analytics Engine usage telemetry mirror.
+    // POST /telemetry/usage (service-role auth) → fire-and-forget AE write.
+    // POST /telemetry/aggregate (service-role auth) → AE SQL proxy for admin dashboard.
+    if (path === "/telemetry/usage" && request.method === "POST") {
+      return handleTelemetryUsage(request, env);
+    }
+    if (path === "/telemetry/aggregate" && request.method === "POST") {
+      return handleTelemetryAggregate(request, env);
+    }
+
     // Routes: /ws/:workspaceId, /rpc/:workspaceId, /event/:workspaceId
     const match = path.match(/^\/(ws|rpc|event)\/([a-f0-9-]+)$/i);
     if (!match) {
-      return json({ error: "Use /ws/:workspaceId, /rpc/:workspaceId, /event/:workspaceId, or /recipient/:token/bundle" }, 404);
+      return json({ error: "Use /ws/:workspaceId, /rpc/:workspaceId, /event/:workspaceId, /recipient/:token/bundle, or /telemetry/{usage,aggregate}" }, 404);
     }
 
     const [, action, workspaceId] = match;
@@ -512,6 +524,72 @@ async function handleRecipientBundle(
     });
   } catch (err) {
     console.error("recipient bundle assemble failed", err);
+    return json({ error: (err as Error).message }, 500);
+  }
+}
+
+/* ── Step 2: Telemetry handlers ───────────────────────────────────── */
+
+function requireServiceRole(request: Request, env: Env): Response | null {
+  const expected = env.SUPABASE_SERVICE_ROLE_KEY
+    ? `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`
+    : null;
+  const got = request.headers.get("authorization") || "";
+  if (!expected || got !== expected) {
+    return json({ error: "Unauthorized" }, 401);
+  }
+  return null;
+}
+
+async function handleTelemetryUsage(request: Request, env: Env): Promise<Response> {
+  const unauth = requireServiceRole(request, env);
+  if (unauth) return unauth;
+  try {
+    const body = (await request.json()) as {
+      workspace_id: string;
+      event_type: string;
+      related_id?: string | null;
+      credit_cost?: number | null;
+      metadata?: Record<string, unknown>;
+    };
+    if (!body.workspace_id || !body.event_type) {
+      return json({ error: "workspace_id and event_type required" }, 400);
+    }
+    recordUsage(env.AE_USAGE, body);
+    return json({ ok: true });
+  } catch (err) {
+    return json({ error: (err as Error).message }, 400);
+  }
+}
+
+async function handleTelemetryAggregate(request: Request, env: Env): Promise<Response> {
+  const unauth = requireServiceRole(request, env);
+  if (unauth) return unauth;
+  if (!env.CLOUDFLARE_ACCOUNT_ID || !env.CLOUDFLARE_API_TOKEN) {
+    return json({ error: "Cloudflare account/token not bound" }, 503);
+  }
+  try {
+    const { query } = (await request.json()) as { query: string };
+    if (!query || typeof query !== "string") {
+      return json({ error: "query string required" }, 400);
+    }
+    const res = await fetch(
+      `https://api.cloudflare.com/client/v4/accounts/${env.CLOUDFLARE_ACCOUNT_ID}/analytics_engine/sql`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${env.CLOUDFLARE_API_TOKEN}`,
+          "Content-Type": "text/plain",
+        },
+        body: query,
+      },
+    );
+    const text = await res.text();
+    return new Response(text, {
+      status: res.status,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  } catch (err) {
     return json({ error: (err as Error).message }, 500);
   }
 }

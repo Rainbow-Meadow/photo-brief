@@ -44,3 +44,9 @@ id      = "f7d82555b5894d6cb44d7139b718d8c2"
 [vars]
 SUPABASE_URL = "https://mvlcefiygkzzewcdzsmj.supabase.co"
 SITE_URL = "https://photobrief.ai"
+
+# Service-role key for flushing CaptureSession state to Postgres on submit.
+[[secrets_store_secrets]]
+binding     = "SUPABASE_SERVICE_ROLE_KEY"
+store_id    = "c6c05c6c4b8747e18e31a3f88c5781a4"
+secret_name = "SUPABASE_SERVICE_ROLE_KEY"
