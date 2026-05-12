@@ -58,19 +58,21 @@ export default function IntakeBriefDetailPage() {
 
       <section className="grid gap-4 md:grid-cols-3">
         <InfoCard title="Customer">
-          <p className="text-base font-medium text-foreground">{brief.customer.name ?? "Unknown customer"}</p>
-          <div className="mt-3 space-y-2 text-sm text-muted-foreground">
-            {brief.customer.email ? <p className="flex items-center gap-2"><Mail className="h-4 w-4" /> {brief.customer.email}</p> : null}
-            {brief.customer.phone ? <p className="flex items-center gap-2"><Phone className="h-4 w-4" /> {brief.customer.phone}</p> : null}
-            {brief.customer.address ? <p>{brief.customer.address}</p> : null}
+          <p className="text-base font-medium leading-snug text-foreground">{brief.customer.name ?? "Unknown customer"}</p>
+          <div className="mt-3 space-y-2 text-sm leading-6 text-muted-foreground">
+            {brief.customer.email ? <p className="flex items-center gap-2"><Mail className="h-4 w-4 shrink-0" /> <span className="break-all">{brief.customer.email}</span></p> : null}
+            {brief.customer.phone ? <p className="flex items-center gap-2"><Phone className="h-4 w-4 shrink-0" /> {brief.customer.phone}</p> : null}
+            {brief.customer.address ? <p className="flex items-start gap-2"><MapPin className="mt-0.5 h-4 w-4 shrink-0" /> {brief.customer.address}</p> : null}
             {!brief.customer.email && !brief.customer.phone && !brief.customer.address ? <p>No contact details shown.</p> : null}
           </div>
         </InfoCard>
 
         <InfoCard title="Request">
-          <p className="text-base font-medium text-foreground">{brief.routeLabel ?? brief.serviceLabel ?? "General request"}</p>
-          <p className="mt-2 text-sm leading-6 text-muted-foreground">Created {formatRelativeTime(brief.createdAt)}</p>
-          {brief.serviceLabel ? <p className="mt-2 text-sm text-muted-foreground">Service: {brief.serviceLabel}</p> : null}
+          <p className="text-base font-medium leading-snug text-foreground">{brief.routeLabel ?? brief.serviceLabel ?? "General request"}</p>
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">Submitted {formatRelativeTime(brief.createdAt)}</p>
+          {brief.serviceLabel && brief.serviceLabel !== brief.routeLabel ? (
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">Service · <span className="text-foreground">{brief.serviceLabel}</span></p>
+          ) : null}
         </InfoCard>
 
         <InfoCard title="Readiness">
@@ -78,14 +80,14 @@ export default function IntakeBriefDetailPage() {
             {brief.readinessScore !== null && brief.readinessScore !== undefined ? <ReadinessScoreBadge score={brief.readinessScore} /> : null}
             <StatusBadge label={humanize(brief.readinessStatus)} tone={brief.readinessStatus.includes("ready") ? "success" : "warning"} />
           </div>
-          <p className="mt-3 text-sm leading-6 text-muted-foreground">{brief.nextAction ?? "Review this brief and follow up with the customer."}</p>
+          <p className="mt-3 text-sm leading-6 text-foreground">{brief.nextAction ?? "Review this brief and follow up with the customer."}</p>
         </InfoCard>
       </section>
 
       <section className="grid gap-4 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-4">
           <InfoCard title="Brief summary">
-            <p className="text-sm leading-7 text-muted-foreground">{brief.summary ?? "No summary was generated yet."}</p>
+            <p className="text-[15px] leading-7 text-foreground/90">{brief.summary ?? "No summary was generated yet."}</p>
           </InfoCard>
 
           <InfoCard title="Answers">
@@ -95,9 +97,12 @@ export default function IntakeBriefDetailPage() {
 
         <div className="space-y-4">
           <InfoCard title="Photo handling">
-            <StatusBadge label={humanize(brief.photoPolicy)} tone={brief.photoPolicy === "required" ? "warning" : brief.photoPolicy === "not_needed" ? "muted" : "info"} />
+            <StatusBadge label={photoPolicyShort(brief.photoPolicy)} tone={photoPolicyTone(brief.photoPolicy)} />
             <p className="mt-3 text-sm leading-6 text-muted-foreground">
-              {brief.photosProvided ? `${brief.photoCount} photos provided.` : "No photos provided with this intake brief."}
+              {photoPolicySentence(brief.photoPolicy).charAt(0).toUpperCase() + photoPolicySentence(brief.photoPolicy).slice(1)}.
+            </p>
+            <p className="mt-2 text-sm leading-6 text-foreground">
+              {brief.photosProvided ? `${brief.photoCount} ${brief.photoCount === 1 ? "photo" : "photos"} attached.` : "No photos attached yet."}
             </p>
             {brief.linkedPhotoBriefRequestId ? (
               <Button asChild variant="outline" size="sm" className="mt-3 gap-1.5">
@@ -105,7 +110,6 @@ export default function IntakeBriefDetailPage() {
               </Button>
             ) : null}
           </InfoCard>
-
           <InfoCard title="Missing items">
             {brief.missingItems.length ? (
               <ul className="space-y-1 text-sm text-muted-foreground">
