@@ -19,6 +19,12 @@ verify_jwt = true
 [functions.website-intake]
 verify_jwt = false
 
+[functions.create-intake-attachment-upload]
+verify_jwt = false
+
+[functions.finalize-intake-attachment]
+verify_jwt = false
+
 [functions.run-migration]
 verify_jwt = true
 
