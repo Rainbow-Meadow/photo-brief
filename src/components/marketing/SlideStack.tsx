@@ -88,6 +88,8 @@ type RawSlideProps = {
   scroll?: boolean;
   tone?: "default" | "alt" | "ink";
   className?: string;
+  style?: CSSProperties;
+  [dataAttr: `data-${string}`]: unknown;
 };
 export function RawSlide({
   children,
@@ -96,6 +98,8 @@ export function RawSlide({
   scroll = true,
   tone = "default",
   className = "",
+  style,
+  ...rest
 }: RawSlideProps) {
   return (
     <div
@@ -103,6 +107,8 @@ export function RawSlide({
       data-pb-slide
       data-pb-label={label ?? anchor ?? ""}
       className={`pb-slide ${toneMap[tone]} ${scroll ? "pb-slide--scroll" : ""} ${className}`}
+      style={style}
+      {...rest}
     >
       {children}
     </div>
