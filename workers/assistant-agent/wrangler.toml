@@ -20,6 +20,23 @@ bindings = [
 tag = "v1"
 new_sqlite_classes = ["AssistantAgent"]
 
+# Hyperdrive: pooled + cached connection to the Supabase Postgres.
+# Used for read paths from the worker. Writes that depend on RLS still go
+# through the Supabase JS client. See workers/_shared/db.ts.
+[[hyperdrive]]
+binding = "HYPERDRIVE"
+id      = "cea7652fc3924714826c43a4090de08a"
+
+# Analytics Engine: usage_events mirror for fast dashboards.
+[[analytics_engine_datasets]]
+binding = "AE_USAGE"
+dataset = "pb_usage_events"
+
+# Recipient bundle cache (KV). Same namespace as router.
+[[kv_namespaces]]
+binding = "RECIPIENT_BUNDLES"
+id      = "f7d82555b5894d6cb44d7139b718d8c2"
+
 [vars]
 SUPABASE_URL = "https://mvlcefiygkzzewcdzsmj.supabase.co"
 SITE_URL = "https://photobrief.ai"

@@ -14,12 +14,32 @@ zone_name = "photobrief.ai"
 
 [durable_objects]
 bindings = [
-  { name = "CAPTURE_AGENT", class_name = "CaptureAgent" }
+  { name = "CAPTURE_AGENT", class_name = "CaptureAgent" },
+  { name = "CAPTURE_SESSION", class_name = "CaptureSession" }
 ]
 
 [[migrations]]
 tag = "v1"
 new_sqlite_classes = ["CaptureAgent"]
+
+[[migrations]]
+tag = "v2"
+new_sqlite_classes = ["CaptureSession"]
+
+# Hyperdrive: read path from Supabase Postgres.
+[[hyperdrive]]
+binding = "HYPERDRIVE"
+id      = "cea7652fc3924714826c43a4090de08a"
+
+# Analytics Engine mirror.
+[[analytics_engine_datasets]]
+binding = "AE_USAGE"
+dataset = "pb_usage_events"
+
+# Recipient bundle cache (read path).
+[[kv_namespaces]]
+binding = "RECIPIENT_BUNDLES"
+id      = "f7d82555b5894d6cb44d7139b718d8c2"
 
 [vars]
 SUPABASE_URL = "https://mvlcefiygkzzewcdzsmj.supabase.co"

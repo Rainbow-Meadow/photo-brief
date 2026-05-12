@@ -19,6 +19,11 @@ bindings = [
 tag = "v1"
 new_sqlite_classes = ["BetaOnboardingAgent"]
 
+# Hyperdrive: read path from Supabase Postgres.
+[[hyperdrive]]
+binding = "HYPERDRIVE"
+id      = "cea7652fc3924714826c43a4090de08a"
+
 [vars]
 SUPABASE_URL = "https://mvlcefiygkzzewcdzsmj.supabase.co"
 SITE_URL = "https://photobrief.ai"
