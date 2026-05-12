@@ -91,12 +91,12 @@ Deno.serve(async (req) => {
 
   const { data: workspace, error: workspaceErr } = await admin
     .from("business_workspaces")
-    .select("plan, name")
+    .select("plan_tier, name")
     .eq("id", intake.workspace_id)
     .maybeSingle();
   if (workspaceErr) return json({ error: workspaceErr.message }, 500);
 
-  const plan = ((workspace as any)?.plan ?? "free") as PlanTier;
+  const plan = ((workspace as any)?.plan_tier ?? "free") as PlanTier;
   if (!canUseWebsiteIntake(plan)) {
     return json(
       {
