@@ -6,7 +6,7 @@ import { buildHowToJsonLd } from "@/hooks/seo/buildHowToJsonLd";
 import { buildFaqJsonLd } from "@/hooks/seo/buildFaqJsonLd";
 
 import { BrandMark } from "@/components/layout/BrandMark";
-import { Section, Container, Card, Body, CTA, CTAGroup } from "@/design-system/schema";
+import { Section, Container, Body } from "@/design-system/schema";
 import { MarqueeRow } from "@/components/motion/MarqueeRow";
 import { RiseIn } from "@/components/motion/RiseIn";
 import { MagneticCTA } from "@/components/motion/MagneticCTA";
