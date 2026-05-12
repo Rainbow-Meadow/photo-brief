@@ -164,7 +164,7 @@ export async function loadRecipientContext(
     hidePhotobriefBranding: brand?.hide_photobrief_branding ?? false,
     introBody:
       brand?.intro_message ??
-      `Hi ${firstName}! ${businessName} here — I'll walk you through a few quick photos.`,
+      `Hi ${firstName} — ${businessName} put together a few quick photo prompts for you.`,
     completionBody: brand?.completion_message ?? undefined,
     guide,
     resubmit,
