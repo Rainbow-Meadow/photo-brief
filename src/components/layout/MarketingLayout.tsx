@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Outlet, NavLink, useLocation } from "react-router-dom";
 import { Menu } from "lucide-react";
 
@@ -32,6 +32,14 @@ export function MarketingLayout() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { pathname } = useLocation();
   const isLanding = pathname === "/";
+
+  // Marketing-only proximity scroll-snap. Class is removed on unmount so app
+  // routes (which never render MarketingLayout) keep fully native scrolling.
+  useEffect(() => {
+    const root = document.documentElement;
+    root.classList.add("pb-snap-root");
+    return () => root.classList.remove("pb-snap-root");
+  }, []);
 
   return (
     <div className="pb-landing flex min-h-screen flex-col">
