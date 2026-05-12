@@ -13,6 +13,16 @@
  */
 
 import { Agent, type Connection, callable } from "agents";
+import {
+  assembleRecipientBundle,
+  type RecipientBundle,
+} from "../../_shared/recipient-bundle";
+import {
+  invalidateRecipientBundle,
+  readRecipientBundle,
+  writeRecipientBundle,
+  type KvNamespace,
+} from "../../_shared/kv-bundle";
 
 /* ── Types ─────────────────────────────────────────────────────────── */
 
@@ -21,6 +31,7 @@ interface Env {
   SUPABASE_URL: string;
   SUPABASE_SERVICE_ROLE_KEY?: string;
   SITE_URL: string;
+  RECIPIENT_BUNDLES?: KvNamespace;
 }
 
 interface WorkspaceStats {
