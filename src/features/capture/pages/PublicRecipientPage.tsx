@@ -208,17 +208,20 @@ function RecipientWorkflow({ ctx, token, navigate }: { ctx: RecipientContext; to
   const handleSubmit = async () => {
     if (submitting) return;
     setSubmitting(true);
-    flow.submitAll();
-    trackEvent("submission_completed", {
-      guide_id: ctx.guide.id,
-      photos: flow.photos.length,
-      answers: flow.answers.length,
-      resubmit: !!ctx.resubmit,
-    });
+
+    // Demo / preview path (no real backend wiring) — proceed optimistically.
     if (!ctx.requestId || !ctx.workspaceId || !token) {
+      flow.submitAll();
+      trackEvent("submission_completed", {
+        guide_id: ctx.guide.id,
+        photos: flow.photos.length,
+        answers: flow.answers.length,
+        resubmit: !!ctx.resubmit,
+      });
       setTimeout(() => navigate(`/r/${token ?? "demo"}/done`), 1200);
       return;
     }
+
     try {
       const submission = await submissionsService.submitFromRecipient({
         token,
@@ -230,6 +233,22 @@ function RecipientWorkflow({ ctx, token, navigate }: { ctx: RecipientContext; to
         answers: flow.answers,
       });
 
+      if (ctx.resubmit && ctx.resubmit.items.length > 0) {
+        const client = getTokenClient(token);
+        const ids = ctx.resubmit.items.map((it) => it.rejectedMediaId);
+        const { error: markErr } = await client.from("captured_media").update({ status: "resubmitted" }).in("id", ids);
+        if (markErr) console.warn("mark resubmitted failed", markErr);
+      }
+
+      // Only flip the UI to the "All done" / submitted phase after the
+      // backend write actually succeeded — prevents misleading success state.
+      flow.submitAll();
+      trackEvent("submission_completed", {
+        guide_id: ctx.guide.id,
+        photos: flow.photos.length,
+        answers: flow.answers.length,
+        resubmit: !!ctx.resubmit,
+      });
       conversions.recipientSubmissionCompleted({
         guide_id: ctx.guide.id,
         request_id: ctx.requestId,
@@ -238,13 +257,6 @@ function RecipientWorkflow({ ctx, token, navigate }: { ctx: RecipientContext; to
         answers: flow.answers.length,
         resubmit: !!ctx.resubmit,
       });
-
-      if (ctx.resubmit && ctx.resubmit.items.length > 0) {
-        const client = getTokenClient(token);
-        const ids = ctx.resubmit.items.map((it) => it.rejectedMediaId);
-        const { error: markErr } = await client.from("captured_media").update({ status: "resubmitted" }).in("id", ids);
-        if (markErr) console.warn("mark resubmitted failed", markErr);
-      }
 
       setTimeout(() => navigate(`/r/${token}/done`), 1200);
     } catch (err) {
