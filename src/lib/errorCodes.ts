@@ -7,6 +7,9 @@ export type RecipientErrorCode =
   | "PB-404" // token not found
   | "PB-425" // request not ready (no guide attached / guide missing)
   | "PB-410" // link revoked / expired
+  | "PB-NET" // network failure during submit
+  | "PB-PERM" // RLS / permission denied during submit
+  | "PB-503" // backend down / 5xx during submit
   | "PB-500"; // unexpected
 
 export interface RecipientErrorDescriptor {
