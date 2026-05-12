@@ -90,23 +90,26 @@ function Hero() {
               </p>
             </RiseIn>
             <RiseIn delay={0.35}>
-              <CTAGroup>
+              <div className="mt-10 flex flex-row flex-wrap items-center gap-x-5 gap-y-3">
                 <MagneticCTA
                   href="/demo"
-                  className="ls-cta ls-cta--lg ls-cta-primary mt-10"
+                  className="ls-cta ls-cta--lg ls-cta-primary"
                   onClick={() => trackEvent("landing_hero_cta_demo")}
                 >
                   Try the live demo <ArrowRight className="h-4 w-4" />
                 </MagneticCTA>
-                <NavLink to="/beta" className="ls-cta ls-cta--lg ls-cta-quiet mt-10">
+                <NavLink
+                  to="/beta"
+                  className="text-sm font-medium text-foreground/80 underline-offset-4 hover:text-foreground hover:underline"
+                >
                   Apply for the beta →
                 </NavLink>
-              </CTAGroup>
+              </div>
             </RiseIn>
           </div>
 
           <RiseIn delay={0.4} className="relative">
-            <div className="mx-auto w-full max-w-[640px] lg:ml-auto lg:mr-0">
+            <div className="mx-auto w-full max-w-[520px] lg:ml-auto lg:mr-0 lg:max-h-[520px]">
               <BeforeAfterSlider
                 before={heroBeforeImg}
                 after={heroAfterImg}
