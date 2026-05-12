@@ -29,6 +29,10 @@ type SlideProps = {
   width?: "narrow" | "default" | "wide" | "full";
   /** vertical alignment of inner content */
   align?: "center" | "start";
+  /** style override (used by SlideStack to inject z-index) */
+  style?: CSSProperties;
+  /** allow data-* attributes injected by SlideStack to land in the DOM */
+  [dataAttr: `data-${string}`]: unknown;
 };
 
 const widthMap = {
