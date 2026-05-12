@@ -18,12 +18,12 @@ export default function IntakeBadgePage() {
   const token = cleanToken(params.get("token"));
   const theme = readParam(params, "theme", "auto");
   const compact = params.get("layout") === "compact";
-  const cta = readParam(params, "cta", "Start photo request");
-  const title = readParam(params, "title", "Send photos the easy way");
+  const cta = readParam(params, "cta", "Start intake");
+  const title = readParam(params, "title", "Start a smart intake");
   const message = readParam(
     params,
     "message",
-    "This guided PhotoBrief request helps us review your request faster, ask fewer follow-up questions, and give you a better answer.",
+    "This guided PhotoBrief intake replaces a basic website form with a clean brief. Photos are only requested when they help us understand your request.",
   );
   const destination = token ? `/i/${token}` : "/";
   const forceDark = theme === "dark";
@@ -39,8 +39,8 @@ export default function IntakeBadgePage() {
   return (
     <>
       <PageMeta
-        title="PhotoBrief.ai photo request badge"
-        description="PhotoBrief.ai badge for hosted website intake links."
+        title="PhotoBrief.ai smart intake badge"
+        description="PhotoBrief.ai badge for hosted smart intake links."
         canonicalPath="/badge/intake"
         noindex
       />
@@ -55,7 +55,7 @@ export default function IntakeBadgePage() {
               <span className="inline-flex items-baseline gap-2 font-mono text-[0.65rem] font-medium uppercase tracking-[0.18em]">
                 <span className="inline-block h-px w-6 -translate-y-[0.25em] bg-[hsl(var(--accent-kinetic))]" />
                 <span className="text-[hsl(var(--accent-kinetic))]">[ PB ]</span>
-                <span className={mutedCls}>Guided photo request</span>
+                <span className={mutedCls}>Smart intake</span>
               </span>
             </div>
             <h1
@@ -69,7 +69,7 @@ export default function IntakeBadgePage() {
               {message}
             </p>
             <p className={`mt-3 inline-flex items-center gap-1.5 font-mono text-[0.65rem] uppercase tracking-[0.18em] ${mutedCls}`}>
-              <CheckCircle2 className="h-3 w-3 text-[hsl(var(--accent-kinetic))]" /> Faster review · Fewer follow-ups
+              <CheckCircle2 className="h-3 w-3 text-[hsl(var(--accent-kinetic))]" /> Clean brief · Conditional photos
             </p>
           </div>
           <a
