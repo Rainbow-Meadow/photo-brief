@@ -510,6 +510,7 @@ function StepContent({
           answers={answers}
           onSubmit={onSubmit}
           submitting={submitting}
+          submitError={submitError}
         />
       </StepCard>
     );
