@@ -45,6 +45,8 @@ export const routePaths = [
   "/customers",
   "/customers/:id",
   "/intake",
+  "/intake/briefs",
+  "/intake/briefs/:id",
   "/settings/brand",
   "/settings/team",
   "/settings/templates",
