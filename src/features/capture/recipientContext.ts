@@ -81,11 +81,11 @@ export async function loadRecipientContext(
     .maybeSingle();
 
   if (!req) {
-    throw new Error("This request link is no longer available.");
+    throw new Error("LINK_NOT_FOUND");
   }
 
   if (!req.guide_id) {
-    throw new Error("This request is missing its saved template.");
+    throw new Error("LINK_NOT_READY");
   }
 
   const [{ data: ws }, { data: brand }, guide] = await Promise.all([
