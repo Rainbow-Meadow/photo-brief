@@ -71,6 +71,36 @@ export function Slide({
   );
 }
 
+/* RawSlide — same sticky pin + bg as Slide but no inner padding/centering.
+   Use when children are existing <Section>s with their own padding. */
+type RawSlideProps = {
+  children: ReactNode;
+  anchor?: string;
+  label?: string;
+  scroll?: boolean;
+  tone?: "default" | "alt" | "ink";
+  className?: string;
+};
+export function RawSlide({
+  children,
+  anchor,
+  label,
+  scroll = true,
+  tone = "default",
+  className = "",
+}: RawSlideProps) {
+  return (
+    <div
+      id={anchor}
+      data-pb-slide
+      data-pb-label={label ?? anchor ?? ""}
+      className={`pb-slide ${toneMap[tone]} ${scroll ? "pb-slide--scroll" : ""} ${className}`}
+    >
+      {children}
+    </div>
+  );
+}
+
 /* ───────── SlideStack ───────── */
 
 type SlideStackProps = {
