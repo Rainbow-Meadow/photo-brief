@@ -219,6 +219,18 @@ export default function PublicIntakePage() {
             </div>
           </dl>
 
+          {submitted.sessionId &&
+          submitted.briefId &&
+          submitted.sessionToken &&
+          (submitted.photoPolicy === "optional" || submitted.photoPolicy === "recommended") ? (
+            <IntakeAttachmentUploader
+              intakeSessionId={submitted.sessionId}
+              intakeBriefId={submitted.briefId}
+              sessionToken={submitted.sessionToken}
+              photoPolicy={submitted.photoPolicy}
+            />
+          ) : null}
+
           <p className="mx-auto mt-6 max-w-sm text-xs leading-5 text-muted-foreground">
             You can close this page. If anything is needed, the business will reach out using the contact details you provided.
           </p>
