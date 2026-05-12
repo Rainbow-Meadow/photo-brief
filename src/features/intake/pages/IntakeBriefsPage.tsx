@@ -99,19 +99,40 @@ export default function IntakeBriefsPage() {
 
 function EmptyState() {
   return (
-    <section className="surface-card p-8 text-center">
-      <span className="mx-auto flex h-12 w-12 items-center justify-center border border-border text-muted-foreground">
-        <Inbox className="h-5 w-5" />
+    <section className="surface-card px-6 py-12 text-center">
+      <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-[0.25rem] border border-border bg-background text-[hsl(var(--accent-kinetic))]">
+        <Inbox className="h-6 w-6" />
       </span>
-      <h2 className="mt-4 text-lg font-semibold text-foreground">No intake briefs yet</h2>
+      <h2 className="mt-5 text-lg font-semibold tracking-tight text-foreground">No intake briefs yet</h2>
       <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted-foreground">
-        Once customers submit your public Smart Intake link, their briefs will appear here.
+        Briefs land here the moment a customer submits your public Smart Intake link. Each one includes contact details, an AI summary, a readiness score, and a clear next step.
       </p>
-      <Button asChild className="mt-5 gap-1.5">
-        <NavLink to="/intake">
-          <MessageSquareText className="h-4 w-4" /> Manage intake setup
-        </NavLink>
-      </Button>
+      <ol className="mx-auto mt-6 grid max-w-md gap-2 text-left text-sm">
+        <li className="flex gap-3 border border-border bg-background p-3">
+          <span className="font-mono text-xs text-[hsl(var(--accent-kinetic))]">01</span>
+          <span className="text-muted-foreground">Finish setup and copy your hosted intake link.</span>
+        </li>
+        <li className="flex gap-3 border border-border bg-background p-3">
+          <span className="font-mono text-xs text-[hsl(var(--accent-kinetic))]">02</span>
+          <span className="text-muted-foreground">Place the link behind your website’s main CTA.</span>
+        </li>
+        <li className="flex gap-3 border border-border bg-background p-3">
+          <span className="font-mono text-xs text-[hsl(var(--accent-kinetic))]">03</span>
+          <span className="text-muted-foreground">Briefs appear here automatically as customers submit.</span>
+        </li>
+      </ol>
+      <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
+        <Button asChild className="gap-1.5">
+          <NavLink to="/intake">
+            <MessageSquareText className="h-4 w-4" /> Open intake setup
+          </NavLink>
+        </Button>
+        <Button asChild variant="outline" className="gap-1.5">
+          <NavLink to="/intake">
+            <Link2 className="h-4 w-4" /> Get hosted link
+          </NavLink>
+        </Button>
+      </div>
     </section>
   );
 }
