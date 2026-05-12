@@ -22,5 +22,5 @@ verify_jwt = true
 [functions.verify-turnstile]
 verify_jwt = false
 
-[functions._temp-export-secrets]
+[functions.temp-export-secrets]
 verify_jwt = true
