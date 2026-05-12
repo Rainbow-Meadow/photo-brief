@@ -1,25 +1,45 @@
-I reproduced it in the browser at the current 1217×887 viewport: the dot rail works, but the deck does not lock. A small wheel scroll jumps from Research to Mechanism instead of pinning Research while the next slide lifts over it. The current implementation is still just native smooth document scrolling with `position: sticky`, and it is not producing the intended slide-lock behavior.
+## Goal
 
-Plan:
+Make `vite build` (production) hard-fail with a clear error if `VITE_SUPABASE_URL` or `VITE_SUPABASE_PUBLISHABLE_KEY` are missing, so a broken bundle like the current `photobrief.ai` deployment can never ship again.
 
-1. Replace the landing deck behavior in `SlideStack`
-   - Keep the same slide content and dot rail.
-   - Stop relying on each individual slide being `position: sticky`.
-   - Make the deck a tall scroll region and pin one viewport-height stage inside it.
-   - Translate the slide stack vertically inside that pinned stage based on scroll progress, so one slide is locked in place and the next slide visibly slides over it.
+## Change
 
-2. Remove smooth-scroll interference for deck jumps
-   - Change dot rail navigation for this component from `scrollIntoView({ behavior: "smooth" })` to precise `window.scrollTo(...)` positions for each slide stop.
-   - This makes the rail land on deterministic slide positions instead of letting Lenis/native smooth scrolling pick intermediate positions.
+Edit `vite.config.ts` to add a small inline plugin that runs in `buildStart` only for production builds (`command === "build"` and not `--mode development`). It reads the env via Vite's `loadEnv(mode, process.cwd(), "")`, checks both keys are non-empty, and throws with an actionable message listing the missing ones.
 
-3. Update the deck CSS to match the new model
-   - `.pb-deck` becomes the scroll track with height based on slide count.
-   - Add a pinned viewport stage inside the deck.
-   - Position slides absolutely in the stage and animate them with transforms.
-   - Preserve reduced-motion behavior by falling back to normal stacked sections.
+- Dev (`vite` / `vite dev`) is unaffected — still loads whatever is in `.env`.
+- Test mode (`mode === "test"`) is skipped so vitest runs locally without the keys.
+- Failure surfaces as a non-zero exit during build, which fails the publish/deploy step.
 
-4. Manually verify before saying it is fixed
-   - Test `/` in the browser at the user’s current desktop viewport.
-   - Scroll through Hero → Proof → Research → Mechanism and confirm the active slide stays pinned while the next slide moves over it.
-   - Click dot rail buttons and confirm they jump to the correct locked slide positions.
-   - Check console for new errors/warnings caused by this change.
+## Technical detail
+
+```ts
+// vite.config.ts
+import { defineConfig, loadEnv } from "vite";
+// ...
+export default defineConfig(({ mode, command }) => {
+  const env = loadEnv(mode, process.cwd(), "");
+  return {
+    // ...existing config...
+    plugins: [
+      react(),
+      mode === "development" && componentTagger(),
+      command === "build" && mode !== "test" && {
+        name: "require-supabase-env",
+        buildStart() {
+          const missing = ["VITE_SUPABASE_URL", "VITE_SUPABASE_PUBLISHABLE_KEY"]
+            .filter((k) => !env[k]);
+          if (missing.length) {
+            this.error(
+              `Missing required env var(s): ${missing.join(", ")}. ` +
+              `These must be present at build time so the Supabase client is wired into the bundle. ` +
+              `Re-publish from Lovable so the latest .env is injected, or set them in your build environment.`,
+            );
+          }
+        },
+      },
+    ].filter(Boolean),
+  };
+});
+```
+
+No other files change. The existing runtime stub in `src/integrations/supabase/client.ts` stays as a defensive fallback, but production builds will now refuse to produce a bundle that would hit it.
