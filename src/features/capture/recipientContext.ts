@@ -103,7 +103,7 @@ export async function loadRecipientContext(
   ]);
 
   if (!guide) {
-    throw new Error("This request's saved template could not be loaded.");
+    throw new Error("LINK_NOT_READY");
   }
 
   const firstName = (req.recipient_name ?? "").split(" ")[0] || "there";
