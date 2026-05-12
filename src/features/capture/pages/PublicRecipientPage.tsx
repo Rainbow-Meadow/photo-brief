@@ -351,6 +351,7 @@ function RecipientWorkflow({ ctx, token, navigate }: { ctx: RecipientContext; to
                 photos={flow.photos}
                 answers={flow.answers}
                 submitting={submitting}
+                submitError={submitError}
                 onCapture={flow.submitPhoto}
                 onSkip={flow.skipPhoto}
                 onRetake={flow.retake}
