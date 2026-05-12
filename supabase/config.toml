@@ -1,4 +1,26 @@
 project_id = "mvlcefiygkzzewcdzsmj"
 
-[functions._temp-export-secrets]
+[functions.process-email-queue]
+verify_jwt = true
+
+[functions.integration-webhook]
 verify_jwt = false
+
+[functions.integration-oauth-start]
+verify_jwt = true
+
+[functions.integration-oauth-callback]
+verify_jwt = false
+
+
+[functions.website-intelligence]
+verify_jwt = true
+
+[functions.run-migration]
+verify_jwt = true
+
+[functions.verify-turnstile]
+verify_jwt = false
+
+[functions._temp-export-secrets]
+verify_jwt = true
