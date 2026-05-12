@@ -6,14 +6,13 @@ import {
   Clock,
   Inbox,
   ShieldCheck,
-  Plus,
   Sparkles,
   Bell,
   ArrowRight,
   ChevronRight,
 } from "lucide-react";
-import { PageHeader } from "@/components/layout/PageHeader";
 import { PageShell, PageStack } from "@/components/layout/primitives";
+import { OnboardingProgressBanner } from "@/features/workspace/components/OnboardingProgressBanner";
 import { MetricCard } from "@/components/shared/MetricCard";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { ReadinessScoreBadge } from "@/components/shared/ReadinessScoreBadge";
