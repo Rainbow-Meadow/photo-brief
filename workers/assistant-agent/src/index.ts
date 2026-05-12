@@ -23,6 +23,7 @@ import {
   writeRecipientBundle,
   type KvNamespace,
 } from "../../_shared/kv-bundle";
+import { recordUsage, type AnalyticsEngineBinding } from "../../_shared/ae";
 
 /* ── Types ─────────────────────────────────────────────────────────── */
 
@@ -32,6 +33,9 @@ interface Env {
   SUPABASE_SERVICE_ROLE_KEY?: string;
   SITE_URL: string;
   RECIPIENT_BUNDLES?: KvNamespace;
+  AE_USAGE?: AnalyticsEngineBinding;
+  CLOUDFLARE_ACCOUNT_ID?: string;
+  CLOUDFLARE_API_TOKEN?: string;
 }
 
 interface WorkspaceStats {
