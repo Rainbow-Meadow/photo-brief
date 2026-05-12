@@ -24,6 +24,11 @@ import {
   type KvNamespace,
 } from "../../_shared/kv-bundle";
 import { recordUsage, type AnalyticsEngineBinding } from "../../_shared/ae";
+import {
+  workersAiChat,
+  workersAiClassify,
+  type AiBinding,
+} from "../../_shared/ai";
 
 /* ── Types ─────────────────────────────────────────────────────────── */
 
@@ -34,6 +39,7 @@ interface Env {
   SITE_URL: string;
   RECIPIENT_BUNDLES?: KvNamespace;
   AE_USAGE?: AnalyticsEngineBinding;
+  AI?: AiBinding;
   CLOUDFLARE_ACCOUNT_ID?: string;
   CLOUDFLARE_API_TOKEN?: string;
 }
