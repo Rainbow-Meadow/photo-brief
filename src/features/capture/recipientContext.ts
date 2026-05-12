@@ -164,13 +164,67 @@ export async function loadRecipientContext(
   }
 
   const client = getTokenClient(token);
-
   const tokenSuffix = token.slice(-6);
-  const { data: req } = await client
-    .from("photo_brief_requests")
-    .select("id, workspace_id, guide_id, recipient_name, status")
-    .eq("token", token)
-    .maybeSingle();
+
+  // Fast path: try the Cloudflare-cached bundle first.
+  const cached = await fetchCachedBundle(token);
+
+  let req: { id: string; workspace_id: string; guide_id: string | null; recipient_name: string | null; status: string | null } | null = null;
+  let ws: { name: string | null } | null = null;
+  let brand:
+    | {
+        logo_url: string | null;
+        primary_color: string | null;
+        intro_message: string | null;
+        completion_message: string | null;
+        hide_photobrief_branding: boolean | null;
+      }
+    | null = null;
+  let guide: PhotoGuide | null = null;
+
+  if (cached) {
+    req = cached.request;
+    ws = cached.workspace_name ? { name: cached.workspace_name } : null;
+    brand = cached.brand;
+    if (cached.guide) {
+      guide = rowToGuide(cached.guide, cached.guide.steps, cached.guide.questions);
+    }
+  } else {
+    // Fallback: original direct token-scoped Supabase reads.
+    const { data: reqRow } = await client
+      .from("photo_brief_requests")
+      .select("id, workspace_id, guide_id, recipient_name, status")
+      .eq("token", token)
+      .maybeSingle();
+    req = reqRow as typeof req;
+
+    if (!req) {
+      throw new RecipientLoadError("PB-404", { token: tokenSuffix });
+    }
+
+    if (!req.guide_id) {
+      throw new RecipientLoadError("PB-425", {
+        token: tokenSuffix,
+        requestId: req.id,
+        workspaceId: req.workspace_id,
+        guideIdPresent: false,
+        status: req.status ?? null,
+      });
+    }
+
+    const [{ data: wsRow }, { data: brandRow }, guideRow] = await Promise.all([
+      client.from("business_workspaces").select("name").eq("id", req.workspace_id).maybeSingle(),
+      client
+        .from("brand_profiles")
+        .select("logo_url, primary_color, intro_message, completion_message, hide_photobrief_branding")
+        .eq("workspace_id", req.workspace_id)
+        .maybeSingle(),
+      guidesService.getByIdViaToken(token, req.guide_id),
+    ]);
+    ws = wsRow as typeof ws;
+    brand = brandRow as typeof brand;
+    guide = guideRow;
+  }
 
   if (!req) {
     throw new RecipientLoadError("PB-404", { token: tokenSuffix });
@@ -185,20 +239,6 @@ export async function loadRecipientContext(
       status: req.status ?? null,
     });
   }
-
-  const [{ data: ws }, { data: brand }, guide] = await Promise.all([
-    client
-      .from("business_workspaces")
-      .select("name")
-      .eq("id", req.workspace_id)
-      .maybeSingle(),
-    client
-      .from("brand_profiles")
-      .select("logo_url, primary_color, intro_message, completion_message, hide_photobrief_branding")
-      .eq("workspace_id", req.workspace_id)
-      .maybeSingle(),
-    guidesService.getByIdViaToken(token, req.guide_id),
-  ]);
 
   if (!guide) {
     throw new RecipientLoadError("PB-425", {
