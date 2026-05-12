@@ -108,6 +108,7 @@ function RecipientWorkflow({ ctx, token, navigate }: { ctx: RecipientContext; to
   const submissionIdRef = useRef<string | null>(ctx.resubmit?.submissionId ?? null);
   const [started, setStarted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<ReturnType<typeof classifySubmitError> | null>(null);
 
   const uploadCapture = useCallback(
     async ({ stepId, blob, ext }: { stepId: string; blob: Blob; ext: string }) => {
