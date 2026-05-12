@@ -38,11 +38,29 @@ export const RECIPIENT_ERRORS: Record<RecipientErrorCode, RecipientErrorDescript
     headline: "This link has expired",
     body: "This request is no longer accepting submissions. Reach out to the sender for a new link.",
   },
+  "PB-NET": {
+    code: "PB-NET",
+    tag: "Connection issue",
+    headline: "We couldn't reach the server",
+    body: "Check your internet connection and tap Try again. Your photos and answers are still saved on this device.",
+  },
+  "PB-PERM": {
+    code: "PB-PERM",
+    tag: "Link permission",
+    headline: "This link can't accept your submission",
+    body: "Your link may have been revoked or replaced. Ask the sender for a fresh link, then try again.",
+  },
+  "PB-503": {
+    code: "PB-503",
+    tag: "Service busy",
+    headline: "Our service is temporarily unavailable",
+    body: "Give it a moment and tap Try again. If it keeps failing, let the sender know.",
+  },
   "PB-500": {
     code: "PB-500",
     tag: "Something broke",
     headline: "We hit an unexpected problem",
-    body: "Try refreshing this page. If it keeps happening, share the diagnostics below with the sender.",
+    body: "Try again. If it keeps happening, share the diagnostics below with the sender.",
   },
 };
 
