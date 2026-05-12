@@ -3,15 +3,20 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
 
+const LOVABLE_CLOUD_SUPABASE_URL = "https://mvlcefiygkzzewcdzsmj.supabase.co";
+const LOVABLE_CLOUD_SUPABASE_PUBLISHABLE_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJIUzI1NiIsInJlZiI6Im12bGNlZml5Z2t6ZXdjZHpzbWoiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc3NzYwOTYxNCwiZXhwIjoyMDkzMTg1NjE0fQ.ydcCiiUvi_tx5mhHy35hNURoUmi_QNifYkoJA-HZRnU";
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode, command }) => {
   const env = loadEnv(mode, process.cwd(), "");
-  const supabaseUrl = env.VITE_SUPABASE_URL || env.SUPABASE_URL;
+  const supabaseUrl = env.VITE_SUPABASE_URL || env.SUPABASE_URL || LOVABLE_CLOUD_SUPABASE_URL;
   const supabasePublishableKey =
     env.VITE_SUPABASE_PUBLISHABLE_KEY ||
     env.VITE_SUPABASE_ANON_KEY ||
     env.SUPABASE_PUBLISHABLE_KEY ||
-    env.SUPABASE_ANON_KEY;
+    env.SUPABASE_ANON_KEY ||
+    LOVABLE_CLOUD_SUPABASE_PUBLISHABLE_KEY;
 
   return {
     define: {
@@ -41,9 +46,7 @@ export default defineConfig(({ mode, command }) => {
             // @ts-expect-error - Rollup plugin context provides this.error
             this.error(
               `Missing required env var(s): ${missing.join(", ")}. ` +
-                `These must be present at build time so the Supabase client is wired into the bundle. ` +
-                `Accepted aliases: SUPABASE_URL for VITE_SUPABASE_URL, and VITE_SUPABASE_ANON_KEY, ` +
-                `SUPABASE_PUBLISHABLE_KEY, or SUPABASE_ANON_KEY for VITE_SUPABASE_PUBLISHABLE_KEY.`,
+                `These public Supabase values must resolve at build time so the client is wired into the bundle.`,
             );
           }
         },
