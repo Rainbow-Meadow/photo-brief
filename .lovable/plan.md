@@ -1,122 +1,74 @@
-# Gain Control of the DB — Cloudflare Offload Plan
 
-Goal: keep the relational/auth/RLS core on Lovable Cloud Postgres, but move volume, latency, and ephemeral state onto Cloudflare so you have leverage over performance and cost.
+## What I scanned
 
-Assumes: Cloudflare Workers **Paid** plan, you already own the `photobrief.ai` zone, and the existing workers (`router`, `assistant-agent`, `capture-agent`, `beta-onboarding-agent`, `mcp-agent`) keep their current responsibilities.
+Cloudflare doesn't expose a per-account "AI agent templates" catalog — the relevant catalog is **Workers AI models bound to your account**. I pulled the full list from `GET /accounts/{id}/ai/models/search` against your account (`6c2f1b…258284`). Result: **91 models** across text generation, vision, embeddings, ASR, TTS, image gen, classification, reranking, translation.
 
----
+For reference I cross-checked against your current router (`supabase/functions/_shared/aiModelRouter.ts`), which today only uses the Lovable AI Gateway (Gemini 2.5/3, GPT-5 family) across 4 tiers: `default`, `vision`, `escalation`, `cheap`.
 
-## Step 1 — Hyperdrive in front of Postgres
+## Findings by tier — best Workers AI candidates
 
-Pool + cache reads from your existing Supabase Postgres into all Workers. Zero data migration.
+### `vision` tier (photo quality, detail extract, readiness, submission summary)
+Currently: GPT-5 mini → Gemini 2.5 Flash. Workers AI multimodal options:
+- **`@cf/meta/llama-4-scout-17b-16e-instruct`** — strongest multimodal on your account, MoE, good for full submission analysis
+- **`@cf/meta/llama-3.2-11b-vision-instruct`** — proven, cheaper, ideal as fallback
+- `@cf/google/gemma-3-12b-it` — multimodal, fast
+- `@cf/llava-hf/llava-1.5-7b-hf` — last-resort budget vision
 
-- Create a Hyperdrive config pointing at `SUPABASE_DB_URL` (pooled connection string, port 6543).
-- Bind `HYPERDRIVE` in each worker's `wrangler.toml` (`router`, `assistant-agent`, `capture-agent`, `beta-onboarding-agent`, `mcp-agent`).
-- Add a thin `db.ts` helper in `workers/_shared/` using `postgres` (npm) over the Hyperdrive connection string. Read paths use it; writes still go through Supabase JS client + RLS where auth context matters.
-- Set caching defaults: `max_age: 60s`, `stale_while_revalidate: 30s` for read queries that are safe to cache (plan limits, brand profile, public guide template).
+### `default` tier (recipient guidance, guide gen, follow-up drafting)
+Currently: Gemini 3 Flash → GPT-5 mini. Workers AI options:
+- **`@cf/meta/llama-3.3-70b-instruct-fp8-fast`** — best quality/$ on platform, JSON-friendly
+- **`@cf/openai/gpt-oss-120b`** — large open-weights, instruction-tuned
+- `@cf/mistralai/mistral-small-3.1-24b-instruct` — solid drafting
+- `@cf/qwen/qwen3-30b-a3b-fp8` — fast MoE, good for templates
 
-Outcome: cold-call Postgres latency from Workers drops from ~150–400ms to ~10–40ms; connection storms during traffic spikes are absorbed.
+### `escalation` tier (admin re-run, low-confidence retry)
+Currently: GPT-5.2 → Gemini 3.1 Pro. Workers AI reasoning options:
+- **`@cf/openai/gpt-oss-120b`** — best general reasoning available
+- **`@cf/qwen/qwq-32b`** — explicit reasoning model
+- `@cf/deepseek-ai/deepseek-r1-distill-qwen-32b` — chain-of-thought distill
+- `@cf/nvidia/nemotron-3-120b-a12b` — large MoE
 
-## Step 2 — Mirror append-only telemetry to Analytics Engine
+### `cheap` tier (classification, routing)
+Currently: GPT-5 nano. Workers AI options (much cheaper, sub-100ms):
+- **`@cf/meta/llama-3.2-3b-instruct`** — sweet spot for tag/route/classify
+- **`@cf/meta/llama-3.2-1b-instruct`** — ultra-cheap routing
+- `@cf/huggingface/distilbert-sst-2-int8` — pure binary classification
 
-Keep Postgres as the system of record (billing math depends on `usage_events` + `credit_ledger`). Mirror the same writes into Cloudflare Analytics Engine for fast dashboards and to relieve Postgres on read-heavy reporting.
+### Net-new capabilities not in your router today
+These open features you currently can't ship via the Lovable Gateway:
 
-- Create one AE dataset: `pb_usage_events` (later add `pb_request_lifecycle`, `pb_sms_log`, `pb_ai_check`).
-- Bind `AE_USAGE` in `assistant-agent` and `capture-agent`.
-- Add a fire-and-forget helper `recordUsage(env, { workspace_id, event_type, related_id, credit_cost, metadata })` that writes the AE point right after the Postgres insert succeeds. Failures only log — never block the write of record.
-- Build one Supabase Edge Function `analytics-aggregate` (or `assistant-agent` route) that proxies the AE SQL API for the in-app admin dashboard, so the browser never sees the AE token.
-- Migrate the heaviest existing dashboard query (admin command center → workspace usage chart) to read from AE.
+| Capability | Model | PhotoBrief use |
+|---|---|---|
+| Safety guardrail | `@cf/meta/llama-guard-3-8b` | Pre-screen recipient captions/photos for abuse before storing |
+| Embeddings (multilingual) | `@cf/baai/bge-m3` | Vectorize + RAG over `photo_guides` instead of in-memory `agent.sql` |
+| Reranker | `@cf/baai/bge-reranker-base` | Improve guide search precision in `assistant-agent` |
+| ASR | `@cf/openai/whisper-large-v3-turbo` | Voice-note submissions from recipients |
+| Live ASR | `@cf/deepgram/flux` | Real-time capture wizard transcription |
+| TTS | `@cf/deepgram/aura-2-en` | Spoken playback of guide steps for hands-busy recipients |
+| Image gen | `@cf/black-forest-labs/flux-2-dev` | Auto-generate "good example" reference images per guide step |
 
-Outcome: you can run "last 30 days, all workspaces, by event_type" without touching Postgres.
+## Recommendation
 
-## Step 3 — Recipient / wizard ephemeral state in Durable Objects
+Add a **`cloudflare` fallback layer** to `aiModelRouter.ts` so each tier degrades gracefully when the Lovable Gateway returns 402/429/5xx, instead of failing the request. This keeps your existing primary stack untouched but unlocks Workers AI bindings in the workers that already have `env.AI` (none yet — needs a small `wrangler.toml` add).
 
-Today, every keystroke / draft answer / step transition in the recipient capture wizard hits Postgres (`submission_answers`, `submissions`, `captured_media` upserts). Move the **in-flight** state into a per-request Durable Object inside `capture-agent`; only persist a finalized snapshot to Postgres on submit.
+```text
+tier         primary (Lovable Gateway)        →  CF fallback (Workers AI)
+default      gemini-3-flash → gpt-5-mini      →  llama-3.3-70b-fp8-fast
+vision       gpt-5-mini → gemini-2.5-flash    →  llama-4-scout-17b → llama-3.2-11b-vision
+escalation   gpt-5.2 → gemini-3.1-pro         →  gpt-oss-120b → qwq-32b
+cheap        gpt-5-nano                       →  llama-3.2-3b → llama-3.2-1b
+```
 
-- New DO class `CaptureSession` (SQLite-backed) keyed by `request_token`. Stores: current step index, draft answers, transient AI check results, retry counters.
-- New worker routes: `POST /capture/:token/state` (patch), `GET /capture/:token/state` (load), `POST /capture/:token/submit` (flush to Postgres in one transaction via Supabase service role).
-- Frontend `useCaptureAgent` / `useChatFlow` hooks switch their autosave path from `submissionsService` to the worker. Final submit still calls the existing edge function so RLS + triggers + credit logging fire exactly once.
-- Add a TTL cleanup alarm on the DO (24h) so abandoned sessions self-destruct.
+## Plan
 
-Outcome: 80–95% reduction in writes to `submission_answers` / `captured_media` during a session; resilient to network blips on flaky mobile.
+1. **Document the catalog** — write `docs/cloudflare-workers-ai-catalog.md` with the full 91-model list grouped by task, plus the recommendation table above. Reference it from `docs/hybrid-hosting.md`.
+2. **Bind Workers AI** — add `[ai] binding = "AI"` to `workers/assistant-agent/wrangler.toml` and `workers/capture-agent/wrangler.toml`.
+3. **Extend the router** — add `TIER_CHAIN_CLOUDFLARE` in `aiModelRouter.ts` plus a `callWorkersAI()` adapter (uses `env.AI.run(model, …)`); wire it in as the last fallback after the Gateway chain in `runAITask()`.
+4. **Pilot one tier first** — flip the `cheap` tier to use `@cf/meta/llama-3.2-3b-instruct` as a primary in workers (where `env.AI` exists) since classification is low-risk and cost savings are largest. Keep edge functions on the Gateway.
+5. **(Optional, separate step)** Stand up Vectorize + `@cf/baai/bge-m3` to replace the in-memory guide index in `AssistantAgent.indexGuides()`.
 
-## Step 4 — Cache public/recipient bundles in Workers KV
+### Out of scope for this plan
+- Voice/TTS/image-gen features (steps 6+, only if you want to ship those product surfaces).
+- Migrating off the Lovable AI Gateway entirely — not recommended; keep it as primary for quality.
 
-The recipient page (`/r/:token`) is fully public. Today each load hits `photo_brief_requests` + `brand_profiles` + `guides` + `guide_steps`. Cache the whole assembled bundle in KV.
-
-- New KV namespace `RECIPIENT_BUNDLES`. Bind to `router` + `capture-agent`.
-- New worker route `GET /recipient/:token/bundle` → KV hit returns immediately; KV miss assembles from Postgres (via Hyperdrive from Step 1), writes back with `expirationTtl: 3600`.
-- Cache invalidation: on any update to `photo_brief_requests`, `brand_profiles`, or the request's `guide_id`, an Edge Function trigger (or a direct service-role POST from the existing handlers) calls `DELETE /recipient/:token/bundle`.
-- `PublicRecipientPage.tsx` and `IntakeBadge.tsx` fetch from the worker route instead of Supabase.
-
-Outcome: recipient page TTFB drops to edge speed; a viral recipient link no longer hammers Postgres.
-
-## Step 5 — Email queue on Cloudflare Queues (deferred)
-
-Only after Steps 1–4 are stable. Today `pgmq` + `_notify_event` + `process-email-queue` edge function carry email. Replacing pgmq with Cloudflare Queues removes Postgres triggers + `pg_net` from the email path.
-
-- New queue `pb-email-out`. Producer binding in `assistant-agent`; consumer is a new worker `email-worker`.
-- Replace `_notify_event` Postgres function calls inside triggers with a direct HTTPS call to `assistant-agent /enqueue-email` (or keep `pg_net` and just change the URL).
-- `email-worker` consumes batches, calls Resend / your existing email template renderer, retries on failure, dead-letters after 5 attempts.
-- Migrate `pgmq` queues one at a time (`welcome`, `submission_received`, `request_*`) and decommission once each is dual-running cleanly for a week.
-
-Outcome: email throughput becomes independent of Postgres health; `pgmq` and `vault.email_queue_service_role_key` can eventually be retired.
-
----
-
-## Cross-cutting deliverables
-
-- `workers/_shared/`: new folder with `db.ts` (Hyperdrive client), `ae.ts` (Analytics Engine writer), `kv-bundle.ts` (recipient cache helpers), `types.ts`.
-- `wrangler.toml` updates across 5 workers: bindings for `HYPERDRIVE`, `AE_USAGE`, `RECIPIENT_BUNDLES`, `CAPTURE_SESSION` (DO), and (Step 5) `EMAIL_QUEUE`.
-- `scripts/secret-manifest.json`: add `HYPERDRIVE_ID`, `AE_DATASET_USAGE`, KV namespace ID, DO migration tag.
-- One smoke-test edge function `cloudflare-control-plane-status` that the admin command center can ping to verify each binding is live.
-- `docs/hybrid-hosting.md`: append a "Data plane split" section listing what lives where.
-
-## What stays untouched on Postgres
-
-Auth (`auth.*`), every table with RLS, all plpgsql triggers/functions, `pgmq` (until Step 5), `pg_net`, `vault`, Supabase Realtime, Supabase Storage. No schema migrations are required for Steps 1–4.
-
-## Suggested rollout order
-
-1. Step 1 (Hyperdrive) — 1 PR, low risk, immediate latency win.
-2. Step 4 (KV recipient bundle) — 1 PR, biggest user-visible speedup.
-3. Step 2 (AE telemetry) — 1 PR, dual-write only, no UI change until the dashboard query is swapped.
-4. Step 3 (DO capture sessions) — larger PR, behind a feature flag (`capture_agent_do`) per workspace.
-5. Step 5 (Queues) — only after the above are stable for 2+ weeks.
-
----
-
-## Implementation status (2026-05-12)
-
-**Step 1 — Hyperdrive: ✅ shipped**
-- Hyperdrive config created: `cea7652fc3924714826c43a4090de08a` → `aws-1-us-east-1.pooler.supabase.com:6543`, caching `max_age=60s`, `swr=30s`.
-- `HYPERDRIVE` binding added to: `assistant-agent`, `capture-agent`, `beta-onboarding-agent`, `mcp-agent` wrangler.toml.
-- `workers/_shared/db.ts`, `ae.ts`, `kv-bundle.ts` scaffolded.
-- `postgres@3.4.4` added to `assistant-agent` + `capture-agent` package.json.
-- KV namespace `f7d82555b5894d6cb44d7139b718d8c2` (`photobrief-recipient-bundles`) created and bound to `router`, `assistant-agent`, `capture-agent` for Step 4.
-- AE dataset `pb_usage_events` bound (auto-created on first write) on `assistant-agent` + `capture-agent` for Step 2.
-- ⚠️ Hyperdrive currently authenticates as `sandbox_exec.<ref>` (the value of `SUPABASE_DB_URL`). If that user is rotated, update the Hyperdrive origin via `PATCH /accounts/{acct}/hyperdrive/configs/cea7652fc3924714826c43a4090de08a`.
-
-**Step 2 — Analytics Engine: ✅ shipped (worker deploy pending)**
-- `recordUsage()` helper wired. AE-mirror dual-write added in `supabase/functions/_shared/creditUsage.ts` → fires fire-and-forget POST to `https://assistant.photobrief.ai/telemetry/usage` (service-role auth) right after `log_credit_usage`.
-- New worker route `POST /telemetry/usage` (service-role) writes to `AE_USAGE`. New `POST /telemetry/aggregate` proxies the Cloudflare AE SQL API (requires `CLOUDFLARE_ACCOUNT_ID` + `CLOUDFLARE_API_TOKEN` in worker env — TODO add via secrets store).
-- Edge function `analytics-aggregate` deployed: platform-admin gated proxy that browser code can call (`supabase.functions.invoke("analytics-aggregate", { body: { query } })`). Browser never sees the Cloudflare token.
-- TODO: migrate the admin command center workspace-usage chart to call `analytics-aggregate` instead of `usage_events` Postgres scans.
-
-**Step 3 — Durable Object capture sessions: ✅ shipped (frontend opt-in pending)**
-- `CaptureSession` DO class implemented in `workers/capture-agent/src/index.ts`. Storage-backed key/value buffer keyed by request token. Routes: `GET/POST /capture/:token/state`, `POST /capture/:token/submit`, `POST /capture/:token/clear`. 24h alarm-driven TTL.
-- Service-role secret bound on capture-agent for future Postgres flush paths.
-- New client helper `src/services/captureSessionService.ts` exposes `loadDraft`, `patchDraft`, `clearDraft`, `markSubmitted`. Designed to be wired into `useCaptureAgent` / `useChatFlow` behind a `capture_agent_do` flag in a follow-up turn (final submit continues to use existing edge functions so credit logging fires exactly once).
-
-**Step 4 — KV recipient bundle cache: ✅ shipped (worker deploy pending)**
-- Worker route `GET /recipient/:token/bundle` and `POST /recipient/:token/invalidate` added to `assistant-agent` (`workers/assistant-agent/src/index.ts`).
-- Shared assembler at `workers/_shared/recipient-bundle.ts` (uses Supabase REST + service role, mirrors `recipientContext.ts` shape including snake_case `instruction`/`capture_type`/`label`/`input_type` columns).
-- Frontend `recipientContext.ts` now tries `https://assistant.photobrief.ai/recipient/:token/bundle` first, falls back transparently to direct token-scoped Supabase reads on any failure. `rowToGuide` exported from `guidesService` for shared mapping.
-- Invalidation: edge function `invalidate-recipient-bundle` (deployed) holds the service-role key and forwards to the worker. Frontend helper `services/recipientBundleCache.ts` exposes `invalidateRecipientBundle(token)`, `...ForWorkspace(workspaceId)`, `...ForGuide(guideId)`. Wired into `guidesService.updateGuide` and `BrandSettingsPage` save.
-- ⚠️ Requires re-deploy of `photobrief-assistant-agent` worker. KV namespace `f7d82555b5894d6cb44d7139b718d8c2` and service-role secret store binding are already configured.
-
-**Step 5 — Cloudflare Queues for email: ⏸ deferred** per plan, only after Steps 1–4 are stable.
-
-**Cross-cutting:** secret-manifest entries, `cloudflare-control-plane-status` smoke probe, and the `docs/hybrid-hosting.md` "Data plane split" section are pending.
-
-The current PR-shaped diff is safe to deploy: it only adds bindings + shared helpers, no call sites changed yet, so behavior is unchanged until Steps 2–4 are wired up in follow-up turns.
+Approve to implement steps 1–4. Step 5 and the optional capabilities I'll plan separately when you're ready.
