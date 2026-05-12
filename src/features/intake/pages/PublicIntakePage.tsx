@@ -5,8 +5,7 @@ import { ArrowRight, CheckCircle2, Loader2, LockKeyhole, MessageSquareText, Spar
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
-
-type PhotoPolicy = "not_needed" | "optional" | "recommended" | "required";
+import { photoPolicyShort, photoPolicySentence, type PhotoPolicy } from "@/features/intake/lib/photoPolicy";
 
 interface SmartIntakeRoute {
   id: string;
@@ -187,28 +186,38 @@ export default function PublicIntakePage() {
   if (submitted) {
     return (
       <PublicShell>
-        <section className="border border-border bg-card p-5 text-center sm:p-7">
-          <span className="mx-auto flex h-12 w-12 items-center justify-center border border-border text-[hsl(var(--accent-kinetic))]">
-            <CheckCircle2 className="h-5 w-5" />
+        <section className="border border-border bg-card p-6 text-center sm:p-8">
+          <span className="mx-auto flex h-14 w-14 items-center justify-center border border-border bg-background text-[hsl(var(--accent-kinetic))]">
+            <CheckCircle2 className="h-6 w-6" />
           </span>
-          <p className="mt-5 font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+          <p className="mt-6 font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
             {config?.businessName}
           </p>
-          <h1 className="mt-2 font-[Geist,Inter,system-ui,sans-serif] text-[clamp(1.6rem,4vw,2.35rem)] font-semibold leading-[1.05] tracking-[-0.03em] text-foreground">
-            Request received
+          <h1 className="mt-2 font-[Geist,Inter,system-ui,sans-serif] text-[clamp(1.7rem,4.5vw,2.4rem)] font-semibold leading-[1.05] tracking-[-0.03em] text-foreground">
+            Thanks — we’ve got it
           </h1>
           <p className="mx-auto mt-4 max-w-md text-base leading-7 text-muted-foreground">
-            {submitted.message ?? "Thanks — your details were sent over and the business has a clean intake brief to review."}
+            {submitted.message ?? "Your request was sent to the team. They’ll review the brief and follow up shortly."}
           </p>
-          {submitted.nextAction ? (
-            <p className="mt-5 border border-border bg-background p-4 text-left text-sm leading-6 text-muted-foreground">
-              <span className="font-mono text-[0.65rem] uppercase tracking-[0.16em] text-foreground">Next step</span>
-              <br />
-              {submitted.nextAction}
-            </p>
-          ) : null}
-          <p className="mt-5 text-xs leading-5 text-muted-foreground">
-            Photos were {photoPolicyLabel(submitted.photoPolicy)} for this request.
+
+          <dl className="mx-auto mt-6 grid max-w-md gap-2 text-left">
+            {submitted.nextAction ? (
+              <div className="border border-border bg-background p-4">
+                <dt className="font-mono text-[0.65rem] uppercase tracking-[0.16em] text-muted-foreground">What happens next</dt>
+                <dd className="mt-1.5 text-sm leading-6 text-foreground">{submitted.nextAction}</dd>
+              </div>
+            ) : null}
+            <div className="border border-border bg-background p-4">
+              <dt className="font-mono text-[0.65rem] uppercase tracking-[0.16em] text-muted-foreground">Photos</dt>
+              <dd className="mt-1.5 text-sm leading-6 text-foreground">
+                {photoPolicyShort(submitted.photoPolicy)}
+                <span className="text-muted-foreground"> — {photoPolicySentence(submitted.photoPolicy)}.</span>
+              </dd>
+            </div>
+          </dl>
+
+          <p className="mx-auto mt-6 max-w-sm text-xs leading-5 text-muted-foreground">
+            You can close this page. If anything is needed, the business will reach out using the contact details you provided.
           </p>
         </section>
 
@@ -223,30 +232,30 @@ export default function PublicIntakePage() {
 
   return (
     <PublicShell>
-      <section className="border border-border bg-card p-5 sm:p-7">
-        <div className="flex items-center gap-3 border-b border-border pb-5">
+      <section className="border border-border bg-card p-4 sm:p-7">
+        <div className="flex items-start gap-3 border-b border-border pb-4 sm:items-center sm:pb-5">
           {config?.logoUrl ? (
             <img
               src={config.logoUrl}
               alt=""
-              className="h-11 w-11 border border-border bg-background object-contain p-1"
+              className="h-12 w-12 shrink-0 border border-border bg-background object-contain p-1"
             />
           ) : (
-            <span className="flex h-11 w-11 items-center justify-center border border-border text-[hsl(var(--accent-kinetic))]">
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center border border-border text-[hsl(var(--accent-kinetic))]">
               <Sparkles className="h-4 w-4" />
             </span>
           )}
           <div className="min-w-0">
-            <p className="font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+            <p className="truncate font-mono text-[0.65rem] font-medium uppercase tracking-[0.18em] text-muted-foreground sm:text-[0.7rem]">
               {config?.businessName}
             </p>
-            <h1 className="mt-1 font-[Geist,Inter,system-ui,sans-serif] text-[clamp(1.5rem,3vw,2rem)] font-semibold leading-[1.05] tracking-[-0.022em] text-foreground">
+            <h1 className="mt-1 font-[Geist,Inter,system-ui,sans-serif] text-[clamp(1.4rem,6vw,2rem)] font-semibold leading-[1.1] tracking-[-0.022em] text-foreground">
               Start your request
             </h1>
           </div>
         </div>
 
-        <p className="mt-5 text-base leading-7 text-muted-foreground">{config?.introMessage}</p>
+        <p className="mt-4 text-[15px] leading-7 text-muted-foreground sm:mt-5 sm:text-base">{config?.introMessage}</p>
 
         <div className="mt-6 space-y-4">
           <div className="grid gap-3 sm:grid-cols-2">
@@ -305,12 +314,18 @@ export default function PublicIntakePage() {
           </div>
 
           {selectedRoute ? (
-            <div className="border border-border bg-background p-3 text-sm leading-6 text-muted-foreground">
-              {selectedRoute.description ? <p>{selectedRoute.description}</p> : null}
-              <p className="mt-1">
-                Photos are <span className="font-medium text-foreground">{photoPolicyLabel(selectedRoute.photoPolicy)}</span>
-                {selectedRoute.photoPolicyReason ? ` — ${selectedRoute.photoPolicyReason}` : "."}
-              </p>
+            <div className="border border-border bg-background p-4">
+              {selectedRoute.description ? (
+                <p className="text-sm leading-6 text-foreground">{selectedRoute.description}</p>
+              ) : null}
+              <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-border pt-3">
+                <span className="inline-flex items-center border border-border bg-card px-2 py-1 font-mono text-[0.6rem] font-semibold uppercase tracking-[0.16em] text-foreground">
+                  Photos · {photoPolicyShort(selectedRoute.photoPolicy)}
+                </span>
+                <span className="text-xs leading-5 text-muted-foreground">
+                  {selectedRoute.photoPolicyReason ?? photoPolicySentence(selectedRoute.photoPolicy) + "."}
+                </span>
+              </div>
             </div>
           ) : null}
 
@@ -364,14 +379,6 @@ export default function PublicIntakePage() {
   );
 }
 
-function photoPolicyLabel(policy?: PhotoPolicy) {
-  if (policy === "not_needed") return "not needed";
-  if (policy === "optional") return "optional";
-  if (policy === "recommended") return "recommended, but not required";
-  if (policy === "required") return "required";
-  return "conditional";
-}
-
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block space-y-1.5">
@@ -385,8 +392,9 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 
 function PublicShell({ children }: { children: React.ReactNode }) {
   return (
-    <main className="min-h-screen bg-background px-4 py-6 sm:py-10">
+    <main className="min-h-[100dvh] bg-background px-3 py-4 sm:px-4 sm:py-10">
       <div className="mx-auto max-w-xl">{children}</div>
     </main>
   );
 }
+

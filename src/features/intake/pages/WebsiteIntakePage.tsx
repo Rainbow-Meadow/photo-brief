@@ -509,7 +509,15 @@ export default function WebsiteIntakePage() {
 
             <div className="space-y-2">
               {rules.length === 0 ? (
-                <p className="rounded-none bg-muted/30 p-3 text-sm text-muted-foreground">No rules yet. AI matching and the fallback template will be used.</p>
+                <div className="border border-border bg-background p-5 text-center">
+                  <p className="font-mono text-[0.65rem] uppercase tracking-[0.18em] text-muted-foreground">No routing rules yet</p>
+                  <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-foreground">
+                    Leads will use AI matching and fall back to your default template.
+                  </p>
+                  <p className="mx-auto mt-2 max-w-sm text-xs leading-5 text-muted-foreground">
+                    Add a rule above (e.g. <span className="font-medium text-foreground">contains “quote”</span>) to send specific request types to the right saved template automatically.
+                  </p>
+                </div>
               ) : rules.map((rule) => (
                 <div key={rule.id} className="flex items-center justify-between gap-3 rounded-none border bg-background p-3">
                   <div>
