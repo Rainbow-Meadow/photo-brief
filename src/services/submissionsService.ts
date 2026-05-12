@@ -402,7 +402,25 @@ export const submissionsService = {
       .invoke("ai-summarize-submission", { body: { submissionId } })
       .catch((e) => console.warn("summary trigger failed", e));
 
-    return { id: submissionId };
+    const payload = { id: submissionId };
+    const parsed = RecipientSubmitResponseSchema.safeParse(payload);
+    if (!parsed.success) {
+      // Log enough to debug without leaking PII — submissionId is a uuid.
+      console.error("[submitFromRecipient] invalid response payload", {
+        requestId: args.requestId,
+        workspaceId: args.workspaceId,
+        rawKeys: payload && typeof payload === "object" ? Object.keys(payload) : null,
+        issues: parsed.error.issues,
+      });
+      throw new InvalidSubmitResponseError(payload, parsed.error.issues);
+    }
+    console.info("[submitFromRecipient] ok", {
+      submissionId: parsed.data.id,
+      requestId: args.requestId,
+      photos: args.photos.length,
+      answers: args.answers.length,
+    });
+    return parsed.data;
   },
 
   /**
