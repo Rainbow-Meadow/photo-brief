@@ -77,3 +77,42 @@ export function resolveRecipientError(message?: string | null): RecipientErrorDe
   if (mapped) return RECIPIENT_ERRORS[mapped];
   return RECIPIENT_ERRORS["PB-500"];
 }
+
+/**
+ * Classify a thrown error from the recipient submit pipeline into a
+ * user-facing descriptor. Looks at status codes, PostgREST error codes,
+ * and common network signatures. Always returns a descriptor (never null).
+ */
+export function classifySubmitError(err: unknown): RecipientErrorDescriptor {
+  if (!err) return RECIPIENT_ERRORS["PB-500"];
+  const anyErr = err as {
+    name?: string;
+    message?: string;
+    code?: string | number;
+    status?: number;
+    statusCode?: number;
+  };
+  const status = Number(anyErr.status ?? anyErr.statusCode ?? 0);
+  const message = String(anyErr.message ?? "").toLowerCase();
+  const code = String(anyErr.code ?? "");
+
+  // PostgREST permission codes
+  if (code === "42501" || code === "PGRST301" || status === 401 || status === 403) {
+    return RECIPIENT_ERRORS["PB-PERM"];
+  }
+  // Network / fetch failures
+  if (
+    anyErr.name === "TypeError" ||
+    anyErr.name === "AbortError" ||
+    message.includes("failed to fetch") ||
+    message.includes("network") ||
+    message.includes("load failed")
+  ) {
+    return RECIPIENT_ERRORS["PB-NET"];
+  }
+  // Backend down / overloaded
+  if (status >= 500 && status < 600) {
+    return RECIPIENT_ERRORS["PB-503"];
+  }
+  return RECIPIENT_ERRORS["PB-500"];
+}
