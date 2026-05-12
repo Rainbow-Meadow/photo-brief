@@ -6,7 +6,7 @@ import { buildHowToJsonLd } from "@/hooks/seo/buildHowToJsonLd";
 import { buildFaqJsonLd } from "@/hooks/seo/buildFaqJsonLd";
 
 import { BrandMark } from "@/components/layout/BrandMark";
-import { Section, Container, Card, Body, CTA, CTAGroup } from "@/design-system/schema";
+import { Section, Container, Body } from "@/design-system/schema";
 import { MarqueeRow } from "@/components/motion/MarqueeRow";
 import { RiseIn } from "@/components/motion/RiseIn";
 import { MagneticCTA } from "@/components/motion/MagneticCTA";
@@ -90,23 +90,26 @@ function Hero() {
               </p>
             </RiseIn>
             <RiseIn delay={0.35}>
-              <CTAGroup>
+              <div className="mt-10 flex flex-row flex-wrap items-center gap-x-5 gap-y-3">
                 <MagneticCTA
                   href="/demo"
-                  className="ls-cta ls-cta--lg ls-cta-primary mt-10"
+                  className="ls-cta ls-cta--lg ls-cta-primary"
                   onClick={() => trackEvent("landing_hero_cta_demo")}
                 >
                   Try the live demo <ArrowRight className="h-4 w-4" />
                 </MagneticCTA>
-                <NavLink to="/beta" className="ls-cta ls-cta--lg ls-cta-quiet mt-10">
+                <NavLink
+                  to="/beta"
+                  className="text-sm font-medium text-foreground/80 underline-offset-4 hover:text-foreground hover:underline"
+                >
                   Apply for the beta →
                 </NavLink>
-              </CTAGroup>
+              </div>
             </RiseIn>
           </div>
 
           <RiseIn delay={0.4} className="relative">
-            <div className="mx-auto w-full max-w-[640px] lg:ml-auto lg:mr-0">
+            <div className="mx-auto w-full max-w-[520px] lg:ml-auto lg:mr-0 lg:max-h-[520px]">
               <BeforeAfterSlider
                 before={heroBeforeImg}
                 after={heroAfterImg}
@@ -126,7 +129,7 @@ function Hero() {
 /* ── Marquee ── */
 function MarqueeBand() {
   return (
-    <div className="relative space-y-3 border-y border-border bg-card py-8">
+    <div className="relative space-y-2 border-y border-border bg-[hsl(var(--accent-kinetic)/0.08)] py-5">
       <MarqueeRow duration={45} direction="left">
         <span className="ls-marquee-item">Guide</span>
         <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
@@ -177,47 +180,62 @@ function ComparisonSection() {
           title="The intake your customers feel — and the one your estimator doesn't curse at."
           subtitle="Same five minutes. Two different futures for the lead."
         />
-        <div className="grid gap-6 lg:grid-cols-2">
-          <Card>
-            <span className="ls-numeral text-destructive">Before · status quo</span>
-            <h3 className="ls-h3 mt-3">Generic intake form</h3>
-            <ul className="mt-6 space-y-3 text-sm">
-              {[
-                { icon: ImageOff, text: "Photos missing or shot from across the yard." },
-                { icon: MessageSquareWarning, text: "Three follow-ups before anyone can price it." },
-                { icon: TimerReset, text: "The lead cools while you chase context." },
-              ].map(({ icon: Icon, text }) => (
-                <li key={text} className="flex gap-3 text-muted-foreground">
-                  <Icon className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
-                  <span>{text}</span>
-                </li>
-              ))}
-            </ul>
-            <div className="mt-6 aspect-[16/9] overflow-hidden border border-border bg-muted">
-              <img src={beforeIntakeFormIllo} alt="Broken intake form with missing photo context"
-                className="h-full w-full object-contain p-4" loading="lazy" />
+        <div className="grid grid-cols-1 overflow-hidden border border-border lg:grid-cols-2">
+          {/* Before — dimmed half */}
+          <div className="border-b border-border bg-muted/30 opacity-70 grayscale-[0.4] lg:border-b-0 lg:border-r">
+            <div className="overflow-hidden bg-muted">
+              <img
+                src={beforeIntakeFormIllo}
+                alt="Broken intake form with missing photo context"
+                className="h-auto w-full object-contain"
+                loading="lazy"
+              />
             </div>
-          </Card>
-          <Card elevated>
-            <span className="ls-numeral text-[hsl(var(--accent-kinetic))]">After · PhotoBrief</span>
-            <h3 className="ls-h3 mt-3">A guided capture pipeline</h3>
-            <ul className="mt-6 space-y-3 text-sm">
-              {[
-                "Right angle. Right lighting. Right context — every single time.",
-                "One packet hits your inbox: photos, notes, location, scope.",
-                "Your estimator quotes on the first reply. The job moves.",
-              ].map((text) => (
-                <li key={text} className="flex gap-3 text-muted-foreground">
-                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[hsl(var(--accent-kinetic))]" />
-                  <span>{text}</span>
-                </li>
-              ))}
-            </ul>
-            <div className="mt-6 aspect-[16/9] overflow-hidden border border-border bg-muted">
-              <img src={afterCapturePipelineIllo} alt="Guided phone capture flow turning into a brief packet"
-                className="h-full w-full object-contain p-4" loading="lazy" />
+            <div className="p-6 lg:p-8">
+              <span className="ls-numeral text-destructive">Before · status quo</span>
+              <h3 className="ls-h3 mt-3">Generic intake form</h3>
+              <ul className="mt-6 space-y-3 text-sm">
+                {[
+                  { icon: ImageOff, text: "Photos missing or shot from across the yard." },
+                  { icon: MessageSquareWarning, text: "Three follow-ups before anyone can price it." },
+                  { icon: TimerReset, text: "The lead cools while you chase context." },
+                ].map(({ icon: Icon, text }) => (
+                  <li key={text} className="flex gap-3 text-muted-foreground">
+                    <Icon className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
+                    <span>{text}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
-          </Card>
+          </div>
+
+          {/* After — bright half */}
+          <div className="bg-card ring-1 ring-inset ring-[hsl(var(--accent-kinetic)/0.4)]">
+            <div className="overflow-hidden bg-muted">
+              <img
+                src={afterCapturePipelineIllo}
+                alt="Guided phone capture flow turning into a brief packet"
+                className="h-auto w-full object-contain"
+                loading="lazy"
+              />
+            </div>
+            <div className="p-6 lg:p-8">
+              <span className="ls-numeral text-[hsl(var(--accent-kinetic))]">After · PhotoBrief</span>
+              <h3 className="ls-h3 mt-3">A guided capture pipeline</h3>
+              <ul className="mt-6 space-y-3 text-sm">
+                {[
+                  "Right angle. Right lighting. Right context — every single time.",
+                  "One packet hits your inbox: photos, notes, location, scope.",
+                  "Your estimator quotes on the first reply. The job moves.",
+                ].map((text) => (
+                  <li key={text} className="flex gap-3 text-muted-foreground">
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[hsl(var(--accent-kinetic))]" />
+                    <span>{text}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </div>
       </Container>
     </Section>
@@ -257,19 +275,52 @@ function SignpostSection() {
     <Section tone="alt">
       <Container>
         <SectionIntro eyebrow="[ 04 ] Where to next ]" title="Pick a door." />
-        <div className="grid gap-6 md:grid-cols-3">
-          {signposts.map((s, i) => (
-            <RiseIn key={s.to} delay={i * 0.06}>
-              <NavLink to={s.to} className="group block h-full">
-                <Card>
-                  <s.icon className="h-7 w-7 text-[hsl(var(--accent-kinetic))]" />
-                  <p className="ls-eyebrow mt-4">{s.eyebrow}</p>
-                  <h3 className="ls-h3 mt-2">{s.title}</h3>
-                  <Body size="sm">{s.body}</Body>
-                  <span className="mt-6 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.18em] text-foreground transition group-hover:text-[hsl(var(--accent-kinetic))]">
+        <div className="grid gap-0 lg:grid-cols-2">
+          {/* Beta — hero door, full top row */}
+          <RiseIn className="lg:col-span-2">
+            <NavLink
+              to="/beta"
+              className="group block border-t border-border bg-[hsl(var(--accent-kinetic)/0.06)] p-8 transition hover:bg-[hsl(var(--accent-kinetic)/0.12)] lg:p-12"
+            >
+              <div className="grid gap-6 lg:grid-cols-12 lg:items-end">
+                <div className="lg:col-span-9">
+                  <h3 className="ls-h2">{signposts[1].title}</h3>
+                  <Body size="md">{signposts[1].body}</Body>
+                </div>
+                <div className="flex items-center justify-between gap-4 lg:col-span-3 lg:justify-end">
+                  <div className="flex items-center gap-3">
+                    <p className="ls-eyebrow !mt-0">{signposts[1].eyebrow}</p>
+                    {(() => {
+                      const I = signposts[1].icon;
+                      return <I className="h-5 w-5 text-[hsl(var(--accent-kinetic))]" />;
+                    })()}
+                  </div>
+                  <span className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.18em] text-foreground transition group-hover:text-[hsl(var(--accent-kinetic))]">
+                    {signposts[1].cta} <ArrowRight className="h-4 w-4" />
+                  </span>
+                </div>
+              </div>
+            </NavLink>
+          </RiseIn>
+
+          {/* Demo + Pricing — flanking smaller doors */}
+          {[signposts[0], signposts[2]].map((s, i) => (
+            <RiseIn key={s.to} delay={(i + 1) * 0.06}>
+              <NavLink
+                to={s.to}
+                className="group block border-t border-border p-6 transition hover:bg-foreground/[0.02] lg:p-8"
+              >
+                <h3 className="ls-h3">{s.title}</h3>
+                <Body size="sm">{s.body}</Body>
+                <div className="mt-6 flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <p className="ls-eyebrow !mt-0">{s.eyebrow}</p>
+                    <s.icon className="h-4 w-4 text-[hsl(var(--accent-kinetic))]" />
+                  </div>
+                  <span className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.18em] text-foreground transition group-hover:text-[hsl(var(--accent-kinetic))]">
                     {s.cta} <ArrowRight className="h-4 w-4" />
                   </span>
-                </Card>
+                </div>
               </NavLink>
             </RiseIn>
           ))}
@@ -283,27 +334,35 @@ function SignpostSection() {
 function FaqSection() {
   return (
     <Section>
-      <Container width="narrow">
-        <SectionIntro eyebrow="[ 05 ] FAQ" title="Frequently. Honestly." />
-        <Accordion type="single" collapsible className="mt-10 border-t border-border">
-          {faqItems.slice(0, 4).map((item, i) => (
-            <AccordionItem key={item.q} value={`q-${i}`} className="border-b border-border py-2">
-              <AccordionTrigger className="text-left font-display text-lg font-medium tracking-tight hover:no-underline">
-                <span className="flex w-full items-baseline gap-4">
-                  <span className="ls-numeral shrink-0">{String(i + 1).padStart(2, "0")}</span>
-                  <span>{item.q}</span>
-                </span>
-              </AccordionTrigger>
-              <AccordionContent className="pl-12 text-muted-foreground">{item.a}</AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
-        <p className="mt-8 text-center text-sm text-muted-foreground">
-          More questions?{" "}
-          <NavLink to="/help" className="text-foreground underline-offset-4 hover:underline">
-            Read the full help center →
-          </NavLink>
-        </p>
+      <Container>
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-16">
+          {/* Sticky intro rail */}
+          <div className="lg:col-span-4">
+            <div className="lg:sticky lg:top-24">
+              <SectionIntro eyebrow="[ 05 ] FAQ" title="Frequently. Honestly." />
+              <p className="mt-2 text-sm text-muted-foreground">
+                More questions?{" "}
+                <NavLink to="/help" className="text-foreground underline-offset-4 hover:underline">
+                  Read the full help center →
+                </NavLink>
+              </p>
+            </div>
+          </div>
+
+          {/* Scrolling Q&A */}
+          <div className="lg:col-span-8">
+            <Accordion type="single" collapsible className="border-t border-border">
+              {faqItems.slice(0, 4).map((item, i) => (
+                <AccordionItem key={item.q} value={`q-${i}`} className="border-b border-border py-2">
+                  <AccordionTrigger className="text-left font-display text-lg font-medium tracking-tight hover:no-underline">
+                    {item.q}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground">{item.a}</AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+        </div>
       </Container>
     </Section>
   );
