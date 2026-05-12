@@ -449,6 +449,16 @@ export default {
       return handleTelemetryAggregate(request, env);
     }
 
+    // Step 6 pilot: Workers AI cheap-tier classifier. Service-role only.
+    // Body: { text: string, labels: string[] }  →  { label, model } | { label: null }
+    // Body: { prompt: string, system?: string } →  { text, model } (free-form chat)
+    if (path === "/ai/classify" && request.method === "POST") {
+      return handleAiClassify(request, env);
+    }
+    if (path === "/ai/chat" && request.method === "POST") {
+      return handleAiChat(request, env);
+    }
+
     // Routes: /ws/:workspaceId, /rpc/:workspaceId, /event/:workspaceId
     const match = path.match(/^\/(ws|rpc|event)\/([a-f0-9-]+)$/i);
     if (!match) {
