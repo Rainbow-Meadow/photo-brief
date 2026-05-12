@@ -1,10 +1,15 @@
 // Resolve recipient context (request + guide + branding) for a token.
 // Used by the public recipient page. Guides/templates are loaded only from
 // Supabase workspace data; there is no built-in template fallback.
+//
+// Fast path: try the Cloudflare-cached recipient bundle (Step 4 of the
+// gain-control plan) at https://assistant.photobrief.ai/recipient/:token/bundle.
+// Falls back transparently to direct token-scoped Supabase reads on any
+// failure, so the page keeps loading even if the worker is offline.
 
 import { getTokenClient } from "@/integrations/supabase/tokenClient";
 import { STANDARD_PHOTO_ISSUE_TYPES } from "@/config/photoAssessment";
-import { guidesService } from "@/services/guidesService";
+import { guidesService, rowToGuide } from "@/services/guidesService";
 import type { PhotoGuide } from "@/types/photobrief";
 
 export interface RecipientLoadDiagnostics {
@@ -78,6 +83,73 @@ const PREVIEW_GUIDE: PhotoGuide = {
   questions: [],
 };
 
+const BUNDLE_BASE_URL = "https://assistant.photobrief.ai";
+
+interface RecipientBundleResponse {
+  bundle: {
+    request: {
+      id: string;
+      workspace_id: string;
+      guide_id: string | null;
+      recipient_name: string | null;
+      status: string | null;
+    };
+    workspace_name: string | null;
+    brand: {
+      logo_url: string | null;
+      primary_color: string | null;
+      intro_message: string | null;
+      completion_message: string | null;
+      hide_photobrief_branding: boolean | null;
+    } | null;
+    guide: {
+      id: string;
+      name: string | null;
+      category: string | null;
+      description: string | null;
+      is_template: boolean | null;
+      steps: Array<{
+        id: string;
+        order_index: number;
+        title: string | null;
+        instructions: string | null;
+        shot_type: string | null;
+        overlay_type: string | null;
+        ai_checks: unknown;
+        required: boolean | null;
+      }>;
+      questions: Array<{
+        id: string;
+        order_index: number;
+        prompt: string | null;
+        question_type: string | null;
+        required: boolean | null;
+        options: unknown;
+      }>;
+    } | null;
+  };
+}
+
+/**
+ * Try the Cloudflare-cached recipient bundle (Step 4 of the gain-control plan).
+ * Returns null on any error so callers transparently fall back to the
+ * direct token-scoped Supabase queries.
+ */
+async function fetchCachedBundle(token: string): Promise<RecipientBundleResponse["bundle"] | null> {
+  try {
+    const res = await fetch(`${BUNDLE_BASE_URL}/recipient/${encodeURIComponent(token)}/bundle`, {
+      method: "GET",
+      headers: { Accept: "application/json" },
+      credentials: "omit",
+    });
+    if (!res.ok) return null;
+    const json = (await res.json()) as RecipientBundleResponse;
+    return json?.bundle ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export async function loadRecipientContext(
   token: string | undefined,
 ): Promise<RecipientContext> {
@@ -92,13 +164,67 @@ export async function loadRecipientContext(
   }
 
   const client = getTokenClient(token);
-
   const tokenSuffix = token.slice(-6);
-  const { data: req } = await client
-    .from("photo_brief_requests")
-    .select("id, workspace_id, guide_id, recipient_name, status")
-    .eq("token", token)
-    .maybeSingle();
+
+  // Fast path: try the Cloudflare-cached bundle first.
+  const cached = await fetchCachedBundle(token);
+
+  let req: { id: string; workspace_id: string; guide_id: string | null; recipient_name: string | null; status: string | null } | null = null;
+  let ws: { name: string | null } | null = null;
+  let brand:
+    | {
+        logo_url: string | null;
+        primary_color: string | null;
+        intro_message: string | null;
+        completion_message: string | null;
+        hide_photobrief_branding: boolean | null;
+      }
+    | null = null;
+  let guide: PhotoGuide | null = null;
+
+  if (cached) {
+    req = cached.request;
+    ws = cached.workspace_name ? { name: cached.workspace_name } : null;
+    brand = cached.brand;
+    if (cached.guide) {
+      guide = rowToGuide(cached.guide, cached.guide.steps, cached.guide.questions);
+    }
+  } else {
+    // Fallback: original direct token-scoped Supabase reads.
+    const { data: reqRow } = await client
+      .from("photo_brief_requests")
+      .select("id, workspace_id, guide_id, recipient_name, status")
+      .eq("token", token)
+      .maybeSingle();
+    req = reqRow as typeof req;
+
+    if (!req) {
+      throw new RecipientLoadError("PB-404", { token: tokenSuffix });
+    }
+
+    if (!req.guide_id) {
+      throw new RecipientLoadError("PB-425", {
+        token: tokenSuffix,
+        requestId: req.id,
+        workspaceId: req.workspace_id,
+        guideIdPresent: false,
+        status: req.status ?? null,
+      });
+    }
+
+    const [{ data: wsRow }, { data: brandRow }, guideRow] = await Promise.all([
+      client.from("business_workspaces").select("name").eq("id", req.workspace_id).maybeSingle(),
+      client
+        .from("brand_profiles")
+        .select("logo_url, primary_color, intro_message, completion_message, hide_photobrief_branding")
+        .eq("workspace_id", req.workspace_id)
+        .maybeSingle(),
+      guidesService.getByIdViaToken(token, req.guide_id),
+    ]);
+    ws = wsRow as typeof ws;
+    brand = brandRow as typeof brand;
+    guide = guideRow;
+  }
 
   if (!req) {
     throw new RecipientLoadError("PB-404", { token: tokenSuffix });
@@ -113,20 +239,6 @@ export async function loadRecipientContext(
       status: req.status ?? null,
     });
   }
-
-  const [{ data: ws }, { data: brand }, guide] = await Promise.all([
-    client
-      .from("business_workspaces")
-      .select("name")
-      .eq("id", req.workspace_id)
-      .maybeSingle(),
-    client
-      .from("brand_profiles")
-      .select("logo_url, primary_color, intro_message, completion_message, hide_photobrief_branding")
-      .eq("workspace_id", req.workspace_id)
-      .maybeSingle(),
-    guidesService.getByIdViaToken(token, req.guide_id),
-  ]);
 
   if (!guide) {
     throw new RecipientLoadError("PB-425", {

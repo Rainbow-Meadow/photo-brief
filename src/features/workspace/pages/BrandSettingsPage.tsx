@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { UpgradePromptCard } from "@/components/shared/UpgradePromptCard";
 import { usePlan } from "@/hooks/usePlan";
 import { useCurrentWorkspace } from "@/hooks/useCurrentWorkspace";
+import { invalidateRecipientBundlesForWorkspace } from "@/services/recipientBundleCache";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
@@ -155,6 +156,9 @@ export default function BrandSettingsPage() {
         ? await supabase.from("brand_profiles").update(payload).eq("id", profileId)
         : await supabase.from("brand_profiles").insert(payload);
       if (bpErr) throw bpErr;
+
+      // Drop the public recipient-bundle cache for every link in this workspace.
+      void invalidateRecipientBundlesForWorkspace(workspace.id);
 
       toast({ title: "Brand saved", description: "Your recipient pages will use these settings." });
     } catch (err: any) {

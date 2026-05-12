@@ -8,8 +8,9 @@ import { withSupabaseRetry as withRetry } from "@/lib/supabaseRetry";
 import { getTokenClient } from "@/integrations/supabase/tokenClient";
 import type { PhotoGuide } from "@/types/photobrief";
 import type { RequestDraft } from "@/types/requestDraft";
+import { invalidateRecipientBundlesForGuide } from "@/services/recipientBundleCache";
 
-function rowToGuide(g: any, steps: any[], questions: any[]): PhotoGuide {
+export function rowToGuide(g: any, steps: any[], questions: any[]): PhotoGuide {
   return {
     id: g.id,
     workspaceId: g.workspace_id ?? undefined,
@@ -242,6 +243,8 @@ export const guidesService = {
       supabase.from("guide_steps").select("*").eq("guide_id", guideId),
       supabase.from("context_questions").select("*").eq("guide_id", guideId),
     ]);
+    // Drop the public recipient bundle cache for any /r/:token using this guide.
+    void invalidateRecipientBundlesForGuide(guideId);
     return rowToGuide(guide, stepsRows ?? [], qRows ?? []);
   },
 
