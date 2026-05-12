@@ -7,7 +7,10 @@ import { ReadinessScoreBadge } from "@/components/shared/ReadinessScoreBadge";
 import { Button } from "@/components/ui/button";
 import { useIntakeBrief } from "@/hooks/useIntakeBriefs";
 import { formatRelativeTime } from "@/utils/format";
-import type { IntakeBrief } from "@/types/intake";
+
+function humanize(value: string) {
+  return value.replace(/_/g, " ");
+}
 
 export default function IntakeBriefDetailPage() {
   const { id } = useParams();
@@ -72,7 +75,7 @@ export default function IntakeBriefDetailPage() {
         <InfoCard title="Readiness">
           <div className="flex flex-wrap items-center gap-2">
             {brief.readinessScore !== null && brief.readinessScore !== undefined ? <ReadinessScoreBadge score={brief.readinessScore} /> : null}
-            <StatusBadge label={brief.readinessStatus.replaceAll("_", " ")} tone={brief.readinessStatus.includes("ready") ? "success" : "warning"} />
+            <StatusBadge label={humanize(brief.readinessStatus)} tone={brief.readinessStatus.includes("ready") ? "success" : "warning"} />
           </div>
           <p className="mt-3 text-sm leading-6 text-muted-foreground">{brief.nextAction ?? "Review this brief and follow up with the customer."}</p>
         </InfoCard>
@@ -91,7 +94,7 @@ export default function IntakeBriefDetailPage() {
 
         <div className="space-y-4">
           <InfoCard title="Photo handling">
-            <StatusBadge label={brief.photoPolicy.replaceAll("_", " ")} tone={brief.photoPolicy === "required" ? "warning" : brief.photoPolicy === "not_needed" ? "muted" : "info"} />
+            <StatusBadge label={humanize(brief.photoPolicy)} tone={brief.photoPolicy === "required" ? "warning" : brief.photoPolicy === "not_needed" ? "muted" : "info"} />
             <p className="mt-3 text-sm leading-6 text-muted-foreground">
               {brief.photosProvided ? `${brief.photoCount} photos provided.` : "No photos provided with this intake brief."}
             </p>
@@ -105,7 +108,7 @@ export default function IntakeBriefDetailPage() {
           <InfoCard title="Missing items">
             {brief.missingItems.length ? (
               <ul className="space-y-1 text-sm text-muted-foreground">
-                {brief.missingItems.map((item) => <li key={item}>• {item.replaceAll("_", " ")}</li>)}
+                {brief.missingItems.map((item) => <li key={item}>• {humanize(item)}</li>)}
               </ul>
             ) : (
               <p className="text-sm text-muted-foreground">No missing items flagged.</p>
@@ -133,7 +136,7 @@ function KeyValueList({ data }: { data: Record<string, unknown> }) {
     <dl className="divide-y divide-border">
       {entries.map(([key, value]) => (
         <div key={key} className="grid gap-1 py-3 sm:grid-cols-3 sm:gap-4">
-          <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{key.replaceAll("_", " ")}</dt>
+          <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{humanize(key)}</dt>
           <dd className="text-sm leading-6 text-foreground sm:col-span-2">{formatValue(value)}</dd>
         </div>
       ))}
