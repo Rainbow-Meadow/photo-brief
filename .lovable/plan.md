@@ -1,36 +1,68 @@
-## Rebalance negative space in the mechanism section
+## Marketing-only proximity scroll snap
 
-### Problem
-`MechanismGrid` wraps every illustration in a fixed `aspect-[16/10]` frame at `lg:col-span-7`. Two of the four assets (steps 02 Mechanism, 03 Brief) are tall portrait phone mockups, so they sit as tiny columns inside a giant landscape box with vast empty gutters left and right. The two landscape assets (01, 04) look fine. Copy column is also top-aligned within a tall row, leaving dead space below the paragraph.
+A lightweight CSS-only snap layer that gives the marketing surface a "deck" feel — when you let go near a section boundary the page settles to the start of that section — while preserving free scrolling inside long sections (FAQ, comparison) and leaving Lenis inertia, app routes, and embeds untouched.
 
-### Changes (single file: `src/components/marketing/MechanismGrid.tsx`)
+### Why CSS proximity (not JS hijacking)
+- `scroll-snap-type: y proximity` cooperates with Lenis; `mandatory` fights it.
+- Zero accessibility cost: keyboard, screen-reader, find-in-page, anchor links, and `scrollIntoView` all keep working.
+- Touch devices behave naturally (proximity only nudges on idle).
+- No layout changes required — sections don't need to be 100vh.
 
-1. **Tag each step with orientation.** Add `orientation: "landscape" | "portrait"` to the `workflowSteps` items:
-   - 01 Research → landscape
-   - 02 Mechanism → portrait
-   - 03 Brief → portrait
-   - 04 Close → landscape
+### Scope
+- Marketing routes only (every page rendered under `MarketingLayout`: `/`, `/pricing`, `/for-ai-agents`, `/privacy`, `/terms`, `/auth`, `/forgot-password`, `/reset-password`, `/unsubscribe`, `/help`, `/demo`, `/beta`, `/signup`, `/beta-invite/:token`, `/welcome`).
+- Explicitly excluded: app shell routes, `/badge/intake`, `/i/:token`, `/r/:token`, `/r/:token/done`, `NotFound`. These never render `MarketingLayout`, so they're untouched by construction.
 
-2. **Adjust column split per orientation.**
-   - Landscape rows: image `lg:col-span-7`, copy `lg:col-span-5` (current).
-   - Portrait rows: image `lg:col-span-5`, copy `lg:col-span-7` so the phone has a narrower column and the copy gets more breathing room — eliminates the empty gutters around the phone.
+### Implementation
 
-3. **Drop the fixed aspect frame; cap height instead.**
-   - Replace the `aspect-[16/10]` wrapper with a flex container: `flex items-center justify-center`.
-   - Image renders at intrinsic ratio with `h-auto w-full max-h-[520px] object-contain` for landscape, `max-h-[560px] w-auto mx-auto` for portrait. Removes the giant empty box around portrait phones and keeps landscape images full-bleed within their column.
+**1. `src/components/layout/MarketingLayout.tsx`** — toggle a marker class on `<html>` only while a marketing route is mounted.
+```tsx
+useEffect(() => {
+  const root = document.documentElement;
+  root.classList.add("pb-snap-root");
+  return () => root.classList.remove("pb-snap-root");
+}, []);
+```
+Class is removed on unmount so navigating into the app instantly drops the snap behavior.
 
-4. **Vertically center copy in each row.** Already `items-center` on the row — keep, and ensure copy column uses the row's vertical centering instead of stretching. Trim row gap from `lg:gap-12` to `lg:gap-16` for a touch more horizontal breathing room between image and copy.
+**2. `src/index.css`** — add the snap utility scoped to that class.
+```css
+@media (prefers-reduced-motion: no-preference) {
+  html.pb-snap-root {
+    scroll-snap-type: y proximity;
+  }
+  /* Snap each top-level marketing <section> to the viewport top, accounting for the floating sticky header (~80px). */
+  html.pb-snap-root .pb-landing > main > section {
+    scroll-snap-align: start;
+    scroll-snap-stop: normal;     /* never block fast scrolls */
+    scroll-margin-top: 5rem;       /* clears the sticky pill nav */
+  }
+  /* Footer should not act as a snap target. */
+  html.pb-snap-root .pb-landing > footer {
+    scroll-snap-align: none;
+  }
+}
+```
+- `proximity` (not `mandatory`) → only snaps when the scroll naturally settles within ~10–15% of a boundary.
+- `scroll-snap-stop: normal` → multi-section flicks aren't trapped on the next section.
+- `scroll-margin-top: 5rem` → snap point sits below the floating pill nav so headings aren't covered.
+- `prefers-reduced-motion` guard → users with reduced motion get no snap at all.
 
-5. **Tighten vertical rhythm.** Reduce `space-y-16 lg:space-y-24` to `space-y-20 lg:space-y-28` only if rows shrink noticeably — keep current values otherwise; verify in preview.
+**3. Smooth scrolling alignment** — Lenis already animates `window.scrollTo`, so anchor links (`#workflow`, `#faq`, etc.) and the "Skip to content" type behaviors continue to land cleanly on snap points (Lenis settles the scroll, browser proximity snaps at rest).
 
-6. **Mobile (`<lg`):** unchanged single-column stack; image still renders at intrinsic ratio with same `max-h` caps so portrait phones don't dominate small screens.
-
-### Out of scope
-- Copy text, asset swaps, animations, the `SectionIntro` heading block, other sections.
-- Any token/color changes.
+### What this does NOT change
+- No JS scroll listeners, no wheel/keyboard hijacking, no per-section observers.
+- No section markup changes anywhere — all current `Section` components already render as `<section>`.
+- No effect on horizontally scrolling marquees, modals, sheets, or nested scroll containers (snap is on the document only).
+- No effect on `MarketingLayout` short pages (auth/legal): with one section there's nothing to snap to, so behavior is unchanged.
+- App routes, embeds, and recipient capture flows are untouched — they don't render `MarketingLayout`, so the `pb-snap-root` class never gets added.
 
 ### Verification
-After edit, screenshot the section at 1399×887 to confirm:
-- Portrait rows no longer have huge empty side gutters.
-- Landscape rows still fill their column.
-- Copy sits visually centered next to each image.
+After the edit, in preview:
+1. Land on `/` and let the wheel coast near the Mechanism / Comparison / FAQ / CTA boundaries — page should settle on the section top with the heading just below the pill nav.
+2. Inside the long FAQ accordion, mid-section scroll must remain free (no snap-back).
+3. Click footer "Privacy" → scroll naturally on a short page (no snap artifacts).
+4. Hard-refresh on `/dashboard` (or any app route) — `html.pb-snap-root` should not be present and scroll should be 100% native.
+5. Test `prefers-reduced-motion: reduce` (DevTools rendering pane) — snap disabled entirely.
+
+### Out of scope
+- Section indicator dots / progress rail, presenter-style page-by-page nav, scroll-driven animations, per-section background swaps, anchor-aware nav highlighting. These are separate features and can build on the snap foundation later if requested.
