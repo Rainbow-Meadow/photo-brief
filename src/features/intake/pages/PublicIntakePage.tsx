@@ -186,28 +186,38 @@ export default function PublicIntakePage() {
   if (submitted) {
     return (
       <PublicShell>
-        <section className="border border-border bg-card p-5 text-center sm:p-7">
-          <span className="mx-auto flex h-12 w-12 items-center justify-center border border-border text-[hsl(var(--accent-kinetic))]">
-            <CheckCircle2 className="h-5 w-5" />
+        <section className="border border-border bg-card p-6 text-center sm:p-8">
+          <span className="mx-auto flex h-14 w-14 items-center justify-center border border-border bg-background text-[hsl(var(--accent-kinetic))]">
+            <CheckCircle2 className="h-6 w-6" />
           </span>
-          <p className="mt-5 font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+          <p className="mt-6 font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
             {config?.businessName}
           </p>
-          <h1 className="mt-2 font-[Geist,Inter,system-ui,sans-serif] text-[clamp(1.6rem,4vw,2.35rem)] font-semibold leading-[1.05] tracking-[-0.03em] text-foreground">
-            Request received
+          <h1 className="mt-2 font-[Geist,Inter,system-ui,sans-serif] text-[clamp(1.7rem,4.5vw,2.4rem)] font-semibold leading-[1.05] tracking-[-0.03em] text-foreground">
+            Thanks — we’ve got it
           </h1>
           <p className="mx-auto mt-4 max-w-md text-base leading-7 text-muted-foreground">
-            {submitted.message ?? "Thanks — your details were sent over and the business has a clean intake brief to review."}
+            {submitted.message ?? "Your request was sent to the team. They’ll review the brief and follow up shortly."}
           </p>
-          {submitted.nextAction ? (
-            <p className="mt-5 border border-border bg-background p-4 text-left text-sm leading-6 text-muted-foreground">
-              <span className="font-mono text-[0.65rem] uppercase tracking-[0.16em] text-foreground">Next step</span>
-              <br />
-              {submitted.nextAction}
-            </p>
-          ) : null}
-          <p className="mt-5 text-xs leading-5 text-muted-foreground">
-            Photos were {photoPolicyLabel(submitted.photoPolicy)} for this request.
+
+          <dl className="mx-auto mt-6 grid max-w-md gap-2 text-left">
+            {submitted.nextAction ? (
+              <div className="border border-border bg-background p-4">
+                <dt className="font-mono text-[0.65rem] uppercase tracking-[0.16em] text-muted-foreground">What happens next</dt>
+                <dd className="mt-1.5 text-sm leading-6 text-foreground">{submitted.nextAction}</dd>
+              </div>
+            ) : null}
+            <div className="border border-border bg-background p-4">
+              <dt className="font-mono text-[0.65rem] uppercase tracking-[0.16em] text-muted-foreground">Photos</dt>
+              <dd className="mt-1.5 text-sm leading-6 text-foreground">
+                {photoPolicyShort(submitted.photoPolicy)}
+                <span className="text-muted-foreground"> — {photoPolicySentence(submitted.photoPolicy)}.</span>
+              </dd>
+            </div>
+          </dl>
+
+          <p className="mx-auto mt-6 max-w-sm text-xs leading-5 text-muted-foreground">
+            You can close this page. If anything is needed, the business will reach out using the contact details you provided.
           </p>
         </section>
 
