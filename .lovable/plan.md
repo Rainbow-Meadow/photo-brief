@@ -103,8 +103,12 @@ Bindings live; still TODO: `recordUsage()` call sites, the `analytics-aggregate`
 **Step 3 — Durable Object capture sessions: 🟡 binding stubbed**
 `CAPTURE_SESSION` DO binding + v2 migration declared in `capture-agent/wrangler.toml`. Class implementation, worker routes, and frontend `useCaptureAgent` swap are pending.
 
-**Step 4 — KV recipient bundle cache: 🟡 namespace ready**
-KV namespace bound to all relevant workers. Worker route + frontend swap + invalidation hooks are pending.
+**Step 4 — KV recipient bundle cache: ✅ shipped (worker deploy pending)**
+- Worker route `GET /recipient/:token/bundle` and `POST /recipient/:token/invalidate` added to `assistant-agent` (`workers/assistant-agent/src/index.ts`).
+- Shared assembler at `workers/_shared/recipient-bundle.ts` (uses Supabase REST + service role, mirrors `recipientContext.ts` shape including snake_case `instruction`/`capture_type`/`label`/`input_type` columns).
+- Frontend `recipientContext.ts` now tries `https://assistant.photobrief.ai/recipient/:token/bundle` first, falls back transparently to direct token-scoped Supabase reads on any failure. `rowToGuide` exported from `guidesService` for shared mapping.
+- Invalidation: edge function `invalidate-recipient-bundle` (deployed) holds the service-role key and forwards to the worker. Frontend helper `services/recipientBundleCache.ts` exposes `invalidateRecipientBundle(token)`, `...ForWorkspace(workspaceId)`, `...ForGuide(guideId)`. Wired into `guidesService.updateGuide` and `BrandSettingsPage` save.
+- ⚠️ Requires re-deploy of `photobrief-assistant-agent` worker. KV namespace `f7d82555b5894d6cb44d7139b718d8c2` and service-role secret store binding are already configured.
 
 **Step 5 — Cloudflare Queues for email: ⏸ deferred** per plan, only after Steps 1–4 are stable.
 
