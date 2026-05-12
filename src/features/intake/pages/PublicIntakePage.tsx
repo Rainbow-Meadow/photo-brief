@@ -130,6 +130,7 @@ export default function PublicIntakePage() {
         setSubmitted({
           briefId: data.briefId,
           sessionId: data.sessionId,
+          sessionToken: data.sessionToken,
           readinessStatus: data.readiness_status,
           photoPolicy: data.photo_policy,
           nextAction: data.next_action,
