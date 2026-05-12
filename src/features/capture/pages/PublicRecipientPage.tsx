@@ -208,6 +208,7 @@ function RecipientWorkflow({ ctx, token, navigate }: { ctx: RecipientContext; to
 
   const handleSubmit = async () => {
     if (submitting) return;
+    setSubmitError(null);
     setSubmitting(true);
 
     // Demo / preview path (no real backend wiring) — proceed optimistically.
@@ -223,6 +224,7 @@ function RecipientWorkflow({ ctx, token, navigate }: { ctx: RecipientContext; to
       return;
     }
 
+    let succeeded = false;
     try {
       const submission = await submissionsService.submitFromRecipient({
         token,
@@ -258,12 +260,26 @@ function RecipientWorkflow({ ctx, token, navigate }: { ctx: RecipientContext; to
         answers: flow.answers.length,
         resubmit: !!ctx.resubmit,
       });
+      succeeded = true;
 
       setTimeout(() => navigate(`/r/${token}/done`), 1200);
     } catch (err) {
-      console.error("Submission failed", err);
-      setSubmitting(false);
-      toast.error("We couldn't send your photos — please try again.");
+      const descriptor = classifySubmitError(err);
+      console.error("Submission failed", descriptor.code, err);
+      trackEvent("submission_failed", {
+        guide_id: ctx.guide.id,
+        request_id: ctx.requestId,
+        code: descriptor.code,
+      });
+      setSubmitError(descriptor);
+      toast.error(`${descriptor.headline} (${descriptor.code})`, {
+        description: descriptor.body,
+      });
+    } finally {
+      // Always re-enable the button on failure. On success we keep the
+      // disabled state through the brief navigation transition so the user
+      // can't double-submit before /done loads.
+      if (!succeeded) setSubmitting(false);
     }
   };
 
