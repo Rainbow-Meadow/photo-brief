@@ -1,5 +1,6 @@
 import { Outlet, NavLink, useLocation } from "react-router-dom";
-import { Plus, LifeBuoy, KeyRound, LogOut, Globe2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Plus, LifeBuoy, KeyRound, LogOut, Globe2, Search } from "lucide-react";
 import { FeedbackWidget } from "@/features/support/components/FeedbackWidget";
 
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
@@ -7,6 +8,7 @@ import { AppSidebar } from "@/components/layout/AppSidebar";
 import { NotificationBell } from "@/components/layout/NotificationBell";
 import { MobileTabBar } from "@/components/layout/MobileTabBar";
 import { BrandMark } from "@/components/layout/BrandMark";
+import { CommandMenu } from "@/components/shell/CommandMenu";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
