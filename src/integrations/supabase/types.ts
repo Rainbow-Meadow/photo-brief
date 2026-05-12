@@ -1145,6 +1145,147 @@ export type Database = {
           },
         ]
       }
+      intake_briefs: {
+        Row: {
+          answers: Json
+          blueprint_id: string | null
+          brief: Json
+          created_at: string
+          customer_contact: Json
+          customer_id: string | null
+          id: string
+          intake_session_id: string
+          intake_source_id: string | null
+          linked_photo_brief_request_id: string | null
+          missing_items: string[]
+          next_action: string | null
+          photo_count: number
+          photo_policy: string
+          photos_provided: boolean
+          readiness_score: number | null
+          readiness_status: string
+          route_label: string | null
+          routing_rule_id: string | null
+          service_label: string | null
+          status: string
+          summary: string | null
+          title: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          answers?: Json
+          blueprint_id?: string | null
+          brief?: Json
+          created_at?: string
+          customer_contact?: Json
+          customer_id?: string | null
+          id?: string
+          intake_session_id: string
+          intake_source_id?: string | null
+          linked_photo_brief_request_id?: string | null
+          missing_items?: string[]
+          next_action?: string | null
+          photo_count?: number
+          photo_policy?: string
+          photos_provided?: boolean
+          readiness_score?: number | null
+          readiness_status?: string
+          route_label?: string | null
+          routing_rule_id?: string | null
+          service_label?: string | null
+          status?: string
+          summary?: string | null
+          title?: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          answers?: Json
+          blueprint_id?: string | null
+          brief?: Json
+          created_at?: string
+          customer_contact?: Json
+          customer_id?: string | null
+          id?: string
+          intake_session_id?: string
+          intake_source_id?: string | null
+          linked_photo_brief_request_id?: string | null
+          missing_items?: string[]
+          next_action?: string | null
+          photo_count?: number
+          photo_policy?: string
+          photos_provided?: boolean
+          readiness_score?: number | null
+          readiness_status?: string
+          route_label?: string | null
+          routing_rule_id?: string | null
+          service_label?: string | null
+          status?: string
+          summary?: string | null
+          title?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "intake_briefs_blueprint_id_fkey"
+            columns: ["blueprint_id"]
+            isOneToOne: false
+            referencedRelation: "intake_blueprints"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "intake_briefs_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "intake_briefs_intake_session_id_fkey"
+            columns: ["intake_session_id"]
+            isOneToOne: true
+            referencedRelation: "intake_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "intake_briefs_intake_source_id_fkey"
+            columns: ["intake_source_id"]
+            isOneToOne: false
+            referencedRelation: "intake_sources"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "intake_briefs_linked_photo_brief_request_id_fkey"
+            columns: ["linked_photo_brief_request_id"]
+            isOneToOne: false
+            referencedRelation: "photo_brief_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "intake_briefs_linked_photo_brief_request_id_fkey"
+            columns: ["linked_photo_brief_request_id"]
+            isOneToOne: false
+            referencedRelation: "requests_inbox_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "intake_briefs_routing_rule_id_fkey"
+            columns: ["routing_rule_id"]
+            isOneToOne: false
+            referencedRelation: "intake_routing_rules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "intake_briefs_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "business_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       intake_events: {
         Row: {
           created_at: string
@@ -1234,6 +1375,10 @@ export type Database = {
           is_fallback: boolean
           label: string
           match_keywords: string[]
+          photo_policy: string
+          photo_policy_reason: string | null
+          questions: Json
+          readiness_goal: string
           service_catalog_item_ids: string[]
           sort_order: number
           template_type: string
@@ -1248,6 +1393,10 @@ export type Database = {
           is_fallback?: boolean
           label: string
           match_keywords?: string[]
+          photo_policy?: string
+          photo_policy_reason?: string | null
+          questions?: Json
+          readiness_goal?: string
           service_catalog_item_ids?: string[]
           sort_order?: number
           template_type: string
@@ -1262,6 +1411,10 @@ export type Database = {
           is_fallback?: boolean
           label?: string
           match_keywords?: string[]
+          photo_policy?: string
+          photo_policy_reason?: string | null
+          questions?: Json
+          readiness_goal?: string
           service_catalog_item_ids?: string[]
           sort_order?: number
           template_type?: string
@@ -1284,6 +1437,131 @@ export type Database = {
           },
           {
             foreignKeyName: "intake_routing_rules_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "business_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      intake_sessions: {
+        Row: {
+          answers: Json
+          blueprint_id: string | null
+          created_at: string
+          customer_contact: Json
+          customer_id: string | null
+          id: string
+          intake_source_id: string | null
+          linked_photo_brief_request_id: string | null
+          metadata: Json
+          photo_policy: string
+          public_session_token: string
+          raw_payload: Json
+          readiness_status: string
+          routing_rule_id: string | null
+          selected_route_label: string | null
+          selected_service: string | null
+          source: string
+          started_at: string
+          status: string
+          submitted_at: string | null
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          answers?: Json
+          blueprint_id?: string | null
+          created_at?: string
+          customer_contact?: Json
+          customer_id?: string | null
+          id?: string
+          intake_source_id?: string | null
+          linked_photo_brief_request_id?: string | null
+          metadata?: Json
+          photo_policy?: string
+          public_session_token?: string
+          raw_payload?: Json
+          readiness_status?: string
+          routing_rule_id?: string | null
+          selected_route_label?: string | null
+          selected_service?: string | null
+          source?: string
+          started_at?: string
+          status?: string
+          submitted_at?: string | null
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          answers?: Json
+          blueprint_id?: string | null
+          created_at?: string
+          customer_contact?: Json
+          customer_id?: string | null
+          id?: string
+          intake_source_id?: string | null
+          linked_photo_brief_request_id?: string | null
+          metadata?: Json
+          photo_policy?: string
+          public_session_token?: string
+          raw_payload?: Json
+          readiness_status?: string
+          routing_rule_id?: string | null
+          selected_route_label?: string | null
+          selected_service?: string | null
+          source?: string
+          started_at?: string
+          status?: string
+          submitted_at?: string | null
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "intake_sessions_blueprint_id_fkey"
+            columns: ["blueprint_id"]
+            isOneToOne: false
+            referencedRelation: "intake_blueprints"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "intake_sessions_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "intake_sessions_intake_source_id_fkey"
+            columns: ["intake_source_id"]
+            isOneToOne: false
+            referencedRelation: "intake_sources"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "intake_sessions_linked_photo_brief_request_id_fkey"
+            columns: ["linked_photo_brief_request_id"]
+            isOneToOne: false
+            referencedRelation: "photo_brief_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "intake_sessions_linked_photo_brief_request_id_fkey"
+            columns: ["linked_photo_brief_request_id"]
+            isOneToOne: false
+            referencedRelation: "requests_inbox_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "intake_sessions_routing_rule_id_fkey"
+            columns: ["routing_rule_id"]
+            isOneToOne: false
+            referencedRelation: "intake_routing_rules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "intake_sessions_workspace_id_fkey"
             columns: ["workspace_id"]
             isOneToOne: false
             referencedRelation: "business_workspaces"
