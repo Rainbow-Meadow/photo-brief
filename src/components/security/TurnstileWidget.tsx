@@ -74,7 +74,13 @@ export function TurnstileWidget({
   const ref = useRef<HTMLDivElement | null>(null);
   const widgetIdRef = useRef<string | null>(null);
 
+  // On Lovable preview / dev hosts, skip the Cloudflare widget entirely so
+  // headless browsers (and degraded-CDN sessions) aren't blocked by the
+  // "Unable to complete" error overlay. Production hosts always render it.
+  const skip = isAutomatedPreviewHost();
+
   useEffect(() => {
+    if (skip) return;
     let cancelled = false;
     loadScript()
       .then(() => {
@@ -102,5 +108,8 @@ export function TurnstileWidget({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  if (skip) {
+    return <div data-testid="turnstile-skipped" className={className} />;
+  }
   return <div ref={ref} className={className} />;
 }
