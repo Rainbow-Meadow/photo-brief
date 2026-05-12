@@ -1,3 +1,4 @@
+// build: refresh hosted bundle so Supabase env vars get baked in (2026-05-12)
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowRight, CheckCircle2, Loader2, LockKeyhole, MessageSquareText, Sparkles } from "lucide-react";
