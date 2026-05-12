@@ -1,54 +1,75 @@
-## Refactor `InteractiveHeroBriefAssembly` to the Cedar & Sons exchange
+# Live E2E Test Plan: PhotoBrief Intake Flow (Cedar & Sons scenario)
 
-The interactive demo currently stars **ClearPath Junk Removal / Sarah Johnson / garage cleanout**. It should mirror the same Cedar & Sons exchange shown in the hero before/after slider so the whole landing page tells one story end-to-end.
+## Objective
+Run a real, evidence-backed end-to-end test of "Send a link. Get a complete brief." against the live preview. Use the **Cedar & Sons leaning-oak tree-care** scenario already used in the hero/interactive demo so test data stays consistent across the product.
 
-### Story to mirror
+## Test data (Cedar & Sons)
+- Business: existing seed workspace (per `mem://seed-users`) — do **not** create a new business
+- Request title: `Cedar & Sons — Leaning Oak Estimate (E2E <ISO timestamp>)`
+- Recipient name: `Cedar & Sons Test Homeowner`
+- Recipient email: safe `+e2e` alias on the seed user's domain
+- Photos: reuse the four tree-care fixtures already in repo
+  - `src/assets/tree-care/leaning-oak-wide.jpg`
+  - `src/assets/tree-care/oak-trunk-closeup.jpg`
+  - `src/assets/tree-care/house-elevation.jpg`
+  - `src/assets/tree-care/driveway-access.jpg`
+- Intake answers mirror the InteractiveHeroBriefAssembly script (lean direction, target species, access notes)
 
-- **Brand:** Cedar & Sons Tree Care — green palette, `TreePine` icon, tagline "Tree care done right."
-- **Customer:** Jamie Smith at **23 Maple St**
-- **Job:** Leaning oak after the storm — removal + stump grind
-- **Outcome on the business phone:** Quote-ready packet, $1,450 removal / $390 stump grinding / **$1,840 total**, "Available Thursday 8am."
+## Phase 1 — Recon (read-only)
+1. Read `mem://seed-users` for the login + workspace to use.
+2. Map live routes from `src/App.tsx` (request create, request detail, `/r/:token`, submission review).
+3. Confirm services + edge functions involved (`requestsService`, `submissionsService`, `r2MediaService`, AI photo check, AI summary).
+4. List DB tables to verify: `photo_brief_requests`, `submissions`, `captured_media`, `ai_check_results`, `submission_reviews`, `usage_events`, `credit_ledger`, plus `submission-media` storage.
 
-### Photo set (4 shots)
+## Phase 2 — Live execution
 
-Replace the 4 junk-removal images with new tree-care photos under `src/assets/tree-care/`:
+### A. Business-side setup
+- Sign in as the seed user via `browser--navigate_to_sandbox`.
+- Create the Cedar & Sons request above; capture request ID, `/r/:token`, timestamps.
+- `supabase--read_query` confirms row in `photo_brief_requests` and a `request_created` event in `usage_events`.
 
-1. `leaning-oak-wide.webp` — wide shot of the leaning oak with the house in frame *(Verified)*
-2. `oak-trunk-closeup.webp` — closeup of the trunk base / lean angle — generated **blurry-feeling first attempt** stays in the BLURRY_INDEX retake flow *(Verified after retake)*
-3. `house-elevation.webp` — house side that the tree threatens — overhead branches *(Needs review — proximity to roof)*
-4. `driveway-access.webp` — driveway showing truck/chipper access *(Verified)*
+### B. Recipient flow (unauthenticated session)
+- Open `/r/:token` with no auth.
+- Walk the stepper using the four tree-care fixtures (copied to `/tmp` first so the file input can read them).
+- Provide Cedar & Sons answers.
+- Trigger AI photo check; capture verdicts.
+- Negative cases: submit missing required photo, missing required answer → expect blocked.
+- Submit. Capture submission ID + `submitted_at`.
+- Reopen completed link → expect read-only/confirmation state.
+- Hit a tampered token → expect graceful invalid screen.
 
-Generate all four with `imagegen` (fast tier, ~1024×1024, .webp via .jpg fallback if needed).
+### C. Business review
+- Back as seed user, open the request + submission.
+- Verify media renders, AI notes / readiness score / plain-English summary present (or report missing), status moved `sent → opened → submitted → reviewed`.
+- Screenshot each verification step.
 
-### Question set (replaces junk-removal Qs)
+### D. Backend verification (`supabase--read_query`)
+For the captured IDs, dump and report rows from each table listed above plus storage objects in `submission-media`. Check for orphans, duplicates, and any service-role leakage in network responses.
 
-`CUSTOMER_ANSWERS` becomes:
+### E. Credits sanity
+- Snapshot `current_credit_balance(workspace_id)` before/after.
+- Confirm: each submitted photo = 1 credit (`ai_photo_check`), first-pass follow-ups = 0 (`first_pass_followup_photo`), no double-charge on resubmission.
 
-- "What's the issue?" → "Leaning oak after storm"
-- "Tree height (approx)?" → "40–50 ft"
-- "Stump grinding needed?" → "Yes"
+### F. Responsive
+- Run the recipient flow once at 390x844 viewport to match real mobile usage.
 
-`CustomerQuestionsScreen` chips become tree-relevant: issue chips (Leaning, Dead/dying, Storm damage, Limbs over house), height segmented (Under 20 ft / 20–40 / 40+), stump (Yes / No).
+## Phase 3 — Reporting
+Deliver the full report the user requested:
+1. Executive summary + direct yes/no on the core promise.
+2. Environment block (URL, timestamps, IDs, branch).
+3. Step-by-step results table (Step / Expected / Actual / Pass-Fail / Evidence).
+4. Bug list (severity, repro, suspected cause, suggested fix, files involved).
+5. Data integrity findings from SQL.
+6. Prioritized recommended fixes.
+7. Code changes section — only if a blocker is found and the fix is small and obvious. Scoped, no secrets, lint/typecheck/build run.
 
-### Brand + copy swaps
+Artifacts (screenshots, SQL output) saved under `/mnt/documents/e2e-photobrief/` and surfaced via `presentation-artifact` tags.
 
-- `BRAND` constant → name "Cedar & Sons Tree Care", short "Cedar & Sons", tagline "Tree care done right.", color `#15803d` (green-700), light `#dcfce7`, mid `#86efac`, ring `rgba(21,128,61,0.25)`.
-- Replace every `Truck` icon used as the brand mark with `TreePine` (header, idle dashboard, request screen hero).
-- Website URL "clearpathjunk.com" → "cedarandsonstreecare.com".
-- Request screen body copy → "Big tree out front looks bad after the storm — can you come look?" and address line → "23 Maple St".
-- Notification/lead name → "Jamie Smith"; package line → "Leaning oak — 23 Maple St".
-- `BriefCompleteScreen` AI summary → "Leaning oak at 23 Maple St — removal + stump grind. ~40 ft, ground-level driveway access. All photos verified. Confirm proximity to roofline before crew dispatch."
-- `BriefCompleteScreen`: add a small **Quote line items** block above the "Quote now" button — Tree removal $1,450 / Stump grinding $390 / **Total $1,840**, plus "Available Thursday 8am" microcopy. (Matches the after-hero email.)
-- `CustomerConfirmationScreen` copy → "Cedar & Sons has your photos and will follow up with a quote." (auto-flows from BRAND.name.)
+## Hard stops (will halt and report)
+- Seed login fails / 2FA blocks.
+- Browser tool unavailable.
+- Recipient route returns the prior "VITE_SUPABASE_URL missing" error in preview.
+- AI gateway / edge functions return 5xx not fixable in-window.
 
-### Files
-
-- **New:** `src/assets/tree-care/leaning-oak-wide.webp`, `oak-trunk-closeup.webp`, `house-elevation.webp`, `driveway-access.webp` (4 generated images)
-- **Edit:** `src/components/marketing/InteractiveHeroBriefAssembly.tsx` — swap `BRAND`, `photos`, `CUSTOMER_ANSWERS`, replace `Truck`→`TreePine`, update request-screen form text, question chips, AI summary, add quote line items to `BriefCompleteScreen`
-- **No changes to:** state machine, phase flow, phone mockup chrome, lead-capture form, `Demo.tsx` wrapper
-
-### Out of scope
-
-- No backend / lead-capture changes.
-- No layout or motion changes to the dual-phone shell.
-- Keep the existing BLURRY_INDEX retake mechanic — just attach it to the trunk closeup instead of the appliance.
+## Known limitations
+- Browser automation can't drive native camera capture; uploads use the file-input fallback. Any step that strictly requires camera will be flagged and skipped, not faked.
