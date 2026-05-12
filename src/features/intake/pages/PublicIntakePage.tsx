@@ -379,14 +379,6 @@ export default function PublicIntakePage() {
   );
 }
 
-function photoPolicyLabel(policy?: PhotoPolicy) {
-  if (policy === "not_needed") return "not needed";
-  if (policy === "optional") return "optional";
-  if (policy === "recommended") return "recommended, but not required";
-  if (policy === "required") return "required";
-  return "conditional";
-}
-
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block space-y-1.5">
@@ -400,8 +392,9 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 
 function PublicShell({ children }: { children: React.ReactNode }) {
   return (
-    <main className="min-h-screen bg-background px-4 py-6 sm:py-10">
+    <main className="min-h-[100dvh] bg-background px-3 py-4 sm:px-4 sm:py-10">
       <div className="mx-auto max-w-xl">{children}</div>
     </main>
   );
 }
+
