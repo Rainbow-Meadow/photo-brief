@@ -5,30 +5,42 @@ import mechanismGearsIllo from "@/assets/rmbc/cedar/02-capture-phone-viewfinder.
 import briefPacketIllo from "@/assets/rmbc/cedar/03-brief-packet.png";
 import methodOverviewIllo from "@/assets/rmbc/cedar/04-close-gmail-quote.png";
 
-export const workflowSteps = [
+type Orientation = "landscape" | "portrait";
+
+export const workflowSteps: Array<{
+  n: string;
+  title: string;
+  body: string;
+  illo: string;
+  orientation: Orientation;
+}> = [
   {
     n: "01",
     title: "Research",
     body: "We scan your site, your trade, and the photos your estimators actually need. The ones that kill callbacks.",
     illo: researchMagnifierIllo,
+    orientation: "landscape",
   },
   {
     n: "02",
     title: "Mechanism",
     body: "The customer taps a link. The camera opens at the right angle. The right shot lands. No app, no login, no thinking.",
     illo: mechanismGearsIllo,
+    orientation: "portrait",
   },
   {
     n: "03",
     title: "Brief",
     body: "Photos, notes, and address arrive as one packet — formatted for your inbox, your CRM, and the person writing the quote.",
     illo: briefPacketIllo,
+    orientation: "portrait",
   },
   {
     n: "04",
     title: "Close",
     body: "Your team quotes on the first reply. The lead doesn't cool. The job moves.",
     illo: methodOverviewIllo,
+    orientation: "landscape",
   },
 ];
 
@@ -37,28 +49,31 @@ export function MechanismGrid() {
     <div className="space-y-16 lg:space-y-24">
       {workflowSteps.map((step, i) => {
         const flipped = i % 2 === 1;
+        const isPortrait = step.orientation === "portrait";
+        const imageColSpan = isPortrait ? "lg:col-span-5" : "lg:col-span-7";
+        const copyColSpan = isPortrait ? "lg:col-span-7" : "lg:col-span-5";
         return (
           <RiseIn key={step.n} delay={i * 0.05}>
-            <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-12">
+            <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-16">
               {/* Image */}
               <div
-                className={`lg:col-span-7 ${flipped ? "lg:order-2" : "lg:order-1"}`}
+                className={`${imageColSpan} ${flipped ? "lg:order-2" : "lg:order-1"} flex items-center justify-center`}
               >
-                <div className="aspect-[16/10] w-full">
-                  <img
-                    src={step.illo}
-                    alt=""
-                    className="h-full w-full object-contain"
-                    loading="lazy"
-                    width={1600}
-                    height={1000}
-                  />
-                </div>
+                <img
+                  src={step.illo}
+                  alt=""
+                  className={
+                    isPortrait
+                      ? "mx-auto h-auto w-auto max-h-[560px] max-w-full object-contain"
+                      : "h-auto w-full max-h-[520px] object-contain"
+                  }
+                  loading="lazy"
+                />
               </div>
 
               {/* Copy */}
               <div
-                className={`lg:col-span-5 ${flipped ? "lg:order-1" : "lg:order-2"}`}
+                className={`${copyColSpan} ${flipped ? "lg:order-1" : "lg:order-2"}`}
               >
                 <div className="flex items-baseline justify-between border-b border-border pb-3">
                   <span className="ls-numeral">{step.n}</span>
