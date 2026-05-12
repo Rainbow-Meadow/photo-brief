@@ -334,27 +334,35 @@ function SignpostSection() {
 function FaqSection() {
   return (
     <Section>
-      <Container width="narrow">
-        <SectionIntro eyebrow="[ 05 ] FAQ" title="Frequently. Honestly." />
-        <Accordion type="single" collapsible className="mt-10 border-t border-border">
-          {faqItems.slice(0, 4).map((item, i) => (
-            <AccordionItem key={item.q} value={`q-${i}`} className="border-b border-border py-2">
-              <AccordionTrigger className="text-left font-display text-lg font-medium tracking-tight hover:no-underline">
-                <span className="flex w-full items-baseline gap-4">
-                  <span className="ls-numeral shrink-0">{String(i + 1).padStart(2, "0")}</span>
-                  <span>{item.q}</span>
-                </span>
-              </AccordionTrigger>
-              <AccordionContent className="pl-12 text-muted-foreground">{item.a}</AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
-        <p className="mt-8 text-center text-sm text-muted-foreground">
-          More questions?{" "}
-          <NavLink to="/help" className="text-foreground underline-offset-4 hover:underline">
-            Read the full help center →
-          </NavLink>
-        </p>
+      <Container>
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-16">
+          {/* Sticky intro rail */}
+          <div className="lg:col-span-4">
+            <div className="lg:sticky lg:top-24">
+              <SectionIntro eyebrow="[ 05 ] FAQ" title="Frequently. Honestly." />
+              <p className="mt-2 text-sm text-muted-foreground">
+                More questions?{" "}
+                <NavLink to="/help" className="text-foreground underline-offset-4 hover:underline">
+                  Read the full help center →
+                </NavLink>
+              </p>
+            </div>
+          </div>
+
+          {/* Scrolling Q&A */}
+          <div className="lg:col-span-8">
+            <Accordion type="single" collapsible className="border-t border-border">
+              {faqItems.slice(0, 4).map((item, i) => (
+                <AccordionItem key={item.q} value={`q-${i}`} className="border-b border-border py-2">
+                  <AccordionTrigger className="text-left font-display text-lg font-medium tracking-tight hover:no-underline">
+                    {item.q}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground">{item.a}</AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+        </div>
       </Container>
     </Section>
   );
