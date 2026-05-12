@@ -76,7 +76,7 @@ export async function presignR2Url(args: {
     aws: {
       signQuery: true,
       allHeaders: false,
-      datetime: new Date(),
+      datetime: new Date().toISOString().replace(/[:-]|\.\d{3}/g, ""),
       expires: args.expiresSeconds ?? 900,
     },
   });
