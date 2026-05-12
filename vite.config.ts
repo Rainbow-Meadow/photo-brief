@@ -17,7 +17,7 @@ export default defineConfig(({ mode, command }) => {
     plugins: [
       react(),
       mode === "development" && componentTagger(),
-      command === "build" && mode !== "test" && {
+      command === "build" && mode === "production" && {
         name: "require-supabase-env",
         buildStart() {
           const required = ["VITE_SUPABASE_URL", "VITE_SUPABASE_PUBLISHABLE_KEY"];
