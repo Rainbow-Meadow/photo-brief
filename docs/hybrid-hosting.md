@@ -179,3 +179,7 @@ Keep this hybrid model for now. It is the lowest-risk optimized setup for the cu
 - Lovable/Supabase keeps the app runtime where auth and DB already live.
 - R2 handles media storage.
 - A future Worker can handle media proxying and other edge APIs without forcing a database/auth migration.
+
+## See also
+
+- [Cloudflare Workers AI catalog](./cloudflare-workers-ai-catalog.md) — full account model list and the tier-by-tier fallback strategy used by `aiModelRouter.ts`.

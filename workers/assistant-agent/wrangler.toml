@@ -32,6 +32,12 @@ id      = "cea7652fc3924714826c43a4090de08a"
 binding = "AE_USAGE"
 dataset = "pb_usage_events"
 
+# Workers AI binding (env.AI.run). Lets the agent fall back to the 91-model
+# Workers AI catalog when the Lovable Gateway is unavailable. See
+# docs/cloudflare-workers-ai-catalog.md for the per-tier model map.
+[ai]
+binding = "AI"
+
 # Recipient bundle cache (KV). Same namespace as router.
 [[kv_namespaces]]
 binding = "RECIPIENT_BUNDLES"

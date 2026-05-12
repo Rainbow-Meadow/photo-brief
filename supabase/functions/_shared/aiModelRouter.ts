@@ -18,6 +18,16 @@
 const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 
+// Cloudflare Workers AI fallback. Activated only when every Lovable
+// Gateway model in the tier chain has failed with a transient (non-429,
+// non-402) error. See docs/cloudflare-workers-ai-catalog.md for the full
+// model rationale. Disabled automatically if either secret is missing.
+const CF_ACCOUNT_ID = Deno.env.get("R2_ACCOUNT_ID"); // same Cloudflare account
+const CF_API_TOKEN = Deno.env.get("CLOUDFLARE_API_TOKEN");
+const CF_AI_BASE = CF_ACCOUNT_ID
+  ? `https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/ai/v1/chat/completions`
+  : null;
+
 export type AITask =
   | "recipient_guidance"
   | "photo_quality_check"
@@ -48,6 +58,19 @@ const TIER_CHAIN: Record<AITier, string[]> = {
     "openai/gpt-5-mini",
   ],
   cheap: ["openai/gpt-5-nano", "google/gemini-2.5-flash-lite"],
+};
+
+// Last-resort Cloudflare Workers AI chain per tier. These run only if
+// every Lovable Gateway model above failed transiently. The IDs are
+// OpenAI-compatible chat-completions models from the account catalog.
+const TIER_CHAIN_CLOUDFLARE: Record<AITier, string[]> = {
+  default: ["@cf/meta/llama-3.3-70b-instruct-fp8-fast"],
+  vision: [
+    "@cf/meta/llama-4-scout-17b-16e-instruct",
+    "@cf/meta/llama-3.2-11b-vision-instruct",
+  ],
+  escalation: ["@cf/openai/gpt-oss-120b", "@cf/qwen/qwq-32b"],
+  cheap: ["@cf/meta/llama-3.2-3b-instruct", "@cf/meta/llama-3.2-1b-instruct"],
 };
 
 const TASK_TIER: Record<AITask, AITier> = {
@@ -215,87 +238,113 @@ export class AIUnavailableError extends Error {
   }
 }
 
+type Provider = "gateway" | "cloudflare";
+
+function normalizeEnvelope(env: AIEnvelope): AIEnvelope {
+  env.flags = Array.isArray(env.flags) ? env.flags : [];
+  env.missing_items = Array.isArray(env.missing_items) ? env.missing_items : [];
+  env.confidence = typeof env.confidence === "number" ? env.confidence : 0.5;
+  env.recipient_feedback = env.recipient_feedback ?? null;
+  env.business_summary = env.business_summary ?? null;
+  env.suggested_next_action = env.suggested_next_action ?? null;
+  return env;
+}
+
+async function tryModel(
+  provider: Provider,
+  model: string,
+  input: RouterCallInput,
+): Promise<{ ok: true; envelope: AIEnvelope } | { ok: false; transient: true; reason: string }> {
+  const body: Record<string, unknown> = {
+    model,
+    messages: input.messages,
+    tools: input.tools,
+    tool_choice: input.tool_choice,
+  };
+  // OpenAI-only reasoning effort hint (Gateway side; CF gpt-oss accepts the
+  // same param but ignores unknown fields safely).
+  if (input.reasoningEffort && model.startsWith("openai/")) {
+    body.reasoning = { effort: input.reasoningEffort };
+  }
+
+  const url = provider === "gateway" ? GATEWAY_URL : CF_AI_BASE!;
+  const auth = provider === "gateway" ? LOVABLE_API_KEY! : CF_API_TOKEN!;
+
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${auth}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+
+  // Workspace-level errors propagate immediately — no fallback.
+  // Only the Lovable Gateway has the workspace credit/rate contract.
+  if (provider === "gateway") {
+    if (res.status === 429) throw new AIRateLimitError();
+    if (res.status === 402) throw new AICreditsError();
+  }
+
+  if (!res.ok) {
+    const txt = await res.text();
+    console.warn(`[aiRouter:${provider}] ${model} → ${res.status} ${txt.slice(0, 200)}`);
+    return { ok: false, transient: true, reason: `${provider}_${res.status}` };
+  }
+
+  const data = await res.json();
+  const call = data?.choices?.[0]?.message?.tool_calls?.[0];
+  if (!call?.function?.arguments) {
+    console.warn(`[aiRouter:${provider}] ${model} → no tool_call`);
+    return { ok: false, transient: true, reason: "no_tool_call" };
+  }
+  try {
+    const envelope = JSON.parse(call.function.arguments) as AIEnvelope;
+    return { ok: true, envelope: normalizeEnvelope(envelope) };
+  } catch (e) {
+    console.warn(`[aiRouter:${provider}] ${model} → unparseable tool_call`, e);
+    return { ok: false, transient: true, reason: "unparseable" };
+  }
+}
+
 export async function callAIWithRouter(
   input: RouterCallInput,
 ): Promise<RouterCallResult> {
   if (!LOVABLE_API_KEY) {
     throw new Error("LOVABLE_API_KEY not configured");
   }
-  const chain = modelsForTask(input.task, { escalate: input.escalate });
+  const tier = tierForTask(input.task);
+  const gatewayChain = modelsForTask(input.task, { escalate: input.escalate });
+  const cfChain = CF_AI_BASE && CF_API_TOKEN ? TIER_CHAIN_CLOUDFLARE[tier] : [];
   const attempts: string[] = [];
 
-  let lastErr: unknown = null;
-  for (const model of chain) {
+  // 1) Primary — Lovable AI Gateway.
+  for (const model of gatewayChain) {
     attempts.push(model);
     try {
-      const body: Record<string, unknown> = {
-        model,
-        messages: input.messages,
-        tools: input.tools,
-        tool_choice: input.tool_choice,
-      };
-      if (input.reasoningEffort && model.startsWith("openai/")) {
-        body.reasoning = { effort: input.reasoningEffort };
-      }
-
-      const res = await fetch(GATEWAY_URL, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${LOVABLE_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      });
-
-      // Workspace-level errors propagate immediately — no fallback.
-      if (res.status === 429) throw new AIRateLimitError();
-      if (res.status === 402) throw new AICreditsError();
-
-      if (!res.ok) {
-        const txt = await res.text();
-        console.warn(`[aiRouter] ${model} → ${res.status} ${txt.slice(0, 200)}`);
-        lastErr = new Error(`gateway_${res.status}`);
-        continue;
-      }
-
-      const data = await res.json();
-      const call = data?.choices?.[0]?.message?.tool_calls?.[0];
-      if (!call?.function?.arguments) {
-        console.warn(`[aiRouter] ${model} → no tool_call`);
-        lastErr = new Error("no_tool_call");
-        continue;
-      }
-      let envelope: AIEnvelope;
-      try {
-        envelope = JSON.parse(call.function.arguments);
-      } catch (e) {
-        console.warn(`[aiRouter] ${model} → unparseable tool_call`, e);
-        lastErr = e;
-        continue;
-      }
-      // Normalize required fields so downstream code can trust them.
-      envelope.flags = Array.isArray(envelope.flags) ? envelope.flags : [];
-      envelope.missing_items = Array.isArray(envelope.missing_items)
-        ? envelope.missing_items
-        : [];
-      envelope.confidence = typeof envelope.confidence === "number"
-        ? envelope.confidence
-        : 0.5;
-      envelope.recipient_feedback = envelope.recipient_feedback ?? null;
-      envelope.business_summary = envelope.business_summary ?? null;
-      envelope.suggested_next_action = envelope.suggested_next_action ?? null;
-
-      return { envelope, model, attempts };
+      const r = await tryModel("gateway", model, input);
+      if (r.ok) return { envelope: r.envelope, model, attempts };
     } catch (e) {
-      // Re-throw workspace-level errors; capture transient ones for next attempt.
       if (e instanceof AIRateLimitError || e instanceof AICreditsError) throw e;
-      console.warn(`[aiRouter] ${model} threw`, e);
-      lastErr = e;
-      continue;
+      console.warn(`[aiRouter:gateway] ${model} threw`, e);
     }
   }
 
-  console.error("[aiRouter] all models exhausted", { task: input.task, attempts, lastErr });
+  // 2) Fallback — Cloudflare Workers AI (REST). Skipped if creds missing.
+  for (const model of cfChain) {
+    attempts.push(model);
+    try {
+      const r = await tryModel("cloudflare", model, input);
+      if (r.ok) {
+        console.log(`[aiRouter] degraded to Workers AI: ${model}`);
+        return { envelope: r.envelope, model, attempts };
+      }
+    } catch (e) {
+      console.warn(`[aiRouter:cloudflare] ${model} threw`, e);
+    }
+  }
+
+  console.error("[aiRouter] all models exhausted", { task: input.task, attempts });
   throw new AIUnavailableError(attempts);
 }
 

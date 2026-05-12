@@ -24,6 +24,11 @@ import {
   type KvNamespace,
 } from "../../_shared/kv-bundle";
 import { recordUsage, type AnalyticsEngineBinding } from "../../_shared/ae";
+import {
+  workersAiChat,
+  workersAiClassify,
+  type AiBinding,
+} from "../../_shared/ai";
 
 /* ── Types ─────────────────────────────────────────────────────────── */
 
@@ -34,6 +39,7 @@ interface Env {
   SITE_URL: string;
   RECIPIENT_BUNDLES?: KvNamespace;
   AE_USAGE?: AnalyticsEngineBinding;
+  AI?: AiBinding;
   CLOUDFLARE_ACCOUNT_ID?: string;
   CLOUDFLARE_API_TOKEN?: string;
 }
@@ -443,6 +449,16 @@ export default {
       return handleTelemetryAggregate(request, env);
     }
 
+    // Step 6 pilot: Workers AI cheap-tier classifier. Service-role only.
+    // Body: { text: string, labels: string[] }  →  { label, model } | { label: null }
+    // Body: { prompt: string, system?: string } →  { text, model } (free-form chat)
+    if (path === "/ai/classify" && request.method === "POST") {
+      return handleAiClassify(request, env);
+    }
+    if (path === "/ai/chat" && request.method === "POST") {
+      return handleAiChat(request, env);
+    }
+
     // Routes: /ws/:workspaceId, /rpc/:workspaceId, /event/:workspaceId
     const match = path.match(/^\/(ws|rpc|event)\/([a-f0-9-]+)$/i);
     if (!match) {
@@ -594,7 +610,46 @@ async function handleTelemetryAggregate(request: Request, env: Env): Promise<Res
   }
 }
 
-/* ── Utility ───────────────────────────────────────────────────────── */
+/* ── Step 6 pilot: Workers AI handlers ─────────────────────────────── */
+
+async function handleAiClassify(request: Request, env: Env): Promise<Response> {
+  const unauth = requireServiceRole(request, env);
+  if (unauth) return unauth;
+  if (!env.AI) return json({ error: "ai_binding_missing" }, 503);
+  try {
+    const body = (await request.json()) as { text?: string; labels?: string[] };
+    if (!body.text || !Array.isArray(body.labels) || body.labels.length === 0) {
+      return json({ error: "text and labels[] required" }, 400);
+    }
+    const label = await workersAiClassify(env.AI, body.text, body.labels);
+    return json({ label, model: "@cf/meta/llama-3.2-3b-instruct" });
+  } catch (err) {
+    return json({ error: (err as Error).message }, 500);
+  }
+}
+
+async function handleAiChat(request: Request, env: Env): Promise<Response> {
+  const unauth = requireServiceRole(request, env);
+  if (unauth) return unauth;
+  if (!env.AI) return json({ error: "ai_binding_missing" }, 503);
+  try {
+    const body = (await request.json()) as {
+      prompt?: string;
+      system?: string;
+      tier?: "cheap" | "default" | "vision" | "guardrail";
+      maxTokens?: number;
+    };
+    if (!body.prompt) return json({ error: "prompt required" }, 400);
+    const result = await workersAiChat(env.AI, body.tier ?? "cheap", {
+      user: body.prompt,
+      system: body.system,
+      maxTokens: body.maxTokens,
+    });
+    return json(result);
+  } catch (err) {
+    return json({ error: (err as Error).message }, 500);
+  }
+}
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
