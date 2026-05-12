@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { Inbox, MessageSquareText, Plus } from "lucide-react";
+import { Inbox, Link2, MessageSquareText, Plus } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { PageShell, PageStack } from "@/components/layout/primitives";
 import { StatusBadge } from "@/components/shared/StatusBadge";
@@ -7,6 +7,7 @@ import { ReadinessScoreBadge } from "@/components/shared/ReadinessScoreBadge";
 import { Button } from "@/components/ui/button";
 import { useIntakeBriefs } from "@/hooks/useIntakeBriefs";
 import { formatRelativeTime } from "@/utils/format";
+import { photoPolicyShort, photoPolicyTone } from "@/features/intake/lib/photoPolicy";
 import type { IntakeBrief } from "@/types/intake";
 
 function humanize(value: string) {
