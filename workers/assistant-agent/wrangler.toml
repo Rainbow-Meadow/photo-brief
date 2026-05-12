@@ -35,7 +35,7 @@ dataset = "pb_usage_events"
 # Recipient bundle cache (KV). Same namespace as router.
 [[kv_namespaces]]
 binding = "RECIPIENT_BUNDLES"
-id      = "RECIPIENT_BUNDLES_KV_ID"
+id      = "f7d82555b5894d6cb44d7139b718d8c2"
 
 [vars]
 SUPABASE_URL = "https://mvlcefiygkzzewcdzsmj.supabase.co"
