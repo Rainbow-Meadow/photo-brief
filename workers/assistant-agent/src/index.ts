@@ -419,13 +419,22 @@ export default {
 
     // Health check
     if (path === "/" || path === "/health") {
-      return json({ ok: true, name: "PhotoBrief Assistant Agent", version: "1.0.0" });
+      return json({ ok: true, name: "PhotoBrief Assistant Agent", version: "1.1.0" });
+    }
+
+    // Public recipient bundle cache (Step 4: KV-cached request+brand+guide).
+    // GET  /recipient/:token/bundle      → JSON bundle (KV hit or assemble+store)
+    // POST /recipient/:token/invalidate  → drop the cache entry (service-role only)
+    const recipientMatch = path.match(/^\/recipient\/([A-Za-z0-9_-]{8,})\/(bundle|invalidate)$/);
+    if (recipientMatch) {
+      const [, token, op] = recipientMatch;
+      return handleRecipientBundle(request, env, token, op as "bundle" | "invalidate");
     }
 
     // Routes: /ws/:workspaceId, /rpc/:workspaceId, /event/:workspaceId
     const match = path.match(/^\/(ws|rpc|event)\/([a-f0-9-]+)$/i);
     if (!match) {
-      return json({ error: "Use /ws/:workspaceId, /rpc/:workspaceId, or /event/:workspaceId" }, 404);
+      return json({ error: "Use /ws/:workspaceId, /rpc/:workspaceId, /event/:workspaceId, or /recipient/:token/bundle" }, 404);
     }
 
     const [, action, workspaceId] = match;
@@ -443,6 +452,69 @@ export default {
     return stub.fetch(request);
   },
 };
+
+async function handleRecipientBundle(
+  request: Request,
+  env: Env,
+  token: string,
+  op: "bundle" | "invalidate",
+): Promise<Response> {
+  if (op === "invalidate") {
+    if (request.method !== "POST") {
+      return json({ error: "POST required" }, 405);
+    }
+    // Require service-role bearer to invalidate, since this is publicly
+    // routable. Frontend invalidation goes through our own services that
+    // already hold the service role indirectly via edge functions, or via
+    // a workspace-scoped JWT with a separate authorization model.
+    const auth = request.headers.get("authorization") || "";
+    const expected = env.SUPABASE_SERVICE_ROLE_KEY
+      ? `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`
+      : null;
+    if (!expected || auth !== expected) {
+      return json({ error: "Unauthorized" }, 401);
+    }
+    await invalidateRecipientBundle(env.RECIPIENT_BUNDLES, token);
+    return json({ ok: true, invalidated: token });
+  }
+
+  // GET /recipient/:token/bundle
+  if (request.method !== "GET") {
+    return json({ error: "GET required" }, 405);
+  }
+
+  // KV hit fast-path
+  const cached = await readRecipientBundle<RecipientBundle>(env.RECIPIENT_BUNDLES, token);
+  if (cached) {
+    return new Response(JSON.stringify({ bundle: cached, source: "kv" }), {
+      status: 200,
+      headers: {
+        ...corsHeaders,
+        "Content-Type": "application/json",
+        "Cache-Control": "public, max-age=60, s-maxage=300",
+      },
+    });
+  }
+
+  try {
+    const bundle = await assembleRecipientBundle(env, token);
+    if (!bundle) {
+      return json({ error: "not_found" }, 404);
+    }
+    await writeRecipientBundle(env.RECIPIENT_BUNDLES, token, bundle);
+    return new Response(JSON.stringify({ bundle, source: "origin" }), {
+      status: 200,
+      headers: {
+        ...corsHeaders,
+        "Content-Type": "application/json",
+        "Cache-Control": "public, max-age=60, s-maxage=300",
+      },
+    });
+  } catch (err) {
+    console.error("recipient bundle assemble failed", err);
+    return json({ error: (err as Error).message }, 500);
+  }
+}
 
 /* ── Utility ───────────────────────────────────────────────────────── */
 
