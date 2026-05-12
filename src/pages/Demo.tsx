@@ -3,6 +3,7 @@ import { useNavigate, NavLink } from "react-router-dom";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Section, Container, CTA, CTAGroup } from "@/design-system/schema";
+import { SlideStack, RawSlide } from "@/components/marketing/SlideStack";
 import { SectionIntro } from "@/components/marketing/SectionIntro";
 import { FinalCtaSection } from "@/components/marketing/FinalCtaSection";
 import { UseCasesGrid } from "@/components/marketing/UseCasesGrid";
@@ -43,92 +44,104 @@ export default function DemoPage() {
         canonicalPath="/demo"
       />
 
-      {/* Hero */}
-      <Section>
-        <Container width="narrow">
-          <div className="space-y-3 text-center">
-            <p className="ls-eyebrow">[ Live demo ]</p>
-            <RiseIn>
-              <h1 className="ls-h2 mt-6">
-                See exactly what your customers
-                <br />would experience<span className="ls-accent-dot">.</span>
-              </h1>
-            </RiseIn>
-            <RiseIn delay={0.1}>
-              <p className="ls-subtitle mx-auto mt-8 max-w-xl">
-                Watch the Reverse-Form Method™ assemble a brief in real time. Then build one
-                tailored to your own business and we'll email you the finished result.
+      <SlideStack>
+        {/* Hero */}
+        <RawSlide anchor="hero" label="Hero">
+          <Section>
+            <Container width="narrow">
+              <div className="space-y-3 text-center">
+                <p className="ls-eyebrow">[ Live demo ]</p>
+                <RiseIn>
+                  <h1 className="ls-h2 mt-6">
+                    See exactly what your customers
+                    <br />would experience<span className="ls-accent-dot">.</span>
+                  </h1>
+                </RiseIn>
+                <RiseIn delay={0.1}>
+                  <p className="ls-subtitle mx-auto mt-8 max-w-xl">
+                    Watch the Reverse-Form Method™ assemble a brief in real time. Then build one
+                    tailored to your own business and we'll email you the finished result.
+                  </p>
+                </RiseIn>
+                <CTAGroup align="center">
+                  <CTA href="#build-yours" variant="primary" size="lg">
+                    Build my sample brief <ArrowRight className="h-4 w-4" />
+                  </CTA>
+                  <CTA href="#assembly" variant="secondary" size="lg">
+                    Watch the assembly
+                  </CTA>
+                </CTAGroup>
+              </div>
+            </Container>
+          </Section>
+        </RawSlide>
+
+        {/* Live brief assembly */}
+        <RawSlide anchor="assembly" label="Watch" tone="alt">
+          <Section id="assembly" tone="alt">
+            <Container>
+              <SectionIntro
+                eyebrow="[ Watch ]"
+                title={`A vague "I need a quote" → quotable job in 38 seconds.`}
+                subtitle="Hit the steps. The packet builds in real time."
+              />
+              <div className="border border-border bg-background p-2 sm:p-4">
+                <Suspense fallback={<div className="flex h-96 items-center justify-center text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin" /></div>}>
+                  <InteractiveHeroBriefAssembly />
+                </Suspense>
+              </div>
+            </Container>
+          </Section>
+        </RawSlide>
+
+        {/* Build-your-own */}
+        <RawSlide anchor="build-yours" label="Try it">
+          <Section id="build-yours">
+            <Container width="narrow">
+              <SectionIntro
+                eyebrow="[ Try it ]"
+                title="Now build the brief for your business."
+                subtitle="A plumber types &ldquo;leaking faucet.&rdquo; A roofer types &ldquo;missing shingles.&rdquo; PhotoBrief builds the brief in 60 seconds and emails it to you."
+              />
+              <DemoDiscoveryChat />
+              <p className="mt-6 text-center text-xs text-muted-foreground">
+                Demo briefs are auto-deleted after 24 hours.
               </p>
-            </RiseIn>
-            <CTAGroup align="center">
-              <CTA href="#build-yours" variant="primary" size="lg">
-                Build my sample brief <ArrowRight className="h-4 w-4" />
-              </CTA>
-              <CTA href="#assembly" variant="secondary" size="lg">
-                Watch the assembly
-              </CTA>
-            </CTAGroup>
-          </div>
-        </Container>
-      </Section>
+            </Container>
+          </Section>
+        </RawSlide>
 
-      {/* Live brief assembly */}
-      <Section id="assembly" tone="alt">
-        <Container>
-          <SectionIntro
-            eyebrow="[ Watch ]"
-            title={`A vague "I need a quote" → quotable job in 38 seconds.`}
-            subtitle="Hit the steps. The packet builds in real time."
+        {/* Trades */}
+        <RawSlide anchor="trades" label="Trades" tone="alt">
+          <Section tone="alt">
+            <Container>
+              <SectionIntro
+                eyebrow="[ Built per trade ]"
+                title="Coverage templates per trade."
+                subtitle="Mute customer? Doesn't matter. The form does the talking."
+              />
+              <UseCasesGrid />
+            </Container>
+          </Section>
+        </RawSlide>
+
+        {/* Footer CTA */}
+        <RawSlide anchor="final-cta" label="Lock in pricing" tone="ink">
+          <FinalCtaSection
+            eyebrow="Like what you saw?"
+            title="Lock in founding pricing"
+            primary={{
+              href: "/beta",
+              label: (
+                <>
+                  Apply for the beta <ArrowRight className="h-4 w-4" />
+                </>
+              ),
+            }}
+            secondary={{ href: "/pricing", label: "See pricing" }}
           />
-          <div className="border border-border bg-background p-2 sm:p-4">
-            <Suspense fallback={<div className="flex h-96 items-center justify-center text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin" /></div>}>
-              <InteractiveHeroBriefAssembly />
-            </Suspense>
-          </div>
-        </Container>
-      </Section>
-
-      {/* Build-your-own */}
-      <Section id="build-yours">
-        <Container width="narrow">
-          <SectionIntro
-            eyebrow="[ Try it ]"
-            title="Now build the brief for your business."
-            subtitle="A plumber types &ldquo;leaking faucet.&rdquo; A roofer types &ldquo;missing shingles.&rdquo; PhotoBrief builds the brief in 60 seconds and emails it to you."
-          />
-          <DemoDiscoveryChat />
-          <p className="mt-6 text-center text-xs text-muted-foreground">
-            Demo briefs are auto-deleted after 24 hours.
-          </p>
-        </Container>
-      </Section>
-
-      {/* Trades */}
-      <Section tone="alt">
-        <Container>
-          <SectionIntro
-            eyebrow="[ Built per trade ]"
-            title="Coverage templates per trade."
-            subtitle="Mute customer? Doesn't matter. The form does the talking."
-          />
-          <UseCasesGrid />
-        </Container>
-      </Section>
-
-      {/* Footer CTA */}
-      <FinalCtaSection
-        eyebrow="Like what you saw?"
-        title="Lock in founding pricing"
-        primary={{
-          href: "/beta",
-          label: (
-            <>
-              Apply for the beta <ArrowRight className="h-4 w-4" />
-            </>
-          ),
-        }}
-        secondary={{ href: "/pricing", label: "See pricing" }}
-      />
+        </RawSlide>
+      </SlideStack>
     </>
   );
 }
