@@ -12,7 +12,9 @@ import { QuestionCard } from "@/features/capture/components/QuestionCard";
 import { ReviewSummaryCard } from "@/features/capture/components/ReviewSummaryCard";
 import { SubmitConfirmationCard } from "@/features/capture/components/SubmitConfirmationCard";
 import { RecipientBrandingProvider } from "@/features/capture/RecipientBrandingContext";
-import { loadRecipientContext, type RecipientContext } from "@/features/capture/recipientContext";
+import { loadRecipientContext, RecipientLoadError, type RecipientContext, type RecipientLoadDiagnostics } from "@/features/capture/recipientContext";
+import { resolveRecipientError } from "@/lib/errorCodes";
+import { DiagnosticsPanel } from "@/components/shared/DiagnosticsPanel";
 import { useChatFlow } from "@/hooks/useChatFlow";
 import { r2MediaService } from "@/services/r2MediaService";
 import { submissionsService } from "@/services/submissionsService";
@@ -26,6 +28,7 @@ export default function PublicRecipientPage() {
   const navigate = useNavigate();
   const [ctx, setCtx] = useState<RecipientContext | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [diagnostics, setDiagnostics] = useState<RecipientLoadDiagnostics | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -34,7 +37,13 @@ export default function PublicRecipientPage() {
         if (!cancelled) setCtx(c);
       })
       .catch((e) => {
-        if (!cancelled) setError(e?.message ?? "Could not load this request");
+        if (cancelled) return;
+        setError(e?.message ?? "PB-500");
+        if (e instanceof RecipientLoadError) {
+          setDiagnostics(e.diagnostics);
+        } else {
+          setDiagnostics({ token: token?.slice(-6) });
+        }
       });
     return () => {
       cancelled = true;
@@ -42,24 +51,33 @@ export default function PublicRecipientPage() {
   }, [token]);
 
   if (error) {
-    const notReady = error === "LINK_NOT_READY";
-    const tagText = notReady ? "Almost ready" : "Link unavailable";
-    const headline = notReady ? "We're not quite ready" : "This link is not available";
-    const body = notReady
-      ? "The sender is still finishing this request. Please ask them to send you a fresh link once it's ready."
-      : "This request link is no longer available. Please reach out to the sender for an updated link.";
+    const desc = resolveRecipientError(error);
+    const diag = diagnostics ?? { token: token?.slice(-6) };
     return (
       <div className="flex min-h-[60svh] items-center justify-center px-4">
         <article className="w-full max-w-md border border-border bg-card p-7 text-center">
           <p className="inline-flex items-baseline gap-2 font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
             <span className="inline-block h-px w-8 -translate-y-[0.25em] bg-[hsl(var(--accent-kinetic))]" />
-            <span className="text-[hsl(var(--accent-kinetic))]">[ {notReady ? "··" : "ER"} ]</span>
-            <span>{tagText}</span>
+            <span className="text-[hsl(var(--accent-kinetic))]">[ {desc.code} ]</span>
+            <span>{desc.tag}</span>
           </p>
-          <h1 className="mt-5 text-xl font-semibold tracking-tight text-foreground">{headline}</h1>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{body}</p>
+          <h1 className="mt-5 text-xl font-semibold tracking-tight text-foreground">{desc.headline}</h1>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{desc.body}</p>
           <div className="mx-auto mt-5 flex h-10 w-10 items-center justify-center border border-border text-muted-foreground">
             <LockKeyhole className="h-4 w-4" />
+          </div>
+          <div className="mt-6">
+            <DiagnosticsPanel
+              code={desc.code}
+              fields={[
+                { label: "Token", value: diag.token ?? token?.slice(-6) },
+                { label: "Request ID", value: diag.requestId ?? null },
+                { label: "Workspace", value: diag.workspaceName ?? diag.workspaceId ?? null },
+                { label: "Guide attached", value: diag.guideIdPresent },
+                { label: "Guide loaded", value: diag.guideLoaded },
+                { label: "Status", value: diag.status ?? null },
+              ]}
+            />
           </div>
         </article>
       </div>
