@@ -1342,8 +1342,15 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .pb-deck > .pb-slide {
+  .pb-deck { height: auto !important; }
+  .pb-deck-stage { position: static; height: auto; overflow: visible; }
+  .pb-deck-slot {
     position: relative;
+    inset: auto;
+    height: auto;
+    transform: none !important;
+  }
+  .pb-deck-slot > .pb-slide {
     height: auto;
     min-height: 100svh;
     overflow: visible;
