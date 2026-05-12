@@ -1,7 +1,8 @@
-import { Send, ImageIcon, MessageCircleQuestion, Loader2, CheckCircle2 } from "lucide-react";
+import { Send, ImageIcon, MessageCircleQuestion, Loader2, CheckCircle2, AlertTriangle, RotateCw } from "lucide-react";
 import { microcopy } from "@/config/microcopy";
 import type { CapturedPhoto, AnsweredQuestion } from "@/types/chat";
 import type { PhotoGuide } from "@/types/photobrief";
+import type { RecipientErrorDescriptor } from "@/lib/errorCodes";
 
 interface ReviewSummaryCardProps {
   guide: PhotoGuide;
@@ -9,9 +10,10 @@ interface ReviewSummaryCardProps {
   answers: AnsweredQuestion[];
   onSubmit: () => void;
   submitting?: boolean;
+  submitError?: RecipientErrorDescriptor | null;
 }
 
-export function ReviewSummaryCard({ guide, photos, answers, onSubmit, submitting }: ReviewSummaryCardProps) {
+export function ReviewSummaryCard({ guide, photos, answers, onSubmit, submitting, submitError }: ReviewSummaryCardProps) {
   return (
     <div className="space-y-6">
       <div className="border border-border bg-card p-6 text-center">
