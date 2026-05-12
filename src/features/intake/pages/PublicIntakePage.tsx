@@ -232,30 +232,30 @@ export default function PublicIntakePage() {
 
   return (
     <PublicShell>
-      <section className="border border-border bg-card p-5 sm:p-7">
-        <div className="flex items-center gap-3 border-b border-border pb-5">
+      <section className="border border-border bg-card p-4 sm:p-7">
+        <div className="flex items-start gap-3 border-b border-border pb-4 sm:items-center sm:pb-5">
           {config?.logoUrl ? (
             <img
               src={config.logoUrl}
               alt=""
-              className="h-11 w-11 border border-border bg-background object-contain p-1"
+              className="h-12 w-12 shrink-0 border border-border bg-background object-contain p-1"
             />
           ) : (
-            <span className="flex h-11 w-11 items-center justify-center border border-border text-[hsl(var(--accent-kinetic))]">
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center border border-border text-[hsl(var(--accent-kinetic))]">
               <Sparkles className="h-4 w-4" />
             </span>
           )}
           <div className="min-w-0">
-            <p className="font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+            <p className="truncate font-mono text-[0.65rem] font-medium uppercase tracking-[0.18em] text-muted-foreground sm:text-[0.7rem]">
               {config?.businessName}
             </p>
-            <h1 className="mt-1 font-[Geist,Inter,system-ui,sans-serif] text-[clamp(1.5rem,3vw,2rem)] font-semibold leading-[1.05] tracking-[-0.022em] text-foreground">
+            <h1 className="mt-1 font-[Geist,Inter,system-ui,sans-serif] text-[clamp(1.4rem,6vw,2rem)] font-semibold leading-[1.1] tracking-[-0.022em] text-foreground">
               Start your request
             </h1>
           </div>
         </div>
 
-        <p className="mt-5 text-base leading-7 text-muted-foreground">{config?.introMessage}</p>
+        <p className="mt-4 text-[15px] leading-7 text-muted-foreground sm:mt-5 sm:text-base">{config?.introMessage}</p>
 
         <div className="mt-6 space-y-4">
           <div className="grid gap-3 sm:grid-cols-2">
