@@ -1,11 +1,11 @@
 import { NavLink, useParams } from "react-router-dom";
-import { ArrowLeft, ExternalLink, FileText, Mail, MapPin, Phone } from "lucide-react";
+import { ArrowLeft, ExternalLink, FileText, ImageIcon, Mail, MapPin, Phone } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { PageShell, PageStack } from "@/components/layout/primitives";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { ReadinessScoreBadge } from "@/components/shared/ReadinessScoreBadge";
 import { Button } from "@/components/ui/button";
-import { useIntakeBrief } from "@/hooks/useIntakeBriefs";
+import { useIntakeBrief, useIntakeBriefAttachments, type IntakeAttachment } from "@/hooks/useIntakeBriefs";
 import { formatRelativeTime } from "@/utils/format";
 import { photoPolicySentence, photoPolicyShort, photoPolicyTone } from "@/features/intake/lib/photoPolicy";
 
@@ -16,6 +16,9 @@ function humanize(value: string) {
 export default function IntakeBriefDetailPage() {
   const { id } = useParams();
   const { data: brief, isLoading, error } = useIntakeBrief(id);
+  const { data: attachments = [], isLoading: attachmentsLoading } = useIntakeBriefAttachments(
+    brief?.photoCount && brief.photoCount > 0 ? brief.id : undefined,
+  );
 
   if (isLoading) {
     return <PageShell><PageStack><div className="surface-card p-8 text-center text-sm text-muted-foreground">Loading intake brief…</div></PageStack></PageShell>;
@@ -110,6 +113,11 @@ export default function IntakeBriefDetailPage() {
               </Button>
             ) : null}
           </InfoCard>
+          {brief.photoCount > 0 ? (
+            <InfoCard title="Attached photos">
+              <AttachmentGallery attachments={attachments} loading={attachmentsLoading} expected={brief.photoCount} />
+            </InfoCard>
+          ) : null}
           <InfoCard title="Missing items">
             {brief.missingItems.length ? (
               <ul className="space-y-1 text-sm text-muted-foreground">
@@ -131,6 +139,47 @@ function InfoCard({ title, children }: { title: string; children: React.ReactNod
       <p className="mb-3 font-mono text-[0.68rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">{title}</p>
       {children}
     </section>
+  );
+}
+
+function AttachmentGallery({ attachments, loading, expected }: { attachments: IntakeAttachment[]; loading: boolean; expected: number }) {
+  if (loading && attachments.length === 0) {
+    return <p className="text-sm text-muted-foreground">Loading photos…</p>;
+  }
+  if (!attachments.length) {
+    return (
+      <p className="text-sm text-muted-foreground">
+        {expected > 0 ? "Photos finished uploading but a preview link could not be generated. Try refreshing." : "No photos attached."}
+      </p>
+    );
+  }
+  return (
+    <div className="grid grid-cols-3 gap-2">
+      {attachments.map((a) => (
+        <a
+          key={a.id}
+          href={a.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group relative block aspect-square overflow-hidden border border-border bg-muted/40"
+          title={a.originalFilename ?? "Open photo"}
+        >
+          {a.mimeType.startsWith("image/") ? (
+            <img
+              src={a.url}
+              alt={a.originalFilename ?? "Intake photo"}
+              loading="lazy"
+              className="h-full w-full object-cover transition group-hover:scale-[1.02]"
+            />
+          ) : (
+            <div className="flex h-full w-full flex-col items-center justify-center gap-1 text-muted-foreground">
+              <ImageIcon className="h-5 w-5" />
+              <span className="px-1 text-[10px] uppercase tracking-wide">{a.mimeType.split("/")[1] ?? "file"}</span>
+            </div>
+          )}
+        </a>
+      ))}
+    </div>
   );
 }
 

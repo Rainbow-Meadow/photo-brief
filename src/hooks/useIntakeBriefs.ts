@@ -97,3 +97,28 @@ export function useIntakeBrief(id: string | undefined) {
     enabled: Boolean(workspace?.id && id),
   });
 }
+
+export type IntakeAttachment = {
+  id: string;
+  mimeType: string;
+  sizeBytes: number | null;
+  originalFilename: string | null;
+  createdAt: string;
+  url: string;
+};
+
+export function useIntakeBriefAttachments(briefId: string | undefined) {
+  return useQuery({
+    queryKey: ["intake-brief-attachments", briefId],
+    queryFn: async (): Promise<IntakeAttachment[]> => {
+      const { data, error } = await supabase.functions.invoke("list-intake-attachments", {
+        body: { briefId },
+      });
+      if (error) throw error;
+      return (data?.attachments ?? []) as IntakeAttachment[];
+    },
+    enabled: Boolean(briefId),
+    staleTime: 5 * 60 * 1000, // signed URLs valid 10m, refresh well before
+  });
+}
+

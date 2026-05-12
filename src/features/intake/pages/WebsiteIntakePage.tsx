@@ -431,10 +431,19 @@ export default function WebsiteIntakePage() {
         );
       case "defaults":
         return (
-          <div className="grid gap-4 lg:grid-cols-2">
+          <div className="space-y-4">
+            {!source.defaultGuideId ? (
+              <div className="border border-[hsl(var(--accent-kinetic)/0.5)] bg-[hsl(var(--accent-kinetic)/0.06)] p-4">
+                <p className="font-mono text-[0.65rem] uppercase tracking-[0.18em] text-[hsl(var(--accent-kinetic))]">Heads up</p>
+                <p className="mt-1 text-sm leading-6 text-foreground">
+                  No fallback template is set. Leads routed to a <span className="font-semibold">photos required</span> path will be saved as briefs marked <span className="font-mono">needs_more_info</span> instead of getting an automatic photo link. Pick a fallback template below to enable the guided photo flow.
+                </p>
+              </div>
+            ) : null}
+            <div className="grid gap-4 lg:grid-cols-2">
             <div className="rounded-none border bg-background p-4">
               <Label className="text-sm font-semibold text-foreground">Fallback template</Label>
-              <p className="mt-1 text-sm leading-6 text-muted-foreground">Used when no routing rule or confident AI match applies.</p>
+              <p className="mt-1 text-sm leading-6 text-muted-foreground">Used when no routing rule or confident AI match applies. Also used for any intake route that requires photos.</p>
               <select
                 className="mt-4 h-12 w-full rounded-none border bg-background px-3 text-sm"
                 value={source.defaultGuideId ?? ""}
@@ -463,6 +472,7 @@ export default function WebsiteIntakePage() {
                   }}
                 />
               </div>
+            </div>
             </div>
           </div>
         );
