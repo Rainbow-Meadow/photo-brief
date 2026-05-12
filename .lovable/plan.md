@@ -72,3 +72,23 @@ cheap        gpt-5-nano                       →  llama-3.2-3b → llama-3.2-1b
 - Migrating off the Lovable AI Gateway entirely — not recommended; keep it as primary for quality.
 
 Approve to implement steps 1–4. Step 5 and the optional capabilities I'll plan separately when you're ready.
+
+---
+
+## Implementation log — Workers AI integration (steps 1-4)
+
+**Status:** shipped. Workers must be redeployed to activate the new routes.
+
+1. **Catalog documented** — `docs/cloudflare-workers-ai-catalog.md` lists all 91 models grouped by task plus the per-tier fallback table. Linked from `docs/hybrid-hosting.md`.
+2. **AI bindings added** — `[ai] binding = "AI"` on `assistant-agent` and `capture-agent` wrangler.toml.
+3. **Router extended** — `supabase/functions/_shared/aiModelRouter.ts` now has `TIER_CHAIN_CLOUDFLARE` and `tryModel(provider, …)`. After every Lovable Gateway model in a tier fails transiently, it falls through to Workers AI via REST (uses `R2_ACCOUNT_ID` + `CLOUDFLARE_API_TOKEN` already in Supabase secrets). 429/402 still propagate immediately and are gateway-only by contract.
+4. **Pilot routes** — `workers/_shared/ai.ts` exposes `workersAiChat` / `workersAiClassify`. `assistant-agent` adds `POST /ai/classify` and `POST /ai/chat` (service-role only) so the cheap-tier Workers AI path can be exercised end-to-end with curl after deploy.
+
+### Smoke test after deploy
+
+```bash
+curl -X POST https://assistant.photobrief.ai/ai/classify \
+  -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
+  -H "content-type: application/json" \
+  -d '{"text":"My roof is leaking near the chimney","labels":["roofing","plumbing","hvac","other"]}'
+```
