@@ -205,6 +205,20 @@ export default function RequestDetailPage() {
         </div>
       </section>
 
+      <DiagnosticsPanel
+        title="Support diagnostics"
+        code={request.guideId ? "PB-OK" : "PB-425"}
+        fields={[
+          { label: "Request ID", value: request.id },
+          { label: "Status", value: request.status },
+          { label: "Guide attached", value: !!request.guideId },
+          { label: "Guide", value: request.guideName || null },
+          { label: "Workspace", value: workspace?.name ?? request.workspaceId },
+          { label: "Token", value: request.token.slice(-6) },
+          { label: "Last activity", value: request.lastActivityAt ?? null },
+        ]}
+      />
+
       <section className="surface-card p-5">
         <h2 className="text-sm font-semibold text-foreground">Activity</h2>
         {messages.length === 0 ? (
