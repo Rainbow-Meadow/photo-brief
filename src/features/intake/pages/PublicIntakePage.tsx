@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { photoPolicyShort, photoPolicySentence, type PhotoPolicy } from "@/features/intake/lib/photoPolicy";
+import { IntakeAttachmentUploader } from "@/features/intake/components/IntakeAttachmentUploader";
 
 interface SmartIntakeRoute {
   id: string;
