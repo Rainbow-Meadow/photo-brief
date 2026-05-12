@@ -1344,7 +1344,7 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
   transform: scale(1.4);
 }
 
-@media (prefers-reduced-motion: reduce) {
+@media (prefers-reduced-motion: reduce), (max-width: 1023.98px) {
   .pb-deck { height: auto !important; }
   .pb-deck-stage { position: static; height: auto; overflow: visible; }
   .pb-deck-slot {
@@ -1357,6 +1357,12 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
     height: auto;
     min-height: 100svh;
     overflow: visible;
+  }
+  .pb-slide-inner {
+    height: auto;
+    min-height: 100svh;
+    overflow: visible;
+    justify-content: flex-start;
   }
   .pb-deck-rail { display: none; }
 }
