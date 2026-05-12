@@ -32,3 +32,8 @@ id = "07d039dcbb2e477d8c14cdfaaad3ddb3"
 [[kv_namespaces]]
 binding = "WORKSPACE_BRAND"
 id = "7f8a41196e004fe8b46701998f77fae5"
+
+# Recipient bundle cache (read-only path for /r/* HTMLRewriter prefetch).
+[[kv_namespaces]]
+binding = "RECIPIENT_BUNDLES"
+id = "f7d82555b5894d6cb44d7139b718d8c2"
