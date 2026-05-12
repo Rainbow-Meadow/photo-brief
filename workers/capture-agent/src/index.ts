@@ -23,7 +23,9 @@ import { Agent, type Connection } from "agents";
 
 interface Env {
   CAPTURE_AGENT: DurableObjectNamespace;
+  CAPTURE_SESSION: DurableObjectNamespace;
   SUPABASE_URL: string;
+  SUPABASE_SERVICE_ROLE_KEY?: string;
   SITE_URL: string;
 }
 
