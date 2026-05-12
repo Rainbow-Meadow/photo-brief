@@ -5,7 +5,7 @@ import { componentTagger } from "lovable-tagger";
 
 const LOVABLE_CLOUD_SUPABASE_URL = "https://mvlcefiygkzzewcdzsmj.supabase.co";
 const LOVABLE_CLOUD_SUPABASE_PUBLISHABLE_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJIUzI1NiIsInJlZiI6Im12bGNlZml5Z2t6ewcdzsmjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2MDk2MTQsImV4cCI6MjA5MzE4NTYxNH0.ydcCiiUvi_tx5mhHy35hNURoUmi_QNifYkoJA-HZRnU";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJIUzI1NiIsInJlZiI6Im12bGNlZml5Z2t6ZXdjZHpzbWoiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc3NzYwOTYxNCwiZXhwIjoyMDkzMTg1NjE0fQ.ydcCiiUvi_tx5mhHy35hNURoUmi_QNifYkoJA-HZRnU";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode, command }) => {
