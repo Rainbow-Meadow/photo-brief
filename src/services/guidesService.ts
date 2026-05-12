@@ -9,7 +9,7 @@ import { getTokenClient } from "@/integrations/supabase/tokenClient";
 import type { PhotoGuide } from "@/types/photobrief";
 import type { RequestDraft } from "@/types/requestDraft";
 
-function rowToGuide(g: any, steps: any[], questions: any[]): PhotoGuide {
+export function rowToGuide(g: any, steps: any[], questions: any[]): PhotoGuide {
   return {
     id: g.id,
     workspaceId: g.workspace_id ?? undefined,
