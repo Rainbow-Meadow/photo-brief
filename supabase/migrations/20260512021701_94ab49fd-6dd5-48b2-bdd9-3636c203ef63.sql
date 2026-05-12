@@ -1,0 +1,1 @@
+UPDATE public.photo_brief_requests SET status='submitted' WHERE id='83e64239-a53e-4bed-b919-4a0aad6da5eb';
