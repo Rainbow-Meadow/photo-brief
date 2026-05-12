@@ -6,7 +6,18 @@ import { componentTagger } from "lovable-tagger";
 // https://vitejs.dev/config/
 export default defineConfig(({ mode, command }) => {
   const env = loadEnv(mode, process.cwd(), "");
+  const supabaseUrl = env.VITE_SUPABASE_URL || env.SUPABASE_URL;
+  const supabasePublishableKey =
+    env.VITE_SUPABASE_PUBLISHABLE_KEY ||
+    env.VITE_SUPABASE_ANON_KEY ||
+    env.SUPABASE_PUBLISHABLE_KEY ||
+    env.SUPABASE_ANON_KEY;
+
   return {
+    define: {
+      "import.meta.env.VITE_SUPABASE_URL": JSON.stringify(supabaseUrl || ""),
+      "import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY": JSON.stringify(supabasePublishableKey || ""),
+    },
     server: {
       host: "::",
       port: 8080,
@@ -20,14 +31,19 @@ export default defineConfig(({ mode, command }) => {
       command === "build" && mode === "production" && {
         name: "require-supabase-env",
         buildStart() {
-          const required = ["VITE_SUPABASE_URL", "VITE_SUPABASE_PUBLISHABLE_KEY"];
-          const missing = required.filter((k) => !env[k]);
+          const missing = [
+            ["VITE_SUPABASE_URL", supabaseUrl],
+            ["VITE_SUPABASE_PUBLISHABLE_KEY", supabasePublishableKey],
+          ]
+            .filter(([, value]) => !value)
+            .map(([name]) => name);
           if (missing.length) {
             // @ts-expect-error - Rollup plugin context provides this.error
             this.error(
               `Missing required env var(s): ${missing.join(", ")}. ` +
                 `These must be present at build time so the Supabase client is wired into the bundle. ` +
-                `Re-publish from Lovable so the latest .env is injected, or set them in your build environment.`,
+                `Accepted aliases: SUPABASE_URL for VITE_SUPABASE_URL, and VITE_SUPABASE_ANON_KEY, ` +
+                `SUPABASE_PUBLISHABLE_KEY, or SUPABASE_ANON_KEY for VITE_SUPABASE_PUBLISHABLE_KEY.`,
             );
           }
         },
