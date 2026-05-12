@@ -515,7 +515,7 @@ function StepContent({
         </div>
       ) : null}
       <div className="mt-6">
-        <CaptureUploadCard step={step} pending={capture?.pending ?? false} onCapture={onCapture} onSkip={!step.required ? onSkip : undefined} />
+        <CaptureUploadCard step={step} pending={capture?.pending ?? false} onCapture={onCapture} onSkip={!step.required ? onSkip : undefined} stepIndex={Math.max(0, index - 1)} />
       </div>
     </StepCard>
   );
