@@ -11,7 +11,8 @@
 //   ADMIN_EMAIL                              — platform admin email
 //   ADMIN_PASSWORD                           — platform admin password
 //   SUPABASE_URL or VITE_SUPABASE_URL       — e.g. https://xyz.supabase.co
-//   SUPABASE_ANON_KEY or VITE_SUPABASE_PUBLISHABLE_KEY — publishable anon key
+//   SUPABASE_ANON_KEY, SUPABASE_PUBLISHABLE_KEY, VITE_SUPABASE_PUBLISHABLE_KEY,
+//   or VITE_SUPABASE_ANON_KEY — publishable anon key
 // ─────────────────────────────────────────────────────────────
 import { readFileSync } from "node:fs";
 import { basename } from "node:path";
@@ -20,7 +21,10 @@ const SUPABASE_URL =
   process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL;
 
 const ANON_KEY =
-  process.env.SUPABASE_ANON_KEY ?? process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+  process.env.SUPABASE_ANON_KEY ??
+  process.env.SUPABASE_PUBLISHABLE_KEY ??
+  process.env.VITE_SUPABASE_PUBLISHABLE_KEY ??
+  process.env.VITE_SUPABASE_ANON_KEY;
 
 if (!SUPABASE_URL) {
   console.error(
@@ -31,7 +35,7 @@ if (!SUPABASE_URL) {
 
 if (!ANON_KEY) {
   console.error(
-    "Error: SUPABASE_ANON_KEY or VITE_SUPABASE_PUBLISHABLE_KEY environment variable is required."
+    "Error: SUPABASE_ANON_KEY, SUPABASE_PUBLISHABLE_KEY, VITE_SUPABASE_PUBLISHABLE_KEY, or VITE_SUPABASE_ANON_KEY environment variable is required."
   );
   process.exit(1);
 }
