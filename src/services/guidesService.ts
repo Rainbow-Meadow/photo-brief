@@ -8,6 +8,7 @@ import { withSupabaseRetry as withRetry } from "@/lib/supabaseRetry";
 import { getTokenClient } from "@/integrations/supabase/tokenClient";
 import type { PhotoGuide } from "@/types/photobrief";
 import type { RequestDraft } from "@/types/requestDraft";
+import { invalidateRecipientBundlesForGuide } from "@/services/recipientBundleCache";
 
 export function rowToGuide(g: any, steps: any[], questions: any[]): PhotoGuide {
   return {
