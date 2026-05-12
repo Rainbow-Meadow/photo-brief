@@ -43,11 +43,11 @@ export function MechanismGrid() {
               <span className="ls-numeral">{step.n}</span>
               <span className="ls-numeral text-foreground/40">04</span>
             </div>
-            <div className="mt-6 aspect-square w-full overflow-hidden border border-border bg-muted">
+            <div className="mt-6 aspect-[4/3] w-full overflow-hidden rounded-sm border border-border bg-[hsl(var(--pb-paper-edge))] p-3 ring-1 ring-border/40 sm:p-4">
               <img
                 src={step.illo}
                 alt=""
-                className="h-full w-full object-cover"
+                className="h-full w-full object-contain"
                 loading="lazy"
                 width={1024}
                 height={1024}
