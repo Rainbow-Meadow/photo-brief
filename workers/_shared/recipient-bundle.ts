@@ -7,41 +7,45 @@
  * request), so we cache the assembled bundle in Workers KV with a 1h TTL.
  *
  * Live portions (latest submission, in-flight rework state) stay on the
- * direct token-scoped Supabase queries, so a recipient who just got
- * rejected sees fresh feedback immediately.
+ * direct token-scoped Supabase queries so a recipient who just got rejected
+ * sees fresh feedback immediately.
  *
- * Schema mirrors what `src/features/capture/recipientContext.ts` already
- * fetches client-side, so the frontend can drop this in as a fast path.
+ * Column names mirror `public.guide_steps` and `public.context_questions`
+ * exactly: `instruction` (singular), `capture_type`, `overlay_type`,
+ * `ai_checks`, `label`, `input_type`, `options`. The frontend mapper
+ * (`rowToGuide` in guidesService) understands this snake_case shape.
  */
 
-export interface RecipientBundleStep {
+export interface RecipientBundleStepRow {
   id: string;
+  guide_id: string;
   order_index: number;
   title: string | null;
-  instructions: string | null;
-  shot_type: string | null;
+  instruction: string | null;
+  capture_type: string | null;
   overlay_type: string | null;
   ai_checks: unknown;
   required: boolean | null;
 }
 
-export interface RecipientBundleQuestion {
+export interface RecipientBundleQuestionRow {
   id: string;
+  guide_id: string;
   order_index: number;
-  prompt: string | null;
-  question_type: string | null;
+  label: string | null;
+  input_type: string | null;
   required: boolean | null;
   options: unknown;
 }
 
-export interface RecipientBundleGuide {
+export interface RecipientBundleGuideRow {
   id: string;
+  workspace_id: string | null;
   name: string | null;
   category: string | null;
   description: string | null;
-  is_template: boolean | null;
-  steps: RecipientBundleStep[];
-  questions: RecipientBundleQuestion[];
+  steps: RecipientBundleStepRow[];
+  questions: RecipientBundleQuestionRow[];
 }
 
 export interface RecipientBundleBrand {
@@ -64,7 +68,7 @@ export interface RecipientBundle {
   request: RecipientBundleRequest;
   workspace_name: string | null;
   brand: RecipientBundleBrand | null;
-  guide: RecipientBundleGuide | null;
+  guide: RecipientBundleGuideRow | null;
   /** Server time when the bundle was assembled. */
   cached_at: string;
 }
@@ -90,11 +94,6 @@ async function sbGet(env: SupabaseEnv, path: string): Promise<unknown> {
   return res.json();
 }
 
-/**
- * Assemble the bundle for a token by hitting Supabase REST with the service
- * role. Intentionally mirrors the queries in recipientContext.ts so the
- * shape is interchangeable with the frontend's existing context loader.
- */
 export async function assembleRecipientBundle(
   env: SupabaseEnv,
   token: string,
@@ -118,19 +117,19 @@ export async function assembleRecipientBundle(
     request.guide_id
       ? (sbGet(
           env,
-          `photo_guides?id=eq.${request.guide_id}&select=id,name,category,description,is_template,guide_steps(id,order_index,title,instructions,shot_type,overlay_type,ai_checks,required),context_questions(id,order_index,prompt,question_type,required,options)&limit=1`,
+          `photo_guides?id=eq.${request.guide_id}&select=id,workspace_id,name,category,description,guide_steps(id,guide_id,order_index,title,instruction,capture_type,overlay_type,ai_checks,required),context_questions(id,guide_id,order_index,label,input_type,required,options)&limit=1`,
         ) as Promise<any[]>)
       : Promise.resolve([]),
   ]);
 
   const guideRow = guideRows[0];
-  const guide: RecipientBundleGuide | null = guideRow
+  const guide: RecipientBundleGuideRow | null = guideRow
     ? {
         id: guideRow.id,
+        workspace_id: guideRow.workspace_id ?? null,
         name: guideRow.name ?? null,
         category: guideRow.category ?? null,
         description: guideRow.description ?? null,
-        is_template: guideRow.is_template ?? null,
         steps: Array.isArray(guideRow.guide_steps)
           ? [...guideRow.guide_steps].sort(
               (a: any, b: any) => (a.order_index ?? 0) - (b.order_index ?? 0),
