@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { UpgradePromptCard } from "@/components/shared/UpgradePromptCard";
 import { usePlan } from "@/hooks/usePlan";
 import { useCurrentWorkspace } from "@/hooks/useCurrentWorkspace";
+import { invalidateRecipientBundlesForWorkspace } from "@/services/recipientBundleCache";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
