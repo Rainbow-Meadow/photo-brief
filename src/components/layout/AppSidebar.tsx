@@ -110,7 +110,15 @@ export function AppSidebar() {
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild isActive={isActive(item.url)} tooltip={tooltip}>
-                      <NavLink to={item.url} className="tap-apple focus-apple flex items-center gap-2 text-callout">
+                      <NavLink
+                        to={item.url}
+                        className={({ isActive: active }) =>
+                          cn(
+                            "tap-apple focus-apple flex items-center gap-2 text-callout",
+                            active && "shadow-[inset_2px_0_0_hsl(var(--accent-kinetic))]",
+                          )
+                        }
+                      >
                         <item.icon className="h-4 w-4" />
                         {!collapsed && (
                           <>
