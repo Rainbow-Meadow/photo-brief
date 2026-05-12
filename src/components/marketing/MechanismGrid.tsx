@@ -44,11 +44,11 @@ export function MechanismGrid() {
               <div
                 className={`lg:col-span-7 ${flipped ? "lg:order-2" : "lg:order-1"}`}
               >
-                <div className="aspect-[16/10] w-full overflow-hidden rounded-sm border border-border bg-[hsl(var(--pb-paper-edge))] ring-1 ring-border/40">
+                <div className="aspect-[16/10] w-full">
                   <img
                     src={step.illo}
                     alt=""
-                    className="h-full w-full object-cover"
+                    className="h-full w-full object-contain"
                     loading="lazy"
                     width={1600}
                     height={1000}
