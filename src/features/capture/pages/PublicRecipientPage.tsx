@@ -234,10 +234,10 @@ function RecipientWorkflow({ ctx, token, navigate }: { ctx: RecipientContext; to
       });
 
       if (ctx.resubmit && ctx.resubmit.items.length > 0) {
-        const client = getTokenClient(token);
         const ids = ctx.resubmit.items.map((it) => it.rejectedMediaId);
-        const { error: markErr } = await client.from("captured_media").update({ status: "resubmitted" }).in("id", ids);
-        if (markErr) console.warn("mark resubmitted failed", markErr);
+        await submissionsService
+          .markRejectedMediaResubmitted({ token, rejectedMediaIds: ids })
+          .catch((err) => console.warn("mark resubmitted failed", err));
       }
 
       // Only flip the UI to the "All done" / submitted phase after the
