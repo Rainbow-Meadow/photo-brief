@@ -43,6 +43,16 @@ export function buildTempOriginalKey(args: {
   return `temp/${args.workspaceId}/${args.requestId}/${args.submissionId}/${args.mediaId}/original.${ext}`;
 }
 
+export function buildIntakeAttachmentKey(args: {
+  workspaceId: string;
+  intakeBriefId: string;
+  attachmentId: string;
+  ext?: string | null;
+}) {
+  const ext = sanitizeExt(args.ext ?? "jpg");
+  return `intake-attachments/${args.workspaceId}/${args.intakeBriefId}/${args.attachmentId}.${ext}`;
+}
+
 export function buildProcessedKey(args: {
   workspaceId: string;
   requestId: string;
