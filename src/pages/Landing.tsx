@@ -129,7 +129,7 @@ function Hero() {
 /* ── Marquee ── */
 function MarqueeBand() {
   return (
-    <div className="relative space-y-3 border-y border-border bg-card py-8">
+    <div className="relative space-y-2 border-y border-border bg-[hsl(var(--accent-kinetic)/0.08)] py-5">
       <MarqueeRow duration={45} direction="left">
         <span className="ls-marquee-item">Guide</span>
         <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
