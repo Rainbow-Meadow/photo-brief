@@ -1270,8 +1270,11 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
   width: 100%;
 }
 .pb-deck-stage {
-  position: sticky;
+  /* JS toggles position between absolute (top:0 / bottom:0) and fixed. */
+  position: absolute;
   top: 0;
+  left: 0;
+  right: 0;
   height: 100svh;
   width: 100%;
   overflow: hidden;
