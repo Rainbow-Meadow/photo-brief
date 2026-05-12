@@ -81,11 +81,11 @@ export async function loadRecipientContext(
     .maybeSingle();
 
   if (!req) {
-    throw new Error("This request link is no longer available.");
+    throw new Error("LINK_NOT_FOUND");
   }
 
   if (!req.guide_id) {
-    throw new Error("This request is missing its saved template.");
+    throw new Error("LINK_NOT_READY");
   }
 
   const [{ data: ws }, { data: brand }, guide] = await Promise.all([
@@ -103,11 +103,14 @@ export async function loadRecipientContext(
   ]);
 
   if (!guide) {
-    throw new Error("This request's saved template could not be loaded.");
+    throw new Error("LINK_NOT_READY");
   }
 
   const firstName = (req.recipient_name ?? "").split(" ")[0] || "there";
-  const businessName = ws?.name ?? "Your business";
+  // Prefer the real workspace name; if the token-scoped read returns null
+  // (e.g. RLS hasn't caught up yet), fall back to the guide name rather than
+  // a literal "Your business" string that would leak to the recipient.
+  const businessName = ws?.name?.trim() || guide?.name?.trim() || "Your photo request";
 
   // Look for an in-flight rework: latest submission for this request that
   // has rejected captured_media rows.
@@ -161,7 +164,7 @@ export async function loadRecipientContext(
     hidePhotobriefBranding: brand?.hide_photobrief_branding ?? false,
     introBody:
       brand?.intro_message ??
-      `Hi ${firstName}! ${businessName} here — I'll walk you through a few quick photos.`,
+      `Hi ${firstName} — ${businessName} put together a few quick photo prompts for you.`,
     completionBody: brand?.completion_message ?? undefined,
     guide,
     resubmit,
