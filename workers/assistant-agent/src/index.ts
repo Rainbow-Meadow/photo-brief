@@ -528,6 +528,72 @@ async function handleRecipientBundle(
   }
 }
 
+/* ── Step 2: Telemetry handlers ───────────────────────────────────── */
+
+function requireServiceRole(request: Request, env: Env): Response | null {
+  const expected = env.SUPABASE_SERVICE_ROLE_KEY
+    ? `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`
+    : null;
+  const got = request.headers.get("authorization") || "";
+  if (!expected || got !== expected) {
+    return json({ error: "Unauthorized" }, 401);
+  }
+  return null;
+}
+
+async function handleTelemetryUsage(request: Request, env: Env): Promise<Response> {
+  const unauth = requireServiceRole(request, env);
+  if (unauth) return unauth;
+  try {
+    const body = (await request.json()) as {
+      workspace_id: string;
+      event_type: string;
+      related_id?: string | null;
+      credit_cost?: number | null;
+      metadata?: Record<string, unknown>;
+    };
+    if (!body.workspace_id || !body.event_type) {
+      return json({ error: "workspace_id and event_type required" }, 400);
+    }
+    recordUsage(env.AE_USAGE, body);
+    return json({ ok: true });
+  } catch (err) {
+    return json({ error: (err as Error).message }, 400);
+  }
+}
+
+async function handleTelemetryAggregate(request: Request, env: Env): Promise<Response> {
+  const unauth = requireServiceRole(request, env);
+  if (unauth) return unauth;
+  if (!env.CLOUDFLARE_ACCOUNT_ID || !env.CLOUDFLARE_API_TOKEN) {
+    return json({ error: "Cloudflare account/token not bound" }, 503);
+  }
+  try {
+    const { query } = (await request.json()) as { query: string };
+    if (!query || typeof query !== "string") {
+      return json({ error: "query string required" }, 400);
+    }
+    const res = await fetch(
+      `https://api.cloudflare.com/client/v4/accounts/${env.CLOUDFLARE_ACCOUNT_ID}/analytics_engine/sql`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${env.CLOUDFLARE_API_TOKEN}`,
+          "Content-Type": "text/plain",
+        },
+        body: query,
+      },
+    );
+    const text = await res.text();
+    return new Response(text, {
+      status: res.status,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  } catch (err) {
+    return json({ error: (err as Error).message }, 500);
+  }
+}
+
 /* ── Utility ───────────────────────────────────────────────────────── */
 
 const corsHeaders = {
