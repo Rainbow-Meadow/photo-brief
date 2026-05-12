@@ -2,7 +2,7 @@
 //
 // Pricing model:
 // - Free + Starter are manual-link plans: create a PhotoBrief request and send a clickable link.
-// - Pro is the first automation plan: hosted Website Intake, routing, webhook/integration setup.
+// - Pro is the first automation plan: hosted Smart Intake, routing, webhook/integration setup.
 // - The customer-facing pricing axes stay simple: photos, branding, storage term, team size.
 // - 1 submitted/analyzed photo = 1 PhotoBrief Credit.
 // - First-pass guarantee: follow-up/resubmission photos requested by PhotoBrief do not consume credits.
@@ -106,16 +106,16 @@ export const featureCatalog: Record<FeatureKey, FeatureMeta> = {
     description: "AI nudges the customer for the exact shot you are missing.",
   },
   website_intake: {
-    label: "Website Intake",
-    description: "Turn website leads into PhotoBrief requests automatically.",
+    label: "Smart Intake",
+    description: "Replace basic website forms with routed intake briefs that request photos only when useful.",
   },
   hosted_intake_form: {
-    label: "Hosted intake form",
+    label: "Hosted smart intake",
     description: "Use a PhotoBrief-hosted intake link from your website CTA.",
   },
   intake_routing: {
-    label: "Template routing",
-    description: "Route request types and messages to the right saved template.",
+    label: "Smart routing",
+    description: "Route request types and messages to the right brief path, saved template, or conditional photo handoff.",
   },
   api_webhooks: {
     label: "Website integrations & webhooks",
@@ -251,7 +251,7 @@ export const planLimits: PlanLimit[] = [
       "Simple AI photo checks and summaries included",
       "PhotoBrief branding shown to customers",
       "7-day media storage",
-      "Website Intake and integrations unlock on Pro",
+      "Smart Intake and integrations unlock on Pro",
     ],
     capabilities: {
       manual_links: true,
@@ -291,7 +291,7 @@ export const planLimits: PlanLimit[] = [
       "AI quality checks, readiness score, and summary",
       "PDF export with PhotoBrief footer",
       "30-day media storage",
-      "Website Intake and integrations unlock on Pro",
+      "Smart Intake and integrations unlock on Pro",
     ],
     capabilities: {
       manual_links: true,
@@ -311,8 +311,8 @@ export const planLimits: PlanLimit[] = [
     name: "Pro",
     priceMonthly: 49,
     priceAnnualMonthly: 40,
-    tagline: "Automate website intake.",
-    purpose: "Small businesses ready to turn website leads into photo-ready requests automatically.",
+    tagline: "Automate smart intake.",
+    purpose: "Small businesses ready to replace basic website forms with routed intake briefs and conditional photo handoff.",
     highlight: true,
     pricingAxes: {
       photos: "500 photos / month",
@@ -332,9 +332,11 @@ export const planLimits: PlanLimit[] = [
     },
     features: [
       "Everything in Starter",
-      "Website Intake hosted form",
+      "Hosted Smart Intake for your website CTA",
+      "Clean intake briefs from website leads",
       "Guided setup for common website tools",
-      "Template routing for request types",
+      "Smart routing for request types and messages",
+      "Conditional photo requests only when useful",
       "Webhook and Zapier/Make-style integrations",
       "AI request builder and AI template drafting",
       "Remove PhotoBrief branding from customer pages",
@@ -373,7 +375,7 @@ export const planLimits: PlanLimit[] = [
     priceMonthly: 99,
     priceAnnualMonthly: 80,
     tagline: "Shared intake operations.",
-    purpose: "Teams sharing automated photo intake across reviewers.",
+    purpose: "Teams sharing automated smart intake and photo review across reviewers.",
     pricingAxes: {
       photos: "1,500 photos / month",
       customerBranding: "Full customer branding",
@@ -393,7 +395,7 @@ export const planLimits: PlanLimit[] = [
     features: [
       "Everything in Pro",
       "1,500 customer photos / month",
-      "Website Intake and webhook integrations",
+      "Smart Intake and webhook integrations",
       "Unlimited saved templates",
       "Team inbox, assignments, and reviewer roles",
       "Shared internal notes and activity history",
