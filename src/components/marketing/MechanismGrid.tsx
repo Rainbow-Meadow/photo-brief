@@ -1,5 +1,4 @@
 import { RiseIn } from "@/components/motion/RiseIn";
-import { Card, Grid, Body } from "@/design-system/schema";
 
 import researchMagnifierIllo from "@/assets/rmbc/cedar/01-research-website-analysis.png";
 import mechanismGearsIllo from "@/assets/rmbc/cedar/02-capture-phone-viewfinder.png";
@@ -35,29 +34,45 @@ export const workflowSteps = [
 
 export function MechanismGrid() {
   return (
-    <Grid cols={4} gap="md">
-      {workflowSteps.map((step, i) => (
-        <RiseIn key={step.n} delay={i * 0.06}>
-          <Card>
-            <div className="flex items-baseline justify-between">
-              <span className="ls-numeral">{step.n}</span>
-              <span className="ls-numeral text-foreground/40">04</span>
+    <div className="space-y-16 lg:space-y-24">
+      {workflowSteps.map((step, i) => {
+        const flipped = i % 2 === 1;
+        return (
+          <RiseIn key={step.n} delay={i * 0.05}>
+            <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-12">
+              {/* Image */}
+              <div
+                className={`lg:col-span-7 ${flipped ? "lg:order-2" : "lg:order-1"}`}
+              >
+                <div className="aspect-[16/10] w-full overflow-hidden rounded-sm border border-border bg-[hsl(var(--pb-paper-edge))] p-4 ring-1 ring-border/40 sm:p-6">
+                  <img
+                    src={step.illo}
+                    alt=""
+                    className="h-full w-full object-contain"
+                    loading="lazy"
+                    width={1600}
+                    height={1000}
+                  />
+                </div>
+              </div>
+
+              {/* Copy */}
+              <div
+                className={`lg:col-span-5 ${flipped ? "lg:order-1" : "lg:order-2"}`}
+              >
+                <div className="flex items-baseline justify-between border-b border-border pb-3">
+                  <span className="ls-numeral">{step.n}</span>
+                  <span className="ls-numeral text-foreground/40">04</span>
+                </div>
+                <h3 className="ls-h2 mt-6">{step.title}</h3>
+                <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+                  {step.body}
+                </p>
+              </div>
             </div>
-            <div className="mt-6 aspect-[4/3] w-full overflow-hidden rounded-sm border border-border bg-[hsl(var(--pb-paper-edge))] p-3 ring-1 ring-border/40 sm:p-4">
-              <img
-                src={step.illo}
-                alt=""
-                className="h-full w-full object-contain"
-                loading="lazy"
-                width={1024}
-                height={1024}
-              />
-            </div>
-            <h3 className="ls-h3 mt-6">{step.title}</h3>
-            <Body size="sm">{step.body}</Body>
-          </Card>
-        </RiseIn>
-      ))}
-    </Grid>
+          </RiseIn>
+        );
+      })}
+    </div>
   );
 }
