@@ -1,67 +1,94 @@
-# Landing Page Layout Refactor
+## Goal
 
-Tighter overall vertical rhythm. Mobile + desktop both covered. No copy changes, no asset swaps, no token edits. Section order preserved (Hero → Marquee → Mechanism → Comparison → Signpost → FAQ → Final CTA).
+Reframe `/dashboard` as a Linear/Vercel-style operations surface: a single **Onboarding Progress** banner up top, the existing metrics strip + dual lists below, and a global **command menu (⌘K)** + keyboard shortcuts in the shell. Tighten shell chrome (sidebar, header) to match. Other pages stay as-is.
 
----
+## Scope
 
-## 1. Hero (`Landing.tsx` → `Hero`)
+**In:** `src/features/workspace/pages/DashboardPage.tsx`, new `OnboardingProgressBanner`, new `CommandMenu` + provider, `DashboardLayout.tsx`, `AppSidebar.tsx`, small additions to `src/index.css` (only if needed for tokens already missing).
 
-- Cap the right-column `BeforeAfterSlider` height (`max-h-[480px] lg:max-h-[520px]`, image `object-contain`) so the row no longer inherits a tall image height.
-- Keep two-column layout with `lg:items-center`; with the shorter image, copy column naturally vertically centers — empty band above the eyebrow goes away.
-- Headline stays as the 3-line display stack (`Guide.` / `Capture.` / `Close.`).
-- **Mobile CTAs:** switch from stacked to inline pair — primary `Try the live demo` + secondary ghost `Apply for the beta →` side-by-side in one row. Wrap with `flex flex-row flex-wrap gap-3` instead of stacking.
-- Section padding untouched.
-
-## 2. Marquee band (`Landing.tsx` → `MarqueeBand`)
-
-- Reduce `py-8` → `py-5`, tighten row gap `space-y-3` → `space-y-2`.
-- Replace `bg-card` with an accent-tinted strip (subtle amber wash, e.g. `bg-[hsl(var(--accent-kinetic)/0.08)]` with the existing `border-y border-border`).
-- Both rows kept (mantra + stats), opposite directions unchanged.
-
-## 3. Mechanism (`MechanismGrid.tsx`)
-
-- **Alternate sides per row:** odd rows image-left / copy-right, even rows image-right / copy-left (independent of orientation). Keep the orientation-based column-span split (landscape 7/5, portrait 5/7).
-- **Oversized step numeral:** replace the small `ls-numeral` with a large display numeral (e.g. `font-display text-7xl lg:text-8xl text-muted-foreground/30`) anchored above or behind the title in the copy column.
-- **Tighter rhythm:** `space-y-16 lg:space-y-24` → `space-y-12 lg:space-y-16`.
-- **Mobile order:** within each row, copy renders before image (currently image first). Use `order-` utilities so desktop side-alternation is preserved.
-
-## 4. Before / After comparison (`Landing.tsx` → `ComparisonSection`)
-
-- Replace the two-card grid with a **single split panel**: one bordered container, vertical seam down the middle at `lg`, "Before" left half / "After" right half. Mobile stacks vertically with a horizontal seam.
-- **Image on top of each half:** illustration first (no `aspect-[16/9]` muted box, no `p-4`), then numeral + heading + bullets beneath.
-- **Dim Before / brighten After:** Before half gets `opacity-60 grayscale-[0.4]` and a quiet background; After half gets full color, a thin accent-kinetic border, and the elevated surface tint.
-- Bullet rows kept as-is (icon + sentence).
-
-## 5. Signpost — three doors (`Landing.tsx` → `SignpostSection`)
-
-- **Hero the Beta door:** desktop grid becomes `lg:grid-cols-2` with rows: Beta spans the full top row (large, accent border or accent surface), Demo + Pricing share the bottom row as smaller tiles. Mobile stacks all three full-width.
-- **Borderless rows:** drop the `Card` panel. Each door is bare content (no fill, no border) separated from siblings by a top hairline (`border-t border-border pt-8`). Beta keeps a subtle accent treatment so it still reads as the priority.
-- **Title-led order inside each door:** `Title` → `Body` → footer row containing eyebrow + icon + arrow CTA. Drop the icon from the top.
-
-## 6. FAQ (`Landing.tsx` → `FaqSection`)
-
-- **Sticky intro + scrolling Q&A:** replace narrow single-column with a 2-column layout at `lg`: left rail (`lg:col-span-4`) holds the `SectionIntro` and the "Read the full help center →" link, sticky (`lg:sticky lg:top-24 self-start`). Right rail (`lg:col-span-8`) holds the accordion. Mobile stacks intro → accordion → link.
-- All items collapsed by default (current behavior).
-- Keep 4 questions.
-- **Drop numerals** from each accordion trigger — just the question, font-display medium. Adjust `AccordionContent` `pl-12` → `pl-0` (or small left padding to align with the question).
-
-## 7. Final CTA (`FinalCtaSection.tsx`, applied globally — Beta page also updates)
-
-- **Asymmetric two-column layout** at `lg`: oversized headline left (`lg:col-span-7`), eyebrow + body + CTAs stacked right (`lg:col-span-5`, vertically centered). Mobile stacks naturally.
-- **Accent surface:** swap `Section tone="dark"` for an accent-tinted surface — subtle amber wash on top of the dark base (`bg-gradient-to-br from-[hsl(var(--accent-kinetic)/0.12)] to-transparent`) so the closing CTA reads as the loudest moment on the page.
-- **Big primary + text link:** primary CTA becomes `size="lg"` solid button at slightly larger weight; secondary becomes a quiet underlined text link beneath the primary (not an inline `CTA secondary`). Keep `CTAGroup` only for the primary; render secondary as a `<NavLink>` with `ls-cta-quiet` styling below.
+**Out:** Requests / Customers / Guides pages, Settings pages, design tokens (use existing), schema, business logic, copy on marketing.
 
 ---
 
-## Technical notes
+## 1 · Onboarding Progress banner (replaces "Primary focus" hero)
 
-- All edits stay in: `src/pages/Landing.tsx`, `src/components/marketing/MechanismGrid.tsx`, `src/components/marketing/FinalCtaSection.tsx`. No token, schema, or shared-primitive changes.
-- Tokens and colors continue to come from `src/index.css` (`--accent-kinetic`, `--background`, `--border`, etc.) — no inline hex.
-- Beta page (`src/pages/Beta.tsx`) inherits the new Final CTA layout automatically since the change is global; no Beta-specific edits needed.
-- After implementation: capture desktop (1366) + mobile (375) screenshots of each section to verify nothing regressed.
+A new component `src/features/workspace/components/OnboardingProgressBanner.tsx`.
+
+**Steps tracked (4):**
+1. Brand set → `workspace.brand_logo_url` or brand settings touched
+2. First guide created → `guides` count > 0
+3. First request sent → `requests` count > 0
+4. First submission reviewed → any request with `firstPassStatus` set
+
+**Behavior:**
+- While `< 4/4`: full-width banner, left rail shows oversized progress count (e.g. `2 / 4`) in the same Geist display style used today on the focus card; right rail shows the 4 step rows with check/empty state, label, and a quiet inline link to the relevant route.
+- A thin progress bar (hairline, accent-kinetic fill) sits across the top edge.
+- At `4/4`: collapses to a single-line "health strip" — `✓ Workspace ready · X requests this period · plan tier · beta clock if active` with a dismiss-forever toggle stored in `localStorage` (`pb.onboarding-banner.dismissed=v1`).
+- On the empty-workspace branch (`isEmpty`), banner sits above `<StarterRequestCard />` instead of replacing it.
+
+**Visual:** Borderless top + bottom hairlines (`border-y border-border`), `bg-card`, no rounded corners (matches current app aesthetic). No accent surface — keep neutral; only the progress bar uses `--accent-kinetic`.
+
+**Data source:** Reuse `useRequests`, `useGuides`, `useCurrentWorkspace`. No new queries unless brand-set state isn't already derivable (then read `business_workspaces.brand_logo_url` once).
+
+---
+
+## 2 · Below the banner (keep current structure, tighten)
+
+Preserve the existing layout from `DashboardPage.tsx`:
+- 4-up metric strip (`Ready / Waiting / In progress / This month`) — keep `MetricCard variant="quiet"`.
+- Wide first-pass acceptance card with sub-stat + footnote — unchanged.
+- Two-column lists (`Ready to review`, `Needs customer action`) — unchanged.
+
+**Tighten:**
+- Remove the standalone "Primary focus" section entirely (it duplicates info now surfaced via the banner + metrics + lists).
+- Drop `PageHeader` title/description block (today's "Today" / "A quiet overview") — the banner is the new header. Keep the Assistant toggle button, move it to a small floating control top-right of the metrics row.
+- Reduce vertical rhythm: `space-y-5 sm:space-y-6` → `space-y-4 sm:space-y-5`.
+
+---
+
+## 3 · Command menu (⌘K) + keyboard nav
+
+New file `src/components/shell/CommandMenu.tsx` using existing shadcn `command.tsx` primitives wrapped in a `CommandDialog`.
+
+**Commands grouped:**
+- **Navigate:** Dashboard, Requests, Customers, Guides, Website Intake, Brand, Team, Templates, SMS, Integrations, Billing, Support, Help & Guide (filtered by plan via `usePlan().can()` for gated items).
+- **Create:** New request (`/requests/new`), New guide (`/guides/new` if route exists, else open builder).
+- **Account:** Reset password, Log out (reuse `useAccountActions`).
+- **Admin:** Command Center, Beta Program, Invites, AI Rerun, Website Intel — only if `usePlatformAdmin().isAdmin`.
+
+**Trigger:**
+- Global `useEffect` keydown listener for `⌘K` / `Ctrl+K` opens the dialog from anywhere inside `DashboardLayout`.
+- Header gets a small "Search… ⌘K" affordance (replaces nothing, sits between workspace name block and the action buttons on `sm+`, hidden on mobile).
+- Single-key shortcuts inside the dialog: `g d` → dashboard, `g r` → requests, `g c` → customers, `g i` → intake, `c` → new request. Implemented as a tiny shortcut map handled inside the dialog only when open=false (Linear-style "g then x").
+
+**Mounted once** inside `DashboardLayout.tsx` so it's available on every authed route. No mount on public/marketing routes.
+
+---
+
+## 4 · Shell chrome polish
+
+`AppSidebar.tsx`:
+- Group label typography → uppercase mono micro-label matching the rest of the app (`font-mono text-[0.62rem] tracking-[0.18em] text-muted-foreground/70`).
+- Tighter row height (`h-8` menu buttons), 13px label, icon `h-3.5 w-3.5`.
+- Active row: left 2px accent rail (`box-shadow: inset 2px 0 0 hsl(var(--accent-kinetic))`) instead of background fill.
+
+`DashboardLayout.tsx` header:
+- Insert the new ⌘K search affordance between the workspace block and the right action cluster.
+- Header height stays `h-16`; reduce horizontal padding one step on `sm` to make room.
+
+No changes to MobileTabBar, FeedbackWidget, or RequireAuth.
+
+---
+
+## 5 · Technical notes
+
+- All new components live under `src/features/workspace/components/` (banner) and `src/components/shell/` (command menu).
+- No new dependencies; `cmdk` is already vendored via `src/components/ui/command.tsx`.
+- Use existing tokens only: `--background`, `--card`, `--border`, `--muted-foreground`, `--accent-kinetic`, `--primary-foreground`. No new CSS variables.
+- Localstorage key for dismissed health strip: `pb.dashboard.health-strip.dismissed=v1`.
+- Keep `isEmpty` branch with `<StarterRequestCard />` working — banner appears above it, command menu still mounts.
+- After implementation: capture desktop (1366) + mobile (375) screenshots of `/dashboard` for visual confirmation. Run `bunx vitest run` to ensure the brand-mark and route contract tests still pass (no logo/route changes expected).
 
 ## Out of scope
 
-- Copy text, eyebrow numbering, asset swaps.
-- `SectionIntro`, `Section`, `Container`, `Card`, `CTA` primitives — used as-is.
-- Other pages (Pricing, Demo, Help, etc.) and design tokens.
+Copy rewrites, marketing pages, Requests/Customers/Guides pages, design tokens, schema, plan gating logic, AssistantPanel internals, MobileTabBar.
