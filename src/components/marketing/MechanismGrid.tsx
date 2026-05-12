@@ -48,7 +48,7 @@ export function MechanismGrid() {
                   <img
                     src={step.illo}
                     alt=""
-                    className="h-full w-full object-contain"
+                    className="h-full w-full object-cover"
                     loading="lazy"
                     width={1600}
                     height={1000}
