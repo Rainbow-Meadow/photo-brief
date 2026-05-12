@@ -80,13 +80,15 @@ export default function PublicIntakePage() {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/website-intake/${token}`);
-        const json = await res.json();
-        if (!res.ok) throw new Error(json?.message ?? json?.error ?? "Could not load intake form");
+        const { data: json, error: fnError } = await supabase.functions.invoke(`website-intake/${token}`, {
+          method: "GET",
+        });
+        if (fnError) throw new Error((json as any)?.message ?? (json as any)?.error ?? fnError.message ?? "Could not load intake form");
         if (!cancelled) {
-          setConfig(json);
-          const firstRoute = json.smartIntake?.routes?.[0]?.label ?? json.requestTypeOptions?.[0];
-          if (firstRoute && (json.smartIntake?.routes?.length === 1 || json.requestTypeOptions?.length === 1)) {
+          const cfg = json as PublicIntakeConfig;
+          setConfig(cfg);
+          const firstRoute = cfg.smartIntake?.routes?.[0]?.label ?? cfg.requestTypeOptions?.[0];
+          if (firstRoute && (cfg.smartIntake?.routes?.length === 1 || cfg.requestTypeOptions?.length === 1)) {
             setForm((f) => ({ ...f, request_type: firstRoute }));
           }
         }
