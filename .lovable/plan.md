@@ -1,68 +1,111 @@
-## Marketing-only proximity scroll snap
+## Sitewide deck mode — sticky-stack reveal across all marketing pages
 
-A lightweight CSS-only snap layer that gives the marketing surface a "deck" feel — when you let go near a section boundary the page settles to the start of that section — while preserving free scrolling inside long sections (FAQ, comparison) and leaving Lenis inertia, app routes, and embeds untouched.
+Replace the proximity snap with a true presentation deck: every section is a 100vh "slide" that pins to the viewport, and the next slide rises up over it like a card on a stack. Pure CSS sticky-stack — no JS hijacking, plays with Lenis, scales to every marketing route.
 
-### Why CSS proximity (not JS hijacking)
-- `scroll-snap-type: y proximity` cooperates with Lenis; `mandatory` fights it.
-- Zero accessibility cost: keyboard, screen-reader, find-in-page, anchor links, and `scrollIntoView` all keep working.
-- Touch devices behave naturally (proximity only nudges on idle).
-- No layout changes required — sections don't need to be 100vh.
+### The primitive (new)
 
-### Scope
-- Marketing routes only (every page rendered under `MarketingLayout`: `/`, `/pricing`, `/for-ai-agents`, `/privacy`, `/terms`, `/auth`, `/forgot-password`, `/reset-password`, `/unsubscribe`, `/help`, `/demo`, `/beta`, `/signup`, `/beta-invite/:token`, `/welcome`).
-- Explicitly excluded: app shell routes, `/badge/intake`, `/i/:token`, `/r/:token`, `/r/:token/done`, `NotFound`. These never render `MarketingLayout`, so they're untouched by construction.
-
-### Implementation
-
-**1. `src/components/layout/MarketingLayout.tsx`** — toggle a marker class on `<html>` only while a marketing route is mounted.
+`src/components/marketing/SlideStack.tsx`
 ```tsx
-useEffect(() => {
-  const root = document.documentElement;
-  root.classList.add("pb-snap-root");
-  return () => root.classList.remove("pb-snap-root");
-}, []);
+export function SlideStack({ children }) {
+  const slides = Children.toArray(children);
+  return (
+    <div className="pb-deck" style={{ "--slide-count": slides.length }}>
+      {slides.map((c, i) => (
+        <div className="pb-slide" style={{ "--i": i, zIndex: i + 1 }} key={i}>
+          {c}
+        </div>
+      ))}
+    </div>
+  );
+}
 ```
-Class is removed on unmount so navigating into the app instantly drops the snap behavior.
-
-**2. `src/index.css`** — add the snap utility scoped to that class.
+`src/index.css` additions:
 ```css
-@media (prefers-reduced-motion: no-preference) {
-  html.pb-snap-root {
-    scroll-snap-type: y proximity;
-  }
-  /* Snap each top-level marketing <section> to the viewport top, accounting for the floating sticky header (~80px). */
-  html.pb-snap-root .pb-landing > main > section {
-    scroll-snap-align: start;
-    scroll-snap-stop: normal;     /* never block fast scrolls */
-    scroll-margin-top: 5rem;       /* clears the sticky pill nav */
-  }
-  /* Footer should not act as a snap target. */
-  html.pb-snap-root .pb-landing > footer {
-    scroll-snap-align: none;
+.pb-deck > .pb-slide {
+  position: sticky;
+  top: 0;
+  height: 100svh;          /* svh handles mobile URL bar */
+  min-height: 100svh;
+  overflow: hidden;
+  background: hsl(var(--background));   /* opaque so it covers the one beneath */
+  isolation: isolate;
+}
+@media (prefers-reduced-motion: reduce) {
+  .pb-deck > .pb-slide {
+    position: relative;     /* graceful fallback: stacked normal flow */
+    height: auto;
+    min-height: 100svh;
   }
 }
 ```
-- `proximity` (not `mandatory`) → only snaps when the scroll naturally settles within ~10–15% of a boundary.
-- `scroll-snap-stop: normal` → multi-section flicks aren't trapped on the next section.
-- `scroll-margin-top: 5rem` → snap point sits below the floating pill nav so headings aren't covered.
-- `prefers-reduced-motion` guard → users with reduced motion get no snap at all.
+The trick: every slide sticks at top 0 with `height: 100svh`. The document height equals `slides × 100svh`. As you scroll, each slide stays glued to the viewport top while the next one (later in DOM, higher z-index) translates upward through normal scroll, sliding over the pinned one.
 
-**3. Smooth scrolling alignment** — Lenis already animates `window.scrollTo`, so anchor links (`#workflow`, `#faq`, etc.) and the "Skip to content" type behaviors continue to land cleanly on snap points (Lenis settles the scroll, browser proximity snaps at rest).
+### Slide content rules
+A new `<Slide>` wrapper enforces the contract:
+```tsx
+<Slide tone="paper|alt|dark" anchor="workflow">
+  <div className="pb-slide-inner">…</div>
+</Slide>
+```
+- `pb-slide-inner`: `mx-auto w-full max-w-7xl h-full px-6 pt-24 pb-12 flex flex-col justify-center` — vertically centers content under the floating nav (top safe-zone 6rem).
+- `tone` sets the background color via existing `--pb-tier-*` tokens so adjacent slides read distinct as they stack.
+- `anchor` sets `id` for hash navigation and `scroll-margin-top: 0` (sticky already handles offset).
 
-### What this does NOT change
-- No JS scroll listeners, no wheel/keyboard hijacking, no per-section observers.
-- No section markup changes anywhere — all current `Section` components already render as `<section>`.
-- No effect on horizontally scrolling marquees, modals, sheets, or nested scroll containers (snap is on the document only).
-- No effect on `MarketingLayout` short pages (auth/legal): with one section there's nothing to snap to, so behavior is unchanged.
-- App routes, embeds, and recipient capture flows are untouched — they don't render `MarketingLayout`, so the `pb-snap-root` class never gets added.
+### Removing the previous layer
+- Delete the `html.pb-snap-root { scroll-snap-type… }` block added last turn.
+- Drop the `pb-snap-root` toggle effect from `MarketingLayout`.
+- Lenis stays unchanged (its smooth `window.scrollTo` works with sticky stacks).
 
-### Verification
-After the edit, in preview:
-1. Land on `/` and let the wheel coast near the Mechanism / Comparison / FAQ / CTA boundaries — page should settle on the section top with the heading just below the pill nav.
-2. Inside the long FAQ accordion, mid-section scroll must remain free (no snap-back).
-3. Click footer "Privacy" → scroll naturally on a short page (no snap artifacts).
-4. Hard-refresh on `/dashboard` (or any app route) — `html.pb-snap-root` should not be present and scroll should be 100% native.
-5. Test `prefers-reduced-motion: reduce` (DevTools rendering pane) — snap disabled entirely.
+### Page refactors
 
-### Out of scope
-- Section indicator dots / progress rail, presenter-style page-by-page nav, scroll-driven animations, per-section background swaps, anchor-aware nav highlighting. These are separate features and can build on the snap foundation later if requested.
+**`src/pages/Landing.tsx` — 9 slides**
+1. Hero
+2. Marquee band (compact, full-bleed, 100svh with stat cards centered)
+3. Mechanism · 01 Research (one row of MechanismGrid, big)
+4. Mechanism · 02 Mechanism
+5. Mechanism · 03 Brief
+6. Mechanism · 04 Close
+7. Comparison (Before/After cards side by side)
+8. Signpost (3 doors)
+9. FAQ (top 4 items, "More" link) + Final CTA merged into one slide with two-column layout, OR FaQ slide + FinalCTA slide if it doesn't fit (decide during build).
+
+`MechanismGrid` is dissolved — replaced by 4 individual `<Slide>` blocks rendering one step each at large size (image dominates left/right, copy centered vertically). Existing `workflowSteps` data array is reused via a new `MechanismSlide` component.
+
+**`src/pages/Pricing.tsx` (7 sections → 7 slides)** Each existing `<Section>` becomes a `<Slide>`. Pricing card grid centered vertically. FAQ slide trims to 3 items.
+
+**`src/pages/Beta.tsx` (9 → 9 slides)** Same wrap. Long form sections (eligibility list, partner perks) compressed via two-column layout.
+
+**`src/pages/Demo.tsx` (7 → 7 slides)** Wrap each. Interactive hero pinned full-bleed.
+
+**`src/pages/ForAiAgents.tsx` (6 → 6 slides)** Wrap each.
+
+**`src/pages/Privacy.tsx`, `Terms.tsx`, `Help`, `Auth`, `ForgotPassword`, `ResetPassword`, `Unsubscribe`, `Signup`, `BetaInvite`, `BetaWelcome`** — these are forms or long-form legal text. Wrap the page in a single `<Slide>` so the deck behavior is consistent (one slide = native scroll inside if needed). No content edits.
+
+### Header & footer
+- Sticky header (`pb-paper-pill`) keeps `z-50`, floats above all slides.
+- Footer is **outside** the `SlideStack`, rendered after it in `MarketingLayout`. Reaching the footer naturally exits the deck.
+- A small **slide indicator rail** (right-side dots, one per slide) is added to `MarketingLayout` when the current page renders a `SlideStack`. Click = `element.scrollIntoView({behavior:'smooth'})`. Active dot tracked via `IntersectionObserver` on each `.pb-slide`. Dots hide on touch and on `prefers-reduced-motion`.
+
+### Mobile (`<sm`)
+- Slides keep `height: 100svh`. Inner content uses smaller type and tighter spacing (Tailwind responsive utilities already in place).
+- For very dense slides (Comparison's two cards), stack vertically inside the slide and reduce illustration size.
+
+### What's left out (intentionally)
+- No keyboard/wheel hijacking. Native scroll + Lenis only.
+- No scroll-driven scale/opacity choreography on outgoing slide. Pure cover-up reveal as requested. (Easy to add later via `animation-timeline: scroll()` once we want polish.)
+- No per-page section count audit at build time — verified visually in preview at 1440×900 and 390×844 after the refactor.
+
+### Risks / tradeoffs you should accept before I build
+- **FAQ truncation on Landing**: only 4 items will be shown on the slide; the rest live in `/help`.
+- **Type may shrink** on the Comparison slide at narrow desktop widths (1280–1366) to keep both cards visible.
+- **Tall content overflow**: any slide whose content genuinely can't be made to fit 100svh (e.g. the full pricing comparison table, full Beta eligibility list) will get an internal scroll inside the pinned slide — the next slide still rises up when the user scrolls past the page-level scroll position. I'll flag any such slide during build and propose a split.
+- **`/auth`, `/signup`, legal pages** stay as single full-height slides — no card-stack effect on them since they're one section.
+
+### Verification (post-build)
+1. `/` at 1440×900: scroll once — Hero stays pinned while Marquee rises over it. Repeat through all 9 slides. Reach footer.
+2. `/` at 390×844 (mobile): same behavior, slide indicator hidden.
+3. `/pricing`, `/beta`, `/demo`, `/for-ai-agents`: each section pins and is overlaid by the next.
+4. `/privacy`: single slide, scrolls naturally to footer.
+5. `/dashboard` and `/r/:token`: zero deck behavior (no `SlideStack` rendered).
+6. DevTools "reduce motion": slides become normal stacked sections, no pinning.
+7. Anchor link `/#workflow` lands on the Research slide.
