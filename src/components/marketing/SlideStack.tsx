@@ -55,7 +55,7 @@ export function Slide({
   align = "center",
 }: SlideProps) {
   return (
-    <section
+    <div
       id={anchor}
       data-pb-slide
       data-pb-label={label ?? anchor ?? ""}
@@ -67,7 +67,7 @@ export function Slide({
       >
         {children}
       </div>
-    </section>
+    </div>
   );
 }
 
