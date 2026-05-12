@@ -1,5 +1,5 @@
 import { NavLink, useParams } from "react-router-dom";
-import { ArrowLeft, ExternalLink, FileText, Mail, Phone } from "lucide-react";
+import { ArrowLeft, ExternalLink, FileText, Mail, MapPin, Phone } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { PageShell, PageStack } from "@/components/layout/primitives";
 import { StatusBadge } from "@/components/shared/StatusBadge";
@@ -7,6 +7,7 @@ import { ReadinessScoreBadge } from "@/components/shared/ReadinessScoreBadge";
 import { Button } from "@/components/ui/button";
 import { useIntakeBrief } from "@/hooks/useIntakeBriefs";
 import { formatRelativeTime } from "@/utils/format";
+import { photoPolicySentence, photoPolicyShort, photoPolicyTone } from "@/features/intake/lib/photoPolicy";
 
 function humanize(value: string) {
   return value.replace(/_/g, " ");
