@@ -1,10 +1,15 @@
 // Resolve recipient context (request + guide + branding) for a token.
 // Used by the public recipient page. Guides/templates are loaded only from
 // Supabase workspace data; there is no built-in template fallback.
+//
+// Fast path: try the Cloudflare-cached recipient bundle (Step 4 of the
+// gain-control plan) at https://assistant.photobrief.ai/recipient/:token/bundle.
+// Falls back transparently to direct token-scoped Supabase reads on any
+// failure, so the page keeps loading even if the worker is offline.
 
 import { getTokenClient } from "@/integrations/supabase/tokenClient";
 import { STANDARD_PHOTO_ISSUE_TYPES } from "@/config/photoAssessment";
-import { guidesService } from "@/services/guidesService";
+import { guidesService, rowToGuide } from "@/services/guidesService";
 import type { PhotoGuide } from "@/types/photobrief";
 
 export interface RecipientLoadDiagnostics {
