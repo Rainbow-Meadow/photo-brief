@@ -1,5 +1,5 @@
 import { Outlet, NavLink, useLocation } from "react-router-dom";
-import { Plus, LifeBuoy, KeyRound, LogOut, Globe2 } from "lucide-react";
+import { Plus, LifeBuoy, KeyRound, LogOut, Globe2, Search } from "lucide-react";
 import { FeedbackWidget } from "@/features/support/components/FeedbackWidget";
 
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
@@ -7,6 +7,7 @@ import { AppSidebar } from "@/components/layout/AppSidebar";
 import { NotificationBell } from "@/components/layout/NotificationBell";
 import { MobileTabBar } from "@/components/layout/MobileTabBar";
 import { BrandMark } from "@/components/layout/BrandMark";
+import { CommandMenu } from "@/components/shell/CommandMenu";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -61,6 +62,21 @@ export function DashboardLayout() {
                 </p>
                 <p className="text-[11px] text-muted-foreground">Visual intake workspace</p>
               </div>
+              {/* ⌘K search affordance — opens CommandMenu via keyboard event */}
+              <button
+                type="button"
+                onClick={() => {
+                  window.dispatchEvent(
+                    new KeyboardEvent("keydown", { key: "k", metaKey: true }),
+                  );
+                }}
+                aria-label="Open command menu"
+                className="ml-3 hidden h-8 w-56 items-center gap-2 border border-border bg-background/40 px-2 text-left text-xs text-muted-foreground transition hover:border-foreground/40 hover:text-foreground md:flex"
+              >
+                <Search className="h-3.5 w-3.5" />
+                <span className="flex-1 truncate">Search or jump to…</span>
+                <kbd className="font-mono text-[0.65rem] tracking-wider text-muted-foreground/70">⌘K</kbd>
+              </button>
 
               <div className="ml-auto flex items-center gap-2">
                 <NavLink
@@ -118,6 +134,8 @@ export function DashboardLayout() {
             </main>
           </div>
         </div>
+
+        <CommandMenu />
 
         <FeedbackWidget />
 

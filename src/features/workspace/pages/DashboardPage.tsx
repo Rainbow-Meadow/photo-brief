@@ -6,14 +6,13 @@ import {
   Clock,
   Inbox,
   ShieldCheck,
-  Plus,
   Sparkles,
   Bell,
   ArrowRight,
   ChevronRight,
 } from "lucide-react";
-import { PageHeader } from "@/components/layout/PageHeader";
 import { PageShell, PageStack } from "@/components/layout/primitives";
+import { OnboardingProgressBanner } from "@/features/workspace/components/OnboardingProgressBanner";
 import { MetricCard } from "@/components/shared/MetricCard";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { ReadinessScoreBadge } from "@/components/shared/ReadinessScoreBadge";
@@ -134,81 +133,32 @@ export default function DashboardPage() {
   );
 
   const isEmpty = requests.length === 0;
-  const primaryFocus = metrics.readyToReview > 0
-    ? {
-        label: "Ready to review",
-        value: `${metrics.readyToReview}`,
-        copy: metrics.readyToReview === 1 ? "submission is waiting for you." : "submissions are waiting for you.",
-        href: "/requests?status=submitted",
-        cta: "Review now",
-      }
-    : metrics.needsCustomer > 0
-      ? {
-          label: "Waiting on customers",
-          value: `${metrics.needsCustomer}`,
-          copy: metrics.needsCustomer === 1 ? "request needs a customer nudge." : "requests may need a customer nudge.",
-          href: "/requests?status=needs_customer_action",
-          cta: "View open requests",
-        }
-      : {
-          label: "All clear",
-          value: "0",
-          copy: "items need your attention right now.",
-          href: "/requests/new",
-          cta: "New request",
-        };
 
   return (
     <PageShell><PageStack>
-      <PageHeader
-        title={isEmpty ? "Welcome to PhotoBrief" : "Today"}
-        description={isEmpty ? "Send your first request and get a PhotoBrief back in minutes." : "A quiet overview of what needs attention."}
-        actions={
-          <div className="flex flex-wrap items-center gap-2">
-            <Button
-              variant={assistantOpen ? "secondary" : "outline"}
-              size="sm"
-              className="gap-1.5 rounded-full bg-background/60"
-              onClick={() => setAssistantOpen((o) => !o)}
-              aria-label="Toggle assistant"
-            >
-              <Sparkles className="h-4 w-4" />
-              <span className="hidden sm:inline">Assistant</span>
-            </Button>
-          </div>
-        }
-      />
+      <OnboardingProgressBanner />
 
       {isEmpty ? <StarterRequestCard industry={workspace?.industry} /> : null}
       {!isEmpty ? (
-        <div className="grid gap-5 sm:gap-6 lg:grid-cols-3">
-          <div className={cn("space-y-5 sm:space-y-6", assistantOpen ? "lg:col-span-2" : "lg:col-span-3")}>
-            {/* Primary focus card */}
-            <section className="relative border border-border bg-card p-5 sm:p-7">
-              <div className="flex flex-col gap-5">
-                <div>
-                  <p className="inline-flex items-baseline gap-2 font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
-                    <span className="inline-block h-px w-8 -translate-y-[0.25em] bg-[hsl(var(--accent-kinetic))]" />
-                    <span className="text-[hsl(var(--accent-kinetic))]">[ 01 ]</span>
-                    <span>{primaryFocus.label}</span>
-                  </p>
-                  <div className="mt-4 flex items-baseline gap-4">
-                    <span className="font-[Geist,Inter,system-ui,sans-serif] text-5xl font-semibold leading-none tracking-[-0.025em] text-foreground tabular-nums">
-                      {primaryFocus.value}
-                    </span>
-                    <span className="max-w-xs text-sm leading-relaxed text-muted-foreground">
-                      {primaryFocus.copy}
-                    </span>
-                  </div>
-                </div>
-                <NavLink
-                  to={primaryFocus.href}
-                  className="inline-flex h-12 items-center justify-center gap-2 self-start bg-[hsl(var(--accent-kinetic))] px-6 font-[Geist,Inter,system-ui,sans-serif] text-[0.78rem] font-semibold uppercase tracking-[0.14em] text-[hsl(var(--primary-foreground))] transition hover:brightness-110"
-                >
-                  {primaryFocus.cta} <ArrowRight className="h-4 w-4" />
-                </NavLink>
-              </div>
-            </section>
+        <div className="grid gap-4 sm:gap-5 lg:grid-cols-3">
+          <div className={cn("space-y-4 sm:space-y-5", assistantOpen ? "lg:col-span-2" : "lg:col-span-3")}>
+            {/* Section heading + assistant toggle */}
+            <div className="flex items-center justify-between">
+              <p className="inline-flex items-center gap-2 font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+                <span className="inline-block h-px w-6 bg-[hsl(var(--accent-kinetic))]" />
+                Today
+              </p>
+              <Button
+                variant={assistantOpen ? "secondary" : "ghost"}
+                size="sm"
+                className="h-8 gap-1.5"
+                onClick={() => setAssistantOpen((o) => !o)}
+                aria-label="Toggle assistant"
+              >
+                <Sparkles className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">Assistant</span>
+              </Button>
+            </div>
 
             {/* Metric cards – horizontal scroll on mobile, grid on desktop */}
             <div className="-mx-3 flex gap-3 overflow-x-auto px-3 pb-1 snap-x snap-mandatory sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-3 sm:overflow-visible sm:px-0 sm:pb-0 xl:grid-cols-4">

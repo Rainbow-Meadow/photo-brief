@@ -101,7 +101,7 @@ export function AppSidebar() {
 
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Workspace</SidebarGroupLabel>
+          <SidebarGroupLabel className="font-mono text-[0.62rem] uppercase tracking-[0.18em] text-muted-foreground/70">Workspace</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {mainItems.map((item) => {
@@ -110,7 +110,15 @@ export function AppSidebar() {
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild isActive={isActive(item.url)} tooltip={tooltip}>
-                      <NavLink to={item.url} className="tap-apple focus-apple flex items-center gap-2 text-callout">
+                      <NavLink
+                        to={item.url}
+                        className={({ isActive: active }) =>
+                          cn(
+                            "tap-apple focus-apple flex items-center gap-2 text-callout",
+                            active && "shadow-[inset_2px_0_0_hsl(var(--accent-kinetic))]",
+                          )
+                        }
+                      >
                         <item.icon className="h-4 w-4" />
                         {!collapsed && (
                           <>
@@ -132,13 +140,21 @@ export function AppSidebar() {
         </SidebarGroup>
 
         <SidebarGroup>
-          <SidebarGroupLabel>Settings</SidebarGroupLabel>
+          <SidebarGroupLabel className="font-mono text-[0.62rem] uppercase tracking-[0.18em] text-muted-foreground/70">Settings</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {settingsItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild isActive={isActive(item.url)} tooltip={item.title}>
-                    <NavLink to={item.url} className="tap-apple focus-apple flex items-center gap-2 text-callout">
+                    <NavLink
+                      to={item.url}
+                      className={({ isActive: active }) =>
+                        cn(
+                          "tap-apple focus-apple flex items-center gap-2 text-callout",
+                          active && "shadow-[inset_2px_0_0_hsl(var(--accent-kinetic))]",
+                        )
+                      }
+                    >
                       <item.icon className="h-4 w-4" />
                       {!collapsed && <span>{item.title}</span>}
                     </NavLink>
@@ -150,12 +166,12 @@ export function AppSidebar() {
         </SidebarGroup>
 
         <SidebarGroup>
-          <SidebarGroupLabel>Resources</SidebarGroupLabel>
+          <SidebarGroupLabel className="font-mono text-[0.62rem] uppercase tracking-[0.18em] text-muted-foreground/70">Resources</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild isActive={isActive("/support")} tooltip="Support">
-                  <NavLink to="/support" className="tap-apple focus-apple flex items-center gap-2 text-callout">
+                  <NavLink to="/support" className={({ isActive: active }) => cn("tap-apple focus-apple flex items-center gap-2 text-callout", active && "shadow-[inset_2px_0_0_hsl(var(--accent-kinetic))]")}>
                     <MessageSquare className="h-4 w-4" />
                     {!collapsed && <span>Support</span>}
                   </NavLink>
@@ -163,7 +179,7 @@ export function AppSidebar() {
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild isActive={isActive("/app/help")} tooltip="Help & Guide">
-                  <NavLink to="/app/help" className="tap-apple focus-apple flex items-center gap-2 text-callout">
+                  <NavLink to="/app/help" className={({ isActive: active }) => cn("tap-apple focus-apple flex items-center gap-2 text-callout", active && "shadow-[inset_2px_0_0_hsl(var(--accent-kinetic))]")}>
                     <LifeBuoy className="h-4 w-4" />
                     {!collapsed && <span>Help & Guide</span>}
                   </NavLink>
@@ -175,13 +191,21 @@ export function AppSidebar() {
 
         {isAdmin ? (
           <SidebarGroup>
-            <SidebarGroupLabel>Admin</SidebarGroupLabel>
+            <SidebarGroupLabel className="font-mono text-[0.62rem] uppercase tracking-[0.18em] text-muted-foreground/70">Admin</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {adminItems.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild isActive={isActive(item.url)} tooltip={item.title}>
-                      <NavLink to={item.url} className="tap-apple focus-apple flex items-center gap-2 text-callout">
+                      <NavLink
+                      to={item.url}
+                      className={({ isActive: active }) =>
+                        cn(
+                          "tap-apple focus-apple flex items-center gap-2 text-callout",
+                          active && "shadow-[inset_2px_0_0_hsl(var(--accent-kinetic))]",
+                        )
+                      }
+                    >
                         <item.icon className="h-4 w-4" />
                         {!collapsed && <span>{item.title}</span>}
                       </NavLink>
