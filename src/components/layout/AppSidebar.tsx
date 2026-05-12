@@ -44,7 +44,8 @@ const mainItems = [
   { title: "Requests", url: "/requests", icon: Inbox },
   { title: "Customers", url: "/customers", icon: Users },
   { title: "Guides", url: "/guides", icon: BookOpen },
-  { title: "Website Intake", url: "/intake", icon: Globe2, feature: "website_intake" as const },
+  { title: "Website Intake", url: "/intake", icon: Globe2, feature: "website_intake" as const, exact: true },
+  { title: "Intake Briefs", url: "/intake/briefs", icon: FileText, feature: "website_intake" as const },
 ];
 
 const adminItems = [
@@ -74,7 +75,7 @@ export function AppSidebar() {
   const showUpgradeCard = !planLoading && (plan === "free" || plan === "starter");
   const { pathname } = useLocation();
 
-  const isActive = (path: string) => pathname === path || pathname.startsWith(`${path}/`);
+  const isActive = (path: string, exact = false) => exact ? pathname === path : pathname === path || pathname.startsWith(`${path}/`);
 
   return (
     <Sidebar collapsible="icon">
@@ -109,7 +110,7 @@ export function AppSidebar() {
                 const tooltip = locked ? `${item.title} · Pro` : item.title;
                 return (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild isActive={isActive(item.url)} tooltip={tooltip}>
+                    <SidebarMenuButton asChild isActive={isActive(item.url, item.exact)} tooltip={tooltip}>
                       <NavLink
                         to={item.url}
                         className={({ isActive: active }) =>
