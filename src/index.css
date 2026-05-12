@@ -1258,3 +1258,21 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
   .tap-apple, .list-row-apple, .segmented-apple > button { transition: none !important; }
   .tap-apple:active { transform: none !important; }
 }
+
+/* ── Marketing scroll-snap ────────────────────────────────────────────────
+   Proximity snap on the document so marketing pages settle on section tops
+   when the wheel coasts to a stop. Cooperates with Lenis (mandatory would
+   fight it). Only applied while MarketingLayout is mounted via .pb-snap-root. */
+@media (prefers-reduced-motion: no-preference) {
+  html.pb-snap-root {
+    scroll-snap-type: y proximity;
+  }
+  html.pb-snap-root .pb-landing > main > section {
+    scroll-snap-align: start;
+    scroll-snap-stop: normal;
+    scroll-margin-top: 5rem;
+  }
+  html.pb-snap-root .pb-landing > footer {
+    scroll-snap-align: none;
+  }
+}
