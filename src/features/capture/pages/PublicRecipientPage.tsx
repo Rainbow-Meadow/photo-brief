@@ -13,7 +13,7 @@ import { ReviewSummaryCard } from "@/features/capture/components/ReviewSummaryCa
 import { SubmitConfirmationCard } from "@/features/capture/components/SubmitConfirmationCard";
 import { RecipientBrandingProvider } from "@/features/capture/RecipientBrandingContext";
 import { loadRecipientContext, RecipientLoadError, type RecipientContext, type RecipientLoadDiagnostics } from "@/features/capture/recipientContext";
-import { resolveRecipientError } from "@/lib/errorCodes";
+import { resolveRecipientError, classifySubmitError } from "@/lib/errorCodes";
 import { DiagnosticsPanel } from "@/components/shared/DiagnosticsPanel";
 import { useChatFlow } from "@/hooks/useChatFlow";
 import { r2MediaService } from "@/services/r2MediaService";
@@ -108,6 +108,7 @@ function RecipientWorkflow({ ctx, token, navigate }: { ctx: RecipientContext; to
   const submissionIdRef = useRef<string | null>(ctx.resubmit?.submissionId ?? null);
   const [started, setStarted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<ReturnType<typeof classifySubmitError> | null>(null);
 
   const uploadCapture = useCallback(
     async ({ stepId, blob, ext }: { stepId: string; blob: Blob; ext: string }) => {
@@ -207,6 +208,7 @@ function RecipientWorkflow({ ctx, token, navigate }: { ctx: RecipientContext; to
 
   const handleSubmit = async () => {
     if (submitting) return;
+    setSubmitError(null);
     setSubmitting(true);
 
     // Demo / preview path (no real backend wiring) — proceed optimistically.
@@ -222,6 +224,7 @@ function RecipientWorkflow({ ctx, token, navigate }: { ctx: RecipientContext; to
       return;
     }
 
+    let succeeded = false;
     try {
       const submission = await submissionsService.submitFromRecipient({
         token,
@@ -257,12 +260,26 @@ function RecipientWorkflow({ ctx, token, navigate }: { ctx: RecipientContext; to
         answers: flow.answers.length,
         resubmit: !!ctx.resubmit,
       });
+      succeeded = true;
 
       setTimeout(() => navigate(`/r/${token}/done`), 1200);
     } catch (err) {
-      console.error("Submission failed", err);
-      setSubmitting(false);
-      toast.error("We couldn't send your photos — please try again.");
+      const descriptor = classifySubmitError(err);
+      console.error("Submission failed", descriptor.code, err);
+      trackEvent("submission_failed", {
+        guide_id: ctx.guide.id,
+        request_id: ctx.requestId,
+        code: descriptor.code,
+      });
+      setSubmitError(descriptor);
+      toast.error(`${descriptor.headline} (${descriptor.code})`, {
+        description: descriptor.body,
+      });
+    } finally {
+      // Always re-enable the button on failure. On success we keep the
+      // disabled state through the brief navigation transition so the user
+      // can't double-submit before /done loads.
+      if (!succeeded) setSubmitting(false);
     }
   };
 
@@ -334,6 +351,7 @@ function RecipientWorkflow({ ctx, token, navigate }: { ctx: RecipientContext; to
                 photos={flow.photos}
                 answers={flow.answers}
                 submitting={submitting}
+                submitError={submitError}
                 onCapture={flow.submitPhoto}
                 onSkip={flow.skipPhoto}
                 onRetake={flow.retake}
@@ -448,6 +466,7 @@ function StepContent({
   photos,
   answers,
   submitting,
+  submitError,
   onCapture,
   onSkip,
   onRetake,
@@ -464,6 +483,7 @@ function StepContent({
   photos: CapturedPhoto[];
   answers: { questionId: string; prompt: string; answer: string }[];
   submitting: boolean;
+  submitError: import("@/lib/errorCodes").RecipientErrorDescriptor | null;
   onCapture: (previewUrl: string, file: File | null) => void;
   onSkip: () => void;
   onRetake: () => void;
@@ -490,6 +510,7 @@ function StepContent({
           answers={answers}
           onSubmit={onSubmit}
           submitting={submitting}
+          submitError={submitError}
         />
       </StepCard>
     );

@@ -7,6 +7,9 @@ export type RecipientErrorCode =
   | "PB-404" // token not found
   | "PB-425" // request not ready (no guide attached / guide missing)
   | "PB-410" // link revoked / expired
+  | "PB-NET" // network failure during submit
+  | "PB-PERM" // RLS / permission denied during submit
+  | "PB-503" // backend down / 5xx during submit
   | "PB-500"; // unexpected
 
 export interface RecipientErrorDescriptor {
@@ -35,11 +38,29 @@ export const RECIPIENT_ERRORS: Record<RecipientErrorCode, RecipientErrorDescript
     headline: "This link has expired",
     body: "This request is no longer accepting submissions. Reach out to the sender for a new link.",
   },
+  "PB-NET": {
+    code: "PB-NET",
+    tag: "Connection issue",
+    headline: "We couldn't reach the server",
+    body: "Check your internet connection and tap Try again. Your photos and answers are still saved on this device.",
+  },
+  "PB-PERM": {
+    code: "PB-PERM",
+    tag: "Link permission",
+    headline: "This link can't accept your submission",
+    body: "Your link may have been revoked or replaced. Ask the sender for a fresh link, then try again.",
+  },
+  "PB-503": {
+    code: "PB-503",
+    tag: "Service busy",
+    headline: "Our service is temporarily unavailable",
+    body: "Give it a moment and tap Try again. If it keeps failing, let the sender know.",
+  },
   "PB-500": {
     code: "PB-500",
     tag: "Something broke",
     headline: "We hit an unexpected problem",
-    body: "Try refreshing this page. If it keeps happening, share the diagnostics below with the sender.",
+    body: "Try again. If it keeps happening, share the diagnostics below with the sender.",
   },
 };
 
@@ -54,5 +75,44 @@ export function resolveRecipientError(message?: string | null): RecipientErrorDe
   if (message in RECIPIENT_ERRORS) return RECIPIENT_ERRORS[message as RecipientErrorCode];
   const mapped = LEGACY_MAP[message];
   if (mapped) return RECIPIENT_ERRORS[mapped];
+  return RECIPIENT_ERRORS["PB-500"];
+}
+
+/**
+ * Classify a thrown error from the recipient submit pipeline into a
+ * user-facing descriptor. Looks at status codes, PostgREST error codes,
+ * and common network signatures. Always returns a descriptor (never null).
+ */
+export function classifySubmitError(err: unknown): RecipientErrorDescriptor {
+  if (!err) return RECIPIENT_ERRORS["PB-500"];
+  const anyErr = err as {
+    name?: string;
+    message?: string;
+    code?: string | number;
+    status?: number;
+    statusCode?: number;
+  };
+  const status = Number(anyErr.status ?? anyErr.statusCode ?? 0);
+  const message = String(anyErr.message ?? "").toLowerCase();
+  const code = String(anyErr.code ?? "");
+
+  // PostgREST permission codes
+  if (code === "42501" || code === "PGRST301" || status === 401 || status === 403) {
+    return RECIPIENT_ERRORS["PB-PERM"];
+  }
+  // Network / fetch failures
+  if (
+    anyErr.name === "TypeError" ||
+    anyErr.name === "AbortError" ||
+    message.includes("failed to fetch") ||
+    message.includes("network") ||
+    message.includes("load failed")
+  ) {
+    return RECIPIENT_ERRORS["PB-NET"];
+  }
+  // Backend down / overloaded
+  if (status >= 500 && status < 600) {
+    return RECIPIENT_ERRORS["PB-503"];
+  }
   return RECIPIENT_ERRORS["PB-500"];
 }
