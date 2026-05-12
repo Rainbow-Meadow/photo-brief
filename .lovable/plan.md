@@ -1,75 +1,112 @@
-# Live E2E Test Plan: PhotoBrief Intake Flow (Cedar & Sons scenario)
+## Goal
 
-## Objective
-Run a real, evidence-backed end-to-end test of "Send a link. Get a complete brief." against the live preview. Use the **Cedar & Sons leaning-oak tree-care** scenario already used in the hero/interactive demo so test data stays consistent across the product.
+Close the four findings from the Cedar & Sons E2E run: two product bugs that real recipients hit today, and two test-tooling blockers that prevented finishing the run.
 
-## Test data (Cedar & Sons)
-- Business: existing seed workspace (per `mem://seed-users`) — do **not** create a new business
-- Request title: `Cedar & Sons — Leaning Oak Estimate (E2E <ISO timestamp>)`
-- Recipient name: `Cedar & Sons Test Homeowner`
-- Recipient email: safe `+e2e` alias on the seed user's domain
-- Photos: reuse the four tree-care fixtures already in repo
-  - `src/assets/tree-care/leaning-oak-wide.jpg`
-  - `src/assets/tree-care/oak-trunk-closeup.jpg`
-  - `src/assets/tree-care/house-elevation.jpg`
-  - `src/assets/tree-care/driveway-access.jpg`
-- Intake answers mirror the InteractiveHeroBriefAssembly script (lean direction, target species, access notes)
+---
 
-## Phase 1 — Recon (read-only)
-1. Read `mem://seed-users` for the login + workspace to use.
-2. Map live routes from `src/App.tsx` (request create, request detail, `/r/:token`, submission review).
-3. Confirm services + edge functions involved (`requestsService`, `submissionsService`, `r2MediaService`, AI photo check, AI summary).
-4. List DB tables to verify: `photo_brief_requests`, `submissions`, `captured_media`, `ai_check_results`, `submission_reviews`, `usage_events`, `credit_ledger`, plus `submission-media` storage.
+## Fix 1 — BUG-2: recipient sees "Your business" / "Your business here"
 
-## Phase 2 — Live execution
+**Root cause (verified in DB):** `business_workspaces` has only `is_workspace_member()` read policy, so the anonymous token-scoped client in `src/features/capture/recipientContext.ts` gets `ws = null`, and `businessName` falls back to the literal string `"Your business"`. That string then gets composed into the headline (`{businessName} needs a few photos`) and the default intro body (`Hi ${firstName}! ${businessName} here — …`). Brand profiles already have a token policy, but workspaces don't — so this leak hits **every** workspace whose owner hasn't manually populated `brand_profiles.intro_message`.
 
-### A. Business-side setup
-- Sign in as the seed user via `browser--navigate_to_sandbox`.
-- Create the Cedar & Sons request above; capture request ID, `/r/:token`, timestamps.
-- `supabase--read_query` confirms row in `photo_brief_requests` and a `request_created` event in `usage_events`.
+**Fix:**
 
-### B. Recipient flow (unauthenticated session)
-- Open `/r/:token` with no auth.
-- Walk the stepper using the four tree-care fixtures (copied to `/tmp` first so the file input can read them).
-- Provide Cedar & Sons answers.
-- Trigger AI photo check; capture verdicts.
-- Negative cases: submit missing required photo, missing required answer → expect blocked.
-- Submit. Capture submission ID + `submitted_at`.
-- Reopen completed link → expect read-only/confirmation state.
-- Hit a tampered token → expect graceful invalid screen.
+1. **Migration** — add an anon/auth-readable policy on `public.business_workspaces`:
+   ```
+   CREATE POLICY "ws read by token" ON public.business_workspaces
+     FOR SELECT TO anon, authenticated
+     USING (EXISTS (
+       SELECT 1 FROM public.photo_brief_requests r
+       WHERE r.id = request_id_for_token()
+         AND r.workspace_id = business_workspaces.id
+     ));
+   ```
+2. **Defensive copy fix** in `recipientContext.ts`: keep `ws?.name` as the primary source, but if it's still null, fall back to the *guide name* rather than the literal "Your business". Strip the "here" phrasing from the default intro body so an empty business name can never produce nonsense.
+3. **Test** — add a Vitest unit test asserting that no rendered intake copy can ever contain the strings `"Your business here"` or `"Your business needs"` when `businessName` is empty.
 
-### C. Business review
-- Back as seed user, open the request + submission.
-- Verify media renders, AI notes / readiness score / plain-English summary present (or report missing), status moved `sent → opened → submitted → reviewed`.
-- Screenshot each verification step.
+---
 
-### D. Backend verification (`supabase--read_query`)
-For the captured IDs, dump and report rows from each table listed above plus storage objects in `submission-media`. Check for orphans, duplicates, and any service-role leakage in network responses.
+## Fix 2 — BUG-1: requests without a guide produce a dead recipient link
 
-### E. Credits sanity
-- Snapshot `current_credit_balance(workspace_id)` before/after.
-- Confirm: each submitted photo = 1 credit (`ai_photo_check`), first-pass follow-ups = 0 (`first_pass_followup_photo`), no double-charge on resubmission.
+**Root cause:** `photo_brief_requests.guide_id` is nullable and the recipient route throws "missing saved template" with a generic lock-icon screen. The DB allows `status='sent'` with no guide.
 
-### F. Responsive
-- Run the recipient flow once at 390x844 viewport to match real mobile usage.
+**Fix:**
 
-## Phase 3 — Reporting
-Deliver the full report the user requested:
-1. Executive summary + direct yes/no on the core promise.
-2. Environment block (URL, timestamps, IDs, branch).
-3. Step-by-step results table (Step / Expected / Actual / Pass-Fail / Evidence).
-4. Bug list (severity, repro, suspected cause, suggested fix, files involved).
-5. Data integrity findings from SQL.
-6. Prioritized recommended fixes.
-7. Code changes section — only if a blocker is found and the fix is small and obvious. Scoped, no secrets, lint/typecheck/build run.
+1. **Migration** — add a `BEFORE INSERT OR UPDATE` trigger on `photo_brief_requests` that raises `check_violation` when `status` is anything other than `'draft'` and `guide_id IS NULL`. Keep the column nullable so drafts can be saved before a template is chosen.
+2. **UI guard** in `src/services/requestsService.ts` (or wherever requests transition to `sent`): refuse to send and surface a clear toast — "Pick a guide before sending this request."
+3. **Recipient UX** — replace the *"This request is missing its saved template"* dead-end with a friendlier card: title "We're not quite ready", body "The sender is still finishing this request. Please ask them to resend the link.", plus a copy-link-to-clipboard button so the homeowner can ping the business. (Defensive UI even after the trigger lands, since older bad rows might still exist.)
 
-Artifacts (screenshots, SQL output) saved under `/mnt/documents/e2e-photobrief/` and surfaced via `presentation-artifact` tags.
+---
 
-## Hard stops (will halt and report)
-- Seed login fails / 2FA blocks.
-- Browser tool unavailable.
-- Recipient route returns the prior "VITE_SUPABASE_URL missing" error in preview.
-- AI gateway / edge functions return 5xx not fixable in-window.
+## Fix 3 — BLOCK-A: Cloudflare Turnstile breaks automation on preview hosts
 
-## Known limitations
-- Browser automation can't drive native camera capture; uploads use the file-input fallback. Any step that strictly requires camera will be flagged and skipped, not faked.
+**Root cause:** `TurnstileWidget` always loads `challenges.cloudflare.com/turnstile/v0/api.js`. In the headless automation browser (and any host where Cloudflare's JS can't reach the iframe) the widget renders an "Unable to complete" error overlay. The auth submit code already only verifies *if a token exists*, but the visible error widget makes the form look broken and blocks confidence.
+
+**Fix (frontend only, no secret changes):**
+
+1. Add a small helper `isAutomatedPreviewHost()` that returns true when:
+   - `import.meta.env.DEV`, **or**
+   - hostname matches `id-preview--*.lovableproject.com`, `*.lovableproject.com`, or `*--lovable.app` (Lovable preview origins).
+2. In `TurnstileWidget`, when that helper is true, **skip script load entirely** and render an empty `<div data-testid="turnstile-skipped" />`. Production hostnames (`photobrief.ai`, `www.photobrief.ai`, `photo-brief.lovable.app`) keep the real widget.
+3. Auth submit code already tolerates a missing token, so no other changes needed.
+
+This is a real product improvement too: today, if Cloudflare's CDN is degraded, anyone on those hosts sees a broken widget. After this change, the bypass is scoped to preview origins only.
+
+---
+
+## Fix 4 — BLOCK-B: browser tool can't upload files through the recipient stepper
+
+**Root cause:** the recipient capture step uses a hidden `<input type="file">` triggered by "Choose from library", and the automation tool's `act()` only supports click/fill/type/press/dragAndDrop — it has no `setInputFiles` primitive.
+
+**Fix — add a dev-only "Use sample photo" affordance to the recipient step:**
+
+1. Ship 4 fixture JPGs in `public/e2e/`: `leaning-oak-wide.jpg`, `oak-trunk-closeup.jpg`, `house-elevation.jpg`, `driveway-access.jpg`.
+2. In the capture-card component, when `isAutomatedPreviewHost()` is true **and** the URL has `?e2e=1`, render a third button: **"Use sample photo"**. It cycles through the 4 fixtures by step index, fetches the file as a Blob, and pushes it through the *same* upload + AI-check pipeline the real "Choose from library" path uses (no shortcut on the data path — only on how the file is acquired).
+3. Visible only on preview hosts behind `?e2e=1`. Production users never see it.
+
+Outcome: future automated E2E runs can complete capture → upload → AI check → submit → business review through the real backend.
+
+---
+
+## Out of scope (intentionally)
+
+- Re-seeding the 18 member sub-accounts and the 2/8/20/35/50 sample requests — not needed for E2E and adds noise.
+- Marketing screenshot regeneration.
+- Updating `mem://seed-users` text — already accurate; will refresh after the run succeeds.
+
+---
+
+## Validation after implementation
+
+Once the four fixes land:
+
+1. Re-open `https://…/r/65e575df9583319549cb2b81ad76a1477d34` — confirm headline reads **"Apex Roofing Group needs a few photos"** and the intro body no longer contains "Your business here".
+2. Try to insert a `photo_brief_requests` row with `status='sent'` and null `guide_id` — DB should reject it.
+3. Sign in at `/auth` from the automation browser — Turnstile no longer renders, button works.
+4. Walk the Cedar & Sons stepper at `/r/:token?e2e=1`, click "Use sample photo" through all 4 steps, answer the 2 questions, submit. Verify in DB:
+   - 1 `submissions` row for the request, `submitted_at` set
+   - 4 `captured_media` rows tied to the right `step_id`s
+   - `usage_events` shows 4 × `submitted_photo` (1 credit each), 4 × `ai_photo_check` (1 credit each), 0 follow-up charges
+   - No double-charge if a single `?e2e=1` retry happens
+5. Run `lint`, `typecheck`, the unit test added in Fix 1, and the build.
+
+---
+
+## Files I expect to touch
+
+```
+supabase/migrations/<new>.sql        # Fix 1 policy + Fix 2 trigger
+src/features/capture/recipientContext.ts   # Fix 1 fallback
+src/features/capture/pages/PublicRecipientPage.tsx  # Fix 2 friendly error, Fix 4 button
+src/services/requestsService.ts      # Fix 2 send guard
+src/lib/preview-host.ts (new)        # isAutomatedPreviewHost()
+src/components/security/TurnstileWidget.tsx  # Fix 3 bypass
+src/test/recipient-copy.test.ts (new)        # Fix 1 regression test
+public/e2e/*.jpg (4 files)           # Fix 4 fixtures
+```
+
+---
+
+## Questions before I implement
+
+1. **Existing bad rows** — there are 24 production-looking workspaces with requests already in flight. After Fix 2's trigger lands, a `UPDATE ... status='sent'` on a guide-less row will fail. Want me to (a) just add the trigger and let any existing bad rows stay as-is (only blocks *new* bad transitions), (b) also auto-flip existing guide-less `sent` rows back to `draft` in the same migration, or (c) leave existing data alone and have me list affected rows for you to review first?
+2. **Fix 4 visibility** — the "Use sample photo" button is only shown on preview hosts behind `?e2e=1`. Is that scope OK, or do you want it gated more tightly (e.g. only when a specific cookie or header is present)?
