@@ -15,6 +15,7 @@ import { useSmsConfig } from "@/hooks/useSmsConfig";
 import { useCurrentWorkspace } from "@/hooks/useCurrentWorkspace";
 import { ChannelPicker, type SendChannel } from "@/components/messaging/ChannelPicker";
 import { ManualSmsShareCard } from "@/features/requests/components/ManualSmsShareCard";
+import { DiagnosticsPanel } from "@/components/shared/DiagnosticsPanel";
 import { formatRelativeTime } from "@/utils/format";
 
 export default function RequestDetailPage() {
