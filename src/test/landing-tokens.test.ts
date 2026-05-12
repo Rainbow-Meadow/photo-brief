@@ -29,7 +29,8 @@ describe("Landing token hygiene", () => {
   });
 
   it("includes the editorial illustrations used by the hero and comparison", () => {
-    expect(SRC).toMatch(/heroIllustration/);
+    expect(SRC).toMatch(/heroBeforeImg/);
+    expect(SRC).toMatch(/heroAfterImg/);
     expect(SRC).toMatch(/beforeIntakeFormIllo/);
     expect(SRC).toMatch(/afterCapturePipelineIllo/);
   });
