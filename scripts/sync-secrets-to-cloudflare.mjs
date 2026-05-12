@@ -34,6 +34,12 @@ const ROOT = resolve(__dirname, "..");
 const args = new Set(process.argv.slice(2));
 const DRY = args.has("--dry-run");
 const PRINT_BINDINGS = args.has("--print-bindings");
+const FROM_ENV = args.has("--from-env");
+
+// When --from-env, allow these aliases (manifest name → env var fallback).
+const ENV_ALIASES = {
+  SUPABASE_ANON_KEY: "VITE_SUPABASE_ANON_KEY",
+};
 
 const TOKEN = process.env.CLOUDFLARE_API_TOKEN;
 const ACCOUNT_ID = process.env.R2_ACCOUNT_ID || process.env.CLOUDFLARE_ACCOUNT_ID;
@@ -159,10 +165,16 @@ function die(msg) { console.error(`✗ ${msg}`); process.exit(1); }
     return;
   }
 
-  const values = parseEnvFile(ENV_FILE);
+  const values = FROM_ENV
+    ? Object.fromEntries(
+        SECRET_NAMES
+          .map((n) => [n, process.env[n] ?? process.env[ENV_ALIASES[n] ?? ""] ?? ""])
+          .filter(([, v]) => v !== ""),
+      )
+    : parseEnvFile(ENV_FILE);
   const missing = SECRET_NAMES.filter((n) => !(n in values) || values[n] === "");
   if (missing.length) {
-    log(`! ${missing.length} secret(s) absent from ${ENV_FILE} — will be skipped:`);
+    log(`! ${missing.length} secret(s) absent from ${FROM_ENV ? "process.env" : ENV_FILE} — will be skipped:`);
     for (const m of missing) log(`    - ${m}`);
   }
 

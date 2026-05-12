@@ -24,11 +24,9 @@ new_sqlite_classes = ["AssistantAgent"]
 SUPABASE_URL = "https://mvlcefiygkzzewcdzsmj.supabase.co"
 SITE_URL = "https://photobrief.ai"
 
-# Cloudflare Secrets Store binding.
-# Run `node scripts/sync-secrets-to-cloudflare.mjs` once to provision the store,
-# then replace REPLACE_WITH_STORE_ID with the id printed by the script (or
-# `--print-bindings`). See docs/secrets-rotation.md.
-# [[secrets_store_secrets]]
-# binding     = "SUPABASE_SERVICE_ROLE_KEY"
-# store_id    = "REPLACE_WITH_STORE_ID"
-# secret_name = "SUPABASE_SERVICE_ROLE_KEY"
+# Cloudflare Secrets Store binding (store id: c6c05c6c4b8747e18e31a3f88c5781a4).
+# Synced via `node scripts/sync-secrets-to-cloudflare.mjs`. See docs/secrets-rotation.md.
+[[secrets_store_secrets]]
+binding     = "SUPABASE_SERVICE_ROLE_KEY"
+store_id    = "c6c05c6c4b8747e18e31a3f88c5781a4"
+secret_name = "SUPABASE_SERVICE_ROLE_KEY"
