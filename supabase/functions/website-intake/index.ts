@@ -245,6 +245,7 @@ Deno.serve(async (req) => {
       status: "intake_brief_created",
       briefId: brief.id,
       sessionId: session.id,
+      sessionToken: (session as any).public_session_token,
       readiness_status: readinessStatus,
       photo_policy: photoPolicy,
       next_action: nextAction,
