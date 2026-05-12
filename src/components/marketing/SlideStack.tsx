@@ -139,9 +139,13 @@ export function SlideStack({ children, rail = true }: SlideStackProps) {
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduced) {
-      // Reset transforms so reduced-motion fallback in CSS takes over.
+      const stage = stageRef.current;
+      if (stage) stage.style.position = "static";
       slideRefs.current.forEach((el) => {
-        if (el) el.style.transform = "";
+        if (el) {
+          el.style.transform = "";
+          el.style.position = "relative";
+        }
       });
       return;
     }
@@ -150,32 +154,52 @@ export function SlideStack({ children, rail = true }: SlideStackProps) {
     const update = () => {
       raf = 0;
       const deck = deckRef.current;
-      if (!deck) return;
+      const stage = stageRef.current;
+      if (!deck || !stage) return;
       const rect = deck.getBoundingClientRect();
       const vh = window.innerHeight;
-      // Total scrollable distance inside the deck = (count) * vh.
-      // When deck top = 0  → progress = 0 (slide 0 fully visible).
-      // When deck top = -(count) * vh → progress = count (last slide fully shown,
-      // about to release the pin).
+      const deckHeight = rect.height; // count * vh
+
+      // Stage positioning: while the deck spans the viewport, pin the stage at
+      // top:0 via position:fixed. Before the deck reaches the viewport, sit at
+      // the top of the deck (position:absolute, top:0). After the deck has
+      // scrolled past, sit at the bottom of the deck (position:absolute,
+      // bottom:0). This emulates sticky without depending on body overflow.
+      if (rect.top > 0) {
+        stage.style.position = "absolute";
+        stage.style.top = "0";
+        stage.style.bottom = "auto";
+      } else if (rect.bottom < vh) {
+        stage.style.position = "absolute";
+        stage.style.top = "auto";
+        stage.style.bottom = "0";
+      } else {
+        stage.style.position = "fixed";
+        stage.style.top = "0";
+        stage.style.bottom = "auto";
+      }
+
       const scrolled = -rect.top;
-      const progress = Math.max(0, Math.min(count, scrolled / vh));
+      const maxScroll = Math.max(1, deckHeight - vh);
+      // Progress in slide segments: 0 at deck top, count-1 at deck bottom.
+      const progress = Math.max(
+        0,
+        Math.min(count - 1, (scrolled / maxScroll) * (count - 1)),
+      );
 
       for (let i = 0; i < count; i++) {
         const el = slideRefs.current[i];
         if (!el) continue;
         if (i === 0) {
-          // Slide 0 stays put — it's the base layer.
           el.style.transform = "translate3d(0,0,0)";
           continue;
         }
-        // Slide i comes up as progress passes (i-1 → i).
-        const local = progress - (i - 1); // -inf .. count
+        const local = progress - (i - 1);
         const clamped = Math.max(0, Math.min(1, local));
-        const offset = (1 - clamped) * 100; // 100% → 0%
+        const offset = (1 - clamped) * 100;
         el.style.transform = `translate3d(0, ${offset}%, 0)`;
       }
 
-      // Active = whichever segment we're currently inside.
       const idx = Math.min(count - 1, Math.max(0, Math.round(progress)));
       setActive((prev) => (prev === idx ? prev : idx));
     };
@@ -199,7 +223,10 @@ export function SlideStack({ children, rail = true }: SlideStackProps) {
     const deck = deckRef.current;
     if (!deck) return;
     const deckTop = deck.getBoundingClientRect().top + window.scrollY;
-    const target = deckTop + i * window.innerHeight;
+    const vh = window.innerHeight;
+    const maxScroll = Math.max(1, deck.getBoundingClientRect().height - vh);
+    const segment = maxScroll / Math.max(1, count - 1);
+    const target = deckTop + i * segment;
     window.scrollTo({ top: target, behavior: "smooth" });
   };
 
@@ -225,7 +252,8 @@ export function SlideStack({ children, rail = true }: SlideStackProps) {
               className="pb-deck-slot"
               style={{
                 zIndex: i + 1,
-                transform: i === 0 ? "translate3d(0,0,0)" : "translate3d(0,100%,0)",
+                transform:
+                  i === 0 ? "translate3d(0,0,0)" : "translate3d(0,100%,0)",
               }}
               data-pb-index={i}
             >
