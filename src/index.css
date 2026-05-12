@@ -1259,20 +1259,78 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
   .tap-apple:active { transform: none !important; }
 }
 
-/* ── Marketing scroll-snap ────────────────────────────────────────────────
-   Proximity snap on the document so marketing pages settle on section tops
-   when the wheel coasts to a stop. Cooperates with Lenis (mandatory would
-   fight it). Only applied while MarketingLayout is mounted via .pb-snap-root. */
-@media (prefers-reduced-motion: no-preference) {
-  html.pb-snap-root {
-    scroll-snap-type: y proximity;
+/* ── Marketing deck (sticky-stack) ─────────────────────────────────────────
+   Each <Slide> in a <SlideStack> is pinned at the top of the viewport at
+   100svh. Subsequent slides have higher z-index and slide up over the
+   previous one as the document scrolls. Pure CSS — no JS hijacking, plays
+   with Lenis. Reduced motion falls back to normal stacked sections. */
+.pb-deck {
+  position: relative;
+}
+.pb-deck > .pb-slide {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  min-height: 100svh;
+  width: 100%;
+  overflow: hidden;
+  background: hsl(var(--background));
+  isolation: isolate;
+}
+.pb-slide-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 5.5rem 1.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+}
+@media (min-width: 640px) {
+  .pb-slide-inner { padding: 6rem 2rem 2.5rem; }
+}
+.pb-slide-inner > * { width: 100%; }
+/* When a slide's content genuinely cannot fit, opt-in scroll inside the slide. */
+.pb-slide--scroll { overflow-y: auto; }
+.pb-slide--scroll .pb-slide-inner { justify-content: flex-start; height: auto; min-height: 100%; }
+
+/* Right-side dot rail */
+.pb-deck-rail {
+  position: fixed;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 45;
+  display: none;
+  flex-direction: column;
+  gap: 0.625rem;
+  pointer-events: auto;
+}
+@media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
+  .pb-deck-rail { display: flex; }
+}
+.pb-deck-rail button {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: hsl(var(--pb-ink-soft) / 0.35);
+  transition: background 200ms ease, transform 200ms ease;
+}
+.pb-deck-rail button:hover { background: hsl(var(--pb-ink-soft) / 0.7); }
+.pb-deck-rail button[aria-current="true"] {
+  background: hsl(var(--accent-kinetic));
+  transform: scale(1.4);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pb-deck > .pb-slide {
+    position: relative;
+    height: auto;
+    min-height: 100svh;
+    overflow: visible;
   }
-  html.pb-snap-root .pb-landing > main > section {
-    scroll-snap-align: start;
-    scroll-snap-stop: normal;
-    scroll-margin-top: 5rem;
-  }
-  html.pb-snap-root .pb-landing > footer {
-    scroll-snap-align: none;
-  }
+  .pb-deck-rail { display: none; }
 }
