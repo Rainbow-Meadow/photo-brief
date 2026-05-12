@@ -107,7 +107,10 @@ export async function loadRecipientContext(
   }
 
   const firstName = (req.recipient_name ?? "").split(" ")[0] || "there";
-  const businessName = ws?.name ?? "Your business";
+  // Prefer the real workspace name; if the token-scoped read returns null
+  // (e.g. RLS hasn't caught up yet), fall back to the guide name rather than
+  // a literal "Your business" string that would leak to the recipient.
+  const businessName = ws?.name?.trim() || guide?.name?.trim() || "Your photo request";
 
   // Look for an in-flight rework: latest submission for this request that
   // has rejected captured_media rows.
