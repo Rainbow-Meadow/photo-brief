@@ -242,6 +242,8 @@ export const guidesService = {
       supabase.from("guide_steps").select("*").eq("guide_id", guideId),
       supabase.from("context_questions").select("*").eq("guide_id", guideId),
     ]);
+    // Drop the public recipient bundle cache for any /r/:token using this guide.
+    void invalidateRecipientBundlesForGuide(guideId);
     return rowToGuide(guide, stepsRows ?? [], qRows ?? []);
   },
 
