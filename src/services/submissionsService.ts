@@ -384,4 +384,25 @@ export const submissionsService = {
 
     return { id: submissionId };
   },
+
+  /**
+   * Mark previously-rejected captured_media rows as `resubmitted`.
+   * Pure helper — callers MUST only invoke this after the parent
+   * submission write has succeeded, so a failed submit never leaves
+   * orphan rows flipped to resubmitted.
+   */
+  async markRejectedMediaResubmitted(args: {
+    token: string;
+    rejectedMediaIds: string[];
+  }): Promise<{ updated: number }> {
+    const ids = (args.rejectedMediaIds ?? []).filter(Boolean);
+    if (ids.length === 0) return { updated: 0 };
+    const client = getTokenClient(args.token);
+    const { error } = await client
+      .from("captured_media")
+      .update({ status: "resubmitted" })
+      .in("id", ids);
+    if (error) throw error;
+    return { updated: ids.length };
+  },
 };
