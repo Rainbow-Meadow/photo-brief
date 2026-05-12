@@ -136,6 +136,8 @@ export function DashboardLayout() {
           </div>
         </div>
 
+        <CommandMenu />
+
         <FeedbackWidget />
 
         <MobileTabBar />
