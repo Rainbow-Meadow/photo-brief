@@ -108,7 +108,9 @@ export function OnboardingProgressBanner() {
             onClick={() => {
               try {
                 localStorage.setItem(DISMISS_KEY, "1");
-              } catch {}
+              } catch {
+                // localStorage can be unavailable in private browsing or restricted embeds.
+              }
               setDismissed(true);
             }}
             className="ml-auto inline-flex h-7 items-center gap-1 px-2 font-mono text-[0.65rem] uppercase tracking-[0.16em] text-muted-foreground transition hover:text-foreground"
