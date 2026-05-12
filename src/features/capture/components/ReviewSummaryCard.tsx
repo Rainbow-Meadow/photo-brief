@@ -79,14 +79,41 @@ export function ReviewSummaryCard({ guide, photos, answers, onSubmit, submitting
         </section>
       ) : null}
 
+      {submitError ? (
+        <div
+          role="alert"
+          aria-live="assertive"
+          className="border border-destructive/40 bg-destructive/10 p-4"
+        >
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-destructive" aria-hidden="true" />
+            <div className="min-w-0 flex-1">
+              <p className="flex items-center gap-2 font-mono text-[0.65rem] uppercase tracking-[0.16em] text-destructive">
+                <span>[ {submitError.code} ]</span>
+                <span className="text-muted-foreground">{submitError.tag}</span>
+              </p>
+              <p className="mt-1.5 text-[15px] font-semibold text-foreground">{submitError.headline}</p>
+              <p className="mt-1 text-sm text-muted-foreground">{submitError.body}</p>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
       <button
         type="button"
         onClick={onSubmit}
         disabled={submitting}
+        aria-busy={submitting}
         className="inline-flex h-14 w-full items-center justify-center gap-2 bg-[hsl(var(--accent-kinetic))] px-6 font-[Geist,Inter,system-ui,sans-serif] text-[0.85rem] font-semibold uppercase tracking-[0.14em] text-[hsl(var(--primary-foreground))] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--ring))]"
       >
-        {submitting ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
-        {submitting ? "Sending…" : microcopy.recipient.submit}
+        {submitting ? (
+          <Loader2 className="h-5 w-5 animate-spin" />
+        ) : submitError ? (
+          <RotateCw className="h-5 w-5" />
+        ) : (
+          <Send className="h-5 w-5" />
+        )}
+        {submitting ? "Sending…" : submitError ? "Try again" : microcopy.recipient.submit}
       </button>
     </div>
   );
