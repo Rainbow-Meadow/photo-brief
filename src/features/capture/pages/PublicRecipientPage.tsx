@@ -483,6 +483,7 @@ function StepContent({
   photos: CapturedPhoto[];
   answers: { questionId: string; prompt: string; answer: string }[];
   submitting: boolean;
+  submitError: import("@/lib/errorCodes").RecipientErrorDescriptor | null;
   onCapture: (previewUrl: string, file: File | null) => void;
   onSkip: () => void;
   onRetake: () => void;
