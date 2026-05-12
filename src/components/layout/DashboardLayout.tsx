@@ -1,5 +1,4 @@
 import { Outlet, NavLink, useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
 import { Plus, LifeBuoy, KeyRound, LogOut, Globe2, Search } from "lucide-react";
 import { FeedbackWidget } from "@/features/support/components/FeedbackWidget";
 
