@@ -163,7 +163,7 @@ export function MarketingLayout() {
         </SheetContent>
       </Sheet>
 
-      <main className="flex-1">
+      <main className="relative">
         <Outlet />
       </main>
 
