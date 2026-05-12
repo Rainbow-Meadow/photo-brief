@@ -165,7 +165,7 @@ const App = () => (
                 <FeatureGate
                   feature="website_intake"
                   title="Smart Intake unlocks on Pro."
-                  description="Free and Starter are for manually creating and sending clickable PhotoBrief links. Pro adds the automation layer that turns website leads into routed intake briefs and requests photos only when the selected route needs them."
+                  description="Free and Starter are for manually creating and sending clickable PhotoBrief links. Pro replaces basic website forms with routed intake briefs and only asks for photos when the selected route needs them."
                   bullets={[
                     "Hosted Smart Intake form for your site CTA",
                     "Guided setup for Wix, Squarespace, WordPress, Webflow, Shopify, GoDaddy, Carrd, Zapier, and Make",
@@ -183,7 +183,7 @@ const App = () => (
                 <FeatureGate
                   feature="website_intake"
                   title="Smart Intake unlocks on Pro."
-                  description="Smart Intake briefs are available with Website Intake."
+                  description="Smart Intake briefs replace basic website-form submissions with routed, review-ready context."
                 >
                   <IntakeBriefsPage />
                 </FeatureGate>
@@ -195,7 +195,7 @@ const App = () => (
                 <FeatureGate
                   feature="website_intake"
                   title="Smart Intake unlocks on Pro."
-                  description="Smart Intake briefs are available with Website Intake."
+                  description="Smart Intake briefs replace basic website-form submissions with routed, review-ready context."
                 >
                   <IntakeBriefDetailPage />
                 </FeatureGate>
