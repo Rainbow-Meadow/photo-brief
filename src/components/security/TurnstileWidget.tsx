@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { TURNSTILE_SITE_KEY } from "@/config/turnstile";
+import { isAutomatedPreviewHost } from "@/lib/preview-host";
 
 declare global {
   interface Window {
