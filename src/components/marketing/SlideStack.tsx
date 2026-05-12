@@ -259,7 +259,7 @@ export function SlideStack({ children, rail = true }: SlideStackProps) {
         style={
           {
             ["--slide-count" as keyof CSSProperties as string]: count,
-            height: `${count * 100}svh`,
+            height: `${deckViewports * 100}svh`,
           } as CSSProperties
         }
       >
