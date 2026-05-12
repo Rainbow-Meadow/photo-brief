@@ -16,3 +16,8 @@ SITE_URL = "https://photobrief.ai"
 # x402 agentic payments config
 X402_PAY_TO = "photobrief.eth"
 X402_NETWORK = "base-sepolia"
+
+# Hyperdrive: read path from Supabase Postgres.
+[[hyperdrive]]
+binding = "HYPERDRIVE"
+id      = "cea7652fc3924714826c43a4090de08a"
