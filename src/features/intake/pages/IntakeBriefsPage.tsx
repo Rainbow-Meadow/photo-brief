@@ -160,7 +160,5 @@ function MobileBriefItem({ brief }: { brief: IntakeBrief }) {
 }
 
 function PhotoPolicyBadge({ brief }: { brief: IntakeBrief }) {
-  const label = humanize(brief.photoPolicy);
-  const tone = brief.photoPolicy === "required" ? "warning" : brief.photoPolicy === "not_needed" ? "muted" : "info";
-  return <StatusBadge label={label} tone={tone} />;
+  return <StatusBadge label={photoPolicyShort(brief.photoPolicy)} tone={photoPolicyTone(brief.photoPolicy)} />;
 }
