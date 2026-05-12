@@ -8,7 +8,6 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 
 import { PageMeta } from "@/hooks/seo/usePageMeta";
 import { Section, Container } from "@/design-system/schema";
-import { SlideStack, RawSlide } from "@/components/marketing/SlideStack";
 import { buildFaqJsonLd } from "@/hooks/seo/buildFaqJsonLd";
 import { buildHowToJsonLd } from "@/hooks/seo/buildHowToJsonLd";
 import { howItWorksSteps } from "@/components/marketing/HowItWorksSteps";
@@ -96,8 +95,6 @@ export default function ForAiAgentsPage() {
       />
 
       {/* Hero */}
-      <SlideStack>
-      <RawSlide anchor="hero" label="Hero">
       <Section><Container><div className="text-center">
         <Eyebrow code="00">
           <Sparkles className="h-3.5 w-3.5" /> For AI agents, answer engines, and automation systems
@@ -139,13 +136,11 @@ export default function ForAiAgentsPage() {
           </div>
         </div>
       </div></Container></Section>
-      </RawSlide>
 
-      <RawSlide anchor="facts" label="Facts" tone="alt"><QuotableFacts /></RawSlide>
-      <RawSlide anchor="comparison" label="Comparison"><ComparisonTable /></RawSlide>
+      <QuotableFacts />
+      <ComparisonTable />
 
       {/* API section */}
-      <RawSlide anchor="api" label="API" tone="alt">
       <Section id="api"><Container>
         <div className="mx-auto max-w-2xl text-center">
           <Eyebrow code="03"><Terminal className="h-3.5 w-3.5" /> REST API</Eyebrow>
@@ -230,10 +225,8 @@ export default function ForAiAgentsPage() {
           ]}
         />
       </Container></Section>
-      </RawSlide>
 
       {/* MCP & Agent manifests */}
-      <RawSlide anchor="mcp" label="MCP">
       <Section id="mcp"><Container>
         <div className="mx-auto max-w-2xl text-center">
           <Eyebrow code="04"><Code2 className="h-3.5 w-3.5" /> MCP & Agent manifests</Eyebrow>
@@ -282,10 +275,8 @@ read_faq         — Canonical FAQ answers (no auth)
           </article>
         </div>
       </Container></Section>
-      </RawSlide>
 
       {/* x402 Agentic Payments */}
-      <RawSlide anchor="x402" label="x402" tone="alt">
       <Section id="x402"><Container>
         <div className="mx-auto max-w-2xl text-center">
           <Eyebrow code="05"><CreditCard className="h-3.5 w-3.5" /> Agentic payments</Eyebrow>
@@ -339,9 +330,7 @@ curl -X POST https://mcp.photobrief.ai/x402/pay \\
           />
         </div>
       </Container></Section>
-      </RawSlide>
 
-      <RawSlide anchor="discovery" label="Discovery">
       <Section id="discovery"><Container>
         <div className="mx-auto max-w-2xl text-center">
           <Eyebrow code="06">Discovery</Eyebrow>
@@ -366,10 +355,8 @@ curl -X POST https://mcp.photobrief.ai/x402/pay \\
           ))}
         </ul>
       </Container></Section>
-      </RawSlide>
 
       {/* FAQ */}
-      <RawSlide anchor="faq" label="FAQ" tone="alt">
       <Section id="faq"><Container width="narrow">
         <div className="text-center">
           <Eyebrow code="99">FAQ</Eyebrow>
@@ -389,8 +376,6 @@ curl -X POST https://mcp.photobrief.ai/x402/pay \\
           ))}
         </Accordion>
       </Container></Section>
-      </RawSlide>
-      </SlideStack>
     </>
   );
 }

@@ -5,34 +5,37 @@ import { resolve } from "node:path";
 const LANDING_PATH = resolve(__dirname, "../pages/Landing.tsx");
 const SRC = readFileSync(LANDING_PATH, "utf8");
 
-describe("Landing visual contract (sticky-stack deck)", () => {
-  it("anchors the workflow/mechanism slide", () => {
-    // Slide primitive sets id from `anchor`; the workflow anchor must exist.
-    expect(SRC).toMatch(/anchor="workflow"/);
+describe("Landing visual contract (Locomotive editorial)", () => {
+  it("anchors the workflow/mechanism section", () => {
+    expect(SRC).toMatch(/id="workflow"/);
   });
 
-  it("composes the page from the documented slide components", () => {
+  it("composes the page from the documented section components", () => {
     for (const fn of [
-      "function HeroSlide",
-      "function MarqueeSlide",
-      "function ComparisonSlide",
-      "function SignpostSlide",
-      "function FaqAndCtaSlide",
+      "function Hero",
+      "function MarqueeBand",
+      "function MechanismSection",
+      "function ComparisonSection",
+      "function SignpostSection",
+      "function FaqSection",
+      "function FinalCta",
     ]) {
-      expect(SRC, `Missing slide component: ${fn}`).toContain(fn);
+      expect(SRC, `Missing section component: ${fn}`).toContain(fn);
     }
   });
 
-  it("renders the deck via SlideStack + Slide primitives (no inline dark <Section>)", () => {
+  it("uses the standardized FinalCtaSection (no inline Section tone='dark')", () => {
+    // FinalCtaSection encapsulates the dark-tone Section, so Landing should not declare its own.
     const dark = SRC.match(/<Section\b[^>]*tone="dark"/g) ?? [];
     expect(dark.length).toBe(0);
-    expect(SRC).toMatch(/<SlideStack\b/);
-    expect(SRC).toMatch(/<Slide\b/);
+    expect(SRC).toMatch(/FinalCtaSection/);
   });
 
-  it("renders the four mechanism steps as individual slides", () => {
-    const matches = SRC.match(/MechanismSlideView\s+index=\{\d\}/g) ?? [];
-    expect(matches.length).toBe(4);
+  it("renders the FinalCta via the standardized FinalCtaSection primitive", () => {
+    expect(SRC).toMatch(/function FinalCta\b/);
+    const cta = SRC.slice(SRC.indexOf("function FinalCta"));
+    expect(cta).toMatch(/<FinalCtaSection\b/);
+    expect(cta).toMatch(/primary=\{/);
   });
 
   it("signpost section renders exactly three doors", () => {

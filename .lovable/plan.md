@@ -1,52 +1,36 @@
-# Slide lock: fix mobile clipping + add real dwell
+## Rebalance negative space in the mechanism section
 
-## Problems
+### Problem
+`MechanismGrid` wraps every illustration in a fixed `aspect-[16/10]` frame at `lg:col-span-7`. Two of the four assets (steps 02 Mechanism, 03 Brief) are tall portrait phone mockups, so they sit as tiny columns inside a giant landscape box with vast empty gutters left and right. The two landscape assets (01, 04) look fine. Copy column is also top-aligned within a tall row, leaving dead space below the paragraph.
 
-1. **Mobile clipping.** `.pb-slide-inner` is locked to `height: 100svh` with `overflow: hidden`. On phones (440×798 today), Hero, Comparison, FAQ+CTA, and Signpost slides have more content than fits — the bottom is silently cut off.
-2. **No actual lock.** The pinned-stack math in `SlideStack.tsx` maps scroll progress linearly across `count - 1` segments, so every pixel of scroll moves the next slide up. There is no moment where a slide is "locked" — the user feels a continuous slide instead of a beat per panel.
+### Changes (single file: `src/components/marketing/MechanismGrid.tsx`)
 
-## Fix
+1. **Tag each step with orientation.** Add `orientation: "landscape" | "portrait"` to the `workflowSteps` items:
+   - 01 Research → landscape
+   - 02 Mechanism → portrait
+   - 03 Brief → portrait
+   - 04 Close → landscape
 
-### 1. Disable the pinned deck on mobile (and keep desktop pinning)
+2. **Adjust column split per orientation.**
+   - Landscape rows: image `lg:col-span-7`, copy `lg:col-span-5` (current).
+   - Portrait rows: image `lg:col-span-5`, copy `lg:col-span-7` so the phone has a narrower column and the copy gets more breathing room — eliminates the empty gutters around the phone.
 
-Below `lg` (1024px), fall back to the same stacked layout we already use for `prefers-reduced-motion`. Slides become normal sections that grow with their content, no clipping, no fixed stage. This is the cleanest fix and matches what mobile users expect (vertical scroll through full sections).
+3. **Drop the fixed aspect frame; cap height instead.**
+   - Replace the `aspect-[16/10]` wrapper with a flex container: `flex items-center justify-center`.
+   - Image renders at intrinsic ratio with `h-auto w-full max-h-[520px] object-contain` for landscape, `max-h-[560px] w-auto mx-auto` for portrait. Removes the giant empty box around portrait phones and keeps landscape images full-bleed within their column.
 
-- `SlideStack.tsx`: in the scroll effect, treat `window.innerWidth < 1024` like reduced-motion — make stage `static`, clear transforms, skip the rAF loop. Re-enable on resize past the breakpoint.
-- `index.css`: extend the existing `prefers-reduced-motion` fallback block to also apply at `(max-width: 1023.98px)`. Hide the rail there too (already hidden below `lg`).
-- Keep `Slide` content as-is. On desktop the deck still pins; on mobile it scrolls naturally.
+4. **Vertically center copy in each row.** Already `items-center` on the row — keep, and ensure copy column uses the row's vertical centering instead of stretching. Trim row gap from `lg:gap-12` to `lg:gap-16` for a touch more horizontal breathing room between image and copy.
 
-### 2. Add a real dwell at each lock
+5. **Tighten vertical rhythm.** Reduce `space-y-16 lg:space-y-24` to `space-y-20 lg:space-y-28` only if rows shrink noticeably — keep current values otherwise; verify in preview.
 
-Reserve scroll space so each slide has both a **transition** segment (cover the previous slide) and a **dwell** segment (locked, no movement). Tunable via one constant.
+6. **Mobile (`<lg`):** unchanged single-column stack; image still renders at intrinsic ratio with same `max-h` caps so portrait phones don't dominate small screens.
 
-In `SlideStack.tsx`:
-
-- Add `DWELL_RATIO = 0.5` (≈1 viewport of scroll dwell vs ~1 viewport of transition per slide). Net: ~1s of locked feel at typical scroll speeds.
-- Deck height becomes `(1 + (count - 1) * (1 + DWELL_RATIO)) * 100svh` instead of `count * 100svh`.
-- Progress math: split each slide segment into `[transition | dwell]`. During transition, animate `translateY` 100% → 0% as today. During dwell, hold at 0%. Active-index stays on the locked slide for the dwell duration.
-
-```text
-slide 0  ─────────────────  (initial viewport, no transform)
-slide 1  ▒▒▒▒▒▒▒░░░░░░░░░  ▒ = rise from 100%→0%, ░ = locked at 0%
-slide 2                    ▒▒▒▒▒▒▒░░░░░░░░░
-...
-```
-
-- `goTo(i)` updates to land at the start of slide `i`'s dwell (i.e., end of its transition) so clicking a rail dot snaps to the locked state, not mid-transition.
+### Out of scope
+- Copy text, asset swaps, animations, the `SectionIntro` heading block, other sections.
+- Any token/color changes.
 
 ### Verification
-
-After changes, confirm at three widths via browser tool:
-- 390×844 (mobile) — stacked, every slide fully visible end-to-end, no clipping.
-- 820×1180 (tablet) — stacked, same.
-- 1440×900 (desktop) — pinned deck, each slide rises and then visibly holds before the next one starts.
-
-## Files
-
-- `src/components/marketing/SlideStack.tsx` — viewport gate + dwell math + `goTo` update
-- `src/index.css` — extend reduced-motion fallback to `max-width: 1023.98px`
-
-## Out of scope
-
-- Restructuring slide content to fit 100svh on desktop (Hero/Comparison fit fine at ≥lg today).
-- Changing slide copy, imagery, or the rail design.
+After edit, screenshot the section at 1399×887 to confirm:
+- Portrait rows no longer have huge empty side gutters.
+- Landscape rows still fill their column.
+- Copy sits visually centered next to each image.
