@@ -133,21 +133,41 @@ export function SlideStack({ children, rail = true }: SlideStackProps) {
   const [active, setActive] = useState(0);
   const count = slides.length;
 
+  // Per-slide scroll budget = 1 viewport of transition + DWELL_RATIO of locked dwell.
+  const DWELL_RATIO = 0.5;
+  const SEGMENT = 1 + DWELL_RATIO; // viewports per slide after the first
+  const deckViewports = 1 + Math.max(0, count - 1) * SEGMENT;
+
   useEffect(() => {
     if (count === 0) return;
     const reduced =
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduced) {
+    const isMobile =
+      typeof window !== "undefined" && window.innerWidth < 1024;
+
+    const disablePin = () => {
       const stage = stageRef.current;
-      if (stage) stage.style.position = "static";
+      if (stage) {
+        stage.style.position = "static";
+        stage.style.top = "";
+        stage.style.bottom = "";
+      }
       slideRefs.current.forEach((el) => {
         if (el) {
           el.style.transform = "";
           el.style.position = "relative";
         }
       });
-      return;
+    };
+
+    if (reduced || isMobile) {
+      disablePin();
+      const onResize = () => {
+        if (window.innerWidth >= 1024 && !reduced) window.location.reload();
+      };
+      window.addEventListener("resize", onResize);
+      return () => window.removeEventListener("resize", onResize);
     }
 
     let raf = 0;
@@ -158,13 +178,8 @@ export function SlideStack({ children, rail = true }: SlideStackProps) {
       if (!deck || !stage) return;
       const rect = deck.getBoundingClientRect();
       const vh = window.innerHeight;
-      const deckHeight = rect.height; // count * vh
+      const deckHeight = rect.height;
 
-      // Stage positioning: while the deck spans the viewport, pin the stage at
-      // top:0 via position:fixed. Before the deck reaches the viewport, sit at
-      // the top of the deck (position:absolute, top:0). After the deck has
-      // scrolled past, sit at the bottom of the deck (position:absolute,
-      // bottom:0). This emulates sticky without depending on body overflow.
       if (rect.top > 0) {
         stage.style.position = "absolute";
         stage.style.top = "0";
@@ -181,12 +196,13 @@ export function SlideStack({ children, rail = true }: SlideStackProps) {
 
       const scrolled = -rect.top;
       const maxScroll = Math.max(1, deckHeight - vh);
-      // Progress in slide segments: 0 at deck top, count-1 at deck bottom.
+      // Normalized progress 0..(count-1) across the deck.
       const progress = Math.max(
         0,
         Math.min(count - 1, (scrolled / maxScroll) * (count - 1)),
       );
 
+      const transitionEnd = 1 / SEGMENT; // portion of a unit spent transitioning
       for (let i = 0; i < count; i++) {
         const el = slideRefs.current[i];
         if (!el) continue;
@@ -194,13 +210,17 @@ export function SlideStack({ children, rail = true }: SlideStackProps) {
           el.style.transform = "translate3d(0,0,0)";
           continue;
         }
-        const local = progress - (i - 1);
-        const clamped = Math.max(0, Math.min(1, local));
-        const offset = (1 - clamped) * 100;
+        const local = progress - (i - 1); // 0..1 within slide i's segment
+        const t = Math.max(0, Math.min(1, local / transitionEnd));
+        const offset = (1 - t) * 100;
         el.style.transform = `translate3d(0, ${offset}%, 0)`;
       }
 
-      const idx = Math.min(count - 1, Math.max(0, Math.round(progress)));
+      // Active = highest index whose transition has finished (now in dwell).
+      let idx = 0;
+      for (let i = 1; i < count; i++) {
+        if (progress - (i - 1) >= transitionEnd) idx = i;
+      }
       setActive((prev) => (prev === idx ? prev : idx));
     };
 
@@ -225,8 +245,9 @@ export function SlideStack({ children, rail = true }: SlideStackProps) {
     const deckTop = deck.getBoundingClientRect().top + window.scrollY;
     const vh = window.innerHeight;
     const maxScroll = Math.max(1, deck.getBoundingClientRect().height - vh);
-    const segment = maxScroll / Math.max(1, count - 1);
-    const target = deckTop + i * segment;
+    // Land at the start of slide i's dwell (transition just completed).
+    const denom = Math.max(1, count - 1);
+    const target = deckTop + (Math.min(i, count - 1) / denom) * maxScroll;
     window.scrollTo({ top: target, behavior: "smooth" });
   };
 
