@@ -5,6 +5,18 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 
+type PhotoPolicy = "not_needed" | "optional" | "recommended" | "required";
+
+interface SmartIntakeRoute {
+  id: string;
+  label: string;
+  description: string | null;
+  photoPolicy: PhotoPolicy;
+  photoPolicyReason: string | null;
+  readinessGoal: string;
+  questions: unknown[];
+}
+
 interface PublicIntakeConfig {
   ok: true;
   sourceName: string;
@@ -14,6 +26,11 @@ interface PublicIntakeConfig {
   hidePhotobriefBranding: boolean;
   introMessage: string;
   requestTypeOptions: string[];
+  smartIntake?: {
+    blueprintId: string | null;
+    routingQuestion: string;
+    routes: SmartIntakeRoute[];
+  };
 }
 
 interface FormState {
@@ -23,6 +40,15 @@ interface FormState {
   request_type: string;
   message: string;
   address: string;
+}
+
+interface SubmittedIntake {
+  briefId?: string;
+  sessionId?: string;
+  readinessStatus?: string;
+  photoPolicy?: PhotoPolicy;
+  nextAction?: string | null;
+  message?: string | null;
 }
 
 const blank: FormState = {
@@ -44,6 +70,7 @@ export default function PublicIntakePage() {
   const [form, setForm] = useState<FormState>(blank);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState<SubmittedIntake | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -58,8 +85,9 @@ export default function PublicIntakePage() {
         if (!res.ok) throw new Error(json?.message ?? json?.error ?? "Could not load intake form");
         if (!cancelled) {
           setConfig(json);
-          if (json.requestTypeOptions?.length === 1) {
-            setForm((f) => ({ ...f, request_type: json.requestTypeOptions[0] }));
+          const firstRoute = json.smartIntake?.routes?.[0]?.label ?? json.requestTypeOptions?.[0];
+          if (firstRoute && (json.smartIntake?.routes?.length === 1 || json.requestTypeOptions?.length === 1)) {
+            setForm((f) => ({ ...f, request_type: firstRoute }));
           }
         }
       } catch (e: any) {
@@ -74,6 +102,7 @@ export default function PublicIntakePage() {
     };
   }, [token]);
 
+  const selectedRoute = config?.smartIntake?.routes?.find((route) => route.label === form.request_type) ?? null;
   const canSubmit = form.name.trim() && (form.email.trim() || form.phone.trim()) && (form.request_type.trim() || form.message.trim());
 
   const submit = async () => {
@@ -82,7 +111,10 @@ export default function PublicIntakePage() {
     setError(null);
     try {
       const { data, error: fnError } = await supabase.functions.invoke(`website-intake/${token}`, {
-        body: form,
+        body: {
+          ...form,
+          route_id: selectedRoute?.id ?? null,
+        },
       });
       if (fnError) throw new Error(data?.message ?? fnError.message);
       if (data?.ok && data.requestLink) {
@@ -90,7 +122,18 @@ export default function PublicIntakePage() {
         navigate(next);
         return;
       }
-      setError(data?.message ?? "We received your request, but could not start the photo steps yet.");
+      if (data?.ok) {
+        setSubmitted({
+          briefId: data.briefId,
+          sessionId: data.sessionId,
+          readinessStatus: data.readiness_status,
+          photoPolicy: data.photo_policy,
+          nextAction: data.next_action,
+          message: data.message,
+        });
+        return;
+      }
+      setError(data?.message ?? "We received your request, but could not finish the intake yet.");
     } catch (e: any) {
       setError(e?.message ?? "Could not send your request");
     } finally {
@@ -134,6 +177,43 @@ export default function PublicIntakePage() {
             The business can still send you a manual PhotoBrief request link if they are not using Website Intake.
           </p>
         </article>
+      </PublicShell>
+    );
+  }
+
+  if (submitted) {
+    return (
+      <PublicShell>
+        <section className="border border-border bg-card p-5 text-center sm:p-7">
+          <span className="mx-auto flex h-12 w-12 items-center justify-center border border-border text-[hsl(var(--accent-kinetic))]">
+            <CheckCircle2 className="h-5 w-5" />
+          </span>
+          <p className="mt-5 font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+            {config?.businessName}
+          </p>
+          <h1 className="mt-2 font-[Geist,Inter,system-ui,sans-serif] text-[clamp(1.6rem,4vw,2.35rem)] font-semibold leading-[1.05] tracking-[-0.03em] text-foreground">
+            Request received
+          </h1>
+          <p className="mx-auto mt-4 max-w-md text-base leading-7 text-muted-foreground">
+            {submitted.message ?? "Thanks — your details were sent over and the business has a clean intake brief to review."}
+          </p>
+          {submitted.nextAction ? (
+            <p className="mt-5 border border-border bg-background p-4 text-left text-sm leading-6 text-muted-foreground">
+              <span className="font-mono text-[0.65rem] uppercase tracking-[0.16em] text-foreground">Next step</span>
+              <br />
+              {submitted.nextAction}
+            </p>
+          ) : null}
+          <p className="mt-5 text-xs leading-5 text-muted-foreground">
+            Photos were {photoPolicyLabel(submitted.photoPolicy)} for this request.
+          </p>
+        </section>
+
+        {!config?.hidePhotobriefBranding ? (
+          <p className="mt-4 text-center font-mono text-[0.7rem] uppercase tracking-[0.18em] text-muted-foreground">
+            Powered by PhotoBrief
+          </p>
+        ) : null}
       </PublicShell>
     );
   }
@@ -195,7 +275,7 @@ export default function PublicIntakePage() {
                 className={inputCls}
               />
             </Field>
-            <Field label="What do you need help with?">
+            <Field label={config?.smartIntake?.routingQuestion ?? "What do you need help with?"}>
               {config?.requestTypeOptions?.length ? (
                 <select
                   value={form.request_type}
@@ -220,6 +300,16 @@ export default function PublicIntakePage() {
               )}
             </Field>
           </div>
+
+          {selectedRoute ? (
+            <div className="border border-border bg-background p-3 text-sm leading-6 text-muted-foreground">
+              {selectedRoute.description ? <p>{selectedRoute.description}</p> : null}
+              <p className="mt-1">
+                Photos are <span className="font-medium text-foreground">{photoPolicyLabel(selectedRoute.photoPolicy)}</span>
+                {selectedRoute.photoPolicyReason ? ` — ${selectedRoute.photoPolicyReason}` : "."}
+              </p>
+            </div>
+          ) : null}
 
           <Field label="Address — optional">
             <Input
@@ -252,13 +342,13 @@ export default function PublicIntakePage() {
           className="mt-6 inline-flex h-14 w-full items-center justify-center gap-2 bg-[hsl(var(--accent-kinetic))] px-6 font-[Geist,Inter,system-ui,sans-serif] text-[0.85rem] font-semibold uppercase tracking-[0.14em] text-[hsl(var(--primary-foreground))] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--ring))]"
         >
           {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <MessageSquareText className="h-4 w-4" />}
-          {submitting ? "Starting…" : "Start photo request"}
+          {submitting ? "Sending…" : "Send request"}
           {!submitting ? <ArrowRight className="h-4 w-4" /> : null}
         </button>
 
         <div className="mt-4 flex items-start gap-2 text-xs leading-5 text-muted-foreground">
           <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[hsl(var(--accent-kinetic))]" />
-          After this, you may be asked for a few photos so the business can help faster.
+          Photos are only requested when they help the business understand your request faster.
         </div>
       </section>
 
@@ -269,6 +359,14 @@ export default function PublicIntakePage() {
       ) : null}
     </PublicShell>
   );
+}
+
+function photoPolicyLabel(policy?: PhotoPolicy) {
+  if (policy === "not_needed") return "not needed";
+  if (policy === "optional") return "optional";
+  if (policy === "recommended") return "recommended, but not required";
+  if (policy === "required") return "required";
+  return "conditional";
 }
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
