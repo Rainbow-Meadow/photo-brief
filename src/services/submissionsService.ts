@@ -2,10 +2,30 @@
 // Combines submissions + captured_media + extracted_details + internal_notes
 // + submission_answers into the legacy Submission shape so existing UI keeps working.
 
+import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { withSupabaseRetry as withRetry } from "@/lib/supabaseRetry";
 import { getTokenClient } from "@/integrations/supabase/tokenClient";
 import { r2MediaService } from "@/services/r2MediaService";
+
+/** Strict shape we expect back from `submitFromRecipient`. */
+export const RecipientSubmitResponseSchema = z.object({
+  id: z.string().uuid({ message: "submission id is not a uuid" }),
+});
+export type RecipientSubmitResponse = z.infer<typeof RecipientSubmitResponseSchema>;
+
+/** Thrown when the response payload is missing/malformed. UI treats as PB-500. */
+export class InvalidSubmitResponseError extends Error {
+  readonly code = "INVALID_SUBMIT_RESPONSE";
+  readonly raw: unknown;
+  readonly issues: unknown;
+  constructor(raw: unknown, issues: unknown) {
+    super("submitFromRecipient returned an unexpected payload");
+    this.name = "InvalidSubmitResponseError";
+    this.raw = raw;
+    this.issues = issues;
+  }
+}
 import type {
   Submission,
   SubmissionShot,
