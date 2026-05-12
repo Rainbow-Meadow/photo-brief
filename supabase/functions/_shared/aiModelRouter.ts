@@ -18,6 +18,16 @@
 const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 
+// Cloudflare Workers AI fallback. Activated only when every Lovable
+// Gateway model in the tier chain has failed with a transient (non-429,
+// non-402) error. See docs/cloudflare-workers-ai-catalog.md for the full
+// model rationale. Disabled automatically if either secret is missing.
+const CF_ACCOUNT_ID = Deno.env.get("R2_ACCOUNT_ID"); // same Cloudflare account
+const CF_API_TOKEN = Deno.env.get("CLOUDFLARE_API_TOKEN");
+const CF_AI_BASE = CF_ACCOUNT_ID
+  ? `https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/ai/v1/chat/completions`
+  : null;
+
 export type AITask =
   | "recipient_guidance"
   | "photo_quality_check"
@@ -48,6 +58,19 @@ const TIER_CHAIN: Record<AITier, string[]> = {
     "openai/gpt-5-mini",
   ],
   cheap: ["openai/gpt-5-nano", "google/gemini-2.5-flash-lite"],
+};
+
+// Last-resort Cloudflare Workers AI chain per tier. These run only if
+// every Lovable Gateway model above failed transiently. The IDs are
+// OpenAI-compatible chat-completions models from the account catalog.
+const TIER_CHAIN_CLOUDFLARE: Record<AITier, string[]> = {
+  default: ["@cf/meta/llama-3.3-70b-instruct-fp8-fast"],
+  vision: [
+    "@cf/meta/llama-4-scout-17b-16e-instruct",
+    "@cf/meta/llama-3.2-11b-vision-instruct",
+  ],
+  escalation: ["@cf/openai/gpt-oss-120b", "@cf/qwen/qwq-32b"],
+  cheap: ["@cf/meta/llama-3.2-3b-instruct", "@cf/meta/llama-3.2-1b-instruct"],
 };
 
 const TASK_TIER: Record<AITask, AITier> = {
