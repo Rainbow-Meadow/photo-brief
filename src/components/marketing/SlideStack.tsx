@@ -29,6 +29,10 @@ type SlideProps = {
   width?: "narrow" | "default" | "wide" | "full";
   /** vertical alignment of inner content */
   align?: "center" | "start";
+  /** style override (used by SlideStack to inject z-index) */
+  style?: CSSProperties;
+  /** allow data-* attributes injected by SlideStack to land in the DOM */
+  [dataAttr: `data-${string}`]: unknown;
 };
 
 const widthMap = {
@@ -53,6 +57,8 @@ export function Slide({
   className = "",
   width = "default",
   align = "center",
+  style,
+  ...rest
 }: SlideProps) {
   return (
     <div
@@ -60,6 +66,8 @@ export function Slide({
       data-pb-slide
       data-pb-label={label ?? anchor ?? ""}
       className={`pb-slide ${toneMap[tone]} ${scroll ? "pb-slide--scroll" : ""} ${className}`}
+      style={style}
+      {...rest}
     >
       <div
         className={`pb-slide-inner ${widthMap[width]}`}
@@ -80,6 +88,8 @@ type RawSlideProps = {
   scroll?: boolean;
   tone?: "default" | "alt" | "ink";
   className?: string;
+  style?: CSSProperties;
+  [dataAttr: `data-${string}`]: unknown;
 };
 export function RawSlide({
   children,
@@ -88,6 +98,8 @@ export function RawSlide({
   scroll = true,
   tone = "default",
   className = "",
+  style,
+  ...rest
 }: RawSlideProps) {
   return (
     <div
@@ -95,6 +107,8 @@ export function RawSlide({
       data-pb-slide
       data-pb-label={label ?? anchor ?? ""}
       className={`pb-slide ${toneMap[tone]} ${scroll ? "pb-slide--scroll" : ""} ${className}`}
+      style={style}
+      {...rest}
     >
       {children}
     </div>
