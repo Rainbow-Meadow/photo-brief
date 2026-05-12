@@ -164,13 +164,13 @@ const App = () => (
               element={
                 <FeatureGate
                   feature="website_intake"
-                  title="Website Intake unlocks on Pro."
-                  description="Free and Starter are for manually creating and sending clickable PhotoBrief links. Pro adds the automation layer that turns website leads into routed PhotoBrief requests."
+                  title="Smart Intake unlocks on Pro."
+                  description="Free and Starter are for manually creating and sending clickable PhotoBrief links. Pro adds the automation layer that turns website leads into routed intake briefs and requests photos only when the selected route needs them."
                   bullets={[
-                    "Hosted Website Intake form for your site CTA",
+                    "Hosted Smart Intake form for your site CTA",
                     "Guided setup for Wix, Squarespace, WordPress, Webflow, Shopify, GoDaddy, Carrd, Zapier, and Make",
-                    "Template routing for request types and messages",
-                    "Webhook setup for existing website forms",
+                    "AI-assisted request routing and intake brief creation",
+                    "Conditional photo handoff for required-photo routes",
                   ]}
                 >
                   <WebsiteIntakePage />
@@ -182,7 +182,7 @@ const App = () => (
               element={
                 <FeatureGate
                   feature="website_intake"
-                  title="Website Intake unlocks on Pro."
+                  title="Smart Intake unlocks on Pro."
                   description="Smart Intake briefs are available with Website Intake."
                 >
                   <IntakeBriefsPage />
@@ -194,7 +194,7 @@ const App = () => (
               element={
                 <FeatureGate
                   feature="website_intake"
-                  title="Website Intake unlocks on Pro."
+                  title="Smart Intake unlocks on Pro."
                   description="Smart Intake briefs are available with Website Intake."
                 >
                   <IntakeBriefDetailPage />
