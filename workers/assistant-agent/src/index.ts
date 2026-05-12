@@ -427,18 +427,26 @@ export default {
     }
 
     // Public recipient bundle cache (Step 4: KV-cached request+brand+guide).
-    // GET  /recipient/:token/bundle      → JSON bundle (KV hit or assemble+store)
-    // POST /recipient/:token/invalidate  → drop the cache entry (service-role only)
     const recipientMatch = path.match(/^\/recipient\/([A-Za-z0-9_-]{8,})\/(bundle|invalidate)$/);
     if (recipientMatch) {
       const [, token, op] = recipientMatch;
       return handleRecipientBundle(request, env, token, op as "bundle" | "invalidate");
     }
 
+    // Step 2: Analytics Engine usage telemetry mirror.
+    // POST /telemetry/usage (service-role auth) → fire-and-forget AE write.
+    // POST /telemetry/aggregate (service-role auth) → AE SQL proxy for admin dashboard.
+    if (path === "/telemetry/usage" && request.method === "POST") {
+      return handleTelemetryUsage(request, env);
+    }
+    if (path === "/telemetry/aggregate" && request.method === "POST") {
+      return handleTelemetryAggregate(request, env);
+    }
+
     // Routes: /ws/:workspaceId, /rpc/:workspaceId, /event/:workspaceId
     const match = path.match(/^\/(ws|rpc|event)\/([a-f0-9-]+)$/i);
     if (!match) {
-      return json({ error: "Use /ws/:workspaceId, /rpc/:workspaceId, /event/:workspaceId, or /recipient/:token/bundle" }, 404);
+      return json({ error: "Use /ws/:workspaceId, /rpc/:workspaceId, /event/:workspaceId, /recipient/:token/bundle, or /telemetry/{usage,aggregate}" }, 404);
     }
 
     const [, action, workspaceId] = match;
