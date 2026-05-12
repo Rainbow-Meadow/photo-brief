@@ -275,19 +275,52 @@ function SignpostSection() {
     <Section tone="alt">
       <Container>
         <SectionIntro eyebrow="[ 04 ] Where to next ]" title="Pick a door." />
-        <div className="grid gap-6 md:grid-cols-3">
-          {signposts.map((s, i) => (
-            <RiseIn key={s.to} delay={i * 0.06}>
-              <NavLink to={s.to} className="group block h-full">
-                <Card>
-                  <s.icon className="h-7 w-7 text-[hsl(var(--accent-kinetic))]" />
-                  <p className="ls-eyebrow mt-4">{s.eyebrow}</p>
-                  <h3 className="ls-h3 mt-2">{s.title}</h3>
-                  <Body size="sm">{s.body}</Body>
-                  <span className="mt-6 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.18em] text-foreground transition group-hover:text-[hsl(var(--accent-kinetic))]">
+        <div className="grid gap-0 lg:grid-cols-2">
+          {/* Beta — hero door, full top row */}
+          <RiseIn className="lg:col-span-2">
+            <NavLink
+              to="/beta"
+              className="group block border-t border-border bg-[hsl(var(--accent-kinetic)/0.06)] p-8 transition hover:bg-[hsl(var(--accent-kinetic)/0.12)] lg:p-12"
+            >
+              <div className="grid gap-6 lg:grid-cols-12 lg:items-end">
+                <div className="lg:col-span-9">
+                  <h3 className="ls-h2">{signposts[1].title}</h3>
+                  <Body size="md">{signposts[1].body}</Body>
+                </div>
+                <div className="flex items-center justify-between gap-4 lg:col-span-3 lg:justify-end">
+                  <div className="flex items-center gap-3">
+                    <p className="ls-eyebrow !mt-0">{signposts[1].eyebrow}</p>
+                    {(() => {
+                      const I = signposts[1].icon;
+                      return <I className="h-5 w-5 text-[hsl(var(--accent-kinetic))]" />;
+                    })()}
+                  </div>
+                  <span className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.18em] text-foreground transition group-hover:text-[hsl(var(--accent-kinetic))]">
+                    {signposts[1].cta} <ArrowRight className="h-4 w-4" />
+                  </span>
+                </div>
+              </div>
+            </NavLink>
+          </RiseIn>
+
+          {/* Demo + Pricing — flanking smaller doors */}
+          {[signposts[0], signposts[2]].map((s, i) => (
+            <RiseIn key={s.to} delay={(i + 1) * 0.06}>
+              <NavLink
+                to={s.to}
+                className="group block border-t border-border p-6 transition hover:bg-foreground/[0.02] lg:p-8"
+              >
+                <h3 className="ls-h3">{s.title}</h3>
+                <Body size="sm">{s.body}</Body>
+                <div className="mt-6 flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <p className="ls-eyebrow !mt-0">{s.eyebrow}</p>
+                    <s.icon className="h-4 w-4 text-[hsl(var(--accent-kinetic))]" />
+                  </div>
+                  <span className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.18em] text-foreground transition group-hover:text-[hsl(var(--accent-kinetic))]">
                     {s.cta} <ArrowRight className="h-4 w-4" />
                   </span>
-                </Card>
+                </div>
               </NavLink>
             </RiseIn>
           ))}
