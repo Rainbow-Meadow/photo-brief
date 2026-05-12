@@ -466,6 +466,7 @@ function StepContent({
   photos,
   answers,
   submitting,
+  submitError,
   onCapture,
   onSkip,
   onRetake,
