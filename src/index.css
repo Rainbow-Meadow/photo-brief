@@ -1259,20 +1259,39 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
   .tap-apple:active { transform: none !important; }
 }
 
-/* ── Marketing deck (sticky-stack) ─────────────────────────────────────────
-   Each <Slide> in a <SlideStack> is pinned at the top of the viewport at
-   100svh. Subsequent slides have higher z-index and slide up over the
-   previous one as the document scrolls. Pure CSS — no JS hijacking, plays
-   with Lenis. Reduced motion falls back to normal stacked sections. */
+/* ── Marketing deck (scroll-driven pinned stack) ───────────────────────────
+   The deck reserves N viewports of scroll. A sticky stage pins one viewport;
+   slides inside it are absolutely positioned and translated by JS based on
+   document scroll progress so each new slide rises over the previous one
+   while the previous one stays locked in place.
+   Reduced motion falls back to normal stacked sections. */
 .pb-deck {
   position: relative;
+  width: 100%;
 }
-.pb-deck > .pb-slide {
-  position: sticky;
+.pb-deck-stage {
+  /* JS toggles position between absolute (top:0 / bottom:0) and fixed. */
+  position: absolute;
   top: 0;
+  left: 0;
+  right: 0;
+  height: 100svh;
+  width: 100%;
+  overflow: hidden;
+  isolation: isolate;
+}
+.pb-deck-slot {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100svh;
+  will-change: transform;
+}
+.pb-deck-slot > .pb-slide {
+  position: relative;
+  width: 100%;
   height: 100svh;
   min-height: 100svh;
-  width: 100%;
   overflow: hidden;
   background: hsl(var(--background));
   isolation: isolate;
@@ -1326,8 +1345,15 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .pb-deck > .pb-slide {
+  .pb-deck { height: auto !important; }
+  .pb-deck-stage { position: static; height: auto; overflow: visible; }
+  .pb-deck-slot {
     position: relative;
+    inset: auto;
+    height: auto;
+    transform: none !important;
+  }
+  .pb-deck-slot > .pb-slide {
     height: auto;
     min-height: 100svh;
     overflow: visible;

@@ -16,22 +16,14 @@ import {
 
 type SlideProps = {
   children: ReactNode;
-  /** id used for hash navigation and indicator rail labelling */
   anchor?: string;
-  /** short label for the indicator rail tooltip */
   label?: string;
-  /** allow internal scroll if content can't be made to fit 100svh */
   scroll?: boolean;
-  /** background override (defaults to --background) */
   tone?: "default" | "alt" | "ink";
   className?: string;
-  /** inner-content max-width, defaults to max-w-7xl */
   width?: "narrow" | "default" | "wide" | "full";
-  /** vertical alignment of inner content */
   align?: "center" | "start";
-  /** style override (used by SlideStack to inject z-index) */
   style?: CSSProperties;
-  /** allow data-* attributes injected by SlideStack to land in the DOM */
   [dataAttr: `data-${string}`]: unknown;
 };
 
@@ -79,8 +71,6 @@ export function Slide({
   );
 }
 
-/* RawSlide — same sticky pin + bg as Slide but no inner padding/centering.
-   Use when children are existing <Section>s with their own padding. */
 type RawSlideProps = {
   children: ReactNode;
   anchor?: string;
@@ -115,11 +105,15 @@ export function RawSlide({
   );
 }
 
-/* ───────── SlideStack ───────── */
+/* ───────── SlideStack ─────────
+   Scroll-driven pinned deck. The deck reserves N viewports of scroll. A
+   sticky stage pins one viewport. Slides are absolutely positioned inside
+   the stage; each slide i translates from translateY(100%) → translateY(0)
+   as the document scrolls through its assigned segment, covering slide i-1.
+*/
 
 type SlideStackProps = {
   children: ReactNode;
-  /** show the right-side indicator rail (desktop only) */
   rail?: boolean;
 };
 
@@ -133,60 +127,145 @@ export function SlideStack({ children, rail = true }: SlideStackProps) {
   );
 
   const railId = useId();
-  const stackRef = useRef<HTMLDivElement | null>(null);
+  const deckRef = useRef<HTMLDivElement | null>(null);
+  const stageRef = useRef<HTMLDivElement | null>(null);
+  const slideRefs = useRef<Array<HTMLElement | null>>([]);
   const [active, setActive] = useState(0);
+  const count = slides.length;
 
   useEffect(() => {
-    if (!rail) return;
-    const root = stackRef.current;
-    if (!root) return;
-    const els = Array.from(
-      root.querySelectorAll<HTMLElement>("[data-pb-slide]"),
-    );
-    if (els.length === 0) return;
+    if (count === 0) return;
+    const reduced =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) {
+      const stage = stageRef.current;
+      if (stage) stage.style.position = "static";
+      slideRefs.current.forEach((el) => {
+        if (el) {
+          el.style.transform = "";
+          el.style.position = "relative";
+        }
+      });
+      return;
+    }
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && entry.intersectionRatio > 0.55) {
-            const idx = Number(entry.target.getAttribute("data-pb-index"));
-            if (!Number.isNaN(idx)) setActive(idx);
-          }
-        });
-      },
-      { threshold: [0, 0.55, 0.9] },
-    );
-    els.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, [rail, slides.length]);
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const deck = deckRef.current;
+      const stage = stageRef.current;
+      if (!deck || !stage) return;
+      const rect = deck.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const deckHeight = rect.height; // count * vh
+
+      // Stage positioning: while the deck spans the viewport, pin the stage at
+      // top:0 via position:fixed. Before the deck reaches the viewport, sit at
+      // the top of the deck (position:absolute, top:0). After the deck has
+      // scrolled past, sit at the bottom of the deck (position:absolute,
+      // bottom:0). This emulates sticky without depending on body overflow.
+      if (rect.top > 0) {
+        stage.style.position = "absolute";
+        stage.style.top = "0";
+        stage.style.bottom = "auto";
+      } else if (rect.bottom < vh) {
+        stage.style.position = "absolute";
+        stage.style.top = "auto";
+        stage.style.bottom = "0";
+      } else {
+        stage.style.position = "fixed";
+        stage.style.top = "0";
+        stage.style.bottom = "auto";
+      }
+
+      const scrolled = -rect.top;
+      const maxScroll = Math.max(1, deckHeight - vh);
+      // Progress in slide segments: 0 at deck top, count-1 at deck bottom.
+      const progress = Math.max(
+        0,
+        Math.min(count - 1, (scrolled / maxScroll) * (count - 1)),
+      );
+
+      for (let i = 0; i < count; i++) {
+        const el = slideRefs.current[i];
+        if (!el) continue;
+        if (i === 0) {
+          el.style.transform = "translate3d(0,0,0)";
+          continue;
+        }
+        const local = progress - (i - 1);
+        const clamped = Math.max(0, Math.min(1, local));
+        const offset = (1 - clamped) * 100;
+        el.style.transform = `translate3d(0, ${offset}%, 0)`;
+      }
+
+      const idx = Math.min(count - 1, Math.max(0, Math.round(progress)));
+      setActive((prev) => (prev === idx ? prev : idx));
+    };
+
+    const onScroll = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(update);
+    };
+
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [count]);
 
   const goTo = (i: number) => {
-    const el = stackRef.current?.querySelector<HTMLElement>(
-      `[data-pb-index="${i}"]`,
-    );
-    el?.scrollIntoView({ behavior: "smooth", block: "start" });
+    const deck = deckRef.current;
+    if (!deck) return;
+    const deckTop = deck.getBoundingClientRect().top + window.scrollY;
+    const vh = window.innerHeight;
+    const maxScroll = Math.max(1, deck.getBoundingClientRect().height - vh);
+    const segment = maxScroll / Math.max(1, count - 1);
+    const target = deckTop + i * segment;
+    window.scrollTo({ top: target, behavior: "smooth" });
   };
 
   return (
     <>
       <div
-        ref={stackRef}
+        ref={deckRef}
         className="pb-deck"
-        style={{ ["--slide-count" as keyof CSSProperties as string]: slides.length } as CSSProperties}
+        style={
+          {
+            ["--slide-count" as keyof CSSProperties as string]: count,
+            height: `${count * 100}svh`,
+          } as CSSProperties
+        }
       >
-        {slides.map((child, i) =>
-          cloneElement(child, {
-            key: child.key ?? i,
-            "data-pb-index": i,
-            style: {
-              ...(child.props.style ?? {}),
-              zIndex: i + 1,
-            },
-          } as Partial<typeof child.props>),
-        )}
+        <div ref={stageRef} className="pb-deck-stage">
+          {slides.map((child, i) => (
+            <div
+              key={child.key ?? i}
+              ref={(el) => {
+                slideRefs.current[i] = el;
+              }}
+              className="pb-deck-slot"
+              style={{
+                zIndex: i + 1,
+                transform:
+                  i === 0 ? "translate3d(0,0,0)" : "translate3d(0,100%,0)",
+              }}
+              data-pb-index={i}
+            >
+              {cloneElement(child, {
+                "data-pb-index": i,
+              } as Partial<typeof child.props>)}
+            </div>
+          ))}
+        </div>
       </div>
 
-      {rail && slides.length > 1 ? (
+      {rail && count > 1 ? (
         <nav aria-label="Slide navigation" className="pb-deck-rail">
           {slides.map((child, i) => {
             const label =
