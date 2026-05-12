@@ -13,7 +13,7 @@ import { ReviewSummaryCard } from "@/features/capture/components/ReviewSummaryCa
 import { SubmitConfirmationCard } from "@/features/capture/components/SubmitConfirmationCard";
 import { RecipientBrandingProvider } from "@/features/capture/RecipientBrandingContext";
 import { loadRecipientContext, RecipientLoadError, type RecipientContext, type RecipientLoadDiagnostics } from "@/features/capture/recipientContext";
-import { resolveRecipientError } from "@/lib/errorCodes";
+import { resolveRecipientError, classifySubmitError } from "@/lib/errorCodes";
 import { DiagnosticsPanel } from "@/components/shared/DiagnosticsPanel";
 import { useChatFlow } from "@/hooks/useChatFlow";
 import { r2MediaService } from "@/services/r2MediaService";
