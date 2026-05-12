@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Section, Container, SectionHeader } from "@/design-system/schema";
+import { SlideStack, RawSlide } from "@/components/marketing/SlideStack";
 
 import pricingCedarOwnerLaptop from "@/assets/pricing/pricing-cedar-owner-laptop.png";
 import pricingMultiTradeFan from "@/assets/pricing/pricing-multi-trade-fan.png";
