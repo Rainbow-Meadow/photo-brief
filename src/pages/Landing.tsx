@@ -180,47 +180,62 @@ function ComparisonSection() {
           title="The intake your customers feel — and the one your estimator doesn't curse at."
           subtitle="Same five minutes. Two different futures for the lead."
         />
-        <div className="grid gap-6 lg:grid-cols-2">
-          <Card>
-            <span className="ls-numeral text-destructive">Before · status quo</span>
-            <h3 className="ls-h3 mt-3">Generic intake form</h3>
-            <ul className="mt-6 space-y-3 text-sm">
-              {[
-                { icon: ImageOff, text: "Photos missing or shot from across the yard." },
-                { icon: MessageSquareWarning, text: "Three follow-ups before anyone can price it." },
-                { icon: TimerReset, text: "The lead cools while you chase context." },
-              ].map(({ icon: Icon, text }) => (
-                <li key={text} className="flex gap-3 text-muted-foreground">
-                  <Icon className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
-                  <span>{text}</span>
-                </li>
-              ))}
-            </ul>
-            <div className="mt-6 aspect-[16/9] overflow-hidden border border-border bg-muted">
-              <img src={beforeIntakeFormIllo} alt="Broken intake form with missing photo context"
-                className="h-full w-full object-contain p-4" loading="lazy" />
+        <div className="grid grid-cols-1 overflow-hidden border border-border lg:grid-cols-2">
+          {/* Before — dimmed half */}
+          <div className="border-b border-border bg-muted/30 opacity-70 grayscale-[0.4] lg:border-b-0 lg:border-r">
+            <div className="overflow-hidden bg-muted">
+              <img
+                src={beforeIntakeFormIllo}
+                alt="Broken intake form with missing photo context"
+                className="h-auto w-full object-contain"
+                loading="lazy"
+              />
             </div>
-          </Card>
-          <Card elevated>
-            <span className="ls-numeral text-[hsl(var(--accent-kinetic))]">After · PhotoBrief</span>
-            <h3 className="ls-h3 mt-3">A guided capture pipeline</h3>
-            <ul className="mt-6 space-y-3 text-sm">
-              {[
-                "Right angle. Right lighting. Right context — every single time.",
-                "One packet hits your inbox: photos, notes, location, scope.",
-                "Your estimator quotes on the first reply. The job moves.",
-              ].map((text) => (
-                <li key={text} className="flex gap-3 text-muted-foreground">
-                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[hsl(var(--accent-kinetic))]" />
-                  <span>{text}</span>
-                </li>
-              ))}
-            </ul>
-            <div className="mt-6 aspect-[16/9] overflow-hidden border border-border bg-muted">
-              <img src={afterCapturePipelineIllo} alt="Guided phone capture flow turning into a brief packet"
-                className="h-full w-full object-contain p-4" loading="lazy" />
+            <div className="p-6 lg:p-8">
+              <span className="ls-numeral text-destructive">Before · status quo</span>
+              <h3 className="ls-h3 mt-3">Generic intake form</h3>
+              <ul className="mt-6 space-y-3 text-sm">
+                {[
+                  { icon: ImageOff, text: "Photos missing or shot from across the yard." },
+                  { icon: MessageSquareWarning, text: "Three follow-ups before anyone can price it." },
+                  { icon: TimerReset, text: "The lead cools while you chase context." },
+                ].map(({ icon: Icon, text }) => (
+                  <li key={text} className="flex gap-3 text-muted-foreground">
+                    <Icon className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
+                    <span>{text}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
-          </Card>
+          </div>
+
+          {/* After — bright half */}
+          <div className="bg-card ring-1 ring-inset ring-[hsl(var(--accent-kinetic)/0.4)]">
+            <div className="overflow-hidden bg-muted">
+              <img
+                src={afterCapturePipelineIllo}
+                alt="Guided phone capture flow turning into a brief packet"
+                className="h-auto w-full object-contain"
+                loading="lazy"
+              />
+            </div>
+            <div className="p-6 lg:p-8">
+              <span className="ls-numeral text-[hsl(var(--accent-kinetic))]">After · PhotoBrief</span>
+              <h3 className="ls-h3 mt-3">A guided capture pipeline</h3>
+              <ul className="mt-6 space-y-3 text-sm">
+                {[
+                  "Right angle. Right lighting. Right context — every single time.",
+                  "One packet hits your inbox: photos, notes, location, scope.",
+                  "Your estimator quotes on the first reply. The job moves.",
+                ].map((text) => (
+                  <li key={text} className="flex gap-3 text-muted-foreground">
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[hsl(var(--accent-kinetic))]" />
+                    <span>{text}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </div>
       </Container>
     </Section>
