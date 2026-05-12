@@ -78,6 +78,73 @@ const PREVIEW_GUIDE: PhotoGuide = {
   questions: [],
 };
 
+const BUNDLE_BASE_URL = "https://assistant.photobrief.ai";
+
+interface RecipientBundleResponse {
+  bundle: {
+    request: {
+      id: string;
+      workspace_id: string;
+      guide_id: string | null;
+      recipient_name: string | null;
+      status: string | null;
+    };
+    workspace_name: string | null;
+    brand: {
+      logo_url: string | null;
+      primary_color: string | null;
+      intro_message: string | null;
+      completion_message: string | null;
+      hide_photobrief_branding: boolean | null;
+    } | null;
+    guide: {
+      id: string;
+      name: string | null;
+      category: string | null;
+      description: string | null;
+      is_template: boolean | null;
+      steps: Array<{
+        id: string;
+        order_index: number;
+        title: string | null;
+        instructions: string | null;
+        shot_type: string | null;
+        overlay_type: string | null;
+        ai_checks: unknown;
+        required: boolean | null;
+      }>;
+      questions: Array<{
+        id: string;
+        order_index: number;
+        prompt: string | null;
+        question_type: string | null;
+        required: boolean | null;
+        options: unknown;
+      }>;
+    } | null;
+  };
+}
+
+/**
+ * Try the Cloudflare-cached recipient bundle (Step 4 of the gain-control plan).
+ * Returns null on any error so callers transparently fall back to the
+ * direct token-scoped Supabase queries.
+ */
+async function fetchCachedBundle(token: string): Promise<RecipientBundleResponse["bundle"] | null> {
+  try {
+    const res = await fetch(`${BUNDLE_BASE_URL}/recipient/${encodeURIComponent(token)}/bundle`, {
+      method: "GET",
+      headers: { Accept: "application/json" },
+      credentials: "omit",
+    });
+    if (!res.ok) return null;
+    const json = (await res.json()) as RecipientBundleResponse;
+    return json?.bundle ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export async function loadRecipientContext(
   token: string | undefined,
 ): Promise<RecipientContext> {
