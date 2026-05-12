@@ -46,7 +46,7 @@ export const workflowSteps: Array<{
 
 export function MechanismGrid() {
   return (
-    <div className="space-y-16 lg:space-y-24">
+    <div className="space-y-12 lg:space-y-16">
       {workflowSteps.map((step, i) => {
         const flipped = i % 2 === 1;
         const isPortrait = step.orientation === "portrait";
@@ -55,9 +55,9 @@ export function MechanismGrid() {
         return (
           <RiseIn key={step.n} delay={i * 0.05}>
             <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-16">
-              {/* Image */}
+              {/* Image — mobile order 2 (after copy), desktop alternates */}
               <div
-                className={`${imageColSpan} ${flipped ? "lg:order-2" : "lg:order-1"} flex items-center justify-center`}
+                className={`${imageColSpan} order-2 ${flipped ? "lg:order-2" : "lg:order-1"} flex items-center justify-center`}
               >
                 <img
                   src={step.illo}
@@ -71,15 +71,17 @@ export function MechanismGrid() {
                 />
               </div>
 
-              {/* Copy */}
+              {/* Copy — mobile order 1 (first), desktop alternates */}
               <div
-                className={`${copyColSpan} ${flipped ? "lg:order-1" : "lg:order-2"}`}
+                className={`${copyColSpan} order-1 ${flipped ? "lg:order-1" : "lg:order-2"}`}
               >
-                <div className="flex items-baseline justify-between border-b border-border pb-3">
-                  <span className="ls-numeral">{step.n}</span>
-                  <span className="ls-numeral text-foreground/40">04</span>
+                <div
+                  aria-hidden="true"
+                  className="font-display text-7xl leading-none tracking-tight text-foreground/15 lg:text-8xl"
+                >
+                  {step.n}
                 </div>
-                <h3 className="ls-h2 mt-6">{step.title}</h3>
+                <h3 className="ls-h2 mt-4 border-t border-border pt-6">{step.title}</h3>
                 <p className="mt-4 text-base leading-relaxed text-muted-foreground">
                   {step.body}
                 </p>
