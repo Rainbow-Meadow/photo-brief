@@ -1068,6 +1068,86 @@ export type Database = {
           },
         ]
       }
+      intake_attachments: {
+        Row: {
+          checksum_sha256: string | null
+          created_at: string
+          finalized_at: string | null
+          id: string
+          intake_brief_id: string
+          intake_session_id: string
+          intake_source_id: string | null
+          mime_type: string
+          original_filename: string | null
+          size_bytes: number | null
+          status: string
+          storage_key: string
+          storage_provider: string
+          workspace_id: string
+        }
+        Insert: {
+          checksum_sha256?: string | null
+          created_at?: string
+          finalized_at?: string | null
+          id?: string
+          intake_brief_id: string
+          intake_session_id: string
+          intake_source_id?: string | null
+          mime_type: string
+          original_filename?: string | null
+          size_bytes?: number | null
+          status?: string
+          storage_key: string
+          storage_provider?: string
+          workspace_id: string
+        }
+        Update: {
+          checksum_sha256?: string | null
+          created_at?: string
+          finalized_at?: string | null
+          id?: string
+          intake_brief_id?: string
+          intake_session_id?: string
+          intake_source_id?: string | null
+          mime_type?: string
+          original_filename?: string | null
+          size_bytes?: number | null
+          status?: string
+          storage_key?: string
+          storage_provider?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "intake_attachments_intake_brief_id_fkey"
+            columns: ["intake_brief_id"]
+            isOneToOne: false
+            referencedRelation: "intake_briefs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "intake_attachments_intake_session_id_fkey"
+            columns: ["intake_session_id"]
+            isOneToOne: false
+            referencedRelation: "intake_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "intake_attachments_intake_source_id_fkey"
+            columns: ["intake_source_id"]
+            isOneToOne: false
+            referencedRelation: "intake_sources"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "intake_attachments_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "business_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       intake_blueprints: {
         Row: {
           approved_at: string | null
