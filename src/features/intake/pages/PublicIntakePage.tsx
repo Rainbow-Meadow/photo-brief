@@ -46,6 +46,7 @@ interface FormState {
 interface SubmittedIntake {
   briefId?: string;
   sessionId?: string;
+  sessionToken?: string;
   readinessStatus?: string;
   photoPolicy?: PhotoPolicy;
   nextAction?: string | null;
