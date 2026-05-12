@@ -127,6 +127,12 @@ export const requestsService = {
   },
 
   async create(input: CreateRequestInput): Promise<PhotoBriefRequest> {
+    const status = input.status ?? "sent";
+    if (status !== "draft" && !input.guideId) {
+      throw new Error(
+        "Pick a guide before sending this request — recipients won't see anything to capture without one.",
+      );
+    }
     const { data: user } = await supabase.auth.getUser();
     const { data, error } = await supabase
       .from("photo_brief_requests")
@@ -137,7 +143,7 @@ export const requestsService = {
         recipient_email: input.recipientEmail ?? null,
         recipient_phone: input.recipientPhone ?? null,
         custom_message: input.customMessage ?? null,
-        status: input.status ?? "sent",
+        status,
         created_by: user.user?.id ?? null,
         customer_id: input.customerId ?? null,
       })
