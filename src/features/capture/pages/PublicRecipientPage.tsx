@@ -17,7 +17,11 @@ import { resolveRecipientError, classifySubmitError } from "@/lib/errorCodes";
 import { DiagnosticsPanel } from "@/components/shared/DiagnosticsPanel";
 import { useChatFlow } from "@/hooks/useChatFlow";
 import { r2MediaService } from "@/services/r2MediaService";
-import { submissionsService } from "@/services/submissionsService";
+import {
+  submissionsService,
+  RecipientSubmitResponseSchema,
+  InvalidSubmitResponseError,
+} from "@/services/submissionsService";
 import { conversions, trackEvent } from "@/lib/analytics";
 import { pushCaptureEvent } from "@/services/captureAgentService";
 import type { CapturedPhoto, ChatMessage } from "@/types/chat";
@@ -226,7 +230,7 @@ function RecipientWorkflow({ ctx, token, navigate }: { ctx: RecipientContext; to
 
     let succeeded = false;
     try {
-      const submission = await submissionsService.submitFromRecipient({
+      const rawSubmission = await submissionsService.submitFromRecipient({
         token,
         requestId: ctx.requestId,
         workspaceId: ctx.workspaceId,
@@ -235,6 +239,15 @@ function RecipientWorkflow({ ctx, token, navigate }: { ctx: RecipientContext; to
         photos: [],
         answers: flow.answers,
       });
+
+      // Defensive re-validation at the call site. Belt-and-suspenders:
+      // even if the service ever changes, the UI will refuse to advance
+      // to the "done" screen on a malformed payload.
+      const parsedSubmission = RecipientSubmitResponseSchema.safeParse(rawSubmission);
+      if (!parsedSubmission.success) {
+        throw new InvalidSubmitResponseError(rawSubmission, parsedSubmission.error.issues);
+      }
+      const submission = parsedSubmission.data;
 
       if (ctx.resubmit && ctx.resubmit.items.length > 0) {
         const ids = ctx.resubmit.items.map((it) => it.rejectedMediaId);
