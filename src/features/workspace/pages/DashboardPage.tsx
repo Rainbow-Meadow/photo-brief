@@ -30,6 +30,7 @@ import { messagingService } from "@/services/messagingService";
 import { StarterRequestCard } from "@/features/workspace/components/StarterRequestCard";
 import { usePlan } from "@/hooks/usePlan";
 import { getPlanLimit, minPlanFor } from "@/config/planLimits";
+import { RecentIntakeBriefsCard } from "@/features/intake/components/RecentIntakeBriefsCard";
 
 async function sendReminder(requestId: string, recipientName: string) {
   const t = toast.loading(`Sending reminder to ${recipientName}…`);
@@ -55,6 +56,7 @@ export default function DashboardPage() {
   const { can } = usePlan();
   const { workspace } = useCurrentWorkspace();
   const canRemind = can("reminders");
+  const canUseWebsiteIntake = can("website_intake");
 
   const [refundedThisPeriod, setRefundedThisPeriod] = useState<number | null>(null);
   useEffect(() => {
@@ -231,6 +233,7 @@ export default function DashboardPage() {
                 ctaHref="/requests?status=needs_customer_action"
                 showReminder={canRemind}
               />
+              {canUseWebsiteIntake ? <RecentIntakeBriefsCard /> : null}
             </div>
           </div>
 
