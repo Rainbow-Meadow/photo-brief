@@ -9,6 +9,10 @@ import { useIntakeBriefs } from "@/hooks/useIntakeBriefs";
 import { formatRelativeTime } from "@/utils/format";
 import type { IntakeBrief } from "@/types/intake";
 
+function humanize(value: string) {
+  return value.replace(/_/g, " ");
+}
+
 export default function IntakeBriefsPage() {
   const { data: briefs = [], isLoading, error } = useIntakeBriefs();
 
@@ -72,7 +76,7 @@ export default function IntakeBriefsPage() {
                     <td className="px-5 py-3 align-middle">
                       <div className="flex items-center gap-2">
                         {brief.readinessScore !== null && brief.readinessScore !== undefined ? <ReadinessScoreBadge score={brief.readinessScore} /> : null}
-                        <StatusBadge label={brief.readinessStatus.replaceAll("_", " ")} tone={brief.readinessStatus.includes("ready") ? "success" : "warning"} />
+                        <StatusBadge label={humanize(brief.readinessStatus)} tone={brief.readinessStatus.includes("ready") ? "success" : "warning"} />
                       </div>
                     </td>
                     <td className="px-5 py-3 align-middle text-xs text-muted-foreground">{formatRelativeTime(brief.createdAt)}</td>
@@ -125,7 +129,7 @@ function MobileBriefItem({ brief }: { brief: IntakeBrief }) {
         <p className="mt-2 line-clamp-2 text-xs leading-5 text-muted-foreground">{brief.summary ?? brief.nextAction ?? "No summary yet"}</p>
         <div className="mt-3 flex flex-wrap items-center gap-2">
           {brief.readinessScore !== null && brief.readinessScore !== undefined ? <ReadinessScoreBadge score={brief.readinessScore} /> : null}
-          <StatusBadge label={brief.readinessStatus.replaceAll("_", " ")} tone={brief.readinessStatus.includes("ready") ? "success" : "warning"} />
+          <StatusBadge label={humanize(brief.readinessStatus)} tone={brief.readinessStatus.includes("ready") ? "success" : "warning"} />
           <span className="text-xs text-muted-foreground">{formatRelativeTime(brief.createdAt)}</span>
         </div>
       </NavLink>
@@ -134,7 +138,7 @@ function MobileBriefItem({ brief }: { brief: IntakeBrief }) {
 }
 
 function PhotoPolicyBadge({ brief }: { brief: IntakeBrief }) {
-  const label = brief.photoPolicy.replaceAll("_", " ");
+  const label = humanize(brief.photoPolicy);
   const tone = brief.photoPolicy === "required" ? "warning" : brief.photoPolicy === "not_needed" ? "muted" : "info";
   return <StatusBadge label={label} tone={tone} />;
 }
