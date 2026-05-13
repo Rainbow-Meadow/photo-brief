@@ -374,7 +374,7 @@ function FaqSection() {
 function FinalCta({ isFull }: { isFull: boolean }) {
   return (
     <FinalCtaSection
-      eyebrow="06 ] Stop chasing leads"
+      eyebrow="06 ] Replace the form"
       title="Ready to replace the form"
       punctuation="?"
       body={
