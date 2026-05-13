@@ -38,8 +38,8 @@ export default function DemoPage() {
   return (
     <>
       <PageMeta
-        title="Try PhotoBrief on your own business — 60-second demo"
-        description="Paste your URL. Watch PhotoBrief build the routes, ask the right questions, and hand you a brief — live, in 60 seconds. No signup."
+        title="See PhotoBrief on your own site — 60 seconds"
+        description="Paste your URL. We build the routes. You get a brief. Sixty seconds. No signup."
         canonicalPath="/demo"
       />
 
@@ -50,21 +50,21 @@ export default function DemoPage() {
             <p className="ls-eyebrow">[ Live demo ]</p>
             <RiseIn>
               <h1 className="ls-h2 mt-6">
-                Watch PhotoBrief build your intake
-                <br />from your own website<span className="ls-accent-dot">.</span>
+                Paste your URL.
+                <br />Get your brief<span className="ls-accent-dot">.</span>
               </h1>
             </RiseIn>
             <RiseIn delay={0.1}>
               <p className="ls-subtitle mx-auto mt-8 max-w-xl">
-                Paste your URL. We'll read the site, build the routes, walk one customer through, and email you the finished brief. Sixty seconds. No signup.
+                We read your site. Build the routes. Email you the brief. Sixty seconds. No signup.
               </p>
             </RiseIn>
             <CTAGroup align="center">
               <CTA href="#build-yours" variant="primary" size="lg">
-                Build my sample brief <ArrowRight className="h-4 w-4" />
+                Build my brief <ArrowRight className="h-4 w-4" />
               </CTA>
               <CTA href="#assembly" variant="secondary" size="lg">
-                Watch the assembly
+                Watch it work
               </CTA>
             </CTAGroup>
           </div>
@@ -76,8 +76,8 @@ export default function DemoPage() {
         <Container>
           <SectionIntro
             eyebrow="[ Watch ]"
-            title={`A website CTA → matched route → brief on your desk in 38 seconds.`}
-            subtitle="Hit the steps. Watch PhotoBrief decide what to ask, when to ask for a photo, and what to hand back."
+            title={`One CTA. One route. One brief. 38 seconds.`}
+            subtitle="Tap through. See what we ask. See when we ask for a photo. See what lands in your inbox."
           />
           <div className="border border-border bg-background p-2 sm:p-4">
             <Suspense fallback={<div className="flex h-96 items-center justify-center text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin" /></div>}>
@@ -92,12 +92,12 @@ export default function DemoPage() {
         <Container width="narrow">
           <SectionIntro
             eyebrow="[ Try it ]"
-            title="Now build the route for your business."
-            subtitle="A plumber types &ldquo;leaking faucet.&rdquo; A roofer types &ldquo;missing shingles.&rdquo; PhotoBrief builds the route, decides on photos, and emails you the finished brief in 60 seconds."
+            title="Now build yours."
+            subtitle="Plumber types &ldquo;leaking faucet.&rdquo; Roofer types &ldquo;missing shingles.&rdquo; We build the route. Pick the photos. Email the brief. 60 seconds."
           />
           <DemoDiscoveryChat />
           <p className="mt-6 text-center text-xs text-muted-foreground">
-            Demo briefs are auto-deleted after 24 hours.
+            Demo briefs auto-delete after 24 hours.
           </p>
         </Container>
       </Section>
@@ -107,7 +107,7 @@ export default function DemoPage() {
         <Container>
           <SectionIntro
             eyebrow="[ Built per trade ]"
-            title="Different trade. Different routes. Same brief in your inbox."
+            title="Different trade. Different routes. Same brief."
             subtitle="Quiet customer? Doesn't matter. The route does the talking."
           />
           <UseCasesGrid />
@@ -116,7 +116,7 @@ export default function DemoPage() {
 
       {/* Footer CTA */}
       <FinalCtaSection
-        eyebrow="Like what you saw?"
+        eyebrow="Seen enough?"
         title="Lock in founding pricing"
         primary={{
           href: "/beta",
@@ -185,7 +185,7 @@ function DemoDiscoveryChat() {
       ) : null}
 
       {stage === "service" && (
-        <StepBlock eyebrow="Step 1 of 3" title="What kind of service do you provide?">
+        <StepBlock eyebrow="Step 1 of 3" title="What do you do?">
           <input
             autoFocus value={serviceType} onChange={(e) => setServiceType(e.target.value)}
             placeholder="e.g. Residential plumbing"
@@ -208,8 +208,8 @@ function DemoDiscoveryChat() {
       {stage === "scenario" && (
         <StepBlock
           eyebrow="Step 2 of 3"
-          title="Walk us through a typical job that comes through your form."
-          hint={`Example: "A homeowner says they have a leaking faucet and wants a quote." We'll route it and decide if photos are worth asking for.`}
+          title="Walk us through a typical job."
+          hint={`Like: "Homeowner has a leaking faucet, wants a quote." We'll route it. Decide if photos help.`}
         >
           <textarea
             autoFocus value={scenario} onChange={(e) => setScenario(e.target.value)} rows={4}
@@ -223,7 +223,7 @@ function DemoDiscoveryChat() {
       )}
 
       {stage === "clarify" && clarifyingQuestion && (
-        <StepBlock eyebrow="One quick clarifier" title={clarifyingQuestion}>
+        <StepBlock eyebrow="One quick thing" title={clarifyingQuestion}>
           <input
             autoFocus value={clarifierAnswer} onChange={(e) => setClarifierAnswer(e.target.value)}
             placeholder="Your answer"
@@ -238,8 +238,8 @@ function DemoDiscoveryChat() {
       {stage === "contact" && (
         <StepBlock
           eyebrow="Step 3 of 3"
-          title="Where should we send the finished brief?"
-          hint="We'll email you the result after you walk through the capture flow. No signup, no spam."
+          title="Where do we send the brief?"
+          hint="Walk through the capture flow. We email the result. No signup. No spam."
         >
           {draft && (
             <div className="mb-4 border border-border bg-background/60 p-4">
@@ -276,7 +276,7 @@ function DemoDiscoveryChat() {
         <div className="flex flex-col items-center gap-4 py-12 text-center">
           <Loader2 className="h-6 w-6 animate-spin text-accent" />
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground">Building your brief</p>
-          <p className="text-sm text-muted-foreground">Redirecting you to the customer view…</p>
+          <p className="text-sm text-muted-foreground">Sending you to the customer view…</p>
         </div>
       )}
     </div>
