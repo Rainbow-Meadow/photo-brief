@@ -17,31 +17,31 @@ import pricingCedarOwnerLaptop from "@/assets/pricing/pricing-cedar-owner-laptop
 import pricingMultiTradeFan from "@/assets/pricing/pricing-multi-trade-fan.png";
 
 const pricingAxes = [
-  { icon: Camera, label: "Photos", copy: "Plans scale by submitted customer photos. Simple jobs stay simple; bigger jobs use more photos." },
-  { icon: BadgeCheck, label: "Branding", copy: "Choose your customer-facing brand level and whether PhotoBrief branding appears." },
-  { icon: HardDrive, label: "Storage term", copy: "Keep customer media for the window that matches how your business reviews work." },
-  { icon: Users, label: "Team size", copy: "Add the people who need to review, assign, and manage finished briefs." },
+  { icon: Camera, label: "Photos", copy: "Plans scale by submitted customer photos. Routes that don't need photos don't burn credits." },
+  { icon: BadgeCheck, label: "Branding", copy: "Pick the customer-facing brand level — and decide whether PhotoBrief shows up at all." },
+  { icon: HardDrive, label: "Storage term", copy: "Keep customer media for the window your business actually reviews against." },
+  { icon: Users, label: "Team size", copy: "Add the people who triage briefs, run quotes, and close jobs." },
 ];
 
 const intakeModes = [
   {
     icon: Link2,
     title: "Every plan",
-    label: "Manual PhotoBrief links",
-    copy: "Create a request, copy or send the clickable PhotoBrief link, and let the customer complete the mobile photo workflow.",
+    label: "Manual smart intake links",
+    copy: "Spin up a smart intake from your URL, copy the link, send it however you already reach customers. The whole route engine works on day one.",
   },
   {
     icon: Globe2,
     title: "Pro and above",
-    label: "Website Intake automation",
-    copy: "Keep manual links, then add hosted intake, routing, and webhook automation for leads that should not wait on a copy-paste step.",
+    label: "Hosted intake on your website",
+    copy: "Drop the badge, embed, or webhook on your live site so every CTA fires straight into the right route — no copy-paste, no manual step.",
   },
 ];
 
 const betaOffer = [
-  { icon: Clock3, label: `${BETA_DURATION_DAYS}-day beta access`, copy: "Use PhotoBrief in real customer workflows before public launch." },
-  { icon: HeartHandshake, label: "Concierge setup", copy: "Get help building first templates, briefs, and team process." },
-  { icon: MessageSquareText, label: "Direct influence", copy: "Your feedback helps shape what gets built next." },
+  { icon: Clock3, label: `${BETA_DURATION_DAYS}-day beta access`, copy: "Run PhotoBrief on real customer leads before public launch." },
+  { icon: HeartHandshake, label: "White-glove route setup", copy: "We read your site with you and ship your first routes ready to take live traffic." },
+  { icon: MessageSquareText, label: "Direct line to the team", copy: "Async feedback (chat, email, in-app) goes straight onto the roadmap." },
   { icon: Sparkles, label: "Tiered post-launch rewards", copy: MAX_DISCOUNT_LABEL },
 ];
 
@@ -52,8 +52,8 @@ export default function PricingPage() {
   return (
     <>
       <PageMeta
-        title={`Pricing | PhotoBrief.ai Founding Partner Beta`}
-        description={`PhotoBrief.ai is accepting founding beta partners. Apply for ${BETA_DURATION_DAYS}-day beta access, concierge setup, direct support, and tiered post-launch rewards — up to 75% off or free Pro for life.`}
+        title={`Pricing | PhotoBrief Founding Partner Beta`}
+        description={`Founding seats are open. ${BETA_DURATION_DAYS} days free, your routes built with you from your own website, direct line to the team, and post-launch rewards up to 75% off forever or free Pro for life.`}
         canonicalPath="/pricing"
         ogImage="/og/pricing.png"
         jsonLd={jsonLd}
@@ -70,13 +70,13 @@ export default function PricingPage() {
               <span className="inline-flex items-center gap-1.5"><Sparkles className="h-3.5 w-3.5" /> Founding Partner Beta Pricing</span>
             </p>
             <h1 className="mx-auto mt-5 max-w-3xl text-[clamp(2.5rem,6vw,4.5rem)] font-semibold leading-[1.02] tracking-[-0.025em] text-foreground">
-              Apply now. Lock in launch-year savings if accepted.
+              Get your routes built. Lock in pricing nobody else gets.
             </h1>
             <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-              PhotoBrief.ai is invite-only while we onboard founding partners. Accepted beta businesses get {BETA_DURATION_DAYS} days free, concierge setup, direct support, and tiered post-launch rewards — up to 75% off or free Pro for life.
+              PhotoBrief is invite-only while we hand-build the first thirty workspaces. Accepted partners get {BETA_DURATION_DAYS} days free, their routes shipped from their own website, a direct line to the team, and post-launch rewards up to 75% off forever — or free Pro for life.
             </p>
             <p className="mx-auto mt-5 inline-flex items-center gap-1.5 border border-[hsl(var(--accent-sage)/0.4)] bg-[hsl(var(--accent-sage)/0.08)] px-3 py-1 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[hsl(var(--accent-sage))]">
-              <ShieldCheck className="h-4 w-4" /> First-pass follow-up photos do not consume credits.
+              <ShieldCheck className="h-4 w-4" /> First-pass photo retakes don't burn credits.
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <Button asChild size="xl" className="rounded-[0.25rem] uppercase tracking-[0.14em]">
@@ -99,12 +99,12 @@ export default function PricingPage() {
               {
                 src: pricingCedarOwnerLaptop,
                 alt: "Cedar & Sons owner reviewing a lead brief on a laptop with a Pro Founding badge visible.",
-                caption: "A founding partner sees the full packet before anyone has to ask for a second photo.",
+                caption: "A founding partner opens the brief, reads the route the customer matched, and quotes — no second email needed.",
               },
               {
                 src: pricingMultiTradeFan,
                 alt: "Four phones showing new-lead brief packets for tree care, HVAC, plumbing, and junk removal.",
-                caption: "The same workflow scales across trades — from tree care to plumbing, HVAC, and junk removal.",
+                caption: "Four trades. Four routes. Four briefs. The same intake engine, configured to each business's site.",
               },
             ]}
           />
@@ -162,8 +162,8 @@ export default function PricingPage() {
           <SectionHeader
             align="center"
             eyebrow="Public launch plans"
-            title="These are the planned tiers after beta."
-            description="During beta, pricing is handled through the Founding Partner program. Apply now if you want early access and launch-year savings."
+            title="Here's what every plan looks like after beta."
+            description="During beta, pricing runs through the Founding Partner program. Apply now to lock in launch-year savings before public pricing kicks in."
           />
           <div className="mt-10">
             <PricingCardGrid />
@@ -181,7 +181,7 @@ export default function PricingPage() {
               <span>FAQ</span>
             </p>
             <h2 className="mt-5 text-[clamp(2rem,4vw,3rem)] font-semibold tracking-tight text-foreground">
-              Questions, answered.
+              The questions everyone asks first.
             </h2>
           </div>
           <Accordion type="single" collapsible className="mt-8 border border-border bg-card px-4 sm:px-6">
@@ -197,9 +197,9 @@ export default function PricingPage() {
             <div className="absolute inset-x-0 top-0 h-px bg-[hsl(var(--accent-kinetic))]" aria-hidden />
             <div className="relative z-10 flex flex-col items-center gap-3">
               <Sparkles className="h-8 w-8 text-[hsl(var(--accent-kinetic))]" />
-              <p className="text-base font-semibold text-foreground">Become a founding partner before public launch.</p>
+              <p className="text-base font-semibold text-foreground">Become a founding partner before the doors open.</p>
               <p className="max-w-md text-sm text-muted-foreground">
-                Get early access, hands-on setup, feature influence, and first-year savings in exchange for using PhotoBrief in real workflows and sharing honest feedback.
+                We build your routes from your site, walk you through the workflow, and lock in pricing nobody else gets — in exchange for running PhotoBrief on real customer leads and telling us what's working.
               </p>
               <Button asChild size="xl" className="mt-2 rounded-[0.25rem] uppercase tracking-[0.14em]">
                 <NavLink to="/beta">
