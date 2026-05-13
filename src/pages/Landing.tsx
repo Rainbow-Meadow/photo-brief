@@ -188,7 +188,7 @@ function ComparisonSection() {
             <div className="overflow-hidden bg-muted">
               <img
                 src={beforeIntakeFormIllo}
-                alt="Broken intake form with missing photo context"
+                alt="Cedar &amp; Oak Tree Care website with a generic three-field Contact us form — the kind of intake PhotoBrief replaces."
                 className="h-auto w-full object-contain"
                 loading="lazy"
               />
@@ -216,7 +216,7 @@ function ComparisonSection() {
             <div className="overflow-hidden bg-muted">
               <img
                 src={afterCapturePipelineIllo}
-                alt="Guided phone capture flow turning into a brief packet"
+                alt="PhotoBrief inbox for Cedar &amp; Oak Tree Care showing two route-specific intake briefs — Emergency limb (photos required) and Full removal quote (photos recommended)."
                 className="h-auto w-full object-contain"
                 loading="lazy"
               />
