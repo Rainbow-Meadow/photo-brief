@@ -701,10 +701,13 @@ function AutoInstallPanel({
   hostedLink: string;
 }) {
   const [siteUrl, setSiteUrl] = useState("");
-  const [busy, setBusy] = useState<null | "detect" | "verify">(null);
+  const [busy, setBusy] = useState<null | "detect" | "verify" | "install" | "save">(null);
   const [state, setState] = useState<InstallerState | null>(null);
+  const [creds, setCreds] = useState<InstallerCredentialsInput>({});
 
   const disabled = !workspaceId || !intakeToken;
+  const fields = state ? credentialFieldsFor(state.platform) : [];
+  const canInstall = state && fields.length > 0 && fields.every((f) => (creds[f] ?? "").length > 0);
 
   async function ensureSession(): Promise<InstallerState> {
     if (state) return state;
@@ -717,32 +720,14 @@ function AutoInstallPanel({
     return next;
   }
 
-  async function handleDetect() {
-    if (disabled || !siteUrl) return;
-    setBusy("detect");
+  async function run<T>(kind: typeof busy, fn: () => Promise<T>, okMsg?: string) {
+    setBusy(kind);
     try {
-      const session = await ensureSession();
-      const { state: s } = await siteInstallerAgent.detect(session.sessionId, siteUrl);
-      setState(s);
-      toast.success(`Detected: ${s.platform}`);
+      const r = await fn();
+      if (okMsg) toast.success(okMsg);
+      return r;
     } catch (e: any) {
-      toast.error(e?.message ?? "Detection failed");
-    } finally {
-      setBusy(null);
-    }
-  }
-
-  async function handleVerify() {
-    if (disabled || !siteUrl) return;
-    setBusy("verify");
-    try {
-      const session = await ensureSession();
-      const { result, state: s } = await siteInstallerAgent.verify(session.sessionId);
-      setState(s);
-      if (result.ok) toast.success("Verified — intake link is live on your site.");
-      else toast.error("Could not find the intake link on the live site yet.");
-    } catch (e: any) {
-      toast.error(e?.message ?? "Verification failed");
+      toast.error(e?.message ?? "Request failed");
     } finally {
       setBusy(null);
     }
@@ -754,10 +739,11 @@ function AutoInstallPanel({
         <ShieldCheck className="h-4 w-4" /> Auto-install (beta)
       </div>
       <p className="mt-2 text-sm text-muted-foreground">
-        Paste your website URL. Our installer agent will detect the platform and confirm the
-        intake link is live after you publish. Full hands-off install for Webflow, Shopify,
-        WordPress and Wix is rolling out next.
+        Paste your site URL. The installer agent detects your platform, optionally installs the
+        intake link via your platform's API (Webflow, Shopify, WordPress, Wix) or browser
+        automation (Carrd), then verifies the live site.
       </p>
+
       <div className="mt-3 flex flex-col gap-2 sm:flex-row">
         <Input
           className="h-11 rounded-none bg-background"
@@ -769,33 +755,97 @@ function AutoInstallPanel({
         <Button
           className="h-11 rounded-none"
           variant="outline"
-          onClick={handleDetect}
+          onClick={() => run("detect", async () => {
+            const session = await ensureSession();
+            const { state: s } = await siteInstallerAgent.detect(session.sessionId, siteUrl);
+            setState(s);
+          }, "Platform detected")}
           disabled={disabled || !siteUrl || busy !== null}
         >
           {busy === "detect" ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Globe2 className="mr-2 h-4 w-4" />}
-          Detect platform
+          Detect
         </Button>
         <Button
           className="h-11 rounded-none"
-          onClick={handleVerify}
+          variant="outline"
+          onClick={() => run("verify", async () => {
+            const session = await ensureSession();
+            const { result, state: s } = await siteInstallerAgent.verify(session.sessionId);
+            setState(s);
+            if (!result.ok) toast.error("Intake link not found on the live site yet.");
+          }, "Verified")}
           disabled={disabled || !siteUrl || busy !== null}
         >
           {busy === "verify" ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CheckCircle2 className="mr-2 h-4 w-4" />}
-          Verify install
+          Verify
         </Button>
       </div>
+
+      {state && fields.length > 0 && state.status !== "installed_verified" && (
+        <div className="mt-4 grid gap-2 sm:grid-cols-2">
+          {fields.map((field) => (
+            <Input
+              key={field}
+              className="h-11 rounded-none bg-background"
+              type={field === "token" || field === "apiKey" ? "password" : "text"}
+              placeholder={CRED_PLACEHOLDERS[field]}
+              value={creds[field] ?? ""}
+              onChange={(e) => setCreds((c) => ({ ...c, [field]: e.target.value }))}
+            />
+          ))}
+          <div className="flex gap-2 sm:col-span-2">
+            <Button
+              className="h-11 rounded-none"
+              disabled={!canInstall || busy !== null}
+              onClick={() => run("install", async () => {
+                const session = await ensureSession();
+                await siteInstallerAgent.credentials(session.sessionId, creds);
+                const { outcome, state: s } = await siteInstallerAgent.install(session.sessionId);
+                setState(s);
+                setCreds({});
+                if (!outcome.ok) toast.error(`Install failed: ${outcome.reason}`);
+              }, "Install attempted")}
+            >
+              {busy === "install" ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
+              Install for me
+            </Button>
+            {state.confirmUrl && (
+              <Button
+                variant="outline"
+                className="h-11 rounded-none"
+                onClick={() => window.open(state.confirmUrl!, "_blank", "noopener,noreferrer")}
+              >
+                <ExternalLink className="mr-2 h-4 w-4" /> Open CMS
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
+
       {state && (
         <div className="mt-3 space-y-1 text-xs text-muted-foreground">
-          <div>Platform: <span className="text-foreground">{state.platform}</span> · Mode: <span className="text-foreground">{state.mode}</span></div>
-          {state.steps.slice(-3).map((s, i) => (
+          <div>
+            Platform: <span className="text-foreground">{state.platform}</span> · Mode:{" "}
+            <span className="text-foreground">{state.mode}</span> · Status:{" "}
+            <span className="text-foreground">{state.status}</span>
+          </div>
+          {state.steps.slice(-5).map((s, i) => (
             <div key={i}>· {s.message}{s.detail ? ` — ${s.detail}` : ""}</div>
           ))}
           {hostedLink && !state.verified && (
-            <div className="pt-1">Install target: <code className="text-foreground">{hostedLink}</code></div>
+            <div className="pt-1">Target: <code className="text-foreground">{hostedLink}</code></div>
           )}
         </div>
       )}
     </div>
   );
 }
+
+const CRED_PLACEHOLDERS: Record<string, string> = {
+  token: "API token / personal access token",
+  siteId: "Site ID",
+  shopDomain: "shop.myshopify.com",
+  wpSite: "https://your-wp-site.com",
+  apiKey: "API key",
+};
 
