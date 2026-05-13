@@ -1,0 +1,32 @@
+name = "photobrief-site-installer-agent"
+main = "src/index.ts"
+compatibility_date = "2025-04-01"
+compatibility_flags = ["nodejs_compat"]
+
+[placement]
+mode = "smart"
+
+[[routes]]
+pattern = "installer-agent.photobrief.ai/*"
+zone_name = "photobrief.ai"
+
+[durable_objects]
+bindings = [
+  { name = "SITE_INSTALLER_AGENT", class_name = "SiteInstallerAgent" }
+]
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["SiteInstallerAgent"]
+
+# Cloudflare Browser Rendering — used to load the customer's site, identify
+# the primary CTA, and verify that it points at /i/:token after install.
+[browser]
+binding = "BROWSER"
+
+# Workers AI — vision + small LLM for CTA detection and platform sniffing.
+[ai]
+binding = "AI"
+
+[vars]
+SITE_URL = "https://photobrief.ai"
