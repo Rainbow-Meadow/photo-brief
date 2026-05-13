@@ -2083,6 +2083,116 @@ export type Database = {
         }
         Relationships: []
       }
+      intelligence_artifacts: {
+        Row: {
+          artifact_type: string
+          content_excerpt: string | null
+          created_at: string
+          id: string
+          job_id: string
+          metadata: Json
+          source_url: string | null
+          storage_key: string | null
+          workspace_id: string
+        }
+        Insert: {
+          artifact_type: string
+          content_excerpt?: string | null
+          created_at?: string
+          id?: string
+          job_id: string
+          metadata?: Json
+          source_url?: string | null
+          storage_key?: string | null
+          workspace_id: string
+        }
+        Update: {
+          artifact_type?: string
+          content_excerpt?: string | null
+          created_at?: string
+          id?: string
+          job_id?: string
+          metadata?: Json
+          source_url?: string | null
+          storage_key?: string | null
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "intelligence_artifacts_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "intelligence_jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "intelligence_artifacts_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "business_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      intelligence_jobs: {
+        Row: {
+          completed_at: string | null
+          confidence: number | null
+          created_at: string
+          created_by: string | null
+          error: string | null
+          id: string
+          input: Json
+          job_type: string
+          output: Json | null
+          started_at: string | null
+          status: string
+          updated_at: string
+          warnings: Json
+          workspace_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          confidence?: number | null
+          created_at?: string
+          created_by?: string | null
+          error?: string | null
+          id?: string
+          input?: Json
+          job_type: string
+          output?: Json | null
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+          warnings?: Json
+          workspace_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          confidence?: number | null
+          created_at?: string
+          created_by?: string | null
+          error?: string | null
+          id?: string
+          input?: Json
+          job_type?: string
+          output?: Json | null
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+          warnings?: Json
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "intelligence_jobs_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "business_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       internal_notes: {
         Row: {
           created_at: string
@@ -3999,6 +4109,10 @@ export type Database = {
       enqueue_email: {
         Args: { payload: Json; queue_name: string }
         Returns: number
+      }
+      enqueue_intelligence_job: {
+        Args: { _input?: Json; _job_type: string; _workspace_id: string }
+        Returns: string
       }
       flag_stale_requests: { Args: never; Returns: undefined }
       founding_pro_remaining: { Args: never; Returns: number }
