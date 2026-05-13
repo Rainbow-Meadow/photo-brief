@@ -1,94 +1,123 @@
-## Goal
 
-Reframe `/dashboard` as a Linear/Vercel-style operations surface: a single **Onboarding Progress** banner up top, the existing metrics strip + dual lists below, and a global **command menu (⌘K)** + keyboard shortcuts in the shell. Tighten shell chrome (sidebar, header) to match. Other pages stay as-is.
+# Kyle Milligan copy pass — PhotoBrief (Smart Intake era)
 
-## Scope
+A top-to-bottom rewrite of every customer-facing line on the marketing site and the auth/signup flow, in the voice Kyle Milligan teaches: one promise, one reader, one-idea-per-sentence, ruthless verbs, specificity over adjectives, and a curiosity-driven rhythm that pulls the eye down the page.
 
-**In:** `src/features/workspace/pages/DashboardPage.tsx`, new `OnboardingProgressBanner`, new `CommandMenu` + provider, `DashboardLayout.tsx`, `AppSidebar.tsx`, small additions to `src/index.css` (only if needed for tokens already missing).
+The pass also realigns positioning to the new product shape: **PhotoBrief reads your existing website, builds a smart intake configuration from it, and routes every customer through the right path — not the same generic form.** Photos become *one possible ingredient*, not the whole meal.
 
-**Out:** Requests / Customers / Guides pages, Settings pages, design tokens (use existing), schema, business logic, copy on marketing.
+## What PhotoBrief is now (the truth the site has to tell)
 
----
+> PhotoBrief uses your existing website as the source material. It scans the site, spots your services, customer intents, and the gaps in your current form, and builds intake routes — each with the right questions and its own photo policy.
+>
+> When a customer hits **/i/:token**, they walk a guided flow. Based on the route they pick, PhotoBrief decides whether photos are *not needed*, *optional*, *recommended*, or *required*.
+>
+> The output isn't a pile of photos. It's an **intake brief**: who the customer is, what they need, which route they matched, what they answered, whether photos came in or are still needed, how ready the request is, and what you should do next.
+>
+> When photos are useful but not mandatory, they upload inside the intake or skip. When photos are truly required, PhotoBrief hands the customer into the existing **/r/:token** guided capture flow — the specialized photo engine, untouched.
 
-## 1 · Onboarding Progress banner (replaces "Primary focus" hero)
+The new mental model the site must communicate:
 
-A new component `src/features/workspace/components/OnboardingProgressBanner.tsx`.
+> **Customer website CTA → Smart Intake → route-specific questions → photo decision → intake brief → optional guided photo handoff only when needed.**
 
-**Steps tracked (4):**
-1. Brand set → `workspace.brand_logo_url` or brand settings touched
-2. First guide created → `guides` count > 0
-3. First request sent → `requests` count > 0
-4. First submission reviewed → any request with `firstPassStatus` set
+The big shift: PhotoBrief no longer opens with *"send me photos."* It opens with *"what does the business need to know to act?"*
 
-**Behavior:**
-- While `< 4/4`: full-width banner, left rail shows oversized progress count (e.g. `2 / 4`) in the same Geist display style used today on the focus card; right rail shows the 4 step rows with check/empty state, label, and a quiet inline link to the relevant route.
-- A thin progress bar (hairline, accent-kinetic fill) sits across the top edge.
-- At `4/4`: collapses to a single-line "health strip" — `✓ Workspace ready · X requests this period · plan tier · beta clock if active` with a dismiss-forever toggle stored in `localStorage` (`pb.onboarding-banner.dismissed=v1`).
-- On the empty-workspace branch (`isEmpty`), banner sits above `<StarterRequestCard />` instead of replacing it.
+## Voice contract (every line)
 
-**Visual:** Borderless top + bottom hairlines (`border-y border-border`), `bg-card`, no rounded corners (matches current app aesthetic). No accent surface — keep neutral; only the progress bar uses `--accent-kinetic`.
+- **One reader.** A small-business owner whose website form gives them a name and a sentence. *You*, never "businesses" or "users."
+- **One promise per page.** Each surface has a single dominant outcome.
+- **Lead with the bleed.** Open with the cost of the same generic form for every lead, then name the fix.
+- **Specificity beats adjective.** "Three follow-up emails before you can price it." Not "lots of back-and-forth."
+- **Conversational rhythm.** Short. Then medium. Then a sentence that earns its length.
+- **Verbs do the lifting.** "Reads your site, builds the routes, decides on photos, hands you a brief."
+- **Curiosity gaps where they're earned.** Eyebrows tease, bodies pay off.
+- **Plain words.** "Send" over "submit." "Quote" over "estimation workflow."
 
-**Data source:** Reuse `useRequests`, `useGuides`, `useCurrentWorkspace`. No new queries unless brand-set state isn't already derivable (then read `business_workspaces.brand_logo_url` once).
+## Positioning rules baked into every page
 
----
+1. **Lead with intake, not photos.** Hero, marquee, mechanism, signposts — all repointed at replacing the generic form.
+2. **Your website is the source material.** Make the *"PhotoBrief reads your site and builds the intake for you"* moment a recurring beat. It's the demo-magic moment.
+3. **Routes, not a single form.** The product creates *route-specific* intake. Different services, different questions, different photo policy.
+4. **The four photo policies are a feature, not a footnote.** Name them in human terms: *not needed*, *optional*, *recommended*, *required*. The conditional logic is part of the pitch.
+5. **The deliverable is a brief, not photos.** Every customer outcome ends in *an intake brief you can act on*.
+6. **The guided photo flow is the closer.** Frame `/r/:token` as the specialist that takes over only when a route demands it.
 
-## 2 · Below the banner (keep current structure, tighten)
+## Guardrails (locked, not rewritten)
 
-Preserve the existing layout from `DashboardPage.tsx`:
-- 4-up metric strip (`Ready / Waiting / In progress / This month`) — keep `MetricCard variant="quiet"`.
-- Wide first-pass acceptance card with sub-stat + footnote — unchanged.
-- Two-column lists (`Ready to review`, `Needs customer action`) — unchanged.
+- Tagline `Guide · Capture · Close` — verbatim everywhere.
+- Pricing numbers, plan names, included photo counts, beta seat count, beta day count — unchanged.
+- `Reverse-Form Method™` retained; framing shifts to position it as the *intake* mechanism, not a photo-only mechanism.
+- Brand tokens, layout, components, routes, analytics events, JSON-LD shape — untouched. Strings only.
+- Legal pages, `llms.txt`, `llms-full.txt`, manifests — out of scope.
+- `/i/:token`, `/r/:token`, `/intake/*` flow copy — already pivoted/QA'd; not retouched here.
 
-**Tighten:**
-- Remove the standalone "Primary focus" section entirely (it duplicates info now surfaced via the banner + metrics + lists).
-- Drop `PageHeader` title/description block (today's "Today" / "A quiet overview") — the banner is the new header. Keep the Assistant toggle button, move it to a small floating control top-right of the metrics row.
-- Reduce vertical rhythm: `space-y-5 sm:space-y-6` → `space-y-4 sm:space-y-5`.
+## Surfaces in scope
 
----
+**Marketing pages**
+- `src/pages/Landing.tsx` — hero, marquee, mechanism intro, before/after, signpost cards, FAQ intro, final CTA. Repositioned around *site → routes → brief*.
+- `src/pages/Pricing.tsx` — hero, beta-offer cards, intake-mode cards, FAQ, founding-partner closer.
+- `src/pages/Beta.tsx` — hero, what-you-get, what-we-need-back, urgency, CTA.
+- `src/pages/Demo.tsx` — hero, scenario copy, narration. New story arc: *paste your URL → see your routes → watch a lead become a brief*.
+- `src/pages/ForAiAgents.tsx` — hero, capability blurbs, endpoint descriptions. Reframes the API around intake creation and brief retrieval.
 
-## 3 · Command menu (⌘K) + keyboard nav
+**Shared marketing components**
+- `HowItWorksSteps.tsx` — four steps now narrate **scan site → build routes → guided intake (with photo decision) → brief delivered**.
+- `MechanismGrid.tsx` — four cards mirror the same four moves.
+- `ComparisonTable.tsx` — *generic contact form vs PhotoBrief smart intake*. Rows about routing, route-aware questions, photo policy, brief output.
+- `UseCasesGrid.tsx` — trade vignettes start with a website lead, show the route picked, end with the brief.
+- `QuotableFacts.tsx` — stats repointed at intake/lead-response economics.
+- `FinalCtaSection.tsx` — default labels.
+- `BetaQuickApplyForm.tsx`, `FoundingCustomerBanner.tsx`, `FreeProEligibilityModal.tsx` — labels, helper text, button states.
 
-New file `src/components/shell/CommandMenu.tsx` using existing shadcn `command.tsx` primitives wrapped in a `CommandDialog`.
+**Shared content**
+- `src/features/help/content/faq.tsx` — owner-voice questions ("Will it know when to ask for a photo?", "Does it really read my site?", "What if my customer just wants a callback?"). Answers ≤ 3 sentences, lead with the answer.
+- `src/config/microcopy.ts` — `business.*` strings only. (`recipient.*` stays — public-flow scope-locked.)
+- `src/config/access.ts` — CTA labels (`signupCtaLabel`, `signupCtaShortLabel`, `planCtaLabel`).
+- `src/config/betaProgram.ts` — only human-readable label strings (e.g. `MAX_DISCOUNT_LABEL`).
 
-**Commands grouped:**
-- **Navigate:** Dashboard, Requests, Customers, Guides, Website Intake, Brand, Team, Templates, SMS, Integrations, Billing, Support, Help & Guide (filtered by plan via `usePlan().can()` for gated items).
-- **Create:** New request (`/requests/new`), New guide (`/guides/new` if route exists, else open builder).
-- **Account:** Reset password, Log out (reuse `useAccountActions`).
-- **Admin:** Command Center, Beta Program, Invites, AI Rerun, Website Intel — only if `usePlatformAdmin().isAdmin`.
+**Auth & signup flow**
+- `Auth.tsx`, `Signup.tsx`, `BetaInvite.tsx`, `BetaWelcome.tsx`, `ForgotPassword.tsx`, `ResetPassword.tsx` — page titles, helpers, button states, success/error toasts. Welcome state reframed around *"point us at your website and we'll build your intake"*.
 
-**Trigger:**
-- Global `useEffect` keydown listener for `⌘K` / `Ctrl+K` opens the dialog from anywhere inside `DashboardLayout`.
-- Header gets a small "Search… ⌘K" affordance (replaces nothing, sits between workspace name block and the action buttons on `sm+`, hidden on mobile).
-- Single-key shortcuts inside the dialog: `g d` → dashboard, `g r` → requests, `g c` → customers, `g i` → intake, `c` → new request. Implemented as a tiny shortcut map handled inside the dialog only when open=false (Linear-style "g then x").
+## What changes per surface (representative)
 
-**Mounted once** inside `DashboardLayout.tsx` so it's available on every authed route. No mount on public/marketing routes.
+**Landing hero.** Keep `Guide. Capture. Close.` Sub becomes: name the leak (one form for every lead), name the fix (PhotoBrief reads your site and builds route-specific intake), name the deliverable (a brief you can quote — with photos when, and only when, the route says so).
 
----
+**Marquee.** Parallel one-clause hooks: *"Your form asks 5 fields. Your customers needed different ones." "78% buy from whoever quotes first." "PhotoBrief reads your site in 60 seconds." "Photos when they matter. Skipped when they don't."*
 
-## 4 · Shell chrome polish
+**Mechanism (4 cards).** **Read the site → Build the routes → Guide the customer → Hand back a brief.** Verb-first titles, 1–2 sentence bodies. Photo policy gets a single line inside card 3.
 
-`AppSidebar.tsx`:
-- Group label typography → uppercase mono micro-label matching the rest of the app (`font-mono text-[0.62rem] tracking-[0.18em] text-muted-foreground/70`).
-- Tighter row height (`h-8` menu buttons), 13px label, icon `h-3.5 w-3.5`.
-- Active row: left 2px accent rail (`box-shadow: inset 2px 0 0 hsl(var(--accent-kinetic))`) instead of background fill.
+**Before/After.** Left = "what your website form gives your inbox today" (name, email, one sentence, no context, no photos when you needed them, photos when you didn't). Right = "what PhotoBrief drops in instead" (matched route, route-specific answers, photos when the route called for them, ready-to-quote brief).
 
-`DashboardLayout.tsx` header:
-- Insert the new ⌘K search affordance between the workspace block and the right action cluster.
-- Header height stays `h-16`; reduce horizontal padding one step on `sm` to make room.
+**Signpost cards.** Demo: *see your own intake assemble in 60 seconds.* Beta: *founding seats.* Pricing: *plans that scale with intake volume.*
 
-No changes to MobileTabBar, FeedbackWidget, or RequireAuth.
+**FAQ.** New questions: *Does PhotoBrief actually read my website? Will it know when to ask for a photo? What about leads that don't need photos at all? Where does my existing form fit? What's an intake brief, exactly? What happens when a route requires photos?* Lead with the answer.
 
----
+**Pricing hero.** Reframe from "Apply now. Lock in launch-year savings." to a benefit-first hook: what the seat actually buys (a working intake replacement built from your site, white-glove setup, founding pricing). Scarcity line beneath, not in the headline.
 
-## 5 · Technical notes
+**Pricing intake-mode cards.** Existing "Every plan / Pro and above" split rewritten so each card sells the *outcome* of that intake mode, not the mechanism.
 
-- All new components live under `src/features/workspace/components/` (banner) and `src/components/shell/` (command menu).
-- No new dependencies; `cmdk` is already vendored via `src/components/ui/command.tsx`.
-- Use existing tokens only: `--background`, `--card`, `--border`, `--muted-foreground`, `--accent-kinetic`, `--primary-foreground`. No new CSS variables.
-- Localstorage key for dismissed health strip: `pb.dashboard.health-strip.dismissed=v1`.
-- Keep `isEmpty` branch with `<StarterRequestCard />` working — banner appears above it, command menu still mounts.
-- After implementation: capture desktop (1366) + mobile (375) screenshots of `/dashboard` for visual confirmation. Run `bunx vitest run` to ensure the brand-mark and route contract tests still pass (no logo/route changes expected).
+**Beta page.** Three-beat structure: what you get, what we ask in return, what happens next.
+
+**Demo.** Narration restructured: starts at *"paste your website URL,"* shows the routes PhotoBrief built, walks one customer through a route, shows the photo-policy decision in action, ends at a brief in the inbox.
+
+**ForAiAgents.** Reframes the API around `create_intake` and brief retrieval as the primary verbs; photo capture endpoints positioned as the optional follow-on the route may trigger.
+
+**Auth/Signup.** Replaces generic "Welcome back" / "Create your account" with PhotoBrief-specific framing tied to the new promise: *"Sign in to your intake inbox," "Your intake routes are one URL away."* Errors stay neutral and actionable.
+
+## Process
+
+1. Draft new strings file-by-file in the order above.
+2. Apply via targeted `code--line_replace` edits — no file rewrites, no JSX moved, no props changed.
+3. Run `lint`, `typecheck`, `vitest`. Existing tests (`recipient-copy.test.ts`, `nav-links.test.ts`, `landing-typography.test.ts`, `brand-mark-contract.test.ts`) catch any contract I break.
+4. Spot-check `/`, `/pricing`, `/beta`, `/demo`, `/auth`, `/signup` in the preview at the current 440 px viewport so new line lengths still wrap cleanly on mobile.
 
 ## Out of scope
 
-Copy rewrites, marketing pages, Requests/Customers/Guides pages, design tokens, schema, plan gating logic, AssistantPanel internals, MobileTabBar.
+- Any backend, RLS, edge function, or schema.
+- Any component structure, prop, or layout class.
+- `/i/:token`, `/r/:token`, `/intake/*` flow copy.
+- `llms.txt`, `llms-full.txt`, OpenAPI, agent manifests.
+- Privacy, Terms, Unsubscribe.
+
+## Deliverable
+
+A single PR's worth of strings-only edits across the files above. Site looks identical, reads like a Kyle Milligan sales letter the whole way down, and finally tells the truth about what PhotoBrief is now: **the smart intake layer that reads your website, builds the routes, decides when photos matter, and hands you a brief you can act on — with the guided photo flow waiting in the wings for the routes that actually need it.**
