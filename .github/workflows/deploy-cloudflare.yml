@@ -127,5 +127,17 @@ jobs:
           workingDirectory: workers/site-installer-agent
           command: deploy
 
+      - name: Install Orchestrator Agent dependencies
+        working-directory: workers/orchestrator-agent
+        run: npm install --no-package-lock
+
+      - name: Deploy Orchestrator Agent Worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: workers/orchestrator-agent
+          command: deploy
+
       - name: Smoke test public production endpoints
         run: node scripts/smoke-public-endpoints.mjs
