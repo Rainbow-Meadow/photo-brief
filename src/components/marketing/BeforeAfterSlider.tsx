@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
+import { cfImage, cfImageSrcSet } from "@/lib/cfImage";
 
 interface BeforeAfterSliderProps {
   before: string;
