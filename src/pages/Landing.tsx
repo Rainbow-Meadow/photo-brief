@@ -341,7 +341,7 @@ function FaqSection() {
           {/* Sticky intro rail */}
           <div className="lg:col-span-4">
             <div className="lg:sticky lg:top-24">
-              <SectionIntro eyebrow="[ 05 ] FAQ" title="The questions everyone asks." />
+              <SectionIntro eyebrow="[ 05 ] FAQ" title="The stuff people always ask." />
               <p className="mt-2 text-sm text-muted-foreground">
                 <NavLink to="/help" className="text-foreground underline-offset-4 hover:underline">
                   Full help center →
@@ -374,11 +374,11 @@ function FinalCta({ isFull }: { isFull: boolean }) {
   return (
     <FinalCtaSection
       eyebrow="06 ] Replace the form"
-      title="Ready to replace the form"
+      title="Ready to ditch the form"
       punctuation="?"
       body={
         isFull
-          ? "Founding seats are full. Leave your email — we'll reach out when one opens."
+          ? "Seats are full. Drop your email. We'll reach out when one opens."
           : `${BETA_TOTAL_PARTNERS} seats. ${BETA_DURATION_DAYS} days. Founding pricing for life.`
       }
       primary={{
