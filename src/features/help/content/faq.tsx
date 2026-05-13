@@ -4,12 +4,32 @@ export type FaqItem = { id: string; q: string; a: React.ReactNode; audience: "bu
 
 export const faqItems: FaqItem[] = [
   {
+    id: "what-is-photobrief",
+    audience: "business",
+    q: "What is PhotoBrief, in one sentence?",
+    a: (
+      <>
+        It's a smart intake system that replaces your generic website form with a guided customer flow — and hands you back a clean, actionable brief you can quote, with photos already attached when photos actually matter.
+      </>
+    ),
+  },
+  {
+    id: "how-it-works",
+    audience: "business",
+    q: "How does it actually work?",
+    a: (
+      <>
+        We read your website, identify the services you offer and the gaps in your current form, then build intake routes for each one. When a customer clicks your CTA, they get the right questions for the job they came for — and a photo step only when photos help you quote. You get a brief in your inbox you can act on.
+      </>
+    ),
+  },
+  {
     id: "founding-beta",
     audience: "business",
     q: "How does the Founding Partner Beta work?",
     a: (
       <>
-        PhotoBrief.ai is currently invite-only. Accepted founding partners get {BETA_DURATION_DAYS} days of free beta access (the clock starts {BETA_SETUP_BUFFER_DAYS} days after the final seat is filled, so every partner gets concierge setup first), direct support, priority feature influence, and tiered post-launch rewards — {MAX_DISCOUNT_LABEL.toLowerCase()}. In return, we ask that partners use PhotoBrief in real workflows and share honest feedback via chat, email, or in-app.
+        PhotoBrief is invite-only right now. Founding partners get {BETA_DURATION_DAYS} days of free beta (the clock starts {BETA_SETUP_BUFFER_DAYS} days after the last seat fills, so everyone gets concierge setup first), direct support, priority say in what we build next, and tiered post-launch rewards — {MAX_DISCOUNT_LABEL.toLowerCase()}. The deal: use it on real customers, tell us the truth via chat, email, or in-app.
       </>
     ),
   },
@@ -17,7 +37,7 @@ export const faqItems: FaqItem[] = [
     id: "recipient-account",
     audience: "business",
     q: "Do customers need an account?",
-    a: <>No. They open a link, follow the mobile photo workflow, and submit. No app. No login.</>,
+    a: <>No. They tap a link, answer a few questions made for the job they're calling about, and they're done. No app. No login.</>,
   },
   {
     id: "manual-or-automated",
@@ -25,7 +45,7 @@ export const faqItems: FaqItem[] = [
     q: "What can I do on Free or Starter?",
     a: (
       <>
-        Every plan can create and send clickable PhotoBrief links manually. Free and Starter are the lowest-friction way to prove the workflow before connecting website automation. Pro and above keep manual links and add Website Intake.
+        Every plan can hand-send PhotoBrief intake links one at a time. Free and Starter are the cheapest way to feel the workflow before you wire it into your website. Pro and above keep manual sending and add the full Website Intake setup.
       </>
     ),
   },
@@ -35,7 +55,7 @@ export const faqItems: FaqItem[] = [
     q: "What is Website Intake?",
     a: (
       <>
-        Website Intake turns website leads into PhotoBrief requests automatically. It unlocks on <strong>Pro</strong> because it includes a hosted intake form, a branded website badge/embed, template routing, auto-send behavior, and webhook/integration setup.
+        Website Intake is the whole point. Your contact form gets replaced with smart intake — different questions per service, the right photo policy per route, and a brief delivered straight to your inbox. It unlocks on <strong>Pro</strong> because it includes the hosted intake, the branded badge or button, route building, and webhook setup.
       </>
     ),
   },
@@ -45,87 +65,97 @@ export const faqItems: FaqItem[] = [
     q: "What should I put on my website?",
     a: (
       <>
-        For the most consistent customer experience, use the branded PhotoBrief.ai intake badge. It explains why the photo request helps the customer, keeps PhotoBrief branding consistent, and links into your hosted intake flow. A plain button like <strong>Get a quote</strong>, <strong>Request service</strong>, or <strong>Start request</strong> also works when the website builder does not support iframe embeds.
+        Replace your "Contact us" or "Get a quote" button with the PhotoBrief badge or a hosted intake link. Customers get a guided experience that fits the job; you get a brief instead of a vague message. A plain button labeled <strong>Get a quote</strong> or <strong>Start a request</strong> works too if your site can't embed iframes.
       </>
     ),
   },
   {
     id: "intake-badge",
     audience: "business",
-    q: "What is the PhotoBrief.ai website badge?",
+    q: "What is the PhotoBrief website badge?",
     a: (
       <>
-        The badge is a small embeddable website block, similar in spirit to a trusted payment badge. It shows the PhotoBrief.ai logo, tells customers they are starting a guided photo request, explains that it helps the business review faster with fewer follow-ups, and opens your hosted intake link.
+        A small embeddable block — think trust mark for intake. It carries the PhotoBrief logo, tells customers they're starting a guided request that will save them time, and opens your hosted intake.
       </>
     ),
   },
   {
     id: "badge-or-link",
     audience: "business",
-    q: "Should I use the badge, a hosted link, or a webhook?",
+    q: "Badge, hosted link, or webhook — which one?",
     a: (
       <>
-        Use the badge when your website can embed an iframe or custom HTML. Use a hosted link behind a normal button when the site only allows links. Use the webhook only when you need to keep an existing form exactly as-is or you already use an automation tool. All Website Intake paths unlock on Pro.
+        Use the badge if your site supports iframe or custom HTML. Use a hosted link behind a normal button if it doesn't. Use the webhook only if you've decided to keep your existing form exactly as-is. All three are Pro.
       </>
     ),
   },
   {
     id: "website-tools",
     audience: "business",
-    q: "Which website tools does PhotoBrief work with?",
+    q: "Which website builders does it work with?",
     a: (
       <>
-        Anything that can embed an iframe or link a button to a web address can use Website Intake on Pro. The setup guide includes simple paths for Wix, Squarespace, WordPress, Elementor, Webflow, Shopify, GoDaddy, Carrd, and Zapier/Make.
+        Anything that can embed an iframe or point a button at a URL. The setup guide covers Wix, Squarespace, WordPress, Elementor, Webflow, Shopify, GoDaddy, Carrd, and Zapier/Make.
       </>
     ),
   },
   {
     id: "existing-form",
     audience: "business",
-    q: "Can I use my existing website form?",
+    q: "Can I keep my existing website form?",
     a: (
       <>
-        Yes on Pro. Copy the webhook URL from <strong>Website Intake</strong> into your form tool, then map your fields to name, email, phone, request type, message, and address. This is the advanced path; most businesses should start with the branded badge or hosted link.
+        On Pro, yes — drop the PhotoBrief webhook into your form tool and map your fields. It's the advanced path. Most businesses are better off replacing the form with a smart intake badge, because the form is the thing costing you quotes.
       </>
     ),
   },
   {
     id: "ai-routing",
     audience: "business",
-    q: "How does Website Intake choose a template?",
+    q: "How does it pick the right intake route?",
     a: (
       <>
-        It checks your exact/contains rules first. If no rule matches, it can try a conservative AI match using only your configured rules. If that is not confident enough, it uses your fallback template.
+        Your routing rules run first. If nothing matches, a conservative AI match uses only your configured rules to choose. If it's not confident, it falls back to your default route. You're always in control.
+      </>
+    ),
+  },
+  {
+    id: "photo-policy",
+    audience: "business",
+    q: "When does it actually ask for photos?",
+    a: (
+      <>
+        Each route has its own photo policy: not needed, optional, recommended, or required. A reschedule? No photos. A leak? Required, with examples. A new install quote? Recommended. Customers only get the camera step when it earns its keep — so they don't bail.
       </>
     ),
   },
   {
     id: "create-template",
     audience: "business",
-    q: "What is the best way to make a template?",
+    q: "How do I build a new route or template?",
     a: (
       <>
-        Start from <strong>Requests → New request</strong>. Use AI to build a simple request, edit it, then save it as a template. Keep templates focused: a few photos and only necessary questions.
+        Open <strong>Requests → New request</strong>, let AI rough one in, then edit the questions and photo policy and save it as a template. Keep them tight: only what you actually need to quote.
       </>
     ),
   },
   {
     id: "branding",
     audience: "business",
-    q: "Can I show my own logo to customers?",
+    q: "Can customers see my branding?",
     a: (
       <>
-        Yes. Go to <strong>Settings → Brand</strong> to upload your logo and pick your brand colour. Your customer-facing request and intake pages can use your business branding by plan, while the hosted Website Intake badge keeps the PhotoBrief.ai trust mark visible so customers recognize the guided photo request experience.
+        Yes. <strong>Settings → Brand</strong> is where you upload your logo and pick your color. Your intake and request pages wear your brand by plan; the embeddable badge keeps the PhotoBrief trust mark so customers recognize the guided experience.
       </>
     ),
   },
   {
     id: "more-photos",
     audience: "business",
-    q: "How do I ask for a retake?",
+    q: "What if a photo is unusable?",
     a: (
       <>
-        Open the submission, choose <strong>Ask for more</strong>, select only the photos that need redoing, add a short note, and send. The customer gets a link that opens only the flagged items.
+        Open the brief, hit <strong>Ask for more</strong>, pick the items to redo, add a one-line note. The customer gets a link that opens straight to those items — not the whole form again.
       </>
     ),
   },
@@ -135,17 +165,17 @@ export const faqItems: FaqItem[] = [
     q: "What counts toward usage?",
     a: (
       <>
-        PhotoBrief is designed around photo usage, not just raw request count. Simple requests use fewer photos; bigger requests use more. First-pass follow-up retakes are handled separately so customers can fix a submission without feeling punished.
+        Usage is based on photos collected, not raw request count. Routes that don't need photos cost you nothing on the photo meter. First-pass retakes are handled separately so a customer fixing a blurry shot doesn't punish you.
       </>
     ),
   },
   {
     id: "what-photo",
     audience: "recipient",
-    q: "I don’t know what photo to take",
+    q: "I don't know what photo to take",
     a: (
       <>
-        Read the photo title and short instruction on the screen. Take the clearest photo you can. If something important is missing, PhotoBrief will suggest a retake.
+        Read the title and short instruction on the screen, then take the clearest photo you can. If something important is missing, you'll get a heads-up to retake.
       </>
     ),
   },
@@ -155,17 +185,17 @@ export const faqItems: FaqItem[] = [
     q: "What does the photo feedback mean?",
     a: (
       <>
-        <strong>Looks good</strong> means continue. <strong>Usable, but could be clearer</strong> means the photo may still work. <strong>This probably needs a retake</strong> means the business may not be able to use it as-is.
+        <strong>Looks good</strong> — keep going. <strong>Usable, but could be clearer</strong> — it'll probably work. <strong>This probably needs a retake</strong> — the business may not be able to use it.
       </>
     ),
   },
   {
     id: "rejected",
     audience: "recipient",
-    q: "Why did PhotoBrief suggest a retake?",
+    q: "Why did it ask me to retake?",
     a: (
       <>
-        It looks for simple issues: the requested subject is missing, the photo is too dark, blurry, has glare, cuts off the subject, or has an unreadable label/text.
+        It catches the usual stuff: subject missing, too dark, blurry, glare, cut off, or text that can't be read.
       </>
     ),
   },
@@ -175,17 +205,17 @@ export const faqItems: FaqItem[] = [
     q: "I already submitted — can I add more?",
     a: (
       <>
-        Only if the business asks for more. They’ll send a new link that opens straight to the photos they need redone.
+        Only if the business asks. They'll send a fresh link that opens straight to what they need.
       </>
     ),
   },
   {
     id: "find-request",
     audience: "recipient",
-    q: "I can’t find my request",
+    q: "I can't find my request",
     a: (
       <>
-        Search your email or texts for the message from the business. The link works on any device. If you still cannot find it, ask the business to resend the link.
+        Search your email or texts for the message from the business. The link works on any device. Still stuck? Ask them to resend it.
       </>
     ),
   },
@@ -195,17 +225,17 @@ export const faqItems: FaqItem[] = [
     q: "Does this work on my phone?",
     a: (
       <>
-        Yes. PhotoBrief is built for phones first. Tap <strong>Take photo</strong> and your phone opens the camera.
+        Yes. It's built phone-first. Tap <strong>Take photo</strong> and your camera opens.
       </>
     ),
   },
   {
     id: "confusing",
     audience: "recipient",
-    q: "Something looks confusing",
+    q: "Something looks off",
     a: (
       <>
-        Reach out to the business that sent you the request. They can explain what they need or send a fresh link if something went wrong.
+        Reach out to the business that sent you the link. They can clarify or resend a clean one.
       </>
     ),
   },

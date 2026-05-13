@@ -20,7 +20,7 @@ export const BETA_SEATS_REMAINING = BETA_TOTAL_PARTNERS - BETA_SEATS_FILLED;
 export const BETA_IS_FULL = BETA_SEATS_FILLED >= BETA_TOTAL_PARTNERS;
 
 /** Human-readable timing explanation for public copy. */
-export const BETA_TIMING_EXPLAINER = `The ${BETA_DURATION_DAYS}-day clock doesn't start until ${BETA_SETUP_BUFFER_DAYS} days after the last seat fills — so every founding partner gets concierge setup before day one.`;
+export const BETA_TIMING_EXPLAINER = `Your ${BETA_DURATION_DAYS} days don't start ticking until ${BETA_SETUP_BUFFER_DAYS} days after the last seat fills — concierge setup first, clock second.`;
 
 // ── Reward tiers ─────────────────────────────────────────────────────
 
@@ -73,22 +73,22 @@ export const REWARD_TIERS: RewardTier[] = [
 ];
 
 /** Human-readable summary for public-facing copy. */
-export const MAX_DISCOUNT_LABEL = "Up to 75% off, forever — earned by feedback quality";
+export const MAX_DISCOUNT_LABEL = "Up to 75% off forever — earned by feedback, not volume";
 
 // ── Partner benefits & expectations ──────────────────────────────────
 
 export const PARTNER_BENEFITS = [
   `${BETA_DURATION_DAYS} days free — clock starts after concierge setup`,
-  "White-glove setup of your first templates and workflows",
-  "Direct line to the team — your input shapes the roadmap",
-  "Early access to every tool we ship next",
+  "We read your site and build your intake routes for you",
+  "Direct line to the team — your input shapes what ships next",
+  "First in line on every tool we release",
   MAX_DISCOUNT_LABEL,
 ] as const;
 
 export const PARTNER_EXPECTATIONS = [
-  "Run PhotoBrief on 3–5 real customer jobs — not test data",
-  "Drop a short async note every two weeks — chat, email, or in-app",
-  "Flag the moments that confused you or the workflow that's missing",
+  "Replace your contact form with PhotoBrief on a real site — not a sandbox",
+  "Send a short async note every two weeks — chat, email, or in-app",
+  "Tell us what confused customers, what felt missing, what the form should've asked",
 ] as const;
 
 // ── Detailed expectations (for the full breakdown section) ───────────
@@ -100,14 +100,14 @@ export interface DetailedExpectation {
 
 export const DETAILED_EXPECTATIONS: DetailedExpectation[] = [
   {
-    title: "Use PhotoBrief on real jobs",
+    title: "Run it on real customers",
     description:
-      "Send photo requests to actual customers on real projects — not test data. That's where the real friction shows up.",
+      "Put PhotoBrief on a live site, in front of real leads. Sandboxes don't show you where the form is bleeding.",
   },
   {
-    title: "Send at least 5 requests in the first two weeks",
+    title: "Take at least 5 real intakes in the first two weeks",
     description:
-      "We need enough usage to know whether the workflow holds up. Five requests gives us a meaningful signal.",
+      "Five live submissions is enough to tell us what's working and what's getting in the way.",
   },
   {
     title: "Respond to check-ins",
@@ -220,4 +220,4 @@ export const FREE_PRO_FINE_PRINT = [
 
 // ── Confirmation / thank-you copy ────────────────────────────────────
 
-export const CONFIRMATION_SUMMARY = `${BETA_DURATION_DAYS} days free (clock starts ${BETA_SETUP_BUFFER_DAYS} days after the last seat fills) · concierge setup · priority support · direct line to the roadmap · early access to every next tool · up to 75% off forever`;
+export const CONFIRMATION_SUMMARY = `${BETA_DURATION_DAYS} days free (clock starts ${BETA_SETUP_BUFFER_DAYS} days after the last seat fills) · concierge intake setup · direct line to the team · first access to every release · up to 75% off forever`;

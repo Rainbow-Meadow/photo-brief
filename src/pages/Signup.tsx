@@ -21,20 +21,20 @@ type ValidationState =
 
 const reasonCopy: Record<string, { title: string; body: string }> = {
   not_found: {
-    title: "We couldn't find that invite",
-    body: "The link may have been mistyped. Double-check it, or apply for beta access below.",
+    title: "That invite didn't check out",
+    body: "The link might be off by a character. Double-check it, or apply for beta access below.",
   },
   expired: {
     title: "This invite has expired",
-    body: "Beta invites are valid for 14 days. Apply again and we'll send a fresh one.",
+    body: "Beta invites are good for 14 days. Apply again and we'll send a fresh one.",
   },
   revoked: {
-    title: "This invite is no longer active",
-    body: "It looks like this invite was revoked. Please reach out or apply for beta access.",
+    title: "This invite was pulled",
+    body: "Looks like this one was revoked. Reach out, or apply for beta access below.",
   },
   accepted: {
-    title: "This invite has already been used",
-    body: "If that wasn't you, please contact support. Otherwise, sign in below.",
+    title: "This invite was already used",
+    body: "If that wasn't you, contact support. Otherwise, sign in below.",
   },
 };
 
@@ -141,8 +141,8 @@ export default function SignupPage() {
       await finalizeAcceptance();
       trackEvent("signup_completed", { method: "email" });
       toast({
-        title: "Welcome to the beta",
-        description: "Check your inbox to confirm your email, then sign in to finish setup.",
+        title: "You're in.",
+        description: "Confirm your email, sign in, and we'll get your intake live.",
       });
       navigate("/auth", { replace: true });
     } catch (err) {
@@ -180,8 +180,8 @@ export default function SignupPage() {
 
   const seo = (
     <SEOHead
-      title="Create your PhotoBrief account"
-      description="Accept your beta invite and create your PhotoBrief workspace."
+      title="Claim your PhotoBrief invite"
+      description="Accept your beta invite and stand up your smart intake in minutes."
       canonicalPath="/signup"
     />
   );

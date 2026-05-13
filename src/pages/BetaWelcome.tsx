@@ -46,10 +46,10 @@ const benefits = PARTNER_BENEFITS.map((text, i) => {
 });
 
 const timelineSteps = [
-  { icon: Send, title: "You fill out this page", body: "Tell us about your business and what you need — takes about 3 minutes." },
-  { icon: Settings, title: "We configure your account", body: "Your workspace, brand settings, and first templates are set up by our team." },
-  { icon: Calendar, title: "Concierge setup via chat or email", body: "We walk through everything async — chat, email, or in-app — on your schedule." },
-  { icon: Rocket, title: "Send your first PhotoBrief", body: "You're live — send a real guided photo request to a customer." },
+  { icon: Send, title: "Tell us about the business", body: "Three minutes. Name, site, what you sell, where the current form falls short." },
+  { icon: Settings, title: "We read your site and build your routes", body: "We scan your services, draft the intake routes, set the photo policy on each, and brand the experience." },
+  { icon: Calendar, title: "Concierge handoff over chat or email", body: "We walk you through everything async — no calls, no scheduling — on your time." },
+  { icon: Rocket, title: "Replace your contact form", body: "Drop the badge or button on your site and start receiving briefs you can quote." },
 ];
 
 /* ── shared editorial classes ───────────────────────────── */
@@ -147,7 +147,7 @@ export default function BetaWelcomePage() {
     if (!form.email.trim()) return "We need your email.";
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) return "That email doesn't look right.";
     if (!form.business_name.trim()) return "Please enter your business name.";
-    if (!form.photo_use_case.trim()) return "Tell us what you need customer photos for.";
+    if (!form.photo_use_case.trim()) return "Tell us what jobs your intake should handle.";
     return null;
   }
 
@@ -196,10 +196,10 @@ export default function BetaWelcomePage() {
                   <CheckCircle2 className="h-7 w-7" />
                 </span>
                 <h1 className="mt-5 text-[clamp(1.6rem,3vw,2rem)] font-semibold leading-[1.05] tracking-[-0.022em] text-foreground">
-                  We've got everything we need
+                  Got it. We're on it.
                 </h1>
                 <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                  Your concierge setup is in the queue. We'll configure your account and reach out via email or chat to walk you through everything — usually within 48 hours.
+                  You're in the concierge queue. We'll read your site, draft your intake routes, and reach out by email or chat to walk you through it — usually within 48 hours.
                 </p>
               </div>
 
@@ -207,10 +207,10 @@ export default function BetaWelcomePage() {
                 <p className={sectionLabelCls}>What happens now</p>
                 <ol className="mt-4 grid gap-3">
                   {[
-                    "We set up your workspace, brand, and first templates.",
-                    "You'll receive an email when your account is ready.",
-                    "We'll walk you through everything via chat or email — no call needed.",
-                    "You send your first guided PhotoBrief to a real customer.",
+                    "We read your site and build your intake routes, brand, and templates.",
+                    "You get an email the moment your workspace is ready.",
+                    "We walk you through it over chat or email — no call required.",
+                    "You drop the badge on your site and the briefs start landing.",
                   ].map((text, i) => (
                     <li key={i} className="flex items-start gap-3">
                       <span className="font-mono text-[0.7rem] font-semibold tabular-nums uppercase tracking-[0.16em] text-[hsl(var(--accent-kinetic))]">
@@ -239,8 +239,8 @@ export default function BetaWelcomePage() {
   return (
     <>
       <SEOHead
-        title="Welcome to the Founding Partner Beta — PhotoBrief.ai"
-        description="You've been accepted into the PhotoBrief.ai Founding Partner Beta. Tell us about your business so we can set everything up for you."
+        title="You're in — Founding Partner Beta | PhotoBrief"
+        description="You've been accepted into the Founding Partner Beta. Tell us about your business and we'll build your smart intake for you."
         canonicalPath="/welcome"
       />
 
@@ -259,7 +259,7 @@ export default function BetaWelcomePage() {
               You're in.
             </h1>
             <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-              You've been selected for the PhotoBrief.ai Founding Partner Beta — a small, hand-picked group of businesses getting early access with concierge setup and direct support.
+              You're a Founding Partner — a hand-picked group helping us replace generic contact forms with smart intake. Concierge setup, direct support, and pricing locked for life.
             </p>
 
             <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
@@ -317,7 +317,7 @@ export default function BetaWelcomePage() {
             <div className="text-center">
               <Eyebrow code="02">How it works</Eyebrow>
               <h2 className="mt-5 text-[clamp(1.6rem,3vw,2.25rem)] font-semibold tracking-tight text-foreground">
-                From here to your first PhotoBrief
+                From here to your first brief in the inbox
               </h2>
             </div>
             <ol className="mt-8 border-l border-border">
@@ -347,10 +347,10 @@ export default function BetaWelcomePage() {
             <Card variant="paper" padding="lg">
               <Eyebrow code="03">Concierge setup</Eyebrow>
               <h2 className="mt-5 text-[clamp(1.4rem,2.5vw,2rem)] font-semibold tracking-tight text-foreground">
-                Tell us about your business
+                Tell us about the business
               </h2>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                We'll use this to configure your account, brand settings, and first templates before your concierge walkthrough.
+                We'll use this to read your site, draft your intake routes, and brand the experience before we hand it back to you.
               </p>
 
               <form onSubmit={onSubmit} className="mt-7 space-y-8">
@@ -388,7 +388,7 @@ export default function BetaWelcomePage() {
                 <div className="space-y-4 border-t border-border pt-7">
                   <div>
                     <p className={sectionLabelCls}>[ B ] Brand & identity</p>
-                    <p className="mt-1 text-xs leading-5 text-muted-foreground">We'll use these to customize how PhotoBrief looks to your customers.</p>
+                    <p className="mt-1 text-xs leading-5 text-muted-foreground">So your intake looks like you, not us.</p>
                   </div>
                   <div className="grid gap-4 sm:grid-cols-2">
                     <Field id="bw-color" label="Primary brand color">
@@ -415,22 +415,22 @@ export default function BetaWelcomePage() {
                 {/* Section 3 */}
                 <div className="space-y-4 border-t border-border pt-7">
                   <div>
-                    <p className={sectionLabelCls}>[ C ] Photo workflow</p>
-                    <p className="mt-1 text-xs leading-5 text-muted-foreground">Help us understand how you'll use PhotoBrief so we can tailor your templates.</p>
+                    <p className={sectionLabelCls}>[ C ] Intake & jobs</p>
+                    <p className="mt-1 text-xs leading-5 text-muted-foreground">What jobs come in, what's missing from your form today, and where photos actually move the needle.</p>
                   </div>
-                  <Field id="bw-usecase" label="What do you need customer photos for?" required>
+                  <Field id="bw-usecase" label="What jobs should your intake handle, and where do photos help?" required>
                     <Textarea
                       id="bw-usecase"
                       value={form.photo_use_case}
                       onChange={update("photo_use_case")}
                       rows={3}
                       required
-                      placeholder="e.g. We need roof damage photos before sending a quote — close-ups of the damage, full roof overview, and any visible flashing or gutter issues."
+                      placeholder="e.g. Roof leaks (photos required — close-up + overview), new roof quotes (photos recommended), reschedules (no photos needed)."
                       className={textareaCls}
                     />
                   </Field>
                   <div className="grid gap-4 sm:grid-cols-2">
-                    <Field id="bw-vol" label="Monthly photo requests (approx.)">
+                    <Field id="bw-vol" label="Monthly leads through your form (approx.)">
                       <select id="bw-vol" value={form.monthly_volume} onChange={update("monthly_volume")} className={selectCls}>
                         <option value="">Select…</option>
                         {VOLUMES.map((v) => <option key={v} value={v}>{v}</option>)}
@@ -442,7 +442,7 @@ export default function BetaWelcomePage() {
                       </select>
                     </Field>
                   </div>
-                  <Field id="bw-reviewer" label="Who reviews incoming photos?">
+                  <Field id="bw-reviewer" label="Who reads the briefs and quotes the job?">
                     <Input id="bw-reviewer" value={form.reviewer_info} onChange={update("reviewer_info")} placeholder="e.g. Office manager Sarah, or the estimating team" className={inputCls} />
                   </Field>
                 </div>
@@ -450,16 +450,16 @@ export default function BetaWelcomePage() {
                 {/* Section 4 */}
                 <div className="space-y-4 border-t border-border pt-7">
                   <div>
-                    <p className={sectionLabelCls}>[ D ] First template ideas</p>
-                    <p className="mt-1 text-xs leading-5 text-muted-foreground">We'll build your first templates based on this. Don't overthink it — we'll refine together over chat or email.</p>
+                    <p className={sectionLabelCls}>[ D ] First intake routes</p>
+                    <p className="mt-1 text-xs leading-5 text-muted-foreground">Which 1–2 jobs should we wire first? Don't overthink it — we'll iterate over chat or email.</p>
                   </div>
-                  <Field id="bw-templates" label="What should your first 1–2 templates cover?">
+                  <Field id="bw-templates" label="Which jobs should the first intake routes cover?">
                     <Textarea
                       id="bw-templates"
                       value={form.template_ideas}
                       onChange={update("template_ideas")}
                       rows={4}
-                      placeholder="e.g. Roof damage assessment — need overall roof shot, close-up of damage area, photos of gutters and flashing, and any interior water stains."
+                      placeholder="e.g. Route 1: Leak diagnosis — ask shut-off location, when it started, photo of the leak. Route 2: New install quote — ask square footage, address, photos of the space."
                       className={textareaCls}
                     />
                   </Field>
