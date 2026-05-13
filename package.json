@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:codespaces": "vite --host 0.0.0.0",
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
@@ -14,6 +15,8 @@
     "test:watch": "vitest",
     "hosting:validate": "node scripts/validate-hybrid-hosting.mjs",
     "functions:check": "node scripts/check-supabase-functions.mjs",
+    "check": "npm run lint && npm run typecheck && npm test && npm run hosting:validate && npm run functions:check",
+    "check:ci-local": "npm run check && npx puppeteer browsers install chrome && npm run build:cloudflare-pages",
     "build:prerender": "vite build && node scripts/prerender.mjs",
     "build:cloudflare-pages": "npm run hosting:validate && npm run build:prerender"
   },
