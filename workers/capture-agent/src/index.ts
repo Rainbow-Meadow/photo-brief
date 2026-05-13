@@ -18,6 +18,15 @@
  */
 
 import { Agent, type Connection } from "agents";
+import {
+  declareRole,
+  emitAgentEvent,
+  handleDispatch,
+  type AgentEventQueue,
+} from "../../_shared/agent-shim";
+import { makeEvent } from "../../_shared/roles";
+
+declareRole("capture_coach");
 
 /* ── Types ─────────────────────────────────────────────────────────── */
 
@@ -27,6 +36,7 @@ interface Env {
   SUPABASE_URL: string;
   SUPABASE_SERVICE_ROLE_KEY?: string;
   SITE_URL: string;
+  AGENT_EVENTS?: AgentEventQueue;
 }
 
 interface CaptureEvent {
@@ -46,6 +56,9 @@ interface CaptureEvent {
   totalSteps?: number;
   completedSteps?: number;
   timestamp?: string;
+  /** Optional — when present, the agent will publish a cross-agent event. */
+  workspaceId?: string;
+  submissionId?: string;
 }
 
 interface StepProgress {
@@ -210,6 +223,17 @@ export class CaptureAgent extends Agent<Env, CaptureState> {
         patch.sessionActive = false;
         // Cancel any pending nudge
         this.cancelSchedule("nudge_reminder");
+        // Hand off to the Conductor when the caller passed enough context.
+        if (event.workspaceId) {
+          await emitAgentEvent(this.env as unknown as { AGENT_EVENTS?: AgentEventQueue }, makeEvent({
+            type: "submission_completed",
+            workspaceId: event.workspaceId,
+            from: "capture_coach",
+            submissionId: event.submissionId ?? "",
+            requestId: this.state.requestId || (this.name ?? ""),
+            correlationId: this.state.requestId,
+          }));
+        }
         break;
     }
 
@@ -372,9 +396,27 @@ export default {
       return json({
         ok: true,
         name: "PhotoBrief Capture Agent",
-        version: "1.1.0",
+        role: "capture_coach",
+        version: "1.2.0",
       });
     }
+
+    // Orchestrator dispatch — Conductor may ask us to nudge a recipient.
+    const dispatched = await handleDispatch(request, {
+      send_nudge: async (payload, ctx) => {
+        await emitAgentEvent(env, makeEvent({
+          type: "capture_stalled",
+          workspaceId: ctx.workspaceId,
+          from: "capture_coach",
+          requestId: (payload as { requestId?: string })?.requestId ?? "",
+          minutesIdle: (payload as { minutesIdle?: number })?.minutesIdle ?? 0,
+          correlationId: ctx.correlationId,
+        }));
+        return { acknowledged: true };
+      },
+    });
+    if (dispatched) return dispatched;
+
 
     // CaptureSession DO routes (Step 3): /capture/:token/{state,submit,clear}
     const captureMatch = path.match(/^\/capture\/([A-Za-z0-9_-]{8,})\/(state|submit|clear)$/);

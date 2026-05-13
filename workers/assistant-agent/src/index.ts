@@ -29,6 +29,15 @@ import {
   workersAiClassify,
   type AiBinding,
 } from "../../_shared/ai";
+import {
+  declareRole,
+  emitAgentEvent,
+  handleDispatch,
+  type AgentEventQueue,
+} from "../../_shared/agent-shim";
+import { makeEvent } from "../../_shared/roles";
+
+declareRole("account_strategist");
 
 /* ── Types ─────────────────────────────────────────────────────────── */
 
@@ -42,6 +51,7 @@ interface Env {
   AI?: AiBinding;
   CLOUDFLARE_ACCOUNT_ID?: string;
   CLOUDFLARE_API_TOKEN?: string;
+  AGENT_EVENTS?: AgentEventQueue;
 }
 
 interface WorkspaceStats {
@@ -429,8 +439,28 @@ export default {
 
     // Health check
     if (path === "/" || path === "/health") {
-      return json({ ok: true, name: "PhotoBrief Assistant Agent", version: "1.1.0" });
+      return json({ ok: true, name: "PhotoBrief Assistant Agent", role: "account_strategist", version: "1.2.0" });
     }
+
+    // Orchestrator dispatch — accept intents the Conductor may route here.
+    const dispatched = await handleDispatch(request, {
+      submission_review: async (payload, ctx) => {
+        await emitAgentEvent(env, makeEvent({
+          type: "submission_quality_scored",
+          workspaceId: ctx.workspaceId,
+          from: "account_strategist",
+          submissionId: (payload as { submissionId?: string })?.submissionId ?? "",
+          score: 0,
+          correlationId: ctx.correlationId,
+        }));
+        return { acknowledged: true };
+      },
+      install_status_changed: async (_payload, _ctx) => ({ acknowledged: true }),
+      kickoff_digest: async (_payload, _ctx) => ({ acknowledged: true }),
+      deliver_team_standup: async (_payload, _ctx) => ({ acknowledged: true }),
+    });
+    if (dispatched) return dispatched;
+
 
     // Public recipient bundle cache (Step 4: KV-cached request+brand+guide).
     const recipientMatch = path.match(/^\/recipient\/([A-Za-z0-9_-]{8,})\/(bundle|invalidate)$/);

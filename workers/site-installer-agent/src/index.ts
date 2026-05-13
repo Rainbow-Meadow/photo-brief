@@ -22,12 +22,22 @@ import { installWordPress } from "./installers/wordpress.js";
 import { installWix } from "./installers/wix.js";
 import { installZapier } from "./installers/zapier.js";
 import { installCarrd } from "./installers/carrd.js";
+import {
+  declareRole,
+  emitAgentEvent,
+  handleDispatch,
+  type AgentEventQueue,
+} from "../../_shared/agent-shim";
+import { makeEvent } from "../../_shared/roles";
+
+declareRole("install_engineer");
 
 interface Env {
   SITE_INSTALLER_AGENT: DurableObjectNamespace;
   BROWSER: Fetcher;
   AI: { run: (model: string, input: unknown) => Promise<any> };
   SITE_URL: string;
+  AGENT_EVENTS?: AgentEventQueue;
 }
 
 type Platform =
@@ -373,6 +383,16 @@ export class SiteInstallerAgent extends Agent<Env, AgentState> {
       ],
       updatedAt: new Date().toISOString(),
     });
+    if (!check.ok && this.state.workspaceId) {
+      await emitAgentEvent(this.env as unknown as { AGENT_EVENTS?: AgentEventQueue }, makeEvent({
+        type: "install_monitor_failed",
+        workspaceId: this.state.workspaceId,
+        from: "install_engineer",
+        siteUrl: this.state.siteUrl ?? "",
+        sessionId: this.state.sessionId,
+        reason: check.reason,
+      }));
+    }
     return check;
   }
 
@@ -468,6 +488,16 @@ export class SiteInstallerAgent extends Agent<Env, AgentState> {
       // Phase 4: kick off recurring re-verification on first success.
       if (!this.state.monitoring.enabled) {
         await this.enableMonitoring(this.state.monitoring.cron || DEFAULT_MONITOR_CRON);
+      }
+      // Notify the Conductor so the Account Strategist can celebrate.
+      if (this.state.workspaceId) {
+        await emitAgentEvent(this.env as unknown as { AGENT_EVENTS?: AgentEventQueue }, makeEvent({
+          type: "install_verified",
+          workspaceId: this.state.workspaceId,
+          from: "install_engineer",
+          siteUrl,
+          sessionId: this.state.sessionId,
+        }));
       }
       return { ok: true, reason: foundLinks[0] };
     }

@@ -1,0 +1,40 @@
+name = "photobrief-orchestrator-agent"
+main = "src/index.ts"
+compatibility_date = "2025-04-01"
+compatibility_flags = ["nodejs_compat"]
+
+[placement]
+mode = "smart"
+
+[[routes]]
+pattern = "orchestrator.photobrief.ai/*"
+zone_name = "photobrief.ai"
+
+# One DO per workspace_id.
+[durable_objects]
+bindings = [
+  { name = "ORCHESTRATOR_AGENT", class_name = "OrchestratorAgent" }
+]
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["OrchestratorAgent"]
+
+# Per-workspace brand cache. Read by every other agent, written here only.
+[[kv_namespaces]]
+binding = "WORKSPACE_BRAND"
+id = "REPLACE_ME_WORKSPACE_BRAND_KV_ID"
+
+# Cross-agent event bus. Producers across all workers, consumed here.
+[[queues.producers]]
+queue = "pb-agent-events"
+binding = "AGENT_EVENTS"
+
+[[queues.consumers]]
+queue = "pb-agent-events"
+max_batch_size = 25
+max_batch_timeout = 5
+
+[vars]
+SITE_URL = "https://photobrief.ai"
+SUPABASE_URL = "https://mvlcefiygkzzewcdzsmj.supabase.co"
