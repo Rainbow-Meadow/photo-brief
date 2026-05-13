@@ -1,6 +1,7 @@
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { CfImg } from "@/components/shared/CfImg";
 
 interface EmptyStateProps {
   icon?: LucideIcon;
@@ -43,13 +44,14 @@ export function EmptyState({
       </p>
 
       {illustration ? (
-        <img
+        <CfImg
           src={illustration}
           alt=""
           aria-hidden
           loading="lazy"
           width={512}
           height={512}
+          cfWidth={512}
           className={cn(
             "select-none opacity-90",
             eff === "lg" ? "h-32 w-32" : "h-24 w-24",

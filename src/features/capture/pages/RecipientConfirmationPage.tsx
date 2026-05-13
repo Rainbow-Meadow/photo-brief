@@ -3,6 +3,7 @@ import { NavLink, useParams } from "react-router-dom";
 import { CheckCircle2, ArrowLeft } from "lucide-react";
 import { PoweredByBadge } from "@/components/shared/PoweredByBadge";
 import { loadRecipientContext, type RecipientContext } from "@/features/capture/recipientContext";
+import { CfImg } from "@/components/shared/CfImg";
 
 export default function RecipientConfirmationPage() {
   const { token } = useParams();
@@ -46,10 +47,11 @@ export default function RecipientConfirmationPage() {
       <article className="border border-border bg-card p-7">
         <div className="flex flex-col items-center text-center">
           {showLogo ? (
-            <img
+            <CfImg
               src={ctx!.logoUrl}
               alt={businessName}
               className="mb-4 h-12 w-auto max-w-[180px] object-contain"
+              cfWidth={360}
             />
           ) : null}
           <span className="flex h-12 w-12 items-center justify-center border border-[hsl(var(--accent-kinetic))] text-[hsl(var(--accent-kinetic))]">
