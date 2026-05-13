@@ -30,3 +30,6 @@ verify_jwt = true
 
 [functions.verify-turnstile]
 verify_jwt = false
+
+[functions.intelligence-runner]
+verify_jwt = true
