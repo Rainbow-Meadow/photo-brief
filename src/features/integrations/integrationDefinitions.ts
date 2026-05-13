@@ -76,7 +76,7 @@ export const integrationDefinitions: IntegrationDefinition[] = [
     category: "website",
     stage: "live",
     icon: Globe2,
-    plan: "pro",
+    plan: "intake_team",
     tagline: "A PhotoBrief-powered intake page for your site CTA.",
     description:
       "Send website visitors into a guided request flow without rebuilding your site or existing forms.",
@@ -98,7 +98,7 @@ export const integrationDefinitions: IntegrationDefinition[] = [
     category: "website",
     stage: "live",
     icon: Code2,
-    plan: "pro",
+    plan: "intake_team",
     tagline: "A branded badge businesses can paste into their website.",
     description:
       "A lightweight script/button pattern that tells customers why PhotoBrief helps and keeps the intake experience consistent.",
@@ -128,7 +128,7 @@ export const integrationDefinitions: IntegrationDefinition[] = [
     category: "website",
     stage: "setup_ready",
     icon: Braces,
-    plan: "pro",
+    plan: "intake_team",
     tagline: "Let existing website forms create PhotoBrief requests.",
     description:
       "A structured receiver for Wix, Webflow, WordPress, Zapier, Make, or custom site forms to hand off leads to PhotoBrief.",
@@ -158,7 +158,7 @@ export const integrationDefinitions: IntegrationDefinition[] = [
     category: "website",
     stage: "setup_ready",
     icon: FormInput,
-    plan: "pro",
+    plan: "intake_team",
     tagline: "Connect WordPress lead forms to guided photo requests.",
     description:
       "Start with a webhook/embedded badge pattern for WordPress sites, then promote to a native plugin once beta demand is clear.",
@@ -181,7 +181,7 @@ export const integrationDefinitions: IntegrationDefinition[] = [
     category: "website",
     stage: "setup_ready",
     icon: FormInput,
-    plan: "pro",
+    plan: "intake_team",
     tagline: "Route Webflow form submissions into PhotoBrief.",
     description:
       "Use the webhook bridge for existing Webflow forms and turn submitted leads into draft PhotoBrief requests.",
@@ -205,7 +205,7 @@ export const integrationDefinitions: IntegrationDefinition[] = [
     category: "website",
     stage: "planned",
     icon: FormInput,
-    plan: "pro",
+    plan: "intake_team",
     tagline: "One-click site builder install once beta demand confirms it.",
     description:
       "Wix should start with hosted links and webhooks, then become a native install experience after the workflow is proven.",
@@ -228,7 +228,7 @@ export const integrationDefinitions: IntegrationDefinition[] = [
     category: "website",
     stage: "planned",
     icon: FormInput,
-    plan: "team",
+    plan: "intake_team",
     tagline: "Collect product, return, review, and custom-order photos.",
     description:
       "A future Shopify connector can request the right photos for returns, custom products, reviews, and support tickets.",
@@ -250,7 +250,7 @@ export const integrationDefinitions: IntegrationDefinition[] = [
     category: "communication",
     stage: "setup_ready",
     icon: Mail,
-    plan: "starter",
+    plan: "intake",
     tagline: "Send request links from the business Gmail account.",
     description:
       "OAuth-backed Gmail sending keeps PhotoBrief messages in the customer's familiar email thread while preserving the request activity log.",
@@ -272,7 +272,7 @@ export const integrationDefinitions: IntegrationDefinition[] = [
     category: "communication",
     stage: "live",
     icon: Smartphone,
-    plan: "free",
+    plan: "intake",
     tagline: "Copy a polished text and send it from your own number.",
     description:
       "The safest low-friction SMS workflow: PhotoBrief generates the message, and the business sends it from its normal texting app.",
@@ -294,7 +294,7 @@ export const integrationDefinitions: IntegrationDefinition[] = [
     category: "communication",
     stage: "setup_ready",
     icon: MessageSquareText,
-    plan: "pro",
+    plan: "intake_team",
     tagline: "Automated SMS with compliance-aware setup.",
     description:
       "A native SMS connector should handle workspace configuration, sender number, opt-out handling, delivery logs, and A2P readiness.",
@@ -318,7 +318,7 @@ export const integrationDefinitions: IntegrationDefinition[] = [
     category: "communication",
     stage: "planned",
     icon: Send,
-    plan: "team",
+    plan: "intake_team",
     tagline: "Bot-based request notifications and team alerts.",
     description:
       "Telegram is useful for internal team alerts or bot-driven customer workflows where teams already operate there.",
@@ -340,7 +340,7 @@ export const integrationDefinitions: IntegrationDefinition[] = [
     category: "automation",
     stage: "setup_ready",
     icon: PlugZap,
-    plan: "pro",
+    plan: "intake_team",
     tagline: "Cover the long tail of business apps fast.",
     description:
       "Expose PhotoBrief triggers and actions so teams can connect the tools we have not built natively yet.",
@@ -371,7 +371,7 @@ export const integrationDefinitions: IntegrationDefinition[] = [
     category: "automation",
     stage: "setup_ready",
     icon: Workflow,
-    plan: "pro",
+    plan: "intake_team",
     tagline: "Visual automations for routed requests and submissions.",
     description:
       "Make support can reuse the same integration event and action contract as Zapier with Make-specific auth and payload docs.",
@@ -401,7 +401,7 @@ export const integrationDefinitions: IntegrationDefinition[] = [
     category: "automation",
     stage: "planned",
     icon: MessageSquareText,
-    plan: "team",
+    plan: "intake_team",
     tagline: "Send brief-ready alerts into team channels.",
     description:
       "Slack can notify operations, quoting, dispatch, or support teams when a PhotoBrief is ready or needs attention.",
@@ -424,7 +424,7 @@ export const integrationDefinitions: IntegrationDefinition[] = [
     category: "automation",
     stage: "planned",
     icon: FileSpreadsheet,
-    plan: "team",
+    plan: "intake_team",
     tagline: "Sync customer requests into an operations base.",
     description:
       "Airtable is a strong bridge for teams that track quotes, approvals, and dispatch packets in custom bases.",
@@ -447,7 +447,7 @@ export const integrationDefinitions: IntegrationDefinition[] = [
     category: "crm",
     stage: "setup_ready",
     icon: ClipboardList,
-    plan: "team",
+    plan: "intake_team",
     tagline: "Attach clean PhotoBrief packets to leads and deals.",
     description:
       "HubSpot should become the first full CRM-native connector once beta users confirm the object mapping they need.",
@@ -470,7 +470,7 @@ export const integrationDefinitions: IntegrationDefinition[] = [
     category: "crm",
     stage: "planned",
     icon: ClipboardList,
-    plan: "team",
+    plan: "intake_team",
     tagline: "Attach PhotoBriefs to leads, accounts, and cases.",
     description:
       "Salesforce belongs after HubSpot unless beta customers specifically need enterprise CRM mapping first.",
@@ -493,7 +493,7 @@ export const integrationDefinitions: IntegrationDefinition[] = [
     category: "automation",
     stage: "planned",
     icon: FileSpreadsheet,
-    plan: "starter",
+    plan: "intake",
     tagline: "Push request and submission rows to a shared sheet.",
     description:
       "A useful reporting connector for teams that are not ready for a CRM but want a live operations ledger.",
@@ -516,7 +516,7 @@ export const integrationDefinitions: IntegrationDefinition[] = [
     category: "crm",
     stage: "planned",
     icon: BadgeCheck,
-    plan: "team",
+    plan: "intake_team",
     tagline: "Turn clean customer photos into job-ready packets.",
     description:
       "Jobber is a practical vertical connector candidate for service teams that need photo context before quoting or dispatch.",
@@ -539,7 +539,7 @@ export const integrationDefinitions: IntegrationDefinition[] = [
     category: "crm",
     stage: "planned",
     icon: BadgeCheck,
-    plan: "business",
+    plan: "intake_team",
     tagline: "Photo documentation for larger service operations.",
     description:
       "ServiceTitan is a later-stage connector for dispatch-heavy businesses that need request packets attached to jobs.",

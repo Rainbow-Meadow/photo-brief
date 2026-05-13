@@ -72,7 +72,7 @@ export function AppSidebar() {
   // Hide the upgrade card for users already on Pro or higher.
   // Plans below Pro: free, starter. Don't render until plan is resolved
   // to avoid flashing the wrong CTA during the brief auth/workspace load.
-  const showUpgradeCard = !planLoading && (plan === "free" || plan === "starter");
+  const showUpgradeCard = !planLoading && (plan === "intake" || plan === "intake");
   const { pathname } = useLocation();
 
   const isActive = (path: string, exact = false) => exact ? pathname === path : pathname === path || pathname.startsWith(`${path}/`);

@@ -1,11 +1,11 @@
 import { BETA_DURATION_DAYS, BETA_SETUP_BUFFER_DAYS, MAX_DISCOUNT_LABEL } from "@/config/betaProgram";
 
-export type FaqItem = { id: string; q: string; a: React.ReactNode; audience: "business" | "recipient" };
+export type FaqItem = { id: string; q: string; a: React.ReactNode; audience: "intake_team" | "recipient" };
 
 export const faqItems: FaqItem[] = [
   {
     id: "what-is-photobrief",
-    audience: "business",
+    audience: "intake_team",
     q: "What is PhotoBrief, in one sentence?",
     a: (
       <>
@@ -15,7 +15,7 @@ export const faqItems: FaqItem[] = [
   },
   {
     id: "how-it-works",
-    audience: "business",
+    audience: "intake_team",
     q: "How does it actually work?",
     a: (
       <>
@@ -25,7 +25,7 @@ export const faqItems: FaqItem[] = [
   },
   {
     id: "founding-beta",
-    audience: "business",
+    audience: "intake_team",
     q: "How does the Founding Partner Beta work?",
     a: (
       <>
@@ -35,13 +35,13 @@ export const faqItems: FaqItem[] = [
   },
   {
     id: "recipient-account",
-    audience: "business",
+    audience: "intake_team",
     q: "Do customers need an account?",
     a: <>No. They tap a link, answer a few questions made for the job they're calling about, and they're done. No app. No login.</>,
   },
   {
     id: "manual-or-automated",
-    audience: "business",
+    audience: "intake_team",
     q: "What can I do on Free or Starter?",
     a: (
       <>
@@ -51,7 +51,7 @@ export const faqItems: FaqItem[] = [
   },
   {
     id: "website-intake",
-    audience: "business",
+    audience: "intake_team",
     q: "What is Website Intake?",
     a: (
       <>
@@ -61,7 +61,7 @@ export const faqItems: FaqItem[] = [
   },
   {
     id: "hosted-intake",
-    audience: "business",
+    audience: "intake_team",
     q: "What should I put on my website?",
     a: (
       <>
@@ -71,7 +71,7 @@ export const faqItems: FaqItem[] = [
   },
   {
     id: "intake-badge",
-    audience: "business",
+    audience: "intake_team",
     q: "What is the PhotoBrief website badge?",
     a: (
       <>
@@ -81,7 +81,7 @@ export const faqItems: FaqItem[] = [
   },
   {
     id: "badge-or-link",
-    audience: "business",
+    audience: "intake_team",
     q: "Badge, hosted link, or webhook — which one?",
     a: (
       <>
@@ -91,7 +91,7 @@ export const faqItems: FaqItem[] = [
   },
   {
     id: "website-tools",
-    audience: "business",
+    audience: "intake_team",
     q: "Which website builders does it work with?",
     a: (
       <>
@@ -101,7 +101,7 @@ export const faqItems: FaqItem[] = [
   },
   {
     id: "existing-form",
-    audience: "business",
+    audience: "intake_team",
     q: "Can I keep my existing website form?",
     a: (
       <>
@@ -111,7 +111,7 @@ export const faqItems: FaqItem[] = [
   },
   {
     id: "ai-routing",
-    audience: "business",
+    audience: "intake_team",
     q: "How does it pick the right intake route?",
     a: (
       <>
@@ -121,7 +121,7 @@ export const faqItems: FaqItem[] = [
   },
   {
     id: "photo-policy",
-    audience: "business",
+    audience: "intake_team",
     q: "When does it actually ask for photos?",
     a: (
       <>
@@ -131,7 +131,7 @@ export const faqItems: FaqItem[] = [
   },
   {
     id: "create-template",
-    audience: "business",
+    audience: "intake_team",
     q: "How do I build a new route or template?",
     a: (
       <>
@@ -141,7 +141,7 @@ export const faqItems: FaqItem[] = [
   },
   {
     id: "branding",
-    audience: "business",
+    audience: "intake_team",
     q: "Can customers see my branding?",
     a: (
       <>
@@ -151,7 +151,7 @@ export const faqItems: FaqItem[] = [
   },
   {
     id: "more-photos",
-    audience: "business",
+    audience: "intake_team",
     q: "What if a photo is unusable?",
     a: (
       <>
@@ -161,7 +161,7 @@ export const faqItems: FaqItem[] = [
   },
   {
     id: "pricing-photos",
-    audience: "business",
+    audience: "intake_team",
     q: "What counts toward usage?",
     a: (
       <>

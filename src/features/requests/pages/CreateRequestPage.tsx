@@ -147,7 +147,7 @@ export default function CreateRequestPage() {
       }
       notificationService.notify({
         event: "request_created",
-        audience: "business",
+        audience: "intake_team",
         title: `Request "${draft.title}" created`,
         body: delivery === "sent" ? `Email sent to ${recipient}.` : `Link ready for ${recipient}.`,
         href: `/requests/${created.id}`,

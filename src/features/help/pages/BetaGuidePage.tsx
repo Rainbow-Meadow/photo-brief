@@ -74,18 +74,18 @@ const intakeChecklist = [
 
 const tocItems: TocItem[] = [
   { id: "quick-start", label: "Quick start" },
-  { id: "business", label: "Business setup" },
+  { id: "intake_team", label: "Business setup" },
   { id: "intake", label: "Website Intake" },
   { id: "website-tools", label: "Website tools" },
   { id: "recipient", label: "Customer flow" },
   { id: "faq", label: "FAQ" },
 ];
 
-type TabValue = "quick" | "business" | "intake" | "tools" | "recipient" | "faq";
+type TabValue = "quick" | "intake_team" | "intake" | "tools" | "recipient" | "faq";
 
 const hashToTab: Record<string, TabValue> = {
   "#quick-start": "quick",
-  "#business": "business",
+  "#business": "intake_team",
   "#intake": "intake",
   "#website-tools": "tools",
   "#recipient": "recipient",
@@ -122,7 +122,7 @@ export default function BetaGuidePage() {
     }
   };
 
-  const businessFaqs = useMemo(() => faqItems.filter((f) => f.audience === "business"), []);
+  const businessFaqs = useMemo(() => faqItems.filter((f) => f.audience === "intake_team"), []);
   const recipientFaqs = useMemo(() => faqItems.filter((f) => f.audience === "recipient"), []);
 
   return (
@@ -196,7 +196,7 @@ export default function BetaGuidePage() {
           <Tabs value={tab} onValueChange={handleTabChange} className="space-y-6">
             <TabsList className="flex w-full flex-wrap gap-1 rounded-[0.25rem] bg-muted/60 p-1">
               <TabsTrigger value="quick" className="gap-1.5 rounded-xl"><Rocket className="h-3.5 w-3.5" /> Start</TabsTrigger>
-              <TabsTrigger value="business" className="gap-1.5 rounded-xl"><Building2 className="h-3.5 w-3.5" /> Setup</TabsTrigger>
+              <TabsTrigger value="intake_team" className="gap-1.5 rounded-xl"><Building2 className="h-3.5 w-3.5" /> Setup</TabsTrigger>
               <TabsTrigger value="intake" className="gap-1.5 rounded-xl"><Globe2 className="h-3.5 w-3.5" /> Intake</TabsTrigger>
               <TabsTrigger value="tools" className="gap-1.5 rounded-xl"><Wrench className="h-3.5 w-3.5" /> Tools</TabsTrigger>
               <TabsTrigger value="recipient" className="gap-1.5 rounded-xl"><Smartphone className="h-3.5 w-3.5" /> Customer</TabsTrigger>
@@ -209,7 +209,7 @@ export default function BetaGuidePage() {
               <div className="space-y-4">{quickStartSteps.map((step) => <GuideStep key={step.number} {...step} />)}</div>
             </TabsContent>
 
-            <TabsContent value="business" id="business" className="space-y-4 scroll-mt-24">
+            <TabsContent value="intake_team" id="intake_team" className="space-y-4 scroll-mt-24">
               <SectionIntro icon={<Building2 className="h-4 w-4" />} title="Business setup" body="The simple operating model: reusable templates, clean requests, branded website intake, and automatic routing." />
               <QuickChecklist storageKey="pb.help.business" items={businessChecklist} title="Recommended setup" />
               <div className="space-y-4">{businessSteps.map((step) => <GuideStep key={step.number} {...step} />)}</div>

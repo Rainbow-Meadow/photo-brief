@@ -225,7 +225,7 @@ export default function BillingSettingsPage() {
         </div>
       </section>
 
-      {workspace.plan !== "free" ? (
+      {workspace.plan !== "intake" ? (
         <section className="surface-card p-5 sm:p-6">
           <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
             <div>

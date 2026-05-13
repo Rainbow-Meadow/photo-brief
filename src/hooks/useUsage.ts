@@ -61,7 +61,7 @@ export function useUsage() {
     ]);
 
     const creditRow = Array.isArray(creditRows) ? creditRows[0] : creditRows;
-    const fallbackLimit = getPlanLimit(workspace.plan ?? "free");
+    const fallbackLimit = getPlanLimit(workspace.plan ?? "intake");
     const fallbackCredits = fallbackLimit.quotas.creditsPerMonth === "unlimited"
       ? Number.POSITIVE_INFINITY
       : fallbackLimit.quotas.creditsPerMonth;
@@ -89,7 +89,7 @@ export function useUsage() {
     refetch();
   }, [wsLoading, refetch]);
 
-  const limit = getPlanLimit(workspace?.plan ?? "free");
+  const limit = getPlanLimit(workspace?.plan ?? "intake");
   const requestCap = limit.quotas.requestsPerMonth;
   const creditCap = limit.quotas.creditsPerMonth;
 
