@@ -758,6 +758,160 @@ const handlers: Partial<Record<JobType, Handler>> = {
         : [],
     };
   },
+
+  // -------------------------------------------------------------------------
+  // learn_from_outcome — record an operator/customer outcome event and emit
+  // structured signals the rest of the system can act on later (route tuning,
+  // photo-policy nudges, blueprint regeneration). Deterministic. No LLM.
+  //
+  // Input: { event_type, ref_id?, metadata? }
+  //   event_type ∈ {
+  //     route_edited            — operator changed a route's questions/policy
+  //     photo_skipped           — recipient skipped an optional photo step
+  //     photo_requested         — operator manually sent a photo request
+  //     brief_closed_won        — operator marked the brief as closed/quoted
+  //     brief_closed_lost       — operator marked the brief as low-intent/spam
+  //     operator_feedback       — explicit thumbs-up/down on a brief or score
+  //   }
+  //   ref_id is the row the event is about (intake_brief, routing_rule, etc.)
+  //
+  // Output: { signals[] } where each signal is { code, weight, reason,
+  //   target: { kind, id } } — consumed by future tuning jobs.
+  // Side effect: scoring_trace artifact for audit + signal stream.
+  // -------------------------------------------------------------------------
+  learn_from_outcome: async (job, admin) => {
+    const input = (job.input ?? {}) as {
+      event_type?: string;
+      ref_id?: string;
+      metadata?: Record<string, unknown>;
+    };
+    const eventType = String(input.event_type ?? "").trim();
+    const refId = input.ref_id ?? null;
+    const meta = input.metadata ?? {};
+
+    const allowed = new Set([
+      "route_edited",
+      "photo_skipped",
+      "photo_requested",
+      "brief_closed_won",
+      "brief_closed_lost",
+      "operator_feedback",
+    ]);
+    if (!allowed.has(eventType)) {
+      throw new Error(`INVALID_INPUT: event_type must be one of ${Array.from(allowed).join(", ")}`);
+    }
+
+    type Signal = {
+      code: string;
+      weight: number;
+      reason: string;
+      target: { kind: string; id: string | null };
+    };
+    const signals: Signal[] = [];
+
+    // Pull a small amount of context per event type so the signal carries
+    // enough information to act on later without a second lookup.
+    if (eventType === "brief_closed_won" || eventType === "brief_closed_lost") {
+      if (!refId) throw new Error("INVALID_INPUT: ref_id (intake_brief id) required");
+      const { data: brief } = await admin
+        .from("intake_briefs")
+        .select("id, routing_rule_id, photo_policy, photos_provided, readiness_status, readiness_score")
+        .eq("id", refId)
+        .eq("workspace_id", job.workspace_id)
+        .maybeSingle();
+      const b = (brief ?? {}) as Record<string, unknown>;
+      const won = eventType === "brief_closed_won";
+      signals.push({
+        code: won ? "route_converted" : "route_lost",
+        weight: won ? 1 : -1,
+        reason: won
+          ? `Brief closed-won at readiness=${b.readiness_status} (score ${b.readiness_score ?? "?"}).`
+          : `Brief closed-lost at readiness=${b.readiness_status} (score ${b.readiness_score ?? "?"}).`,
+        target: { kind: "intake_routing_rule", id: (b.routing_rule_id as string | null) ?? null },
+      });
+      // Photo policy correlation: if a brief converted without photos, the
+      // current policy may be over-asking. If it lost without photos under a
+      // 'recommended' policy, the policy may be under-asking.
+      const policy = String(b.photo_policy ?? "");
+      const provided = Boolean(b.photos_provided);
+      if (won && !provided && policy === "required") {
+        signals.push({
+          code: "photo_policy_too_strict",
+          weight: 1,
+          reason: "Closed-won without photos despite required policy — consider downgrading to recommended.",
+          target: { kind: "intake_routing_rule", id: (b.routing_rule_id as string | null) ?? null },
+        });
+      } else if (!won && !provided && policy === "recommended") {
+        signals.push({
+          code: "photo_policy_too_loose",
+          weight: 1,
+          reason: "Closed-lost without photos under recommended policy — consider promoting to required.",
+          target: { kind: "intake_routing_rule", id: (b.routing_rule_id as string | null) ?? null },
+        });
+      }
+    } else if (eventType === "photo_skipped") {
+      if (!refId) throw new Error("INVALID_INPUT: ref_id (intake_brief id) required");
+      const { data: brief } = await admin
+        .from("intake_briefs")
+        .select("routing_rule_id, photo_policy")
+        .eq("id", refId)
+        .eq("workspace_id", job.workspace_id)
+        .maybeSingle();
+      const b = (brief ?? {}) as Record<string, unknown>;
+      const policy = String(b.photo_policy ?? "");
+      signals.push({
+        code: policy === "required" ? "photo_skipped_under_required" : "photo_skipped_optional",
+        weight: policy === "required" ? 2 : 1,
+        reason: `Recipient skipped photos under ${policy || "unknown"} policy.`,
+        target: { kind: "intake_routing_rule", id: (b.routing_rule_id as string | null) ?? null },
+      });
+    } else if (eventType === "photo_requested") {
+      signals.push({
+        code: "manual_photo_request",
+        weight: 1,
+        reason: "Operator manually sent a photo request — initial intake may be missing the photo prompt.",
+        target: { kind: "intake_brief", id: refId },
+      });
+    } else if (eventType === "route_edited") {
+      const fields = Array.isArray(meta.changed_fields) ? (meta.changed_fields as string[]) : [];
+      signals.push({
+        code: "route_definition_changed",
+        weight: 1,
+        reason: `Operator edited route — fields: ${fields.join(", ") || "unspecified"}.`,
+        target: { kind: "intake_routing_rule", id: refId },
+      });
+    } else if (eventType === "operator_feedback") {
+      const direction = String(meta.direction ?? "").toLowerCase();
+      const positive = direction === "up" || direction === "positive" || direction === "thumbs_up";
+      signals.push({
+        code: positive ? "operator_thumbs_up" : "operator_thumbs_down",
+        weight: positive ? 1 : -1,
+        reason: typeof meta.note === "string" ? meta.note.slice(0, 280) : `Operator feedback (${direction || "unspecified"}).`,
+        target: { kind: (meta.target_kind as string) || "intake_brief", id: refId },
+      });
+    }
+
+    return {
+      output: {
+        event_type: eventType,
+        ref_id: refId,
+        signals,
+      },
+      confidence: null,
+      warnings: signals.length === 0
+        ? [{ code: "NO_SIGNALS", message: "Event recorded but produced no signals — check ref_id." }]
+        : [],
+      artifacts: [{
+        artifact_type: "scoring_trace" as const,
+        content_excerpt: JSON.stringify({ event_type: eventType, ref_id: refId, signals, metadata: meta }).slice(0, 2000),
+        metadata: {
+          event_type: eventType,
+          ref_id: refId,
+          signal_count: signals.length,
+        },
+      }],
+    };
+  },
 };
 
 // ---------------------------------------------------------------------------
