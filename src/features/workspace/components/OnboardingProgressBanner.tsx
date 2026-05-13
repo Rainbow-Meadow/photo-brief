@@ -101,7 +101,7 @@ export function OnboardingProgressBanner() {
           <span className="text-muted-foreground">
             {requests.length} {requests.length === 1 ? "request" : "requests"} ·{" "}
             {guides.length} {guides.length === 1 ? "guide" : "guides"} ·{" "}
-            <span className="capitalize">{workspace?.plan ?? "free"}</span> plan
+            <span className="capitalize">{workspace?.plan ?? "intake"}</span> plan
           </span>
           <button
             type="button"

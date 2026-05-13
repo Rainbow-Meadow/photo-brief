@@ -55,7 +55,7 @@ export default function GuideLibraryPage() {
                 }
               >
                 <Plus className="h-4 w-4" /> New template
-                <PlanTag plan="pro" className="ml-1 bg-white/15 text-primary-foreground" />
+                <PlanTag plan="intake_team" className="ml-1 bg-white/15 text-primary-foreground" />
               </Button>
             )
           }

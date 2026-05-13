@@ -61,7 +61,7 @@ const stageMeta: Record<IntegrationStage, { label: string; compactLabel: string;
 };
 
 function planRank(plan: string) {
-  return ["free", "starter", "pro", "team", "business"].indexOf(plan);
+  return ["intake", "intake", "intake_team", "intake_team", "intake_team"].indexOf(plan);
 }
 
 function isAvailableForPlan(currentPlan: string, requiredPlan: string) {
@@ -257,7 +257,7 @@ function ConnectorRow({
               {integrationCategories[integration.category].label}
             </Badge>
             <Badge variant={planAllowed ? "secondary" : "outline"} className="rounded-full px-2 py-0 text-[10px]">
-              {integration.plan === "free" ? "All plans" : `${integration.plan}+`}
+              {integration.plan === "intake" ? "All plans" : `${integration.plan}+`}
             </Badge>
           </div>
         </div>
@@ -377,7 +377,7 @@ export default function IntegrationsPage() {
   const [query, setQuery] = useState("");
   const [connections, setConnections] = useState<Record<string, IntegrationConnection>>({});
   const [connectionLoadError, setConnectionLoadError] = useState<string | null>(null);
-  const currentPlan = loading ? "free" : plan;
+  const currentPlan = loading ? "intake" : plan;
 
   const loadConnections = useCallback(async () => {
     if (!workspace?.id) return;

@@ -382,7 +382,7 @@ export default function SubmissionReviewPage() {
       trackEvent("submission_reviewed", { submission_id: submission.id });
       notificationService.notify({
         event: "reviewed",
-        audience: "business",
+        audience: "intake_team",
         title: `Marked "${submission.guideName}" reviewed`,
         body: `${submission.recipientName}'s submission is closed out.`,
         submissionId: submission.id,

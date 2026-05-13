@@ -537,6 +537,8 @@ export type Database = {
           plan_tier: Database["public"]["Enums"]["plan_tier"]
           slug: string | null
           status: string
+          trial_ends_at: string | null
+          trial_plan: Database["public"]["Enums"]["plan_tier"] | null
           updated_at: string
         }
         Insert: {
@@ -549,6 +551,8 @@ export type Database = {
           plan_tier?: Database["public"]["Enums"]["plan_tier"]
           slug?: string | null
           status?: string
+          trial_ends_at?: string | null
+          trial_plan?: Database["public"]["Enums"]["plan_tier"] | null
           updated_at?: string
         }
         Update: {
@@ -561,6 +565,8 @@ export type Database = {
           plan_tier?: Database["public"]["Enums"]["plan_tier"]
           slug?: string | null
           status?: string
+          trial_ends_at?: string | null
+          trial_plan?: Database["public"]["Enums"]["plan_tier"] | null
           updated_at?: string
         }
         Relationships: []
@@ -2057,7 +2063,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           key: string
-          minimum_plan?: Database["public"]["Enums"]["plan_tier"]
+          minimum_plan: Database["public"]["Enums"]["plan_tier"]
           name: string
           required_scopes?: string[]
           stage?: string
@@ -3078,7 +3084,7 @@ export type Database = {
           environment?: string
           id?: string
           is_founding_pro?: boolean
-          plan_tier?: Database["public"]["Enums"]["plan_tier"]
+          plan_tier: Database["public"]["Enums"]["plan_tier"]
           price_id?: string | null
           renewal_date?: string | null
           status?: string
@@ -4149,7 +4155,7 @@ export type Database = {
         | "scale_reference"
         | "video_motion"
         | "custom"
-      plan_tier: "free" | "starter" | "pro" | "team" | "business"
+      plan_tier: "intake" | "intake_team"
       request_credit_pack_status:
         | "pending"
         | "active"
@@ -4434,7 +4440,7 @@ export const Constants = {
         "video_motion",
         "custom",
       ],
-      plan_tier: ["free", "starter", "pro", "team", "business"],
+      plan_tier: ["intake", "intake_team"],
       request_credit_pack_status: [
         "pending",
         "active",

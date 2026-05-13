@@ -28,7 +28,7 @@ export type NotificationEvent =
 
 export type NotificationChannel = "in_app" | "toast" | "email" | "sms" | "push";
 
-export type NotificationAudience = "business" | "recipient";
+export type NotificationAudience = "intake_team" | "recipient";
 
 export interface NotificationPayload {
   event: NotificationEvent;

@@ -60,7 +60,7 @@ export function useNotifications() {
     ...dbItems.map((n: any) => ({
       id: n.id,
       event: n.type as any,
-      audience: "business" as const,
+      audience: "intake_team" as const,
       title: n.title,
       body: n.body ?? undefined,
       createdAt: n.created_at,

@@ -5,11 +5,8 @@ import { cn } from "@/lib/utils";
 import type { PhotoGuide } from "@/types/photobrief";
 
 const planMeta: Record<NonNullable<PhotoGuide["recommendedPlan"]>, { label: string; tone: "muted" | "info" | "success" }> = {
-  free: { label: "Free", tone: "muted" },
-  starter: { label: "Starter", tone: "muted" },
-  pro: { label: "Pro", tone: "info" },
-  team: { label: "Team", tone: "info" },
-  business: { label: "Business", tone: "success" },
+  intake: { label: "Smart Intake", tone: "info" },
+  intake_team: { label: "Smart Intake Team", tone: "success" },
 };
 
 interface Props {

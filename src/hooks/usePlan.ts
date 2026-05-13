@@ -1,5 +1,5 @@
 // Workspace-aware plan gating hook. Reads the live plan from the user's
-// current workspace + subscription. Falls back to "free" while loading
+// current workspace + subscription. Falls back to "intake" while loading
 // or when unauthenticated.
 import { useMemo } from "react";
 import { useCurrentWorkspace } from "@/hooks/useCurrentWorkspace";
@@ -22,7 +22,7 @@ export interface UsePlan {
 
 export function usePlan(): UsePlan {
   const { workspace, loading } = useCurrentWorkspace();
-  const plan: Plan = workspace?.plan ?? "free";
+  const plan: Plan = workspace?.plan ?? "intake";
   return useMemo(
     () => ({
       plan,

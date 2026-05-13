@@ -216,13 +216,13 @@ export default function RequestsInboxPage() {
               disabled={bulkBusy}
             >
               <Archive className="h-3.5 w-3.5" /> Archive
-              {!canBulk ? <PlanTag plan="pro" className="ml-1" /> : null}
+              {!canBulk ? <PlanTag plan="intake_team" className="ml-1" /> : null}
             </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="h-9 gap-1 sm:h-7" disabled={bulkBusy}>
                   <UserPlus className="h-3.5 w-3.5" /> Assign
-                  {!canAssign ? <PlanTag plan="pro" className="ml-1" /> : null}
+                  {!canAssign ? <PlanTag plan="intake_team" className="ml-1" /> : null}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start">
@@ -360,7 +360,7 @@ export default function RequestsInboxPage() {
                           }}
                         >
                           <Bell className="mr-2 h-3.5 w-3.5" /> Send reminder
-                          {!canRemind ? <PlanTag plan="pro" alignRight /> : null}
+                          {!canRemind ? <PlanTag plan="intake_team" alignRight /> : null}
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() => {
@@ -510,7 +510,7 @@ export default function RequestsInboxPage() {
                               >
                                 <Bell className="mr-2 h-3.5 w-3.5" /> Send reminder
                                 {!canRemind ? (
-                                  <PlanTag plan="pro" alignRight />
+                                  <PlanTag plan="intake_team" alignRight />
                                 ) : null}
                               </DropdownMenuItem>
                               <DropdownMenuItem

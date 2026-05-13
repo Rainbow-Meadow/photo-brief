@@ -80,7 +80,7 @@ export default function MessageTemplatesPage() {
     } catch (e: any) {
       const msg = e?.message ?? "";
       if (msg.includes("PLAN_FEATURE_LOCKED")) {
-        toast.error(`Saved templates require the ${getPlanLimit("pro").name} plan`);
+        toast.error(`Saved templates require the ${getPlanLimit("intake_team").name} plan`);
       } else {
         toast.error(msg || "Could not save template");
       }
