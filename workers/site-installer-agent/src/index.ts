@@ -272,14 +272,108 @@ export class SiteInstallerAgent extends Agent<Env, AgentState> {
   }
 
   private async handleGiveUp(_request: Request) {
+    await this.cancelMonitoring();
     this.setState({
       ...this.state,
       status: "gave_up",
       credentials: null,
-      steps: [...this.state.steps, step("info", "Session closed. Credentials wiped.")],
+      monitoring: { ...this.state.monitoring, enabled: false, scheduleId: null },
+      steps: [...this.state.steps, step("info", "Session closed. Credentials wiped. Monitoring stopped.")],
       updatedAt: new Date().toISOString(),
     });
     return json(this.publicState(), 200, _request);
+  }
+
+  // ---- Phase 4: monitoring ------------------------------------------------
+
+  private async handleMonitorNow(request: Request) {
+    if (!this.state.siteUrl || !this.state.intakeToken) {
+      return json({ error: "siteUrl and intakeToken must be set before monitoring." }, 400, request);
+    }
+    const result = await this.runMonitorCheck("manual");
+    return json({ result, state: this.publicState() }, 200, request);
+  }
+
+  private async handleMonitorEnable(request: Request) {
+    const body = await readJson(request);
+    const cron = clean(body.cron) || this.state.monitoring.cron || DEFAULT_MONITOR_CRON;
+    await this.enableMonitoring(cron);
+    return json(this.publicState(), 200, request);
+  }
+
+  private async handleMonitorDisable(request: Request) {
+    await this.cancelMonitoring();
+    this.setState({
+      ...this.state,
+      monitoring: { ...this.state.monitoring, enabled: false, scheduleId: null },
+      steps: [...this.state.steps, step("info", "Monitoring disabled.")],
+      updatedAt: new Date().toISOString(),
+    });
+    return json(this.publicState(), 200, request);
+  }
+
+  private async enableMonitoring(cron: string) {
+    await this.cancelMonitoring();
+    let scheduleId: string | null = null;
+    try {
+      // Agents SDK: schedule a recurring task by cron, dispatched to `monitorTick`.
+      const handle = await (this as any).schedule(cron, "monitorTick", {});
+      scheduleId = handle?.id ?? handle ?? null;
+    } catch (e) {
+      this.appendStep(step("verify_fail", "Could not schedule monitoring.", asString(e)));
+    }
+    this.setState({
+      ...this.state,
+      monitoring: {
+        ...this.state.monitoring,
+        enabled: true,
+        cron,
+        scheduleId,
+      },
+      steps: [...this.state.steps, step("info", `Monitoring enabled (${cron}).`)],
+      updatedAt: new Date().toISOString(),
+    });
+  }
+
+  private async cancelMonitoring() {
+    const id = this.state.monitoring.scheduleId;
+    if (!id) return;
+    try { await (this as any).cancelSchedule?.(id); } catch { /* ignore */ }
+  }
+
+  /**
+   * Scheduled callback invoked by the Agents runtime on the configured cron.
+   * Must be public so the SDK can dispatch to it by name.
+   */
+  async monitorTick() {
+    if (!this.state.monitoring.enabled) return;
+    if (!this.state.siteUrl || !this.state.intakeToken) return;
+    await this.runMonitorCheck("scheduled");
+  }
+
+  private async runMonitorCheck(trigger: "manual" | "scheduled"): Promise<MonitorCheck> {
+    const result = await this.verifyInstall();
+    const check: MonitorCheck = {
+      at: new Date().toISOString(),
+      ok: result.ok,
+      reason: result.reason,
+    };
+    const history = [check, ...this.state.monitoring.history].slice(0, 20);
+    this.setState({
+      ...this.state,
+      monitoring: {
+        ...this.state.monitoring,
+        lastCheckAt: check.at,
+        lastOk: check.ok,
+        history,
+      },
+      steps: [
+        ...this.state.steps,
+        step(check.ok ? "verify_pass" : "verify_fail", `Monitor (${trigger}): ${check.ok ? "intake link still live." : "intake link missing."}`, check.reason),
+      ],
+      updatedAt: new Date().toISOString(),
+    });
+    return check;
   }
 
   // ---- core ---------------------------------------------------------------
