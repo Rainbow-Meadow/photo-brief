@@ -149,8 +149,11 @@ export class SiteInstallerAgent extends Agent<Env, AgentState> {
       if (request.method === "POST" && url.pathname === "/mark-installed") return this.handleMarkInstalled(request);
       if (request.method === "POST" && url.pathname === "/verify") return this.handleVerify(request);
       if (request.method === "POST" && url.pathname === "/give-up") return this.handleGiveUp(request);
+      if (request.method === "POST" && url.pathname === "/monitor") return this.handleMonitorNow(request);
+      if (request.method === "POST" && url.pathname === "/monitor/enable") return this.handleMonitorEnable(request);
+      if (request.method === "POST" && url.pathname === "/monitor/disable") return this.handleMonitorDisable(request);
 
-      return json({ error: "Use /start, /state, /detect, /credentials, /install, /mark-installed, /verify, /give-up." }, 404, request);
+      return json({ error: "Use /start, /state, /detect, /credentials, /install, /mark-installed, /verify, /monitor, /monitor/enable, /monitor/disable, /give-up." }, 404, request);
     } catch (error) {
       console.error("site installer agent error", error);
       return json({ error: error instanceof Error ? error.message : "Unknown error" }, 500, request);
