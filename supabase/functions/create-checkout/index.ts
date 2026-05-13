@@ -9,18 +9,22 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 import { type StripeEnv, createStripeClient } from "../_shared/stripe.ts";
 
 const PLAN_PRICE_IDS = new Set([
-  "starter_monthly",
-  "starter_annual",
-  "pro_monthly",
-  "pro_annual",
-  "team_monthly",
-  "team_annual",
-  "business_monthly",
-  "business_annual",
+  "intake_monthly",
+  "intake_annual",
+  "intake_team_monthly",
+  "intake_team_annual",
 ]);
 
 function priceIdFor(plan: string, interval: string): string | null {
-  const id = `${plan}_${interval === "annual" ? "annual" : "monthly"}`;
+  // Accept both new ids and legacy aliases so the UI can pass either.
+  const aliases: Record<string, string> = {
+    starter: "intake",
+    pro: "intake",
+    team: "intake_team",
+    business: "intake_team",
+  };
+  const normalizedPlan = aliases[plan] ?? plan;
+  const id = `${normalizedPlan}_${interval === "annual" ? "annual" : "monthly"}`;
   return PLAN_PRICE_IDS.has(id) ? id : null;
 }
 

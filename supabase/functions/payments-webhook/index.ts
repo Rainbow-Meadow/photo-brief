@@ -18,12 +18,12 @@ function getSupabase() {
 type PlanRow = { plan: string; billing_interval: string };
 
 async function planFromPriceId(priceId: string | undefined): Promise<PlanRow> {
-  if (!priceId) return { plan: "free", billing_interval: "monthly" };
+  if (!priceId) return { plan: "intake", billing_interval: "monthly" };
   const { data } = await getSupabase().rpc("plan_from_price_id", { _price_id: priceId });
   if (Array.isArray(data) && data.length > 0) {
     return data[0] as PlanRow;
   }
-  return { plan: "free", billing_interval: "monthly" };
+  return { plan: "intake", billing_interval: "monthly" };
 }
 
 function periodFields(subscription: any) {
@@ -140,7 +140,7 @@ async function markCanceled(subscription: any, env: StripeEnv) {
     .update({
       status: "canceled",
       cancel_at_period_end: false,
-      plan_tier: "free" as never,
+      plan_tier: "intake" as never,
       updated_at: new Date().toISOString(),
     })
     .eq("stripe_subscription_id", subscription.id)
@@ -150,7 +150,7 @@ async function markCanceled(subscription: any, env: StripeEnv) {
   if (workspaceId) {
     await getSupabase()
       .from("business_workspaces")
-      .update({ plan_tier: "free" as never })
+      .update({ plan_tier: "intake" as never })
       .eq("id", workspaceId);
   }
 }
