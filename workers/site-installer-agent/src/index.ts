@@ -54,6 +54,24 @@ type InstallStatus =
   | "installed_verified"
   | "gave_up";
 
+interface MonitorCheck {
+  at: string;
+  ok: boolean;
+  reason: string;
+}
+
+interface MonitoringState {
+  enabled: boolean;
+  /** Cron expression used for the recurring re-verify. */
+  cron: string;
+  /** ID returned by `this.schedule()`, used for cancellation. */
+  scheduleId: string | null;
+  lastCheckAt: string | null;
+  lastOk: boolean | null;
+  /** Most recent N checks (newest first). Capped to 20. */
+  history: MonitorCheck[];
+}
+
 interface AgentState {
   sessionId: string;
   workspaceId: string | null;
@@ -70,8 +88,12 @@ interface AgentState {
   credentials: InstallerCredentials | null;
   /** Confirmation URL the user can open to inspect the change in their CMS. */
   confirmUrl: string | null;
+  monitoring: MonitoringState;
   updatedAt: string;
 }
+
+/** Phase 4: re-verify each install once a day at a session-stable minute. */
+const DEFAULT_MONITOR_CRON = "17 9 * * *";
 
 const PLATFORM_FINGERPRINTS: Array<{ platform: Platform; needles: string[] }> = [
   { platform: "webflow", needles: ["webflow.com", "data-wf-page", "wf-domain"] },
