@@ -39,7 +39,7 @@ export default function DemoPage() {
     <>
       <PageMeta
         title="Try PhotoBrief on your own business — 60-second demo"
-        description="Watch the Reverse-Form Method™ build a brief in real time, then generate one tailored to your own business. No signup."
+        description="Paste your URL. Watch PhotoBrief build the routes, ask the right questions, and hand you a brief — live, in 60 seconds. No signup."
         canonicalPath="/demo"
       />
 
@@ -50,14 +50,13 @@ export default function DemoPage() {
             <p className="ls-eyebrow">[ Live demo ]</p>
             <RiseIn>
               <h1 className="ls-h2 mt-6">
-                See exactly what your customers
-                <br />would experience<span className="ls-accent-dot">.</span>
+                Watch PhotoBrief build your intake
+                <br />from your own website<span className="ls-accent-dot">.</span>
               </h1>
             </RiseIn>
             <RiseIn delay={0.1}>
               <p className="ls-subtitle mx-auto mt-8 max-w-xl">
-                Watch the Reverse-Form Method™ assemble a brief in real time. Then build one
-                tailored to your own business and we'll email you the finished result.
+                Paste your URL. We'll read the site, build the routes, walk one customer through, and email you the finished brief. Sixty seconds. No signup.
               </p>
             </RiseIn>
             <CTAGroup align="center">
@@ -77,8 +76,8 @@ export default function DemoPage() {
         <Container>
           <SectionIntro
             eyebrow="[ Watch ]"
-            title={`A vague "I need a quote" → quotable job in 38 seconds.`}
-            subtitle="Hit the steps. The packet builds in real time."
+            title={`A website CTA → matched route → brief on your desk in 38 seconds.`}
+            subtitle="Hit the steps. Watch PhotoBrief decide what to ask, when to ask for a photo, and what to hand back."
           />
           <div className="border border-border bg-background p-2 sm:p-4">
             <Suspense fallback={<div className="flex h-96 items-center justify-center text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin" /></div>}>
@@ -93,8 +92,8 @@ export default function DemoPage() {
         <Container width="narrow">
           <SectionIntro
             eyebrow="[ Try it ]"
-            title="Now build the brief for your business."
-            subtitle="A plumber types &ldquo;leaking faucet.&rdquo; A roofer types &ldquo;missing shingles.&rdquo; PhotoBrief builds the brief in 60 seconds and emails it to you."
+            title="Now build the route for your business."
+            subtitle="A plumber types &ldquo;leaking faucet.&rdquo; A roofer types &ldquo;missing shingles.&rdquo; PhotoBrief builds the route, decides on photos, and emails you the finished brief in 60 seconds."
           />
           <DemoDiscoveryChat />
           <p className="mt-6 text-center text-xs text-muted-foreground">
@@ -108,8 +107,8 @@ export default function DemoPage() {
         <Container>
           <SectionIntro
             eyebrow="[ Built per trade ]"
-            title="Coverage templates per trade."
-            subtitle="Mute customer? Doesn't matter. The form does the talking."
+            title="Different trade. Different routes. Same brief in your inbox."
+            subtitle="Quiet customer? Doesn't matter. The route does the talking."
           />
           <UseCasesGrid />
         </Container>
