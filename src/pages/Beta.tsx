@@ -16,7 +16,7 @@ import { BETA_DURATION_DAYS, BETA_TOTAL_PARTNERS, MAX_DISCOUNT_LABEL } from "@/c
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { faqItems } from "@/features/help/content/faq";
 
-import betaConciergeCall from "@/assets/beta/beta-concierge-call.png";
+import betaAsyncSetup from "@/assets/beta/beta-async-setup.png";
 import betaFeedbackThread from "@/assets/beta/beta-feedback-thread.png";
 
 const BetaOnboardingAgentExperience = lazy(() =>
@@ -97,13 +97,13 @@ export default function BetaPage() {
             className="mt-10"
             items={[
               {
-                src: betaConciergeCall,
-                alt: "Partner on a concierge setup call with the PhotoBrief team while onboarding steps appear on the laptop and phone.",
-                caption: "Founding partners get hands-on setup with the workflow open in front of them, not a generic tutorial video.",
+                src: betaAsyncSetup,
+                alt: "Founding partner at a laptop sketching intake routes in a notebook while typing a setup note — no video call, async by design.",
+                caption: "Concierge setup happens over chat and email — we read your site, draft your routes, you review on your time.",
               },
               {
                 src: betaFeedbackThread,
-                alt: "Phone showing an in-app feedback thread between a beta partner and the PhotoBrief team about an urgent flag.",
+                alt: "Editorial close-up of a laptop screen showing a feedback thread with two grey partner messages and one amber PhotoBrief reply.",
                 caption: "Feedback stays async and close to the product — partners ask, the team ships, the thread documents both.",
               },
             ]}
