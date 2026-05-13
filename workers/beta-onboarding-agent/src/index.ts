@@ -144,6 +144,14 @@ export class BetaOnboardingAgent extends Agent<Env, AgentState> {
         const recommendation = this.state.recommendation ?? recommend(this.state.answers);
         await submitApplication(this.env, this.state.answers, recommendation, this.state.source, this.state.context);
         this.setState({ ...this.state, recommendation, saved: true, updatedAt: new Date().toISOString() });
+        await emitAgentEvent(this.env, makeEvent({
+          type: "beta_activated",
+          from: "growth_steward",
+          workspaceId: this.state.sessionId, // beta has no workspace yet — use session as scope
+          userId: this.state.answers.email ?? "unknown",
+          planTier: recommendation.workflowType,
+          correlationId: this.state.sessionId,
+        }));
         return json({ ok: true, state: this.publicState() }, 200, request);
       }
 
