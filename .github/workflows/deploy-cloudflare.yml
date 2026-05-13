@@ -19,6 +19,10 @@ jobs:
     env:
       VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
       VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+      # Routes <img src> through /cdn-cgi/image/ in the production bundle and
+      # the Puppeteer prerender, so Lighthouse downloads CF-resized variants
+      # instead of the raw multi-MB PNGs.
+      VITE_CF_IMAGES: "true"
     steps:
       - uses: actions/checkout@v4
 

@@ -69,6 +69,12 @@ function buildOptions(opts: CfImageOptions): string {
  * photobrief.ai. In that case we serve the original URL untouched.
  */
 function cfResizingAvailable(): boolean {
+  // Build-time opt-in: production builds (and the Puppeteer prerender that
+  // reads them) see this as "true", so the emitted HTML already contains
+  // /cdn-cgi/image/... URLs. Without this, prerender ran against
+  // http://127.0.0.1:4173 and shipped raw /assets/*.png URLs to Lighthouse.
+  if (import.meta.env.VITE_CF_IMAGES === "true") return true;
+  // Runtime safety net for any deploy that forgot the env var.
   if (typeof window === "undefined") return false;
   const host = window.location.hostname;
   return host === DEFAULT_HOST || host === `www.${DEFAULT_HOST}`;
