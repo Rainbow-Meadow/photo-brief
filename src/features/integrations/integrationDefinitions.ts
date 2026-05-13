@@ -76,7 +76,7 @@ export const integrationDefinitions: IntegrationDefinition[] = [
     category: "website",
     stage: "live",
     icon: Globe2,
-    plan: "intake_team",
+    plan: "intake",
     tagline: "A PhotoBrief-powered intake page for your site CTA.",
     description:
       "Send website visitors into a guided request flow without rebuilding your site or existing forms.",
@@ -98,7 +98,7 @@ export const integrationDefinitions: IntegrationDefinition[] = [
     category: "website",
     stage: "live",
     icon: Code2,
-    plan: "intake_team",
+    plan: "intake",
     tagline: "A branded badge businesses can paste into their website.",
     description:
       "A lightweight script/button pattern that tells customers why PhotoBrief helps and keeps the intake experience consistent.",
