@@ -292,11 +292,7 @@ export default function BillingSettingsPage() {
               item_id: plan,
               item_name: selectedPlan?.name ?? plan,
               billing_interval: interval,
-              value: selectedPlan
-                ? interval === "annual"
-                  ? selectedPlan.priceAnnualMonthly * 12
-                  : selectedPlan.priceMonthly
-                : undefined,
+              value: selectedPlan ? selectedPlan.priceMonthly : undefined,
             });
             setCheckout({ plan, interval });
           }}
