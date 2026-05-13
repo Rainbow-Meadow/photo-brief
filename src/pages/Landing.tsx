@@ -109,7 +109,7 @@ function Hero() {
           </div>
 
           <RiseIn delay={0.4} className="relative">
-            <div className="mx-auto w-full max-w-[520px] lg:ml-auto lg:mr-0 lg:max-h-[520px]">
+            <div className="mx-auto w-full max-w-[520px] lg:ml-auto lg:mr-0 lg:max-w-[420px]">
               <BeforeAfterSlider
                 before={heroBeforeImg}
                 after={heroAfterImg}
