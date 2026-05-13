@@ -1,6 +1,6 @@
 /**
  * siteInstallerAgentService — client for the Cloudflare Site Installer Agent
- * (workers/site-installer-agent). Phase 1: detect platform + verify install.
+ * (workers/site-installer-agent). Phases 1–3.
  */
 
 const AGENT_BASE_URL = "https://installer-agent.photobrief.ai";
@@ -10,6 +10,10 @@ export type InstallerPlatform =
   | "wordpress" | "carrd" | "godaddy" | "framer" | "static_html" | "unknown";
 
 export type InstallerMode = "auto_api" | "auto_browser" | "manual_paste";
+
+export type InstallerStatus =
+  | "draft" | "detecting" | "awaiting_credentials" | "installing"
+  | "installed_unverified" | "installed_verified" | "gave_up";
 
 export interface InstallerStep {
   kind: "info" | "ask" | "action_required" | "verify_pass" | "verify_fail" | "complete";
@@ -22,13 +26,25 @@ export interface InstallerState {
   sessionId: string;
   workspaceId: string | null;
   intakeToken: string | null;
+  ctaLabel: string;
   siteUrl: string | null;
   platform: InstallerPlatform;
   mode: InstallerMode;
+  status: InstallerStatus;
   steps: InstallerStep[];
   installed: boolean;
   verified: boolean;
+  hasCredentials: boolean;
+  confirmUrl: string | null;
   updatedAt: string;
+}
+
+export interface InstallerCredentialsInput {
+  token?: string;
+  siteId?: string;
+  shopDomain?: string;
+  wpSite?: string;
+  apiKey?: string;
 }
 
 async function call<T>(path: string, init?: RequestInit): Promise<T> {
@@ -41,20 +57,35 @@ async function call<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 export const siteInstallerAgent = {
-  start: (input: { workspaceId: string; intakeToken: string; siteUrl?: string; sessionId?: string }) =>
+  start: (input: { workspaceId: string; intakeToken: string; siteUrl?: string; ctaLabel?: string; sessionId?: string }) =>
     call<InstallerState>("/sessions/start", { method: "POST", body: JSON.stringify(input) }),
   state: (sessionId: string) =>
     call<InstallerState>(`/sessions/${sessionId}/state`),
   detect: (sessionId: string, siteUrl: string) =>
     call<{ platform: InstallerPlatform; state: InstallerState }>(
-      `/sessions/${sessionId}/detect`,
-      { method: "POST", body: JSON.stringify({ siteUrl }) },
-    ),
+      `/sessions/${sessionId}/detect`, { method: "POST", body: JSON.stringify({ siteUrl }) }),
+  credentials: (sessionId: string, creds: InstallerCredentialsInput) =>
+    call<InstallerState>(`/sessions/${sessionId}/credentials`, { method: "POST", body: JSON.stringify(creds) }),
+  install: (sessionId: string) =>
+    call<{ outcome: { ok: boolean; reason: string }; state: InstallerState }>(
+      `/sessions/${sessionId}/install`, { method: "POST", body: "{}" }),
   markInstalled: (sessionId: string) =>
     call<InstallerState>(`/sessions/${sessionId}/mark-installed`, { method: "POST", body: "{}" }),
   verify: (sessionId: string) =>
     call<{ result: { ok: boolean; reason: string }; state: InstallerState }>(
-      `/sessions/${sessionId}/verify`,
-      { method: "POST", body: "{}" },
-    ),
+      `/sessions/${sessionId}/verify`, { method: "POST", body: "{}" }),
+  giveUp: (sessionId: string) =>
+    call<InstallerState>(`/sessions/${sessionId}/give-up`, { method: "POST", body: "{}" }),
 };
+
+export function credentialFieldsFor(platform: InstallerPlatform): Array<keyof InstallerCredentialsInput> {
+  switch (platform) {
+    case "webflow": return ["token", "siteId"];
+    case "shopify": return ["shopDomain", "token"];
+    case "wordpress": return ["wpSite", "token"];
+    case "wix":
+    case "wix_studio": return ["apiKey", "siteId"];
+    case "carrd": return ["token"];
+    default: return [];
+  }
+}
