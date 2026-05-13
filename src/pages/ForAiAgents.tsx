@@ -145,7 +145,7 @@ export default function ForAiAgentsPage() {
         <div className="mx-auto max-w-2xl text-center">
           <Eyebrow code="03"><Terminal className="h-3.5 w-3.5" /> REST API</Eyebrow>
           <h2 id="api-heading" className="mt-5 text-[clamp(2rem,4vw,3rem)] font-semibold tracking-tight text-foreground">
-            Create a photo request
+            Create an intake request
           </h2>
           <p className="mt-4 text-base leading-relaxed text-muted-foreground">
             <code className={codeChipCls}>POST {API_BASE_URL}/api-create-request</code>{" "}
