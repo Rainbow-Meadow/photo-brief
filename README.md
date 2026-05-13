@@ -114,6 +114,21 @@ Stripe checkout and subscription sync live in Supabase Edge Functions. Active su
 
 Reviewers can approve, reject, request retakes, assign, add notes, export PDFs, send reminders, and archive. Rejected shots update `captured_media`, insert `submission_reviews`, move the submission to `needs_more`, and are detected by the recipient context loader when the original link is reopened.
 
+## Development workflow
+
+PhotoBrief supports GitHub Codespaces through `.devcontainer/devcontainer.json`. A new Codespace installs Node dependencies, creates a local `.env` from `.env.example` when one does not already exist, and installs the Supabase and Wrangler CLIs.
+
+Common commands:
+
+```bash
+npm run dev:codespaces   # start the Vite app on the forwarded Codespaces port
+npm run check            # lint, typecheck, tests, hosting validation, and Supabase function checks
+npm run check:ci-local   # heavier CI-style check, including prerender / Cloudflare Pages build
+supabase start           # optional local Supabase stack
+```
+
+Use Codespaces secrets or local `.env` values for development credentials. Real environment files are ignored and must not be committed.
+
 ## Known follow-ups
 
 - Add a proper session restore path for the public recipient flow. The app currently saves a small progress snapshot to `sessionStorage`, but full rehydration is not complete.
