@@ -18,8 +18,11 @@ import {
   Sparkles,
   Trash2,
   Wand2,
+  Wand,
+  ShieldCheck,
   type LucideIcon,
 } from "lucide-react";
+import { siteInstallerAgent, type InstallerState } from "@/services/siteInstallerAgentService";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
