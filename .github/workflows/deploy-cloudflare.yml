@@ -115,5 +115,17 @@ jobs:
           workingDirectory: workers/beta-onboarding-agent
           command: deploy
 
+      - name: Install Site Installer Agent dependencies
+        working-directory: workers/site-installer-agent
+        run: npm install --no-package-lock
+
+      - name: Deploy Site Installer Agent Worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: workers/site-installer-agent
+          command: deploy
+
       - name: Smoke test public production endpoints
         run: node scripts/smoke-public-endpoints.mjs
