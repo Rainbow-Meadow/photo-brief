@@ -111,6 +111,7 @@ export function cfImageSrcSet(
   options: Omit<CfImageOptions, "width"> = {},
 ): string {
   if (!url) return "";
+  if (cfImageBypass(url)) return "";
   // Without Cloudflare Image Resizing each width would resolve to the same
   // raw URL, so a srcset is pointless — return empty and let `src` win.
   if (!cfResizingAvailable()) return "";
