@@ -187,9 +187,10 @@ function ComparisonSection() {
           {/* Before — dimmed half */}
           <div className="border-b border-border bg-muted/30 opacity-70 grayscale-[0.4] lg:border-b-0 lg:border-r">
             <div className="overflow-hidden bg-muted">
-              <img
-                src={cfImage(beforeIntakeFormIllo, { width: 720, format: "auto" })}
-                srcSet={cfImageSrcSet(beforeIntakeFormIllo, [480, 720, 1080])}
+              <CfImg
+                src={beforeIntakeFormIllo}
+                cfWidth={720}
+                widths={[480, 720, 1080]}
                 sizes="(min-width: 1024px) 50vw, 100vw"
                 alt="Cedar &amp; Oak Tree Care website with a generic three-field Contact us form — the kind of intake PhotoBrief replaces."
                 className="h-auto w-full object-contain"
