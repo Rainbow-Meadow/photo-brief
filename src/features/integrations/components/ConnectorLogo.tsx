@@ -3,6 +3,7 @@ import type { LucideIcon } from "lucide-react";
 
 import { BrandMark } from "@/components/layout/BrandMark";
 import { cn } from "@/lib/utils";
+import { CfImg } from "@/components/shared/CfImg";
 
 const connectorLogoMap: Record<string, { slug?: string; label: string; bg?: string; invertOnDark?: boolean }> = {
   gmail: { slug: "gmail", label: "Gmail", bg: "bg-white" },
@@ -49,10 +50,11 @@ export function ConnectorLogo({ integrationKey, name, fallbackIcon: FallbackIcon
       )}
     >
       {showBrandLogo ? (
-        <img
+        <CfImg
           src={`https://cdn.simpleicons.org/${logo.slug}`}
           alt={`${logo.label} logo`}
           className="h-8 w-8 object-contain sm:h-9 sm:w-9"
+          cfWidth={72}
           loading="lazy"
           decoding="async"
           referrerPolicy="no-referrer"

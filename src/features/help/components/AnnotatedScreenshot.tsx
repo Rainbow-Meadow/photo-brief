@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ImageOff } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { CfImg } from "@/components/shared/CfImg";
 
 export type Pin = {
   /** Percent x position, 0-100 */
@@ -41,10 +42,11 @@ export function AnnotatedScreenshot({
         style={{ aspectRatio: ratio.replace("/", " / ") }}
       >
         {showImage ? (
-          <img
+          <CfImg
             src={src}
             alt={alt}
             loading="lazy"
+            cfWidth={1080}
             onError={() => setErrored(true)}
             className="h-full w-full object-cover"
           />

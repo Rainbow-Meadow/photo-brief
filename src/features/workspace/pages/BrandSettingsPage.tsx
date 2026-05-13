@@ -1,3 +1,4 @@
+import { CfImg } from "@/components/shared/CfImg";
 import { useEffect, useRef, useState } from "react";
 import { Loader2, Upload, X } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
@@ -218,10 +219,11 @@ export default function BrandSettingsPage() {
                 <div className="flex items-center gap-4">
                   <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-lg border bg-muted">
                     {form.logo_url ? (
-                      <img
+                      <CfImg
                         src={form.logo_url}
                         alt="Brand logo preview"
                         className="h-full w-full object-contain"
+                        cfWidth={160}
                       />
                     ) : (
                       <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
@@ -390,10 +392,11 @@ export default function BrandSettingsPage() {
               style={{ backgroundColor: form.primary_color, color: "#fff" }}
             >
               {form.logo_url ? (
-                <img
+                <CfImg
                   src={form.logo_url}
                   alt=""
                   className="h-9 w-9 rounded-md bg-white/90 object-contain p-1"
+                  cfWidth={72}
                 />
               ) : (
                 <div className="flex h-9 w-9 items-center justify-center rounded-md bg-white/20 text-xs font-semibold">

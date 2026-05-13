@@ -26,6 +26,7 @@ import {
   TreePine,
   LayoutList,
 } from "lucide-react";
+import { CfImg } from "@/components/shared/CfImg";
 import leaningOakWide from "@/assets/tree-care/leaning-oak-wide.jpg";
 import oakTrunkCloseup from "@/assets/tree-care/oak-trunk-closeup.jpg";
 import houseElevation from "@/assets/tree-care/house-elevation.jpg";
@@ -412,10 +413,11 @@ function BriefCompleteScreen() {
             key={photo.id}
             className="relative overflow-hidden border border-[#F4F1EA]/15"
           >
-            <img
+            <CfImg
               src={photo.src}
               alt={photo.label}
               className="h-[60px] w-full object-cover"
+              cfWidth={300}
               width={300} height={300} loading="lazy" sizes="150px"
             />
             <div className="flex items-center justify-between bg-black/55 px-2 py-1">
@@ -756,10 +758,11 @@ function CustomerCaptureScreen({
       <div className="relative overflow-hidden border border-black/15">
         {isBlurryShot ? (
           <div className="relative">
-            <img
+            <CfImg
               src={photo.src}
               alt={photo.label}
               className="h-[200px] w-full object-cover blur-[3px]"
+              cfWidth={600}
               width={300} height={300} loading="lazy" sizes="300px"
             />
             <div className="absolute inset-0 flex flex-col items-center justify-center bg-amber-900/30">
@@ -770,10 +773,11 @@ function CustomerCaptureScreen({
           </div>
         ) : captured.has(currentStep) ? (
           <div className="relative">
-             <img
+             <CfImg
                src={photo.src}
                alt={photo.label}
                className="h-[200px] w-full object-cover"
+               cfWidth={600}
                width={300} height={300} loading="lazy" sizes="300px"
              />
             <div className="absolute inset-0 flex items-center justify-center bg-black/20">
@@ -859,10 +863,11 @@ function CustomerCaptureScreen({
           >
             {i === BLURRY_INDEX && blurryPending && captured.has(i) ? (
               <>
-                <img
+                <CfImg
                   src={p.src}
                   alt={p.label}
                   className="h-full w-full object-cover blur-[2px]"
+                  cfWidth={96}
                   width={300} height={300} loading="lazy" sizes="48px"
                 />
                 <span className="absolute right-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-amber-500">
@@ -871,10 +876,11 @@ function CustomerCaptureScreen({
               </>
             ) : captured.has(i) ? (
               <>
-                <img
+                <CfImg
                   src={p.src}
                   alt={p.label}
                   className="h-full w-full object-cover"
+                  cfWidth={96}
                   width={300} height={300} loading="lazy" sizes="48px"
                 />
                 <span className="absolute right-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#0d9488]">
@@ -929,10 +935,11 @@ function CustomerReviewScreen({ onSubmit }: { onSubmit: () => void }) {
       <div className="grid grid-cols-2 gap-2">
         {photos.map((p) => (
           <div key={p.id} className="overflow-hidden rounded-xl border border-black/15">
-            <img
+            <CfImg
               src={p.src}
               alt={p.label}
               className="h-[72px] w-full object-cover"
+              cfWidth={300}
               width={300} height={300} loading="lazy" sizes="150px"
             />
             <div className="flex items-center justify-between px-2 py-1.5 border-t border-black/10">

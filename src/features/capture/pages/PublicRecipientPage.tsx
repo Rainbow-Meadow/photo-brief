@@ -1,3 +1,4 @@
+import { CfImg } from "@/components/shared/CfImg";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 
@@ -535,7 +536,7 @@ function StepContent({
       <StepCard>
         <StepHeader step={latestRetake.step} index={guideSteps.findIndex((s) => s.id === latestRetake.step.id) + 1} total={guideSteps.length} />
         <div className="mt-5 overflow-hidden border border-border bg-muted">
-          <img src={latestRetake.photo.previewUrl} alt="Submitted" className="max-h-[40svh] w-full object-cover" />
+          <CfImg src={latestRetake.photo.previewUrl} alt="Submitted" className="max-h-[40svh] w-full object-cover" cfWidth={720} />
         </div>
         <div className="mt-4">
           <AIFeedbackMessage photo={latestRetake.photo} verdict={latestRetake.photo.checks.some((c) => c.severity === "fail") ? "fail" : "warn"} />
@@ -570,7 +571,7 @@ function StepContent({
       <StepHeader step={step} index={index} total={guideSteps.length} />
       {photoForStep ? (
         <div className="mt-5 overflow-hidden border border-border bg-muted">
-          <img src={photoForStep.previewUrl} alt="Completed" className="max-h-[40svh] w-full object-cover" />
+          <CfImg src={photoForStep.previewUrl} alt="Completed" className="max-h-[40svh] w-full object-cover" cfWidth={720} />
         </div>
       ) : null}
       {latestFeedback && latestFeedback.photo.stepId === step.id ? (

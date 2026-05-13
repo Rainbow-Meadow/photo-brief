@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { photoPolicyShort, photoPolicySentence, type PhotoPolicy } from "@/features/intake/lib/photoPolicy";
 import { IntakeAttachmentUploader } from "@/features/intake/components/IntakeAttachmentUploader";
+import { CfImg } from "@/components/shared/CfImg";
 
 interface SmartIntakeRoute {
   id: string;
@@ -250,10 +251,11 @@ export default function PublicIntakePage() {
       <section className="border border-border bg-card p-4 sm:p-7">
         <div className="flex items-start gap-3 border-b border-border pb-4 sm:items-center sm:pb-5">
           {config?.logoUrl ? (
-            <img
+            <CfImg
               src={config.logoUrl}
               alt=""
               className="h-12 w-12 shrink-0 border border-border bg-background object-contain p-1"
+              cfWidth={96}
             />
           ) : (
             <span className="flex h-12 w-12 shrink-0 items-center justify-center border border-border text-[hsl(var(--accent-kinetic))]">

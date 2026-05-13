@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { cfImage, cfImageSrcSet } from "@/lib/cfImage";
+import { CfImg } from "@/components/shared/CfImg";
 
 interface BeforeAfterSliderProps {
   before: string;
@@ -95,9 +95,10 @@ export function BeforeAfterSlider({
         onPointerCancel={onPointerUp}
       >
         {/* After image (base layer = LCP candidate) */}
-        <img
-          src={cfImage(after, { width: 640, format: "auto" })}
-          srcSet={cfImageSrcSet(after, [480, 720, 960])}
+        <CfImg
+          src={after}
+          cfWidth={640}
+          widths={[480, 720, 960]}
           sizes="(min-width: 1024px) 420px, 100vw"
           alt={afterAlt}
           className="absolute inset-0 h-full w-full object-cover"
@@ -110,9 +111,10 @@ export function BeforeAfterSlider({
           draggable={false}
         />
         {/* Before image (clipped overlay) */}
-        <img
-          src={cfImage(before, { width: 640, format: "auto" })}
-          srcSet={cfImageSrcSet(before, [480, 720, 960])}
+        <CfImg
+          src={before}
+          cfWidth={640}
+          widths={[480, 720, 960]}
           sizes="(min-width: 1024px) 420px, 100vw"
           alt={beforeAlt}
           className="absolute inset-0 h-full w-full object-cover"

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { useIntakeBrief, useIntakeBriefAttachments, type IntakeAttachment } from "@/hooks/useIntakeBriefs";
 import { formatRelativeTime } from "@/utils/format";
 import { photoPolicySentence, photoPolicyShort, photoPolicyTone } from "@/features/intake/lib/photoPolicy";
+import { CfImg } from "@/components/shared/CfImg";
 
 function humanize(value: string) {
   return value.replace(/_/g, " ");
@@ -165,10 +166,11 @@ function AttachmentGallery({ attachments, loading, expected }: { attachments: In
           title={a.originalFilename ?? "Open photo"}
         >
           {a.mimeType.startsWith("image/") ? (
-            <img
+            <CfImg
               src={a.url}
               alt={a.originalFilename ?? "Intake photo"}
               loading="lazy"
+              cfWidth={480}
               className="h-full w-full object-cover transition group-hover:scale-[1.02]"
             />
           ) : (

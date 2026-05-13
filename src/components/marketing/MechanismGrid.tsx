@@ -1,3 +1,4 @@
+import { CfImg } from "@/components/shared/CfImg";
 import { RiseIn } from "@/components/motion/RiseIn";
 
 import researchMagnifierIllo from "@/assets/rmbc/cedar/01-research-website-analysis.png";
@@ -59,7 +60,7 @@ export function MechanismGrid() {
               <div
                 className={`${imageColSpan} order-2 ${flipped ? "lg:order-2" : "lg:order-1"} flex items-center justify-center`}
               >
-                <img
+                <CfImg
                   src={step.illo}
                   alt=""
                   className={
@@ -67,6 +68,7 @@ export function MechanismGrid() {
                       ? "mx-auto h-auto w-auto max-h-[560px] max-w-full object-contain"
                       : "h-auto w-full max-h-[520px] object-contain"
                   }
+                  cfWidth={1080}
                   loading="lazy"
                 />
               </div>

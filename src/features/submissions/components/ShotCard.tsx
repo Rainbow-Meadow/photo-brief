@@ -7,6 +7,7 @@ import { StatusBadge } from "@/components/shared/StatusBadge";
 import { formatRelativeTime } from "@/utils/format";
 import type { ShotFeedbackSeverity, ShotReviewStatus, SubmissionShot } from "@/types/photobrief";
 import { classifyAction, type QuickActionKind } from "@/features/submissions/lib/quickAction";
+import { CfImg } from "@/components/shared/CfImg";
 
 const severityMeta: Record<
   ShotFeedbackSeverity,
@@ -92,10 +93,11 @@ export function ShotCard({
             <p className="text-xs">Not captured</p>
           </div>
         ) : (
-          <img
+          <CfImg
             src={shot.imageUrl}
             alt={shot.title}
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+            cfWidth={720}
             loading="lazy"
           />
         )}

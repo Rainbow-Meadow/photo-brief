@@ -3,6 +3,7 @@ import { microcopy } from "@/config/microcopy";
 import type { CapturedPhoto, AnsweredQuestion } from "@/types/chat";
 import type { PhotoGuide } from "@/types/photobrief";
 import type { RecipientErrorDescriptor } from "@/lib/errorCodes";
+import { CfImg } from "@/components/shared/CfImg";
 
 interface ReviewSummaryCardProps {
   guide: PhotoGuide;
@@ -48,10 +49,11 @@ export function ReviewSummaryCard({ guide, photos, answers, onSubmit, submitting
             return (
               <div key={`${p.stepId}-${i}`} className="overflow-hidden border border-border bg-background">
                 <div className="aspect-square overflow-hidden">
-                  <img
+                  <CfImg
                     src={p.previewUrl}
                     alt={step?.title ?? "Photo"}
                     className="h-full w-full object-cover"
+                    cfWidth={480}
                   />
                 </div>
                 <p className="line-clamp-2 px-2.5 py-2 font-mono text-[0.65rem] uppercase tracking-[0.14em] text-muted-foreground">

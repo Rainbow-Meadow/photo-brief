@@ -2,6 +2,7 @@ import { Outlet, NavLink } from "react-router-dom";
 import { BrandMark } from "@/components/layout/BrandMark";
 import { PoweredByBadge } from "@/components/shared/PoweredByBadge";
 import { useRecipientBranding } from "@/features/capture/RecipientBrandingContext";
+import { CfImg } from "@/components/shared/CfImg";
 
 /**
  * PublicRequestLayout
@@ -17,10 +18,11 @@ export function PublicRequestLayout() {
         <div className="mx-auto flex h-14 w-full max-w-2xl items-center justify-between px-4">
           <div className="flex items-center gap-2 text-callout font-semibold text-label">
             {logoUrl ? (
-              <img
+              <CfImg
                 src={logoUrl}
                 alt={businessName}
                 className="h-7 w-7 rounded-lg object-cover ring-1 ring-separator"
+                cfWidth={56}
               />
             ) : (
               <BrandMark variant="horizontal" tone="dark" size={28} eager />

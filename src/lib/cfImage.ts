@@ -74,10 +74,21 @@ function cfResizingAvailable(): boolean {
   return host === DEFAULT_HOST || host === `www.${DEFAULT_HOST}`;
 }
 
+/** True for URLs that should NEVER be routed through Cloudflare Image Resizing. */
+export function cfImageBypass(url: string | null | undefined): boolean {
+  if (!url) return true;
+  if (url.startsWith("data:")) return true;
+  if (url.startsWith("blob:")) return true;
+  if (url.includes("/cdn-cgi/image/")) return true;
+  // SVGs and animated GIFs gain nothing from CF resizing and SVG can break.
+  const path = url.split("?")[0].toLowerCase();
+  if (path.endsWith(".svg") || path.endsWith(".gif")) return true;
+  return false;
+}
+
 export function cfImage(url: string | null | undefined, options: CfImageOptions): string {
   if (!url) return "";
-  if (url.startsWith("data:")) return url;
-  if (url.includes("/cdn-cgi/image/")) return url;
+  if (cfImageBypass(url)) return url;
   if (!cfResizingAvailable()) return url;
   const opts = buildOptions(options);
   // Cloudflare expects: https://<zone>/cdn-cgi/image/<options>/<source-url>
@@ -100,6 +111,7 @@ export function cfImageSrcSet(
   options: Omit<CfImageOptions, "width"> = {},
 ): string {
   if (!url) return "";
+  if (cfImageBypass(url)) return "";
   // Without Cloudflare Image Resizing each width would resolve to the same
   // raw URL, so a srcset is pointless — return empty and let `src` win.
   if (!cfResizingAvailable()) return "";
