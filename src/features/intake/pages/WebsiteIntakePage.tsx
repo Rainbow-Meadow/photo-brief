@@ -701,7 +701,7 @@ function AutoInstallPanel({
   hostedLink: string;
 }) {
   const [siteUrl, setSiteUrl] = useState("");
-  const [busy, setBusy] = useState<null | "detect" | "verify" | "install" | "save">(null);
+  const [busy, setBusy] = useState<null | "detect" | "verify" | "install" | "save" | "monitor" | "monitor_toggle">(null);
   const [state, setState] = useState<InstallerState | null>(null);
   const [creds, setCreds] = useState<InstallerCredentialsInput>({});
 
