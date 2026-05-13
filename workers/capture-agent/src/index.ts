@@ -18,6 +18,15 @@
  */
 
 import { Agent, type Connection } from "agents";
+import {
+  declareRole,
+  emitAgentEvent,
+  handleDispatch,
+  type AgentEventQueue,
+} from "../../_shared/agent-shim";
+import { makeEvent } from "../../_shared/roles";
+
+declareRole("capture_coach");
 
 /* ── Types ─────────────────────────────────────────────────────────── */
 
@@ -27,6 +36,7 @@ interface Env {
   SUPABASE_URL: string;
   SUPABASE_SERVICE_ROLE_KEY?: string;
   SITE_URL: string;
+  AGENT_EVENTS?: AgentEventQueue;
 }
 
 interface CaptureEvent {
