@@ -85,6 +85,14 @@ export function initAnalytics() {
   // the script loads are queued safely on `dataLayer` and drained by gtag.js
   // on load, so no `page_view` or conversion is lost. Keep the idle fallback
   // short enough that quick-bounce visitors still register in GA Realtime.
+  // Skip GTM entirely on Save-Data or 2g connections — keeps slow-mobile LCP
+  // out of the GA loader's way. dataLayer queue still buffers events so they
+  // can flush if the user navigates to a faster network later in the session.
+  const conn = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
+  if (conn?.saveData || conn?.effectiveType === "2g" || conn?.effectiveType === "slow-2g") {
+    return;
+  }
+
   const events = ["pointerdown", "keydown", "touchstart", "scroll"] as const;
   const loadAndCleanup = () => {
     loadGoogleTag();
@@ -95,10 +103,12 @@ export function initAnalytics() {
     window.addEventListener(eventName, loadAndCleanup, { passive: true, once: true });
   });
 
+  // Idle fallback — push out of the LCP window. 8s timeout still catches
+  // quick-bounce visitors before they leave but never competes with hero paint.
   if ("requestIdleCallback" in window) {
-    window.requestIdleCallback(loadAndCleanup, { timeout: 1500 });
+    window.requestIdleCallback(loadAndCleanup, { timeout: 8000 });
   } else {
-    setTimeout(loadAndCleanup, 1500);
+    setTimeout(loadAndCleanup, 5000);
   }
 }
 
