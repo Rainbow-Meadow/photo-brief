@@ -9,11 +9,11 @@ import junkHaulerIllo from "@/assets/trades/junk-hauler-illustration.png";
 import estimatorIllo from "@/assets/trades/estimator-illustration.png";
 
 const useCases = [
-  { icon: Wrench, label: "Plumbers", note: "Under-sink, shut-off, the exact leak — captured in order.", illo: plumberIllo },
-  { icon: Wind, label: "HVAC", note: "Outdoor unit, indoor air-handler, breaker panel — one tap each.", illo: hvacTechIllo },
-  { icon: Leaf, label: "Landscapers", note: "Front yard, back yard, slope, side-gate access — drone-free.", illo: landscaperIllo },
-  { icon: Truck, label: "Junk haulers", note: "The pile, the path, the hazards — before the truck rolls.", illo: junkHaulerIllo },
-  { icon: Calculator, label: "Estimators", note: "Photo coverage that actually prices the job.", illo: estimatorIllo },
+  { icon: Wrench, label: "Plumbers", note: "Leak route asks for the shut-off and the source — and skips the photo when it's a callback.", illo: plumberIllo },
+  { icon: Wind, label: "HVAC", note: "Tune-up books itself. New install routes through model, panel, and clearance photos automatically.", illo: hvacTechIllo },
+  { icon: Leaf, label: "Landscapers", note: "Quote routes ask for the yard. Maintenance routes don't bother — they just get on the calendar.", illo: landscaperIllo },
+  { icon: Truck, label: "Junk haulers", note: "Pile, path, hazards. The brief lands before the truck rolls. Everyone prices the same job.", illo: junkHaulerIllo },
+  { icon: Calculator, label: "Estimators", note: "Every brief is structured. Every photo is labelled. You quote, you don't decode.", illo: estimatorIllo },
 ];
 
 export function UseCasesGrid() {

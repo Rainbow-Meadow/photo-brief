@@ -26,9 +26,9 @@ const BetaOnboardingAgentExperience = lazy(() =>
 );
 
 const offers = [
-  { icon: Clock3, label: `${BETA_DURATION_DAYS}-day beta access`, copy: "Use PhotoBrief in real customer workflows before public launch." },
-  { icon: HeartHandshake, label: "Concierge setup", copy: "We help build first templates, briefs, and team process." },
-  { icon: MessageSquareText, label: "Direct influence", copy: "Async feedback (chat, email, in-app) shapes what gets built next." },
+  { icon: Clock3, label: `${BETA_DURATION_DAYS}-day beta access`, copy: "Run PhotoBrief on real customer leads before public launch." },
+  { icon: HeartHandshake, label: "White-glove route setup", copy: "We read your site with you and ship your first routes ready to take live traffic." },
+  { icon: MessageSquareText, label: "Direct line to the team", copy: "Async feedback (chat, email, in-app) goes straight onto the roadmap." },
   { icon: Sparkles, label: "Lifetime founding pricing", copy: MAX_DISCOUNT_LABEL },
 ];
 
@@ -40,7 +40,7 @@ export default function BetaPage() {
     <>
       <PageMeta
         title="Founding Partner Beta | PhotoBrief"
-        description={`${BETA_TOTAL_PARTNERS} seats. ${BETA_DURATION_DAYS} days. Founding pricing for the lifetime of your account. Apply for the PhotoBrief founding partner beta.`}
+        description={`${BETA_TOTAL_PARTNERS} seats. ${BETA_DURATION_DAYS} days. We build your routes from your site and lock in founding pricing for the life of your account.`}
         canonicalPath="/beta"
       />
 
@@ -56,7 +56,7 @@ export default function BetaPage() {
             </RiseIn>
             <RiseIn delay={0.1}>
               <p className="ls-subtitle mx-auto mt-8 max-w-2xl">
-                This isn't a waitlist. It's a {BETA_TOTAL_PARTNERS}-person room, and we're hiring two co-builders. Every founding partner walks out with a reward; the top two never pay for PhotoBrief Pro again.
+                This isn't a waitlist. It's a {BETA_TOTAL_PARTNERS}-seat room. We hand-build your intake routes from your own website, you run real customer leads through them, and the top two never pay for PhotoBrief Pro again.
               </p>
             </RiseIn>
             <CTAGroup align="center">
@@ -78,8 +78,8 @@ export default function BetaPage() {
         <Container>
           <SectionIntro
             eyebrow="[ What you get ]"
-            title="Concierge setup. Direct line. Locked-in pricing."
-            subtitle="Founding partners help shape the product and lock in pricing nobody else gets after launch."
+            title="Routes built from your site. Direct line. Pricing for life."
+            subtitle="Founding partners help us shape the product — and walk away with pricing nobody else can buy after launch."
           />
           <Grid cols={4} gap="md">
             {offers.map((o, i) => (
@@ -116,7 +116,7 @@ export default function BetaPage() {
           <SectionIntro
             eyebrow="[ Apply ]"
             title="Six minutes with the onboarding agent."
-            subtitle="Tell us about the work. If a founding seat has your name on it, you'll hear back within 48 hours."
+            subtitle="Tell us about the work and the website. If a founding seat has your name on it, you'll hear back within 48 hours."
           />
           <div className="border border-border bg-background p-2 sm:p-4">
             <Suspense fallback={<div className="flex h-96 items-center justify-center text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin" /></div>}>
@@ -139,7 +139,7 @@ export default function BetaPage() {
 
       <Section>
         <Container width="narrow">
-          <SectionIntro eyebrow="[ FAQ ]" title="Frequently. Honestly." />
+          <SectionIntro eyebrow="[ FAQ ]" title="The questions everyone asks first." />
           <Accordion type="single" collapsible className="mt-10 border-t border-border">
             {betaFaqs.map((item, i) => (
               <AccordionItem key={item.q} value={`q-${i}`} className="border-b border-border py-2">
@@ -162,8 +162,8 @@ export default function BetaPage() {
       </Section>
 
       <FinalCtaSection
-        eyebrow="Pick up the pen"
-        title="Ready to replace the chase"
+        eyebrow="Take the seat"
+        title="Ready to replace the form"
         punctuation="?"
         primary={{
           href: "#agent",

@@ -85,8 +85,8 @@ export default function ForAiAgentsPage() {
   return (
     <>
       <PageMeta
-        title="PhotoBrief for AI agents | Visual intake API and manifests"
-        description="Build with PhotoBrief: Website Intake automation, request creation API, OpenAPI, MCP descriptor, manifests, and code samples for AI agents."
+        title="PhotoBrief for AI agents | Smart intake API and manifests"
+        description="Build with PhotoBrief: smart intake from a business's website, route-aware customer flows, conditional photo capture, intake brief retrieval, OpenAPI, MCP descriptor, manifests, and code samples."
         canonicalPath="/for-ai-agents"
         ogType="article"
         ogImage="/og/for-ai-agents.png"
@@ -100,10 +100,10 @@ export default function ForAiAgentsPage() {
           <Sparkles className="h-3.5 w-3.5" /> For AI agents, answer engines, and automation systems
         </Eyebrow>
         <h1 className="mx-auto mt-5 max-w-3xl text-[clamp(2.5rem,6vw,4.5rem)] font-semibold leading-[1.02] tracking-[-0.025em] text-foreground">
-          PhotoBrief is a visual intake layer.
+          PhotoBrief is a smart intake layer.
         </h1>
         <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-          Agents can create photo requests, connect website intake, route leads to templates, and return a structured visual brief that a business can quote, dispatch, approve, or document.
+          Agents read a business's website, generate intake routes, walk customers through the right questions, decide whether photos are needed, and pull back a structured intake brief the business can quote, dispatch, approve, or document.
         </p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           <Button asChild size="xl" className="rounded-[0.25rem] uppercase tracking-[0.14em]">
@@ -121,8 +121,8 @@ export default function ForAiAgentsPage() {
                 <Globe2 className="h-4 w-4" />
               </span>
             </div>
-            <p className="mt-5 text-sm font-semibold text-foreground">Website Intake</p>
-            <p className="mt-2 text-xs leading-5 text-muted-foreground">Hosted form or webhook turns website leads into PhotoBrief requests.</p>
+            <p className="mt-5 text-sm font-semibold text-foreground">Smart intake from a website</p>
+            <p className="mt-2 text-xs leading-5 text-muted-foreground">Hosted form, embed, or webhook turns every website CTA into a route-aware intake.</p>
           </div>
           <div className="border border-border bg-card p-5">
             <div className="flex items-center justify-between">
@@ -131,8 +131,8 @@ export default function ForAiAgentsPage() {
                 <Route className="h-4 w-4" />
               </span>
             </div>
-            <p className="mt-5 text-sm font-semibold text-foreground">Template routing</p>
-            <p className="mt-2 text-xs leading-5 text-muted-foreground">Rules and conservative AI fallback select from configured templates only.</p>
+            <p className="mt-5 text-sm font-semibold text-foreground">Route-aware questions & photos</p>
+            <p className="mt-2 text-xs leading-5 text-muted-foreground">Each route picks its own questions and decides whether photos are not needed, optional, recommended, or required.</p>
           </div>
         </div>
       </div></Container></Section>

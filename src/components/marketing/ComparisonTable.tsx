@@ -1,16 +1,16 @@
 import { Check, Minus } from "lucide-react";
 import { Section, Container } from "@/design-system/schema";
 
-const COLUMNS = ["PhotoBrief", "Email back-and-forth", "Generic form", "File upload portal"] as const;
+const COLUMNS = ["PhotoBrief", "Generic contact form", "Email back-and-forth", "File upload portal"] as const;
 
 const ROWS: Array<{ feature: string; values: Array<boolean | string> }> = [
-  { feature: "Hosted website intake form", values: [true, false, false, false] },
-  { feature: "Existing-form webhook", values: [true, false, "partial", "partial"] },
-  { feature: "Routes leads to saved templates", values: [true, false, false, false] },
-  { feature: "Mobile-first customer photo workflow", values: [true, false, "partial", "partial"] },
-  { feature: "Simple AI photo feedback", values: [true, false, false, false] },
-  { feature: "First-pass follow-up photos are free", values: [true, false, false, false] },
-  { feature: "Business-ready summary", values: [true, false, false, false] },
+  { feature: "Reads your website to build intake", values: [true, false, false, false] },
+  { feature: "Different questions per service", values: [true, false, false, false] },
+  { feature: "Decides when photos are needed", values: [true, false, false, false] },
+  { feature: "Mobile-first guided customer flow", values: [true, false, false, "partial"] },
+  { feature: "Routes leads to the right template", values: [true, false, false, false] },
+  { feature: "Returns a quote-ready brief, not a folder", values: [true, false, false, false] },
+  { feature: "First-pass photo retakes are free", values: [true, false, false, false] },
   { feature: "Customer profiles and request history", values: [true, false, "partial", "partial"] },
 ];
 
@@ -41,10 +41,10 @@ export function ComparisonTable() {
         <div className="mx-auto max-w-2xl text-center">
           <span className="pb-eyebrow">Comparison</span>
           <h2 id="comparison-heading" className="pb-section-title mt-4 text-white">
-            PhotoBrief vs. generic intake tools
+            PhotoBrief vs. the form on your site today
           </h2>
           <p className="pb-copy mt-4 text-base">
-            Forms collect text. PhotoBrief collects the visual proof a business actually needs.
+            Forms collect text. Portals collect files. PhotoBrief reads your site and builds intake that actually decides what to ask.
           </p>
         </div>
 

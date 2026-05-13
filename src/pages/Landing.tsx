@@ -35,7 +35,7 @@ const SOFTWARE_APP_JSONLD: Record<string, unknown> = {
   applicationCategory: "BusinessApplication",
   operatingSystem: "Web",
   description:
-    "Your contact form is leaking money. PhotoBrief's Reverse-Form Method™ tells customers exactly what to send — and a quote-ready lead packet lands in your inbox on the first try.",
+    "Your contact form gives you a name and a sentence. PhotoBrief reads your website, builds smart intake routes, decides when photos actually matter, and drops a brief in your inbox you can quote on the first reply.",
 };
 
 export default function LandingPage() {
@@ -51,7 +51,7 @@ export default function LandingPage() {
     <>
       <PageMeta
         title="PhotoBrief — Guide. Capture. Close."
-        description="Stop chasing customers for the right photo. PhotoBrief's Reverse-Form Method™ delivers a quote-ready lead packet on the first try."
+        description="Your contact form gives you a name. PhotoBrief reads your site, routes every lead through the right questions, and drops a brief you can quote — with photos when, and only when, the job needs them."
         canonicalPath="/"
         jsonLd={[SOFTWARE_APP_JSONLD, heroJsonLd, faqJsonLd]}
       />
@@ -86,7 +86,7 @@ function Hero() {
             </RiseIn>
             <RiseIn delay={0.25}>
               <p className="ls-subtitle mt-8 max-w-[44ch]">
-                Your contact form is leaking money. The Reverse-Form Method™ patches it — <em>you</em> tell customers exactly what to send, and a quote-ready packet lands in your inbox on the first try.
+                Your website form gives you a name and a vibe. PhotoBrief reads your site, builds smart intake routes for every service you offer, and hands your inbox a brief you can quote — with photos when the job needs them, skipped when it doesn't.
               </p>
             </RiseIn>
             <RiseIn delay={0.35}>
@@ -141,11 +141,13 @@ function MarqueeBand() {
         <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
       </MarqueeRow>
       <MarqueeRow duration={60} direction="right">
-        <span className="ls-marquee-item">81% bail before they hit submit</span>
+        <span className="ls-marquee-item">Your form asks 5 fields</span>
         <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
-        <span className="ls-marquee-item ls-marquee-item--ghost">78% buy from whoever responds first</span>
+        <span className="ls-marquee-item ls-marquee-item--ghost">Your customer needed different ones</span>
         <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
-        <span className="ls-marquee-item">4.2 hr avg lead response time</span>
+        <span className="ls-marquee-item">78% buy from whoever quotes first</span>
+        <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
+        <span className="ls-marquee-item">Photos when they matter. Skipped when they don't.</span>
         <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
         <span className="ls-marquee-item ls-marquee-item--accent">Reverse-Form Method™</span>
         <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
@@ -161,8 +163,8 @@ function MechanismSection() {
       <Container>
         <SectionIntro
           eyebrow="[ 02 ] The mechanism"
-          title="Stop asking. Start telling."
-          subtitle={`The Reverse-Form Method™. Four moves that turn "I need a quote" into a quotable job in 38 seconds.`}
+          title="Stop asking. Start routing."
+          subtitle={`The Reverse-Form Method™. Four moves that turn a website CTA into a brief on your desk — with the right questions, the right photos, the right next step.`}
         />
         <MechanismGrid />
       </Container>
@@ -177,8 +179,8 @@ function ComparisonSection() {
       <Container>
         <SectionIntro
           eyebrow="[ 03 ] Before / after"
-          title="The intake your customers feel — and the one your estimator doesn't curse at."
-          subtitle="Same five minutes. Two different futures for the lead."
+          title="One generic form for every lead. Or one smart route for each."
+          subtitle="Same customer. Same five minutes. Two completely different things show up in your inbox."
         />
         <div className="grid grid-cols-1 overflow-hidden border border-border lg:grid-cols-2">
           {/* Before — dimmed half */}
@@ -192,13 +194,13 @@ function ComparisonSection() {
               />
             </div>
             <div className="p-6 lg:p-8">
-              <span className="ls-numeral text-destructive">Before · status quo</span>
-              <h3 className="ls-h3 mt-3">Generic intake form</h3>
+              <span className="ls-numeral text-destructive">Before · your contact form</span>
+              <h3 className="ls-h3 mt-3">One form for every job</h3>
               <ul className="mt-6 space-y-3 text-sm">
                 {[
-                  { icon: ImageOff, text: "Photos missing or shot from across the yard." },
-                  { icon: MessageSquareWarning, text: "Three follow-ups before anyone can price it." },
-                  { icon: TimerReset, text: "The lead cools while you chase context." },
+                  { icon: MessageSquareWarning, text: "A name, an email, one vague sentence. No idea which service. No idea where to start." },
+                  { icon: ImageOff, text: "No photos when you needed them. Photos of the wrong thing when you didn't." },
+                  { icon: TimerReset, text: "Three follow-up emails before you can price it. The lead cools. Your competitor quotes first." },
                 ].map(({ icon: Icon, text }) => (
                   <li key={text} className="flex gap-3 text-muted-foreground">
                     <Icon className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
@@ -221,12 +223,12 @@ function ComparisonSection() {
             </div>
             <div className="p-6 lg:p-8">
               <span className="ls-numeral text-[hsl(var(--accent-kinetic))]">After · PhotoBrief</span>
-              <h3 className="ls-h3 mt-3">A guided capture pipeline</h3>
+              <h3 className="ls-h3 mt-3">A smart route for every job</h3>
               <ul className="mt-6 space-y-3 text-sm">
                 {[
-                  "Right angle. Right lighting. Right context — every single time.",
-                  "One packet hits your inbox: photos, notes, location, scope.",
-                  "Your estimator quotes on the first reply. The job moves.",
+                  "We read your site. We build a route per service. Each one asks the questions that actually price the job.",
+                  "Photos when the route says photos matter. Skipped when they don't. No generic photo dump.",
+                  "One brief lands: who, what, which route, what they answered, photos in or still pending, what to do next.",
                 ].map((text) => (
                   <li key={text} className="flex gap-3 text-muted-foreground">
                     <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[hsl(var(--accent-kinetic))]" />
@@ -248,8 +250,8 @@ const signposts = [
     to: "/demo",
     icon: PlayCircle,
     eyebrow: "Demo",
-    title: "See it work on your business.",
-    body: "Watch a brief assemble live, then build one tailored to your trade in 60 seconds.",
+    title: "Paste your URL. Watch your routes appear.",
+    body: "PhotoBrief reads your site and builds a working intake live. 60 seconds. No signup.",
     cta: "Try the live demo",
   },
   {
@@ -257,15 +259,15 @@ const signposts = [
     icon: Rocket,
     eyebrow: "Beta",
     title: `${BETA_TOTAL_PARTNERS} founding seats. ${BETA_DURATION_DAYS} days.`,
-    body: "Concierge setup, direct line to the team, lifetime founding pricing for accepted partners.",
+    body: "We build your routes with you. You get a direct line to the team and founding pricing for life.",
     cta: "Apply for the beta",
   },
   {
     to: "/pricing",
     icon: Tags,
     eyebrow: "Pricing",
-    title: "Plans that scale with the work.",
-    body: "Free, Starter, Pro, Team, Business — see what's included and what unlocks at each tier.",
+    title: "Plans that scale with intake volume.",
+    body: "Free, Starter, Pro, Team, Business — what every tier unlocks, and what you get to keep at founding pricing.",
     cta: "See pricing",
   },
 ];
@@ -274,7 +276,7 @@ function SignpostSection() {
   return (
     <Section tone="alt">
       <Container>
-        <SectionIntro eyebrow="[ 04 ] Where to next ]" title="Pick a door." />
+        <SectionIntro eyebrow="[ 04 ] Where to next ]" title="Three doors. Pick one." />
         <div className="grid gap-0 lg:grid-cols-2">
           {/* Beta — hero door, full top row */}
           <RiseIn className="lg:col-span-2">
@@ -339,11 +341,11 @@ function FaqSection() {
           {/* Sticky intro rail */}
           <div className="lg:col-span-4">
             <div className="lg:sticky lg:top-24">
-              <SectionIntro eyebrow="[ 05 ] FAQ" title="Frequently. Honestly." />
+              <SectionIntro eyebrow="[ 05 ] FAQ" title="The questions everyone asks." />
               <p className="mt-2 text-sm text-muted-foreground">
-                More questions?{" "}
+                Want every answer in one place?{" "}
                 <NavLink to="/help" className="text-foreground underline-offset-4 hover:underline">
-                  Read the full help center →
+                  Open the full help center →
                 </NavLink>
               </p>
             </div>
@@ -372,13 +374,13 @@ function FaqSection() {
 function FinalCta({ isFull }: { isFull: boolean }) {
   return (
     <FinalCtaSection
-      eyebrow="06 ] Pick up the pen"
-      title="Ready to replace the chase"
+      eyebrow="06 ] Stop chasing leads"
+      title="Ready to replace the form"
       punctuation="?"
       body={
         isFull
-          ? "Founding seats are full. Join the waitlist and we'll reach out the moment a seat opens."
-          : `${BETA_TOTAL_PARTNERS} seats. ${BETA_DURATION_DAYS} days. Founding pricing for the lifetime of your account.`
+          ? "Founding seats are full. Drop your email and we'll reach out the moment a seat opens."
+          : `${BETA_TOTAL_PARTNERS} seats. ${BETA_DURATION_DAYS} days. Founding pricing for the life of your account.`
       }
       primary={{
         href: "/beta",

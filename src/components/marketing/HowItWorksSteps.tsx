@@ -4,23 +4,23 @@ import { Section, Container } from "@/design-system/schema";
 export const howItWorksSteps = [
   {
     icon: Link2,
-    title: "Create a request or automate the lead",
-    body: "Start with a manual PhotoBrief link, or use Pro Website Intake to trigger the same flow from your website.",
+    title: "Read your website",
+    body: "Point PhotoBrief at your URL. We scan your services, your customer intents, and the gaps your current form leaves wide open.",
   },
   {
     icon: ClipboardList,
-    title: "Choose what photos you need",
-    body: "Use a saved template or build a simple request so customers see one clear photo step at a time.",
+    title: "Build the routes",
+    body: "Every service gets its own intake route — its own questions, its own photo policy. No more one form for every job.",
   },
   {
     icon: Camera,
-    title: "The customer captures what matters",
-    body: "They open a mobile workflow, take the requested photos, and get simple feedback before submitting.",
+    title: "Guide the customer",
+    body: "Your customer answers a short, route-specific flow. Photos only show up when the route says they earn their keep.",
   },
   {
     icon: Sparkles,
-    title: "You get a ready-to-use brief",
-    body: "Photos, answers, AI checks, and a plain-English summary arrive organized for quoting, dispatch, review, or documentation.",
+    title: "Hand back a brief",
+    body: "Who they are. What they need. Which route matched. What they answered. Photos in or still pending. What you should do next.",
   },
 ];
 
@@ -31,10 +31,10 @@ export function HowItWorksSteps() {
         <div className="mx-auto max-w-3xl text-center">
           <span className="pb-eyebrow">How it works</span>
           <h2 className="pb-section-title mt-4 text-white">
-            From photo chase to complete visual brief.
+            From website CTA to a brief you can act on.
           </h2>
           <p className="pb-copy mx-auto mt-4 max-w-2xl text-base sm:text-lg">
-            The old way is contact form → email → "can you send photos?" PhotoBrief makes the request itself do the work.
+            The old way is contact form → email → "what service did you mean?" PhotoBrief reads your site, builds the routes, and asks the right questions for you.
           </p>
         </div>
 
