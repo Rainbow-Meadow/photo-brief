@@ -604,7 +604,253 @@ const handlers: Partial<Record<JobType, Handler>> = {
       warnings: [],
     };
   },
+
+  // -------------------------------------------------------------------------
+  // verify_install — confirm Smart Intake is installed on the operator's
+  // public website. Deterministic. No LLM.
+  //
+  // Input: { site_url: string, expected_token?: string,
+  //   intake_source_id?: uuid, expected_host?: string }
+  //   - If expected_token is omitted, looks up the workspace's intake source
+  //     (or the row matching intake_source_id).
+  // Output: { installed, platform, found_links[], expected_url, fix_steps?[] }
+  // Side effect: install_probe artifact with the fetched HTML excerpt.
+  // -------------------------------------------------------------------------
+  verify_install: async (job, admin) => {
+    const input = (job.input ?? {}) as {
+      site_url?: string;
+      expected_token?: string;
+      intake_source_id?: string;
+      expected_host?: string;
+    };
+    const siteUrl = input.site_url;
+    if (!siteUrl || typeof siteUrl !== "string") {
+      throw new Error("INVALID_INPUT: site_url is required");
+    }
+    const expectedHost = (input.expected_host ?? "photobrief.ai").toLowerCase();
+
+    let expectedToken = input.expected_token ?? null;
+    let intakeSourceId = input.intake_source_id ?? null;
+    if (!expectedToken) {
+      let q = admin
+        .from("intake_sources")
+        .select("id, public_token")
+        .eq("workspace_id", job.workspace_id)
+        .eq("enabled", true)
+        .order("created_at", { ascending: false })
+        .limit(1);
+      if (intakeSourceId) q = q.eq("id", intakeSourceId);
+      const { data: src } = await q.maybeSingle();
+      if (src) {
+        expectedToken = (src as { public_token?: string }).public_token ?? null;
+        intakeSourceId = (src as { id?: string }).id ?? intakeSourceId;
+      }
+    }
+    if (!expectedToken) {
+      throw new Error("NO_INTAKE_TOKEN: workspace has no intake_source to verify against");
+    }
+
+    const probe = await probeSite(siteUrl);
+    const platform = detectPlatform(probe.html);
+    const expectedPath = `/i/${expectedToken}`;
+    const linkPattern = /https?:\/\/[^"'<> )]+\/i\/[A-Za-z0-9_-]+/g;
+    const allLinks = probe.html.match(linkPattern) ?? [];
+    const foundLinks = allLinks.filter((l) =>
+      l.toLowerCase().includes(expectedHost) && l.includes(expectedPath)
+    );
+    const installed = foundLinks.length > 0;
+    const expectedUrl = `https://${expectedHost}${expectedPath}`;
+    const fixSteps = installed ? undefined : buildFixSteps(platform, expectedUrl);
+
+    return {
+      output: {
+        installed,
+        platform,
+        site_url: siteUrl,
+        expected_url: expectedUrl,
+        intake_source_id: intakeSourceId,
+        found_links: foundLinks.slice(0, 10),
+        fix_steps: fixSteps,
+        fetch_status: probe.status,
+      },
+      confidence: null,
+      warnings: probe.error
+        ? [{ code: "FETCH_FAILED", message: probe.error }]
+        : (installed ? [] : [{ code: "NOT_FOUND", message: `No link to ${expectedUrl} found in the page HTML.` }]),
+      artifacts: [{
+        artifact_type: "install_probe" as const,
+        source_url: siteUrl,
+        content_excerpt: probe.html.slice(0, 2000),
+        metadata: {
+          platform,
+          installed,
+          fetch_status: probe.status,
+          found_count: foundLinks.length,
+          expected_url: expectedUrl,
+          intake_source_id: intakeSourceId,
+        },
+      }],
+    };
+  },
+
+  // -------------------------------------------------------------------------
+  // monitor_install — daily health check. Iterates each enabled intake source
+  // for the workspace and re-runs verify on its last known site URL (read
+  // from the most recent install_probe artifact). Returns a healthy/drift
+  // summary the operator can act on.
+  // -------------------------------------------------------------------------
+  monitor_install: async (job, admin) => {
+    const input = (job.input ?? {}) as { intake_source_id?: string; site_url?: string };
+    let sourcesQ = admin
+      .from("intake_sources")
+      .select("id, public_token, name")
+      .eq("workspace_id", job.workspace_id)
+      .eq("enabled", true);
+    if (input.intake_source_id) sourcesQ = sourcesQ.eq("id", input.intake_source_id);
+    const { data: sources, error: srcErr } = await sourcesQ;
+    if (srcErr) throw new Error(`READ_SOURCES_FAILED: ${srcErr.message}`);
+
+    const checks: Array<Record<string, unknown>> = [];
+    let healthy = 0, drifted = 0, skipped = 0;
+
+    for (const s of (sources ?? []) as Array<Record<string, unknown>>) {
+      let siteUrl = input.site_url ?? null;
+      if (!siteUrl) {
+        const { data: lastProbe } = await admin
+          .from("intelligence_artifacts")
+          .select("source_url, metadata, created_at")
+          .eq("workspace_id", job.workspace_id)
+          .eq("artifact_type", "install_probe")
+          .contains("metadata", { intake_source_id: s.id })
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        siteUrl = ((lastProbe as { source_url?: string } | null)?.source_url) ?? null;
+      }
+      if (!siteUrl) {
+        skipped += 1;
+        checks.push({ intake_source_id: s.id, name: s.name, status: "skipped", reason: "no known site_url" });
+        continue;
+      }
+      const probe = await probeSite(siteUrl);
+      const platform = detectPlatform(probe.html);
+      const expectedPath = `/i/${s.public_token}`;
+      const matches = (probe.html.match(/https?:\/\/[^"'<> )]+\/i\/[A-Za-z0-9_-]+/g) ?? [])
+        .filter((l) => l.toLowerCase().includes("photobrief.ai") && l.includes(expectedPath));
+      const ok = matches.length > 0;
+      if (ok) healthy += 1; else drifted += 1;
+      checks.push({
+        intake_source_id: s.id,
+        name: s.name,
+        site_url: siteUrl,
+        platform,
+        status: ok ? "healthy" : "drift",
+        fetch_status: probe.status,
+        found_links: matches.slice(0, 3),
+      });
+    }
+
+    return {
+      output: { sources_checked: checks.length, healthy, drifted, skipped, checks },
+      confidence: null,
+      warnings: drifted > 0
+        ? [{ code: "INSTALL_DRIFT", message: `${drifted} intake source(s) no longer linked from the live site.` }]
+        : [],
+    };
+  },
 };
+
+// ---------------------------------------------------------------------------
+// Install Intelligence helpers (ported from workers/site-installer-agent).
+// ---------------------------------------------------------------------------
+
+const PLATFORM_FINGERPRINTS: Array<{ platform: string; needles: string[] }> = [
+  { platform: "webflow", needles: ["webflow.com", "data-wf-page", "wf-domain"] },
+  { platform: "shopify", needles: ["cdn.shopify.com", "shopify.theme", "shopify-section"] },
+  { platform: "wix_studio", needles: ["wixstudio", "static.wixstatic.com"] },
+  { platform: "wix", needles: ["wix.com", "wixstatic.com", "_wixCIDX"] },
+  { platform: "squarespace", needles: ["squarespace.com", "static1.squarespace.com"] },
+  { platform: "wordpress", needles: ["wp-content", "wp-includes", "wp-json"] },
+  { platform: "carrd", needles: ["carrd.co", "/carrd/"] },
+  { platform: "godaddy", needles: ["godaddy", "img1.wsimg.com"] },
+  { platform: "framer", needles: ["framer.com", "framerusercontent.com"] },
+];
+
+function detectPlatform(html: string): string {
+  if (!html) return "unknown";
+  const lower = html.toLowerCase();
+  for (const fp of PLATFORM_FINGERPRINTS) {
+    if (fp.needles.some((n) => lower.includes(n.toLowerCase()))) return fp.platform;
+  }
+  return /<html/i.test(lower) ? "static_html" : "unknown";
+}
+
+async function probeSite(url: string): Promise<{ html: string; status: number; error?: string }> {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 15_000);
+  try {
+    const res = await fetch(url, {
+      signal: ctrl.signal,
+      headers: { "user-agent": "Mozilla/5.0 PhotoBriefIntelligence/1.0" },
+      redirect: "follow",
+    });
+    const html = (await res.text()).slice(0, 200_000);
+    return { html, status: res.status };
+  } catch (e) {
+    return { html: "", status: 0, error: e instanceof Error ? e.message : String(e) };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+function buildFixSteps(platform: string, expectedUrl: string): string[] {
+  const generic = [
+    `Add a button or link to ${expectedUrl} on your homepage.`,
+    "Use anchor text the customer recognizes (Get a quote, Book a job, Send photos).",
+    "Republish the page and wait ~30 seconds for the CDN to refresh.",
+  ];
+  switch (platform) {
+    case "webflow":
+      return [
+        "In Webflow Designer, drop a Button element where you want the CTA.",
+        `Set its link target to URL → ${expectedUrl} (open in new tab).`,
+        "Publish to your live domain. CDN refresh takes ~30s.",
+      ];
+    case "shopify":
+      return [
+        "In Shopify Admin → Online Store → Themes → Customize.",
+        `Add a Button block (or edit your hero) and set the link to ${expectedUrl}.`,
+        "Save. Confirm on the live storefront.",
+      ];
+    case "wix":
+    case "wix_studio":
+      return [
+        "In the Wix Editor, add a Button to your homepage header.",
+        `Link it to a Web Address → ${expectedUrl}.`,
+        "Publish the site.",
+      ];
+    case "wordpress":
+      return [
+        "Edit the page where you want the CTA in the WordPress block editor.",
+        `Insert a Buttons block linking to ${expectedUrl}.`,
+        "Update / publish. Clear any caching plugin if the link doesn't appear.",
+      ];
+    case "carrd":
+      return [
+        "In Carrd, add a Button element to your site.",
+        `Set the URL to ${expectedUrl}.`,
+        "Publish.",
+      ];
+    case "squarespace":
+      return [
+        "In Squarespace, edit the section where you want the CTA.",
+        `Add a Button block linking to ${expectedUrl}.`,
+        "Save.",
+      ];
+    default:
+      return generic;
+  }
+}
 
 // ---------------------------------------------------------------------------
 // Job loop
