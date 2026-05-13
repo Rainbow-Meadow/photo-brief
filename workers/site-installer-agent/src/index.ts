@@ -526,7 +526,7 @@ export default {
       }));
     }
 
-    const match = url.pathname.match(/^\/sessions\/([^/]+)\/(state|detect|credentials|install|mark-installed|verify|give-up)$/);
+    const match = url.pathname.match(/^\/sessions\/([^/]+)\/(state|detect|credentials|install|mark-installed|verify|give-up|monitor|monitor\/enable|monitor\/disable)$/);
     if (!match) return json({ error: "Unknown route." }, 404, request);
 
     const [, rawSessionId, action] = match;
