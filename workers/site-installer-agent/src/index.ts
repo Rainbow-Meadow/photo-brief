@@ -383,6 +383,16 @@ export class SiteInstallerAgent extends Agent<Env, AgentState> {
       ],
       updatedAt: new Date().toISOString(),
     });
+    if (!check.ok && this.state.workspaceId) {
+      await emitAgentEvent(this.env as unknown as { AGENT_EVENTS?: AgentEventQueue }, makeEvent({
+        type: "install_monitor_failed",
+        workspaceId: this.state.workspaceId,
+        from: "install_engineer",
+        siteUrl: this.state.siteUrl ?? "",
+        sessionId: this.state.sessionId,
+        reason: check.reason,
+      }));
+    }
     return check;
   }
 
