@@ -51,7 +51,7 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
     --secondary-foreground: 42 32% 94%;
 
     --muted: 60 5% 14%;
-    --muted-foreground: 42 8% 64%;
+    --muted-foreground: 42 12% 72%;
 
     --accent: 16 100% 56%;               /* same as primary, used as wash */
     --accent-foreground: 42 32% 96%;
