@@ -20,6 +20,15 @@ import {
   type X402Config,
 } from "./x402";
 
+import {
+  declareRole,
+  emitAgentEvent,
+  type AgentEventQueue,
+} from "../../_shared/agent-shim";
+import { makeEvent } from "../../_shared/roles";
+
+declareRole("agent_gateway");
+
 interface Env {
   API_BASE_URL: string;
   SITE_URL: string;
@@ -27,6 +36,7 @@ interface Env {
   X402_PAY_TO?: string;
   /** x402 network identifier (default: "base-sepolia" for testnet) */
   X402_NETWORK?: string;
+  AGENT_EVENTS?: AgentEventQueue;
 }
 
 /* ── Pricing data (mirrors /llms-full.txt) ─────────────────────────── */
