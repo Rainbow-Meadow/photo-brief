@@ -95,7 +95,7 @@ export type WorkflowType =
   | "vehicle_body";
 
 /** Plan tiers — mirrors DB `plan_tier` enum. */
-export type Plan = "free" | "starter" | "pro" | "team" | "business";
+export type Plan = "intake" | "intake_team";
 
 export type BillingInterval = "monthly" | "annual";
 
