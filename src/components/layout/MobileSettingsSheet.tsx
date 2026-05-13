@@ -9,6 +9,7 @@ import {
   KeyRound,
   LogOut,
   Plug,
+  Bot,
 } from "lucide-react";
 
 import {
@@ -27,6 +28,7 @@ const items = [
   { to: "/settings/sms", label: "SMS", description: "Phone number & delivery", icon: MessageSquare },
   { to: "/settings/integrations", label: "Integrations", description: "Website, email, SMS, CRM", icon: Plug },
   { to: "/settings/billing", label: "Billing & plan", description: "Subscription, usage, invoices", icon: CreditCard },
+  { to: "/settings/agents", label: "Agent team", description: "Brand voice, roles, handoffs", icon: Bot },
 ];
 
 interface Props {

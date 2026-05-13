@@ -62,6 +62,7 @@ const settingsItems = [
   { title: "SMS", url: "/settings/sms", icon: MessageSquare },
   { title: "Integrations", url: "/settings/integrations", icon: Plug },
   { title: "Billing", url: "/settings/billing", icon: CreditCard },
+  { title: "Agent team", url: "/settings/agents", icon: Bot },
 ];
 
 export function AppSidebar() {

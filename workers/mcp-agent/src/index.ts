@@ -20,6 +20,15 @@ import {
   type X402Config,
 } from "./x402";
 
+import {
+  declareRole,
+  emitAgentEvent,
+  type AgentEventQueue,
+} from "../../_shared/agent-shim";
+import { makeEvent } from "../../_shared/roles";
+
+declareRole("agent_gateway");
+
 interface Env {
   API_BASE_URL: string;
   SITE_URL: string;
@@ -27,6 +36,7 @@ interface Env {
   X402_PAY_TO?: string;
   /** x402 network identifier (default: "base-sepolia" for testnet) */
   X402_NETWORK?: string;
+  AGENT_EVENTS?: AgentEventQueue;
 }
 
 /* ── Pricing data (mirrors /llms-full.txt) ─────────────────────────── */
@@ -188,6 +198,15 @@ function createServer(env: Env) {
       });
 
       const data = await res.json() as Record<string, unknown>;
+
+      // Surface this gateway call to the Conductor for cross-agent visibility.
+      await emitAgentEvent(env, makeEvent({
+        type: "agent_gateway_call",
+        from: "agent_gateway",
+        workspaceId: (data?.workspace_id as string) ?? "public",
+        tool: "create_request",
+        payerId: api_key ? "api_key" : "x402",
+      }));
 
       if (!res.ok) {
         return {
