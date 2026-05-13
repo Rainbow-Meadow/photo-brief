@@ -122,6 +122,14 @@ export class SiteInstallerAgent extends Agent<Env, AgentState> {
     verified: false,
     credentials: null,
     confirmUrl: null,
+    monitoring: {
+      enabled: false,
+      cron: DEFAULT_MONITOR_CRON,
+      scheduleId: null,
+      lastCheckAt: null,
+      lastOk: null,
+      history: [],
+    },
     updatedAt: new Date().toISOString(),
   };
 
