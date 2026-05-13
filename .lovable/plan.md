@@ -94,3 +94,39 @@ Validation triggers (not CHECK constraints) enforce:
 3. Beta-onboarding: confirm it's paused (no new signups going through it) so I can mark it deprecation-eligible, not just legacy.
 
 I'll answer 1 with my recommendation in the doc unless you override; 2 I'll include; 3 I need from you before writing the deprecation column.
+
+---
+
+# PR 7 — Delete dormant workers
+
+PhotoBrief Intelligence (PRs 2–6) now covers everything the orchestrator,
+assistant, site-installer, and beta-onboarding workers used to do. They have
+been idle since their replacement job types went live. This PR removes the
+tombstones.
+
+## Deleted
+- `workers/orchestrator-agent/` — replaced by `intelligence_jobs` queue.
+- `workers/assistant-agent/` — replaced by `score_intake_brief`,
+  `suggest_next_action`, `generate_workspace_digest`.
+- `workers/site-installer-agent/` — replaced by `verify_install`,
+  `monitor_install`.
+- `workers/beta-onboarding-agent/` — paused; folded into Stripe + DB triggers.
+
+## Kept
+- `workers/capture-agent/` — still hosts the `CaptureSession` Durable Object
+  used by `/r/:token`. Demoted to a session buffer (no decisions, no LLM in
+  the recipient path). Full removal deferred until DO storage is migrated.
+- `workers/mcp-agent/` — external distribution surface, unchanged.
+- `workers/router/` — edge traffic, unchanged.
+
+## Shared code
+- `workers/_shared/roles.ts`: `AgentRole` enum trimmed to the three live
+  workers. Importing a removed role now fails the type-check loud.
+- `workers/_shared/kv-bundle.ts`, `workers/_shared/ai.ts`: comments updated
+  to point at edge functions instead of deleted workers.
+
+## Not touched
+- No edge function edits.
+- No DB migrations. Old `agent_*` tables (if any) stay until a separate
+  cleanup PR.
+- `/i/:token`, `/r/:token`, `/intake` runtime paths unchanged.

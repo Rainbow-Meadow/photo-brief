@@ -2,7 +2,7 @@
  * Shared Workers AI adapter for PhotoBrief.
  *
  * Wraps the env.AI binding with a tiny envelope-shaped helper used by
- * worker code (assistant-agent classification, capture-agent guardrails, …).
+ * worker code (capture-agent guardrails, mcp-agent gateway calls, …).
  *
  * The Lovable AI Gateway remains the primary path for envelope-grade
  * structured output inside edge functions (see
