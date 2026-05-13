@@ -479,6 +479,16 @@ export class SiteInstallerAgent extends Agent<Env, AgentState> {
       if (!this.state.monitoring.enabled) {
         await this.enableMonitoring(this.state.monitoring.cron || DEFAULT_MONITOR_CRON);
       }
+      // Notify the Conductor so the Account Strategist can celebrate.
+      if (this.state.workspaceId) {
+        await emitAgentEvent(this.env as unknown as { AGENT_EVENTS?: AgentEventQueue }, makeEvent({
+          type: "install_verified",
+          workspaceId: this.state.workspaceId,
+          from: "install_engineer",
+          siteUrl,
+          sessionId: this.state.sessionId,
+        }));
+      }
       return { ok: true, reason: foundLinks[0] };
     }
 
