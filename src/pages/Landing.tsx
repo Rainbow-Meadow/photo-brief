@@ -221,9 +221,10 @@ function ComparisonSection() {
           {/* After — bright half */}
           <div className="bg-card ring-1 ring-inset ring-[hsl(var(--accent-kinetic)/0.4)]">
             <div className="overflow-hidden bg-muted">
-              <img
-                src={cfImage(afterCapturePipelineIllo, { width: 720, format: "auto" })}
-                srcSet={cfImageSrcSet(afterCapturePipelineIllo, [480, 720, 1080])}
+              <CfImg
+                src={afterCapturePipelineIllo}
+                cfWidth={720}
+                widths={[480, 720, 1080]}
                 sizes="(min-width: 1024px) 50vw, 100vw"
                 alt="PhotoBrief inbox for Cedar &amp; Oak Tree Care showing two route-specific intake briefs — Emergency limb (photos required) and Full removal quote (photos recommended)."
                 className="h-auto w-full object-contain"
