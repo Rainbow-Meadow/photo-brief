@@ -16,29 +16,29 @@ export const workflowSteps: Array<{
 }> = [
   {
     n: "01",
-    title: "Read the site",
-    body: "PhotoBrief scans your site and pulls out every service — in your customers' words.",
+    title: "Read your site",
+    body: "We pull every service from your website, in your customers' words.",
     illo: researchMagnifierIllo,
     orientation: "landscape",
   },
   {
     n: "02",
     title: "Build the routes",
-    body: "One route per service. Its own questions. Its own photo policy — not needed, optional, recommended, or required.",
+    body: "Each service gets its own questions and its own photo policy.",
     illo: mechanismGearsIllo,
     orientation: "portrait",
   },
   {
     n: "03",
     title: "Guide the customer",
-    body: "One CTA. PhotoBrief picks the route, asks the right questions, and only opens the camera when photos move the job.",
+    body: "One CTA picks the route, asks what's needed, opens the camera only when it matters.",
     illo: briefPacketIllo,
     orientation: "portrait",
   },
   {
     n: "04",
     title: "Hand you a brief",
-    body: "Who, what, route, answers, photos, next step. Quote on the first reply.",
+    body: "Who, what, route, answers, photos, next step — quote on the first reply.",
     illo: methodOverviewIllo,
     orientation: "landscape",
   },
@@ -75,13 +75,15 @@ export function MechanismGrid() {
               <div
                 className={`${copyColSpan} order-1 ${flipped ? "lg:order-1" : "lg:order-2"}`}
               >
-                <div
-                  aria-hidden="true"
-                  className="font-display text-7xl leading-none tracking-tight text-foreground/15 lg:text-8xl"
-                >
-                  {step.n}
+                <div className="flex items-center gap-3">
+                  <span
+                    aria-hidden="true"
+                    className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[hsl(var(--accent-kinetic))] font-mono text-[11px] font-medium tracking-wide text-[hsl(var(--accent-kinetic))]"
+                  >
+                    {step.n}
+                  </span>
+                  <h3 className="ls-h3">{step.title}</h3>
                 </div>
-                <h3 className="ls-h2 mt-4 border-t border-border pt-6">{step.title}</h3>
                 <p className="mt-4 text-base leading-relaxed text-muted-foreground">
                   {step.body}
                 </p>
