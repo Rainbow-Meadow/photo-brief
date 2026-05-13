@@ -54,6 +54,24 @@ type InstallStatus =
   | "installed_verified"
   | "gave_up";
 
+interface MonitorCheck {
+  at: string;
+  ok: boolean;
+  reason: string;
+}
+
+interface MonitoringState {
+  enabled: boolean;
+  /** Cron expression used for the recurring re-verify. */
+  cron: string;
+  /** ID returned by `this.schedule()`, used for cancellation. */
+  scheduleId: string | null;
+  lastCheckAt: string | null;
+  lastOk: boolean | null;
+  /** Most recent N checks (newest first). Capped to 20. */
+  history: MonitorCheck[];
+}
+
 interface AgentState {
   sessionId: string;
   workspaceId: string | null;
@@ -70,8 +88,12 @@ interface AgentState {
   credentials: InstallerCredentials | null;
   /** Confirmation URL the user can open to inspect the change in their CMS. */
   confirmUrl: string | null;
+  monitoring: MonitoringState;
   updatedAt: string;
 }
+
+/** Phase 4: re-verify each install once a day at a session-stable minute. */
+const DEFAULT_MONITOR_CRON = "17 9 * * *";
 
 const PLATFORM_FINGERPRINTS: Array<{ platform: Platform; needles: string[] }> = [
   { platform: "webflow", needles: ["webflow.com", "data-wf-page", "wf-domain"] },
@@ -100,6 +122,14 @@ export class SiteInstallerAgent extends Agent<Env, AgentState> {
     verified: false,
     credentials: null,
     confirmUrl: null,
+    monitoring: {
+      enabled: false,
+      cron: DEFAULT_MONITOR_CRON,
+      scheduleId: null,
+      lastCheckAt: null,
+      lastOk: null,
+      history: [],
+    },
     updatedAt: new Date().toISOString(),
   };
 
@@ -119,8 +149,11 @@ export class SiteInstallerAgent extends Agent<Env, AgentState> {
       if (request.method === "POST" && url.pathname === "/mark-installed") return this.handleMarkInstalled(request);
       if (request.method === "POST" && url.pathname === "/verify") return this.handleVerify(request);
       if (request.method === "POST" && url.pathname === "/give-up") return this.handleGiveUp(request);
+      if (request.method === "POST" && url.pathname === "/monitor") return this.handleMonitorNow(request);
+      if (request.method === "POST" && url.pathname === "/monitor/enable") return this.handleMonitorEnable(request);
+      if (request.method === "POST" && url.pathname === "/monitor/disable") return this.handleMonitorDisable(request);
 
-      return json({ error: "Use /start, /state, /detect, /credentials, /install, /mark-installed, /verify, /give-up." }, 404, request);
+      return json({ error: "Use /start, /state, /detect, /credentials, /install, /mark-installed, /verify, /monitor, /monitor/enable, /monitor/disable, /give-up." }, 404, request);
     } catch (error) {
       console.error("site installer agent error", error);
       return json({ error: error instanceof Error ? error.message : "Unknown error" }, 500, request);
@@ -239,14 +272,108 @@ export class SiteInstallerAgent extends Agent<Env, AgentState> {
   }
 
   private async handleGiveUp(_request: Request) {
+    await this.cancelMonitoring();
     this.setState({
       ...this.state,
       status: "gave_up",
       credentials: null,
-      steps: [...this.state.steps, step("info", "Session closed. Credentials wiped.")],
+      monitoring: { ...this.state.monitoring, enabled: false, scheduleId: null },
+      steps: [...this.state.steps, step("info", "Session closed. Credentials wiped. Monitoring stopped.")],
       updatedAt: new Date().toISOString(),
     });
     return json(this.publicState(), 200, _request);
+  }
+
+  // ---- Phase 4: monitoring ------------------------------------------------
+
+  private async handleMonitorNow(request: Request) {
+    if (!this.state.siteUrl || !this.state.intakeToken) {
+      return json({ error: "siteUrl and intakeToken must be set before monitoring." }, 400, request);
+    }
+    const result = await this.runMonitorCheck("manual");
+    return json({ result, state: this.publicState() }, 200, request);
+  }
+
+  private async handleMonitorEnable(request: Request) {
+    const body = await readJson(request);
+    const cron = clean(body.cron) || this.state.monitoring.cron || DEFAULT_MONITOR_CRON;
+    await this.enableMonitoring(cron);
+    return json(this.publicState(), 200, request);
+  }
+
+  private async handleMonitorDisable(request: Request) {
+    await this.cancelMonitoring();
+    this.setState({
+      ...this.state,
+      monitoring: { ...this.state.monitoring, enabled: false, scheduleId: null },
+      steps: [...this.state.steps, step("info", "Monitoring disabled.")],
+      updatedAt: new Date().toISOString(),
+    });
+    return json(this.publicState(), 200, request);
+  }
+
+  private async enableMonitoring(cron: string) {
+    await this.cancelMonitoring();
+    let scheduleId: string | null = null;
+    try {
+      // Agents SDK: schedule a recurring task by cron, dispatched to `monitorTick`.
+      const handle = await (this as any).schedule(cron, "monitorTick", {});
+      scheduleId = handle?.id ?? handle ?? null;
+    } catch (e) {
+      this.appendStep(step("verify_fail", "Could not schedule monitoring.", asString(e)));
+    }
+    this.setState({
+      ...this.state,
+      monitoring: {
+        ...this.state.monitoring,
+        enabled: true,
+        cron,
+        scheduleId,
+      },
+      steps: [...this.state.steps, step("info", `Monitoring enabled (${cron}).`)],
+      updatedAt: new Date().toISOString(),
+    });
+  }
+
+  private async cancelMonitoring() {
+    const id = this.state.monitoring.scheduleId;
+    if (!id) return;
+    try { await (this as any).cancelSchedule?.(id); } catch { /* ignore */ }
+  }
+
+  /**
+   * Scheduled callback invoked by the Agents runtime on the configured cron.
+   * Must be public so the SDK can dispatch to it by name.
+   */
+  async monitorTick() {
+    if (!this.state.monitoring.enabled) return;
+    if (!this.state.siteUrl || !this.state.intakeToken) return;
+    await this.runMonitorCheck("scheduled");
+  }
+
+  private async runMonitorCheck(trigger: "manual" | "scheduled"): Promise<MonitorCheck> {
+    const result = await this.verifyInstall();
+    const check: MonitorCheck = {
+      at: new Date().toISOString(),
+      ok: result.ok,
+      reason: result.reason,
+    };
+    const history = [check, ...this.state.monitoring.history].slice(0, 20);
+    this.setState({
+      ...this.state,
+      monitoring: {
+        ...this.state.monitoring,
+        lastCheckAt: check.at,
+        lastOk: check.ok,
+        history,
+      },
+      steps: [
+        ...this.state.steps,
+        step(check.ok ? "verify_pass" : "verify_fail", `Monitor (${trigger}): ${check.ok ? "intake link still live." : "intake link missing."}`, check.reason),
+      ],
+      updatedAt: new Date().toISOString(),
+    });
+    return check;
   }
 
   // ---- core ---------------------------------------------------------------
@@ -338,6 +465,10 @@ export class SiteInstallerAgent extends Agent<Env, AgentState> {
         credentials: null, // wipe credentials on success
         updatedAt: new Date().toISOString(),
       });
+      // Phase 4: kick off recurring re-verification on first success.
+      if (!this.state.monitoring.enabled) {
+        await this.enableMonitoring(this.state.monitoring.cron || DEFAULT_MONITOR_CRON);
+      }
       return { ok: true, reason: foundLinks[0] };
     }
 
@@ -379,7 +510,7 @@ export default {
 
     const url = new URL(request.url);
     if (url.pathname === "/" || url.pathname === "/health") {
-      return json({ ok: true, name: "PhotoBrief Site Installer Agent", version: "1.2.0" }, 200, request);
+      return json({ ok: true, name: "PhotoBrief Site Installer Agent", version: "1.3.0" }, 200, request);
     }
 
     if (request.method === "POST" && url.pathname === "/sessions/start") {
@@ -395,7 +526,7 @@ export default {
       }));
     }
 
-    const match = url.pathname.match(/^\/sessions\/([^/]+)\/(state|detect|credentials|install|mark-installed|verify|give-up)$/);
+    const match = url.pathname.match(/^\/sessions\/([^/]+)\/(state|detect|credentials|install|mark-installed|verify|give-up|monitor|monitor\/enable|monitor\/disable)$/);
     if (!match) return json({ error: "Unknown route." }, 404, request);
 
     const [, rawSessionId, action] = match;

@@ -701,7 +701,7 @@ function AutoInstallPanel({
   hostedLink: string;
 }) {
   const [siteUrl, setSiteUrl] = useState("");
-  const [busy, setBusy] = useState<null | "detect" | "verify" | "install" | "save">(null);
+  const [busy, setBusy] = useState<null | "detect" | "verify" | "install" | "save" | "monitor" | "monitor_toggle">(null);
   const [state, setState] = useState<InstallerState | null>(null);
   const [creds, setCreds] = useState<InstallerCredentialsInput>({});
 
@@ -834,6 +834,68 @@ function AutoInstallPanel({
           ))}
           {hostedLink && !state.verified && (
             <div className="pt-1">Target: <code className="text-foreground">{hostedLink}</code></div>
+          )}
+        </div>
+      )}
+
+      {state && state.verified && (
+        <div className="mt-4 rounded-none border border-border bg-background/50 p-3">
+          <div className="flex items-center justify-between gap-2">
+            <div className="text-sm font-semibold uppercase tracking-[0.18em] text-foreground">
+              Monitoring
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                className="h-9 rounded-none"
+                disabled={busy !== null}
+                onClick={() => run("monitor", async () => {
+                  const { state: s } = await siteInstallerAgent.monitorNow(state.sessionId);
+                  setState(s);
+                }, "Re-checked live site")}
+              >
+                {busy === "monitor" ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CheckCircle2 className="mr-2 h-4 w-4" />}
+                Check now
+              </Button>
+              <Button
+                variant="outline"
+                className="h-9 rounded-none"
+                disabled={busy !== null}
+                onClick={() => run("monitor_toggle", async () => {
+                  const s = state.monitoring.enabled
+                    ? await siteInstallerAgent.monitorDisable(state.sessionId)
+                    : await siteInstallerAgent.monitorEnable(state.sessionId);
+                  setState(s);
+                }, state.monitoring.enabled ? "Monitoring paused" : "Monitoring enabled")}
+              >
+                {state.monitoring.enabled ? "Pause" : "Enable"}
+              </Button>
+            </div>
+          </div>
+          <div className="mt-2 text-xs text-muted-foreground">
+            {state.monitoring.enabled
+              ? <>Re-checking the live site on schedule (<code className="text-foreground">{state.monitoring.cron}</code> UTC).</>
+              : <>Scheduled re-checks paused.</>}
+            {state.monitoring.lastCheckAt && (
+              <> Last check {new Date(state.monitoring.lastCheckAt).toLocaleString()} —{" "}
+                <span className={state.monitoring.lastOk ? "text-foreground" : "text-destructive"}>
+                  {state.monitoring.lastOk ? "link still live" : "link missing"}
+                </span>.
+              </>
+            )}
+          </div>
+          {state.monitoring.history.length > 0 && (
+            <ul className="mt-2 space-y-0.5 text-xs text-muted-foreground">
+              {state.monitoring.history.slice(0, 5).map((h, i) => (
+                <li key={i}>
+                  · {new Date(h.at).toLocaleString()} —{" "}
+                  <span className={h.ok ? "text-foreground" : "text-destructive"}>
+                    {h.ok ? "OK" : "FAIL"}
+                  </span>
+                  {h.reason ? <> · <span className="opacity-70">{h.reason}</span></> : null}
+                </li>
+              ))}
+            </ul>
           )}
         </div>
       )}

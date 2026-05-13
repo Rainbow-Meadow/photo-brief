@@ -22,6 +22,21 @@ export interface InstallerStep {
   at: string;
 }
 
+export interface MonitorCheck {
+  at: string;
+  ok: boolean;
+  reason: string;
+}
+
+export interface MonitoringState {
+  enabled: boolean;
+  cron: string;
+  scheduleId: string | null;
+  lastCheckAt: string | null;
+  lastOk: boolean | null;
+  history: MonitorCheck[];
+}
+
 export interface InstallerState {
   sessionId: string;
   workspaceId: string | null;
@@ -36,6 +51,7 @@ export interface InstallerState {
   verified: boolean;
   hasCredentials: boolean;
   confirmUrl: string | null;
+  monitoring: MonitoringState;
   updatedAt: string;
 }
 
@@ -74,6 +90,15 @@ export const siteInstallerAgent = {
   verify: (sessionId: string) =>
     call<{ result: { ok: boolean; reason: string }; state: InstallerState }>(
       `/sessions/${sessionId}/verify`, { method: "POST", body: "{}" }),
+  monitorNow: (sessionId: string) =>
+    call<{ result: MonitorCheck; state: InstallerState }>(
+      `/sessions/${sessionId}/monitor`, { method: "POST", body: "{}" }),
+  monitorEnable: (sessionId: string, cron?: string) =>
+    call<InstallerState>(`/sessions/${sessionId}/monitor/enable`, {
+      method: "POST", body: JSON.stringify(cron ? { cron } : {}),
+    }),
+  monitorDisable: (sessionId: string) =>
+    call<InstallerState>(`/sessions/${sessionId}/monitor/disable`, { method: "POST", body: "{}" }),
   giveUp: (sessionId: string) =>
     call<InstallerState>(`/sessions/${sessionId}/give-up`, { method: "POST", body: "{}" }),
 };
