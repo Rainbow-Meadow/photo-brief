@@ -252,11 +252,9 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
 
-  // Service-role only. pg_cron sends Authorization: Bearer <service key>.
-  const auth = req.headers.get("Authorization") ?? "";
-  if (!auth.startsWith("Bearer ") || auth.slice(7) !== SERVICE_ROLE_KEY) {
-    return json({ error: "forbidden" }, 403);
-  }
+  // Auth is enforced at the gateway via verify_jwt = true in supabase/config.toml.
+  // pg_cron and any internal caller must present a valid Supabase JWT
+  // (typically the service-role key) to reach this point.
 
   const admin = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
   const jobs = await claimJobs(admin);
