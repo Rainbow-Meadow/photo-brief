@@ -223,6 +223,17 @@ export class CaptureAgent extends Agent<Env, CaptureState> {
         patch.sessionActive = false;
         // Cancel any pending nudge
         this.cancelSchedule("nudge_reminder");
+        // Hand off to the Conductor when the caller passed enough context.
+        if (event.workspaceId) {
+          await emitAgentEvent(this.env as unknown as { AGENT_EVENTS?: AgentEventQueue }, makeEvent({
+            type: "submission_completed",
+            workspaceId: event.workspaceId,
+            from: "capture_coach",
+            submissionId: event.submissionId ?? "",
+            requestId: this.state.requestId || (this.name ?? ""),
+            correlationId: this.state.requestId,
+          }));
+        }
         break;
     }
 
