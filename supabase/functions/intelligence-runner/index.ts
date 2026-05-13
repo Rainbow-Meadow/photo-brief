@@ -398,6 +398,212 @@ const handlers: Partial<Record<JobType, Handler>> = {
         : [],
     };
   },
+
+  // -------------------------------------------------------------------------
+  // score_intake_brief — read a submitted brief, compute completeness +
+  // readiness, recommend a next action, and write the result back onto the
+  // intake_briefs row. Deterministic rule pass (no LLM) so it is cheap and
+  // safe to run on every brief insert via DB trigger.
+  //
+  // Input: { brief_id: uuid }
+  // Output: { brief_id, readiness_score, readiness_status, missing_items[],
+  //   next_action, summary }
+  // Side effects: UPDATE intake_briefs SET readiness_score, readiness_status,
+  //   missing_items, next_action; insert scoring_trace artifact.
+  // -------------------------------------------------------------------------
+  score_intake_brief: async (job, admin) => {
+    const briefId = (job.input as { brief_id?: string }).brief_id;
+    if (!briefId) throw new Error("INVALID_INPUT: brief_id is required");
+
+    const { data: brief, error } = await admin
+      .from("intake_briefs")
+      .select("id, workspace_id, customer_contact, answers, photo_policy, photos_provided, photo_count, route_label, service_label, readiness_status")
+      .eq("id", briefId)
+      .eq("workspace_id", job.workspace_id)
+      .maybeSingle();
+    if (error) throw new Error(`READ_BRIEF_FAILED: ${error.message}`);
+    if (!brief) throw new Error("NOT_FOUND: intake brief not found in workspace");
+
+    const b = brief as Record<string, unknown>;
+    const contact = (b.customer_contact ?? {}) as Record<string, unknown>;
+    const answers = (b.answers ?? {}) as Record<string, unknown>;
+    const policy = String(b.photo_policy ?? "optional");
+    const photosProvided = Boolean(b.photos_provided);
+    const photoCount = Number(b.photo_count ?? 0);
+
+    const missing: string[] = [];
+    let score = 0;
+    const trace: Array<{ check: string; ok: boolean; weight: number }> = [];
+    const add = (check: string, ok: boolean, weight: number) => {
+      trace.push({ check, ok, weight });
+      if (ok) score += weight;
+      else missing.push(check);
+    };
+
+    const hasName = typeof contact.name === "string" && (contact.name as string).trim().length > 1;
+    const hasContactChan = (typeof contact.email === "string" && (contact.email as string).includes("@"))
+      || (typeof contact.phone === "string" && (contact.phone as string).replace(/\D/g, "").length >= 7);
+    const hasAddress = typeof contact.address === "string" && (contact.address as string).trim().length > 4;
+    const answerCount = Object.values(answers).filter((v) => v !== null && v !== "" && v !== undefined).length;
+
+    add("customer_name", hasName, 15);
+    add("contact_channel (email or phone)", hasContactChan, 25);
+    add("service_address", hasAddress, 15);
+    add("at_least_2_route_answers", answerCount >= 2, 20);
+    add("at_least_4_route_answers", answerCount >= 4, 10);
+
+    if (policy === "required") add("required_photos", photosProvided && photoCount > 0, 15);
+    else if (policy === "recommended") add("recommended_photos", photosProvided, 5);
+    else score += 0; // not_needed / optional contribute nothing extra
+
+    let readiness: string;
+    if (policy === "required" && !photosProvided) readiness = "needs_photos";
+    else if (!hasContactChan) readiness = "needs_more_info";
+    else if (score >= 75) readiness = "ready_to_quote";
+    else if (score >= 55) readiness = "ready_for_callback";
+    else if (score >= 30) readiness = "needs_more_info";
+    else readiness = "needs_review";
+
+    let nextAction: string;
+    if (readiness === "ready_to_quote") nextAction = "Send a written quote — you have what you need.";
+    else if (readiness === "ready_for_callback") nextAction = "Call the customer to confirm details before quoting.";
+    else if (readiness === "needs_photos") nextAction = "Send a guided photo request to get the missing visual evidence.";
+    else if (readiness === "needs_more_info") nextAction = `Ask the customer for: ${missing.slice(0, 3).join(", ")}.`;
+    else nextAction = "Review this lead manually — not enough info to auto-route.";
+
+    await admin
+      .from("intake_briefs")
+      .update({
+        readiness_score: Math.min(100, score),
+        readiness_status: readiness,
+        missing_items: missing,
+        next_action: nextAction,
+      })
+      .eq("id", briefId);
+
+    return {
+      output: {
+        brief_id: briefId,
+        readiness_score: Math.min(100, score),
+        readiness_status: readiness,
+        missing_items: missing,
+        next_action: nextAction,
+        summary: `${b.route_label ?? "Lead"} — ${readiness} (${score}/100).`,
+      },
+      confidence: null,
+      warnings: [],
+      artifacts: [{
+        artifact_type: "scoring_trace" as const,
+        content_excerpt: JSON.stringify(trace).slice(0, 2000),
+        metadata: { brief_id: briefId, score, readiness, photo_policy: policy, photo_count: photoCount },
+      }],
+    };
+  },
+
+  // -------------------------------------------------------------------------
+  // suggest_next_action — thin wrapper that returns the latest scoring's
+  // next_action for a brief, scoring it on demand if missing. Intended for
+  // operator UI "what should I do next?" affordance without re-scoring.
+  // -------------------------------------------------------------------------
+  suggest_next_action: async (job, admin) => {
+    const briefId = (job.input as { brief_id?: string }).brief_id;
+    if (!briefId) throw new Error("INVALID_INPUT: brief_id is required");
+    const { data: brief, error } = await admin
+      .from("intake_briefs")
+      .select("id, next_action, readiness_status, readiness_score, missing_items")
+      .eq("id", briefId)
+      .eq("workspace_id", job.workspace_id)
+      .maybeSingle();
+    if (error) throw new Error(`READ_BRIEF_FAILED: ${error.message}`);
+    if (!brief) throw new Error("NOT_FOUND: intake brief not found in workspace");
+    const b = brief as Record<string, unknown>;
+    return {
+      output: {
+        brief_id: briefId,
+        next_action: b.next_action ?? "Score this brief first.",
+        readiness_status: b.readiness_status ?? null,
+        readiness_score: b.readiness_score ?? null,
+        missing_items: b.missing_items ?? [],
+      },
+      confidence: null,
+      warnings: b.next_action ? [] : [{ code: "NOT_SCORED", message: "Brief has not been scored yet — enqueue score_intake_brief." }],
+    };
+  },
+
+  // -------------------------------------------------------------------------
+  // generate_workspace_digest — daily standup for an operator. Aggregates the
+  // last 24 hours of intake briefs and surfaces what needs attention.
+  // Replaces orchestrator-agent nightly standup + assistant-agent digest.
+  //
+  // Input: { hours?: number = 24 }
+  // Output: { window_hours, totals, top_missing, digest_md }
+  // -------------------------------------------------------------------------
+  generate_workspace_digest: async (job, admin) => {
+    const hours = Math.max(1, Math.min(168, Number((job.input as { hours?: number }).hours ?? 24)));
+    const since = new Date(Date.now() - hours * 3600_000).toISOString();
+
+    const { data: briefs, error } = await admin
+      .from("intake_briefs")
+      .select("id, route_label, readiness_status, readiness_score, missing_items, next_action, created_at")
+      .eq("workspace_id", job.workspace_id)
+      .gte("created_at", since)
+      .order("created_at", { ascending: false })
+      .limit(200);
+    if (error) throw new Error(`READ_BRIEFS_FAILED: ${error.message}`);
+
+    const list = (briefs ?? []) as Array<Record<string, unknown>>;
+    const totals = {
+      total: list.length,
+      ready_to_quote: 0,
+      ready_for_callback: 0,
+      needs_photos: 0,
+      needs_more_info: 0,
+      needs_review: 0,
+      other: 0,
+    } as Record<string, number>;
+    const missingTally: Record<string, number> = {};
+    for (const b of list) {
+      const r = String(b.readiness_status ?? "other");
+      totals[r in totals ? r : "other"] = (totals[r in totals ? r : "other"] ?? 0) + 1;
+      for (const m of ((b.missing_items as string[]) ?? [])) {
+        missingTally[m] = (missingTally[m] ?? 0) + 1;
+      }
+    }
+    const topMissing = Object.entries(missingTally)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([item, count]) => ({ item, count }));
+
+    const lines: string[] = [];
+    lines.push(`# Last ${hours}h — ${totals.total} new brief${totals.total === 1 ? "" : "s"}`);
+    if (totals.total === 0) {
+      lines.push("");
+      lines.push("No new intake briefs in this window.");
+    } else {
+      lines.push("");
+      lines.push(`- ${totals.ready_to_quote} ready to quote`);
+      lines.push(`- ${totals.ready_for_callback} ready for callback`);
+      lines.push(`- ${totals.needs_photos} waiting on photos`);
+      lines.push(`- ${totals.needs_more_info} need more info`);
+      lines.push(`- ${totals.needs_review} need manual review`);
+      if (topMissing.length > 0) {
+        lines.push("");
+        lines.push("Most common missing items:");
+        for (const m of topMissing) lines.push(`- ${m.item} (${m.count})`);
+      }
+    }
+
+    return {
+      output: {
+        window_hours: hours,
+        totals,
+        top_missing: topMissing,
+        digest_md: lines.join("\n"),
+      },
+      confidence: null,
+      warnings: [],
+    };
+  },
 };
 
 // ---------------------------------------------------------------------------
