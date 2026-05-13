@@ -56,6 +56,9 @@ interface CaptureEvent {
   totalSteps?: number;
   completedSteps?: number;
   timestamp?: string;
+  /** Optional — when present, the agent will publish a cross-agent event. */
+  workspaceId?: string;
+  submissionId?: string;
 }
 
 interface StepProgress {
