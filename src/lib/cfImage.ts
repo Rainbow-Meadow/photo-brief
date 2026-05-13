@@ -60,10 +60,25 @@ function buildOptions(opts: CfImageOptions): string {
  * photobrief.ai zone (Cloudflare fetches the source). If the URL is empty
  * or already wrapped, it is returned unchanged.
  */
+/**
+ * True when the current page is served from a host that has Cloudflare
+ * Image Resizing enabled. Off the photobrief.ai zone (e.g. the
+ * `*.lovable.app` preview, localhost, custom subdomains) we must NOT
+ * route through `/cdn-cgi/image/` because Cloudflare would try to fetch
+ * a hashed Vite asset that only exists in the *production* bundle on
+ * photobrief.ai. In that case we serve the original URL untouched.
+ */
+function cfResizingAvailable(): boolean {
+  if (typeof window === "undefined") return false;
+  const host = window.location.hostname;
+  return host === DEFAULT_HOST || host === `www.${DEFAULT_HOST}`;
+}
+
 export function cfImage(url: string | null | undefined, options: CfImageOptions): string {
   if (!url) return "";
   if (url.startsWith("data:")) return url;
   if (url.includes("/cdn-cgi/image/")) return url;
+  if (!cfResizingAvailable()) return url;
   const opts = buildOptions(options);
   // Cloudflare expects: https://<zone>/cdn-cgi/image/<options>/<source-url>
   // For absolute URLs, the source is appended verbatim (Cloudflare fetches it).
@@ -85,6 +100,9 @@ export function cfImageSrcSet(
   options: Omit<CfImageOptions, "width"> = {},
 ): string {
   if (!url) return "";
+  // Without Cloudflare Image Resizing each width would resolve to the same
+  // raw URL, so a srcset is pointless — return empty and let `src` win.
+  if (!cfResizingAvailable()) return "";
   return widths
     .map((w) => `${cfImage(url, { ...options, width: w })} ${w}w`)
     .join(", ");
