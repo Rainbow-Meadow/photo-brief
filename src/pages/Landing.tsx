@@ -27,6 +27,7 @@ import heroAfterImg from "@/assets/hero/hero-after-photobrief-packet.jpg";
 import beforeIntakeFormIllo from "@/assets/comparison/before-cedar-intake.png";
 import afterCapturePipelineIllo from "@/assets/comparison/after-cedar-brief.png";
 import { BeforeAfterSlider } from "@/components/marketing/BeforeAfterSlider";
+import { cfImage, cfImageSrcSet } from "@/lib/cfImage";
 
 const SOFTWARE_APP_JSONLD: Record<string, unknown> = {
   "@context": "https://schema.org",
