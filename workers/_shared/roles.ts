@@ -7,12 +7,11 @@
  * See docs/agent-roles.md for the human-readable charter.
  */
 
+// PR 7 (PhotoBrief Intelligence collapse): orchestrator/assistant/site-installer/
+// beta-onboarding workers were deleted. Their roles are intentionally absent
+// from this enum so importers fail loud if they try to dispatch to a tombstone.
 export type AgentRole =
-  | "conductor"
-  | "account_strategist"
   | "capture_coach"
-  | "install_engineer"
-  | "growth_steward"
   | "agent_gateway"
   | "edge_traffic";
 
