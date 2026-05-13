@@ -156,6 +156,248 @@ const handlers: Partial<Record<JobType, Handler>> = {
       ],
     };
   },
+
+  // -------------------------------------------------------------------------
+  // analyze_forms — read scanned forms for a workspace and classify them.
+  //
+  // Input: { scan_job_id?: uuid, workspace_id? } — defaults to the latest
+  //   scan job for the workspace.
+  // Output: { forms: [{ id, page_url, inferred_purpose, quality_score,
+  //   classification, replace_with_intake, reason }], summary }
+  //
+  // Deterministic. No LLM. Classification is a simple rule pass over field
+  // names + button text + nearby copy. The purpose is to flag which legacy
+  // website forms Smart Intake should replace.
+  // -------------------------------------------------------------------------
+  analyze_forms: async (job, admin) => {
+    const input = job.input ?? {};
+    const scanJobId = (input as { scan_job_id?: string }).scan_job_id ?? null;
+
+    let q = admin
+      .from("website_forms")
+      .select("id, page_url, field_names, field_labels, required_fields, button_text, nearby_heading, nearby_copy, inferred_purpose, quality_score, scan_job_id")
+      .eq("workspace_id", job.workspace_id)
+      .order("quality_score", { ascending: false })
+      .limit(100);
+    if (scanJobId) q = q.eq("scan_job_id", scanJobId);
+    const { data: forms, error } = await q;
+    if (error) throw new Error(`READ_FORMS_FAILED: ${error.message}`);
+
+    const classified = (forms ?? []).map((f: Record<string, unknown>) => {
+      const fields = ([] as string[])
+        .concat((f.field_names as string[]) ?? [])
+        .concat((f.field_labels as string[]) ?? [])
+        .map((s) => (s ?? "").toLowerCase());
+      const text = `${f.button_text ?? ""} ${f.nearby_heading ?? ""} ${f.nearby_copy ?? ""}`.toLowerCase();
+      const all = fields.join(" ") + " " + text;
+
+      const has = (...needles: string[]) => needles.some((n) => all.includes(n));
+
+      let classification: "contact" | "quote" | "booking" | "newsletter" | "support" | "other" = "other";
+      if (has("newsletter", "subscribe", "signup for")) classification = "newsletter";
+      else if (has("estimate", "quote", "pricing", "get a price")) classification = "quote";
+      else if (has("appointment", "book ", "schedule")) classification = "booking";
+      else if (has("support", "ticket", "help")) classification = "support";
+      else if (has("contact", "message", "get in touch", "reach out", "name", "email")) classification = "contact";
+
+      // Anything that captures customer intent for service work should be
+      // replaced with Smart Intake. Newsletters and pure support tickets stay.
+      const replace = classification === "contact"
+        || classification === "quote"
+        || classification === "booking";
+
+      const reason = replace
+        ? `Captures customer intent (${classification}) — Smart Intake collects the same fields plus job-specific routing.`
+        : `Not a service-intake form (${classification}).`;
+
+      return {
+        id: f.id,
+        page_url: f.page_url,
+        inferred_purpose: f.inferred_purpose,
+        quality_score: f.quality_score,
+        classification,
+        replace_with_intake: replace,
+        reason,
+      };
+    });
+
+    const replaceCount = classified.filter((c) => c.replace_with_intake).length;
+    return {
+      output: {
+        scan_job_id: scanJobId,
+        forms_total: classified.length,
+        forms_to_replace: replaceCount,
+        forms: classified,
+        summary: replaceCount === 0
+          ? "No service-intake forms detected on this site."
+          : `${replaceCount} of ${classified.length} forms should be replaced by Smart Intake.`,
+      },
+      confidence: null,
+      warnings: classified.length === 0
+        ? [{ code: "NO_FORMS", message: "No website_forms rows found for this workspace/scan." }]
+        : [],
+      artifacts: classified.slice(0, 10).map((c) => ({
+        artifact_type: "form_snapshot" as const,
+        source_url: typeof c.page_url === "string" ? c.page_url : null,
+        metadata: {
+          form_id: c.id,
+          classification: c.classification,
+          replace_with_intake: c.replace_with_intake,
+          quality_score: c.quality_score,
+        },
+      })),
+    };
+  },
+
+  // -------------------------------------------------------------------------
+  // propose_routes — read the routing rules currently attached to a
+  // workspace's latest blueprint and surface them as a proposal payload
+  // (label, customer_description, match_keywords, template_type, fallback).
+  //
+  // Input: { blueprint_id?: uuid } — defaults to the latest draft/active
+  //   blueprint for the workspace.
+  // Output: { blueprint_id, routes: [...], coverage_warnings }
+  //
+  // Deterministic. PR 4 will swap the source from legacy generation to a
+  // first-class job that derives routes from website_pages + service_catalog.
+  // -------------------------------------------------------------------------
+  propose_routes: async (job, admin) => {
+    const input = job.input ?? {};
+    let blueprintId = (input as { blueprint_id?: string }).blueprint_id ?? null;
+
+    if (!blueprintId) {
+      const { data: bp } = await admin
+        .from("intake_blueprints")
+        .select("id")
+        .eq("workspace_id", job.workspace_id)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      blueprintId = (bp as { id?: string } | null)?.id ?? null;
+    }
+    if (!blueprintId) {
+      throw new Error("NO_BLUEPRINT: workspace has no intake_blueprint to propose routes for");
+    }
+
+    const { data: rules, error } = await admin
+      .from("intake_routing_rules")
+      .select("id, label, customer_description, match_keywords, template_type, photo_policy, readiness_goal, sort_order, is_fallback")
+      .eq("blueprint_id", blueprintId)
+      .order("sort_order", { ascending: true });
+    if (error) throw new Error(`READ_ROUTES_FAILED: ${error.message}`);
+
+    const list = rules ?? [];
+    const warnings: Array<{ code: string; message: string }> = [];
+    if (list.length === 0) warnings.push({ code: "NO_ROUTES", message: "Blueprint has no routes." });
+    if (list.length > 0 && !list.some((r: Record<string, unknown>) => r.is_fallback)) {
+      warnings.push({ code: "NO_FALLBACK", message: "No fallback route defined — recipients who don't match a route will be stuck." });
+    }
+    const dupes = new Set<string>();
+    const seen = new Set<string>();
+    for (const r of list) {
+      const key = (r as { label?: string }).label?.toLowerCase().trim() ?? "";
+      if (!key) continue;
+      if (seen.has(key)) dupes.add(key);
+      seen.add(key);
+    }
+    if (dupes.size > 0) {
+      warnings.push({ code: "DUPLICATE_LABELS", message: `Duplicate route labels: ${Array.from(dupes).join(", ")}` });
+    }
+
+    return {
+      output: {
+        blueprint_id: blueprintId,
+        routes_total: list.length,
+        routes: list,
+      },
+      confidence: null,
+      warnings,
+    };
+  },
+
+  // -------------------------------------------------------------------------
+  // propose_photo_policies — for each route on a blueprint, recommend one of
+  // the four canonical photo policies based on template_type + readiness_goal.
+  //
+  // The default answer to "should we ask for a photo?" is no. Photos are
+  // only required when the job literally cannot be quoted/dispatched without
+  // visual evidence (damage, install conditions).
+  //
+  // Input: { blueprint_id?: uuid }
+  // Output: { blueprint_id, recommendations: [{ route_id, label,
+  //   current_policy, recommended_policy, reason }] }
+  // -------------------------------------------------------------------------
+  propose_photo_policies: async (job, admin) => {
+    const input = job.input ?? {};
+    let blueprintId = (input as { blueprint_id?: string }).blueprint_id ?? null;
+    if (!blueprintId) {
+      const { data: bp } = await admin
+        .from("intake_blueprints")
+        .select("id")
+        .eq("workspace_id", job.workspace_id)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      blueprintId = (bp as { id?: string } | null)?.id ?? null;
+    }
+    if (!blueprintId) {
+      throw new Error("NO_BLUEPRINT: workspace has no intake_blueprint to propose photo policies for");
+    }
+
+    const { data: rules, error } = await admin
+      .from("intake_routing_rules")
+      .select("id, label, template_type, readiness_goal, photo_policy")
+      .eq("blueprint_id", blueprintId);
+    if (error) throw new Error(`READ_ROUTES_FAILED: ${error.message}`);
+
+    type Policy = "not_needed" | "optional" | "recommended" | "required";
+    const recommendations = (rules ?? []).map((r: Record<string, unknown>) => {
+      const tmpl = String(r.template_type ?? "").toLowerCase();
+      const goal = String(r.readiness_goal ?? "").toLowerCase();
+      const label = String(r.label ?? "").toLowerCase();
+      const blob = `${tmpl} ${goal} ${label}`;
+
+      let recommended: Policy = "optional";
+      let reason = "Default: photos help but don't block — operator can decide per lead.";
+
+      if (/\b(damage|leak|repair|insurance|claim|storm|roof|hvac|plumb|electric)\b/.test(blob)) {
+        recommended = "required";
+        reason = "Damage/repair/insurance work cannot be quoted without visual evidence.";
+      } else if (/\b(install|replace|measur|estimate|quote)\b/.test(blob)) {
+        recommended = "recommended";
+        reason = "Install/replace estimates are much faster with photos but a callback can fill the gap.";
+      } else if (/\b(callback|call|talk|consult|question|info)\b/.test(blob)) {
+        recommended = "not_needed";
+        reason = "Information / callback request — no photos needed.";
+      } else if (/\b(book|appoint|schedule|maintenance|tune)\b/.test(blob)) {
+        recommended = "not_needed";
+        reason = "Scheduled service / maintenance — photos add friction without changing the dispatch.";
+      }
+
+      return {
+        route_id: r.id,
+        label: r.label,
+        current_policy: r.photo_policy,
+        recommended_policy: recommended,
+        changed: r.photo_policy !== recommended,
+        reason,
+      };
+    });
+
+    const changes = recommendations.filter((r) => r.changed).length;
+    return {
+      output: {
+        blueprint_id: blueprintId,
+        routes_total: recommendations.length,
+        changes_proposed: changes,
+        recommendations,
+      },
+      confidence: null,
+      warnings: recommendations.length === 0
+        ? [{ code: "NO_ROUTES", message: "Blueprint has no routes to recommend policies for." }]
+        : [],
+    };
+  },
 };
 
 // ---------------------------------------------------------------------------
