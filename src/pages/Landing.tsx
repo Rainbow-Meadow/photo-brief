@@ -27,6 +27,7 @@ import heroAfterImg from "@/assets/hero/hero-after-photobrief-packet.jpg";
 import beforeIntakeFormIllo from "@/assets/comparison/before-cedar-intake.png";
 import afterCapturePipelineIllo from "@/assets/comparison/after-cedar-brief.png";
 import { BeforeAfterSlider } from "@/components/marketing/BeforeAfterSlider";
+import { cfImage, cfImageSrcSet } from "@/lib/cfImage";
 
 const SOFTWARE_APP_JSONLD: Record<string, unknown> = {
   "@context": "https://schema.org",
@@ -187,10 +188,15 @@ function ComparisonSection() {
           <div className="border-b border-border bg-muted/30 opacity-70 grayscale-[0.4] lg:border-b-0 lg:border-r">
             <div className="overflow-hidden bg-muted">
               <img
-                src={beforeIntakeFormIllo}
+                src={cfImage(beforeIntakeFormIllo, { width: 720, format: "auto" })}
+                srcSet={cfImageSrcSet(beforeIntakeFormIllo, [480, 720, 1080])}
+                sizes="(min-width: 1024px) 50vw, 100vw"
                 alt="Cedar &amp; Oak Tree Care website with a generic three-field Contact us form — the kind of intake PhotoBrief replaces."
                 className="h-auto w-full object-contain"
                 loading="lazy"
+                decoding="async"
+                width={1280}
+                height={960}
               />
             </div>
             <div className="p-6 lg:p-8">
@@ -215,10 +221,15 @@ function ComparisonSection() {
           <div className="bg-card ring-1 ring-inset ring-[hsl(var(--accent-kinetic)/0.4)]">
             <div className="overflow-hidden bg-muted">
               <img
-                src={afterCapturePipelineIllo}
+                src={cfImage(afterCapturePipelineIllo, { width: 720, format: "auto" })}
+                srcSet={cfImageSrcSet(afterCapturePipelineIllo, [480, 720, 1080])}
+                sizes="(min-width: 1024px) 50vw, 100vw"
                 alt="PhotoBrief inbox for Cedar &amp; Oak Tree Care showing two route-specific intake briefs — Emergency limb (photos required) and Full removal quote (photos recommended)."
                 className="h-auto w-full object-contain"
                 loading="lazy"
+                decoding="async"
+                width={1280}
+                height={960}
               />
             </div>
             <div className="p-6 lg:p-8">
