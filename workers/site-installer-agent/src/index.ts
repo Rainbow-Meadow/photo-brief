@@ -465,6 +465,10 @@ export class SiteInstallerAgent extends Agent<Env, AgentState> {
         credentials: null, // wipe credentials on success
         updatedAt: new Date().toISOString(),
       });
+      // Phase 4: kick off recurring re-verification on first success.
+      if (!this.state.monitoring.enabled) {
+        await this.enableMonitoring(this.state.monitoring.cron || DEFAULT_MONITOR_CRON);
+      }
       return { ok: true, reason: foundLinks[0] };
     }
 
