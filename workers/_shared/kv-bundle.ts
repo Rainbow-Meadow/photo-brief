@@ -3,8 +3,9 @@
  *
  * The recipient page (/r/:token) is fully public, so we cache the assembled
  * bundle (request + brand profile + guide + steps) in Workers KV. Cache TTL
- * is 1 hour; explicit invalidation is triggered when the underlying records
- * change (see assistant-agent /invalidate-recipient route).
+ * is 1 hour; explicit invalidation is triggered by the
+ * `invalidate-recipient-bundle` Supabase edge function when the underlying
+ * records change.
  *
  * Add to wrangler.toml:
  *   [[kv_namespaces]]
