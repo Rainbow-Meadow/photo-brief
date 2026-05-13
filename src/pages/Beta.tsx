@@ -26,9 +26,9 @@ const BetaOnboardingAgentExperience = lazy(() =>
 );
 
 const offers = [
-  { icon: Clock3, label: `${BETA_DURATION_DAYS}-day beta access`, copy: "Run PhotoBrief on real customer leads before public launch." },
-  { icon: HeartHandshake, label: "White-glove route setup", copy: "We read your site with you and ship your first routes ready to take live traffic." },
-  { icon: MessageSquareText, label: "Direct line to the team", copy: "Async feedback (chat, email, in-app) goes straight onto the roadmap." },
+  { icon: Clock3, label: `${BETA_DURATION_DAYS}-day beta access`, copy: "Run real customer leads through PhotoBrief. Before anyone else." },
+  { icon: HeartHandshake, label: "White-glove route setup", copy: "We read your site. We build your routes. You take live traffic on day one." },
+  { icon: MessageSquareText, label: "Direct line to the team", copy: "Chat. Email. In-app. Your feedback hits the roadmap." },
   { icon: Sparkles, label: "Lifetime founding pricing", copy: MAX_DISCOUNT_LABEL },
 ];
 
@@ -40,7 +40,7 @@ export default function BetaPage() {
     <>
       <PageMeta
         title="Founding Partner Beta | PhotoBrief"
-        description={`${BETA_TOTAL_PARTNERS} seats. ${BETA_DURATION_DAYS} days. We build your routes from your site and lock in founding pricing for the life of your account.`}
+        description={`${BETA_TOTAL_PARTNERS} seats. ${BETA_DURATION_DAYS} days. We build your routes. You lock in founding pricing for life.`}
         canonicalPath="/beta"
       />
 
@@ -56,15 +56,15 @@ export default function BetaPage() {
             </RiseIn>
             <RiseIn delay={0.1}>
               <p className="ls-subtitle mx-auto mt-8 max-w-2xl">
-                This isn't a waitlist. It's a {BETA_TOTAL_PARTNERS}-seat room. We hand-build your intake routes from your own website, you run real customer leads through them, and the top two never pay for PhotoBrief Pro again.
+                Not a waitlist. A {BETA_TOTAL_PARTNERS}-seat room. We build your routes from your site. You run real leads. Top two never pay for Pro again.
               </p>
             </RiseIn>
             <CTAGroup align="center">
               <CTA href="#agent" variant="primary" size="lg">
-                {isFull ? "Join waitlist" : "Open the agent"}
+                {isFull ? "Join the waitlist" : "Take a seat"}
               </CTA>
               <CTA href="/demo" variant="secondary" size="lg">
-                See the live demo
+                See it live
               </CTA>
             </CTAGroup>
           </div>
@@ -78,8 +78,8 @@ export default function BetaPage() {
         <Container>
           <SectionIntro
             eyebrow="[ What you get ]"
-            title="Routes built from your site. Direct line. Pricing for life."
-            subtitle="Founding partners help us shape the product — and walk away with pricing nobody else can buy after launch."
+            title="Routes from your site. Direct line. Pricing for life."
+            subtitle="Help us shape the product. Walk away with pricing nobody else can buy."
           />
           <Grid cols={4} gap="md">
             {offers.map((o, i) => (
@@ -99,12 +99,12 @@ export default function BetaPage() {
               {
                 src: betaAsyncSetup,
                 alt: "Founding partner at a laptop sketching intake routes in a notebook while typing a setup note — no video call, async by design.",
-                caption: "Concierge setup happens over chat and email — we read your site, draft your routes, you review on your time.",
+                caption: "Setup happens over chat and email. We read your site. We draft your routes. You review on your time.",
               },
               {
                 src: betaFeedbackThread,
                 alt: "Editorial close-up of a laptop screen showing a feedback thread with two grey partner messages and one amber PhotoBrief reply.",
-                caption: "Feedback stays async and close to the product — partners ask, the team ships, the thread documents both.",
+                caption: "Feedback stays async. Close to the product. You ask. We ship. The thread proves it.",
               },
             ]}
           />
@@ -115,8 +115,8 @@ export default function BetaPage() {
         <Container>
           <SectionIntro
             eyebrow="[ Apply ]"
-            title="Six minutes with the onboarding agent."
-            subtitle="Tell us about the work and the website. If a founding seat has your name on it, you'll hear back within 48 hours."
+            title="Six minutes with the agent."
+            subtitle="Tell us about the work. Tell us about the site. If a seat has your name on it, we reply in 48 hours."
           />
           <div className="border border-border bg-background p-2 sm:p-4">
             <Suspense fallback={<div className="flex h-96 items-center justify-center text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin" /></div>}>
@@ -130,8 +130,8 @@ export default function BetaPage() {
         <Container width="narrow">
           <SectionIntro
             eyebrow="[ Quick apply ]"
-            title="Don't have six minutes? Drop your details."
-            subtitle="We'll reach out and finish the conversation by email."
+            title="Short on time? Drop your details."
+            subtitle="We'll reach out. Finish it by email."
           />
           <BetaQuickApplyForm isFull={isFull} source="beta-page-quick-apply" agentAnchor="#agent" />
         </Container>
@@ -139,7 +139,7 @@ export default function BetaPage() {
 
       <Section>
         <Container width="narrow">
-          <SectionIntro eyebrow="[ FAQ ]" title="The questions everyone asks first." />
+          <SectionIntro eyebrow="[ FAQ ]" title="The stuff everyone asks first." />
           <Accordion type="single" collapsible className="mt-10 border-t border-border">
             {betaFaqs.map((item, i) => (
               <AccordionItem key={item.q} value={`q-${i}`} className="border-b border-border py-2">
@@ -163,13 +163,13 @@ export default function BetaPage() {
 
       <FinalCtaSection
         eyebrow="Take the seat"
-        title="Ready to replace the form"
+        title="Ready to ditch the form"
         punctuation="?"
         primary={{
           href: "#agent",
           label: (
             <>
-              {isFull ? "Join waitlist" : "Open the agent"} <ArrowRight className="h-4 w-4" />
+              {isFull ? "Join the waitlist" : "Take a seat"} <ArrowRight className="h-4 w-4" />
             </>
           ),
         }}
