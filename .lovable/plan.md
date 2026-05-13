@@ -1,132 +1,60 @@
-# PR 1 — PhotoBrief Intelligence: foundations
+# BetaList submission images — 5-shot deck
 
-Scope is intentionally small. No worker is deleted. No runtime path changes. The deliverable is one architecture doc plus two new tables that future PRs will fill in.
+Output: 5 PNGs at **1600×1200 (4:3, retina-grade for an 800×600 slot)**, saved to `/mnt/documents/betalist/`. All on PhotoBrief brand: near-black `#0D0D0B`, cream `#F4F1EA`, amber `#F2A33A`. BrandMark in cream. Inter-style typography, Kyle Milligan voice — no hype words, no exclamation points.
 
-## What ships in this PR
+## The 5 shots
 
-### 1. New doc: `docs/photobrief-intelligence-architecture.md`
+**01_hero.png — Statement card (mockup)**
+Big cream headline left-aligned: **"Guide. Capture. Close."** Smaller amber kicker above: "Smart intake for service businesses." On the right, a floating dark "Brief #1042" card mockup peeking in (customer name, address, 3 answers, photo thumbnail, "Ready to quote" amber pill). Subtle grain + amber gradient bloom bottom-right. BrandMark top-left, `photobrief.ai` bottom-right.
 
-Single source of truth for the collapse. Sections:
+**02_intake_setup.png — Real /intake screenshot, framed**
+Capture the setup hub from preview (signed in as a seed user with a real workspace — Apex Roofing). Place in a soft dark window frame (subtle title bar, no traffic-light kitsch since brand is dark). Caption strip top: **"Scan your site. Get routes, questions, and a photo policy in 60 seconds."** Kicker: "Setup".
 
-1. **Current system summary** — table of the 7 workers + 2 edge functions, what each owns today, lines of code, last-touched.
-2. **What is over-engineered** — named, with evidence:
-   - Conductor + event bus + dispatch RPC + KV brand cache for a product that has one operator per workspace.
-   - Per-agent DOs holding state that already lives in Postgres.
-   - LLM wrappers (`brandedPrompt`) on agents that don't talk to customers.
-   - Separate workers for jobs that are really just "run this pipeline once and write a row."
-3. **What gets collapsed into PhotoBrief Intelligence** — the five capability blocks the user listed (Website / Route / Brief / Install / Learning), each mapped to the old worker(s) it replaces.
-4. **What stays deterministic (no LLM, no agent)** — `/i/:token`, `/r/:token`, `website-intake` edge function, R2 uploads, RLS, plan gates, router.
-5. **What stays as infrastructure** — Cloudflare router, R2, Supabase, Lovable AI Gateway, Stripe.
-6. **New system diagram** — ASCII. Operator UI and edge functions enqueue jobs into `intelligence_jobs`; one Intelligence runner (Supabase edge function or single CF worker, decided in PR 2) processes them; runtime paths read configuration only.
-7. **Canonical job model** — every intelligence task is a row in `intelligence_jobs`. Inputs, outputs, confidence, warnings are columns, not bespoke endpoints. Artifacts (scraped HTML, screenshots, form snapshots) go in `intelligence_artifacts` + R2.
-8. **Canonical job types** — the 11 the user listed: `scan_website`, `analyze_forms`, `propose_routes`, `propose_photo_policies`, `generate_blueprint`, `score_intake_brief`, `suggest_next_action`, `verify_install`, `monitor_install`, `generate_workspace_digest`, `learn_from_outcome`. Each gets: trigger, input shape, output shape, which old worker it replaces, deterministic vs LLM-assisted.
-9. **Legacy adapter status** — table marking each existing worker:
-   - `orchestrator-agent` → legacy, replaced by job engine
-   - `assistant-agent` → folds into `score_intake_brief` + `generate_workspace_digest`
-   - `capture-agent` → demoted to runtime session buffer; no decisions
-   - `site-installer-agent` → folds into `verify_install` + `monitor_install`
-   - `beta-onboarding-agent` → paused, candidate for removal once no traffic for 30 days
-   - `mcp-agent` → paused, kept as future distribution channel
-   - `website-intelligence` edge fn → folds into `scan_website` + `analyze_forms`
-   - `website-intake` edge fn → unchanged, stays deterministic
-   - `router` → unchanged
-10. **Migration sequence by PR** — one table:
-    - PR 1 (this) — doc + tables, no behavior change.
-    - PR 2 — Intelligence runner skeleton + first job type (`scan_website`); `website-intelligence` edge fn delegates to it behind a flag.
-    - PR 3 — `analyze_forms`, `propose_routes`, `propose_photo_policies`; `/intake` setup hub reads from new tables behind a flag.
-    - PR 4 — `score_intake_brief`, `suggest_next_action`, `generate_workspace_digest`; assistant-agent stops being called.
-    - PR 5 — `verify_install`, `monitor_install`; site-installer-agent stops being called.
-    - PR 6 — `learn_from_outcome` + capture-agent demoted to session buffer.
-    - PR 7 — delete dormant workers (orchestrator, assistant, site-installer, beta-onboarding) after 30 days idle.
-11. **Risks** — flag-gated rollout per job type; old workers stay deployed and callable until their replacement job type has run cleanly in production for 14 days; explicit rollback (flip the flag) for each PR.
-12. **Testing strategy** — contract tests on job input/output shapes; golden-file tests for each job type's deterministic portion; snapshot tests proving `/i/:token` and `/r/:token` payloads are byte-identical before/after each PR; smoke job per type in CI.
+**03_recipient_intake.png — Real /i/:token in iPhone frame**
+Open a published intake link in the preview at mobile width (440px), screenshot one of the guided question screens. Drop into a dark iPhone-style frame, centered on a cream→amber radial. Caption right: **"Your form gives you a name. We give you a brief."** Kicker: "What the customer sees".
 
-### 2. New tables (proposed, awaiting your approval)
+**04_brief.png — Real completed brief, framed**
+Screenshot the operator's brief view (route, contact, answers, photos, readiness score, next action). Frame as in 02. Caption top: **"Quote on the first reply."** Sub-caption: "Every brief lands ready — or tells you exactly what's missing." Kicker: "What lands in your inbox".
 
-`intelligence_jobs`:
-- `id uuid pk`
-- `workspace_id uuid not null` (RLS scoped)
-- `job_type text not null` (enum-checked via trigger, not CHECK, per project rules)
-- `status text not null default 'queued'` (`queued | running | succeeded | failed | cancelled`)
-- `input jsonb not null default '{}'`
-- `output jsonb`
-- `confidence numeric` (0–1, nullable for deterministic jobs)
-- `warnings jsonb not null default '[]'`
-- `error text`
-- `started_at timestamptz`
-- `completed_at timestamptz`
-- `created_by uuid` (auth user, nullable for system jobs)
-- `created_at`, `updated_at` (trigger)
-- Indexes: `(workspace_id, status, created_at desc)`, `(workspace_id, job_type, completed_at desc)`
-- RLS: workspace members read; insert via SECURITY DEFINER fn `enqueue_intelligence_job`; only service role updates `status/output/error`.
+**05_photo_policy.png — Concept card (mockup)**
+4-tile grid showing the four photo states with one-line operator copy each:
+- `not_needed` — "Don't ask. Don't slow them down."
+- `optional` — "Offer it. Don't block it."
+- `recommended` — "Tell them why a photo helps."
+- `required` — "No photo, no brief."
+Headline above: **"Photos when they matter. Not when they don't."** Kicker: "Photo policy". Amber accent on the active "recommended" tile.
 
-`intelligence_artifacts`:
-- `id uuid pk`
-- `workspace_id uuid not null`
-- `job_id uuid not null references intelligence_jobs(id) on delete cascade`
-- `artifact_type text not null` (`page_html | screenshot | form_snapshot | scraped_text | scoring_trace | install_probe`)
-- `source_url text`
-- `storage_key text` (R2 key, nullable when content fits inline)
-- `content_excerpt text` (≤ 2KB preview for ops)
-- `metadata jsonb not null default '{}'`
-- `created_at`
-- Indexes: `(job_id)`, `(workspace_id, artifact_type, created_at desc)`
-- RLS: workspace members read; service role write.
+## How they get built
 
-Validation triggers (not CHECK constraints) enforce:
-- `job_type` in canonical set
-- `status` in canonical set
-- `confidence` between 0 and 1 when present
-- `completed_at >= started_at` when both present
+1. **Brand probe** — read `src/index.css`, `tailwind.config.ts`, `BrandMark` component to lock exact tokens, fonts, and the two-tone wordmark SVG. Read `mem://design/brand-system` and `mem://seed-users` to pick a workspace with believable seed data for screenshots.
+2. **Real screenshots** (shots 02, 03, 04):
+   - Sign in as the appropriate seed user via `browser--navigate_to_sandbox` + `browser--act`.
+   - For 03, set viewport to 440×900 before navigating to a real published `/i/:token`.
+   - Use `browser--screenshot`, save to `/tmp/`.
+3. **Composition** — single Python/Pillow script (`/tmp/build_betalist.py`) that:
+   - Loads brand tokens as constants.
+   - Loads Inter + Inter Tight via `@fontsource` files already in the repo (or downloads via `urllib` to `/tmp/fonts/` if needed).
+   - Renders each of the 5 canvases at 1600×1200, composites real screenshots into dark window/iPhone frames with rounded corners + soft shadows, draws headline/kicker/BrandMark.
+   - Writes PNGs to `/mnt/documents/betalist/01_hero.png` … `05_photo_policy.png`.
+4. **Hero & policy mockup chrome** — drawn directly in Pillow (no AI image gen needed; keeps it on-brand and crisp). Brief card on hero is a faux-UI render (rounded rect, real-looking field labels).
+5. **QA pass** — for each PNG: open with `code--view`, check no overlap, no clipping, BrandMark legible, headline contrast ≥ AA, no orphan words, 4:3 exactly. Re-render until clean. Report what was checked.
+6. **Deliver** — `<presentation-artifact>` tags for all 5 PNGs plus a zipped bundle `betalist_premium.zip`.
 
-## What this PR does NOT touch
+## Brand & copy guardrails
 
-- No worker code edits.
-- No edge function edits.
-- No changes to `/i/:token`, `/r/:token`, `/intake`.
-- No deletes. Old workers stay deployed.
-- No new runtime dependencies.
+- BrandMark always cream-on-dark (`tone="dark"`), never inline `<img>` look-alike.
+- No "AI-powered", no "revolutionary", no "seamless", no exclamation points.
+- Tagline canonical form: **Guide · Capture · Close** (middots, not periods) on small/footer use; **"Guide. Capture. Close."** allowed only in the hero headline since you specified periods.
+- Plan pricing not shown anywhere (BetaList isn't a pricing page).
+- "Lovable Cloud"/"Supabase" never visible.
 
-## Open questions before I write the doc
+## What this plan does NOT do
 
-1. Runner host for PR 2: **Supabase edge function** (simpler, lives next to data, fits "no LLM in customer path" since runner is offline) or **single CF worker `photobrief-intelligence`** (keeps queue/cron primitives we already use)? My recommendation: Supabase edge function + `pg_cron` trigger — fewer moving parts for a small team.
-2. Should `intake_blueprints`, `intake_routing_rules`, `website_scan_jobs`, `website_pages`, `website_forms`, `service_catalog_items` be documented as "owned by Intelligence, written only by jobs" in this doc? I'll do that unless you'd rather scope the doc tighter.
-3. Beta-onboarding: confirm it's paused (no new signups going through it) so I can mark it deprecation-eligible, not just legacy.
+- No new code in `src/`. No edits to the app.
+- No mock data injected into the DB — uses existing seed workspace data only.
+- No carousel page added to the marketing site (separate request if you want one).
+- No video/GIF — BetaList submission is stills only per your screenshot.
 
-I'll answer 1 with my recommendation in the doc unless you override; 2 I'll include; 3 I need from you before writing the deprecation column.
+## Open question I'm assuming the answer to (tell me if wrong)
 
----
-
-# PR 7 — Delete dormant workers
-
-PhotoBrief Intelligence (PRs 2–6) now covers everything the orchestrator,
-assistant, site-installer, and beta-onboarding workers used to do. They have
-been idle since their replacement job types went live. This PR removes the
-tombstones.
-
-## Deleted
-- `workers/orchestrator-agent/` — replaced by `intelligence_jobs` queue.
-- `workers/assistant-agent/` — replaced by `score_intake_brief`,
-  `suggest_next_action`, `generate_workspace_digest`.
-- `workers/site-installer-agent/` — replaced by `verify_install`,
-  `monitor_install`.
-- `workers/beta-onboarding-agent/` — paused; folded into Stripe + DB triggers.
-
-## Kept
-- `workers/capture-agent/` — still hosts the `CaptureSession` Durable Object
-  used by `/r/:token`. Demoted to a session buffer (no decisions, no LLM in
-  the recipient path). Full removal deferred until DO storage is migrated.
-- `workers/mcp-agent/` — external distribution surface, unchanged.
-- `workers/router/` — edge traffic, unchanged.
-
-## Shared code
-- `workers/_shared/roles.ts`: `AgentRole` enum trimmed to the three live
-  workers. Importing a removed role now fails the type-check loud.
-- `workers/_shared/kv-bundle.ts`, `workers/_shared/ai.ts`: comments updated
-  to point at edge functions instead of deleted workers.
-
-## Not touched
-- No edge function edits.
-- No DB migrations. Old `agent_*` tables (if any) stay until a separate
-  cleanup PR.
-- `/i/:token`, `/r/:token`, `/intake` runtime paths unchanged.
+- I'll use the **Apex Roofing** seed workspace for the real screenshots (roofer = clearest BetaList narrative). Say the word if you'd rather see HVAC or claims.
