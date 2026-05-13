@@ -94,12 +94,15 @@ export function BeforeAfterSlider({
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerUp}
       >
-        {/* After image (base layer) */}
+        {/* After image (base layer = LCP candidate) */}
         <img
-          src={after}
+          src={cfImage(after, { width: 640, format: "auto" })}
+          srcSet={cfImageSrcSet(after, [480, 720, 960])}
+          sizes="(min-width: 1024px) 420px, 100vw"
           alt={afterAlt}
           className="absolute inset-0 h-full w-full object-cover"
           loading="eager"
+          decoding="async"
           // @ts-expect-error - fetchpriority is valid HTML attribute
           fetchpriority="high"
           width={1152}
@@ -108,11 +111,16 @@ export function BeforeAfterSlider({
         />
         {/* Before image (clipped overlay) */}
         <img
-          src={before}
+          src={cfImage(before, { width: 640, format: "auto" })}
+          srcSet={cfImageSrcSet(before, [480, 720, 960])}
+          sizes="(min-width: 1024px) 420px, 100vw"
           alt={beforeAlt}
           className="absolute inset-0 h-full w-full object-cover"
           style={{ clipPath: `inset(0 ${100 - position}% 0 0)` }}
           loading="eager"
+          decoding="async"
+          // @ts-expect-error - fetchpriority is valid HTML attribute
+          fetchpriority="low"
           width={1152}
           height={1536}
           draggable={false}
