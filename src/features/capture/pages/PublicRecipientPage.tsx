@@ -1,3 +1,4 @@
+import { CfImg } from "@/components/shared/CfImg";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 

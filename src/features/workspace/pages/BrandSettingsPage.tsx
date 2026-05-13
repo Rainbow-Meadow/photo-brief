@@ -1,3 +1,4 @@
+import { CfImg } from "@/components/shared/CfImg";
 import { useEffect, useRef, useState } from "react";
 import { Loader2, Upload, X } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
