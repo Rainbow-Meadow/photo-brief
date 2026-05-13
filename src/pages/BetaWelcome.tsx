@@ -46,10 +46,10 @@ const benefits = PARTNER_BENEFITS.map((text, i) => {
 });
 
 const timelineSteps = [
-  { icon: Send, title: "You fill out this page", body: "Tell us about your business and what you need — takes about 3 minutes." },
-  { icon: Settings, title: "We configure your account", body: "Your workspace, brand settings, and first templates are set up by our team." },
-  { icon: Calendar, title: "Concierge setup via chat or email", body: "We walk through everything async — chat, email, or in-app — on your schedule." },
-  { icon: Rocket, title: "Send your first PhotoBrief", body: "You're live — send a real guided photo request to a customer." },
+  { icon: Send, title: "Tell us about the business", body: "Three minutes. Name, site, what you sell, where the current form falls short." },
+  { icon: Settings, title: "We read your site and build your routes", body: "We scan your services, draft the intake routes, set the photo policy on each, and brand the experience." },
+  { icon: Calendar, title: "Concierge handoff over chat or email", body: "We walk you through everything async — no calls, no scheduling — on your time." },
+  { icon: Rocket, title: "Replace your contact form", body: "Drop the badge or button on your site and start receiving briefs you can quote." },
 ];
 
 /* ── shared editorial classes ───────────────────────────── */
@@ -196,10 +196,10 @@ export default function BetaWelcomePage() {
                   <CheckCircle2 className="h-7 w-7" />
                 </span>
                 <h1 className="mt-5 text-[clamp(1.6rem,3vw,2rem)] font-semibold leading-[1.05] tracking-[-0.022em] text-foreground">
-                  We've got everything we need
+                  Got it. We're on it.
                 </h1>
                 <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                  Your concierge setup is in the queue. We'll configure your account and reach out via email or chat to walk you through everything — usually within 48 hours.
+                  You're in the concierge queue. We'll read your site, draft your intake routes, and reach out by email or chat to walk you through it — usually within 48 hours.
                 </p>
               </div>
 
@@ -207,10 +207,10 @@ export default function BetaWelcomePage() {
                 <p className={sectionLabelCls}>What happens now</p>
                 <ol className="mt-4 grid gap-3">
                   {[
-                    "We set up your workspace, brand, and first templates.",
-                    "You'll receive an email when your account is ready.",
-                    "We'll walk you through everything via chat or email — no call needed.",
-                    "You send your first guided PhotoBrief to a real customer.",
+                    "We read your site and build your intake routes, brand, and templates.",
+                    "You get an email the moment your workspace is ready.",
+                    "We walk you through it over chat or email — no call required.",
+                    "You drop the badge on your site and the briefs start landing.",
                   ].map((text, i) => (
                     <li key={i} className="flex items-start gap-3">
                       <span className="font-mono text-[0.7rem] font-semibold tabular-nums uppercase tracking-[0.16em] text-[hsl(var(--accent-kinetic))]">
@@ -259,7 +259,7 @@ export default function BetaWelcomePage() {
               You're in.
             </h1>
             <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-              You've been selected for the PhotoBrief.ai Founding Partner Beta — a small, hand-picked group of businesses getting early access with concierge setup and direct support.
+              You're a Founding Partner — a hand-picked group helping us replace generic contact forms with smart intake. Concierge setup, direct support, and pricing locked for life.
             </p>
 
             <div className="mt-6 flex flex-wrap items-center justify-center gap-2">

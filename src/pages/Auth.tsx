@@ -77,7 +77,7 @@ export default function AuthPage() {
         });
         if (error) throw error;
         trackEvent("signup_completed", { method: "email" });
-        toast({ title: "Check your inbox", description: "Confirm your email to finish creating your workspace." });
+        toast({ title: "Check your inbox", description: "Confirm your email and we'll spin up your workspace." });
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         onboardingDebug("auth.email_signin.done", {
@@ -130,11 +130,11 @@ export default function AuthPage() {
       <EditorialAuthShell
         numeral="01"
         eyebrow={mode === "signup" ? "Create workspace" : "Sign in"}
-        title={mode === "signup" ? "Create your workspace" : "Welcome back"}
+        title={mode === "signup" ? "Set up your intake" : "Welcome back"}
         description={
           mode === "signup"
-            ? "Sign up to start sending photo briefs."
-            : "Sign in to your PhotoBrief workspace."
+            ? "Replace your contact form with smart intake. Start sending briefs in minutes."
+            : "Back to your inbox of briefs."
         }
         footer={
           <p>
