@@ -92,8 +92,12 @@ export function cfImage(url: string | null | undefined, options: CfImageOptions)
   if (!cfResizingAvailable()) return url;
   const opts = buildOptions(options);
   // Cloudflare expects: https://<zone>/cdn-cgi/image/<options>/<source-url>
-  // For absolute URLs, the source is appended verbatim (Cloudflare fetches it).
-  return `https://${DEFAULT_HOST}/cdn-cgi/image/${opts}/${url}`;
+  // For absolute URLs, append verbatim. For same-origin paths, strip the
+  // leading slash so we don't emit `…/<opts>//assets/…` (which CF rejects
+  // with err=9404 / 403).
+  const isAbsolute = /^https?:\/\//i.test(url);
+  const source = isAbsolute ? url : url.replace(/^\/+/, "");
+  return `https://${DEFAULT_HOST}/cdn-cgi/image/${opts}/${source}`;
 }
 
 /**
