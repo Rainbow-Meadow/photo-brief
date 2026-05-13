@@ -69,10 +69,8 @@ export function AppSidebar() {
   const collapsed = state === "collapsed";
   const { plan, loading: planLoading, can } = usePlan();
   const { isAdmin } = usePlatformAdmin();
-  // Hide the upgrade card for users already on Pro or higher.
-  // Plans below Pro: free, starter. Don't render until plan is resolved
-  // to avoid flashing the wrong CTA during the brief auth/workspace load.
-  const showUpgradeCard = !planLoading && (plan === "intake" || plan === "intake");
+  // Show upgrade card for Smart Intake users (offer Smart Intake Team).
+  const showUpgradeCard = !planLoading && plan === "intake";
   const { pathname } = useLocation();
 
   const isActive = (path: string, exact = false) => exact ? pathname === path : pathname === path || pathname.startsWith(`${path}/`);

@@ -94,7 +94,7 @@ const hashToTab: Record<string, TabValue> = {
 
 const tabToHash: Record<TabValue, string> = {
   quick: "#quick-start",
-  business: "#business",
+  intake_team: "#business",
   intake: "#intake",
   tools: "#website-tools",
   recipient: "#recipient",
@@ -122,7 +122,7 @@ export default function BetaGuidePage() {
     }
   };
 
-  const businessFaqs = useMemo(() => faqItems.filter((f) => f.audience === "intake_team"), []);
+  const businessFaqs = useMemo(() => faqItems.filter((f) => f.audience === "business"), []);
   const recipientFaqs = useMemo(() => faqItems.filter((f) => f.audience === "recipient"), []);
 
   return (
