@@ -130,7 +130,7 @@ function Hero() {
 function MarqueeBand() {
   return (
     <div className="relative space-y-2 border-y border-border bg-[hsl(var(--accent-kinetic)/0.08)] py-5">
-      <MarqueeRow duration={45} direction="left">
+      <MarqueeRow duration={45} direction="right">
         <span className="ls-marquee-item">Guide</span>
         <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
         <span className="ls-marquee-item">Capture</span>
@@ -140,7 +140,7 @@ function MarqueeBand() {
         <span className="ls-marquee-item ls-marquee-item--accent">photo·brief</span>
         <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
       </MarqueeRow>
-      <MarqueeRow duration={60} direction="right">
+      <MarqueeRow duration={60} direction="left">
         <span className="ls-marquee-item">Your form asks 5 fields</span>
         <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
         <span className="ls-marquee-item ls-marquee-item--ghost">Your customer needed different ones</span>
