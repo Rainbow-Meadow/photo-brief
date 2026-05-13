@@ -26,15 +26,15 @@ const pricingAxes = [
 const intakeModes = [
   {
     icon: Link2,
-    title: "Every plan",
-    label: "Manual smart intake links",
-    copy: "Spin up a smart intake from your URL, copy the link, send it however you already reach customers. The whole route engine works on day one.",
+    title: "Smart Intake",
+    label: "One guided intake link",
+    copy: "Replace your form with one Smart Intake link. Send it however you already reach customers. Briefs land clean, photos only when they help.",
   },
   {
     icon: Globe2,
-    title: "Pro and above",
-    label: "Hosted intake on your website",
-    copy: "Drop the badge, embed, or webhook on your live site so every CTA fires straight into the right route — no copy-paste, no manual step.",
+    title: "Smart Intake Team",
+    label: "Multiple links. One inbox.",
+    copy: "Run intake across sources, sites, and staff. Briefs queue in one team inbox your crew can quote, assign, and close — with notes, webhooks, and priority support.",
   },
 ];
 
@@ -53,7 +53,7 @@ export default function PricingPage() {
     <>
       <PageMeta
         title={`Pricing | PhotoBrief Founding Partner Beta`}
-        description={`Founding seats are open. ${BETA_DURATION_DAYS} days free, your routes built with you from your own website, direct line to the team, and post-launch rewards up to 75% off forever or free Pro for life.`}
+        description={`Founding seats are open. ${BETA_DURATION_DAYS} days free, your routes built with you from your own website, direct line to the team, and post-launch rewards up to 75% off forever or free Smart Intake for life.`}
         canonicalPath="/pricing"
         ogImage="/og/pricing.png"
         jsonLd={jsonLd}
@@ -73,7 +73,7 @@ export default function PricingPage() {
               Get your routes built. Lock in pricing nobody else gets.
             </h1>
             <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-              PhotoBrief is invite-only while we hand-build the first thirty workspaces. Accepted partners get {BETA_DURATION_DAYS} days free, their routes shipped from their own website, a direct line to the team, and post-launch rewards up to 75% off forever — or free Pro for life.
+              PhotoBrief is invite-only while we hand-build the first thirty workspaces. Accepted partners get {BETA_DURATION_DAYS} days free, their routes shipped from their own website, a direct line to the team, and post-launch rewards up to 75% off forever — or free Smart Intake for life.
             </p>
             <p className="mx-auto mt-5 inline-flex items-center gap-1.5 border border-[hsl(var(--accent-sage)/0.4)] bg-[hsl(var(--accent-sage)/0.08)] px-3 py-1 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[hsl(var(--accent-sage))]">
               <ShieldCheck className="h-4 w-4" /> First-pass photo retakes don't burn credits.
