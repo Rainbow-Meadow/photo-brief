@@ -426,12 +426,14 @@ html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
   }
   .pb-display-ink { color: hsl(var(--pb-ink-soft)); }
   .pb-paper-pill {
-    background: hsl(220 35% 99% / 0.78);
+    background: hsl(var(--pb-panel) / 0.82);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
-    border: 1px solid hsl(var(--pb-paper-edge) / 0.7);
-    box-shadow: 0 18px 40px -28px hsl(var(--pb-ink) / 0.45);
-    --pb-wordmark-gradient: linear-gradient(135deg, hsl(var(--pb-ink-soft)) 0%, hsl(var(--pb-amber)) 100%);
+    border: 1px solid hsl(var(--pb-ink-soft) / 0.14);
+    box-shadow:
+      0 14px 36px -22px hsl(var(--pb-shadow) / 0.6),
+      0 1px 0 hsl(var(--pb-ink-soft) / 0.06) inset;
+    --pb-wordmark-gradient: linear-gradient(135deg, hsl(var(--pb-ink)) 0%, hsl(var(--pb-amber)) 100%);
   }
   /* Re-theme dark-on-dark widgets when placed on the paper surface */
   .pb-on-paper { color: hsl(var(--pb-ink-soft)); }
