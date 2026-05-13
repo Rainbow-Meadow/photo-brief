@@ -510,7 +510,7 @@ export default {
 
     const url = new URL(request.url);
     if (url.pathname === "/" || url.pathname === "/health") {
-      return json({ ok: true, name: "PhotoBrief Site Installer Agent", version: "1.2.0" }, 200, request);
+      return json({ ok: true, name: "PhotoBrief Site Installer Agent", version: "1.3.0" }, 200, request);
     }
 
     if (request.method === "POST" && url.pathname === "/sessions/start") {
