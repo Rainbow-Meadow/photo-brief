@@ -555,10 +555,10 @@ function CustomerRoutingScreen({ onDone }: { onDone: () => void }) {
           <Loader2 className="h-6 w-6 animate-spin" style={{ color: BRAND.color }} />
         </div>
         <h3 className="mt-4 text-[15px] font-bold tracking-tight text-black/80">
-          Setting up your photo brief
+          Building your intake
         </h3>
         <p className="mt-1.5 px-4 text-[12px] leading-[1.6] text-black/40">
-          {BRAND.short} uses PhotoBrief to collect the right photos upfront — so they can quote faster.
+          {BRAND.short} routes this kind of job through a quick guided flow — photos included, because for tree removal they actually matter.
         </p>
         <div className="mt-5 flex items-center gap-2 rounded-full border border-black/15 px-3 py-1.5">
           <Camera className="h-3 w-3 text-black/30" />

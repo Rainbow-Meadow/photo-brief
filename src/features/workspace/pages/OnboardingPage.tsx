@@ -89,8 +89,8 @@ export default function OnboardingPage() {
     workspaceName: "",
     industry: "",
     primaryColor: "#0A6BFF",
-    introMessage: "Hi! Help us help you — a few quick photos.",
-    completionMessage: "Thanks! We've got everything we need.",
+    introMessage: "Thanks for reaching out — quick guided intake so we can help faster.",
+    completionMessage: "Got it. We have what we need and we'll be in touch.",
   });
 
   useEffect(() => {
