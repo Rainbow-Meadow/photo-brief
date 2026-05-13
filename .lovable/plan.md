@@ -1,47 +1,58 @@
-## Problems
+## What's off
 
-1. **Marquee overlaps the hero image.** The `MarqueeBand` sits directly under `<Hero />` with no top spacing, and the hero's right column (BeforeAfterSlider + BrandMark at `mt-6`) extends to the bottom of its `Section`. The marquee band's top edge cuts into the bottom of the phone/laptop image.
-2. **Header nav pill is too light against the dark landing.** `.pb-paper-pill` uses a near-white background (`hsl(220 35% 99% / 0.78)`). The user wants the pill itself to be **dark** so it reads as part of the dark landing, while text stays cream (current).
+On desktop, the hero stack uses arbitrary Tailwind margins (`mt-6` / `mt-8` / `mt-10`) that don't ladder with the type scale, and the marquee renders at hero-headline weight (`clamp(2rem, 5vw, 3.75rem)` ≈ 60px at 1347px wide) with `py-5` + `space-y-2`, so the band reads as a second hero rather than a thin accent strip. The result: spacing between eyebrow → H1 → subtitle → CTAs feels uneven, and the marquee crowds whatever sits below it.
 
-## Fix
+## Fix — desktop-first, two surgical edits
 
-### 1. Marquee no longer touches the hero (`src/pages/Landing.tsx`)
+### 1. `src/pages/Landing.tsx` — even hero rhythm
 
-In the `MarqueeBand` wrapper (line 132), add vertical breathing room above the band so it can't ride up into the hero image:
-- Add `mt-12 sm:mt-20` to the outer `<div>`.
+Replace the ad-hoc margins on the hero left column with a single proportional ladder, em-anchored to the H1 so it scales with the clamp:
 
-(No change to `MarqueeRow` or its inner spacing.)
+```text
+eyebrow                     ← (block start)
+↓ mt-8         (was mt-6 on H1)
+H1 ls-display-stack
+↓ mt-6         (was mt-8 on subtitle)
+subtitle
+↓ mt-8         (was mt-10 on CTA row)
+CTAs
+```
 
-### 2. Dark pill — `.pb-paper-pill` (`src/index.css`, ~line 428)
+Concrete edits inside `Hero()` (lines 79 / 88 / 93):
+- `<h1 className="ls-h1 ls-display-stack mt-8">`
+- `<p className="ls-subtitle mt-6 max-w-[44ch]">`
+- `<div className="mt-8 flex flex-row flex-wrap items-center gap-x-5 gap-y-3">`
 
-Swap the pill surface to a dark token while keeping the existing cream text/links untouched:
+Also drop the freshly-added `mt-12 sm:mt-20` on `MarqueeBand` outer div down to `mt-10 sm:mt-14` — the band is no longer scrolling under the hero, but should still feel like part of the same composition.
+
+### 2. `src/design-system/schema.css` — slim the marquee band
+
+Make the band visually a thinner accent strip on desktop while leaving the mobile size alone:
 
 ```css
-.pb-paper-pill {
-  background: hsl(var(--pb-panel) / 0.82);     /* dark graphite, was near-white */
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid hsl(var(--pb-ink-soft) / 0.14);
-  box-shadow:
-    0 14px 36px -22px hsl(var(--pb-shadow) / 0.6),
-    0 1px 0 hsl(var(--pb-ink-soft) / 0.06) inset;
-  --pb-wordmark-gradient: linear-gradient(135deg, hsl(var(--pb-ink)) 0%, hsl(var(--pb-amber)) 100%);
+.ls-marquee-item {
+  /* was clamp(2rem, 5vw, 3.75rem) — too close to ls-h1 */
+  font-size: clamp(1.5rem, 3.2vw, 2.5rem);
+  letter-spacing: -0.018em;
+  padding-inline: 1.25rem;
+  /* unchanged: font, weight, color, white-space */
 }
 ```
 
-Tokens used already exist (`--pb-panel`, `--pb-ink-soft`, `--pb-shadow`, `--pb-ink`, `--pb-amber`). The existing `.pb-paper-link` color (`--pb-ink-soft / 0.78`) now reads correctly cream-on-dark, with the amber hover/active state preserved.
+And in `Landing.tsx` MarqueeBand wrapper (line 132), drop padding + row gap:
+- `py-5` → `py-3`
+- `space-y-2` → `space-y-1`
 
-### 3. Sign-in / menu buttons — leave as-is
-
-Their `text-[hsl(var(--pb-ink-soft))]` already works against the dark landing canvas; with the pill now dark too, no change needed.
-
-## Verification
-
-- Reload `/` at 1313 desktop and 390 mobile — confirm marquee has clear gap above it (no overlap with hero image) and the header pill reads as a soft dark capsule with cream wordmark + amber active link.
-- Tab through pill links — hover/active still flips to amber.
-- Re-run `bun run test:visual -- --project="public-desktop"` afterward; baselines will need a refresh (expected).
+Net effect: band height drops ~40%, sits as a clear horizontal divider between hero and the mechanism section instead of competing with the H1.
 
 ## Out of scope
 
-- No changes to `MarqueeRow`, BrandMark, or hero contents.
-- No new CSS variables, no Tailwind config changes.
+- No mobile-specific tuning (user picked desktop).
+- No changes to Section padding tokens, BeforeAfterSlider, BrandMark, or marquee content/colors.
+- No new tokens — only existing Tailwind margins and the one `.ls-marquee-item` rule.
+
+## Verification
+
+- Reload `/` at 1347 desktop — confirm eyebrow→H1→subtitle→CTA spacing feels even and the marquee reads as a single thin accent band, not a second hero.
+- Spot-check at 1280 and 1536 to confirm the clamps still scale cleanly.
+- `bun run test:visual -- --project="public-desktop"` baselines will need refresh (expected).
