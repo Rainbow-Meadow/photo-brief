@@ -1,3 +1,4 @@
+import { CfImg } from "@/components/shared/CfImg";
 import { RiseIn } from "@/components/motion/RiseIn";
 
 import researchMagnifierIllo from "@/assets/rmbc/cedar/01-research-website-analysis.png";
