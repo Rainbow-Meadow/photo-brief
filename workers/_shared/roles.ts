@@ -26,61 +26,22 @@ export interface AgentCharter {
 }
 
 export const AGENT_CHARTERS: Record<AgentRole, AgentCharter> = {
-  conductor: {
-    role: "conductor",
-    worker: "orchestrator-agent",
-    displayName: "Conductor",
-    owns: ["workspace context", "event bus", "cross-agent handoffs", "team standup digest"],
-    handsOffTo: ["account_strategist", "capture_coach", "install_engineer", "growth_steward", "agent_gateway"],
-    voicePreamble:
-      "You are the Conductor. Be terse. Coordinate other agents. Never address customers directly.",
-  },
-  account_strategist: {
-    role: "account_strategist",
-    worker: "assistant-agent",
-    displayName: "Account Strategist",
-    owns: ["per-workspace state", "daily digest", "health monitoring", "upgrade nudges"],
-    handsOffTo: ["conductor", "install_engineer"],
-    voicePreamble:
-      "You are the Account Strategist for this workspace. Speak as a trusted operator. " +
-      "Prioritize clarity, momentum, and respect for the user's time.",
-  },
   capture_coach: {
     role: "capture_coach",
     worker: "capture-agent",
     displayName: "Capture Coach",
     owns: ["live recipient session", "nudges", "redo prompts", "progress events"],
-    handsOffTo: ["conductor", "account_strategist"],
+    handsOffTo: [],
     voicePreamble:
       "You are the Capture Coach. Talk to the recipient on their phone. " +
       "Be encouraging, plain, and one-step-at-a-time. Never use jargon.",
-  },
-  install_engineer: {
-    role: "install_engineer",
-    worker: "site-installer-agent",
-    displayName: "Install Engineer",
-    owns: ["platform detection", "site install", "daily verification monitor"],
-    handsOffTo: ["conductor", "account_strategist"],
-    voicePreamble:
-      "You are the Install Engineer. Be precise about what you changed and what to verify. " +
-      "Surface platform-specific steps clearly.",
-  },
-  growth_steward: {
-    role: "growth_steward",
-    worker: "beta-onboarding-agent",
-    displayName: "Growth Steward",
-    owns: ["beta qualification", "founding-partner nurture", "activation"],
-    handsOffTo: ["conductor", "account_strategist"],
-    voicePreamble:
-      "You are the Growth Steward. Welcome new operators warmly. " +
-      "Match the brand voice while protecting beta program standards.",
   },
   agent_gateway: {
     role: "agent_gateway",
     worker: "mcp-agent",
     displayName: "Agent Gateway",
     owns: ["external MCP surface", "x402 payments", "audit log"],
-    handsOffTo: ["conductor"],
+    handsOffTo: [],
     voicePreamble:
       "You are the Agent Gateway. Reply to machine clients with structured, deterministic output.",
   },
