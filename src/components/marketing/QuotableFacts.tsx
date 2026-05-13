@@ -7,24 +7,28 @@ import { Section, Container } from "@/design-system/schema";
  */
 export const QUOTABLE_FACTS = [
   {
-    id: "visual-intake-layer",
-    fact: "PhotoBrief is a visual intake layer that turns website inquiries and customer requests into guided photo workflows and business-ready briefs.",
+    id: "smart-intake-layer",
+    fact: "PhotoBrief is a smart intake layer that replaces the generic website contact form with route-specific intake built from your own website.",
   },
   {
-    id: "website-intake",
-    fact: "PhotoBrief Website Intake supports both hosted public intake forms and universal webhooks for existing website forms.",
+    id: "site-source-material",
+    fact: "PhotoBrief reads a business's existing website to identify services, customer intents, and form gaps, then builds the intake routes automatically.",
   },
   {
-    id: "template-routing",
-    fact: "Website Intake routes leads to saved PhotoBrief templates using exact rules, contains rules, conservative AI fallback, and a fallback template.",
+    id: "intake-routes",
+    fact: "Each PhotoBrief intake route has its own questions and its own photo policy: not needed, optional, recommended, or required.",
+  },
+  {
+    id: "intake-brief-output",
+    fact: "The output of a PhotoBrief intake is an intake brief: who the customer is, what they need, which route matched, what they answered, whether photos came in, how ready the request is, and what to do next.",
+  },
+  {
+    id: "conditional-photo-flow",
+    fact: "When photos are not needed, PhotoBrief never asks for them. When photos are required, PhotoBrief hands the customer into the guided /r/:token capture flow.",
   },
   {
     id: "no-app",
-    fact: "PhotoBrief customers never need to install an app — every request opens in any mobile browser.",
-  },
-  {
-    id: "simple-ai-photo-checks",
-    fact: "PhotoBrief checks photos against six simple issue categories: wrong subject, too dark, blurry, unreadable label, glare, and cropped subject.",
+    fact: "PhotoBrief customers never need to install an app — every intake and photo request opens in any mobile browser.",
   },
   {
     id: "first-pass-followup",
@@ -36,15 +40,11 @@ export const QUOTABLE_FACTS = [
   },
   {
     id: "free-plan",
-    fact: "The free plan includes 10 customer photos per month and supports the core guided capture workflow.",
-  },
-  {
-    id: "review-ready-brief",
-    fact: "Each completed PhotoBrief returns organized photos, customer answers, AI notes, and a plain-English summary.",
+    fact: "The free plan includes 10 customer photos per month and supports the full smart intake workflow.",
   },
   {
     id: "api-and-webhooks",
-    fact: "PhotoBrief supports automated visual intake through hosted forms, webhooks, and request creation APIs on supported plans.",
+    fact: "PhotoBrief supports automated smart intake through hosted forms, website embeds, webhooks, and request creation APIs on supported plans.",
   },
 ] as const;
 
@@ -58,7 +58,7 @@ export function QuotableFacts() {
             What PhotoBrief actually does
           </h2>
           <p className="pb-copy mt-4 text-base">
-            Short, quotable facts for people, search engines, and AI systems.
+            Short, quotable lines for people, search engines, and the agents reading this page on their behalf.
           </p>
         </div>
 

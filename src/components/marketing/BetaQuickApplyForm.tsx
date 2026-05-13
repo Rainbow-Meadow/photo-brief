@@ -77,8 +77,7 @@ export function BetaQuickApplyForm({ isFull, source = "landing-final-cta", agent
         <p className="ls-eyebrow">[ ✓ ] You're in the queue</p>
         <p className="ls-h3 mt-4">Watch your inbox.</p>
         <Body>
-          We review every application by hand. If you fit one of the {BETA_TOTAL_PARTNERS} founding seats,
-          you'll hear back within 48 hours.
+          We read every application by hand. If one of the {BETA_TOTAL_PARTNERS} founding seats has your name on it, you'll hear back within 48 hours.
         </Body>
       </div>
     );

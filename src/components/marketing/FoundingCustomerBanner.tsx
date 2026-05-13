@@ -25,11 +25,11 @@ export function FoundingCustomerBanner() {
             <div>
               <p className="text-sm font-semibold text-foreground">
                 {isFull
-                  ? "Room's full — get on the waitlist"
-                  : `Founding partner seats open — ${seatsRemaining} of ${BETA_TOTAL_PARTNERS} left`}
+                  ? "Seats are full — get on the waitlist"
+                  : `Founding seats open — ${seatsRemaining} of ${BETA_TOTAL_PARTNERS} left`}
               </p>
               <p className="mt-0.5 text-sm text-muted-foreground">
-                You get <span className="font-semibold text-foreground">{BETA_DURATION_DAYS} days free (clock starts {BETA_SETUP_BUFFER_DAYS} days after the last seat fills), concierge setup, a direct line to the team, and a tiered post-launch reward</span>. {MAX_DISCOUNT_LABEL}. Top two never pay again.
+                You get <span className="font-semibold text-foreground">{BETA_DURATION_DAYS} days free (clock starts {BETA_SETUP_BUFFER_DAYS} days after the last seat fills), white-glove route setup from your site, a direct line to the team, and a tiered post-launch reward</span>. {MAX_DISCOUNT_LABEL}. Top two never pay again.
               </p>
             </div>
           </div>
