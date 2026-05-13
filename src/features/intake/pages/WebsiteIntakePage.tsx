@@ -588,6 +588,11 @@ export default function WebsiteIntakePage() {
                 </Button>
               </div>
             )}
+            <AutoInstallPanel
+              workspaceId={workspace?.id}
+              intakeToken={source?.publicToken}
+              hostedLink={hostedLink}
+            />
           </div>
         );
       case "map":
