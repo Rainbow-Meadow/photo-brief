@@ -22,12 +22,22 @@ import { installWordPress } from "./installers/wordpress.js";
 import { installWix } from "./installers/wix.js";
 import { installZapier } from "./installers/zapier.js";
 import { installCarrd } from "./installers/carrd.js";
+import {
+  declareRole,
+  emitAgentEvent,
+  handleDispatch,
+  type AgentEventQueue,
+} from "../../_shared/agent-shim";
+import { makeEvent } from "../../_shared/roles";
+
+declareRole("install_engineer");
 
 interface Env {
   SITE_INSTALLER_AGENT: DurableObjectNamespace;
   BROWSER: Fetcher;
   AI: { run: (model: string, input: unknown) => Promise<any> };
   SITE_URL: string;
+  AGENT_EVENTS?: AgentEventQueue;
 }
 
 type Platform =
