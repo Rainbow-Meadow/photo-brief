@@ -382,9 +382,27 @@ export default {
       return json({
         ok: true,
         name: "PhotoBrief Capture Agent",
-        version: "1.1.0",
+        role: "capture_coach",
+        version: "1.2.0",
       });
     }
+
+    // Orchestrator dispatch — Conductor may ask us to nudge a recipient.
+    const dispatched = await handleDispatch(request, {
+      send_nudge: async (payload, ctx) => {
+        await emitAgentEvent(env, makeEvent({
+          type: "capture_stalled",
+          workspaceId: ctx.workspaceId,
+          from: "capture_coach",
+          requestId: (payload as { requestId?: string })?.requestId ?? "",
+          minutesIdle: (payload as { minutesIdle?: number })?.minutesIdle ?? 0,
+          correlationId: ctx.correlationId,
+        }));
+        return { acknowledged: true };
+      },
+    });
+    if (dispatched) return dispatched;
+
 
     // CaptureSession DO routes (Step 3): /capture/:token/{state,submit,clear}
     const captureMatch = path.match(/^\/capture\/([A-Za-z0-9_-]{8,})\/(state|submit|clear)$/);
