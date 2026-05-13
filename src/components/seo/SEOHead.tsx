@@ -27,7 +27,7 @@ interface SEOHeadProps {
 }
 
 const ORIGIN = "https://photobrief.ai";
-const DEFAULT_OG_IMAGE = "/og-image.png";
+const DEFAULT_OG_IMAGE = "https://photobrief.ai/og-image.png";
 
 function setMeta(name: string, content: string, attr: "name" | "property" = "name") {
   let el = document.head.querySelector<HTMLMetaElement>(`meta[${attr}="${name}"]`);

@@ -86,10 +86,10 @@ export default function ForAiAgentsPage() {
     <>
       <PageMeta
         title="PhotoBrief for AI agents | Smart intake API and manifests"
-        description="Build with PhotoBrief: smart intake from a business's website, route-aware customer flows, conditional photo capture, intake brief retrieval, OpenAPI, MCP descriptor, manifests, and code samples."
+        description="Build with PhotoBrief: smart intake from a business's site, route-aware photo capture, brief retrieval, OpenAPI, MCP, manifests, and code samples."
         canonicalPath="/for-ai-agents"
         ogType="article"
-        ogImage="/og/for-ai-agents.png"
+        ogImage="https://photobrief.ai/og/for-ai-agents.png"
         jsonLd={[articleJsonLd, howToJsonLd, faqJsonLd]}
         breadcrumbs={[{ name: "Home", path: "/" }, { name: "For AI agents", path: "/for-ai-agents" }]}
       />
