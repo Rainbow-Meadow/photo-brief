@@ -18,7 +18,6 @@ import {
   Sparkles,
   Trash2,
   Wand2,
-  Wand,
   ShieldCheck,
   type LucideIcon,
 } from "lucide-react";
