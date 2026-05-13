@@ -76,7 +76,7 @@ function Hero() {
           <div>
             <p className="ls-eyebrow">[ 01 ] The Reverse-Form Method™</p>
             <RiseIn delay={0.05}>
-              <h1 className="ls-h1 ls-display-stack mt-6">
+              <h1 className="ls-h1 ls-display-stack mt-8">
                 <span className="block">Guide.</span>
                 <span className="block">Capture.</span>
                 <span className="block">
@@ -85,12 +85,12 @@ function Hero() {
               </h1>
             </RiseIn>
             <RiseIn delay={0.25}>
-              <p className="ls-subtitle mt-8 max-w-[44ch]">
+              <p className="ls-subtitle mt-6 max-w-[44ch]">
                 Your form gives you a name. We give you a brief. Quote on the first reply.
               </p>
             </RiseIn>
             <RiseIn delay={0.35}>
-              <div className="mt-10 flex flex-row flex-wrap items-center gap-x-5 gap-y-3">
+              <div className="mt-8 flex flex-row flex-wrap items-center gap-x-5 gap-y-3">
                 <MagneticCTA
                   href="/demo"
                   className="ls-cta ls-cta--lg ls-cta-primary"
@@ -129,7 +129,7 @@ function Hero() {
 /* ── Marquee ── */
 function MarqueeBand() {
   return (
-    <div className="relative mt-12 space-y-2 border-y border-border bg-[hsl(var(--accent-kinetic)/0.08)] py-5 sm:mt-20">
+    <div className="relative mt-10 space-y-1 border-y border-border bg-[hsl(var(--accent-kinetic)/0.08)] py-3 sm:mt-14">
       <MarqueeRow duration={45} direction="right">
         <span className="ls-marquee-item">Guide</span>
         <span className="ls-marquee-item ls-marquee-item--ghost">·</span>

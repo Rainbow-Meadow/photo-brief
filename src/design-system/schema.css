@@ -244,10 +244,10 @@
 /* ── Marquee — Geist display, paper foreground ──────────── */
 .ls-marquee-item {
   font-family: "Geist", "Inter", system-ui, sans-serif;
-  font-size: clamp(2rem, 5vw, 3.75rem);
+  font-size: clamp(1.5rem, 3.2vw, 2.5rem);
   font-weight: 700;
-  letter-spacing: -0.022em;
-  padding-inline: 1.5rem;
+  letter-spacing: -0.018em;
+  padding-inline: 1.25rem;
   color: hsl(var(--foreground));
   white-space: nowrap;
 }
