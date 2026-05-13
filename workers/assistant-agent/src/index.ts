@@ -29,6 +29,15 @@ import {
   workersAiClassify,
   type AiBinding,
 } from "../../_shared/ai";
+import {
+  declareRole,
+  emitAgentEvent,
+  handleDispatch,
+  type AgentEventQueue,
+} from "../../_shared/agent-shim";
+import { makeEvent } from "../../_shared/roles";
+
+declareRole("account_strategist");
 
 /* ── Types ─────────────────────────────────────────────────────────── */
 
@@ -42,6 +51,7 @@ interface Env {
   AI?: AiBinding;
   CLOUDFLARE_ACCOUNT_ID?: string;
   CLOUDFLARE_API_TOKEN?: string;
+  AGENT_EVENTS?: AgentEventQueue;
 }
 
 interface WorkspaceStats {
