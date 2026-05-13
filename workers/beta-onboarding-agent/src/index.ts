@@ -7,11 +7,20 @@
  */
 
 import { Agent } from "agents";
+import {
+  declareRole,
+  emitAgentEvent,
+  type AgentEventQueue,
+} from "../../_shared/agent-shim";
+import { makeEvent } from "../../_shared/roles";
+
+declareRole("growth_steward");
 
 interface Env {
   BETA_ONBOARDING_AGENT: DurableObjectNamespace;
   SUPABASE_URL: string;
   SITE_URL: string;
+  AGENT_EVENTS?: AgentEventQueue;
 }
 
 type Field =
