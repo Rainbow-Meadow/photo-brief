@@ -66,21 +66,14 @@ export interface AgentContext {
 }
 
 export async function fetchAgentContext(workspaceId: string): Promise<AgentContext> {
-  const { data, error } = await supabase.functions.invoke("agent-brand", {
-    method: "GET",
-    headers: {},
-    body: undefined,
-    // edge function reads workspace_id from the query string
-    // supabase-js doesn't expose query, so call fetch directly:
-  } as never);
-  if (data && !error) return data as AgentContext;
-
-  // Fallback to direct call (no auth — read-only context for membership-validated user)
   const session = await supabase.auth.getSession();
   const token = session.data.session?.access_token;
   const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/agent-brand?workspace_id=${workspaceId}`;
   const res = await fetch(url, {
-    headers: { Authorization: `Bearer ${token ?? ""}`, apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ?? "" },
+    headers: {
+      Authorization: `Bearer ${token ?? ""}`,
+      apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ?? "",
+    },
   });
   if (!res.ok) throw new Error(`fetchAgentContext failed: ${res.status}`);
   return (await res.json()) as AgentContext;
