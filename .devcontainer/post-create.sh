@@ -17,11 +17,17 @@ npm install --global supabase@latest
 printf '\n==> Installing Wrangler CLI...\n'
 npm install --global wrangler@latest
 
-printf '\n==> Running fast validation checks...\n'
-npm run lint
-npm run typecheck
-npm test
-npm run hosting:validate
-npm run functions:check
+cat <<'MSG'
 
-printf '\nCodespace bootstrap complete. Run npm run dev -- --host 0.0.0.0 to start the app.\n'
+Codespace bootstrap complete.
+
+Start the app:
+  npm run dev:codespaces
+
+Run local checks before a PR:
+  npm run check
+
+Run the heavier CI-style build locally:
+  npm run check:ci-local
+
+MSG
