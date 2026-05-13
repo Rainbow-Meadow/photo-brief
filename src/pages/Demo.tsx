@@ -208,8 +208,8 @@ function DemoDiscoveryChat() {
       {stage === "scenario" && (
         <StepBlock
           eyebrow="Step 2 of 3"
-          title="What does a typical photo request look like for you?"
-          hint={`Example: "Customer says they have a leaking faucet and we need photos to quote it."`}
+          title="Walk us through a typical job that comes through your form."
+          hint={`Example: "A homeowner says they have a leaking faucet and wants a quote." We'll route it and decide if photos are worth asking for.`}
         >
           <textarea
             autoFocus value={scenario} onChange={(e) => setScenario(e.target.value)} rows={4}
