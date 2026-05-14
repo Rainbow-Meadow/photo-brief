@@ -34,6 +34,7 @@ const IntakeBadgePage = lazy(() => import("@/pages/IntakeBadge"));
 const BetaWelcomePage = lazy(() => import("@/pages/BetaWelcome"));
 const PrivacyPage = lazy(() => import("@/pages/Privacy"));
 const TermsPage = lazy(() => import("@/pages/Terms"));
+const RefundPage = lazy(() => import("@/pages/Refund"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 const DemoPage = lazy(() => import("@/pages/Demo"));
 const BetaPage = lazy(() => import("@/pages/Beta"));
