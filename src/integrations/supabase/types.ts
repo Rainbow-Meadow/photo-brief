@@ -3212,7 +3212,7 @@ export type Database = {
           {
             foreignKeyName: "subscriptions_workspace_id_fkey"
             columns: ["workspace_id"]
-            isOneToOne: true
+            isOneToOne: false
             referencedRelation: "business_workspaces"
             referencedColumns: ["id"]
           },
@@ -4149,6 +4149,10 @@ export type Database = {
       plan_user_cap: {
         Args: { _plan: Database["public"]["Enums"]["plan_tier"] }
         Returns: number
+      }
+      product_to_plan_tier: {
+        Args: { p_product_id: string }
+        Returns: Database["public"]["Enums"]["plan_tier"]
       }
       read_email_batch: {
         Args: { batch_size: number; queue_name: string; vt: number }
