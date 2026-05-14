@@ -923,6 +923,44 @@ export type Database = {
         }
         Relationships: []
       }
+      exit_interviews: {
+        Row: {
+          created_at: string
+          details: string | null
+          id: string
+          reason: string
+          user_id: string
+          workspace_id: string
+          would_return: string | null
+        }
+        Insert: {
+          created_at?: string
+          details?: string | null
+          id?: string
+          reason: string
+          user_id: string
+          workspace_id: string
+          would_return?: string | null
+        }
+        Update: {
+          created_at?: string
+          details?: string | null
+          id?: string
+          reason?: string
+          user_id?: string
+          workspace_id?: string
+          would_return?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exit_interviews_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "business_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       extracted_details: {
         Row: {
           confidence: number | null
@@ -3116,9 +3154,14 @@ export type Database = {
           created_at: string
           current_period_end: string
           current_period_start: string
+          environment: string
           id: string
           is_founding_pro: boolean
+          paddle_customer_id: string | null
+          paddle_subscription_id: string | null
           plan_tier: Database["public"]["Enums"]["plan_tier"]
+          price_id: string | null
+          product_id: string | null
           renewal_date: string | null
           status: string
           trial_ends_at: string | null
@@ -3131,9 +3174,14 @@ export type Database = {
           created_at?: string
           current_period_end?: string
           current_period_start?: string
+          environment?: string
           id?: string
           is_founding_pro?: boolean
+          paddle_customer_id?: string | null
+          paddle_subscription_id?: string | null
           plan_tier: Database["public"]["Enums"]["plan_tier"]
+          price_id?: string | null
+          product_id?: string | null
           renewal_date?: string | null
           status?: string
           trial_ends_at?: string | null
@@ -3146,9 +3194,14 @@ export type Database = {
           created_at?: string
           current_period_end?: string
           current_period_start?: string
+          environment?: string
           id?: string
           is_founding_pro?: boolean
+          paddle_customer_id?: string | null
+          paddle_subscription_id?: string | null
           plan_tier?: Database["public"]["Enums"]["plan_tier"]
+          price_id?: string | null
+          product_id?: string | null
           renewal_date?: string | null
           status?: string
           trial_ends_at?: string | null
