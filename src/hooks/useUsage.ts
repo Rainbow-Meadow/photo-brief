@@ -4,7 +4,6 @@ import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useCurrentWorkspace } from "@/hooks/useCurrentWorkspace";
 import { getPlanLimit } from "@/config/planLimits";
-import { useTopupBalance } from "@/hooks/useTopupBalance";
 
 export type UsageEventType =
   | "request_created"
@@ -37,11 +36,12 @@ const emptyUsage: UsageSnapshot = {
   topupCreditsRemaining: 0,
 };
 
+const emptyTopup = { remaining: 0, expiresAt: null as string | null };
+
 export function useUsage() {
   const { workspace, loading: wsLoading } = useCurrentWorkspace();
   const [usage, setUsage] = useState<UsageSnapshot>(emptyUsage);
   const [loading, setLoading] = useState(true);
-  const { balance: topup, refetch: refetchTopup, loading: topupLoading } = useTopupBalance();
 
   const refetch = useCallback(async () => {
     if (!workspace?.id) return;
@@ -76,13 +76,12 @@ export function useUsage() {
       creditsUsed: Number(creditRow?.used ?? 0),
       creditsIncluded: Number(creditRow?.included ?? fallbackCredits ?? 0),
       creditsRemaining: Number(creditRow?.remaining ?? fallbackCredits ?? 0),
-      topupCreditsRemaining: Number(creditRow?.topup_remaining ?? topup.remaining ?? 0),
+      topupCreditsRemaining: 0,
       creditPeriodStart: creditRow?.period_start ?? null,
-      topupCreditsExpireAt: creditRow?.topup_expires_at ?? null,
+      topupCreditsExpireAt: null,
     });
-    await refetchTopup();
     setLoading(false);
-  }, [workspace?.id, workspace?.plan, refetchTopup, topup.remaining]);
+  }, [workspace?.id, workspace?.plan]);
 
   useEffect(() => {
     if (wsLoading) return;
@@ -95,10 +94,9 @@ export function useUsage() {
 
   const planRequestsRemaining =
     requestCap === "unlimited" ? Infinity : Math.max(0, requestCap - usage.requests);
-  const requestsRemaining =
-    requestCap === "unlimited" ? Infinity : planRequestsRemaining + topup.remaining;
+  const requestsRemaining = planRequestsRemaining;
   const planAtLimit = requestCap !== "unlimited" && usage.requests >= requestCap;
-  const requestsAtLimit = planAtLimit && topup.remaining === 0;
+  const requestsAtLimit = planAtLimit;
 
   const creditsRemaining =
     creditCap === "unlimited" ? Infinity : usage.creditsRemaining;
@@ -106,18 +104,14 @@ export function useUsage() {
 
   return {
     usage,
-    loading: loading || wsLoading || topupLoading,
+    loading: loading || wsLoading,
     refetch,
     requestsRemaining,
     requestsAtLimit,
     creditsRemaining,
     creditsAtLimit,
-    onTopupCredits: planAtLimit && topup.remaining > 0,
-    topup: {
-      ...topup,
-      remaining: usage.topupCreditsRemaining || topup.remaining,
-      expiresAt: usage.topupCreditsExpireAt ?? topup.expiresAt,
-    },
+    onTopupCredits: false,
+    topup: emptyTopup,
     quotas: limit.quotas,
   };
 }
