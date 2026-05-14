@@ -130,6 +130,9 @@ export default function BillingSettingsPage() {
       <PageMeta title="Billing | PhotoBrief" description="Manage your plan" canonicalPath="/settings/billing" />
       <Section>
         <Container width="narrow">
+          <div className="mb-4">
+            <SubscriptionStatusBanner hideCta />
+          </div>
           {showCancel && workspaceId ? (
             <ExitInterview
               workspaceId={workspaceId}
