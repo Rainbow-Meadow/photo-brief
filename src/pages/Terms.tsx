@@ -4,8 +4,16 @@ import { PageMeta } from "@/hooks/seo/usePageMeta";
 import { Section, Container } from "@/design-system/schema";
 
 const updatedAt = "January 2026";
+const SELLER_NAME = "Patrick Ryan Berthiaume";
 
 const sections = [
+  {
+    title: "Who you are contracting with",
+    body: [
+      `PhotoBrief.ai is operated by ${SELLER_NAME} ("PhotoBrief", "we", "us", "our"). When you use PhotoBrief, you are entering into an agreement with ${SELLER_NAME}.`,
+      "You can contact us at hello@photobrief.ai for any question about these Terms or your account.",
+    ],
+  },
   {
     title: "Agreement to these Terms",
     body: [
