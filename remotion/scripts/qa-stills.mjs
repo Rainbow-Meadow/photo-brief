@@ -6,7 +6,7 @@ import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // Spread across the 30s composition (900f total)
-const FRAMES = [40, 200, 360, 500, 660, 820];
+const FRAMES = [580, 660, 720, 820];
 mkdirSync("/tmp/qa", { recursive: true });
 
 const bundled = await bundle({
