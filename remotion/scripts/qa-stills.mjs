@@ -4,7 +4,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const FRAMES = [60, 250, 510, 820, 1190, 1540, 1880, 2370, 2690];
+const FRAMES = [2440, 2500, 2580, 2640];
 
 const bundled = await bundle({
   entryPoint: path.resolve(__dirname, "../src/index.ts"),
