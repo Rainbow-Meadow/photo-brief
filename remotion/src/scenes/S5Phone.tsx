@@ -21,15 +21,15 @@ export const S5Phone: React.FC = () => {
 
   return (
     <PlateFrame plate={SPEC.plate} label={SPEC.label}>
-      <AbsoluteFill style={{ alignItems: "center", justifyContent: "center", paddingTop: 80 }}>
+      <AbsoluteFill style={{ alignItems: "center", justifyContent: "flex-start", paddingTop: 200 }}>
         <div
           style={{
             opacity: phoneOpacity,
             transform: `scale(${phoneScale})`,
-            transformOrigin: "center",
+            transformOrigin: "top center",
           }}
         >
-          <PhoneFrame width={520} height={1080}>
+          <PhoneFrame width={460} height={920}>
             <div style={{ padding: "28px 26px", height: "100%", display: "flex", flexDirection: "column" }}>
               <div
                 style={{
