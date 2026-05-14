@@ -164,6 +164,7 @@ export function CurrentWorkspaceProvider({ children }: { children: ReactNode }) 
         name: string;
         industry: string | null;
         plan_tier: Plan | null;
+        trial_ends_at: string | null;
       };
       const subTyped = sub as {
         plan_tier?: Plan;
@@ -172,21 +173,24 @@ export function CurrentWorkspaceProvider({ children }: { children: ReactNode }) 
         current_period_end?: string | null;
         cancel_at_period_end?: boolean;
         is_founding_pro?: boolean;
-        stripe_customer_id?: string | null;
-        stripe_subscription_id?: string | null;
+        paddle_customer_id?: string | null;
+        paddle_subscription_id?: string | null;
+        status?: string | null;
       } | null;
       setWorkspace({
         id: wsTyped.id,
         name: wsTyped.name,
         industry: wsTyped.industry,
-        plan: (subTyped?.plan_tier ?? wsTyped.plan_tier ?? "free") as Plan,
+        plan: (subTyped?.plan_tier ?? wsTyped.plan_tier ?? "intake") as Plan,
         isFoundingPro: !!subTyped?.is_founding_pro,
         billingInterval: (subTyped?.billing_interval ?? "monthly") as BillingInterval,
         currentPeriodStart: subTyped?.current_period_start ?? null,
         currentPeriodEnd: subTyped?.current_period_end ?? null,
         cancelAtPeriodEnd: !!subTyped?.cancel_at_period_end,
-        stripeCustomerId: subTyped?.stripe_customer_id ?? null,
-        stripeSubscriptionId: subTyped?.stripe_subscription_id ?? null,
+        paddleCustomerId: subTyped?.paddle_customer_id ?? null,
+        paddleSubscriptionId: subTyped?.paddle_subscription_id ?? null,
+        subscriptionStatus: subTyped?.status ?? null,
+        trialEndsAt: wsTyped.trial_ends_at ?? null,
       });
     } else {
       setWorkspace(null);
