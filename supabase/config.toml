@@ -33,3 +33,9 @@ verify_jwt = false
 
 [functions.intelligence-runner]
 verify_jwt = true
+
+[functions.payments-webhook]
+verify_jwt = false
+
+[functions.get-paddle-price]
+verify_jwt = false
