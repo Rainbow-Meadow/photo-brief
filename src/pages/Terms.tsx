@@ -68,8 +68,9 @@ const sections = [
   {
     title: "Plans, billing, and beta offers",
     body: [
-      "Paid plans, beta offers, founding partner discounts, top-ups, trials, and feature availability may change over time. Pricing and plan details are shown in the product or on the pricing page.",
-      "Unless stated otherwise, fees are non-refundable except where required by law or expressly offered by PhotoBrief. You are responsible for applicable taxes and for keeping billing information current.",
+      "Paid plans, beta offers, founding partner discounts, top-ups, trials, and feature availability may change over time. Pricing and plan details are shown in the product or on the pricing page. You are responsible for applicable taxes (where not collected by Paddle) and for keeping billing information current.",
+      "Our order process is conducted by our online reseller Paddle.com (Paddle.com Market Limited). Paddle is the Merchant of Record for all our orders. Paddle provides all customer service inquiries related to billing and handles returns. Subscription billing, payment processing, tax calculation and remittance, invoicing, cancellations, refunds, and chargebacks are governed by Paddle's Buyer Terms (https://www.paddle.com/legal/checkout-buyer-terms) and Paddle's Refund Policy (https://www.paddle.com/legal/refund-policy).",
+      "PhotoBrief offers a 30-day money-back guarantee on initial paid subscriptions. See our Refund Policy at /refund-policy for details on how to request a refund through Paddle.",
     ],
   },
   {
