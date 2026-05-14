@@ -139,6 +139,7 @@ export default function DashboardPage() {
 
   return (
     <PageShell><PageStack>
+      <SubscriptionStatusBanner />
       <OnboardingProgressBanner />
 
       {isEmpty ? <StarterRequestCard industry={workspace?.industry} /> : null}
