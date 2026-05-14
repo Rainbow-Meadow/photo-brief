@@ -118,7 +118,7 @@ export function CurrentWorkspaceProvider({ children }: { children: ReactNode }) 
       withRetry(async () =>
         await supabase
           .from("business_workspaces")
-          .select("id, name, industry, plan_tier")
+          .select("id, name, industry, plan_tier, trial_ends_at")
           .eq("id", wsId)
           .maybeSingle(),
       ),
@@ -126,7 +126,7 @@ export function CurrentWorkspaceProvider({ children }: { children: ReactNode }) 
         await supabase
           .from("subscriptions")
           .select(
-            "plan_tier, billing_interval, current_period_start, current_period_end, cancel_at_period_end, is_founding_pro, stripe_customer_id, stripe_subscription_id",
+            "plan_tier, billing_interval, current_period_start, current_period_end, cancel_at_period_end, is_founding_pro, paddle_customer_id, paddle_subscription_id, status",
           )
           .eq("workspace_id", wsId)
           .order("created_at", { ascending: false })
