@@ -16,8 +16,10 @@ export interface CurrentWorkspace {
   currentPeriodStart: string | null;
   currentPeriodEnd: string | null;
   cancelAtPeriodEnd: boolean;
-  stripeCustomerId: string | null;
-  stripeSubscriptionId: string | null;
+  paddleCustomerId: string | null;
+  paddleSubscriptionId: string | null;
+  subscriptionStatus: string | null;
+  trialEndsAt: string | null;
 }
 
 interface WorkspaceContextValue {
