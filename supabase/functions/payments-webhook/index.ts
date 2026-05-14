@@ -36,8 +36,10 @@ async function handleSubscriptionCreated(data: any, env: PaddleEnv) {
   }
   const planTier = productId === 'intake_team' ? 'intake_team' : 'intake';
   const billingInterval = intervalFromBillingCycle(item?.price?.billingCycle);
+  const isFoundingPro = !!discount?.id;
 
-  const { error } = await getSupabase().from('subscriptions').upsert({
+  const sb = getSupabase();
+  const { error } = await sb.from('subscriptions').upsert({
     workspace_id: workspaceId,
     paddle_subscription_id: id,
     paddle_customer_id: customerId,
@@ -48,12 +50,37 @@ async function handleSubscriptionCreated(data: any, env: PaddleEnv) {
     status,
     current_period_start: currentBillingPeriod?.startsAt,
     current_period_end: currentBillingPeriod?.endsAt,
-    is_founding_pro: !!discount?.id,
+    is_founding_pro: isFoundingPro,
     environment: env,
     trial_ends_at: null,
     updated_at: new Date().toISOString(),
   }, { onConflict: 'paddle_subscription_id' });
   if (error) console.error('upsert subscription error:', error);
+
+  // Clear the trial subscription row created by handle_new_user (no Paddle ID).
+  // Keeps the table tidy and prevents stale current_period_end values from
+  // confusing usage-period calculations.
+  await sb.from('subscriptions')
+    .delete()
+    .eq('workspace_id', workspaceId)
+    .is('paddle_subscription_id', null);
+
+  // Record founding-partner claim so founding_pro_remaining() decrements.
+  // Only for live (sandbox checkouts shouldn't burn live slots).
+  if (isFoundingPro && env === 'live') {
+    const { data: ws } = await sb
+      .from('business_workspaces')
+      .select('owner_id')
+      .eq('id', workspaceId)
+      .maybeSingle();
+    if ((ws as { owner_id?: string } | null)?.owner_id) {
+      const { error: claimErr } = await sb.from('founding_pro_claims').upsert(
+        { workspace_id: workspaceId, claimed_by: (ws as { owner_id: string }).owner_id },
+        { onConflict: 'workspace_id' },
+      );
+      if (claimErr) console.error('founding_pro_claims insert error:', claimErr);
+    }
+  }
 }
 
 async function handleSubscriptionUpdated(data: any, env: PaddleEnv) {

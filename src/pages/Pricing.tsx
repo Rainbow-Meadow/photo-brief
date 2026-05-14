@@ -1,11 +1,17 @@
 import { useMemo } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { ArrowRight, BadgeCheck, Camera, Clock3, Globe2, HardDrive, HeartHandshake, Link2, MessageSquareText, ShieldCheck, Sparkles, Users } from "lucide-react";
+import { toast } from "sonner";
 import { PricingCardGrid } from "@/components/pricing/PricingCardGrid";
 import { PageMeta } from "@/hooks/seo/usePageMeta";
 import { faqItems } from "@/features/help/content/faq";
 import { BETA_DURATION_DAYS, MAX_DISCOUNT_LABEL } from "@/config/betaProgram";
 import { PublicPhotoPair } from "@/components/marketing/PublicPhotoPair";
+import { useAuth } from "@/hooks/useAuth";
+import { useCurrentWorkspace } from "@/hooks/useCurrentWorkspace";
+import { useSubscription } from "@/hooks/useSubscription";
+import { usePaddleCheckout } from "@/hooks/usePaddleCheckout";
+import type { Plan } from "@/types/photobrief";
 
 import { Button } from "@/components/ui/button";
 
@@ -14,6 +20,11 @@ import { Section, Container, SectionHeader } from "@/design-system/schema";
 
 import pricingCedarOwnerLaptop from "@/assets/pricing/pricing-cedar-owner-laptop.png";
 import pricingMultiTradeFan from "@/assets/pricing/pricing-multi-trade-fan.png";
+
+const LOGGED_IN_PRICE_ID: Record<string, string> = {
+  intake: "intake_monthly",
+  intake_team: "intake_team_monthly",
+};
 
 const pricingAxes = [
   { icon: Camera, label: "Photos", copy: "Plans scale by submitted customer photos. Routes that don't need photos don't burn credits." },
@@ -46,6 +57,32 @@ const betaOffer = [
 
 export default function PricingPage() {
   const businessFaqs = useMemo(() => faqItems.filter((f) => f.audience === "business"), []);
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { workspace } = useCurrentWorkspace();
+  const { isPaid, subscription } = useSubscription(workspace?.id);
+  const { openCheckout } = usePaddleCheckout();
+  const canShowCheckout = !!user && !!workspace?.id && !isPaid;
+  const handleSelectPlan = canShowCheckout
+    ? async (planId: Plan) => {
+        const priceId = LOGGED_IN_PRICE_ID[planId];
+        if (!priceId) {
+          navigate("/settings/billing");
+          return;
+        }
+        try {
+          await openCheckout({
+            priceId,
+            workspaceId: workspace!.id,
+            customerEmail: user!.email ?? undefined,
+            successUrl: `${window.location.origin}/settings/billing?checkout=success&from=checkout`,
+          });
+        } catch (e) {
+          console.error(e);
+          toast.error("Couldn't open checkout. Try again.");
+        }
+      }
+    : undefined;
 
   return (
     <>
@@ -163,7 +200,10 @@ export default function PricingPage() {
             description="During beta, pricing runs through the Founding Partner program. Apply now to lock in launch-year savings before public pricing kicks in."
           />
           <div className="mt-10">
-            <PricingCardGrid />
+            <PricingCardGrid
+              currentPlan={subscription?.plan_tier}
+              onSelectPlan={handleSelectPlan}
+            />
           </div>
         </Container>
       </Section>

@@ -11,6 +11,7 @@ import { useSubscription } from "@/hooks/useSubscription";
 import { usePaddleCheckout } from "@/hooks/usePaddleCheckout";
 import { getPaddleEnvironment } from "@/lib/paddle";
 import { supabase } from "@/integrations/supabase/client";
+import { SubscriptionStatusBanner } from "@/features/billing/components/SubscriptionStatusBanner";
 
 type Tier = "intake" | "intake_team";
 type Interval = "monthly" | "annual";
@@ -90,11 +91,16 @@ export default function BillingSettingsPage() {
     if (!workspaceId) return;
     setBusy("change");
     try {
-      const { error } = await supabase.functions.invoke("change-subscription", {
+      const { data, error } = await supabase.functions.invoke("change-subscription", {
         body: { workspaceId, newPriceId: PRICES[tier][nextInterval].id, environment: env },
       });
       if (error) throw error;
-      toast.success("Plan updated. You only paid the difference.");
+      const mode = (data as { mode?: string } | null)?.mode;
+      if (mode === "downgrade") {
+        toast.success("Plan change scheduled — takes effect at your next renewal.");
+      } else {
+        toast.success("Plan updated. You only paid the difference.");
+      }
       void refetch();
     } catch (e: any) {
       toast.error(e?.message ?? "Couldn't update plan.");
@@ -124,6 +130,9 @@ export default function BillingSettingsPage() {
       <PageMeta title="Billing | PhotoBrief" description="Manage your plan" canonicalPath="/settings/billing" />
       <Section>
         <Container width="narrow">
+          <div className="mb-4">
+            <SubscriptionStatusBanner hideCta />
+          </div>
           {showCancel && workspaceId ? (
             <ExitInterview
               workspaceId={workspaceId}
