@@ -2677,62 +2677,6 @@ export type Database = {
           },
         ]
       }
-      request_credit_packs: {
-        Row: {
-          amount_cents: number
-          created_at: string
-          currency: string
-          environment: string
-          id: string
-          pack_size: number
-          period_end: string
-          plan_at_purchase: Database["public"]["Enums"]["plan_tier"] | null
-          remaining: number
-          status: string
-          stripe_checkout_session_id: string | null
-          stripe_payment_intent_id: string | null
-          workspace_id: string
-        }
-        Insert: {
-          amount_cents: number
-          created_at?: string
-          currency?: string
-          environment?: string
-          id?: string
-          pack_size: number
-          period_end: string
-          plan_at_purchase?: Database["public"]["Enums"]["plan_tier"] | null
-          remaining: number
-          status?: string
-          stripe_checkout_session_id?: string | null
-          stripe_payment_intent_id?: string | null
-          workspace_id: string
-        }
-        Update: {
-          amount_cents?: number
-          created_at?: string
-          currency?: string
-          environment?: string
-          id?: string
-          pack_size?: number
-          period_end?: string
-          plan_at_purchase?: Database["public"]["Enums"]["plan_tier"] | null
-          remaining?: number
-          status?: string
-          stripe_checkout_session_id?: string | null
-          stripe_payment_intent_id?: string | null
-          workspace_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "request_credit_packs_workspace_id_fkey"
-            columns: ["workspace_id"]
-            isOneToOne: false
-            referencedRelation: "business_workspaces"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       request_messages: {
         Row: {
           body: string | null
@@ -3172,15 +3116,11 @@ export type Database = {
           created_at: string
           current_period_end: string
           current_period_start: string
-          environment: string
           id: string
           is_founding_pro: boolean
           plan_tier: Database["public"]["Enums"]["plan_tier"]
-          price_id: string | null
           renewal_date: string | null
           status: string
-          stripe_customer_id: string | null
-          stripe_subscription_id: string | null
           trial_ends_at: string | null
           updated_at: string
           workspace_id: string
@@ -3191,15 +3131,11 @@ export type Database = {
           created_at?: string
           current_period_end?: string
           current_period_start?: string
-          environment?: string
           id?: string
           is_founding_pro?: boolean
           plan_tier: Database["public"]["Enums"]["plan_tier"]
-          price_id?: string | null
           renewal_date?: string | null
           status?: string
-          stripe_customer_id?: string | null
-          stripe_subscription_id?: string | null
           trial_ends_at?: string | null
           updated_at?: string
           workspace_id: string
@@ -3210,15 +3146,11 @@ export type Database = {
           created_at?: string
           current_period_end?: string
           current_period_start?: string
-          environment?: string
           id?: string
           is_founding_pro?: boolean
           plan_tier?: Database["public"]["Enums"]["plan_tier"]
-          price_id?: string | null
           renewal_date?: string | null
           status?: string
-          stripe_customer_id?: string | null
-          stripe_subscription_id?: string | null
           trial_ends_at?: string | null
           updated_at?: string
           workspace_id?: string
