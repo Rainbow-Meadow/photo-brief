@@ -114,6 +114,7 @@ const App = () => (
             <Route path="/for-ai-agents" element={<ForAiAgentsPage />} />
             <Route path="/privacy" element={<PrivacyPage />} />
             <Route path="/terms" element={<TermsPage />} />
+            <Route path="/refund-policy" element={<RefundPage />} />
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
