@@ -66,7 +66,7 @@ function CodeBlock({ label, code }: { label: string; code: string }) {
 export default function ForAiAgentsPage() {
   const [lang, setLang] = useState<ApiExampleLang>("curl");
 
-  const faqJsonLd = useMemo(() => buildFaqJsonLd(faqItems), []);
+  
   const howToJsonLd = useMemo(() => buildHowToJsonLd("Turn a small-business inquiry into a PhotoBrief visual intake workflow", howItWorksSteps), []);
   const articleJsonLd = useMemo<Record<string, unknown>>(
     () => ({
