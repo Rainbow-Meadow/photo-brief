@@ -16,6 +16,7 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { PublicRequestLayout } from "@/components/layout/PublicRequestLayout";
 import { RequireAuth } from "@/components/auth/RequireAuth";
 import { RouteTracker } from "@/components/analytics/RouteTracker";
+import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { FeatureGate } from "@/components/shared/FeatureGate";
 
 // All route components are lazy-loaded so each page (especially the marketing
