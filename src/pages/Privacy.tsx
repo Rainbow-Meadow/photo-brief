@@ -28,7 +28,7 @@ const sections = [
       "Account and workspace information, such as name, email address, business name, workspace settings, plan information, and team membership.",
       "Request and recipient information, such as customer names, email addresses, phone numbers, request messages, PhotoBrief links, guide templates, uploaded photos, answers, and submission metadata.",
       "Usage and device information, such as pages viewed, actions taken, browser/device details, approximate location derived from IP address, log data, and diagnostic information.",
-      "Payment information may be processed by our payment provider. PhotoBrief does not intentionally store full payment card numbers in the app.",
+      "Payment information (card details, billing address, tax identifiers) is collected and processed directly by our Merchant of Record, Paddle.com Market Limited (\"Paddle\"). PhotoBrief does not store full payment card numbers — we only receive limited transaction metadata (such as plan, status, last four digits, and country) needed to provision your subscription.",
     ],
   },
   {
