@@ -3,7 +3,6 @@ import { NavLink } from "react-router-dom";
 import { ArrowRight, BadgeCheck, Camera, Clock3, Globe2, HardDrive, HeartHandshake, Link2, MessageSquareText, ShieldCheck, Sparkles, Users } from "lucide-react";
 import { PricingCardGrid } from "@/components/pricing/PricingCardGrid";
 import { PageMeta } from "@/hooks/seo/usePageMeta";
-import { buildFaqJsonLd } from "@/hooks/seo/buildFaqJsonLd";
 import { faqItems } from "@/features/help/content/faq";
 import { BETA_DURATION_DAYS, MAX_DISCOUNT_LABEL } from "@/config/betaProgram";
 import { PublicPhotoPair } from "@/components/marketing/PublicPhotoPair";
