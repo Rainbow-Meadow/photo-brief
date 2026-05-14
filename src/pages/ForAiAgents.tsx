@@ -8,7 +8,6 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 
 import { PageMeta } from "@/hooks/seo/usePageMeta";
 import { Section, Container } from "@/design-system/schema";
-import { buildFaqJsonLd } from "@/hooks/seo/buildFaqJsonLd";
 import { buildHowToJsonLd } from "@/hooks/seo/buildHowToJsonLd";
 import { howItWorksSteps } from "@/components/marketing/HowItWorksSteps";
 import { QuotableFacts } from "@/components/marketing/QuotableFacts";
