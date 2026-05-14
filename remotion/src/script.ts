@@ -43,7 +43,7 @@ export const SCENES: SceneSpec[] = [
   },
   {
     id: "s2-graveyard",
-    durationInFrames: 195, // 6.5s
+    durationInFrames: 270, // 9.0s
     plate: "PLT.A.02",
     label: "RFM-METHOD / PAIN",
     vo: "Seventeen Contact Us submissions this week. Half of them — just a name and need a quote. You text back. They ghost. Repeat.",
@@ -55,7 +55,7 @@ export const SCENES: SceneSpec[] = [
   },
   {
     id: "s3-reframe",
-    durationInFrames: 255, // 8.5s
+    durationInFrames: 285, // 9.5s
     plate: "PLT.A.03",
     label: "RFM-METHOD / REFRAME",
     vo: "The form isn't the problem. The ask is. A roofer needs different answers than a mover. A leak needs different photos than a re-roof.",
@@ -68,7 +68,7 @@ export const SCENES: SceneSpec[] = [
   },
   {
     id: "s4-paste-url",
-    durationInFrames: 315, // 10.5s
+    durationInFrames: 375, // 12.5s
     plate: "PLT.B.01",
     label: "RFM-METHOD / SCAN",
     vo: "Paste your website. PhotoBrief reads it and proposes the routes a customer comes in for. Repair. Install. Quote. Emergency. You approve.",
@@ -94,7 +94,7 @@ export const SCENES: SceneSpec[] = [
   },
   {
     id: "s6-recipient",
-    durationInFrames: 435, // 14.5s
+    durationInFrames: 360, // 12.0s
     plate: "PLT.B.03",
     label: "RFM-METHOD / CAPTURE",
     vo: "Your customer gets one link. On their phone. One thumb. Plain words. No login. They answer. Attach what's asked. Hit send.",
@@ -107,7 +107,7 @@ export const SCENES: SceneSpec[] = [
   },
   {
     id: "s7-inbox",
-    durationInFrames: 435, // 14.5s
+    durationInFrames: 360, // 12.0s
     plate: "PLT.B.04",
     label: "RFM-METHOD / BRIEF",
     vo: "You get a brief. Contact, answers, photos, a readiness score. And either ready to quote — or a short list of what's still missing. Stop chasing. Start closing.",
@@ -120,7 +120,7 @@ export const SCENES: SceneSpec[] = [
   },
   {
     id: "s8-close",
-    durationInFrames: 660, // 22s
+    durationInFrames: 645, // 21.5s
     plate: "PLT.A.06",
     label: "RFM-METHOD / CLOSE",
     vo: "PhotoBrief. Guide. Capture. Close. Built for roofers, HVAC, contractors, real estate, and claims adjusters tired of chasing customers over text.",
