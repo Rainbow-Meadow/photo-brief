@@ -1,60 +1,61 @@
-# BetaList submission images — 5-shot deck
+# Tighten the BetaList 5-shot deck
 
-Output: 5 PNGs at **1600×1200 (4:3, retina-grade for an 800×600 slot)**, saved to `/mnt/documents/betalist/`. All on PhotoBrief brand: near-black `#0D0D0B`, cream `#F4F1EA`, amber `#F2A33A`. BrandMark in cream. Inter-style typography, Kyle Milligan voice — no hype words, no exclamation points.
+Two problems to fix in `/tmp/build_betalist.py`, then re-render to `/mnt/documents/betalist/`:
 
-## The 5 shots
+1. The five shots each tell a slightly different story. Reads like five posters, not a deck.
+2. Shots 01 and 04 show "Photos · 3" but the thumbnails are gray gradients. A submission deck for a product called *PhotoBrief* must show actual photos.
 
-**01_hero.png — Statement card (mockup)**
-Big cream headline left-aligned: **"Guide. Capture. Close."** Smaller amber kicker above: "Smart intake for service businesses." On the right, a floating dark "Brief #1042" card mockup peeking in (customer name, address, 3 answers, photo thumbnail, "Ready to quote" amber pill). Subtle grain + amber gradient bloom bottom-right. BrandMark top-left, `photobrief.ai` bottom-right.
+## 1. One story, five beats
 
-**02_intake_setup.png — Real /intake screenshot, framed**
-Capture the setup hub from preview (signed in as a seed user with a real workspace — Apex Roofing). Place in a soft dark window frame (subtle title bar, no traffic-light kitsch since brand is dark). Caption strip top: **"Scan your site. Get routes, questions, and a photo policy in 60 seconds."** Kicker: "Setup".
+Lock a single arc and rewrite each caption so it lands one beat:
 
-**03_recipient_intake.png — Real /i/:token in iPhone frame**
-Open a published intake link in the preview at mobile width (440px), screenshot one of the guided question screens. Drop into a dark iPhone-style frame, centered on a cream→amber radial. Caption right: **"Your form gives you a name. We give you a brief."** Kicker: "What the customer sees".
+| # | Beat | Kicker | Headline | Sub |
+|---|------|--------|----------|-----|
+| 01 | Promise | `SMART INTAKE FOR SERVICE BUSINESSES` | **Guide. Capture. Close.** | Your form gives you a name. We give you a brief — ready to quote. |
+| 02 | Guide (operator setup) | `GUIDE · SETUP IN 60 SECONDS` | **Scan your site. Get a real intake.** | Routes, questions, and a photo policy — tuned to how you actually quote. |
+| 03 | Capture (recipient) | `CAPTURE · WHAT THE CUSTOMER SEES` | **Plain words. One thumb. No login.** | Photos only when they actually move the job. |
+| 04 | Close (operator inbox) | `CLOSE · WHAT LANDS IN YOUR INBOX` | **Quote on the first reply.** | Every brief lands ready — or tells you exactly what's missing. |
+| 05 | The rule under it all | `PHOTO POLICY · FOUR MODES` | **Photos when they matter. Not when they don't.** | Most forms ignore photos or demand them. Both lose leads. PhotoBrief picks per route. |
 
-**04_brief.png — Real completed brief, framed**
-Screenshot the operator's brief view (route, contact, answers, photos, readiness score, next action). Frame as in 02. Caption top: **"Quote on the first reply."** Sub-caption: "Every brief lands ready — or tells you exactly what's missing." Kicker: "What lands in your inbox".
+Voice rules already in project knowledge: no "AI-powered", no "seamless", no exclamation points, sixth-grader words, periods only in the hero headline. CTAs and stat labels stay verbs/nouns the operator already uses.
 
-**05_photo_policy.png — Concept card (mockup)**
-4-tile grid showing the four photo states with one-line operator copy each:
-- `not_needed` — "Don't ask. Don't slow them down."
-- `optional` — "Offer it. Don't block it."
-- `recommended` — "Tell them why a photo helps."
-- `required` — "No photo, no brief."
-Headline above: **"Photos when they matter. Not when they don't."** Kicker: "Photo policy". Amber accent on the active "recommended" tile.
+Removes the current mismatches:
+- 01's sub ("Your form gives you a name… on the first reply") and 03's headline ("Your form gives you a name") were saying the same thing in two places. Now 01 owns the promise; 03 owns the recipient experience.
+- 02's headline ("Scan your site. Get routes, questions, and a photo policy.") was a feature list. Replaced with curiosity-gap headline + payoff in the sub.
+- 04's "Or know exactly what's missing." softens to the agreed sub above.
+- 05 stays as the closing principle.
 
-## How they get built
+Also align the small things across shots so they read as a set:
+- Every kicker uses the format `BEAT · DETAIL`.
+- Brandmark size, position, and `photobrief.ai` footer identical on all 5 (already true — verify).
+- Shot 03's stat row labels rewritten to match operator voice: `90s avg · 0 logins · 4 photo modes` (currently "average to finish" / "logins required" / "photo policy modes" — too long, breaks rhythm).
+- Shot 02's checklist labels stay; shot 04's readiness checklist stays — they already match.
 
-1. **Brand probe** — read `src/index.css`, `tailwind.config.ts`, `BrandMark` component to lock exact tokens, fonts, and the two-tone wordmark SVG. Read `mem://design/brand-system` and `mem://seed-users` to pick a workspace with believable seed data for screenshots.
-2. **Real screenshots** (shots 02, 03, 04):
-   - Sign in as the appropriate seed user via `browser--navigate_to_sandbox` + `browser--act`.
-   - For 03, set viewport to 440×900 before navigating to a real published `/i/:token`.
-   - Use `browser--screenshot`, save to `/tmp/`.
-3. **Composition** — single Python/Pillow script (`/tmp/build_betalist.py`) that:
-   - Loads brand tokens as constants.
-   - Loads Inter + Inter Tight via `@fontsource` files already in the repo (or downloads via `urllib` to `/tmp/fonts/` if needed).
-   - Renders each of the 5 canvases at 1600×1200, composites real screenshots into dark window/iPhone frames with rounded corners + soft shadows, draws headline/kicker/BrandMark.
-   - Writes PNGs to `/mnt/documents/betalist/01_hero.png` … `05_photo_policy.png`.
-4. **Hero & policy mockup chrome** — drawn directly in Pillow (no AI image gen needed; keeps it on-brand and crisp). Brief card on hero is a faux-UI render (rounded rect, real-looking field labels).
-5. **QA pass** — for each PNG: open with `code--view`, check no overlap, no clipping, BrandMark legible, headline contrast ≥ AA, no orphan words, 4:3 exactly. Re-render until clean. Report what was checked.
-6. **Deliver** — `<presentation-artifact>` tags for all 5 PNGs plus a zipped bundle `betalist_premium.zip`.
+## 2. Real photos in the brief
 
-## Brand & copy guardrails
+Today `render_brief_card()` paints three gray gradient rectangles where photo thumbnails should be. Same card is reused in shot 04. Fix:
 
-- BrandMark always cream-on-dark (`tone="dark"`), never inline `<img>` look-alike.
-- No "AI-powered", no "revolutionary", no "seamless", no exclamation points.
-- Tagline canonical form: **Guide · Capture · Close** (middots, not periods) on small/footer use; **"Guide. Capture. Close."** allowed only in the hero headline since you specified periods.
-- Plan pricing not shown anywhere (BetaList isn't a pricing page).
-- "Lovable Cloud"/"Supabase" never visible.
+- Download 3 small roofing-damage / dormer photos from Unsplash Source (CC0, no attribution required for editorial product mockups) into `/tmp/photo_assets/`. Pick photos that match the brief copy ("Front dormer — water came through after Tuesday's storm"): a close-up of damaged shingles, a dormer/roof line, a water-stained ceiling or gutter detail.
+- Cache locally so re-runs don't re-download.
+- In `render_brief_card`, replace the gradient loop with: open photo → `ImageOps.fit` to thumbnail size → round corners with a mask → paste. Keep the cream 1px outline. Same `PHOTOS · 3` label above.
+- In shot 04's readiness column, swap `Photos · 3 of 3` to `Photos · 3 attached` so it reads naturally.
+
+If a download fails, fall back to the current gradient so the script never breaks. Log which photos were used.
+
+## 3. QA pass (re-run for each shot)
+
+For every PNG, open with `code--view` and check:
+- Headline + sub fit, no clipping, no orphans.
+- Brandmark and `photobrief.ai` footer in identical positions across all 5.
+- Real photos in 01 and 04 are sharp, not stretched, corners rounded, contrast against card.
+- Kicker format `BEAT · DETAIL` consistent everywhere.
+- Canvas exactly 1600×1200.
+
+Re-bundle `betalist_premium.zip`, deliver via `<presentation-artifact>` tags.
 
 ## What this plan does NOT do
 
-- No new code in `src/`. No edits to the app.
-- No mock data injected into the DB — uses existing seed workspace data only.
-- No carousel page added to the marketing site (separate request if you want one).
-- No video/GIF — BetaList submission is stills only per your screenshot.
-
-## Open question I'm assuming the answer to (tell me if wrong)
-
-- I'll use the **Apex Roofing** seed workspace for the real screenshots (roofer = clearest BetaList narrative). Say the word if you'd rather see HVAC or claims.
+- No app/source changes. Pure asset regeneration.
+- No new shots, no carousel page, no video.
+- No new fonts, no palette change.
+- No copy that wasn't already approved in voice rules.
