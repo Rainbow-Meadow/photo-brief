@@ -1,10 +1,13 @@
 import { bundle } from "@remotion/bundler";
 import { renderStill, selectComposition, openBrowser } from "@remotion/renderer";
+import { mkdirSync } from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const FRAMES = [2660, 2680, 2695];
+// Spread across the 30s composition (900f total)
+const FRAMES = [40, 200, 360, 500, 660, 820];
+mkdirSync("/tmp/qa", { recursive: true });
 
 const bundled = await bundle({
   entryPoint: path.resolve(__dirname, "../src/index.ts"),
@@ -19,9 +22,11 @@ const composition = await selectComposition({ serveUrl: bundled, id: "main", pup
 for (const f of FRAMES) {
   console.log("frame", f);
   await renderStill({
-    composition, serveUrl: bundled,
+    composition,
+    serveUrl: bundled,
     output: `/tmp/qa/f-${String(f).padStart(4, "0")}.png`,
-    frame: f, puppeteerInstance: browser,
+    frame: f,
+    puppeteerInstance: browser,
   });
 }
 await browser.close({ silent: false });
