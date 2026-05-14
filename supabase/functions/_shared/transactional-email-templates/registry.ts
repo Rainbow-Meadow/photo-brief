@@ -42,4 +42,5 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'beta-testimonial-request': betaTestimonialRequest,
   'beta-graduation': betaGraduation,
   'demo-brief-delivery': demoBriefDelivery,
+  'trial-ending': trialEnding,
 }
