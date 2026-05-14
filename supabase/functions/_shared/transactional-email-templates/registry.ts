@@ -24,6 +24,7 @@ import { template as betaStalledCheckin } from './beta-stalled-checkin.tsx'
 import { template as betaTestimonialRequest } from './beta-testimonial-request.tsx'
 import { template as betaGraduation } from './beta-graduation.tsx'
 import { template as demoBriefDelivery } from './demo-brief-delivery.tsx'
+import { template as trialEnding } from './trial-ending.tsx'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'recipient-request-link': recipientRequestLink,
@@ -41,4 +42,5 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'beta-testimonial-request': betaTestimonialRequest,
   'beta-graduation': betaGraduation,
   'demo-brief-delivery': demoBriefDelivery,
+  'trial-ending': trialEnding,
 }

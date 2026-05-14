@@ -39,3 +39,7 @@ verify_jwt = false
 
 [functions.get-paddle-price]
 verify_jwt = false
+
+
+[functions.check-trial-nudges]
+verify_jwt = true

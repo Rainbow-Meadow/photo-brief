@@ -31,6 +31,7 @@ import { StarterRequestCard } from "@/features/workspace/components/StarterReque
 import { usePlan } from "@/hooks/usePlan";
 import { getPlanLimit, minPlanFor } from "@/config/planLimits";
 import { RecentIntakeBriefsCard } from "@/features/intake/components/RecentIntakeBriefsCard";
+import { SubscriptionStatusBanner } from "@/features/billing/components/SubscriptionStatusBanner";
 
 async function sendReminder(requestId: string, recipientName: string) {
   const t = toast.loading(`Sending reminder to ${recipientName}…`);
@@ -138,6 +139,7 @@ export default function DashboardPage() {
 
   return (
     <PageShell><PageStack>
+      <SubscriptionStatusBanner />
       <OnboardingProgressBanner />
 
       {isEmpty ? <StarterRequestCard industry={workspace?.industry} /> : null}
