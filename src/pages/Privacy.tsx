@@ -5,7 +5,16 @@ import { Section, Container } from "@/design-system/schema";
 
 const updatedAt = "January 2026";
 
+const SELLER_NAME = "Patrick Ryan Berthiaume";
+
 const sections = [
+  {
+    title: "Who we are",
+    body: [
+      `PhotoBrief.ai is operated by ${SELLER_NAME} ("PhotoBrief", "we", "us", "our"). For the personal data described in this policy, ${SELLER_NAME} acts as the data controller and decides how and why personal data is processed.`,
+      "You can contact us at hello@photobrief.ai for any privacy-related question, including requests to access, correct, export, or delete your data.",
+    ],
+  },
   {
     title: "What PhotoBrief does",
     body: [
