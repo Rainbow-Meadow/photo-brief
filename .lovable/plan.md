@@ -1,74 +1,79 @@
-## Goal
+# Extend prerender coverage to all marketing/legal/help routes
 
-Tear out the existing half-wired Stripe integration completely (frontend, edge functions, DB columns/tables, secrets, deps), then re-enable payments cleanly via Lovable's built-in payments flow with fresh products. Pricing marketing page stays as-is; checkout CTAs get neutered until the new provider is wired.
+## Current state
 
-## Phase 1 — Rip out
+`scripts/prerender.mjs` already does the heavy lifting: after `vite build`, it reads `public/sitemap.xml`, spins up a static server over `dist/`, and snapshots each sitemap URL into `dist/<route>/index.html`. The sitemap is the single source of truth.
 
-### Frontend (delete)
-- `src/components/billing/PaymentTestModeBanner.tsx`
-- `src/components/billing/StripeEmbeddedCheckout.tsx`
-- `src/components/billing/StripeTopupCheckout.tsx`
-- `src/components/billing/TopupPackCards.tsx`
-- `src/config/topupPacks.ts`
-- `src/hooks/useTopupBalance.ts`
-- `src/lib/stripe.ts`
-- `src/features/billing/pages/BillingSettingsPage.tsx` → replace with a minimal stub page ("Billing is being rebuilt") so the `/settings/billing` route still mounts.
+The script itself doesn't need code changes. The gap is that **three public marketing/legal routes exist in the app but are missing from the sitemap and the two routing allow-lists**, so they never get prerendered and they never get routed to Pages even if they were.
 
-### Frontend (edit)
-- `src/hooks/useUsage.ts` — drop `useTopupBalance` import + topup field; report only plan allowance + usage.
-- `src/pages/Pricing.tsx` — keep page; replace any "Start checkout" / "Upgrade" handlers with a no-op (`mailto:hello@photobrief.ai` or "Coming soon" toast). FoundingPro counter stays.
-- Any `<Link to="/settings/billing">` upgrade CTAs keep working (route still exists, shows stub).
+### Public marketing/legal/help routes that exist in `src/App.tsx`
 
-### Dependencies
-- `bun remove @stripe/react-stripe-js @stripe/stripe-js`
+| Route | In sitemap.xml | In router allow-list | In _redirects |
+|---|---|---|---|
+| `/` | yes | yes | yes |
+| `/pricing` | yes | yes | yes |
+| `/for-ai-agents` | yes | yes | yes |
+| `/help` | yes | yes | yes |
+| `/privacy` | yes | no | yes |
+| `/terms` | yes | no | yes |
+| `/demo` | **no** | no | no |
+| `/beta` | **no** | no | no |
+| `/refund-policy` | **no** | no | no |
 
-### Edge functions (delete code + call `delete_edge_functions`)
-- `create-checkout`
-- `create-topup-checkout`
-- `customer-portal`
-- `payments-webhook`
-- `supabase/functions/_shared/stripe.ts`
-- Remove related blocks from `supabase/config.toml` if any (none currently set).
+`/auth`, `/forgot-password`, `/signup`, `/welcome`, `/unsubscribe`, `/onboarding`, `/invite/*`, `/r/*`, `/i/*`, app, and admin routes are intentionally excluded per `docs/seo-llm-discovery.md` — they're either tokenized, auth-gated, or low-value for indexing.
 
-### Secrets (delete via `delete_secret`)
-- `STRIPE_SANDBOX_API_KEY`, `STRIPE_LIVE_API_KEY`
-- `PAYMENTS_SANDBOX_WEBHOOK_SECRET`, `PAYMENTS_LIVE_WEBHOOK_SECRET`
-- `VITE_PAYMENTS_CLIENT_TOKEN`
-- (Skip `LOVABLE_API_KEY` and any connector-managed secrets.)
+## Changes
 
-### Database migration
-Single migration that:
-1. Drops `request_credit_packs` table (cascades to `idx_topup_packs_*`).
-2. Updates `current_topup_credits()`, `current_topup_balance()`, `current_credit_balance()` to return zero topup constants (no table read), or just return plan-only balance.
-3. Updates `enforce_request_limit()` trigger to skip the topup fallback branch — when cap is hit, raise `PLAN_LIMIT_REACHED` directly.
-4. Strips Stripe-specific columns from `subscriptions`: `stripe_customer_id`, `stripe_subscription_id`, `price_id`, `environment`. Drops indexes that reference them. Keeps `plan_tier`, `status`, `trial_ends_at`, `current_period_*`, `cancel_at_period_end`, `is_founding_pro`, `billing_interval` (still used for trial + plan accounting).
-5. Leaves `credit_ledger`, `usage_events`, `subscriptions` schema otherwise intact so `handle_new_user`, plan gates, and credit accounting keep working.
+### 1. `public/sitemap.xml`
+Add three `<url>` entries:
+- `https://photobrief.ai/demo` — weekly, priority 0.9
+- `https://photobrief.ai/beta` — weekly, priority 0.9
+- `https://photobrief.ai/refund-policy` — yearly, priority 0.3
 
-### Cleanup verification
-- `rg "stripe|Stripe|@stripe|topup|Topup|VITE_PAYMENTS" src/ supabase/ workers/` should only return: this plan, `docs/`, agent-shim cost mirroring (unrelated AE telemetry), and any historical migrations.
-- App builds, `/settings/billing` shows stub, `/pricing` renders.
+This alone makes `scripts/prerender.mjs` start emitting `dist/demo/index.html`, `dist/beta/index.html`, and `dist/refund-policy/index.html` on the next build. No script changes required.
 
-## Phase 2 — Re-enable Lovable Payments fresh
+### 2. `workers/router/src/index.ts`
+Extend `MARKETING_PATHS` from 4 entries to 9 so the Cloudflare router actually routes these paths to Pages (otherwise they fall through to the Lovable origin and the prerendered HTML is never served):
 
-After Phase 1 is in and verified:
+```ts
+const MARKETING_PATHS = new Set<string>([
+  "/",
+  "/pricing",
+  "/help",
+  "/for-ai-agents",
+  "/privacy",
+  "/terms",
+  "/refund-policy",
+  "/demo",
+  "/beta",
+]);
+```
 
-1. Run `payments--recommend_payment_provider` — classifies PhotoBrief (B2B SaaS, digital service, US-friendly) and recommends Stripe or Paddle.
-2. Present the recommendation, confirm with you.
-3. Call the chosen `enable_*_payments` tool. New (sandbox) keys are wired automatically.
-4. (Stripe only) Ask which tax-handling mode you want per the seamless Stripe options.
-5. Define products with `batch_create_product`:
-   - `intake_monthly` — $79/mo  (founding $59)
-   - `intake_annual` — $790/yr  (founding $590)
-   - `intake_team_monthly` — $199/mo  (founding $149)
-   - `intake_team_annual` — $1990/yr  (founding $1490)
-   - Top-up credit packs — pricing/sizes you confirm at that step.
-6. Implement fresh checkout: new edge function(s) using the Lovable-managed payments knowledge, new `BillingSettingsPage` showing plan + invoices + portal link, new pricing-page CTAs that hit checkout. New webhook to update `subscriptions.plan_tier` / `status` / `trial_ends_at`.
-7. New schema, if needed, will be added at that point (e.g. fresh `topups` table) — designed against the new provider's events instead of inheriting the old shape.
+### 3. `public/_redirects`
+Add the missing Pages routes to the explicit allow-list so Pages can serve `dist/<route>/index.html` (this file is the fail-closed contract for Pages):
 
-## Risk notes
+```
+/demo /demo/index.html 200
+/beta /beta/index.html 200
+/refund-policy /refund-policy/index.html 200
+```
 
-- **`handle_new_user` trigger** inserts a `subscriptions` row with `plan_tier='intake'`, `status='trialing'`. Migration keeps that working — no signup regression.
-- **Founding Pro** logic (`founding_pro_remaining`, `founding_pro_cache`) is independent of Stripe and stays intact.
-- **Plan gates** (`usePlan`, `enforce_seat_cap`, `enforce_request_limit`, `plan_credit_allowance`) keep working off `business_workspaces.plan_tier` — nothing here touches Stripe.
-- **`webhook_subscriptions`** table is unrelated (outbound submission webhooks for customers). Untouched.
-- After Phase 1, no one can pay — workspaces are effectively frozen on whatever `plan_tier` they currently have. Fine because this is pre-launch.
+`/privacy` and `/terms` are already there.
+
+### 4. `docs/seo-llm-discovery.md` (small doc fix)
+The "Current public indexable pages" list currently shows `/waitlist` (which doesn't exist) and is missing `/demo`, `/beta`, `/privacy`, `/terms`, `/refund-policy`. Update it to match reality so future changes don't drift again.
+
+## Out of scope
+
+- No SSR, no framework change, no React Router or build-pipeline changes.
+- No new structured data, no copy changes — `PageMeta` already handles per-route `<title>`, description, canonical, OG, JSON-LD on each of these pages, and the prerender script captures the post-mount DOM.
+- No changes to puppeteer flags, viewport, or wait conditions — current setup (`networkidle0` + `#root > div` + 30s timeout) already works for the existing 8 routes and the 3 new ones are simpler than `/` or `/pricing`.
+
+## Verification
+
+After the change ships:
+1. CI / `npm run build:prerender` produces `dist/demo/index.html`, `dist/beta/index.html`, `dist/refund-policy/index.html` with rendered hero content (not the empty SPA shell).
+2. `scripts/smoke-public-endpoints.mjs` returns 200 with non-empty HTML for each new path.
+3. `curl -I https://photobrief.ai/demo` (with a bot UA) returns the Pages origin, not Lovable.
+4. Sitemap fetched at `/sitemap.xml` lists all 11 URLs.
+
