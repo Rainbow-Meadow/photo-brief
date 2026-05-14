@@ -54,10 +54,9 @@ export default function BillingSettingsPage() {
       toast.success("You're in. Welcome to PhotoBrief.");
       params.delete("checkout");
       setParams(params, { replace: true });
-      // Subscription row arrives via webhook; refetch a few times.
-      const t = setInterval(() => { void refetch(); }, 1500);
-      const stop = setTimeout(() => clearInterval(t), 12_000);
-      return () => { clearInterval(t); clearTimeout(stop); };
+      const t = window.setInterval(() => { void refetch(); }, 1500);
+      const stop = window.setTimeout(() => window.clearInterval(t), 12_000);
+      return () => { window.clearInterval(t); window.clearTimeout(stop); };
     }
   }, [params, setParams, refetch]);
 
