@@ -264,6 +264,16 @@ const App = () => (
                 </RequireAuth>
               }
             />
+            <Route
+              path="/admin/exit-interviews"
+              element={
+                <RequireAuth requireOnboarding={false}>
+                  <RequirePlatformAdmin>
+                    <AdminExitInterviewsPage />
+                  </RequirePlatformAdmin>
+                </RequireAuth>
+              }
+            />
           </Route>
 
           {/* Public intake + recipient capture */}
