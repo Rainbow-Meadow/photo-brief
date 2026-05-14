@@ -57,6 +57,32 @@ const betaOffer = [
 
 export default function PricingPage() {
   const businessFaqs = useMemo(() => faqItems.filter((f) => f.audience === "business"), []);
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { workspace } = useCurrentWorkspace();
+  const { isPaid, subscription } = useSubscription(workspace?.id);
+  const { openCheckout } = usePaddleCheckout();
+  const canShowCheckout = !!user && !!workspace?.id && !isPaid;
+  const handleSelectPlan = canShowCheckout
+    ? async (planId: Plan) => {
+        const priceId = LOGGED_IN_PRICE_ID[planId];
+        if (!priceId) {
+          navigate("/settings/billing");
+          return;
+        }
+        try {
+          await openCheckout({
+            priceId,
+            workspaceId: workspace!.id,
+            customerEmail: user!.email ?? undefined,
+            successUrl: `${window.location.origin}/settings/billing?checkout=success&from=checkout`,
+          });
+        } catch (e) {
+          console.error(e);
+          toast.error("Couldn't open checkout. Try again.");
+        }
+      }
+    : undefined;
 
   return (
     <>
