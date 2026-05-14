@@ -25,20 +25,19 @@ export const PlateCodeTicker: React.FC<Props> = ({ totalFrame, totalFrames }) =>
         position: "absolute",
         left: 0,
         right: 0,
-        bottom: 24,
+        bottom: 22,
         display: "flex",
-        justifyContent: "space-between",
-        padding: "0 80px",
+        justifyContent: "center",
+        padding: "0 60px",
         fontFamily: FONT.mono,
-        fontSize: 11,
+        fontSize: 12,
         letterSpacing: "0.32em",
         color: COLORS.inkDim,
         textTransform: "uppercase",
         pointerEvents: "none",
       }}
     >
-      <div>PHOTOBRIEF · FIELD MANUAL · 90s SPOT</div>
-      <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
         <span>{tc}</span>
         <ProgressBar progress={progress} />
         <span>{framesToTimecode(totalFrames)}</span>
