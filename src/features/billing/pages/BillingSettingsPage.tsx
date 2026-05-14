@@ -11,6 +11,7 @@ import { useSubscription } from "@/hooks/useSubscription";
 import { usePaddleCheckout } from "@/hooks/usePaddleCheckout";
 import { getPaddleEnvironment } from "@/lib/paddle";
 import { supabase } from "@/integrations/supabase/client";
+import { SubscriptionStatusBanner } from "@/features/billing/components/SubscriptionStatusBanner";
 
 type Tier = "intake" | "intake_team";
 type Interval = "monthly" | "annual";
