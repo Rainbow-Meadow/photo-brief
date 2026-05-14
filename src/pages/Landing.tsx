@@ -3,7 +3,6 @@ import { ArrowRight, CheckCircle2, ImageOff, MessageSquareWarning, TimerReset, P
 
 import { PageMeta } from "@/hooks/seo/usePageMeta";
 import { buildHowToJsonLd } from "@/hooks/seo/buildHowToJsonLd";
-import { buildFaqJsonLd } from "@/hooks/seo/buildFaqJsonLd";
 
 import { BrandMark } from "@/components/layout/BrandMark";
 import { Section, Container, Body } from "@/design-system/schema";
