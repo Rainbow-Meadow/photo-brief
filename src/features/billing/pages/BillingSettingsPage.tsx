@@ -90,11 +90,16 @@ export default function BillingSettingsPage() {
     if (!workspaceId) return;
     setBusy("change");
     try {
-      const { error } = await supabase.functions.invoke("change-subscription", {
+      const { data, error } = await supabase.functions.invoke("change-subscription", {
         body: { workspaceId, newPriceId: PRICES[tier][nextInterval].id, environment: env },
       });
       if (error) throw error;
-      toast.success("Plan updated. You only paid the difference.");
+      const mode = (data as { mode?: string } | null)?.mode;
+      if (mode === "downgrade") {
+        toast.success("Plan change scheduled — takes effect at your next renewal.");
+      } else {
+        toast.success("Plan updated. You only paid the difference.");
+      }
       void refetch();
     } catch (e: any) {
       toast.error(e?.message ?? "Couldn't update plan.");
