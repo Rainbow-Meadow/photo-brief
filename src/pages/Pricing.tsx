@@ -200,7 +200,10 @@ export default function PricingPage() {
             description="During beta, pricing runs through the Founding Partner program. Apply now to lock in launch-year savings before public pricing kicks in."
           />
           <div className="mt-10">
-            <PricingCardGrid />
+            <PricingCardGrid
+              currentPlan={subscription?.plan_tier}
+              onSelectPlan={handleSelectPlan}
+            />
           </div>
         </Container>
       </Section>
