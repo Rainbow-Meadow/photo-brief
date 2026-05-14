@@ -24,6 +24,7 @@ export const marketingLinks: MarketingNavLink[] = [
 export const legalLinks: MarketingNavLink[] = [
   { to: "/privacy", label: "Privacy" },
   { to: "/terms", label: "Terms" },
+  { to: "/refund-policy", label: "Refunds" },
 ];
 
 /** Footer-only utility links */

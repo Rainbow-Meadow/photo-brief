@@ -5,7 +5,16 @@ import { Section, Container } from "@/design-system/schema";
 
 const updatedAt = "January 2026";
 
+const SELLER_NAME = "Patrick Ryan Berthiaume";
+
 const sections = [
+  {
+    title: "Who we are",
+    body: [
+      `PhotoBrief.ai is operated by ${SELLER_NAME} ("PhotoBrief", "we", "us", "our"). For the personal data described in this policy, ${SELLER_NAME} acts as the data controller and decides how and why personal data is processed.`,
+      "You can contact us at hello@photobrief.ai for any privacy-related question, including requests to access, correct, export, or delete your data.",
+    ],
+  },
   {
     title: "What PhotoBrief does",
     body: [
@@ -19,7 +28,7 @@ const sections = [
       "Account and workspace information, such as name, email address, business name, workspace settings, plan information, and team membership.",
       "Request and recipient information, such as customer names, email addresses, phone numbers, request messages, PhotoBrief links, guide templates, uploaded photos, answers, and submission metadata.",
       "Usage and device information, such as pages viewed, actions taken, browser/device details, approximate location derived from IP address, log data, and diagnostic information.",
-      "Payment information may be processed by our payment provider. PhotoBrief does not intentionally store full payment card numbers in the app.",
+      "Payment information (card details, billing address, tax identifiers) is collected and processed directly by our Merchant of Record, Paddle.com Market Limited (\"Paddle\"). PhotoBrief does not store full payment card numbers — we only receive limited transaction metadata (such as plan, status, last four digits, and country) needed to provision your subscription.",
     ],
   },
   {
@@ -40,10 +49,18 @@ const sections = [
     ],
   },
   {
+    title: "Legal basis for processing",
+    body: [
+      "Where applicable law (such as UK/EU GDPR) requires a legal basis to process personal data, we rely on: (a) performance of a contract — to provide PhotoBrief to you and your workspace; (b) legitimate interests — to secure, improve, support, and market the service in a proportionate way; (c) consent — where you have given it (for example, optional marketing emails or non-essential cookies); and (d) legal obligation — to meet tax, accounting, security, and law-enforcement requirements.",
+      "You can withdraw consent at any time where consent is the legal basis, without affecting the lawfulness of prior processing.",
+    ],
+  },
+  {
     title: "Sharing information",
     body: [
-      "We share information with service providers that help us host, secure, analyze, support, communicate, and process payments for PhotoBrief.",
-      "We may share information when required by law, to protect rights and safety, to prevent abuse, or as part of a business transaction such as a merger, financing, acquisition, or sale of assets.",
+      "We share information with service providers (sub-processors) that help us host, secure, analyze, support, and communicate for PhotoBrief — including cloud hosting, database, email/SMS delivery, analytics, and customer support tooling.",
+      "We share order, billing, tax, and contact information with our Merchant of Record, Paddle.com Market Limited (\"Paddle\"), so that Paddle can process payments, handle subscription billing, calculate and remit sales tax/VAT, issue invoices, and manage refunds and chargebacks. Paddle acts as an independent controller for the personal data it processes for these purposes. Paddle's privacy notice is available at https://www.paddle.com/legal/privacy.",
+      "We may share information with professional advisers (legal, accounting), and when required by law, to protect rights and safety, to prevent abuse, or as part of a business transaction such as a merger, financing, acquisition, or sale of assets.",
       "We do not sell customer conversations, request content, or uploaded photos to advertisers.",
     ],
   },

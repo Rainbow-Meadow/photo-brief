@@ -15,6 +15,7 @@ export const routePaths = [
   "/for-ai-agents",
   "/privacy",
   "/terms",
+  "/refund-policy",
   "/auth",
   "/forgot-password",
   "/reset-password",
