@@ -46,7 +46,6 @@ const betaOffer = [
 
 export default function PricingPage() {
   const businessFaqs = useMemo(() => faqItems.filter((f) => f.audience === "business"), []);
-  const jsonLd = useMemo(() => [buildFaqJsonLd(businessFaqs)], [businessFaqs]);
 
   return (
     <>
