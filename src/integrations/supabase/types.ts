@@ -538,6 +538,8 @@ export type Database = {
           slug: string | null
           status: string
           trial_ends_at: string | null
+          trial_nudge_t1_sent_at: string | null
+          trial_nudge_t3_sent_at: string | null
           trial_plan: Database["public"]["Enums"]["plan_tier"] | null
           updated_at: string
         }
@@ -552,6 +554,8 @@ export type Database = {
           slug?: string | null
           status?: string
           trial_ends_at?: string | null
+          trial_nudge_t1_sent_at?: string | null
+          trial_nudge_t3_sent_at?: string | null
           trial_plan?: Database["public"]["Enums"]["plan_tier"] | null
           updated_at?: string
         }
@@ -566,6 +570,8 @@ export type Database = {
           slug?: string | null
           status?: string
           trial_ends_at?: string | null
+          trial_nudge_t1_sent_at?: string | null
+          trial_nudge_t3_sent_at?: string | null
           trial_plan?: Database["public"]["Enums"]["plan_tier"] | null
           updated_at?: string
         }
