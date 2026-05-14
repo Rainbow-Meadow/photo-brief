@@ -54,7 +54,6 @@ export default function PricingPage() {
         description={`Founding Partner beta is open: ${BETA_DURATION_DAYS} days free, routes built with you, and post-launch rewards up to 75% off forever.`}
         canonicalPath="/pricing"
         ogImage="https://photobrief.ai/og/pricing.png"
-        jsonLd={jsonLd}
         breadcrumbs={[{ name: "Home", path: "/" }, { name: "Pricing", path: "/pricing" }]}
       />
 
