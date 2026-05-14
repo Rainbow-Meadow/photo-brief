@@ -3,7 +3,6 @@ import { NavLink } from "react-router-dom";
 import { ArrowRight, BadgeCheck, Camera, Clock3, Globe2, HardDrive, HeartHandshake, Link2, MessageSquareText, ShieldCheck, Sparkles, Users } from "lucide-react";
 import { PricingCardGrid } from "@/components/pricing/PricingCardGrid";
 import { PageMeta } from "@/hooks/seo/usePageMeta";
-import { buildFaqJsonLd } from "@/hooks/seo/buildFaqJsonLd";
 import { faqItems } from "@/features/help/content/faq";
 import { BETA_DURATION_DAYS, MAX_DISCOUNT_LABEL } from "@/config/betaProgram";
 import { PublicPhotoPair } from "@/components/marketing/PublicPhotoPair";
@@ -47,7 +46,6 @@ const betaOffer = [
 
 export default function PricingPage() {
   const businessFaqs = useMemo(() => faqItems.filter((f) => f.audience === "business"), []);
-  const jsonLd = useMemo(() => [buildFaqJsonLd(businessFaqs)], [businessFaqs]);
 
   return (
     <>
@@ -56,7 +54,6 @@ export default function PricingPage() {
         description={`Founding Partner beta is open: ${BETA_DURATION_DAYS} days free, routes built with you, and post-launch rewards up to 75% off forever.`}
         canonicalPath="/pricing"
         ogImage="https://photobrief.ai/og/pricing.png"
-        jsonLd={jsonLd}
         breadcrumbs={[{ name: "Home", path: "/" }, { name: "Pricing", path: "/pricing" }]}
       />
 

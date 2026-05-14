@@ -3,7 +3,6 @@ import { ArrowRight, CheckCircle2, ImageOff, MessageSquareWarning, TimerReset, P
 
 import { PageMeta } from "@/hooks/seo/usePageMeta";
 import { buildHowToJsonLd } from "@/hooks/seo/buildHowToJsonLd";
-import { buildFaqJsonLd } from "@/hooks/seo/buildFaqJsonLd";
 
 import { BrandMark } from "@/components/layout/BrandMark";
 import { Section, Container, Body } from "@/design-system/schema";
@@ -46,7 +45,6 @@ export default function LandingPage() {
     "How PhotoBrief works",
     howItWorksSteps.map((s) => ({ title: s.title, body: s.body })),
   );
-  const faqJsonLd = buildFaqJsonLd(faqItems);
 
   return (
     <>
@@ -54,7 +52,7 @@ export default function LandingPage() {
         title="PhotoBrief — Guide. Capture. Close."
         description="Your form gives you a name. PhotoBrief gives you a brief you can quote on the first reply."
         canonicalPath="/"
-        jsonLd={[SOFTWARE_APP_JSONLD, heroJsonLd, faqJsonLd]}
+        jsonLd={[SOFTWARE_APP_JSONLD, heroJsonLd]}
       />
 
       <Hero />

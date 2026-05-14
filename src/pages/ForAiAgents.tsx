@@ -8,7 +8,6 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 
 import { PageMeta } from "@/hooks/seo/usePageMeta";
 import { Section, Container } from "@/design-system/schema";
-import { buildFaqJsonLd } from "@/hooks/seo/buildFaqJsonLd";
 import { buildHowToJsonLd } from "@/hooks/seo/buildHowToJsonLd";
 import { howItWorksSteps } from "@/components/marketing/HowItWorksSteps";
 import { QuotableFacts } from "@/components/marketing/QuotableFacts";
@@ -67,7 +66,7 @@ function CodeBlock({ label, code }: { label: string; code: string }) {
 export default function ForAiAgentsPage() {
   const [lang, setLang] = useState<ApiExampleLang>("curl");
 
-  const faqJsonLd = useMemo(() => buildFaqJsonLd(faqItems), []);
+  
   const howToJsonLd = useMemo(() => buildHowToJsonLd("Turn a small-business inquiry into a PhotoBrief visual intake workflow", howItWorksSteps), []);
   const articleJsonLd = useMemo<Record<string, unknown>>(
     () => ({
@@ -90,7 +89,7 @@ export default function ForAiAgentsPage() {
         canonicalPath="/for-ai-agents"
         ogType="article"
         ogImage="https://photobrief.ai/og/for-ai-agents.png"
-        jsonLd={[articleJsonLd, howToJsonLd, faqJsonLd]}
+        jsonLd={[articleJsonLd, howToJsonLd]}
         breadcrumbs={[{ name: "Home", path: "/" }, { name: "For AI agents", path: "/for-ai-agents" }]}
       />
 
