@@ -54,7 +54,7 @@ export default function AdminExitInterviews() {
   return (
     <Section>
       <Container>
-        <Stack gap="lg">
+        <Stack gap="relaxed">
           <PageHeader
             title="Exit interviews"
             description="Why customers cancel — newest first. Read-only."
