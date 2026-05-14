@@ -13,7 +13,11 @@ Only these public pages should appear in the sitemap and search index:
 - `/pricing`
 - `/for-ai-agents`
 - `/help`
-- `/waitlist`
+- `/demo`
+- `/beta`
+- `/privacy`
+- `/terms`
+- `/refund-policy`
 
 The app, auth, invite, recipient, settings, customer, request, submission, and admin routes should not be indexed. These paths may contain private workspace state, tokenized recipient links, or low-value app screens.
 
