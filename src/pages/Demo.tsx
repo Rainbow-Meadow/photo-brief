@@ -117,12 +117,12 @@ export default function DemoPage() {
       {/* Footer CTA */}
       <FinalCtaSection
         eyebrow="Seen enough?"
-        title="Lock in founding pricing"
+        title="Start your 14-day trial"
         primary={{
-          href: "/beta",
+          href: "/auth?mode=signup",
           label: (
             <>
-              Apply for the beta <ArrowRight className="h-4 w-4" />
+              Start my 14-day trial <ArrowRight className="h-4 w-4" />
             </>
           ),
         }}
