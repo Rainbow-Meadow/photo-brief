@@ -202,7 +202,7 @@ const App = () => (
             <Route path="/settings/integrations" element={<IntegrationsPage />} />
             <Route path="/settings/billing" element={<BillingSettingsPage />} />
             <Route path="/settings/agents" element={<AgentTeamPage />} />
-            <Route path="/app/help" element={<BetaGuidePage />} />
+            <Route path="/app/help" element={<HelpPage />} />
             <Route path="/support" element={<SupportPage />} />
             <Route
               path="/admin/invites"
@@ -277,7 +277,6 @@ const App = () => (
           </Routes>
           </Suspense>
           </ErrorBoundary>
-          </InviteAcceptanceGuard>
           </LenisProvider>
         </CurrentWorkspaceProvider>
         </AuthProvider>
