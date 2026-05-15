@@ -1,102 +1,118 @@
-# Remove all beta framing — go direct to launch
+## Goal
 
-## Decisions locked in from your answers
-- **Signup**: fully open. Anyone can create an account → 14-day trial of `intake`.
-- **Pricing**: $59/mo (intake) and $149/mo (intake_team) become the **standard** published prices. The $79/$199 "regular" prices are retired entirely.
-- **Coupons**: existing Paddle discount codes stay alive as silent early-signup bonuses (no UI surfacing). You can hand them out manually.
-- **Beta surfaces**: delete public-facing beta pages and the invite acceptance flow. Keep admin tooling and DB markers for grandfathering existing beta users.
+Kill the static tile-grid idea. Reuse the existing **MarqueeBand** as the visual proof — but feed it monochrome platform marks instead of the current word loops. The marquee already conveys "this works everywhere" through motion; logos make it literal.
 
-## What changes
+## Section anatomy
 
-### 1. Access config — flip the switch
-`src/config/access.ts`
-- `PUBLIC_SIGNUP_ENABLED = true`
-- `INVITE_ONLY_BETA = false`
-- All CTAs now route to `/auth?mode=signup` (or `?plan=...`) instead of `/#apply`.
-- Labels become: "Start free trial" / "Get started" instead of "Apply".
-- Update `src/test/access-cta.test.ts` to lock in the open-signup behavior.
+Slot order on `Landing.tsx`:
 
-### 2. Pricing — collapse to one price per tier
-`src/config/planLimits.ts` and any pricing source of truth:
-- `intake`: $59/mo (drop $79)
-- `intake_team`: $149/mo (drop $199)
-- Remove "founding" / "was $79" / strike-through markup from `PricingCardGrid.tsx`.
-- Delete `src/components/pricing/FoundingProBadge.tsx` and all its imports.
-- Update Paddle product/price wiring so checkout opens against the $59/$149 prices as the default (no coupon required).
+```text
+<Hero />
+<OneLinkAnywhereSection />   ← new [ 01 ]: heading + subhead + 3-step strip + logo marquee
+<MechanismSection />         ← stays [ 02 ]
+<ComparisonSection />        ← [ 03 ]
+<SignpostSection />          ← [ 04 ]
+<FaqSection />               ← [ 05 ]
+<FinalCta />
+```
 
-### 3. Delete public beta pages and routes
-Files to **delete**:
-- `src/pages/Beta.tsx`
-- `src/pages/BetaInvite.tsx`
-- `src/pages/BetaWelcome.tsx`
-- `src/components/auth/InviteAcceptanceGuard.tsx`
-- `src/components/marketing/BetaQuickApplyForm.tsx`
-- `src/components/marketing/BetaOnboardingAgentExperience.tsx`
-- `src/components/marketing/FoundingCustomerBanner.tsx`
-- `src/components/marketing/BetaSeatTracker.tsx`
-- `src/hooks/useBetaSeats.ts`
-- `src/config/betaProgram.ts`
+The current `<MarqueeBand />` (Guide/Capture/Close + Reverse-Form Method™ word loops) is **deleted** from the page. The motion lives on inside the new section as the logo strip.
 
-Routing/config to update:
-- `src/App.tsx` — remove `/beta`, `/beta/invite/:token`, `/beta/welcome` routes; remove `<InviteAcceptanceGuard>` wrapper.
-- `src/config/routePaths.ts` and `src/config/marketingNav.ts` — drop beta entries.
-- `src/test/route-contract.test.ts`, `src/test/nav-links.test.ts`, `src/test/analytics-sanitize-path.test.ts` — remove beta assertions.
-- `public/sitemap.xml` — drop `/beta`.
-- `public/_redirects` — drop `/beta` entries.
-- `public/llms.txt`, `public/robots.txt`, `docs/seo-llm-discovery.md` — drop beta references.
-- `scripts/smoke-public-endpoints.mjs` — drop `/beta`.
-- `workers/router/src/index.ts` `MARKETING_PATHS` — drop `/beta`.
+### Layout
 
-### 4. Rewrite landing + pricing copy
-`src/pages/Landing.tsx`, `src/pages/Pricing.tsx`, `src/pages/Demo.tsx`, `src/pages/Signup.tsx`:
-- Strip "Founding Partner Beta", "limited spots", "X of 25 seats", "60-day clock", apply-to-join CTAs, waitlist messaging.
-- Replace headline frame (Kyle Milligan voice, since you didn't specify): lead with the operator pain ("Quoting jobs from a wall of texts and half-finished form submissions?"), CTA "Start my 14-day trial" → `/auth?mode=signup`. No "free forever," no hype.
-- Keep tagline "Guide · Capture · Close" and the dark/amber brand system untouched.
+```text
+┌──────────────────────────────────────────────┐
+│ [ 01 ]  ✦ Works where you already work       │
+│                                              │
+│  One link. Drop it anywhere customers        │
+│  already find you.                           │
+│                                              │
+│  Your site already works. Your booking tool  │
+│  already works. We don't replace any of it — │
+│  we replace the form that's losing you jobs. │
+│                                              │
+│  ── 3-step paste-it strip ───────────────    │
+│  01 Copy your link  02 Paste it where        │
+│  customers click    03 Briefs land ready     │
+│                     to quote                 │
+│                                              │
+│  ┌── full-bleed marquee band ────────────┐   │
+│  │  → Wix · Squarespace · Webflow ·      │   │
+│  │    WordPress · Shopify · Carrd ·      │   │
+│  │    Instagram · Linktree · Google …    │   │
+│  ├────────────────────────────────────────┤   │
+│  │  ← SMS · Email · QR code · Facebook · │   │
+│  │    TikTok · Google Business · …       │   │
+│  └────────────────────────────────────────┘   │
+└──────────────────────────────────────────────┘
+```
 
-### 5. Email templates — keep the lifecycle, drop the "beta" word
-Rename and rewrite the four `beta-*` templates in `supabase/functions/_shared/transactional-email-templates/` to be generic onboarding/lifecycle emails:
-- `beta-first-request-nudge` → `first-request-nudge`
-- `beta-feedback-checkin` → `two-week-checkin`
-- `beta-stalled-checkin` → `stalled-checkin`
-- `beta-testimonial-request` → `testimonial-request`
+Two `MarqueeRow` rows, opposite directions, just like today's word marquee — but each item is `<PlatformMark /> <span>Name</span>` instead of a phrase. Same band container styling: `border-y border-border bg-[hsl(var(--accent-kinetic)/0.08)]`, same `ls-marquee-item` rhythm with ghost dots between groups.
 
-Update `registry.ts` and any send-sites accordingly. Strip "founding partner" / "beta" copy; keep the structure and Kyle Milligan voice.
+## Copy (Kyle voice)
 
-### 6. Help / FAQ / billing surfaces
-- `src/features/help/content/faq.tsx` — remove beta Q&As.
-- `src/features/help/pages/BetaGuidePage.tsx` — delete the page + its route.
-- `src/features/billing/components/SubscriptionStatusBanner.tsx` — drop "founding price locked in" badge.
-- `src/features/billing/pages/BillingSettingsPage.tsx` — drop beta-partner upsell block.
-- `src/features/submissions/components/BetaFeedbackCard.tsx` — delete (or rename to generic feedback card if used outside beta context — I'll check on implementation).
-- `src/components/shell/CommandMenu.tsx`, `src/components/layout/AppSidebar.tsx` — remove "Beta program" / "Apply" entries.
-- `src/components/marketing/FreeProEligibilityModal.tsx` — delete (legacy free→pro modal tied to old tiers).
+- **Eyebrow**: `[ 01 ] ✦ Works where you already work`
+- **H2**: `One link. Drop it anywhere customers already find you.`
+- **Subhead**: `Your site already works. Your booking tool already works. We don't replace any of it — we replace the form that's losing you jobs.`
+- **3-step strip**:
+  - `01 — Copy your Smart Intake link.`
+  - `02 — Paste it where customers already click.`
+  - `03 — Briefs land in your inbox, ready to quote.`
+- **Marquee row 1** (right→): `Wix · Squarespace · Webflow · WordPress · Shopify · Carrd · Instagram · Linktree · TikTok · Facebook`
+- **Marquee row 2** (←left): `SMS · Email signature · QR code · Google Business · WhatsApp · Messenger · Voicemail link · Booking page` (bridges social + outreach groups so motion never feels repetitive)
 
-### 7. Keep, untouched (your call)
-- `src/pages/AdminBeta.tsx`, `src/pages/AdminInvites.tsx` — internal-only admin tools, useful for ops.
-- `beta_workspace_profiles` table + `src/hooks/useIsBetaPartner.ts` — DB marker for existing founding users so we can grandfather them.
-- `src/hooks/useFlag.ts` beta entries — generic feature flag system, harmless.
-- All Paddle discount codes stay live in Paddle; just no longer surfaced in the UI.
+The marquee carries the "it goes anywhere" beat without needing labeled buckets — which is the point.
 
-### 8. Memory + docs cleanup
-- Update `mem://index.md` Core to drop the beta clock and replace plan-tiers line: prices are now $59 / $149 standard.
-- Delete `mem://features/beta-timing-and-feedback`.
-- Update `docs/founding-partner-beta-plan.md` → mark as historical (or delete).
-- Update `docs/beta-program-emails.md` → rename to `docs/lifecycle-emails.md` with rewritten copy.
-- Update `README.md` if it mentions beta.
+## Implementation details
 
-## Out of scope (call out so nothing surprises you)
-- No DB migration for `beta_workspace_profiles` — kept for grandfathering.
-- No Paddle product/price ID changes — same prices, just relabeling $59/$149 as the canonical sticker price.
-- No changes to capture, intake, agents, or recipient flows.
-- No analytics event renames (event names stay; just the surfaces firing them change).
+1. **New file `src/components/marketing/OneLinkAnywhereSection.tsx`**
+   - Renders `<Section>` + `<Container>` with `SectionIntro` (eyebrow + title + subhead).
+   - Renders the 3-step `<ol>` (mirrors `MechanismGrid`'s rhythm).
+   - Renders the two-row marquee band inline, using `MarqueeRow` from `@/components/motion/MarqueeRow`.
+   - Marquee items: `<span class="ls-marquee-item inline-flex items-center gap-2"><Mark className="h-4 w-4" /> Name</span>` separated by the existing `ls-marquee-item--ghost` `·` dots.
 
-## Verification
-- `bun run lint` clean.
-- Vitest: `access-cta`, `route-contract`, `nav-links`, `brand-mark-contract` all green.
-- Manual: `/`, `/pricing`, `/demo`, `/auth` show no "beta," "founding," or "apply" copy. Signup creates an account end-to-end.
-- `curl -I` on `/beta` returns 404 (or redirects to `/`).
-- Sitemap + smoke script don't reference `/beta`.
+2. **New SVG marks under `src/components/marketing/icons/platforms/`**
+   - One file per mark, single-color via `currentColor`, sized through className.
+   - Set: `WixMark`, `SquarespaceMark`, `WebflowMark`, `WordpressMark`, `ShopifyMark`, `CarrdMark`, `InstagramMark`, `FacebookMark`, `LinktreeMark`, `TiktokMark`, `WhatsappMark`, `MessengerMark`, `GoogleBusinessMark`.
+   - SMS / Email / QR / Voicemail / Booking reuse `lucide-react` (`MessageSquare`, `Mail`, `QrCode`, `Voicemail`, `CalendarClock`) wrapped to a common `MarkProps` shape so the marquee item code is uniform.
+   - Re-drawn from open simple-icons style outlines, no brand fill colors (trademark-safe).
+   - Barrel export `src/components/marketing/icons/platforms/index.ts`.
 
-## Risk notes
-- Existing users with bookmarks to `/beta`, `/beta/invite/:token`, `/beta/welcome` will hit 404. I'll add a single `/beta → /` redirect in `public/_redirects` to soften it. Live invite tokens (if any are unredeemed) will stop working — you may want to email those people first.
-- Anything in customer-facing email already sent that links to `/beta/welcome` will 404. Acceptable since the cohort is small.
+3. **`src/pages/Landing.tsx`**
+   - Delete the local `MarqueeBand` function.
+   - Remove its `<MarqueeBand />` slot from the `Page` body.
+   - Remove the `MarqueeRow` import (now consumed inside the new section, not Landing directly).
+   - Import + render `<OneLinkAnywhereSection />` between `<Hero />` and `<MechanismSection />`.
+
+4. **No new design tokens. No new CSS classes.** Reuse `ls-marquee-item`, `ls-marquee-item--ghost`, `ls-marquee-item--accent`.
+
+5. **Touch behavior** — `MarqueeRow` already respects reduced-motion / touch; nothing extra needed. Marks are decorative inside an aria-labelled list, no hover affordance.
+
+6. **Accessibility**
+   - Section: `aria-labelledby` on H2.
+   - 3-step strip: `<ol>` with `<li>` items.
+   - Marquee band: wrapped in `<div role="list" aria-label="Platforms PhotoBrief drops into">`, each item `role="listitem"` with `aria-label="{platform name}"`. Decorative `·` dots get `aria-hidden`.
+
+## Tests
+
+`src/test/landing-one-link-section.test.ts`:
+- Renders `Landing`, asserts the new H2 text is present.
+- Asserts the 3-step `<ol>` has exactly 3 `<li>` children.
+- Asserts the platform marquee container is present and contains at least 14 platform `aria-label`s.
+- Asserts the **old** `MarqueeBand` content (`Reverse-Form Method™`, `Guide` word loop) is **gone**.
+- Asserts new section appears in DOM order **before** the existing `[ 02 ] The mechanism` eyebrow.
+
+Existing `landing-visual-contract`, `landing-typography`, `landing-tokens` tests stay untouched — confirm they still pass after the marquee swap.
+
+## Out of scope
+
+- No backend changes.
+- No real-color brand logos. Monochrome only.
+- No clickable tiles / outbound links.
+- No analytics events on marquee items.
+- No changes to `MarqueeRow` itself — it stays a generic primitive.
+
+## Risk
+
+- **Trademark**: monochrome silhouettes for compatibility purposes are standard, but if legal pushes back the marquee can swap to typographic-only by deleting the icon component from each item — one-line change inside `OneLinkAnywhereSection.tsx`.
+- **Lost copy**: the deleted word marquee carried the `Reverse-Form Method™` phrase and the `Guide · Capture · Close` tagline. Tagline already lives in the BrandMark/footer; if anyone wants `Reverse-Form Method™` preserved on the landing page, it can move into the FinalCta or the Mechanism eyebrow — flag at implementation time.
