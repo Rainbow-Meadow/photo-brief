@@ -13,7 +13,7 @@ describe("Landing visual contract (Locomotive editorial)", () => {
   it("composes the page from the documented section components", () => {
     for (const fn of [
       "function Hero",
-      "function MarqueeBand",
+      "OneLinkAnywhereSection",
       "function MechanismSection",
       "function ComparisonSection",
       "function SignpostSection",
