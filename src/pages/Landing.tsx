@@ -157,7 +157,7 @@ function ComparisonSection() {
                 cfWidth={720}
                 widths={[480, 720, 1080]}
                 sizes="(min-width: 1024px) 50vw, 100vw"
-                alt="Cedar &amp; Oak Tree Care website with a generic three-field Contact us form — the kind of intake PhotoBrief replaces."
+                alt="Cedar &amp; Sons Tree Care website with a generic three-field Contact Us form (Name, Email, Message) — the kind of intake PhotoBrief replaces."
                 className="h-auto w-full object-contain"
                 loading="lazy"
                 decoding="async"
@@ -191,7 +191,7 @@ function ComparisonSection() {
                 cfWidth={720}
                 widths={[480, 720, 1080]}
                 sizes="(min-width: 1024px) 50vw, 100vw"
-                alt="PhotoBrief inbox for Cedar &amp; Oak Tree Care showing two route-specific intake briefs — Emergency limb (photos required) and Full removal quote (photos recommended)."
+                alt="Cedar &amp; Sons Tree Care website with PhotoBrief Smart Intake embedded inline — route chips for Emergency limb, Full removal, and Stump grind, plus a guided question with Yes/No answers."
                 className="h-auto w-full object-contain"
                 loading="lazy"
                 decoding="async"
