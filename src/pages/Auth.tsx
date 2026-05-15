@@ -139,15 +139,9 @@ export default function AuthPage() {
         footer={
           <p>
             {mode === "signup" ? "Already have an account?" : "New to PhotoBrief?"}{" "}
-            {mode === "signin" && !signupAllowed ? (
-              <NavLink to="/#apply" className="font-medium text-[hsl(var(--accent-kinetic))] hover:underline">
-                Apply for beta
-              </NavLink>
-            ) : (
-              <NavLink to={`/auth?mode=${otherMode}`} className="font-medium text-[hsl(var(--accent-kinetic))] hover:underline">
-                {otherMode === "signup" ? "Create one" : "Sign in"}
-              </NavLink>
-            )}
+            <NavLink to={`/auth?mode=${otherMode}`} className="font-medium text-[hsl(var(--accent-kinetic))] hover:underline">
+              {otherMode === "signup" ? "Create one" : "Sign in"}
+            </NavLink>
           </p>
         }
       >
