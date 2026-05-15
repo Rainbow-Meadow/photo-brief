@@ -6,7 +6,7 @@ import { buildHowToJsonLd } from "@/hooks/seo/buildHowToJsonLd";
 
 import { BrandMark } from "@/components/layout/BrandMark";
 import { Section, Container, Body } from "@/design-system/schema";
-import { MarqueeRow } from "@/components/motion/MarqueeRow";
+import { OneLinkAnywhereSection } from "@/components/marketing/OneLinkAnywhereSection";
 import { RiseIn } from "@/components/motion/RiseIn";
 import { MagneticCTA } from "@/components/motion/MagneticCTA";
 
