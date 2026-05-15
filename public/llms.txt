@@ -3,7 +3,7 @@
 > PhotoBrief is a visual intake layer for small businesses. It turns website inquiries and customer requests into guided mobile photo workflows, then returns organized photos, customer answers, simple AI photo checks, and a plain-English job brief.
 
 Site: https://photobrief.ai
-Status: live beta
+Status: live
 Category: visual intake automation / AI-guided customer photo workflows
 Audience: home services, repair teams, junk removal, property management, claims, warranty, returns, and any business that needs customer photos before quoting, dispatching, approving, or documenting work.
 
