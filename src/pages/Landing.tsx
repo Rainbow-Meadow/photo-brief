@@ -6,7 +6,7 @@ import { buildHowToJsonLd } from "@/hooks/seo/buildHowToJsonLd";
 
 import { BrandMark } from "@/components/layout/BrandMark";
 import { Section, Container, Body } from "@/design-system/schema";
-import { MarqueeRow } from "@/components/motion/MarqueeRow";
+import { OneLinkAnywhereSection } from "@/components/marketing/OneLinkAnywhereSection";
 import { RiseIn } from "@/components/motion/RiseIn";
 import { MagneticCTA } from "@/components/motion/MagneticCTA";
 
@@ -52,7 +52,7 @@ export default function LandingPage() {
       />
 
       <Hero />
-      <MarqueeBand />
+      <OneLinkAnywhereSection />
       <MechanismSection />
       <ComparisonSection />
       <SignpostSection />
@@ -121,35 +121,6 @@ function Hero() {
   );
 }
 
-/* ── Marquee ── */
-function MarqueeBand() {
-  return (
-    <div className="relative mt-10 space-y-1 border-y border-border bg-[hsl(var(--accent-kinetic)/0.08)] py-3 sm:mt-14">
-      <MarqueeRow duration={45} direction="right">
-        <span className="ls-marquee-item">Guide</span>
-        <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
-        <span className="ls-marquee-item">Capture</span>
-        <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
-        <span className="ls-marquee-item">Close</span>
-        <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
-        <span className="ls-marquee-item ls-marquee-item--accent">photo·brief</span>
-        <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
-      </MarqueeRow>
-      <MarqueeRow duration={60} direction="left">
-        <span className="ls-marquee-item">One form. Every job.</span>
-        <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
-        <span className="ls-marquee-item ls-marquee-item--ghost">Wrong questions. Every time.</span>
-        <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
-        <span className="ls-marquee-item">First quote wins 78% of the time</span>
-        <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
-        <span className="ls-marquee-item">Photos only when they help</span>
-        <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
-        <span className="ls-marquee-item ls-marquee-item--accent">Reverse-Form Method™</span>
-        <span className="ls-marquee-item ls-marquee-item--ghost">·</span>
-      </MarqueeRow>
-    </div>
-  );
-}
 
 /* ── Mechanism teaser ── */
 function MechanismSection() {
