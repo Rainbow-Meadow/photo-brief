@@ -46,7 +46,8 @@ describe("Landing visual contract (Locomotive editorial)", () => {
   });
 
   it("uses kinetic motion primitives", () => {
-    expect(SRC).toMatch(/MarqueeRow/);
+    // MarqueeRow lives inside OneLinkAnywhereSection now; assert that section is wired in.
+    expect(SRC).toMatch(/OneLinkAnywhereSection/);
     expect(SRC).toMatch(/RiseIn/);
     expect(SRC).toMatch(/MagneticCTA/);
   });
