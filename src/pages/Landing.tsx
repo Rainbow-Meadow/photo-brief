@@ -52,7 +52,7 @@ export default function LandingPage() {
       />
 
       <Hero />
-      <MarqueeBand />
+      <OneLinkAnywhereSection />
       <MechanismSection />
       <ComparisonSection />
       <SignpostSection />
