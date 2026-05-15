@@ -21,8 +21,8 @@ import { FinalCtaSection } from "@/components/marketing/FinalCtaSection";
 
 import heroBeforeImg from "@/assets/hero/hero-before-messy-intake.jpg";
 import heroAfterImg from "@/assets/hero/hero-after-photobrief-packet.jpg";
-import beforeIntakeFormIllo from "@/assets/comparison/before-cedar-intake.png";
-import afterCapturePipelineIllo from "@/assets/comparison/after-cedar-brief.png";
+import beforeIntakeFormIllo from "@/assets/comparison/cedar-before-contact-form.jpg";
+import afterCapturePipelineIllo from "@/assets/comparison/cedar-after-photobrief-embed.jpg";
 import { BeforeAfterSlider } from "@/components/marketing/BeforeAfterSlider";
 import { CfImg } from "@/components/shared/CfImg";
 
