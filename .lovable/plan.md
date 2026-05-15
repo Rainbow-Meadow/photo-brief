@@ -1,79 +1,102 @@
-# Extend prerender coverage to all marketing/legal/help routes
+# Remove all beta framing — go direct to launch
 
-## Current state
+## Decisions locked in from your answers
+- **Signup**: fully open. Anyone can create an account → 14-day trial of `intake`.
+- **Pricing**: $59/mo (intake) and $149/mo (intake_team) become the **standard** published prices. The $79/$199 "regular" prices are retired entirely.
+- **Coupons**: existing Paddle discount codes stay alive as silent early-signup bonuses (no UI surfacing). You can hand them out manually.
+- **Beta surfaces**: delete public-facing beta pages and the invite acceptance flow. Keep admin tooling and DB markers for grandfathering existing beta users.
 
-`scripts/prerender.mjs` already does the heavy lifting: after `vite build`, it reads `public/sitemap.xml`, spins up a static server over `dist/`, and snapshots each sitemap URL into `dist/<route>/index.html`. The sitemap is the single source of truth.
+## What changes
 
-The script itself doesn't need code changes. The gap is that **three public marketing/legal routes exist in the app but are missing from the sitemap and the two routing allow-lists**, so they never get prerendered and they never get routed to Pages even if they were.
+### 1. Access config — flip the switch
+`src/config/access.ts`
+- `PUBLIC_SIGNUP_ENABLED = true`
+- `INVITE_ONLY_BETA = false`
+- All CTAs now route to `/auth?mode=signup` (or `?plan=...`) instead of `/#apply`.
+- Labels become: "Start free trial" / "Get started" instead of "Apply".
+- Update `src/test/access-cta.test.ts` to lock in the open-signup behavior.
 
-### Public marketing/legal/help routes that exist in `src/App.tsx`
+### 2. Pricing — collapse to one price per tier
+`src/config/planLimits.ts` and any pricing source of truth:
+- `intake`: $59/mo (drop $79)
+- `intake_team`: $149/mo (drop $199)
+- Remove "founding" / "was $79" / strike-through markup from `PricingCardGrid.tsx`.
+- Delete `src/components/pricing/FoundingProBadge.tsx` and all its imports.
+- Update Paddle product/price wiring so checkout opens against the $59/$149 prices as the default (no coupon required).
 
-| Route | In sitemap.xml | In router allow-list | In _redirects |
-|---|---|---|---|
-| `/` | yes | yes | yes |
-| `/pricing` | yes | yes | yes |
-| `/for-ai-agents` | yes | yes | yes |
-| `/help` | yes | yes | yes |
-| `/privacy` | yes | no | yes |
-| `/terms` | yes | no | yes |
-| `/demo` | **no** | no | no |
-| `/beta` | **no** | no | no |
-| `/refund-policy` | **no** | no | no |
+### 3. Delete public beta pages and routes
+Files to **delete**:
+- `src/pages/Beta.tsx`
+- `src/pages/BetaInvite.tsx`
+- `src/pages/BetaWelcome.tsx`
+- `src/components/auth/InviteAcceptanceGuard.tsx`
+- `src/components/marketing/BetaQuickApplyForm.tsx`
+- `src/components/marketing/BetaOnboardingAgentExperience.tsx`
+- `src/components/marketing/FoundingCustomerBanner.tsx`
+- `src/components/marketing/BetaSeatTracker.tsx`
+- `src/hooks/useBetaSeats.ts`
+- `src/config/betaProgram.ts`
 
-`/auth`, `/forgot-password`, `/signup`, `/welcome`, `/unsubscribe`, `/onboarding`, `/invite/*`, `/r/*`, `/i/*`, app, and admin routes are intentionally excluded per `docs/seo-llm-discovery.md` — they're either tokenized, auth-gated, or low-value for indexing.
+Routing/config to update:
+- `src/App.tsx` — remove `/beta`, `/beta/invite/:token`, `/beta/welcome` routes; remove `<InviteAcceptanceGuard>` wrapper.
+- `src/config/routePaths.ts` and `src/config/marketingNav.ts` — drop beta entries.
+- `src/test/route-contract.test.ts`, `src/test/nav-links.test.ts`, `src/test/analytics-sanitize-path.test.ts` — remove beta assertions.
+- `public/sitemap.xml` — drop `/beta`.
+- `public/_redirects` — drop `/beta` entries.
+- `public/llms.txt`, `public/robots.txt`, `docs/seo-llm-discovery.md` — drop beta references.
+- `scripts/smoke-public-endpoints.mjs` — drop `/beta`.
+- `workers/router/src/index.ts` `MARKETING_PATHS` — drop `/beta`.
 
-## Changes
+### 4. Rewrite landing + pricing copy
+`src/pages/Landing.tsx`, `src/pages/Pricing.tsx`, `src/pages/Demo.tsx`, `src/pages/Signup.tsx`:
+- Strip "Founding Partner Beta", "limited spots", "X of 25 seats", "60-day clock", apply-to-join CTAs, waitlist messaging.
+- Replace headline frame (Kyle Milligan voice, since you didn't specify): lead with the operator pain ("Quoting jobs from a wall of texts and half-finished form submissions?"), CTA "Start my 14-day trial" → `/auth?mode=signup`. No "free forever," no hype.
+- Keep tagline "Guide · Capture · Close" and the dark/amber brand system untouched.
 
-### 1. `public/sitemap.xml`
-Add three `<url>` entries:
-- `https://photobrief.ai/demo` — weekly, priority 0.9
-- `https://photobrief.ai/beta` — weekly, priority 0.9
-- `https://photobrief.ai/refund-policy` — yearly, priority 0.3
+### 5. Email templates — keep the lifecycle, drop the "beta" word
+Rename and rewrite the four `beta-*` templates in `supabase/functions/_shared/transactional-email-templates/` to be generic onboarding/lifecycle emails:
+- `beta-first-request-nudge` → `first-request-nudge`
+- `beta-feedback-checkin` → `two-week-checkin`
+- `beta-stalled-checkin` → `stalled-checkin`
+- `beta-testimonial-request` → `testimonial-request`
 
-This alone makes `scripts/prerender.mjs` start emitting `dist/demo/index.html`, `dist/beta/index.html`, and `dist/refund-policy/index.html` on the next build. No script changes required.
+Update `registry.ts` and any send-sites accordingly. Strip "founding partner" / "beta" copy; keep the structure and Kyle Milligan voice.
 
-### 2. `workers/router/src/index.ts`
-Extend `MARKETING_PATHS` from 4 entries to 9 so the Cloudflare router actually routes these paths to Pages (otherwise they fall through to the Lovable origin and the prerendered HTML is never served):
+### 6. Help / FAQ / billing surfaces
+- `src/features/help/content/faq.tsx` — remove beta Q&As.
+- `src/features/help/pages/BetaGuidePage.tsx` — delete the page + its route.
+- `src/features/billing/components/SubscriptionStatusBanner.tsx` — drop "founding price locked in" badge.
+- `src/features/billing/pages/BillingSettingsPage.tsx` — drop beta-partner upsell block.
+- `src/features/submissions/components/BetaFeedbackCard.tsx` — delete (or rename to generic feedback card if used outside beta context — I'll check on implementation).
+- `src/components/shell/CommandMenu.tsx`, `src/components/layout/AppSidebar.tsx` — remove "Beta program" / "Apply" entries.
+- `src/components/marketing/FreeProEligibilityModal.tsx` — delete (legacy free→pro modal tied to old tiers).
 
-```ts
-const MARKETING_PATHS = new Set<string>([
-  "/",
-  "/pricing",
-  "/help",
-  "/for-ai-agents",
-  "/privacy",
-  "/terms",
-  "/refund-policy",
-  "/demo",
-  "/beta",
-]);
-```
+### 7. Keep, untouched (your call)
+- `src/pages/AdminBeta.tsx`, `src/pages/AdminInvites.tsx` — internal-only admin tools, useful for ops.
+- `beta_workspace_profiles` table + `src/hooks/useIsBetaPartner.ts` — DB marker for existing founding users so we can grandfather them.
+- `src/hooks/useFlag.ts` beta entries — generic feature flag system, harmless.
+- All Paddle discount codes stay live in Paddle; just no longer surfaced in the UI.
 
-### 3. `public/_redirects`
-Add the missing Pages routes to the explicit allow-list so Pages can serve `dist/<route>/index.html` (this file is the fail-closed contract for Pages):
+### 8. Memory + docs cleanup
+- Update `mem://index.md` Core to drop the beta clock and replace plan-tiers line: prices are now $59 / $149 standard.
+- Delete `mem://features/beta-timing-and-feedback`.
+- Update `docs/founding-partner-beta-plan.md` → mark as historical (or delete).
+- Update `docs/beta-program-emails.md` → rename to `docs/lifecycle-emails.md` with rewritten copy.
+- Update `README.md` if it mentions beta.
 
-```
-/demo /demo/index.html 200
-/beta /beta/index.html 200
-/refund-policy /refund-policy/index.html 200
-```
-
-`/privacy` and `/terms` are already there.
-
-### 4. `docs/seo-llm-discovery.md` (small doc fix)
-The "Current public indexable pages" list currently shows `/waitlist` (which doesn't exist) and is missing `/demo`, `/beta`, `/privacy`, `/terms`, `/refund-policy`. Update it to match reality so future changes don't drift again.
-
-## Out of scope
-
-- No SSR, no framework change, no React Router or build-pipeline changes.
-- No new structured data, no copy changes — `PageMeta` already handles per-route `<title>`, description, canonical, OG, JSON-LD on each of these pages, and the prerender script captures the post-mount DOM.
-- No changes to puppeteer flags, viewport, or wait conditions — current setup (`networkidle0` + `#root > div` + 30s timeout) already works for the existing 8 routes and the 3 new ones are simpler than `/` or `/pricing`.
+## Out of scope (call out so nothing surprises you)
+- No DB migration for `beta_workspace_profiles` — kept for grandfathering.
+- No Paddle product/price ID changes — same prices, just relabeling $59/$149 as the canonical sticker price.
+- No changes to capture, intake, agents, or recipient flows.
+- No analytics event renames (event names stay; just the surfaces firing them change).
 
 ## Verification
+- `bun run lint` clean.
+- Vitest: `access-cta`, `route-contract`, `nav-links`, `brand-mark-contract` all green.
+- Manual: `/`, `/pricing`, `/demo`, `/auth` show no "beta," "founding," or "apply" copy. Signup creates an account end-to-end.
+- `curl -I` on `/beta` returns 404 (or redirects to `/`).
+- Sitemap + smoke script don't reference `/beta`.
 
-After the change ships:
-1. CI / `npm run build:prerender` produces `dist/demo/index.html`, `dist/beta/index.html`, `dist/refund-policy/index.html` with rendered hero content (not the empty SPA shell).
-2. `scripts/smoke-public-endpoints.mjs` returns 200 with non-empty HTML for each new path.
-3. `curl -I https://photobrief.ai/demo` (with a bot UA) returns the Pages origin, not Lovable.
-4. Sitemap fetched at `/sitemap.xml` lists all 11 URLs.
-
+## Risk notes
+- Existing users with bookmarks to `/beta`, `/beta/invite/:token`, `/beta/welcome` will hit 404. I'll add a single `/beta → /` redirect in `public/_redirects` to soften it. Live invite tokens (if any are unredeemed) will stop working — you may want to email those people first.
+- Anything in customer-facing email already sent that links to `/beta/welcome` will 404. Acceptable since the cohort is small.

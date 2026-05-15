@@ -1,5 +1,3 @@
-import { BETA_DURATION_DAYS, BETA_SETUP_BUFFER_DAYS, MAX_DISCOUNT_LABEL } from "@/config/betaProgram";
-
 export type FaqItem = { id: string; q: string; a: React.ReactNode; audience: "business" | "recipient" };
 
 export const faqItems: FaqItem[] = [
@@ -24,12 +22,12 @@ export const faqItems: FaqItem[] = [
     ),
   },
   {
-    id: "founding-beta",
+    id: "trial",
     audience: "business",
-    q: "How does the Founding Partner Beta work?",
+    q: "How does the free trial work?",
     a: (
       <>
-        PhotoBrief is invite-only right now. Founding partners get {BETA_DURATION_DAYS} days of free beta (the clock starts {BETA_SETUP_BUFFER_DAYS} days after the last seat fills, so everyone gets concierge setup first), direct support, priority say in what we build next, and tiered post-launch rewards — {MAX_DISCOUNT_LABEL.toLowerCase()}. The deal: use it on real customers, tell us the truth via chat, email, or in-app.
+        Every new account gets 14 days of Smart Intake free. No credit card upfront. Pick a plan before the trial ends to keep sending briefs — or cancel and walk away clean.
       </>
     ),
   },

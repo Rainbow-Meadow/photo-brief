@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { ArrowRight, CheckCircle2, ImageOff, MessageSquareWarning, TimerReset, PlayCircle, Rocket, Tags } from "lucide-react";
+import { ArrowRight, CheckCircle2, ImageOff, MessageSquareWarning, TimerReset, PlayCircle, Tags } from "lucide-react";
 
 import { PageMeta } from "@/hooks/seo/usePageMeta";
 import { buildHowToJsonLd } from "@/hooks/seo/buildHowToJsonLd";
@@ -13,8 +13,6 @@ import { MagneticCTA } from "@/components/motion/MagneticCTA";
 import { faqItems } from "@/features/help/content/faq";
 import { howItWorksSteps } from "@/components/marketing/HowItWorksSteps";
 import { trackEvent } from "@/lib/analytics";
-import { BETA_DURATION_DAYS, BETA_TOTAL_PARTNERS } from "@/config/betaProgram";
-import { useBetaSeats } from "@/hooks/useBetaSeats";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 import { SectionIntro } from "@/components/marketing/SectionIntro";
@@ -39,8 +37,6 @@ const SOFTWARE_APP_JSONLD: Record<string, unknown> = {
 };
 
 export default function LandingPage() {
-  const { isFull } = useBetaSeats();
-
   const heroJsonLd = buildHowToJsonLd(
     "How PhotoBrief works",
     howItWorksSteps.map((s) => ({ title: s.title, body: s.body })),
@@ -61,7 +57,7 @@ export default function LandingPage() {
       <ComparisonSection />
       <SignpostSection />
       <FaqSection />
-      <FinalCta isFull={isFull} />
+      <FinalCta />
     </>
   );
 }
@@ -98,10 +94,10 @@ function Hero() {
                   Try the live demo <ArrowRight className="h-4 w-4" />
                 </MagneticCTA>
                 <NavLink
-                  to="/beta"
+                  to="/auth?mode=signup"
                   className="text-sm font-medium text-foreground/80 underline-offset-4 hover:text-foreground hover:underline"
                 >
-                  Or apply for the beta →
+                  Or start your 14-day trial →
                 </NavLink>
               </div>
             </RiseIn>
@@ -266,19 +262,19 @@ const signposts = [
     cta: "Try the live demo",
   },
   {
-    to: "/beta",
-    icon: Rocket,
-    eyebrow: "Beta",
-    title: `${BETA_TOTAL_PARTNERS} founding seats. ${BETA_DURATION_DAYS} days.`,
-    body: "We build it with you. Founding pricing for life.",
-    cta: "Apply for the beta",
+    to: "/auth?mode=signup",
+    icon: ArrowRight,
+    eyebrow: "Start",
+    title: "Replace your form in an afternoon.",
+    body: "14-day free trial. No card upfront. Cancel anytime.",
+    cta: "Start free trial",
   },
   {
     to: "/pricing",
     icon: Tags,
     eyebrow: "Pricing",
     title: "Plans that scale with your intake.",
-    body: "Free to Business. See what each tier unlocks.",
+    body: "Smart Intake at $59/mo. Smart Intake Team at $149/mo.",
     cta: "See pricing",
   },
 ];
@@ -289,10 +285,10 @@ function SignpostSection() {
       <Container>
         <SectionIntro eyebrow="[ 04 ] Where to next ]" title="Three doors. Pick one." />
         <div className="grid gap-0 lg:grid-cols-2">
-          {/* Beta — hero door, full top row */}
+          {/* Start — hero door, full top row */}
           <RiseIn className="lg:col-span-2">
             <NavLink
-              to="/beta"
+              to={signposts[1].to}
               className="group block border-t border-border bg-[hsl(var(--accent-kinetic)/0.06)] p-8 transition hover:bg-[hsl(var(--accent-kinetic)/0.12)] lg:p-12"
             >
               <div className="grid gap-6 lg:grid-cols-12 lg:items-end">
@@ -381,22 +377,18 @@ function FaqSection() {
 }
 
 /* ── Final CTA ── */
-function FinalCta({ isFull }: { isFull: boolean }) {
+function FinalCta() {
   return (
     <FinalCtaSection
       eyebrow="06 ] Replace the form"
       title="Ready to ditch the form"
       punctuation="?"
-      body={
-        isFull
-          ? "Seats are full. Drop your email. We'll reach out when one opens."
-          : `${BETA_TOTAL_PARTNERS} seats. ${BETA_DURATION_DAYS} days. Founding pricing for life.`
-      }
+      body="14-day free trial. No card upfront. Cancel anytime."
       primary={{
-        href: "/beta",
+        href: "/auth?mode=signup",
         label: (
           <>
-            {isFull ? "Join waitlist" : "Apply for the beta"} <ArrowRight className="h-4 w-4" />
+            Start free trial <ArrowRight className="h-4 w-4" />
           </>
         ),
       }}
