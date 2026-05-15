@@ -187,7 +187,7 @@ describe("Link normalisation edge cases", () => {
   });
 
   it("dynamic route patterns match concrete paths", () => {
-    assertLinkResolves("/beta-invite/abc123", "dynamic");
+    assertLinkResolves("/invite/abc123", "dynamic");
     assertLinkResolves("/requests/req_xyz", "dynamic");
     assertLinkResolves("/r/tok_abc/done", "dynamic");
     assertLinkResolves("/i/intake_456", "dynamic");

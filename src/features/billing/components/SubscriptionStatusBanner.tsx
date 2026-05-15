@@ -75,7 +75,7 @@ export function SubscriptionStatusBanner({ hideCta }: Props) {
           {days === 1 ? "1 day left in your trial." : `${days} days left in your trial.`}
         </p>
         <p className="mt-1 text-muted-foreground">
-          Lock in your founding-partner price before the trial ends.{" "}
+          Pick a plan before your trial ends to keep your routes live.{" "}
           {!hideCta && (
             <NavLink to="/settings/billing" className="underline underline-offset-4">
               Pick a plan

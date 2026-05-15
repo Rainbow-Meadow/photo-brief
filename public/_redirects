@@ -14,7 +14,6 @@
 /terms /terms/index.html 200
 /refund-policy /refund-policy/index.html 200
 /demo /demo/index.html 200
-/beta /beta/index.html 200
 
 
 # Public discovery files.
@@ -42,7 +41,6 @@
 /settings* /404.html 404
 /admin* /404.html 404
 /invite/* /404.html 404
-/beta-invite/* /404.html 404
 /r/* /404.html 404
 
 # Any other unknown path should not hydrate the app shell from Pages.

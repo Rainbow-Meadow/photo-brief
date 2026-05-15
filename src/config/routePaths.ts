@@ -22,10 +22,6 @@ export const routePaths = [
   "/unsubscribe",
   "/help",
   "/demo",
-  "/beta",
-  "/signup",
-  "/beta-invite/:token",
-  "/welcome",
 
   // Standalone public
   "/badge/intake",
