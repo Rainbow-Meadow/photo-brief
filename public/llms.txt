@@ -80,8 +80,7 @@ A: PhotoBrief keeps photo feedback simple: wrong subject, too dark, blurry, unre
 
 - [Home](/): What PhotoBrief is and who it's for.
 - [Demo](/demo): Walk through a live intake flow end-to-end.
-- [Beta](/beta): Founding Partner program details and how to apply.
-- [Pricing](/pricing): Smart Intake and Smart Intake Team plans, founding pricing.
+- [Pricing](/pricing): Smart Intake and Smart Intake Team plans with a 14-day free trial.
 - [For AI agents](/for-ai-agents): API, MCP, OpenAPI, manifests, and code samples.
 - [Help & FAQ](/help): How PhotoBrief works, setup, and common questions.
 - [Privacy](/privacy): Privacy policy.
