@@ -28,22 +28,17 @@ const ForAiAgentsPage = lazy(() => import("@/pages/ForAiAgents"));
 const ForgotPasswordPage = lazy(() => import("@/pages/ForgotPassword"));
 const ResetPasswordPage = lazy(() => import("@/pages/ResetPassword"));
 const UnsubscribePage = lazy(() => import("@/pages/Unsubscribe"));
-const SignupPage = lazy(() => import("@/pages/Signup"));
-const BetaInvitePage = lazy(() => import("@/pages/BetaInvite"));
 const IntakeBadgePage = lazy(() => import("@/pages/IntakeBadge"));
-const BetaWelcomePage = lazy(() => import("@/pages/BetaWelcome"));
 const PrivacyPage = lazy(() => import("@/pages/Privacy"));
 const TermsPage = lazy(() => import("@/pages/Terms"));
 const RefundPage = lazy(() => import("@/pages/Refund"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 const DemoPage = lazy(() => import("@/pages/Demo"));
-const BetaPage = lazy(() => import("@/pages/Beta"));
 const PublicRecipientPage = lazy(() => import("@/features/capture/pages/PublicRecipientPage"));
 const RecipientConfirmationPage = lazy(() => import("@/features/capture/pages/RecipientConfirmationPage"));
 const PublicIntakePage = lazy(() => import("@/features/intake/pages/PublicIntakePage"));
 
 import { RequirePlatformAdmin } from "@/components/auth/RequirePlatformAdmin";
-import { InviteAcceptanceGuard } from "@/components/auth/InviteAcceptanceGuard";
 
 // Lazy: authenticated business app + onboarding + help. These pages are only
 // reachable after sign-in, so splitting them out of the initial bundle removes
@@ -71,7 +66,7 @@ const WebsiteIntakePage = lazy(() => import("@/features/intake/pages/WebsiteInta
 const IntakeBriefsPage = lazy(() => import("@/features/intake/pages/IntakeBriefsPage"));
 const IntakeBriefDetailPage = lazy(() => import("@/features/intake/pages/IntakeBriefDetailPage"));
 const AcceptInvitePage = lazy(() => import("@/features/workspace/pages/AcceptInvitePage"));
-const BetaGuidePage = lazy(() => import("@/features/help/pages/BetaGuidePage"));
+const HelpPage = lazy(() => import("@/features/help/pages/HelpPage"));
 const AdminInvitesPage = lazy(() => import("@/pages/AdminInvites"));
 const AdminAIRerunPage = lazy(() => import("@/pages/AdminAIRerun"));
 const AdminCommandCenter = lazy(() => import("@/pages/AdminCommandCenter"));
@@ -103,7 +98,6 @@ const App = () => (
           <LenisProvider>
           <GrainOverlay />
           <RouteTracker />
-          <InviteAcceptanceGuard>
           <ErrorBoundary>
           <Suspense fallback={<div className="flex min-h-screen items-center justify-center"><div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" /></div>}>
           <Routes>
@@ -119,14 +113,8 @@ const App = () => (
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/unsubscribe" element={<UnsubscribePage />} />
-            <Route path="/help" element={<BetaGuidePage />} />
+            <Route path="/help" element={<HelpPage />} />
             <Route path="/demo" element={<DemoPage />} />
-            <Route path="/beta" element={<BetaPage />} />
-            
-            <Route path="/signup" element={<SignupPage />} />
-            <Route path="/beta-invite/:token" element={<BetaInvitePage />} />
-            
-            <Route path="/welcome" element={<BetaWelcomePage />} />
           </Route>
 
           {/* Lightweight embeddable brand surface for customer websites. */}
