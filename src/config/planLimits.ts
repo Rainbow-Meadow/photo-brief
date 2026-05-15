@@ -224,8 +224,8 @@ export const planLimits: PlanLimit[] = [
   {
     id: "intake",
     name: "Smart Intake",
-    priceMonthly: 79,
-    priceAnnualMonthly: 79, // founding price handled separately
+    priceMonthly: 59,
+    priceAnnualMonthly: 59,
     tagline: "Replace your website form.",
     purpose:
       "For businesses that want to replace one bad website form with one clean Smart Intake flow.",
@@ -281,8 +281,8 @@ export const planLimits: PlanLimit[] = [
   {
     id: "intake_team",
     name: "Smart Intake Team",
-    priceMonthly: 199,
-    priceAnnualMonthly: 199,
+    priceMonthly: 149,
+    priceAnnualMonthly: 149,
     tagline: "Run intake as a team.",
     purpose:
       "For businesses where intake is not just one person checking a form inbox. Turn messy website leads into a shared intake queue your team can quote, assign, and act on.",
@@ -417,14 +417,18 @@ export function lockedFeatureCopy(feature: FeatureKey): {
   };
 }
 
-/** Founding-partner pricing (lifetime) for the Smart Intake tier. */
+/**
+ * @deprecated Founding-partner branding has been removed. Standard prices
+ * ($59 / $149) are now the published prices in `planLimits` above. These
+ * exports remain only for backward compatibility with code that has not yet
+ * been updated; new callers should read `priceMonthly` from `planLimits`.
+ */
 export const FOUNDING_PRO = {
   monthlyPrice: 59,
-  totalSlots: 50,
+  totalSlots: 0,
   basePlan: "intake" as Plan,
-  couponCode: "FOUNDINGPRO",
+  couponCode: "EARLYBIRD",
 };
-
-/** Founding price for Smart Intake Team while we ramp up (later $199/mo public). */
+/** @deprecated See FOUNDING_PRO note above. */
 export const FOUNDING_TEAM_PRICE = 149;
 
