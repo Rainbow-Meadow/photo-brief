@@ -2,12 +2,10 @@ import { NavLink } from "react-router-dom";
 import { ArrowRight, BadgeCheck, CheckCircle2, HardDrive, Image, Sparkles, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { planLimits, FOUNDING_PRO, FOUNDING_TEAM_PRICE, type PlanLimit } from "@/config/planLimits";
+import { planLimits, type PlanLimit } from "@/config/planLimits";
 import type { Plan } from "@/types/photobrief";
-import { FoundingProBadge } from "./FoundingProBadge";
-import { FoundingCustomerBanner } from "@/components/marketing/FoundingCustomerBanner";
 import { conversions, trackEvent } from "@/lib/analytics";
-import { INVITE_ONLY_BETA } from "@/config/access";
+import { planCtaTarget } from "@/config/access";
 
 interface Props {
   ctaTarget?: "signup" | "billing";
@@ -19,25 +17,22 @@ interface Props {
   className?: string;
   heading?: string;
   subheading?: string;
-  showFoundingBanner?: boolean;
 }
 
 const ctaLabelByPlan: Record<Plan, string> = {
-  intake: "Replace My Form",
-  intake_team: "Run Intake as a Team",
+  intake: "Start 14-day trial",
+  intake_team: "Start 14-day trial",
 };
 
-function ctaLabel(plan: PlanLimit, currentPlan?: Plan, pending?: boolean, target?: "signup" | "billing"): string {
+function ctaLabel(plan: PlanLimit, currentPlan?: Plan, pending?: boolean): string {
   if (pending) return "Opening…";
   if (currentPlan && currentPlan === plan.id) return "Current plan";
-  if (INVITE_ONLY_BETA && target !== "billing") return "Apply for founding access";
   return ctaLabelByPlan[plan.id];
 }
 
 function ctaTo(plan: PlanLimit, target: "signup" | "billing"): string {
   if (target === "billing") return `/settings/billing?plan=${plan.id}`;
-  if (INVITE_ONLY_BETA) return `/#apply?interest=${plan.id}`;
-  return `/auth?mode=signup&plan=${plan.id}`;
+  return planCtaTarget(plan.id);
 }
 
 function trackPlanSelection(plan: PlanLimit, surface: "signup" | "billing") {
@@ -73,21 +68,6 @@ function AxisRow({
   );
 }
 
-function priceFor(plan: PlanLimit): { price: number; foundingNote: string; publicNote: string } {
-  if (plan.id === "intake") {
-    return {
-      price: FOUNDING_PRO.monthlyPrice,
-      foundingNote: `$${FOUNDING_PRO.monthlyPrice}/mo founding price`,
-      publicNote: `$${plan.priceMonthly}/mo public · billed monthly`,
-    };
-  }
-  return {
-    price: FOUNDING_TEAM_PRICE,
-    foundingNote: `$${FOUNDING_TEAM_PRICE}/mo founding price`,
-    publicNote: `$${plan.priceMonthly}/mo public · billed monthly`,
-  };
-}
-
 export function PricingCardGrid({
   ctaTarget = "signup",
   currentPlan,
@@ -98,7 +78,6 @@ export function PricingCardGrid({
   className,
   heading,
   subheading,
-  showFoundingBanner = true,
 }: Props) {
   const onDark = variant === "onDark";
 
@@ -117,21 +96,10 @@ export function PricingCardGrid({
         </div>
       )}
 
-      <div className="mt-8 flex flex-col items-center justify-center gap-3">
-        <FoundingProBadge variant={onDark ? "onDark" : "default"} />
-      </div>
-
-      {!onDark && showFoundingBanner ? (
-        <div className="mt-8">
-          <FoundingCustomerBanner />
-        </div>
-      ) : null}
-
       <div className={cn("mt-10 grid grid-cols-1 gap-5 md:grid-cols-2", compact && "mt-6 gap-4")}>
         {planLimits.map((plan) => {
           const isCurrent = currentPlan === plan.id;
           const showHighlight = plan.highlight && !isCurrent;
-          const { price, foundingNote, publicNote } = priceFor(plan);
 
           return (
             <article
@@ -161,12 +129,13 @@ export function PricingCardGrid({
 
               <div className="mt-5 flex items-baseline gap-1">
                 <span className={cn("text-4xl font-semibold tracking-tight", onDark ? "text-white" : "text-foreground")}>
-                  ${price}
+                  ${plan.priceMonthly}
                 </span>
                 <span className={cn("text-sm", onDark ? "text-white/60" : "text-muted-foreground")}>/mo</span>
               </div>
-              <p className={cn("mt-1 text-xs", onDark ? "text-white/60" : "text-muted-foreground")}>{foundingNote}</p>
-              <p className={cn("text-xs", onDark ? "text-white/40" : "text-muted-foreground/70")}>{publicNote}</p>
+              <p className={cn("mt-1 text-xs", onDark ? "text-white/60" : "text-muted-foreground")}>
+                Billed monthly · 14-day free trial
+              </p>
 
               <ul className="mt-5 grid gap-2">
                 <AxisRow icon={Image} label="Photos" value={plan.pricingAxes.photos} onDark={onDark} />
@@ -186,7 +155,7 @@ export function PricingCardGrid({
                   variant={showHighlight ? "default" : "outline"}
                   className={cn("mt-5 w-full justify-center", onDark && !showHighlight && "border-white/25 bg-white/5 text-white hover:bg-white/15 hover:text-white")}
                 >
-                  {ctaLabel(plan, currentPlan, pendingPlan === plan.id, "billing")}
+                  {ctaLabel(plan, currentPlan, pendingPlan === plan.id)}
                   {!isCurrent ? <ArrowRight className="ml-1 h-4 w-4" /> : null}
                 </Button>
               ) : (
@@ -198,7 +167,7 @@ export function PricingCardGrid({
                   className={cn("mt-5 w-full justify-center", onDark && !showHighlight && "border-white/25 bg-white/5 text-white hover:bg-white/15 hover:text-white")}
                 >
                   <NavLink to={ctaTo(plan, ctaTarget)} onClick={() => trackPlanSelection(plan, ctaTarget)}>
-                    {ctaLabel(plan, currentPlan, false, ctaTarget)}
+                    {ctaLabel(plan, currentPlan, false)}
                     {!isCurrent ? <ArrowRight className="ml-1 h-4 w-4" /> : null}
                   </NavLink>
                 </Button>
