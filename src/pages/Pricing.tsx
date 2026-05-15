@@ -1,11 +1,10 @@
 import { useMemo } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { ArrowRight, BadgeCheck, Camera, Clock3, Globe2, HardDrive, HeartHandshake, Link2, MessageSquareText, ShieldCheck, Sparkles, Users } from "lucide-react";
+import { ArrowRight, BadgeCheck, Camera, Globe2, HardDrive, Link2, Sparkles, ShieldCheck, Users } from "lucide-react";
 import { toast } from "sonner";
 import { PricingCardGrid } from "@/components/pricing/PricingCardGrid";
 import { PageMeta } from "@/hooks/seo/usePageMeta";
 import { faqItems } from "@/features/help/content/faq";
-import { BETA_DURATION_DAYS, MAX_DISCOUNT_LABEL } from "@/config/betaProgram";
 import { PublicPhotoPair } from "@/components/marketing/PublicPhotoPair";
 import { useAuth } from "@/hooks/useAuth";
 import { useCurrentWorkspace } from "@/hooks/useCurrentWorkspace";
@@ -48,13 +47,6 @@ const intakeModes = [
   },
 ];
 
-const betaOffer = [
-  { icon: Clock3, label: `${BETA_DURATION_DAYS}-day beta access`, copy: "Run PhotoBrief on real customer leads before public launch." },
-  { icon: HeartHandshake, label: "White-glove route setup", copy: "We read your site with you and ship your first routes ready to take live traffic." },
-  { icon: MessageSquareText, label: "Direct line to the team", copy: "Async feedback (chat, email, in-app) goes straight onto the roadmap." },
-  { icon: Sparkles, label: "Tiered post-launch rewards", copy: MAX_DISCOUNT_LABEL },
-];
-
 export default function PricingPage() {
   const businessFaqs = useMemo(() => faqItems.filter((f) => f.audience === "business"), []);
   const navigate = useNavigate();
@@ -87,8 +79,8 @@ export default function PricingPage() {
   return (
     <>
       <PageMeta
-        title={`Pricing | PhotoBrief Founding Partner Beta`}
-        description={`Founding Partner beta is open: ${BETA_DURATION_DAYS} days free, routes built with you, and post-launch rewards up to 75% off forever.`}
+        title="Pricing | PhotoBrief"
+        description="Simple, flat pricing for Smart Intake. Start a 14-day free trial — no credit card required."
         canonicalPath="/pricing"
         ogImage="https://photobrief.ai/og/pricing.png"
         breadcrumbs={[{ name: "Home", path: "/" }, { name: "Pricing", path: "/pricing" }]}
@@ -101,21 +93,21 @@ export default function PricingPage() {
             <p className="inline-flex items-baseline gap-2 font-mono text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
               <span className="inline-block h-px w-8 -translate-y-[0.25em] bg-[hsl(var(--accent-kinetic))]" />
               <span className="text-[hsl(var(--accent-kinetic))]">[ 00 ]</span>
-              <span className="inline-flex items-center gap-1.5"><Sparkles className="h-3.5 w-3.5" /> Founding Partner Beta Pricing</span>
+              <span className="inline-flex items-center gap-1.5"><Sparkles className="h-3.5 w-3.5" /> Pricing</span>
             </p>
             <h1 className="mx-auto mt-5 max-w-3xl text-[clamp(2.5rem,6vw,4.5rem)] font-semibold leading-[1.02] tracking-[-0.025em] text-foreground">
-              Get your routes built. Lock in pricing nobody else gets.
+              One flat price. Every brief, every route, every seat.
             </h1>
             <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-              PhotoBrief is invite-only while we hand-build the first thirty workspaces. Accepted partners get {BETA_DURATION_DAYS} days free, their routes shipped from their own website, a direct line to the team, and post-launch rewards up to 75% off forever — or free Smart Intake for life.
+              Start a 14-day free trial. No credit card. When you're ready, pick the plan that fits your crew — Smart Intake for solo operators, Smart Intake Team for everyone else.
             </p>
             <p className="mx-auto mt-5 inline-flex items-center gap-1.5 border border-[hsl(var(--accent-sage)/0.4)] bg-[hsl(var(--accent-sage)/0.08)] px-3 py-1 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[hsl(var(--accent-sage))]">
               <ShieldCheck className="h-4 w-4" /> First-pass photo retakes don't burn credits.
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <Button asChild size="xl" className="rounded-[0.25rem] uppercase tracking-[0.14em]">
-                <NavLink to="/beta">
-                  Apply for the beta <ArrowRight className="ml-1 h-4 w-4" />
+                <NavLink to="/auth?mode=signup">
+                  Start my 14-day trial <ArrowRight className="ml-1 h-4 w-4" />
                 </NavLink>
               </Button>
               <Button asChild size="xl" variant="outline" className="rounded-[0.25rem] border-border uppercase tracking-[0.14em]">
@@ -132,8 +124,8 @@ export default function PricingPage() {
             items={[
               {
                 src: pricingCedarOwnerLaptop,
-                alt: "Cedar & Sons owner reviewing a lead brief on a laptop with a Pro Founding badge visible.",
-                caption: "A founding partner opens the brief, reads the route the customer matched, and quotes — no second email needed.",
+                alt: "Cedar & Sons owner reviewing a lead brief on a laptop.",
+                caption: "Open the brief, read the route the customer matched, and quote — no second email needed.",
               },
               {
                 src: pricingMultiTradeFan,
@@ -145,11 +137,11 @@ export default function PricingPage() {
         </Container>
       </Section>
 
-      {/* Beta offer cards */}
+      {/* Pricing axes */}
       <Section size="tight">
         <Container>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {betaOffer.map((item, i) => {
+            {pricingAxes.map((item, i) => {
               const Icon = item.icon;
               return (
                 <div key={item.label} className="border border-border bg-card p-5">
@@ -195,9 +187,9 @@ export default function PricingPage() {
         <Container width="narrow">
           <SectionHeader
             align="center"
-            eyebrow="Public launch plans"
-            title="Here's what every plan looks like after beta."
-            description="During beta, pricing runs through the Founding Partner program. Apply now to lock in launch-year savings before public pricing kicks in."
+            eyebrow="Plans"
+            title="Pick the plan that fits your crew."
+            description="Every plan starts with a 14-day free trial. Upgrade, downgrade, or cancel anytime."
           />
           <div className="mt-10">
             <PricingCardGrid
@@ -234,13 +226,13 @@ export default function PricingPage() {
             <div className="absolute inset-x-0 top-0 h-px bg-[hsl(var(--accent-kinetic))]" aria-hidden />
             <div className="relative z-10 flex flex-col items-center gap-3">
               <Sparkles className="h-8 w-8 text-[hsl(var(--accent-kinetic))]" />
-              <p className="text-base font-semibold text-foreground">Become a founding partner before the doors open.</p>
+              <p className="text-base font-semibold text-foreground">Stop chasing. Start closing.</p>
               <p className="max-w-md text-sm text-muted-foreground">
-                We build your routes from your site, walk you through the workflow, and lock in pricing nobody else gets — in exchange for running PhotoBrief on real customer leads and telling us what's working.
+                Spin up your first Smart Intake link in minutes. We'll read your site, build your routes, and hand you a link you can drop anywhere customers find you.
               </p>
               <Button asChild size="xl" className="mt-2 rounded-[0.25rem] uppercase tracking-[0.14em]">
-                <NavLink to="/beta">
-                  Apply for the beta <ArrowRight className="ml-1 h-4 w-4" />
+                <NavLink to="/auth?mode=signup">
+                  Start my 14-day trial <ArrowRight className="ml-1 h-4 w-4" />
                 </NavLink>
               </Button>
             </div>
