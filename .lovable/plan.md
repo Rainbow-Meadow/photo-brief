@@ -1,118 +1,27 @@
-## Goal
+## Replace Before/After comparison images
 
-Kill the static tile-grid idea. Reuse the existing **MarqueeBand** as the visual proof — but feed it monochrome platform marks instead of the current word loops. The marquee already conveys "this works everywhere" through motion; logos make it literal.
+Goal: The `[ 03 ] Before / after` section on the landing page should show two screenshots of the *same* fictional Cedar & Sons website — one with their old contact form, one with PhotoBrief Smart Intake embedded inline.
 
-## Section anatomy
+### What changes
 
-Slot order on `Landing.tsx`:
+1. **Generate two new mockup images** using the AI gateway image tool (`google/gemini-3-pro-image-preview` for legible UI text):
+   - `src/assets/comparison/cedar-before-contact-form.jpg` — A realistic browser window showing "Cedar & Sons Tree Care" site. Hero photo of a tree crew, nav, then a generic 3-field "Contact us" form (Name / Email / Message) with a "Send" button. Dated, generic, slightly tired styling. Operator-pain framing: this is what they have today.
+   - `src/assets/comparison/cedar-after-photobrief-embed.jpg` — The same Cedar & Sons site, same hero, same nav, but where the contact form was, now an embedded PhotoBrief Smart Intake panel: a small "Powered by PhotoBrief" mark, a question header ("What kind of tree work do you need?"), three route chips (Emergency limb · Full removal · Stump grind), one active question with two answers, and a subtle "1 of 4" progress indicator. Looks live, embedded, native to the host page.
+   - Both images: 1280×960, 4:3, same browser chrome treatment so the slider comparison reads as "same site, two intake experiences."
 
-```text
-<Hero />
-<OneLinkAnywhereSection />   ← new [ 01 ]: heading + subhead + 3-step strip + logo marquee
-<MechanismSection />         ← stays [ 02 ]
-<ComparisonSection />        ← [ 03 ]
-<SignpostSection />          ← [ 04 ]
-<FaqSection />               ← [ 05 ]
-<FinalCta />
-```
+2. **Wire them into `src/pages/Landing.tsx`** — replace the two existing imports (`beforeIntakeFormIllo`, `afterCapturePipelineIllo`) with the new files. Update both `<CfImg>` `alt` strings to describe the new images accurately. Keep the surrounding bullet copy and section structure unchanged.
 
-The current `<MarqueeBand />` (Guide/Capture/Close + Reverse-Form Method™ word loops) is **deleted** from the page. The motion lives on inside the new section as the logo strip.
+3. **Delete the old assets** (`before-cedar-intake.png`, `after-cedar-brief.png`) only after the new ones land and the import switch is verified.
 
-### Layout
+### Out of scope
+- No copy changes to the bullet lists or section heading.
+- No layout changes to ComparisonSection.
+- No changes to BeforeAfterSlider (this section uses a static two-column grid, not the slider).
+- No new design tokens, no new components.
 
-```text
-┌──────────────────────────────────────────────┐
-│ [ 01 ]  ✦ Works where you already work       │
-│                                              │
-│  One link. Drop it anywhere customers        │
-│  already find you.                           │
-│                                              │
-│  Your site already works. Your booking tool  │
-│  already works. We don't replace any of it — │
-│  we replace the form that's losing you jobs. │
-│                                              │
-│  ── 3-step paste-it strip ───────────────    │
-│  01 Copy your link  02 Paste it where        │
-│  customers click    03 Briefs land ready     │
-│                     to quote                 │
-│                                              │
-│  ┌── full-bleed marquee band ────────────┐   │
-│  │  → Wix · Squarespace · Webflow ·      │   │
-│  │    WordPress · Shopify · Carrd ·      │   │
-│  │    Instagram · Linktree · Google …    │   │
-│  ├────────────────────────────────────────┤   │
-│  │  ← SMS · Email · QR code · Facebook · │   │
-│  │    TikTok · Google Business · …       │   │
-│  └────────────────────────────────────────┘   │
-└──────────────────────────────────────────────┘
-```
+### QA
+- Visually inspect both generated images at full size before wiring in. Re-generate if text is illegible or the "after" doesn't read as embedded.
+- Confirm `landing-visual-contract.test.ts` still passes (no structural changes expected).
 
-Two `MarqueeRow` rows, opposite directions, just like today's word marquee — but each item is `<PlatformMark /> <span>Name</span>` instead of a phrase. Same band container styling: `border-y border-border bg-[hsl(var(--accent-kinetic)/0.08)]`, same `ls-marquee-item` rhythm with ghost dots between groups.
-
-## Copy (Kyle voice)
-
-- **Eyebrow**: `[ 01 ] ✦ Works where you already work`
-- **H2**: `One link. Drop it anywhere customers already find you.`
-- **Subhead**: `Your site already works. Your booking tool already works. We don't replace any of it — we replace the form that's losing you jobs.`
-- **3-step strip**:
-  - `01 — Copy your Smart Intake link.`
-  - `02 — Paste it where customers already click.`
-  - `03 — Briefs land in your inbox, ready to quote.`
-- **Marquee row 1** (right→): `Wix · Squarespace · Webflow · WordPress · Shopify · Carrd · Instagram · Linktree · TikTok · Facebook`
-- **Marquee row 2** (←left): `SMS · Email signature · QR code · Google Business · WhatsApp · Messenger · Voicemail link · Booking page` (bridges social + outreach groups so motion never feels repetitive)
-
-The marquee carries the "it goes anywhere" beat without needing labeled buckets — which is the point.
-
-## Implementation details
-
-1. **New file `src/components/marketing/OneLinkAnywhereSection.tsx`**
-   - Renders `<Section>` + `<Container>` with `SectionIntro` (eyebrow + title + subhead).
-   - Renders the 3-step `<ol>` (mirrors `MechanismGrid`'s rhythm).
-   - Renders the two-row marquee band inline, using `MarqueeRow` from `@/components/motion/MarqueeRow`.
-   - Marquee items: `<span class="ls-marquee-item inline-flex items-center gap-2"><Mark className="h-4 w-4" /> Name</span>` separated by the existing `ls-marquee-item--ghost` `·` dots.
-
-2. **New SVG marks under `src/components/marketing/icons/platforms/`**
-   - One file per mark, single-color via `currentColor`, sized through className.
-   - Set: `WixMark`, `SquarespaceMark`, `WebflowMark`, `WordpressMark`, `ShopifyMark`, `CarrdMark`, `InstagramMark`, `FacebookMark`, `LinktreeMark`, `TiktokMark`, `WhatsappMark`, `MessengerMark`, `GoogleBusinessMark`.
-   - SMS / Email / QR / Voicemail / Booking reuse `lucide-react` (`MessageSquare`, `Mail`, `QrCode`, `Voicemail`, `CalendarClock`) wrapped to a common `MarkProps` shape so the marquee item code is uniform.
-   - Re-drawn from open simple-icons style outlines, no brand fill colors (trademark-safe).
-   - Barrel export `src/components/marketing/icons/platforms/index.ts`.
-
-3. **`src/pages/Landing.tsx`**
-   - Delete the local `MarqueeBand` function.
-   - Remove its `<MarqueeBand />` slot from the `Page` body.
-   - Remove the `MarqueeRow` import (now consumed inside the new section, not Landing directly).
-   - Import + render `<OneLinkAnywhereSection />` between `<Hero />` and `<MechanismSection />`.
-
-4. **No new design tokens. No new CSS classes.** Reuse `ls-marquee-item`, `ls-marquee-item--ghost`, `ls-marquee-item--accent`.
-
-5. **Touch behavior** — `MarqueeRow` already respects reduced-motion / touch; nothing extra needed. Marks are decorative inside an aria-labelled list, no hover affordance.
-
-6. **Accessibility**
-   - Section: `aria-labelledby` on H2.
-   - 3-step strip: `<ol>` with `<li>` items.
-   - Marquee band: wrapped in `<div role="list" aria-label="Platforms PhotoBrief drops into">`, each item `role="listitem"` with `aria-label="{platform name}"`. Decorative `·` dots get `aria-hidden`.
-
-## Tests
-
-`src/test/landing-one-link-section.test.ts`:
-- Renders `Landing`, asserts the new H2 text is present.
-- Asserts the 3-step `<ol>` has exactly 3 `<li>` children.
-- Asserts the platform marquee container is present and contains at least 14 platform `aria-label`s.
-- Asserts the **old** `MarqueeBand` content (`Reverse-Form Method™`, `Guide` word loop) is **gone**.
-- Asserts new section appears in DOM order **before** the existing `[ 02 ] The mechanism` eyebrow.
-
-Existing `landing-visual-contract`, `landing-typography`, `landing-tokens` tests stay untouched — confirm they still pass after the marquee swap.
-
-## Out of scope
-
-- No backend changes.
-- No real-color brand logos. Monochrome only.
-- No clickable tiles / outbound links.
-- No analytics events on marquee items.
-- No changes to `MarqueeRow` itself — it stays a generic primitive.
-
-## Risk
-
-- **Trademark**: monochrome silhouettes for compatibility purposes are standard, but if legal pushes back the marquee can swap to typographic-only by deleting the icon component from each item — one-line change inside `OneLinkAnywhereSection.tsx`.
-- **Lost copy**: the deleted word marquee carried the `Reverse-Form Method™` phrase and the `Guide · Capture · Close` tagline. Tagline already lives in the BrandMark/footer; if anyone wants `Reverse-Form Method™` preserved on the landing page, it can move into the FinalCta or the Mechanism eyebrow — flag at implementation time.
+### Risk
+- AI image gen may produce illegible UI text on the "after" panel. If the first pass is unreadable, fall back to a simpler "after" (single big "Get a quote in 60 seconds →" CTA button) rather than a complex embedded form mockup.
