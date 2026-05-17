@@ -53,6 +53,13 @@ export default function ResetPasswordPage() {
   };
 
   return (
+    <>
+      <PageMeta
+        title="Set a new password | PhotoBrief"
+        description="Choose a new password to finish recovering your PhotoBrief account."
+        canonicalPath="/reset-password"
+        noindex
+      />
     <EditorialAuthShell
       numeral="00"
       eyebrow="New password"
