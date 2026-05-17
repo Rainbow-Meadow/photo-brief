@@ -521,6 +521,8 @@ Deno.serve(async (req) => {
       scan_job_id: scanJobId,
       summary: plan.summary,
       routes_preview: routesPreview,
+      scan_completed_at: new Date().toISOString(),
+      pages_scanned: pageRows.length,
     }).eq("id", demoSessionId);
 
     return json({
