@@ -1,130 +1,106 @@
+# New `/demo` Flow
 
-# Ruthless refactor — every public page
+Replace the current conversational demo with a flow that proves the product by running the real intake pipeline against the visitor's own URL.
 
-Goal: each page does exactly its one job and nothing else. No decorative chrome, no second pitch, no third FAQ, no "and here's also…" sections.
+## User experience
 
-## What each page's *one* job is
+```text
+1. Paste URL  →  "Scanning your site…" (10–40s, live status)
+2. See proposed routes + photo policies (the actual scan output)
+3. Interact with the live /i/:token public intake (their own brief)
+4. CTA: "Start 14-day trial and keep this setup"
+5. After signup → new workspace seeded with the exact blueprint
+```
 
-| Page | Job |
-|---|---|
-| `/` | Get the visitor to either try the demo or start a trial. |
-| `/demo` | Let the visitor build a brief in 60s. |
-| `/pricing` | Show plans, let them pick. |
-| `/for-ai-agents` | Give a machine (or its operator) the endpoints + a working call. |
-| `/help` | Answer the questions people ask. |
-| `/privacy` `/terms` `/refund-policy` | Be readable legal compliance text. |
+## Step 1 — Public scrape endpoint
 
----
+The current `website-intelligence` function requires auth + an existing workspace. We need a public sibling.
 
-## `/` Landing — 371 → ~210 LOC
+**New edge function:** `demo-scan` (public, `verify_jwt = false`)
 
-**Keep:** Hero, Mechanism (4 steps), Before/After comparison, Final CTA.
+- Input: `{ url, turnstileToken }`
+- Reuses the existing scraper, classifier, and blueprint planner from `website-intelligence` (extract those into `_shared/intelligence/` so both functions call the same code — no duplication).
+- Writes the scan + blueprint into the existing `DEMO_WORKSPACE_ID` (same hidden workspace used today by `demo-discovery`), tagged with a per-visitor `demo_session_id`.
+- Creates a one-off `intake_sources` row + public token so the visitor immediately gets a working `/i/:token` URL.
+- Rate-limited by IP (Turnstile + a simple `demo_scans` table with `created_at` + `ip_hash`).
+- Returns: `{ demoSessionId, intakeToken, blueprintSummary, routes[] }`.
 
-**Cut:**
-- **`OneLinkAnywhereSection`** — restates the mechanism with logos. Pure padding. Delete the section and its file.
-- **`SignpostSection` ("Three doors. Pick one.")** — duplicates the hero CTAs (demo / signup / pricing already live in the nav and hero). Three doors after a final CTA is choice paralysis. Delete.
-- **`FaqSection`** — `/help` exists. The landing FAQ ships 4 stale Q&As and adds 80 LOC. Delete; link to `/help` from the Final CTA.
-- **BrandMark under the hero image** — the global nav already shows it. Delete.
-- **`[ 01 ]` / `[ 02 ]` / `[ 03 ]` numeral eyebrows** — leftover from an earlier "chapter" treatment. Strip across sections (keep `SectionIntro` eyebrows like `The mechanism`, `Before / after`).
+Hardening: re-use `isUnsafeHost`, max-pages cap, request timeout, content-type allowlist already in `website-intelligence`.
 
-**Net:** Hero → Mechanism → Before/After → Final CTA. Four sections. One job.
+## Step 2 — Preview the proposed setup
 
----
+New section on `/demo` shows what was found:
+- Business name + summary the AI inferred
+- Each route: label, description, photo policy chip
+- One-line install recommendation
+- Primary CTA: "Try it as a customer →" (opens `/i/:token` in an iframe **and** a "open in new tab" link)
 
-## `/demo` — 312 → ~210 LOC
+## Step 3 — Live intake interaction
 
-**Keep:** Hero, the interactive `DemoDiscoveryChat` (this *is* the page).
+Embed the real `/i/:token` page (same component that ships to customers) inside a phone-frame on the demo page. No mock — it's the actual flow against their actual scan.
 
-**Cut:**
-- **"Watch it work" (`InteractiveHeroBriefAssembly`)** section. The page's purpose is "build *your* brief" — a pre-baked walkthrough above it teaches passivity and steals the click from the real input. Delete the section and the lazy import.
-- **"Built per trade" `UseCasesGrid` section.** It's a landing-page module wedged into a tool page. Delete.
-- **`FinalCtaSection`** ("Start your 14-day trial / See pricing"). The chat itself converts: when the brief is built, that completion screen is the CTA. Replace the footer block with a single inline line after the brief: "Like what you got? Start your 14-day trial →".
-- **Hero secondary CTA "Watch it work"** — dies with its section.
+## Step 4 — Conversion CTA
 
-**Net:** Hero → DemoDiscoveryChat → inline post-brief CTA. One job.
+After the visitor submits (or skips) the intake, show:
+- "This is your setup. Claim it." → `/auth?mode=signup&demo=<demoSessionId>`
+- The signup page reads `?demo=...`, stores it in `sessionStorage` before the auth round-trip.
 
----
+## Step 5 — Import on signup
 
-## `/pricing` — 273 → ~180 LOC
+**New edge function:** `claim-demo-blueprint` (auth required)
 
-**Keep:** Hero, `PricingCardGrid`, FAQ accordion (this is where pricing questions belong).
+- Input: `{ demoSessionId }`
+- Verifies the session belongs to the demo workspace, is < 24h old, hasn't been claimed.
+- Copies the blueprint, routing rules, service catalog items, and intake source row from `DEMO_WORKSPACE_ID` into the user's new workspace (rewriting workspace_id + regenerating ids/tokens).
+- Marks the demo session `claimed_at = now()` so it can't be re-imported.
+- Returns the new workspace's intake source token.
 
-**Cut:**
-- **`PublicPhotoPair`** (Cedar owner laptop + multi-trade fan). Decoration. People came to see prices, not lifestyle photography. Delete.
-- **`pricingAxes` grid** ("Photos / Branding / Storage term / Team size"). The plan cards already encode this. Delete.
-- **`intakeModes` grid** ("Smart Intake" vs "Smart Intake Team" big tiles above the actual price cards). The cards label themselves. Delete.
-- **Bottom "Stop chasing. Start closing." panel.** Hero already has the trial CTA. Delete.
-- **`[ 00 ]` and `[ 99 ]` numeral eyebrows.** Strip.
+Wire-up: after `ensure-workspace` completes in the post-signup bootstrap, if `sessionStorage.demoSessionId` exists, call `claim-demo-blueprint`, then redirect to `/intake` with a "Imported from your demo" toast.
 
-**Net:** Hero (with trial CTA) → Pricing cards → FAQ. One job.
+## Schema changes
 
----
+```sql
+-- new table
+create table public.demo_sessions (
+  id uuid primary key default gen_random_uuid(),
+  url text not null,
+  ip_hash text not null,
+  blueprint_id uuid references intake_blueprints(id) on delete set null,
+  intake_source_id uuid references intake_sources(id) on delete set null,
+  scan_job_id uuid references website_scan_jobs(id) on delete set null,
+  claimed_by_user_id uuid,
+  claimed_workspace_id uuid,
+  claimed_at timestamptz,
+  created_at timestamptz not null default now(),
+  expires_at timestamptz not null default (now() + interval '24 hours')
+);
+-- RLS: deny all from anon/auth; service-role only (edge functions handle access)
+create index on public.demo_sessions (ip_hash, created_at desc);
+```
 
-## `/for-ai-agents` — 381 → ~230 LOC
+`demo-cleanup` extended to drop expired/unclaimed `demo_sessions` plus their blueprint/source rows.
 
-**Keep:** Hero (one sentence + "see the API" + openapi link), the API code-tabs block, the MCP block, the discovery-links list.
+## Files
 
-**Cut:**
-- **`QuotableFacts` + `ComparisonTable`** — marketing modules disguised as agent docs. Agents don't need a comparison table. Delete both imports + render.
-- **`PublicPhotoPair`** (terminal + chat screenshots). Decorative; the actual code blocks are above. Delete.
-- **`x402` section.** It's an early-experimental payment flow with one operator using it. Cut from the page; the info lives in `/mcp.json` and `https://mcp.photobrief.ai/x402/requirements`, which agents discover from the discovery list. Re-introduce when there's adoption.
-- **Bottom FAQ accordion.** Duplicates `/help` verbatim and the page literally says "Same source as /help." Replace with a single line + link.
-- **The two cards under the hero ("Smart intake from a website" / "Route-aware questions & photos")** — the H1 says this in one sentence already. Delete.
+**New**
+- `supabase/functions/demo-scan/index.ts`
+- `supabase/functions/claim-demo-blueprint/index.ts`
+- `supabase/functions/_shared/intelligence/` (extracted scraper + planner)
+- migration for `demo_sessions` + cleanup updates
 
-**Net:** Hero → API call → MCP → Discovery list → link to /help. One job (machine-readable wiring).
+**Rewritten**
+- `src/pages/Demo.tsx` — three states: `url-entry`, `scanning` (with progress copy), `preview-and-try` (routes summary + embedded `/i/:token` + CTA)
 
----
+**Edited**
+- `src/pages/Auth.tsx` — read `?demo=` and stash in sessionStorage
+- post-signup bootstrap (wherever `ensure-workspace` is called) — call `claim-demo-blueprint` when stash present
+- `supabase/functions/demo-cleanup/index.ts` — also purge `demo_sessions`
 
-## `/help` — 95 LOC, already lean
+**Deleted**
+- `supabase/functions/demo-discovery/index.ts` (old conversational demo)
 
-**Keep:** business FAQ, recipient FAQ.
+## Questions before I build
 
-**Cut:**
-- **The "Still have questions? → Try the live demo" CTA panel.** The demo doesn't answer help questions. If someone's on /help they want an answer, not a marketing handoff. Replace with one line: "Still stuck? Email hello@photobrief.ai."
-- **Header `SectionHeader` description** — it summarizes the two H2s directly below it. Redundant. Keep the title, drop the description.
-
----
-
-## `/privacy`, `/terms`, `/refund-policy` — legal pages
-
-The *text* is legally required and stays untouched. The *chrome* is bloat.
-
-**Cut from each:**
-- Oversized hero (`clamp(2.25rem,5vw,3.75rem)` h1 + decorative `ShieldCheck`/`Scale`/`RefreshCcw` icon + `[ 00 ]` eyebrow + tagline subtitle like "no fake legal theater"). Replace with: a normal `<h1>`, a one-line "Last updated: …", done.
-- Per-section `[ 01 ]` `[ 02 ]` numerals, `FileText` icons next to every H2, "border border-border bg-card p-8" panels around every section. Replace with plain `<h2>` + `<p>` stack — readable, scannable, prints sanely.
-- Bottom "Contact" card with green sage tint and Mail icon. Replace with a single sentence at end of body: "Questions: hello@photobrief.ai."
-
-Result: each legal page goes from ~150 LOC of decorative panels around boilerplate text to a clean document. **No legal text is altered.**
-
-**Optional follow-up (not in this pass):** the three legal pages now share an identical shell — extract `<LegalPage title updatedAt sections />` and use it from all three. Cuts ~60 LOC total. Worth doing if you want.
-
----
-
-## What I am *not* touching
-
-- Sitemap, robots, prerender — done last round.
-- `index.html` sitewide meta, `PageMeta` per-route — already correct.
-- Auth-walled routes (`/auth`, `/onboarding`, app) — out of scope.
-- Copy voice — I'm cutting sections, not rewriting surviving sentences. If you also want me to tighten the surviving copy line-by-line, say the word.
-
-## Files touched
-
-- `src/pages/Landing.tsx` (heavy)
-- `src/pages/Demo.tsx`
-- `src/pages/Pricing.tsx`
-- `src/pages/ForAiAgents.tsx`
-- `src/features/help/pages/HelpPage.tsx`
-- `src/pages/Privacy.tsx`
-- `src/pages/Terms.tsx`
-- `src/pages/Refund.tsx`
-- Delete: `src/components/marketing/OneLinkAnywhereSection.tsx` and its icon barrel `src/components/marketing/icons/platforms/index.tsx` (only consumer is the section being cut)
-- Update `src/test/landing-visual-contract.test.ts` to drop the section assertions
-
-## One decision for you
-
-Of all the cuts above, two are the kind of thing you might disagree with — flag them now or I make them:
-
-1. **Killing the landing-page FAQ.** It does deflect some scroll-to-bottom intent before the final CTA. I'd cut it; `/help` exists and is one click. **Keep or cut?**
-2. **Killing the x402 section on /for-ai-agents.** It's the only differentiated "agentic" thing on that page even if adoption is small. **Keep or cut?**
-
-Defaults if you don't reply: cut both.
+1. **Rate limiting** — 1 scan per IP per hour is my default. OK, or more generous?
+2. **Embed vs redirect** for step 3 — embed `/i/:token` in a phone-frame on the demo page (my plan), or hand them a link and let them open it in a new tab?
+3. **What happens if scrape fails / site blocks us?** Fall back to the current conversational `demo-discovery` flow as plan B, or just show "we couldn't read that site — start your trial and we'll help you set it up"?
