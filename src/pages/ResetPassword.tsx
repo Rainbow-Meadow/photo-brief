@@ -98,5 +98,6 @@ export default function ResetPasswordPage() {
         </Button>
       </form>
     </EditorialAuthShell>
+    </>
   );
 }
