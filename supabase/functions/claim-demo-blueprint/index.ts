@@ -43,16 +43,81 @@ Deno.serve(async (req) => {
 
   const { data: session } = await admin
     .from("demo_sessions")
-    .select("id, workspace_id, status, claimed_at, expires_at, url")
+    .select("id, workspace_id, status, claimed_at, claimed_by_user_id, claimed_workspace_id, expires_at, url, created_at")
     .eq("id", demoSessionId)
     .maybeSingle();
-  if (!session) return json({ error: "demo_session_not_found" }, 404);
-  if ((session as any).claimed_at) return json({ error: "already_claimed" }, 409);
-  if ((session as any).status !== "ready") return json({ error: "demo_not_ready" }, 409);
-  if (new Date((session as any).expires_at).getTime() < Date.now())
-    return json({ error: "demo_expired" }, 410);
+  if (!session) {
+    return json({
+      error: "demo_session_not_found",
+      message: "We couldn't find that demo. It may have expired and been cleaned up.",
+    }, 404);
+  }
 
-  const demoWorkspaceId = (session as any).workspace_id as string;
+  const s = session as any;
+  const nowMs = Date.now();
+  const expiresMs = s.expires_at ? new Date(s.expires_at).getTime() : 0;
+  const claimedMs = s.claimed_at ? new Date(s.claimed_at).getTime() : 0;
+
+  // Idempotent: if THIS user already claimed THIS session, return success
+  // instead of erroring. Prevents double-submits / refreshes from breaking.
+  if (s.claimed_at && s.claimed_by_user_id === user.id && s.claimed_workspace_id) {
+    return json({
+      ok: true,
+      workspaceId: s.claimed_workspace_id,
+      alreadyClaimed: true,
+      message: "This demo was already imported into your workspace.",
+    });
+  }
+
+  if (s.claimed_at) {
+    return json({
+      error: "already_claimed",
+      message: "This demo was already imported by another account. Start a new scan to import a fresh setup.",
+      claimedAt: s.claimed_at,
+      claimedAgoMinutes: Math.round((nowMs - claimedMs) / 60000),
+    }, 409);
+  }
+
+  if (s.status !== "ready") {
+    return json({
+      error: "demo_not_ready",
+      message: s.status === "scanning"
+        ? "We're still building your demo. Give it a few more seconds and try again."
+        : s.status === "failed"
+        ? "This demo scan failed. Start a fresh scan to try again."
+        : `Demo is in '${s.status}' state and cannot be imported.`,
+      status: s.status,
+    }, 409);
+  }
+
+  if (expiresMs && expiresMs < nowMs) {
+    return json({
+      error: "demo_expired",
+      message: "This demo expired. Demos are kept for 24 hours — start a fresh scan to import a new one.",
+      expiredAt: s.expires_at,
+      expiredAgoMinutes: Math.round((nowMs - expiresMs) / 60000),
+    }, 410);
+  }
+
+  const demoWorkspaceId = s.workspace_id as string;
+
+  // Prevent the same user from importing a second demo on top of an existing
+  // claim. They should start fresh from inside their workspace instead.
+  const { data: priorClaims } = await admin
+    .from("demo_sessions")
+    .select("id, claimed_workspace_id, claimed_at")
+    .eq("claimed_by_user_id", user.id)
+    .not("claimed_at", "is", null)
+    .limit(1);
+  if (priorClaims && priorClaims.length > 0) {
+    const prior = priorClaims[0] as any;
+    return json({
+      error: "user_already_claimed_demo",
+      message: "You've already imported a demo into your account. Start a fresh scan from inside your workspace.",
+      existingWorkspaceId: prior.claimed_workspace_id,
+      claimedAt: prior.claimed_at,
+    }, 409);
+  }
 
   // Verify demo workspace is actually a demo (cannot hijack a live workspace).
   const { data: demoWs } = await admin
@@ -60,7 +125,12 @@ Deno.serve(async (req) => {
     .select("id, is_demo, owner_id")
     .eq("id", demoWorkspaceId)
     .maybeSingle();
-  if (!demoWs || !(demoWs as any).is_demo) return json({ error: "invalid_demo_workspace" }, 400);
+  if (!demoWs || !(demoWs as any).is_demo) {
+    return json({
+      error: "invalid_demo_workspace",
+      message: "This demo's workspace is no longer valid. Start a fresh scan.",
+    }, 400);
+  }
 
   // Find the auto-created workspace from handle_new_user trigger.
   const { data: profile } = await admin
