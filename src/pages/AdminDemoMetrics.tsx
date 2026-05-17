@@ -57,7 +57,7 @@ export default function AdminDemoMetricsPage() {
     <>
       <PageMeta title="Demo metrics · Admin" description="Demo scan success and claim conversion." canonicalPath="/admin/demo-metrics" />
       <Section>
-        <Container width="wide">
+        <Container width="default">
           <header className="mb-8">
             <p className="ls-eyebrow">Admin</p>
             <h1 className="ls-h2 mt-4">Demo performance</h1>
