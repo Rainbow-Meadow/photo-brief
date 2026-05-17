@@ -1,19 +1,10 @@
-import { lazy, Suspense, useState } from "react";
+import { useState } from "react";
 import { useNavigate, NavLink } from "react-router-dom";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Section, Container, CTA, CTAGroup } from "@/design-system/schema";
-import { SectionIntro } from "@/components/marketing/SectionIntro";
-import { FinalCtaSection } from "@/components/marketing/FinalCtaSection";
-import { UseCasesGrid } from "@/components/marketing/UseCasesGrid";
 import { PageMeta } from "@/hooks/seo/usePageMeta";
 import { RiseIn } from "@/components/motion/RiseIn";
-
-const InteractiveHeroBriefAssembly = lazy(() =>
-  import("@/components/marketing/InteractiveHeroBriefAssembly").then((m) => ({
-    default: m.InteractiveHeroBriefAssembly,
-  })),
-);
 
 type Stage = "service" | "scenario" | "clarify" | "contact" | "generating";
 
@@ -47,7 +38,7 @@ export default function DemoPage() {
       <Section>
         <Container width="narrow">
           <div className="space-y-3 text-center">
-            <p className="ls-eyebrow">[ Live demo ]</p>
+            <p className="ls-eyebrow">Live demo</p>
             <RiseIn>
               <h1 className="ls-h2 mt-6">
                 Paste your URL.
@@ -63,71 +54,29 @@ export default function DemoPage() {
               <CTA href="#build-yours" variant="primary" size="lg">
                 Build my brief <ArrowRight className="h-4 w-4" />
               </CTA>
-              <CTA href="#assembly" variant="secondary" size="lg">
-                Watch it work
-              </CTA>
             </CTAGroup>
           </div>
         </Container>
       </Section>
 
-      {/* Live brief assembly */}
-      <Section id="assembly" tone="alt">
-        <Container>
-          <SectionIntro
-            eyebrow="[ Watch ]"
-            title={`One CTA. One route. One brief. 38 seconds.`}
-            subtitle="Tap through. See what we ask. See when we ask for a photo. See what lands in your inbox."
-          />
-          <div className="border border-border bg-background p-2 sm:p-4">
-            <Suspense fallback={<div className="flex h-96 items-center justify-center text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin" /></div>}>
-              <InteractiveHeroBriefAssembly />
-            </Suspense>
-          </div>
-        </Container>
-      </Section>
-
-      {/* Build-your-own */}
-      <Section id="build-yours">
+      {/* The tool */}
+      <Section id="build-yours" tone="alt">
         <Container width="narrow">
-          <SectionIntro
-            eyebrow="[ Try it ]"
-            title="Now build yours."
-            subtitle="Plumber types &ldquo;leaking faucet.&rdquo; Roofer types &ldquo;missing shingles.&rdquo; We build the route. Pick the photos. Email the brief. 60 seconds."
-          />
           <DemoDiscoveryChat />
           <p className="mt-6 text-center text-xs text-muted-foreground">
             Demo briefs auto-delete after 24 hours.
           </p>
+          <p className="mt-3 text-center text-sm text-muted-foreground">
+            Like what you got?{" "}
+            <NavLink
+              to="/auth?mode=signup"
+              className="font-medium text-foreground underline-offset-4 hover:underline"
+            >
+              Start your 14-day trial →
+            </NavLink>
+          </p>
         </Container>
       </Section>
-
-      {/* Trades */}
-      <Section tone="alt">
-        <Container>
-          <SectionIntro
-            eyebrow="[ Built per trade ]"
-            title="Different trade. Different routes. Same brief."
-            subtitle="Quiet customer? Doesn't matter. The route does the talking."
-          />
-          <UseCasesGrid />
-        </Container>
-      </Section>
-
-      {/* Footer CTA */}
-      <FinalCtaSection
-        eyebrow="Seen enough?"
-        title="Start your 14-day trial"
-        primary={{
-          href: "/auth?mode=signup",
-          label: (
-            <>
-              Start my 14-day trial <ArrowRight className="h-4 w-4" />
-            </>
-          ),
-        }}
-        secondary={{ href: "/pricing", label: "See pricing" }}
-      />
     </>
   );
 }

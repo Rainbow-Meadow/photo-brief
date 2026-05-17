@@ -1,20 +1,15 @@
 import { NavLink } from "react-router-dom";
-import { ArrowRight, CheckCircle2, ImageOff, MessageSquareWarning, TimerReset, PlayCircle, Tags } from "lucide-react";
+import { ArrowRight, CheckCircle2, ImageOff, MessageSquareWarning, TimerReset } from "lucide-react";
 
 import { PageMeta } from "@/hooks/seo/usePageMeta";
 import { buildHowToJsonLd } from "@/hooks/seo/buildHowToJsonLd";
-import { buildFaqJsonLd } from "@/hooks/seo/buildFaqJsonLd";
 
-import { BrandMark } from "@/components/layout/BrandMark";
-import { Section, Container, Body } from "@/design-system/schema";
-import { OneLinkAnywhereSection } from "@/components/marketing/OneLinkAnywhereSection";
+import { Section, Container } from "@/design-system/schema";
 import { RiseIn } from "@/components/motion/RiseIn";
 import { MagneticCTA } from "@/components/motion/MagneticCTA";
 
-import { faqItems } from "@/features/help/content/faq";
 import { howItWorksSteps } from "@/components/marketing/HowItWorksSteps";
 import { trackEvent } from "@/lib/analytics";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 import { SectionIntro } from "@/components/marketing/SectionIntro";
 import { MechanismGrid } from "@/components/marketing/MechanismGrid";
@@ -33,8 +28,7 @@ const SOFTWARE_APP_JSONLD: Record<string, unknown> = {
   name: "PhotoBrief.ai",
   applicationCategory: "BusinessApplication",
   operatingSystem: "Web",
-  description:
-    "Your form gives you a name. PhotoBrief gives you a quote-ready brief.",
+  description: "Your form gives you a name. PhotoBrief gives you a quote-ready brief.",
 };
 
 export default function LandingPage() {
@@ -42,7 +36,6 @@ export default function LandingPage() {
     "How PhotoBrief works",
     howItWorksSteps.map((s) => ({ title: s.title, body: s.body })),
   );
-  const faqJsonLd = buildFaqJsonLd(faqItems.slice(0, 4));
 
   return (
     <>
@@ -50,15 +43,12 @@ export default function LandingPage() {
         title="PhotoBrief — Guide. Capture. Close."
         description="Your form gives you a name. PhotoBrief gives you a brief you can quote on the first reply."
         canonicalPath="/"
-        jsonLd={[SOFTWARE_APP_JSONLD, heroJsonLd, faqJsonLd]}
+        jsonLd={[SOFTWARE_APP_JSONLD, heroJsonLd]}
       />
 
       <Hero />
-      <OneLinkAnywhereSection />
       <MechanismSection />
       <ComparisonSection />
-      <SignpostSection />
-      <FaqSection />
       <FinalCta />
     </>
   );
@@ -71,7 +61,7 @@ function Hero() {
       <Container>
         <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
           <div>
-            <p className="ls-eyebrow">[ 01 ] The Reverse-Form Method™</p>
+            <p className="ls-eyebrow">The Reverse-Form Method™</p>
             <RiseIn delay={0.05}>
               <h1 className="ls-h1 ls-display-stack mt-8">
                 <span className="block">Guide.</span>
@@ -114,7 +104,6 @@ function Hero() {
                 afterAlt="Laptop showing a clean two-message Gmail thread — PhotoBrief packet at 9:14 AM, Cedar & Sons quote reply at 9:31 AM."
                 onFirstInteract={() => trackEvent("landing_hero_before_after_drag")}
               />
-              <BrandMark variant="horizontal" tone="dark" size={28} className="mt-6 justify-center opacity-80" />
             </div>
           </RiseIn>
         </div>
@@ -123,14 +112,13 @@ function Hero() {
   );
 }
 
-
 /* ── Mechanism teaser ── */
 function MechanismSection() {
   return (
     <Section id="workflow" tone="alt">
       <Container>
         <SectionIntro
-          eyebrow="[ 02 ] The mechanism"
+          eyebrow="The mechanism"
           title="Stop asking. Start routing."
           subtitle="Four moves. Website CTA to brief on your desk."
         />
@@ -146,7 +134,7 @@ function ComparisonSection() {
     <Section>
       <Container>
         <SectionIntro
-          eyebrow="[ 03 ] Before / after"
+          eyebrow="Before / after"
           title="One form. Or one route per job."
           subtitle="Same lead. Same five minutes. Two very different inboxes."
         />
@@ -224,136 +212,11 @@ function ComparisonSection() {
   );
 }
 
-/* ── Signpost — three doors ── */
-const signposts = [
-  {
-    to: "/demo",
-    icon: PlayCircle,
-    eyebrow: "Demo",
-    title: "Paste your URL. Watch your routes appear.",
-    body: "Live, in 60 seconds. No signup.",
-    cta: "Try the live demo",
-  },
-  {
-    to: "/auth?mode=signup",
-    icon: ArrowRight,
-    eyebrow: "Start",
-    title: "Replace your form in an afternoon.",
-    body: "14-day free trial. No card upfront. Cancel anytime.",
-    cta: "Start free trial",
-  },
-  {
-    to: "/pricing",
-    icon: Tags,
-    eyebrow: "Pricing",
-    title: "Plans that scale with your intake.",
-    body: "Smart Intake at $59/mo. Smart Intake Team at $149/mo.",
-    cta: "See pricing",
-  },
-];
-
-function SignpostSection() {
-  return (
-    <Section tone="alt">
-      <Container>
-        <SectionIntro eyebrow="[ 04 ] Where to next ]" title="Three doors. Pick one." />
-        <div className="grid gap-0 lg:grid-cols-2">
-          {/* Start — hero door, full top row */}
-          <RiseIn className="lg:col-span-2">
-            <NavLink
-              to={signposts[1].to}
-              className="group block border-t border-border bg-[hsl(var(--accent-kinetic)/0.06)] p-8 transition hover:bg-[hsl(var(--accent-kinetic)/0.12)] lg:p-12"
-            >
-              <div className="grid gap-6 lg:grid-cols-12 lg:items-end">
-                <div className="lg:col-span-9">
-                  <h3 className="ls-h2">{signposts[1].title}</h3>
-                  <Body size="md">{signposts[1].body}</Body>
-                </div>
-                <div className="flex items-center justify-between gap-4 lg:col-span-3 lg:justify-end">
-                  <div className="flex items-center gap-3">
-                    <p className="ls-eyebrow !mt-0">{signposts[1].eyebrow}</p>
-                    {(() => {
-                      const I = signposts[1].icon;
-                      return <I className="h-5 w-5 text-[hsl(var(--accent-kinetic))]" />;
-                    })()}
-                  </div>
-                  <span className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.18em] text-foreground transition group-hover:text-[hsl(var(--accent-kinetic))]">
-                    {signposts[1].cta} <ArrowRight className="h-4 w-4" />
-                  </span>
-                </div>
-              </div>
-            </NavLink>
-          </RiseIn>
-
-          {/* Demo + Pricing — flanking smaller doors */}
-          {[signposts[0], signposts[2]].map((s, i) => (
-            <RiseIn key={s.to} delay={(i + 1) * 0.06}>
-              <NavLink
-                to={s.to}
-                className="group block border-t border-border p-6 transition hover:bg-foreground/[0.02] lg:p-8"
-              >
-                <h3 className="ls-h3">{s.title}</h3>
-                <Body size="sm">{s.body}</Body>
-                <div className="mt-6 flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-3">
-                    <p className="ls-eyebrow !mt-0">{s.eyebrow}</p>
-                    <s.icon className="h-4 w-4 text-[hsl(var(--accent-kinetic))]" />
-                  </div>
-                  <span className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.18em] text-foreground transition group-hover:text-[hsl(var(--accent-kinetic))]">
-                    {s.cta} <ArrowRight className="h-4 w-4" />
-                  </span>
-                </div>
-              </NavLink>
-            </RiseIn>
-          ))}
-        </div>
-      </Container>
-    </Section>
-  );
-}
-
-/* ── Compact FAQ ── */
-function FaqSection() {
-  return (
-    <Section>
-      <Container>
-        <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-16">
-          {/* Sticky intro rail */}
-          <div className="lg:col-span-4">
-            <div className="lg:sticky lg:top-24">
-              <SectionIntro eyebrow="[ 05 ] FAQ" title="The stuff people always ask." />
-              <p className="mt-2 text-sm text-muted-foreground">
-                <NavLink to="/help" className="text-foreground underline-offset-4 hover:underline">
-                  Full help center →
-                </NavLink>
-              </p>
-            </div>
-          </div>
-
-          {/* Scrolling Q&A */}
-          <div className="lg:col-span-8">
-            <Accordion type="single" collapsible className="border-t border-border">
-              {faqItems.slice(0, 4).map((item, i) => (
-                <AccordionItem key={item.q} value={`q-${i}`} className="border-b border-border py-2">
-                  <AccordionTrigger className="text-left font-display text-lg font-medium tracking-tight hover:no-underline">
-                    {item.q}
-                  </AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground">{item.a}</AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </div>
-        </div>
-      </Container>
-    </Section>
-  );
-}
-
 /* ── Final CTA ── */
 function FinalCta() {
   return (
     <FinalCtaSection
-      eyebrow="06 ] Replace the form"
+      eyebrow="Replace the form"
       title="Ready to ditch the form"
       punctuation="?"
       body="14-day free trial. No card upfront. Cancel anytime."
@@ -365,7 +228,7 @@ function FinalCta() {
           </>
         ),
       }}
-      secondary={{ href: "/demo", label: "See the live demo" }}
+      secondary={{ href: "/help", label: "Read the FAQ" }}
     />
   );
 }
