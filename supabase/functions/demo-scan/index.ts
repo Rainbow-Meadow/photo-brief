@@ -16,12 +16,23 @@ const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const DEMO_WORKSPACE_ID = Deno.env.get("DEMO_WORKSPACE_ID")!;
 const TURNSTILE_SECRET = Deno.env.get("TURNSTILE_SECRET_KEY") ?? "";
+const FIRECRAWL_API_KEY = Deno.env.get("FIRECRAWL_API_KEY") ?? "";
 
 const MAX_PAGES = 10;
 const MAX_HTML_CHARS = 80_000;
 const REQUEST_TIMEOUT_MS = 8_000;
+const FIRECRAWL_TIMEOUT_MS = 25_000;
 const AGENT = "PhotoBriefDemoInspector/0.1";
 const RATE_LIMIT_PER_HOUR = 3;
+const FIRECRAWL_V2 = "https://api.firecrawl.dev/v2";
+
+// A page is "thin" (likely a JS shell like Wix/Framer/SPA) if it has very few
+// internal links AND little visible text. When the root looks thin, we re-fetch
+// it through Firecrawl (which executes JS) and use /map to seed the crawl.
+function looksLikeJsShell(html: string, linkCount: number) {
+  const textLen = stripHtml(html).length;
+  return linkCount < 3 || textLen < 600;
+}
 
 type PhotoPolicy = "not_needed" | "optional" | "recommended" | "required";
 type ReadinessGoal =
@@ -197,6 +208,80 @@ async function fetchPublicHtml(url: string) {
     return (await res.text()).slice(0, MAX_HTML_CHARS);
   } catch {
     return null;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+// Firecrawl /v2/scrape — returns rendered HTML (JS executed) and discovered links.
+async function fetchRenderedHtml(
+  url: string,
+): Promise<{ html: string; links: string[] } | null> {
+  if (!FIRECRAWL_API_KEY) return null;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), FIRECRAWL_TIMEOUT_MS);
+  try {
+    const res = await fetch(`${FIRECRAWL_V2}/scrape`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${FIRECRAWL_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        url,
+        formats: ["html", "links"],
+        onlyMainContent: false,
+        waitFor: 1500,
+      }),
+      signal: controller.signal,
+    });
+    if (!res.ok) {
+      console.warn("firecrawl scrape failed", res.status, await res.text().catch(() => ""));
+      return null;
+    }
+    const body = await res.json() as {
+      data?: { html?: string; links?: string[] };
+      html?: string;
+      links?: string[];
+    };
+    const html = (body.data?.html ?? body.html ?? "").slice(0, MAX_HTML_CHARS);
+    const links = body.data?.links ?? body.links ?? [];
+    if (!html) return null;
+    return { html, links: Array.isArray(links) ? links : [] };
+  } catch (err) {
+    console.warn("firecrawl scrape error", err instanceof Error ? err.message : err);
+    return null;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+// Firecrawl /v2/map — fast URL enumeration for a domain. Used to seed the crawl
+// when the root page is a JS shell with no static internal links.
+async function mapSiteUrls(url: string, limit = MAX_PAGES * 3): Promise<string[]> {
+  if (!FIRECRAWL_API_KEY) return [];
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), FIRECRAWL_TIMEOUT_MS);
+  try {
+    const res = await fetch(`${FIRECRAWL_V2}/map`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${FIRECRAWL_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ url, limit, includeSubdomains: false }),
+      signal: controller.signal,
+    });
+    if (!res.ok) {
+      console.warn("firecrawl map failed", res.status);
+      return [];
+    }
+    const body = await res.json() as { links?: string[]; data?: { links?: string[] } };
+    const links = body.links ?? body.data?.links ?? [];
+    return Array.isArray(links) ? links : [];
+  } catch (err) {
+    console.warn("firecrawl map error", err instanceof Error ? err.message : err);
+    return [];
   } finally {
     clearTimeout(timer);
   }
@@ -409,12 +494,29 @@ Deno.serve(async (req) => {
     const pageRows: Array<Record<string, unknown> & { headings: string[]; text_excerpt: string | null }> = [];
     const formRows: Array<Record<string, unknown>> = [];
 
+    let isFirstPage = true;
     while (queue.length && visited.size < MAX_PAGES) {
       const url = queue.shift()!;
       if (visited.has(url)) continue;
       visited.add(url);
-      const html = await fetchPublicHtml(url);
+
+      // 1. Try a fast static fetch first.
+      let html = await fetchPublicHtml(url);
+      let extraLinks: string[] = [];
+
+      // 2. If the page is missing or looks like a JS shell (Wix, Framer,
+      //    Webflow with heavy JS, most SPAs), re-fetch through Firecrawl so we
+      //    get rendered HTML and discovered links.
+      const staticLinkCount = html ? extractLinks(html, root).length : 0;
+      if (!html || looksLikeJsShell(html, staticLinkCount)) {
+        const rendered = await fetchRenderedHtml(url);
+        if (rendered) {
+          html = rendered.html;
+          extraLinks = rendered.links;
+        }
+      }
       if (!html) continue;
+
       const title = extractSingle(html, /<title[^>]*>([\s\S]*?)<\/title>/i, 180);
       const h1 = extractSingle(html, /<h1[^>]*>([\s\S]*?)<\/h1>/i, 180);
       const headings = extractHeadings(html);
@@ -428,8 +530,39 @@ Deno.serve(async (req) => {
         headings, ctas: [],
       });
       formRows.push(...extractForms(html, url).map((f) => ({ ...f, workspace_id: workspaceId, scan_job_id: scanJobId })));
-      for (const link of extractLinks(html, root))
+
+      // 3. Seed the queue from static <a> links + Firecrawl-discovered links.
+      const candidateLinks = new Set<string>(extractLinks(html, root));
+      for (const link of extractLinks(html, root)) candidateLinks.add(link);
+      for (const link of extraLinks) {
+        try {
+          const u = new URL(link, root);
+          if (u.origin !== root.origin || isUnsafeHost(u.hostname)) continue;
+          if (/\.(jpg|jpeg|png|gif|webp|svg|pdf|zip|mp4|mov|css|js)$/i.test(u.pathname)) continue;
+          u.hash = "";
+          candidateLinks.add(u.toString());
+        } catch { /* ignore */ }
+      }
+
+      // 4. On the root page, if discovery is still thin, ask Firecrawl /map to
+      //    enumerate the rest of the site.
+      if (isFirstPage && candidateLinks.size < 5) {
+        for (const link of await mapSiteUrls(url)) {
+          try {
+            const u = new URL(link, root);
+            if (u.origin !== root.origin || isUnsafeHost(u.hostname)) continue;
+            if (/\.(jpg|jpeg|png|gif|webp|svg|pdf|zip|mp4|mov|css|js)$/i.test(u.pathname)) continue;
+            u.hash = "";
+            candidateLinks.add(u.toString());
+          } catch { /* ignore */ }
+        }
+      }
+      isFirstPage = false;
+
+      const prioritized = Array.from(candidateLinks).sort((a, b) => linkPriority(b) - linkPriority(a));
+      for (const link of prioritized) {
         if (!visited.has(link) && !queue.includes(link) && queue.length < MAX_PAGES) queue.push(link);
+      }
     }
 
     if (pageRows.length) await admin.from("website_pages").insert(pageRows);
