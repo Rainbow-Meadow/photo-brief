@@ -134,28 +134,23 @@ function DemoFlow() {
       )}
 
       {stage === "scanning" && (
-        <div className="flex flex-col items-center gap-4 py-12 text-center">
-          <Loader2 className="h-6 w-6 animate-spin text-accent" />
-          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
-            Scanning {hostOf(url)} · {elapsed}s
-          </p>
-          <p className="max-w-xs text-sm text-muted-foreground">
-            Reading your pages. Spotting services. Building routes.
-          </p>
-        </div>
+        <ScanningView host={hostOf(url)} elapsed={elapsed} />
       )}
 
       {stage === "failed" && (
         <div className="space-y-4">
           <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-accent">Couldn't read that site</p>
-          <p className="text-sm text-muted-foreground">{error ?? "Try a different URL."}</p>
+          <p className="text-sm text-foreground">{friendlyError(error)}</p>
+          <p className="text-xs text-muted-foreground">
+            Common causes: the site blocks bots, the URL is wrong, or there's no public homepage.
+          </p>
           <div className="flex flex-wrap gap-3">
             <PrimaryButton onClick={() => { setStage("url"); setError(null); }}>Try another URL →</PrimaryButton>
             <NavLink
               to="/auth?mode=signup"
               className="inline-flex min-h-11 items-center justify-center px-6 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] text-foreground underline-offset-4 hover:underline"
             >
-              Start trial instead →
+              Skip — start trial blank →
             </NavLink>
           </div>
         </div>
@@ -219,24 +214,109 @@ function ReadyView({ result }: { result: ScanResult }) {
         </a>
       </div>
 
-      <div className="border-t border-border pt-6">
-        <p className="text-sm text-foreground">
-          This setup is yours. Claim it and we'll drop it into your new workspace.
-        </p>
-        <div className="mt-3 flex flex-wrap gap-3">
+      <div className="border border-accent/40 bg-accent/[0.06] p-5 sm:p-6">
+        <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-accent">Step 3 · Make it yours</p>
+        <h3 className="mt-2 text-lg font-semibold text-foreground sm:text-xl">
+          Start your 14-day trial and we'll import this exact setup.
+        </h3>
+        <ul className="mt-3 space-y-1.5 text-sm text-muted-foreground">
+          <li>· {result.routes?.length ?? 0} intake route{(result.routes?.length ?? 0) === 1 ? "" : "s"} — ready to receive leads</li>
+          <li>· Photo policy already set per route</li>
+          <li>· Your public intake link, live the moment you sign up</li>
+        </ul>
+        <div className="mt-5 flex flex-wrap gap-3">
           <NavLink
             to={`/auth?mode=signup&demo=${encodeURIComponent(result.demoSessionId)}`}
             className="inline-flex min-h-11 items-center justify-center gap-2 rounded-sm border border-accent bg-accent px-6 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] text-accent-foreground transition hover:opacity-90"
           >
-            Start 14-day trial → keep this setup
+            Start 14-day trial → import this setup
+          </NavLink>
+          <NavLink
+            to="/auth?mode=signup"
+            className="inline-flex min-h-11 items-center justify-center px-6 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground underline-offset-4 hover:underline"
+          >
+            Sign up blank instead
           </NavLink>
         </div>
         <p className="mt-3 text-xs text-muted-foreground">
-          Demo setup auto-deletes after 24 hours if you don't claim it.
+          No card required. Demo auto-deletes after 24 hours if you don't claim it.
         </p>
       </div>
     </div>
   );
+}
+
+const SCAN_STEPS = [
+  "Fetching homepage",
+  "Reading service pages",
+  "Spotting routes",
+  "Drafting questions",
+  "Setting photo policy",
+  "Finishing up",
+];
+
+function ScanningView({ host, elapsed }: { host: string; elapsed: number }) {
+  // Advance one step every ~6s, cap at last step.
+  const stepIndex = Math.min(SCAN_STEPS.length - 1, Math.floor(elapsed / 6));
+  return (
+    <div className="space-y-5 py-6">
+      <div className="flex items-center gap-3">
+        <Loader2 className="h-5 w-5 animate-spin text-accent" />
+        <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
+          Scanning {host} · {elapsed}s
+        </p>
+      </div>
+      <ol className="space-y-2">
+        {SCAN_STEPS.map((label, i) => {
+          const state = i < stepIndex ? "done" : i === stepIndex ? "active" : "pending";
+          return (
+            <li key={label} className="flex items-center gap-3 text-sm">
+              <span
+                aria-hidden
+                className={
+                  "inline-flex h-4 w-4 items-center justify-center rounded-full border text-[10px] font-bold " +
+                  (state === "done"
+                    ? "border-accent bg-accent text-accent-foreground"
+                    : state === "active"
+                    ? "border-accent text-accent"
+                    : "border-border text-muted-foreground")
+                }
+              >
+                {state === "done" ? "✓" : ""}
+              </span>
+              <span
+                className={
+                  state === "pending"
+                    ? "text-muted-foreground"
+                    : state === "active"
+                    ? "text-foreground"
+                    : "text-muted-foreground line-through decoration-muted-foreground/40"
+                }
+              >
+                {label}
+              </span>
+            </li>
+          );
+        })}
+      </ol>
+      {elapsed > 35 ? (
+        <p className="text-xs text-muted-foreground">
+          Bigger sites take a little longer. Hang tight — usually under a minute.
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
+function friendlyError(err: string | null) {
+  if (!err) return "Try a different URL.";
+  const e = err.toLowerCase();
+  if (e.includes("timeout") || e.includes("timed out")) return "Your site took too long to respond. Try again or use a different URL.";
+  if (e.includes("invalid") && e.includes("url")) return "That URL doesn't look right. Try something like acmeplumbing.com.";
+  if (e.includes("not enough") || e.includes("too little") || e.includes("empty")) return "We couldn't read enough text from that site to build an intake.";
+  if (e.includes("block") || e.includes("403") || e.includes("forbidden")) return "That site blocked our scanner. Try a different URL.";
+  if (e.includes("not found") || e.includes("404")) return "We couldn't find that site.";
+  return err;
 }
 
 function PrimaryButton({
