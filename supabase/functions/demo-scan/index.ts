@@ -16,12 +16,23 @@ const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const DEMO_WORKSPACE_ID = Deno.env.get("DEMO_WORKSPACE_ID")!;
 const TURNSTILE_SECRET = Deno.env.get("TURNSTILE_SECRET_KEY") ?? "";
+const FIRECRAWL_API_KEY = Deno.env.get("FIRECRAWL_API_KEY") ?? "";
 
 const MAX_PAGES = 10;
 const MAX_HTML_CHARS = 80_000;
 const REQUEST_TIMEOUT_MS = 8_000;
+const FIRECRAWL_TIMEOUT_MS = 25_000;
 const AGENT = "PhotoBriefDemoInspector/0.1";
 const RATE_LIMIT_PER_HOUR = 3;
+const FIRECRAWL_V2 = "https://api.firecrawl.dev/v2";
+
+// A page is "thin" (likely a JS shell like Wix/Framer/SPA) if it has very few
+// internal links AND little visible text. When the root looks thin, we re-fetch
+// it through Firecrawl (which executes JS) and use /map to seed the crawl.
+function looksLikeJsShell(html: string, linkCount: number) {
+  const textLen = stripHtml(html).length;
+  return linkCount < 3 || textLen < 600;
+}
 
 type PhotoPolicy = "not_needed" | "optional" | "recommended" | "required";
 type ReadinessGoal =
