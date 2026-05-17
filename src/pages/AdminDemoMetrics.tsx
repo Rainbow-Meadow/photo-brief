@@ -43,8 +43,8 @@ export default function AdminDemoMetricsPage() {
     (async () => {
       setLoading(true);
       const [w, d] = await Promise.all([
-        supabase.from("demo_session_metrics" as any).select("*"),
-        supabase.from("demo_session_daily_metrics" as any).select("*"),
+        (supabase as any).from("demo_session_metrics").select("*"),
+        (supabase as any).from("demo_session_daily_metrics").select("*"),
       ]);
       if (w.error) setError(w.error.message);
       else setWindows((w.data ?? []) as WindowRow[]);
