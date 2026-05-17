@@ -783,7 +783,38 @@ Deno.serve(async (req) => {
       ? await admin.from("service_catalog_items").insert(serviceRows).select("id, recommended_template_type")
       : { data: [] as Array<{ id: string; recommended_template_type: string }> };
 
-    const plan = buildPlan(services, formRows);
+    // Try LLM-based route inference first; fall back to keyword buckets.
+    let plan: ReturnType<typeof buildPlan>;
+    const aiRoutes = await inferRoutesWithAI(
+      pageRows.map((p) => ({
+        url: String(p.url), title: p.title as string | null, h1: p.h1 as string | null,
+        page_type: String(p.page_type), text_excerpt: p.text_excerpt, headings: p.headings,
+      })),
+      formRows,
+      hostLabel,
+    );
+
+    if (aiRoutes.length > 0) {
+      plan = {
+        rules: aiRoutes.map((r, index) => ({
+          label: r.label,
+          customer_description: r.customer_description,
+          match_keywords: r.match_keywords,
+          template_type: r.template_type,
+          sort_order: index,
+          is_fallback: r.is_fallback === true,
+          service_names: r.service_names,
+          photo_policy: r.photo_policy,
+          photo_policy_reason: r.photo_policy_reason,
+          readiness_goal: r.readiness_goal,
+          questions: questionsForTemplate(r.template_type),
+        })),
+        summary: `Found ${services.length} likely service/product signals and ${formRows.length} form(s). Recommended ${aiRoutes.length} smart intake path(s).`,
+      };
+    } else {
+      plan = buildPlan(services, formRows);
+    }
+
     if (!plan.rules.length) {
       // Always give the visitor at least one route.
       plan.rules.push({
