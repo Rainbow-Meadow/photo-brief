@@ -134,28 +134,23 @@ function DemoFlow() {
       )}
 
       {stage === "scanning" && (
-        <div className="flex flex-col items-center gap-4 py-12 text-center">
-          <Loader2 className="h-6 w-6 animate-spin text-accent" />
-          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
-            Scanning {hostOf(url)} · {elapsed}s
-          </p>
-          <p className="max-w-xs text-sm text-muted-foreground">
-            Reading your pages. Spotting services. Building routes.
-          </p>
-        </div>
+        <ScanningView host={hostOf(url)} elapsed={elapsed} />
       )}
 
       {stage === "failed" && (
         <div className="space-y-4">
           <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-accent">Couldn't read that site</p>
-          <p className="text-sm text-muted-foreground">{error ?? "Try a different URL."}</p>
+          <p className="text-sm text-foreground">{friendlyError(error)}</p>
+          <p className="text-xs text-muted-foreground">
+            Common causes: the site blocks bots, the URL is wrong, or there's no public homepage.
+          </p>
           <div className="flex flex-wrap gap-3">
             <PrimaryButton onClick={() => { setStage("url"); setError(null); }}>Try another URL →</PrimaryButton>
             <NavLink
               to="/auth?mode=signup"
               className="inline-flex min-h-11 items-center justify-center px-6 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] text-foreground underline-offset-4 hover:underline"
             >
-              Start trial instead →
+              Skip — start trial blank →
             </NavLink>
           </div>
         </div>
