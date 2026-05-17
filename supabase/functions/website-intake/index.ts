@@ -268,7 +268,14 @@ Deno.serve(async (req) => {
 });
 
 function canUseWebsiteIntake(plan: PlanTier) {
-  return plan === "pro" || plan === "team" || plan === "business";
+  // Canonical tiers (intake, intake_team) plus legacy tiers that map to them.
+  return (
+    plan === "intake" ||
+    plan === "intake_team" ||
+    plan === "pro" ||
+    plan === "team" ||
+    plan === "business"
+  );
 }
 
 async function getPublicConfig(admin: SupabaseAdmin, intake: IntakeSource, businessName: string) {
