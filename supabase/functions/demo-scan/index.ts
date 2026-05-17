@@ -355,7 +355,7 @@ Deno.serve(async (req) => {
     .eq("id", DEMO_WORKSPACE_ID)
     .maybeSingle();
   const demoOwnerId = (demoRoot as any)?.owner_id;
-  if (!demoOwnerId) return json({ error: "demo_root_missing" }, 500);
+  if (!demoOwnerId) return json({ error: "demo_root_missing", looked_up: DEMO_WORKSPACE_ID?.slice(0, 8) ?? null, len: DEMO_WORKSPACE_ID?.length ?? 0 }, 500);
 
   // 2. Create a fresh per-visit workspace.
   const root = new URL(rootUrl);
