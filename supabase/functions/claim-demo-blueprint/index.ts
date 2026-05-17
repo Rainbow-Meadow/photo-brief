@@ -152,6 +152,29 @@ Deno.serve(async (req) => {
     catch { return "Workspace"; }
   })();
 
+  // Atomically reserve the claim BEFORE mutating workspaces. If another
+  // concurrent request already flipped claimed_at, this UPDATE returns 0 rows
+  // and we abort safely without touching the workspace.
+  const claimedAtIso = new Date().toISOString();
+  const { data: reserved, error: reserveErr } = await admin
+    .from("demo_sessions")
+    .update({
+      claimed_at: claimedAtIso,
+      claimed_by_user_id: user.id,
+      status: "claiming",
+    })
+    .eq("id", demoSessionId)
+    .is("claimed_at", null)
+    .select("id")
+    .maybeSingle();
+  if (reserveErr) return json({ error: "claim_reserve_failed", message: reserveErr.message }, 500);
+  if (!reserved) {
+    return json({
+      error: "already_claimed",
+      message: "This demo was just claimed by another request. Refresh and try again.",
+    }, 409);
+  }
+
   // Transfer the demo workspace to the new user.
   const { error: wsUpdateErr } = await admin
     .from("business_workspaces")
@@ -163,7 +186,13 @@ Deno.serve(async (req) => {
       trial_plan: "intake",
     })
     .eq("id", demoWorkspaceId);
-  if (wsUpdateErr) return json({ error: "workspace_transfer_failed", message: wsUpdateErr.message }, 500);
+  if (wsUpdateErr) {
+    // Best-effort rollback so the user can retry.
+    await admin.from("demo_sessions").update({
+      claimed_at: null, claimed_by_user_id: null, status: "ready",
+    }).eq("id", demoSessionId);
+    return json({ error: "workspace_transfer_failed", message: wsUpdateErr.message }, 500);
+  }
 
   // Add user as owner member; remove the prior demo-owner membership so the
   // sentinel system user no longer appears in the new workspace.
