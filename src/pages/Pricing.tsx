@@ -85,6 +85,34 @@ export default function PricingPage() {
         canonicalPath="/pricing"
         ogImage="https://photobrief.ai/og/pricing.png"
         breadcrumbs={[{ name: "Home", path: "/" }, { name: "Pricing", path: "/pricing" }]}
+        jsonLd={[
+          {
+            "@context": "https://schema.org",
+            "@type": "Product",
+            name: "PhotoBrief Smart Intake",
+            description: "Smart Intake replaces dumb website contact forms with a guided intake that produces quote-ready briefs.",
+            brand: { "@type": "Brand", name: "PhotoBrief" },
+            offers: [
+              {
+                "@type": "Offer",
+                name: "Smart Intake",
+                price: "79",
+                priceCurrency: "USD",
+                priceSpecification: { "@type": "UnitPriceSpecification", price: "79", priceCurrency: "USD", billingIncrement: 1, unitCode: "MON" },
+                url: "https://photobrief.ai/pricing",
+              },
+              {
+                "@type": "Offer",
+                name: "Smart Intake Team",
+                price: "199",
+                priceCurrency: "USD",
+                priceSpecification: { "@type": "UnitPriceSpecification", price: "199", priceCurrency: "USD", billingIncrement: 1, unitCode: "MON" },
+                url: "https://photobrief.ai/pricing",
+              },
+            ],
+          },
+          buildFaqJsonLd(businessFaqs),
+        ]}
       />
 
       {/* Hero */}
