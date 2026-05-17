@@ -213,6 +213,80 @@ async function fetchPublicHtml(url: string) {
   }
 }
 
+// Firecrawl /v2/scrape — returns rendered HTML (JS executed) and discovered links.
+async function fetchRenderedHtml(
+  url: string,
+): Promise<{ html: string; links: string[] } | null> {
+  if (!FIRECRAWL_API_KEY) return null;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), FIRECRAWL_TIMEOUT_MS);
+  try {
+    const res = await fetch(`${FIRECRAWL_V2}/scrape`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${FIRECRAWL_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        url,
+        formats: ["html", "links"],
+        onlyMainContent: false,
+        waitFor: 1500,
+      }),
+      signal: controller.signal,
+    });
+    if (!res.ok) {
+      console.warn("firecrawl scrape failed", res.status, await res.text().catch(() => ""));
+      return null;
+    }
+    const body = await res.json() as {
+      data?: { html?: string; links?: string[] };
+      html?: string;
+      links?: string[];
+    };
+    const html = (body.data?.html ?? body.html ?? "").slice(0, MAX_HTML_CHARS);
+    const links = body.data?.links ?? body.links ?? [];
+    if (!html) return null;
+    return { html, links: Array.isArray(links) ? links : [] };
+  } catch (err) {
+    console.warn("firecrawl scrape error", err instanceof Error ? err.message : err);
+    return null;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+// Firecrawl /v2/map — fast URL enumeration for a domain. Used to seed the crawl
+// when the root page is a JS shell with no static internal links.
+async function mapSiteUrls(url: string, limit = MAX_PAGES * 3): Promise<string[]> {
+  if (!FIRECRAWL_API_KEY) return [];
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), FIRECRAWL_TIMEOUT_MS);
+  try {
+    const res = await fetch(`${FIRECRAWL_V2}/map`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${FIRECRAWL_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ url, limit, includeSubdomains: false }),
+      signal: controller.signal,
+    });
+    if (!res.ok) {
+      console.warn("firecrawl map failed", res.status);
+      return [];
+    }
+    const body = await res.json() as { links?: string[]; data?: { links?: string[] } };
+    const links = body.links ?? body.data?.links ?? [];
+    return Array.isArray(links) ? links : [];
+  } catch (err) {
+    console.warn("firecrawl map error", err instanceof Error ? err.message : err);
+    return [];
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 function inferServices(pages: Array<{ url: string; title: string | null; h1: string | null; page_type: string; text_excerpt: string | null; headings: string[] }>) {
   const map = new Map<string, { name: string; source_url: string; description: string; keywords: string[]; category: string; template: string; intent: string; confidence: number }>();
   const bad = /home|about|contact|privacy|terms|blog|faq|pricing|login|cart|menu/i;
