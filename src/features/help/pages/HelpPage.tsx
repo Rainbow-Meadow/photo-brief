@@ -1,6 +1,4 @@
 import { useMemo } from "react";
-import { NavLink } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
 
 import { PageMeta } from "@/hooks/seo/usePageMeta";
 import { buildFaqJsonLd } from "@/hooks/seo/buildFaqJsonLd";
@@ -11,13 +9,11 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
 import { faqItems } from "@/features/help/content/faq";
 
 /**
- * Public help / FAQ page. Mounted at both `/help` (marketing) and `/app/help`
- * (authenticated app). Splits the FAQ into business and recipient buckets and
- * surfaces a primary CTA back to the live demo.
+ * Public help / FAQ page. Mounted at both `/help` (marketing) and `/app/help`.
+ * Splits the FAQ into business and recipient buckets.
  */
 export default function HelpPage() {
   const business = useMemo(() => faqItems.filter((f) => f.audience === "business"), []);
@@ -42,7 +38,6 @@ export default function HelpPage() {
             align="center"
             eyebrow="Help"
             title="The questions everyone asks first."
-            description="Two short reads — one for business owners, one for the customer on the other end of the link."
           />
         </Container>
       </Section>
@@ -75,19 +70,15 @@ export default function HelpPage() {
         </Container>
       </Section>
 
-      <Section>
+      <Section size="tight">
         <Container width="narrow">
-          <div className="border border-border bg-card p-8 text-center">
-            <p className="text-base font-semibold text-foreground">Still have questions?</p>
-            <p className="mt-2 max-w-md mx-auto text-sm text-muted-foreground">
-              Try the live demo on your own URL — the fastest way to see what PhotoBrief gives you.
-            </p>
-            <Button asChild size="xl" className="mt-5 rounded-[0.25rem] uppercase tracking-[0.14em]">
-              <NavLink to="/demo">
-                Try the live demo <ArrowRight className="ml-1 h-4 w-4" />
-              </NavLink>
-            </Button>
-          </div>
+          <p className="text-center text-sm text-muted-foreground">
+            Still stuck? Email{" "}
+            <a className="font-medium text-foreground underline-offset-4 hover:underline" href="mailto:hello@photobrief.ai">
+              hello@photobrief.ai
+            </a>
+            .
+          </p>
         </Container>
       </Section>
     </>
