@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { EditorialAuthShell } from "@/components/editorial/EditorialAuthShell";
+import { PageMeta } from "@/hooks/seo/usePageMeta";
 
 export default function ResetPasswordPage() {
   const navigate = useNavigate();
@@ -52,6 +53,13 @@ export default function ResetPasswordPage() {
   };
 
   return (
+    <>
+      <PageMeta
+        title="Set a new password | PhotoBrief"
+        description="Choose a new password to finish recovering your PhotoBrief account."
+        canonicalPath="/reset-password"
+        noindex
+      />
     <EditorialAuthShell
       numeral="00"
       eyebrow="New password"
@@ -90,5 +98,6 @@ export default function ResetPasswordPage() {
         </Button>
       </form>
     </EditorialAuthShell>
+    </>
   );
 }

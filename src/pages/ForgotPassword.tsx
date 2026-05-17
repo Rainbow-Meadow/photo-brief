@@ -8,6 +8,7 @@ import { toast } from "@/hooks/use-toast";
 import { TurnstileWidget } from "@/components/security/TurnstileWidget";
 import { verifyTurnstileToken } from "@/config/turnstile";
 import { EditorialAuthShell } from "@/components/editorial/EditorialAuthShell";
+import { PageMeta } from "@/hooks/seo/usePageMeta";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -40,6 +41,13 @@ export default function ForgotPasswordPage() {
   };
 
   return (
+    <>
+      <PageMeta
+        title="Reset your password | PhotoBrief"
+        description="Request a password reset link for your PhotoBrief account."
+        canonicalPath="/forgot-password"
+        noindex
+      />
     <EditorialAuthShell
       numeral="00"
       eyebrow="Reset password"
@@ -86,5 +94,6 @@ export default function ForgotPasswordPage() {
         </form>
       )}
     </EditorialAuthShell>
+    </>
   );
 }
