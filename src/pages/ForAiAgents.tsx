@@ -90,7 +90,7 @@ export default function ForAiAgentsPage() {
         canonicalPath="/for-ai-agents"
         ogType="article"
         ogImage="https://photobrief.ai/og/for-ai-agents.png"
-        jsonLd={[articleJsonLd, howToJsonLd]}
+        jsonLd={[articleJsonLd, howToJsonLd, buildFaqJsonLd(faqItems)]}
         breadcrumbs={[{ name: "Home", path: "/" }, { name: "For AI agents", path: "/for-ai-agents" }]}
       />
 
