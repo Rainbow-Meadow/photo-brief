@@ -265,6 +265,16 @@ const App = () => (
                 </RequireAuth>
               }
             />
+            <Route
+              path="/admin/demo-metrics"
+              element={
+                <RequireAuth requireOnboarding={false}>
+                  <RequirePlatformAdmin>
+                    <AdminDemoMetricsPage />
+                  </RequirePlatformAdmin>
+                </RequireAuth>
+              }
+            />
           </Route>
 
           {/* Public intake + recipient capture */}
