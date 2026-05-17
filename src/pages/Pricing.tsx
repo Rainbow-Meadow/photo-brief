@@ -4,6 +4,7 @@ import { ArrowRight, BadgeCheck, Camera, Globe2, HardDrive, Link2, Sparkles, Shi
 import { toast } from "sonner";
 import { PricingCardGrid } from "@/components/pricing/PricingCardGrid";
 import { PageMeta } from "@/hooks/seo/usePageMeta";
+import { buildFaqJsonLd } from "@/hooks/seo/buildFaqJsonLd";
 import { faqItems } from "@/features/help/content/faq";
 import { PublicPhotoPair } from "@/components/marketing/PublicPhotoPair";
 import { useAuth } from "@/hooks/useAuth";
