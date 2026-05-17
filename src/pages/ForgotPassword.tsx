@@ -41,6 +41,13 @@ export default function ForgotPasswordPage() {
   };
 
   return (
+    <>
+      <PageMeta
+        title="Reset your password | PhotoBrief"
+        description="Request a password reset link for your PhotoBrief account."
+        canonicalPath="/forgot-password"
+        noindex
+      />
     <EditorialAuthShell
       numeral="00"
       eyebrow="Reset password"
