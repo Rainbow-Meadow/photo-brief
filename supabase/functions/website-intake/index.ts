@@ -21,7 +21,7 @@ const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const APP_URL = Deno.env.get("APP_PUBLIC_URL") ?? "https://photobrief.ai";
 
-type PlanTier = "free" | "starter" | "pro" | "team" | "business";
+type PlanTier = "intake" | "intake_team" | "free" | "starter" | "pro" | "team" | "business";
 type PhotoPolicy = "not_needed" | "optional" | "recommended" | "required";
 type ReadinessStatus =
   | "ready_to_quote"
