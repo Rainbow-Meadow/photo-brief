@@ -1,248 +1,240 @@
-import { useState } from "react";
-import { useNavigate, NavLink } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { NavLink } from "react-router-dom";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Section, Container, CTA, CTAGroup } from "@/design-system/schema";
 import { PageMeta } from "@/hooks/seo/usePageMeta";
 import { RiseIn } from "@/components/motion/RiseIn";
 
-type Stage = "service" | "scenario" | "clarify" | "contact" | "generating";
+type Stage = "url" | "scanning" | "ready" | "failed";
 
-interface DraftPreview {
-  title: string;
-  introMessage?: string;
-  steps: { title: string; instruction: string }[];
+interface RoutePreview {
+  label: string;
+  photoPolicy: "not_needed" | "optional" | "recommended" | "required";
+  photoPolicyReason: string | null;
+  description: string | null;
 }
 
-const SERVICE_CHIPS = [
-  "Plumbing",
-  "Roofing",
-  "HVAC",
-  "Auto repair",
-  "Property management",
-  "Landscaping",
-  "Junk removal",
-  "Cleaning",
-];
+interface ScanResult {
+  ok: boolean;
+  demoSessionId: string;
+  intakeToken?: string;
+  businessName?: string;
+  summary?: string;
+  pagesScanned?: number;
+  routes?: RoutePreview[];
+  message?: string;
+}
+
+const POLICY_LABEL: Record<RoutePreview["photoPolicy"], string> = {
+  not_needed: "No photos",
+  optional: "Photos optional",
+  recommended: "Photos recommended",
+  required: "Photos required",
+};
 
 export default function DemoPage() {
   return (
     <>
       <PageMeta
         title="See PhotoBrief on your own site — 60 seconds"
-        description="Paste your URL. We build the routes. You get a brief. Sixty seconds. No signup."
+        description="Paste your URL. We scan your site, build your Smart Intake, and let you try it as a customer. No signup."
         canonicalPath="/demo"
       />
 
-      {/* Hero */}
       <Section>
         <Container width="narrow">
           <div className="space-y-3 text-center">
             <p className="ls-eyebrow">Live demo</p>
             <RiseIn>
               <h1 className="ls-h2 mt-6">
-                Paste your URL.
-                <br />Get your brief<span className="ls-accent-dot">.</span>
+                Your site. Your intake.
+                <br />Sixty seconds<span className="ls-accent-dot">.</span>
               </h1>
             </RiseIn>
             <RiseIn delay={0.1}>
               <p className="ls-subtitle mx-auto mt-8 max-w-xl">
-                We read your site. Build the routes. Email you the brief. Sixty seconds. No signup.
+                Paste your URL. We scan your site, build the smart intake, and you try it as a customer.
               </p>
             </RiseIn>
             <CTAGroup align="center">
               <CTA href="#build-yours" variant="primary" size="lg">
-                Build my brief <ArrowRight className="h-4 w-4" />
+                Build my intake <ArrowRight className="h-4 w-4" />
               </CTA>
             </CTAGroup>
           </div>
         </Container>
       </Section>
 
-      {/* The tool */}
       <Section id="build-yours" tone="alt">
         <Container width="narrow">
-          <DemoDiscoveryChat />
-          <p className="mt-6 text-center text-xs text-muted-foreground">
-            Demo briefs auto-delete after 24 hours.
-          </p>
-          <p className="mt-3 text-center text-sm text-muted-foreground">
-            Like what you got?{" "}
-            <NavLink
-              to="/auth?mode=signup"
-              className="font-medium text-foreground underline-offset-4 hover:underline"
-            >
-              Start your 14-day trial →
-            </NavLink>
-          </p>
+          <DemoFlow />
         </Container>
       </Section>
     </>
   );
 }
 
-/* ───────────── Discovery chat ───────────── */
-
-function DemoDiscoveryChat() {
-  const navigate = useNavigate();
-  const [stage, setStage] = useState<Stage>("service");
-  const [serviceType, setServiceType] = useState("");
-  const [scenario, setScenario] = useState("");
-  const [clarifyingQuestion, setClarifyingQuestion] = useState<string | null>(null);
-  const [clarifierAnswer, setClarifierAnswer] = useState("");
-  const [visitorName, setVisitorName] = useState("");
-  const [visitorEmail, setVisitorEmail] = useState("");
-  const [draft, setDraft] = useState<DraftPreview | null>(null);
+function DemoFlow() {
+  const [stage, setStage] = useState<Stage>("url");
+  const [url, setUrl] = useState("");
+  const [result, setResult] = useState<ScanResult | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
+  const [submittedAt, setSubmittedAt] = useState<number | null>(null);
+  const tick = useTick(stage === "scanning");
 
-  async function callDiscovery(opts: { finalize?: boolean } = {}) {
-    setBusy(true);
+  async function startScan() {
+    const trimmed = url.trim();
+    if (!trimmed) return;
     setError(null);
+    setStage("scanning");
+    setSubmittedAt(Date.now());
     try {
-      const { data, error: invokeErr } = await supabase.functions.invoke("demo-discovery", {
-        body: {
-          serviceType,
-          scenario,
-          clarifyingQuestionAsked: clarifyingQuestion ?? undefined,
-          clarifierAnswer: clarifyingQuestion ? clarifierAnswer : undefined,
-          visitorName: visitorName || undefined,
-          visitorEmail: visitorEmail || undefined,
-          finalize: opts.finalize === true,
-        },
+      const { data, error: invokeErr } = await supabase.functions.invoke("demo-scan", {
+        body: { url: trimmed },
       });
       if (invokeErr) throw invokeErr;
-      const res = data as any;
-      if (res?.error) throw new Error(res.error);
-
-      if (res.status === "clarify") { setClarifyingQuestion(res.clarifyingQuestion); setStage("clarify"); return; }
-      if (res.status === "draft") { setDraft(res.draft); setStage("contact"); return; }
-      if (res.status === "ready" && res.requestLink) { navigate(res.requestLink); return; }
-      throw new Error("Unexpected response");
+      const res = data as ScanResult;
+      setResult(res);
+      if (res.ok && res.intakeToken) {
+        setStage("ready");
+      } else {
+        setError(res.message ?? "We couldn't read enough from that site.");
+        setStage("failed");
+      }
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Something went wrong. Try again.");
-      setStage((s) => (s === "generating" ? "contact" : s));
-    } finally {
-      setBusy(false);
+      setError(e instanceof Error ? e.message : "Something went wrong.");
+      setStage("failed");
     }
   }
 
+  const elapsed = submittedAt ? Math.max(0, Math.floor((tick - submittedAt) / 1000)) : 0;
+
   return (
     <div className="border border-border bg-background/40 p-6 sm:p-8">
-      {error ? (
-        <div className="mb-4 border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">{error}</div>
-      ) : null}
-
-      {stage === "service" && (
-        <StepBlock eyebrow="Step 1 of 3" title="What do you do?">
-          <input
-            autoFocus value={serviceType} onChange={(e) => setServiceType(e.target.value)}
-            placeholder="e.g. Residential plumbing"
-            className="w-full border border-border bg-background px-4 py-3 text-base text-foreground outline-none focus:border-accent"
-          />
-          <div className="mt-3 flex flex-wrap gap-2">
-            {SERVICE_CHIPS.map((c) => (
-              <button
-                key={c} type="button" onClick={() => setServiceType(c)}
-                className="border border-border bg-background px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground hover:border-accent hover:text-foreground"
-              >
-                {c}
-              </button>
-            ))}
+      {stage === "url" && (
+        <div className="space-y-4">
+          <div>
+            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-accent">Step 1 of 2</p>
+            <h2 className="mt-2 text-xl font-semibold text-foreground sm:text-2xl">What's your business URL?</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              We scan up to 10 pages on your site. Takes about 30 seconds.
+            </p>
           </div>
-          <PrimaryButton disabled={!serviceType.trim()} onClick={() => setStage("scenario")}>Continue →</PrimaryButton>
-        </StepBlock>
-      )}
-
-      {stage === "scenario" && (
-        <StepBlock
-          eyebrow="Step 2 of 3"
-          title="Walk us through a typical job."
-          hint={`Like: "Homeowner has a leaking faucet, wants a quote." We'll route it. Decide if photos help.`}
-        >
-          <textarea
-            autoFocus value={scenario} onChange={(e) => setScenario(e.target.value)} rows={4}
-            placeholder="Describe a real situation you handle..."
+          <input
+            autoFocus
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            onKeyDown={(e) => { if (e.key === "Enter") startScan(); }}
+            placeholder="acmeplumbing.com"
             className="w-full border border-border bg-background px-4 py-3 text-base text-foreground outline-none focus:border-accent"
           />
-          <PrimaryButton disabled={!scenario.trim() || busy} onClick={() => callDiscovery()}>
-            {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : "Continue →"}
-          </PrimaryButton>
-        </StepBlock>
+          <PrimaryButton disabled={!url.trim()} onClick={startScan}>Scan my site →</PrimaryButton>
+        </div>
       )}
 
-      {stage === "clarify" && clarifyingQuestion && (
-        <StepBlock eyebrow="One quick thing" title={clarifyingQuestion}>
-          <input
-            autoFocus value={clarifierAnswer} onChange={(e) => setClarifierAnswer(e.target.value)}
-            placeholder="Your answer"
-            className="w-full border border-border bg-background px-4 py-3 text-base text-foreground outline-none focus:border-accent"
-          />
-          <PrimaryButton disabled={!clarifierAnswer.trim() || busy} onClick={() => callDiscovery()}>
-            {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : "Build my brief →"}
-          </PrimaryButton>
-        </StepBlock>
-      )}
-
-      {stage === "contact" && (
-        <StepBlock
-          eyebrow="Step 3 of 3"
-          title="Where do we send the brief?"
-          hint="Walk through the capture flow. We email the result. No signup. No spam."
-        >
-          {draft && (
-            <div className="mb-4 border border-border bg-background/60 p-4">
-              <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Your brief</p>
-              <p className="mt-2 text-base font-semibold text-foreground">{draft.title}</p>
-              <ul className="mt-3 space-y-1.5 text-sm text-muted-foreground">
-                {draft.steps.map((s, i) => (
-                  <li key={i}>
-                    <span className="text-foreground">{i + 1}. {s.title}</span>
-                    <span className="text-muted-foreground"> — {s.instruction}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-          <input
-            autoFocus value={visitorName} onChange={(e) => setVisitorName(e.target.value)} placeholder="Your name"
-            className="mb-3 w-full border border-border bg-background px-4 py-3 text-base text-foreground outline-none focus:border-accent"
-          />
-          <input
-            type="email" value={visitorEmail} onChange={(e) => setVisitorEmail(e.target.value)} placeholder="you@business.com"
-            className="w-full border border-border bg-background px-4 py-3 text-base text-foreground outline-none focus:border-accent"
-          />
-          <PrimaryButton
-            disabled={!visitorEmail.trim() || !visitorName.trim() || busy}
-            onClick={() => { setStage("generating"); callDiscovery({ finalize: true }); }}
-          >
-            {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : "Walk through my brief →"}
-          </PrimaryButton>
-        </StepBlock>
-      )}
-
-      {stage === "generating" && (
+      {stage === "scanning" && (
         <div className="flex flex-col items-center gap-4 py-12 text-center">
           <Loader2 className="h-6 w-6 animate-spin text-accent" />
-          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground">Building your brief</p>
-          <p className="text-sm text-muted-foreground">Sending you to the customer view…</p>
+          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
+            Scanning {hostOf(url)} · {elapsed}s
+          </p>
+          <p className="max-w-xs text-sm text-muted-foreground">
+            Reading your pages. Spotting services. Building routes.
+          </p>
         </div>
+      )}
+
+      {stage === "failed" && (
+        <div className="space-y-4">
+          <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-accent">Couldn't read that site</p>
+          <p className="text-sm text-muted-foreground">{error ?? "Try a different URL."}</p>
+          <div className="flex flex-wrap gap-3">
+            <PrimaryButton onClick={() => { setStage("url"); setError(null); }}>Try another URL →</PrimaryButton>
+            <NavLink
+              to="/auth?mode=signup"
+              className="inline-flex min-h-11 items-center justify-center px-6 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] text-foreground underline-offset-4 hover:underline"
+            >
+              Start trial instead →
+            </NavLink>
+          </div>
+        </div>
+      )}
+
+      {stage === "ready" && result?.intakeToken && (
+        <ReadyView result={result} />
       )}
     </div>
   );
 }
 
-function StepBlock({
-  eyebrow, title, hint, children,
-}: { eyebrow: string; title: string; hint?: string; children: React.ReactNode }) {
+function ReadyView({ result }: { result: ScanResult }) {
+  const intakeUrl = `/i/${result.intakeToken}`;
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div>
-        <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-accent">{eyebrow}</p>
-        <h2 className="mt-2 text-xl font-semibold text-foreground sm:text-2xl">{title}</h2>
-        {hint ? <p className="mt-2 text-sm text-muted-foreground">{hint}</p> : null}
+        <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-accent">Step 2 of 2 · Ready</p>
+        <h2 className="mt-2 text-xl font-semibold text-foreground sm:text-2xl">
+          Here's what we built for {result.businessName}.
+        </h2>
+        {result.summary ? (
+          <p className="mt-2 text-sm text-muted-foreground">{result.summary}</p>
+        ) : null}
       </div>
-      {children}
+
+      <ul className="space-y-2">
+        {result.routes?.map((r, i) => (
+          <li key={i} className="border border-border bg-background/60 p-4">
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-sm font-semibold text-foreground">{r.label}</p>
+              <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-accent">
+                {POLICY_LABEL[r.photoPolicy]}
+              </span>
+            </div>
+            {r.photoPolicyReason ? (
+              <p className="mt-1.5 text-xs text-muted-foreground">{r.photoPolicyReason}</p>
+            ) : null}
+          </li>
+        ))}
+      </ul>
+
+      <div className="space-y-3">
+        <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+          Try it as a customer
+        </p>
+        <div className="overflow-hidden border border-border bg-background">
+          <iframe
+            src={intakeUrl}
+            title="Your Smart Intake demo"
+            className="block h-[640px] w-full"
+          />
+        </div>
+        <a
+          href={intakeUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 text-xs text-muted-foreground underline-offset-4 hover:underline"
+        >
+          Open in a new tab →
+        </a>
+      </div>
+
+      <div className="border-t border-border pt-6">
+        <p className="text-sm text-foreground">
+          This setup is yours. Claim it and we'll drop it into your new workspace.
+        </p>
+        <div className="mt-3 flex flex-wrap gap-3">
+          <NavLink
+            to={`/auth?mode=signup&demo=${encodeURIComponent(result.demoSessionId)}`}
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-sm border border-accent bg-accent px-6 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] text-accent-foreground transition hover:opacity-90"
+          >
+            Start 14-day trial → keep this setup
+          </NavLink>
+        </div>
+        <p className="mt-3 text-xs text-muted-foreground">
+          Demo setup auto-deletes after 24 hours if you don't claim it.
+        </p>
+      </div>
     </div>
   );
 }
@@ -253,9 +245,28 @@ function PrimaryButton({
   return (
     <button
       type="button" disabled={disabled} onClick={onClick}
-      className="mt-5 inline-flex min-h-11 items-center justify-center gap-2 rounded-sm border border-accent bg-accent px-6 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] text-accent-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+      className="mt-2 inline-flex min-h-11 items-center justify-center gap-2 rounded-sm border border-accent bg-accent px-6 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] text-accent-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
     >
       {children}
     </button>
   );
+}
+
+function useTick(active: boolean) {
+  const [now, setNow] = useState(() => Date.now());
+  const ref = useRef<number | null>(null);
+  useEffect(() => {
+    if (!active) return;
+    ref.current = window.setInterval(() => setNow(Date.now()), 500);
+    return () => { if (ref.current) window.clearInterval(ref.current); };
+  }, [active]);
+  return now;
+}
+
+function hostOf(value: string) {
+  try {
+    return new URL(value.startsWith("http") ? value : `https://${value}`).hostname.replace(/^www\./, "");
+  } catch {
+    return value;
+  }
 }

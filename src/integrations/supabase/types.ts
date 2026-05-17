@@ -532,6 +532,7 @@ export type Database = {
           custom_domain: string | null
           id: string
           industry: string | null
+          is_demo: boolean
           name: string
           owner_id: string
           plan_tier: Database["public"]["Enums"]["plan_tier"]
@@ -548,6 +549,7 @@ export type Database = {
           custom_domain?: string | null
           id?: string
           industry?: string | null
+          is_demo?: boolean
           name: string
           owner_id: string
           plan_tier?: Database["public"]["Enums"]["plan_tier"]
@@ -564,6 +566,7 @@ export type Database = {
           custom_domain?: string | null
           id?: string
           industry?: string | null
+          is_demo?: boolean
           name?: string
           owner_id?: string
           plan_tier?: Database["public"]["Enums"]["plan_tier"]
@@ -841,6 +844,95 @@ export type Database = {
           workspace_id?: string
         }
         Relationships: []
+      }
+      demo_sessions: {
+        Row: {
+          blueprint_id: string | null
+          claimed_at: string | null
+          claimed_by_user_id: string | null
+          claimed_workspace_id: string | null
+          created_at: string
+          error: string | null
+          expires_at: string
+          id: string
+          intake_public_token: string | null
+          intake_source_id: string | null
+          ip_hash: string
+          routes_preview: Json
+          scan_job_id: string | null
+          status: string
+          summary: string | null
+          url: string
+          workspace_id: string | null
+        }
+        Insert: {
+          blueprint_id?: string | null
+          claimed_at?: string | null
+          claimed_by_user_id?: string | null
+          claimed_workspace_id?: string | null
+          created_at?: string
+          error?: string | null
+          expires_at?: string
+          id?: string
+          intake_public_token?: string | null
+          intake_source_id?: string | null
+          ip_hash: string
+          routes_preview?: Json
+          scan_job_id?: string | null
+          status?: string
+          summary?: string | null
+          url: string
+          workspace_id?: string | null
+        }
+        Update: {
+          blueprint_id?: string | null
+          claimed_at?: string | null
+          claimed_by_user_id?: string | null
+          claimed_workspace_id?: string | null
+          created_at?: string
+          error?: string | null
+          expires_at?: string
+          id?: string
+          intake_public_token?: string | null
+          intake_source_id?: string | null
+          ip_hash?: string
+          routes_preview?: Json
+          scan_job_id?: string | null
+          status?: string
+          summary?: string | null
+          url?: string
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "demo_sessions_blueprint_id_fkey"
+            columns: ["blueprint_id"]
+            isOneToOne: false
+            referencedRelation: "intake_blueprints"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "demo_sessions_intake_source_id_fkey"
+            columns: ["intake_source_id"]
+            isOneToOne: false
+            referencedRelation: "intake_sources"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "demo_sessions_scan_job_id_fkey"
+            columns: ["scan_job_id"]
+            isOneToOne: false
+            referencedRelation: "website_scan_jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "demo_sessions_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "business_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       email_send_log: {
         Row: {
