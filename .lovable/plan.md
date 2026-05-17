@@ -1,106 +1,103 @@
-# New `/demo` Flow
 
-Replace the current conversational demo with a flow that proves the product by running the real intake pipeline against the visitor's own URL.
+## Problem
 
-## User experience
+The demo scanned `btymaterial.com` (a landscape materials yard — mulch, stone, gravel) and recommended:
 
-```text
-1. Paste URL  →  "Scanning your site…" (10–40s, live status)
-2. See proposed routes + photo policies (the actual scan output)
-3. Interact with the live /i/:token public intake (their own brief)
-4. CTA: "Start 14-day trial and keep this setup"
-5. After signup → new workspace seeded with the exact blueprint
+1. "Get a quote or estimate" — photos recommended
+2. "Request service or repair" — photos recommended
+3. "Something else" — photos optional
+
+That's wrong. They don't do repairs. They sell bulk materials. Photos help estimate square footage for coverage but aren't required.
+
+## Root cause
+
+`supabase/functions/demo-scan/index.ts` builds routes with hard-coded keyword regex:
+
+- `inferServices()` slots every page into one of 5 fixed buckets (`quote_estimate`, `service_repair`, `warranty_damage`, `product_inquiry`, `general_intake`) using shallow regex like `/quote|install|project|price|cost/` and `/repair|service|maintenance/`.
+- `buildPlan()` then picks the top 3 buckets in a fixed priority order. Because any page with the word "service" or "project" matches, `service_repair` almost always wins second place even for businesses that don't do service work.
+- Route labels and photo policies are hard-coded per bucket, with zero awareness of what the business actually sells or does.
+
+The "smart" intake isn't smart — it's a five-option mad-lib.
+
+## Fix
+
+Replace the bucket-based `inferServices` + `buildPlan` with a single LLM step that proposes routes tailored to *this* business, then falls back to the existing keyword logic only if the LLM call fails.
+
+This stays within project rules:
+- The LLM runs at **setup time only** (demo scan), not in the live recipient `/i/:token` path.
+- Uses Lovable AI Gateway (no extra API key).
+- Output is config (route rows) — the live flow stays deterministic.
+
+### New step: `inferRoutesWithAI(pages, forms, host)`
+
+Inputs sent to the model:
+- `host` (e.g. `btymaterial.com`)
+- For up to 8 highest-signal pages: `url`, `page_type`, `title`, `h1`, `headings` (first 8), `text_excerpt` (first ~800 chars)
+- Detected forms summary: `inferred_purpose` + `field_labels`
+
+System prompt (anchored to PhotoBrief rules):
+
+> You design a Smart Intake for a service business. Read the scanned pages and propose 2–4 distinct intake routes a real customer of *this specific business* would actually pick. Do not invent services the site doesn't show evidence of. Photos are conditional, not default — only require them when the team literally can't act without one. Plain words. No jargon.
+
+Structured output (Zod / JSON schema) per route:
+```
+{
+  label: string (≤ 50 chars, verb-led, customer voice),
+  customer_description: string (≤ 140 chars),
+  template_type: "quote_estimate" | "service_repair" | "warranty_damage"
+                | "product_inquiry" | "delivery_pickup" | "bulk_order"
+                | "general_intake",
+  photo_policy: "not_needed" | "optional" | "recommended" | "required",
+  photo_policy_reason: string (≤ 160 chars, explains why in plain words),
+  readiness_goal: ReadinessGoal,
+  match_keywords: string[] (≤ 12, derived from real page content),
+  service_names: string[] (≤ 6),
+  evidence_urls: string[] (1–3 URLs from the scanned pages that justify this route)
+}
 ```
 
-## Step 1 — Public scrape endpoint
+Model: `google/gemini-2.5-flash` (fast, cheap, good enough for setup-time config).
 
-The current `website-intelligence` function requires auth + an existing workspace. We need a public sibling.
+After the call, validate:
+- Drop routes whose `evidence_urls` aren't in the scanned set (anti-hallucination).
+- Ensure at least one `is_fallback: true` route. If the model didn't include a "Something else" path, append the existing `general_intake` fallback with `photo_policy: "optional"`.
+- Map each route's `template_type` to the existing `suggestedQuestions(type)` helper for now — keeps DB shape unchanged. If the type is one of the new ones (`delivery_pickup`, `bulk_order`), use `quote_estimate`'s question set as the base.
+- Clamp to max 4 routes, sort with fallback last.
 
-**New edge function:** `demo-scan` (public, `verify_jwt = false`)
+Fallback chain:
+1. AI call fails or returns 0 valid routes → use existing `inferServices` + `buildPlan`.
+2. That returns 0 → existing single "Tell us what you need" safety route.
 
-- Input: `{ url, turnstileToken }`
-- Reuses the existing scraper, classifier, and blueprint planner from `website-intelligence` (extract those into `_shared/intelligence/` so both functions call the same code — no duplication).
-- Writes the scan + blueprint into the existing `DEMO_WORKSPACE_ID` (same hidden workspace used today by `demo-discovery`), tagged with a per-visitor `demo_session_id`.
-- Creates a one-off `intake_sources` row + public token so the visitor immediately gets a working `/i/:token` URL.
-- Rate-limited by IP (Turnstile + a simple `demo_scans` table with `created_at` + `ip_hash`).
-- Returns: `{ demoSessionId, intakeToken, blueprintSummary, routes[] }`.
+### Touch points (all in `supabase/functions/demo-scan/index.ts`)
 
-Hardening: re-use `isUnsafeHost`, max-pages cap, request timeout, content-type allowlist already in `website-intelligence`.
+- Add `inferRoutesWithAI()` helper that calls `https://ai.gateway.lovable.dev/v1/chat/completions` with `LOVABLE_API_KEY` and `response_format: { type: "json_schema", ... }`.
+- Extend `suggestPhotoPolicy()` to know about `delivery_pickup` (photos optional — helps estimate coverage) and `bulk_order` (photos optional).
+- Extend `suggestedQuestions()` to provide sane defaults for `delivery_pickup` ("What material and roughly how much?", "Delivery address?", "When do you need it?") and `bulk_order` (quantity, contact, timing). Keep existing types unchanged.
+- In the handler, after the crawl finishes:
+  - Try `inferRoutesWithAI(pageRows, formRows, hostLabel)`.
+  - If it returns routes, use those for `plan.rules` and skip `inferServices`/`buildPlan` for route generation. Still run `inferServices` for the `service_catalog_items` rows (DB shape unchanged).
+  - If it fails, fall through to existing `buildPlan(services, formRows)`.
 
-## Step 2 — Preview the proposed setup
+### Why this works for btymaterial.com
 
-New section on `/demo` shows what was found:
-- Business name + summary the AI inferred
-- Each route: label, description, photo policy chip
-- One-line install recommendation
-- Primary CTA: "Try it as a customer →" (opens `/i/:token` in an iframe **and** a "open in new tab" link)
+The model sees titles/headings like "Mulch", "Stone & Gravel", "Bulk Delivery", "Pickup" and will propose routes like:
+- "Get a delivery quote" — photos optional ("Photos help us estimate coverage, but aren't required")
+- "Place a pickup order" — photos not needed
+- "Ask about a product or price" — photos not needed
+- "Something else" — fallback
 
-## Step 3 — Live intake interaction
+…instead of inventing repair work that doesn't exist.
 
-Embed the real `/i/:token` page (same component that ships to customers) inside a phone-frame on the demo page. No mock — it's the actual flow against their actual scan.
+## Out of scope
 
-## Step 4 — Conversion CTA
+- No DB schema changes — `intake_routing_rules.template_type` stays a string, new types just flow through.
+- No change to live `/i/:token` (still config-driven, no LLM).
+- No change to `website-intake` edge function or plan gates.
+- Existing keyword pipeline stays intact as fallback — not deleted.
 
-After the visitor submits (or skips) the intake, show:
-- "This is your setup. Claim it." → `/auth?mode=signup&demo=<demoSessionId>`
-- The signup page reads `?demo=...`, stores it in `sessionStorage` before the auth round-trip.
+## Technical notes
 
-## Step 5 — Import on signup
-
-**New edge function:** `claim-demo-blueprint` (auth required)
-
-- Input: `{ demoSessionId }`
-- Verifies the session belongs to the demo workspace, is < 24h old, hasn't been claimed.
-- Copies the blueprint, routing rules, service catalog items, and intake source row from `DEMO_WORKSPACE_ID` into the user's new workspace (rewriting workspace_id + regenerating ids/tokens).
-- Marks the demo session `claimed_at = now()` so it can't be re-imported.
-- Returns the new workspace's intake source token.
-
-Wire-up: after `ensure-workspace` completes in the post-signup bootstrap, if `sessionStorage.demoSessionId` exists, call `claim-demo-blueprint`, then redirect to `/intake` with a "Imported from your demo" toast.
-
-## Schema changes
-
-```sql
--- new table
-create table public.demo_sessions (
-  id uuid primary key default gen_random_uuid(),
-  url text not null,
-  ip_hash text not null,
-  blueprint_id uuid references intake_blueprints(id) on delete set null,
-  intake_source_id uuid references intake_sources(id) on delete set null,
-  scan_job_id uuid references website_scan_jobs(id) on delete set null,
-  claimed_by_user_id uuid,
-  claimed_workspace_id uuid,
-  claimed_at timestamptz,
-  created_at timestamptz not null default now(),
-  expires_at timestamptz not null default (now() + interval '24 hours')
-);
--- RLS: deny all from anon/auth; service-role only (edge functions handle access)
-create index on public.demo_sessions (ip_hash, created_at desc);
-```
-
-`demo-cleanup` extended to drop expired/unclaimed `demo_sessions` plus their blueprint/source rows.
-
-## Files
-
-**New**
-- `supabase/functions/demo-scan/index.ts`
-- `supabase/functions/claim-demo-blueprint/index.ts`
-- `supabase/functions/_shared/intelligence/` (extracted scraper + planner)
-- migration for `demo_sessions` + cleanup updates
-
-**Rewritten**
-- `src/pages/Demo.tsx` — three states: `url-entry`, `scanning` (with progress copy), `preview-and-try` (routes summary + embedded `/i/:token` + CTA)
-
-**Edited**
-- `src/pages/Auth.tsx` — read `?demo=` and stash in sessionStorage
-- post-signup bootstrap (wherever `ensure-workspace` is called) — call `claim-demo-blueprint` when stash present
-- `supabase/functions/demo-cleanup/index.ts` — also purge `demo_sessions`
-
-**Deleted**
-- `supabase/functions/demo-discovery/index.ts` (old conversational demo)
-
-## Questions before I build
-
-1. **Rate limiting** — 1 scan per IP per hour is my default. OK, or more generous?
-2. **Embed vs redirect** for step 3 — embed `/i/:token` in a phone-frame on the demo page (my plan), or hand them a link and let them open it in a new tab?
-3. **What happens if scrape fails / site blocks us?** Fall back to the current conversational `demo-discovery` flow as plan B, or just show "we couldn't read that site — start your trial and we'll help you set it up"?
+- Lovable AI Gateway: `LOVABLE_API_KEY` is already injected into edge functions. No new secret.
+- Handle 402 (credits) and 429 (rate limit) explicitly — log and fall through to keyword fallback.
+- Cap LLM call to ~15s with `AbortController`; demo already waits ~30s.
+- All prompts/output stay on the server; nothing about the LLM is exposed to the browser.
