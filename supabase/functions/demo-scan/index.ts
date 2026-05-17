@@ -536,7 +536,11 @@ Deno.serve(async (req) => {
     });
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    await admin.from("demo_sessions").update({ status: "failed", error: msg }).eq("id", demoSessionId);
+    await admin.from("demo_sessions").update({
+      status: "failed",
+      error: msg,
+      scan_completed_at: new Date().toISOString(),
+    }).eq("id", demoSessionId);
     return json({
       ok: false, error: "scan_failed", demoSessionId,
       message: "We couldn't read enough from that site. Start a trial and we'll help you set it up.",
