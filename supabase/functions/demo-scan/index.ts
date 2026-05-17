@@ -323,6 +323,206 @@ function suggestPhotoPolicy(templateType: string, keywords: string[]): { policy:
     return { policy: "optional", reason: "Photos may help with context, but the request can usually be reviewed without them.", readinessGoal: "ready_for_callback" };
   return { policy: "not_needed", reason: "This route can start as a simple customer inquiry without visual context.", readinessGoal: "ready_for_callback" };
 }
+const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY") ?? "";
+const AI_GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
+const AI_TIMEOUT_MS = 20_000;
+
+type AiRoute = {
+  label: string;
+  customer_description: string;
+  template_type: string;
+  photo_policy: PhotoPolicy;
+  photo_policy_reason: string;
+  readiness_goal: ReadinessGoal;
+  match_keywords: string[];
+  service_names: string[];
+  evidence_urls: string[];
+  is_fallback?: boolean;
+};
+
+const VALID_TEMPLATE_TYPES = new Set([
+  "quote_estimate", "service_repair", "warranty_damage", "product_inquiry",
+  "delivery_pickup", "bulk_order", "general_intake",
+]);
+const VALID_POLICIES = new Set<PhotoPolicy>(["not_needed", "optional", "recommended", "required"]);
+const VALID_GOALS = new Set<ReadinessGoal>([
+  "ready_to_quote", "ready_to_dispatch", "ready_for_callback",
+  "needs_review", "needs_more_info", "needs_photos",
+]);
+
+async function inferRoutesWithAI(
+  pages: Array<{ url: string; title: string | null; h1: string | null; page_type: string; text_excerpt: string | null; headings: string[] }>,
+  forms: Array<Record<string, unknown>>,
+  host: string,
+): Promise<AiRoute[]> {
+  if (!LOVABLE_API_KEY || pages.length === 0) return [];
+
+  // Pick highest-signal pages first (service/product/pricing/contact, then others).
+  const ranked = [...pages].sort((a, b) => {
+    const score = (p: typeof a) =>
+      ({ service: 5, product: 5, pricing: 4, contact: 3, faq: 2, about: 1, home: 3, unknown: 0 } as Record<string, number>)[p.page_type] ?? 0;
+    return score(b) - score(a);
+  }).slice(0, 8);
+
+  const pageSummaries = ranked.map((p) => ({
+    url: p.url,
+    type: p.page_type,
+    title: p.title,
+    h1: p.h1,
+    headings: p.headings.slice(0, 8),
+    excerpt: (p.text_excerpt ?? "").slice(0, 800),
+  }));
+
+  const formSummaries = forms.slice(0, 6).map((f) => ({
+    purpose: f.inferred_purpose,
+    labels: (f.field_labels as string[] | undefined)?.slice(0, 10) ?? [],
+  }));
+
+  const scannedUrls = new Set(pages.map((p) => p.url));
+
+  const system = [
+    "You design a Smart Intake for a service or product business.",
+    "Read the scanned pages and propose 2-4 distinct intake routes a REAL customer of THIS specific business would actually pick.",
+    "Do NOT invent services the site doesn't show evidence of. If they sell mulch, do not propose 'repair'. If they're a roofer, do not propose 'product catalog'.",
+    "Photos are CONDITIONAL, not default. Only set photo_policy='required' when the team literally cannot act without seeing the issue (damage/warranty/leak). Use 'recommended' when photos clearly speed up scoping. Use 'optional' when they help sometimes (e.g. measuring a yard for mulch coverage). Use 'not_needed' for simple orders, pickups, or general questions.",
+    "Labels must be in customer voice, verb-led, max 50 chars. Plain words. No jargon. No 'AI-powered'. No exclamation points.",
+    "Always include exactly one fallback route ('Something else' / 'Tell us what you need') with is_fallback=true and photo_policy='optional'.",
+    "Each non-fallback route MUST include 1-3 evidence_urls from the scanned pages that justify it.",
+    "Pick the most natural template_type from: quote_estimate, service_repair, warranty_damage, product_inquiry, delivery_pickup, bulk_order, general_intake.",
+  ].join(" ");
+
+  const user = JSON.stringify({ host, pages: pageSummaries, forms: formSummaries });
+
+  const schema = {
+    type: "object",
+    additionalProperties: false,
+    required: ["routes"],
+    properties: {
+      routes: {
+        type: "array", minItems: 2, maxItems: 4,
+        items: {
+          type: "object",
+          additionalProperties: false,
+          required: ["label", "customer_description", "template_type", "photo_policy", "photo_policy_reason", "readiness_goal", "match_keywords", "service_names", "evidence_urls", "is_fallback"],
+          properties: {
+            label: { type: "string", maxLength: 60 },
+            customer_description: { type: "string", maxLength: 160 },
+            template_type: { type: "string", enum: ["quote_estimate", "service_repair", "warranty_damage", "product_inquiry", "delivery_pickup", "bulk_order", "general_intake"] },
+            photo_policy: { type: "string", enum: ["not_needed", "optional", "recommended", "required"] },
+            photo_policy_reason: { type: "string", maxLength: 200 },
+            readiness_goal: { type: "string", enum: ["ready_to_quote", "ready_to_dispatch", "ready_for_callback", "needs_review", "needs_more_info", "needs_photos"] },
+            match_keywords: { type: "array", maxItems: 12, items: { type: "string" } },
+            service_names: { type: "array", maxItems: 6, items: { type: "string" } },
+            evidence_urls: { type: "array", maxItems: 3, items: { type: "string" } },
+            is_fallback: { type: "boolean" },
+          },
+        },
+      },
+    },
+  };
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), AI_TIMEOUT_MS);
+  try {
+    const res = await fetch(AI_GATEWAY_URL, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "google/gemini-2.5-flash",
+        messages: [
+          { role: "system", content: system },
+          { role: "user", content: user },
+        ],
+        response_format: {
+          type: "json_schema",
+          json_schema: { name: "intake_routes", strict: true, schema },
+        },
+      }),
+      signal: controller.signal,
+    });
+    if (!res.ok) {
+      console.warn("ai route inference failed", res.status, await res.text().catch(() => ""));
+      return [];
+    }
+    const body = await res.json() as { choices?: Array<{ message?: { content?: string } }> };
+    const content = body.choices?.[0]?.message?.content;
+    if (!content) return [];
+    const parsed = JSON.parse(content) as { routes?: AiRoute[] };
+    const routes = Array.isArray(parsed.routes) ? parsed.routes : [];
+
+    // Validate + sanitize
+    const cleaned: AiRoute[] = [];
+    for (const r of routes) {
+      if (!r || typeof r.label !== "string") continue;
+      if (!VALID_TEMPLATE_TYPES.has(r.template_type)) continue;
+      if (!VALID_POLICIES.has(r.photo_policy)) continue;
+      if (!VALID_GOALS.has(r.readiness_goal)) continue;
+      const evidence = (r.evidence_urls ?? []).filter((u) => scannedUrls.has(u));
+      // Allow fallback routes without evidence; require it for the rest.
+      if (!r.is_fallback && evidence.length === 0) continue;
+      cleaned.push({
+        ...r,
+        evidence_urls: evidence,
+        match_keywords: (r.match_keywords ?? []).slice(0, 12),
+        service_names: (r.service_names ?? []).slice(0, 6),
+      });
+      if (cleaned.length >= 4) break;
+    }
+
+    if (cleaned.length === 0) return [];
+
+    // Ensure exactly one fallback at the end.
+    const fallbacks = cleaned.filter((r) => r.is_fallback);
+    const nonFallbacks = cleaned.filter((r) => !r.is_fallback);
+    if (fallbacks.length === 0) {
+      nonFallbacks.push({
+        label: "Something else",
+        customer_description: "Tell us what you need and we'll follow up.",
+        template_type: "general_intake",
+        photo_policy: "optional",
+        photo_policy_reason: "Photos may help with context, but aren't required.",
+        readiness_goal: "ready_for_callback",
+        match_keywords: [],
+        service_names: [],
+        evidence_urls: [],
+        is_fallback: true,
+      });
+      return [...nonFallbacks];
+    }
+    return [...nonFallbacks, fallbacks[0]];
+  } catch (err) {
+    console.warn("ai route inference error", err instanceof Error ? err.message : err);
+    return [];
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+function questionsForTemplate(templateType: string) {
+  // delivery_pickup and bulk_order map to quote_estimate-style questions.
+  if (templateType === "delivery_pickup") {
+    return [
+      { id: "contact_name", prompt: "What is your name?", type: "short_text", required: true, sortOrder: 0 },
+      { id: "contact_method", prompt: "What is the best email or phone number to reach you?", type: "short_text", required: true, sortOrder: 1 },
+      { id: "material_and_quantity", prompt: "What material do you need, and roughly how much?", type: "long_text", required: true, sortOrder: 2 },
+      { id: "delivery_address", prompt: "Where should we deliver, or are you picking up?", type: "address", required: false, sortOrder: 3 },
+      { id: "needed_by", prompt: "When do you need it?", type: "short_text", required: false, sortOrder: 4 },
+    ];
+  }
+  if (templateType === "bulk_order") {
+    return [
+      { id: "contact_name", prompt: "What is your name or company?", type: "short_text", required: true, sortOrder: 0 },
+      { id: "contact_method", prompt: "What is the best email or phone number to reach you?", type: "short_text", required: true, sortOrder: 1 },
+      { id: "order_details", prompt: "What are you looking to order, and roughly how much?", type: "long_text", required: true, sortOrder: 2 },
+      { id: "timing", prompt: "When do you need it?", type: "short_text", required: false, sortOrder: 3 },
+    ];
+  }
+  return suggestedQuestions(templateType);
+}
+
 function suggestedQuestions(templateType: string) {
   const base = [
     { id: "contact_name", prompt: "What is your name?", type: "short_text", required: true, sortOrder: 0 },
@@ -583,7 +783,38 @@ Deno.serve(async (req) => {
       ? await admin.from("service_catalog_items").insert(serviceRows).select("id, recommended_template_type")
       : { data: [] as Array<{ id: string; recommended_template_type: string }> };
 
-    const plan = buildPlan(services, formRows);
+    // Try LLM-based route inference first; fall back to keyword buckets.
+    let plan: ReturnType<typeof buildPlan>;
+    const aiRoutes = await inferRoutesWithAI(
+      pageRows.map((p) => ({
+        url: String(p.url), title: p.title as string | null, h1: p.h1 as string | null,
+        page_type: String(p.page_type), text_excerpt: p.text_excerpt, headings: p.headings,
+      })),
+      formRows,
+      hostLabel,
+    );
+
+    if (aiRoutes.length > 0) {
+      plan = {
+        rules: aiRoutes.map((r, index) => ({
+          label: r.label,
+          customer_description: r.customer_description,
+          match_keywords: r.match_keywords,
+          template_type: r.template_type,
+          sort_order: index,
+          is_fallback: r.is_fallback === true,
+          service_names: r.service_names,
+          photo_policy: r.photo_policy,
+          photo_policy_reason: r.photo_policy_reason,
+          readiness_goal: r.readiness_goal,
+          questions: questionsForTemplate(r.template_type),
+        })),
+        summary: `Found ${services.length} likely service/product signals and ${formRows.length} form(s). Recommended ${aiRoutes.length} smart intake path(s).`,
+      };
+    } else {
+      plan = buildPlan(services, formRows);
+    }
+
     if (!plan.rules.length) {
       // Always give the visitor at least one route.
       plan.rules.push({
