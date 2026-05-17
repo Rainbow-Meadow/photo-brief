@@ -73,6 +73,7 @@ const AdminCommandCenter = lazy(() => import("@/pages/AdminCommandCenter"));
 const AdminBetaPage = lazy(() => import("@/pages/AdminBeta"));
 const AdminWebsiteIntelligencePage = lazy(() => import("@/pages/AdminWebsiteIntelligence"));
 const AdminExitInterviewsPage = lazy(() => import("@/pages/AdminExitInterviews"));
+const AdminDemoMetricsPage = lazy(() => import("@/pages/AdminDemoMetrics"));
 const SupportPage = lazy(() => import("@/features/support/pages/SupportPage"));
 
 const queryClient = new QueryClient({
@@ -260,6 +261,16 @@ const App = () => (
                 <RequireAuth requireOnboarding={false}>
                   <RequirePlatformAdmin>
                     <AdminExitInterviewsPage />
+                  </RequirePlatformAdmin>
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/admin/demo-metrics"
+              element={
+                <RequireAuth requireOnboarding={false}>
+                  <RequirePlatformAdmin>
+                    <AdminDemoMetricsPage />
                   </RequirePlatformAdmin>
                 </RequireAuth>
               }
