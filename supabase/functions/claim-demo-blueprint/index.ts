@@ -228,12 +228,10 @@ Deno.serve(async (req) => {
     await admin.from("business_workspaces").delete().eq("id", autoWorkspaceId);
   }
 
-  // Mark demo claimed.
+  // Finalize claim (claimed_at already set during atomic reserve).
   await admin.from("demo_sessions").update({
     status: "claimed",
-    claimed_by_user_id: user.id,
     claimed_workspace_id: demoWorkspaceId,
-    claimed_at: new Date().toISOString(),
   }).eq("id", demoSessionId);
 
   return json({ ok: true, workspaceId: demoWorkspaceId });
