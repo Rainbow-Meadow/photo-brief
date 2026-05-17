@@ -8,6 +8,7 @@ import { toast } from "@/hooks/use-toast";
 import { TurnstileWidget } from "@/components/security/TurnstileWidget";
 import { verifyTurnstileToken } from "@/config/turnstile";
 import { EditorialAuthShell } from "@/components/editorial/EditorialAuthShell";
+import { PageMeta } from "@/hooks/seo/usePageMeta";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
