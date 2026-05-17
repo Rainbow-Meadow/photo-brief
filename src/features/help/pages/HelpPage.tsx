@@ -33,6 +33,7 @@ export default function HelpPage() {
           { name: "Home", path: "/" },
           { name: "Help", path: "/help" },
         ]}
+        jsonLd={buildFaqJsonLd(faqItems)}
       />
 
       <Section>
