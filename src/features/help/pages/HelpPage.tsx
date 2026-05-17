@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 
 import { PageMeta } from "@/hooks/seo/usePageMeta";
+import { buildFaqJsonLd } from "@/hooks/seo/buildFaqJsonLd";
 import { Section, Container, SectionHeader } from "@/design-system/schema";
 import {
   Accordion,
