@@ -858,7 +858,9 @@ export type Database = {
           intake_public_token: string | null
           intake_source_id: string | null
           ip_hash: string
+          pages_scanned: number | null
           routes_preview: Json
+          scan_completed_at: string | null
           scan_job_id: string | null
           status: string
           summary: string | null
@@ -877,7 +879,9 @@ export type Database = {
           intake_public_token?: string | null
           intake_source_id?: string | null
           ip_hash: string
+          pages_scanned?: number | null
           routes_preview?: Json
+          scan_completed_at?: string | null
           scan_job_id?: string | null
           status?: string
           summary?: string | null
@@ -896,7 +900,9 @@ export type Database = {
           intake_public_token?: string | null
           intake_source_id?: string | null
           ip_hash?: string
+          pages_scanned?: number | null
           routes_preview?: Json
+          scan_completed_at?: string | null
           scan_job_id?: string | null
           status?: string
           summary?: string | null
@@ -4078,6 +4084,34 @@ export type Database = {
       }
     }
     Views: {
+      demo_session_daily_metrics: {
+        Row: {
+          avg_scrape_seconds: number | null
+          day: string | null
+          scans_claimed: number | null
+          scans_failed: number | null
+          scans_succeeded: number | null
+          scans_total: number | null
+        }
+        Relationships: []
+      }
+      demo_session_metrics: {
+        Row: {
+          avg_pages_scanned: number | null
+          avg_scrape_seconds: number | null
+          claim_conversion_pct: number | null
+          p50_scrape_seconds: number | null
+          p95_scrape_seconds: number | null
+          scans_claimed: number | null
+          scans_failed: number | null
+          scans_in_progress: number | null
+          scans_succeeded: number | null
+          scans_total: number | null
+          success_rate_pct: number | null
+          window_label: string | null
+        }
+        Relationships: []
+      }
       requests_inbox_view: {
         Row: {
           assigned_to: string | null
