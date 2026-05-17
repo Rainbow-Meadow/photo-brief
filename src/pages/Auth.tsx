@@ -34,19 +34,40 @@ export default function AuthPage() {
   const [submitting, setSubmitting] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
+  // Persist ?demo=<sessionId> across the auth round-trip.
   useEffect(() => {
-    if (!authLoading && session) {
+    const demo = params.get("demo");
+    if (demo) {
+      try { sessionStorage.setItem("pb_demo_session_id", demo); } catch { /* noop */ }
+    }
+  }, [params]);
+
+  useEffect(() => {
+    if (authLoading || !session) return;
+    (async () => {
+      let claimedTarget: string | null = null;
+      try {
+        const demoId = sessionStorage.getItem("pb_demo_session_id");
+        if (demoId) {
+          sessionStorage.removeItem("pb_demo_session_id");
+          const { data, error } = await supabase.functions.invoke("claim-demo-blueprint", {
+            body: { demoSessionId: demoId },
+          });
+          if (!error && (data as any)?.ok) {
+            claimedTarget = "/intake?claimed=1";
+            toast({ title: "Setup imported", description: "Your demo is now your workspace." });
+          }
+        }
+      } catch { /* ignore — fall through to default redirect */ }
       const next = params.get("next");
-      const target = next ? decodeURIComponent(next) : "/dashboard";
+      const target = claimedTarget ?? (next ? decodeURIComponent(next) : "/dashboard");
       onboardingDebug("auth.redirect_authenticated", {
-        sessionPresent: true,
-        currentUserId: session.user.id,
+        sessionPresent: true, currentUserId: session.user.id,
         currentUserEmail: session.user.email ?? null,
-        redirectDestination: target,
-        triggeredBy: "AuthPage.session_present",
+        redirectDestination: target, triggeredBy: "AuthPage.session_present",
       });
       navigate(target, { replace: true });
-    }
+    })();
   }, [authLoading, session, navigate, params]);
 
   const handleEmail = async (e: React.FormEvent) => {
