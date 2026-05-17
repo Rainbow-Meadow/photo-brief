@@ -75,8 +75,44 @@ Deno.serve(async (req) => {
     }
   }
 
+  // Purge expired, unclaimed demo_sessions and their per-visit demo workspaces.
+  let sessionsDeleted = 0;
+  let demoWorkspacesDeleted = 0;
+  const { data: expiredSessions } = await admin
+    .from("demo_sessions")
+    .select("id, claimed_workspace_id")
+    .is("claimed_at", null)
+    .lt("expires_at", new Date().toISOString());
+
+  const sessionIds = (expiredSessions ?? []).map((s: any) => s.id);
+  const demoWsIds = Array.from(new Set(
+    (expiredSessions ?? []).map((s: any) => s.claimed_workspace_id).filter(Boolean),
+  ));
+
+  if (sessionIds.length > 0) {
+    await admin.from("demo_sessions").delete().in("id", sessionIds);
+    sessionsDeleted = sessionIds.length;
+  }
+  if (demoWsIds.length > 0) {
+    // Only delete workspaces still flagged is_demo (never claimed into a user).
+    const { data: deleted } = await admin
+      .from("business_workspaces")
+      .delete()
+      .in("id", demoWsIds)
+      .eq("is_demo", true)
+      .select("id");
+    demoWorkspacesDeleted = (deleted ?? []).length;
+  }
+
   return new Response(
-    JSON.stringify({ ok: true, requestsDeleted: requestIds.length, guidesDeleted: guideIds.length, r2Deleted }),
+    JSON.stringify({
+      ok: true,
+      requestsDeleted: requestIds.length,
+      guidesDeleted: guideIds.length,
+      r2Deleted,
+      sessionsDeleted,
+      demoWorkspacesDeleted,
+    }),
     { headers: { ...corsHeaders, "Content-Type": "application/json" } },
   );
 });
