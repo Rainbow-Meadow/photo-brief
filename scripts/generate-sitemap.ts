@@ -32,7 +32,7 @@ const urls = paths
   .map((p) =>
     [
       `  <url>`,
-      `    <loc>${BASE_URL}${p === "/" ? "" : p}</loc>`,
+      `    <loc>${BASE_URL}${p === "/" ? "/" : p}</loc>`,
       `    <lastmod>${lastmod}</lastmod>`,
       `  </url>`,
     ].join("\n"),
