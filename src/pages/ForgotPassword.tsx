@@ -94,5 +94,6 @@ export default function ForgotPasswordPage() {
         </form>
       )}
     </EditorialAuthShell>
+    </>
   );
 }
