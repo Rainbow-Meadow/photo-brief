@@ -1,0 +1,23 @@
+name: Sync GPTFULL to buytheyard
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Copy value
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.BUYTHEYARD_SECRET_SYNC_TOKEN }}
+          SOURCE_VALUE: ${{ secrets.GPTFULL }}
+        run: |
+          set -euo pipefail
+          test -n "${SOURCE_VALUE:-}" || { echo "::error::GPTFULL is not configured in this repository"; exit 1; }
+          test -n "${GH_TOKEN:-}" || { echo "::error::BUYTHEYARD_SECRET_SYNC_TOKEN is not configured in this repository"; exit 1; }
+          printf '%s' "$SOURCE_VALUE" | gh secret set GPTFULL --repo Rainbow-Meadow/buytheyard
+          echo "GPTFULL was updated in Rainbow-Meadow/buytheyard."
